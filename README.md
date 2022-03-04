@@ -1,3 +1,3 @@
 ## `mlte`: Machine Learning Testing and Evaluation
 
-A toolkit for machine learning testing and evaluation.
+`mlte` (pronounced "melt") is a toolkit for machine learning testing and evaluation.
