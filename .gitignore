@@ -1,2 +1,7 @@
 # Python virtual environments
 env/
+
+# tox artifacts
+.tox/
+.eggs/
+mlte.egg-info
