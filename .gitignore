@@ -5,3 +5,6 @@ env/
 .tox/
 .eggs/
 mlte.egg-info
+
+# mypy artifacts
+.mypy_cache/

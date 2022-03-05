@@ -79,6 +79,4 @@ class ProcessLocalMemoryConsumption(Property):
             stats.append(kb)
             time.sleep(poll_interval)
 
-        return MemoryStatistics(
-            sum(stats) / len(stats), min(stats), max(stats)
-        )
+        return MemoryStatistics(sum(stats) / len(stats), min(stats), max(stats))

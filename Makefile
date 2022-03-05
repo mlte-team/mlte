@@ -3,16 +3,20 @@
 # Format all source code
 .PHONY: format
 format:
-	black src/mlte/
+	black src/
 	black test/
-	black setup.py
 
 # Lint all source code
 .PHONY: lint
 lint:
-	flake8 src/mlte/
+	flake8 src/
 	flake8 test/
-	flake8 setup.py
+
+# Typecheck all source code
+.PHONY: typecheck
+typecheck:
+	mypy src/
+	mypy test/
 
 # Run unit tests with tox
 .PHONY: test
