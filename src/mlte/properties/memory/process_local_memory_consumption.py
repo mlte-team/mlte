@@ -6,6 +6,7 @@ import time
 import subprocess
 
 from ..property import Property
+from ...platform.os import is_windows
 
 
 class MemoryStatistics:
@@ -63,6 +64,10 @@ class ProcessLocalMemoryConsumption(Property):
 
     def __init__(self):
         super().__init__("ProcessLocalMemoryConsumption")
+        if is_windows():
+            raise RuntimeError(
+                f"Property {self.name} is not supported on Windows."
+            )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """

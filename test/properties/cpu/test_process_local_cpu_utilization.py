@@ -4,6 +4,7 @@ Unit test for ProcessLocalCPUUtilization property.
 
 
 import os
+import time
 import pytest
 import threading
 import subprocess
@@ -11,15 +12,15 @@ import subprocess
 from mlte.platform.os import is_windows, is_nix
 from mlte.properties.cpu import ProcessLocalCPUUtilization
 
+from ...support.meta import path_to_support
 
-def support_path() -> str:
-    """Get the absolute path to the support directory."""
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "support/")
+# The spin duration, in seconds
+SPIN_DURATION = 5
 
 
 def spin_for(seconds: int):
     """Run the spin.py program for `seconds`."""
-    path = os.path.join(support_path(), "spin.py")
+    path = os.path.join(path_to_support(), "spin.py")
     prog = subprocess.Popen(["python", path, f"{seconds}"])
     thread = threading.Thread(target=lambda: prog.wait())
     thread.start()
@@ -30,10 +31,17 @@ def spin_for(seconds: int):
     is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
 def test_cpu_nix():
+    start = time.time()
+
     prog = spin_for(5)
     prop = ProcessLocalCPUUtilization()
+
+    # Capture CPU utilization; blocks until process exit
     stat = prop(prog.pid)
+
     assert len(str(stat)) > 0
+    # Test for passage of time
+    assert int(time.time() - start) >= SPIN_DURATION
 
 
 @pytest.mark.skipif(
