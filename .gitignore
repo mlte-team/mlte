@@ -1,5 +1,6 @@
 # Python virtual environments
-env/
+env-dev/
+env-test/
 
 # tox artifacts
 .tox/

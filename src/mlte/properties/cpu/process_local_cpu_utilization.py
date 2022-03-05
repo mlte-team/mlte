@@ -7,6 +7,7 @@ import subprocess
 from subprocess import SubprocessError
 
 from ..property import Property
+from ...platform.os import is_windows
 
 
 class CPUStatistics:
@@ -53,13 +54,17 @@ def _get_cpu_usage(pid: int) -> float:
         return -1.0
 
 
-class ProcessLocalCpuUtilization(Property):
+class ProcessLocalCPUUtilization(Property):
     """
     TODO
     """
 
     def __init__(self):
         super().__init__("ProcessLocalCPUUtilization")
+        if is_windows():
+            raise RuntimeError(
+                f"Property {self.name} is not supported on Windows."
+            )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
         """
