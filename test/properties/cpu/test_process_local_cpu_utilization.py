@@ -26,7 +26,9 @@ def spin_for(seconds: int):
     return prog
 
 
-@pytest.mark.skipif(is_windows())
+@pytest.mark.skipif(
+    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
 def test_cpu_nix():
     prog = spin_for(5)
     prop = ProcessLocalCPUUtilization()
@@ -34,7 +36,9 @@ def test_cpu_nix():
     assert len(str(stat)) > 0
 
 
-@pytest.mark.skipif(is_nix())
+@pytest.mark.skipif(
+    is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
 def test_cpu_windows():
     with pytest.raises(RuntimeError):
         _ = ProcessLocalCPUUtilization()

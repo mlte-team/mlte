@@ -1,4 +1,5 @@
 # Python virtual environments
+env/
 env-dev/
 env-test/
 
@@ -9,3 +10,8 @@ mlte.egg-info
 
 # mypy artifacts
 .mypy_cache/
+
+# pytest artifacts
+.coverage
+
+__pycache__/

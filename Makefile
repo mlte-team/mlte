@@ -19,6 +19,7 @@ typecheck:
 	mypy test/
 
 # Run unit tests with tox
+# NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox
+	tox --develop -e py38
