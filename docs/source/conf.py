@@ -5,7 +5,7 @@ Configuration file for sphinx documentation builder.
 import os
 import sys
 # Allow sphinx to find package for docstrings
-sys.path.append(os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../src/'))
 
 # -- Project information
 
@@ -21,10 +21,12 @@ extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'autoapi.extension',
     'myst_parser'
 ]
+
+autosummary_generate = True
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
@@ -33,10 +35,14 @@ intersphinx_mapping = {
 
 intersphinx_disabled_domains = ["std"]
 
-templates_path = ["_templates"]
-
 # -- Options for HTML output
 html_theme = "sphinx_rtd_theme"
 
 # -- Options for EPUB output
 epub_show_urls = "footnote"
+
+# -- Options for autoapi
+autoapi_type = "python"
+autoapi_dirs = ["../../src"]
+autoapi_options = ["members", "special-members", "undoc-members", "imported-members"]
+autoapi_add_toctree_entry = False

@@ -10,7 +10,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties.cpu import ProcessLocalCPUUtilization
+from mlte.properties import ProcessLocalCPUUtilization
 
 from ...support.meta import path_to_support
 

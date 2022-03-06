@@ -55,11 +55,10 @@ def _get_cpu_usage(pid: int) -> float:
 
 
 class ProcessLocalCPUUtilization(Property):
-    """
-    TODO
-    """
+    """Measures CPU utilization for a local training process."""
 
     def __init__(self):
+        """Initialize a new ProcessLocalCPUUtilization property."""
         super().__init__("ProcessLocalCPUUtilization")
         if is_windows():
             raise RuntimeError(
@@ -69,9 +68,14 @@ class ProcessLocalCPUUtilization(Property):
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
         """
         Monitor the CPU utilization of process at `pid` until exit.
-        :param pid The process identifier
-        :param poll_interval The poll interval in seconds
-        :return The collection of CPU usage statistics
+
+        :param pid: The process identifier
+        :type pid: int
+        :param poll_interval: The poll interval in seconds
+        :type poll_interval: int
+
+        :return: The collection of CPU usage statistics
+        :rtype: CPUStatistics
         """
         stats = []
         while True:

@@ -14,4 +14,8 @@ mlte.egg-info
 # pytest artifacts
 .coverage
 
+# sphinx artifacts
+build/
+_autosummary/
+
 __pycache__/

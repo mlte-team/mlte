@@ -19,8 +19,13 @@ class MemoryStatistics:
     def __init__(self, avg: float, min: int, max: int):
         """
         Initialize a MemoryStatistics instance.
-        :param average The average memory consumtion (bytes)
-        :param peak The peak memory consumption
+
+        :param avg: The average memory consumtion (bytes)
+        :type avg: float
+        :param min: The minimum memory consumption (bytes)
+        :type avg: float
+        :param max: The maximum memory consumption (bytes)
+        :type max: float
         """
         # The statistics
         self.avg = avg
@@ -58,11 +63,10 @@ def _get_memory_usage(pid: int) -> int:
 
 
 class ProcessLocalMemoryConsumption(Property):
-    """
-    TODO
-    """
+    """Measure memory consumption for a local training process."""
 
     def __init__(self):
+        """Initialize a ProcessLocalMemoryConsumption instance."""
         super().__init__("ProcessLocalMemoryConsumption")
         if is_windows():
             raise RuntimeError(
@@ -72,9 +76,14 @@ class ProcessLocalMemoryConsumption(Property):
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
-        :param pid The process identifier
-        :param interval The poll interval, in seconds
+
+        :param pid: The process identifier
+        :type pid: int
+        :param poll_interval: The poll interval, in seconds
+        :type poll_interval: int
+
         :return The collection of memory usage statistics
+        :rtype: MemoryStatistics
         """
         stats = []
         while True:

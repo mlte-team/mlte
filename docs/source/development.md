@@ -1,8 +1,8 @@
-## Development
+# Development
 
 This document describes some of the development practices used within `mlte`.
 
-### Quickstart
+## Quickstart
 
 Create a Python virtual environment and install the required development packages:
 
@@ -14,7 +14,7 @@ $ pip install -r requirements_dev.txt
 
 Now you are ready to start working on `mlte`!
 
-### Source Formatting
+## Source Formatting
 
 We format all Python code in this project with the [`black`](https://github.com/psf/black) source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
 
@@ -31,7 +31,7 @@ $ black test/
 
 Code that does not satisfy the formatter will be rejected from pull requests.
 
-### Source Linting
+## Source Linting
 
 We lint all Python code in this project with the [`flake8`](https://flake8.pycqa.org/en/latest/) source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
@@ -48,7 +48,7 @@ $ flake8 test/
 
 Code that does not satisfy the linter will be rejected from pull requests.
 
-### Static Type Checking
+## Static Type Checking
 
 We run static type-checking with [`mypy`](http://mypy-lang.org/). Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
 
@@ -65,7 +65,7 @@ $ mypy test/
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
 
-### Unit Tests
+## Unit Tests
 
 We unit test the `mlte` library with the [`pytest`](https://docs.pytest.org/en/7.0.x/contents.html) package and [`tox`](https://tox.wiki/en/latest/). The former is a test-runner for Python while the latter is a tool for environment isolation and automation. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
@@ -81,10 +81,25 @@ $ tox --develop
 
 Unit tests failures result in build failures in CI.
 
-### Continuous Integration
+## Continuous Integration
 
 We utilize [Github Actions](https://docs.github.com/en/actions) for continuous integration.
 
-### Documentation
+## Documentation
 
 We build documentation with [`sphinx`](https://www.sphinx-doc.org/en/master/) and host documentation on (ReadTheDocs)[https://readthedocs.org/].
+
+We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
+
+```bash
+$ cd docs
+$ python -m venv env
+$ source ./env/bin/activate
+$ pip install -r requirements.txt
+```
+
+Now you can build the documentation with:
+
+```bash
+$ make html
+```
