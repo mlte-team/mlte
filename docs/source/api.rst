@@ -1,7 +1,5 @@
 API
 ===
 
-.. autosummary::
-   :toctree: generated
-
-   mlte
+.. automodule:: mlte
+    :members:

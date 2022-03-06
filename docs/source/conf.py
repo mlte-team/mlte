@@ -2,6 +2,11 @@
 Configuration file for sphinx documentation builder.
 """
 
+import os
+import sys
+# Allow sphinx to find package for docstrings
+sys.path.append(os.path.abspath('..'))
+
 # -- Project information
 
 project = "mlte"
