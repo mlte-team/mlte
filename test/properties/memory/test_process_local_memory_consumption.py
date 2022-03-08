@@ -9,7 +9,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties import ProcessLocalMemoryConsumption
+from mlte.properties.memory import ProcessLocalMemoryConsumption
 
 from ...support.meta import path_to_support
 
