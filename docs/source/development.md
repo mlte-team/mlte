@@ -103,3 +103,46 @@ Now you can build the documentation with:
 ```bash
 $ make html
 ```
+
+## Versioning
+
+We follow semantic versioning when versioning the `mlte` package. We use [`bump2version`](https://github.com/c4urself/bump2version) to consistently update versions across the project. A configuration file is provided in `.bumpversion.cfg` at the root of the project.
+
+Bumping the version for a new release can be accomplished with:
+
+```bash
+$ bumpversion patch
+```
+
+where `patch` may be replaced with `minor` or `major` as appropriate for the release.
+
+## Publishing
+
+We publish the `mlte` package on [PyPi](https://pypi.org/). The current procedure we follow for publication is described below.
+
+Ensure you have properly incremented the version for the new release, as described in Versioning above.
+
+Create the source distribution and the wheel:
+
+```bash
+$ python setup.py sdist bdist_wheel
+```
+
+Check the package contents with `twine`:
+
+```bash
+twine check dist/*
+```
+
+Manually check the contents of the source distribution (optional):
+
+```bash
+$ cd dist/
+$ tar tzf mlte-0.0.0.tar.gz
+```
+
+Upload the package to [`TestPyPi`](https://test.pypi.org/) to verify that the package appears as expected:
+
+```bash
+$ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+```

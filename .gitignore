@@ -18,4 +18,10 @@ mlte.egg-info
 build/
 _autosummary/
 
+# Python artifacts
 __pycache__/
+src/mlte_python.egg-info/
+
+# Packaging artifacts
+dist/
+build/
