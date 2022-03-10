@@ -146,3 +146,9 @@ Upload the package to [`TestPyPi`](https://test.pypi.org/) to verify that the pa
 ```bash
 $ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
+
+Finally, upload the package to `PyPi`:
+
+```
+$ twine upload dist/*
+```
