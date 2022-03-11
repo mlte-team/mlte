@@ -19,7 +19,7 @@ class LocalModelSize(Property):
         Compute the size of the model at `path`.
 
         :param path: The path to the model
-        :type path: string
+        :type path: str
 
         :return: The size of the model, in bytes
         :rtype: int
