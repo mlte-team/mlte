@@ -1,5 +1,5 @@
 """
-Unit test for ProcessLocalCPUUtilization property.
+Unit test for LocalProcessCPUUtilization property.
 """
 
 
@@ -10,7 +10,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties.cpu import ProcessLocalCPUUtilization
+from mlte.properties.cpu import LocalProcessCPUUtilization
 
 from ...support.meta import path_to_support
 
@@ -28,13 +28,13 @@ def spin_for(seconds: int):
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix():
     start = time.time()
 
     prog = spin_for(5)
-    prop = ProcessLocalCPUUtilization()
+    prop = LocalProcessCPUUtilization()
 
     # Capture CPU utilization; blocks until process exit
     stat = prop(prog.pid)
@@ -45,8 +45,8 @@ def test_cpu_nix():
 
 
 @pytest.mark.skipif(
-    is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_windows():
     with pytest.raises(RuntimeError):
-        _ = ProcessLocalCPUUtilization()
+        _ = LocalProcessCPUUtilization()

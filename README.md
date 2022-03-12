@@ -16,10 +16,10 @@ $ pip install mlte-python
 A simple example that measures the CPU utilization of a local model training process:
 
 ```python
-from mlte.properties.cpu import ProcessLocalCPUUtilization
+from mlte.properties.cpu import LocalProcessCPUUtilization
 
 pid = spawn_training_process()
-cpu = ProcessLocalCPUUtilization()
+cpu = LocalProcessCPUUtilization()
 
 metrics = cpu(pid)
 print(metrics)
