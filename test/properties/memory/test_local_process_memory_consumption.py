@@ -1,5 +1,5 @@
 """
-Unit test for ProcessLocalMemoryConsumption property.
+Unit test for LocalProcessMemoryConsumption property.
 """
 
 import os
@@ -9,7 +9,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties.memory import ProcessLocalMemoryConsumption
+from mlte.properties.memory import LocalProcessMemoryConsumption
 
 from ...support.meta import path_to_support
 
@@ -33,7 +33,7 @@ def test_memory_nix():
     start = time.time()
 
     prog = spin_for(5)
-    prop = ProcessLocalMemoryConsumption()
+    prop = LocalProcessMemoryConsumption()
 
     # Capture memory consumption; blocks until process exit
     stat = prop(prog.pid)
@@ -47,4 +47,4 @@ def test_memory_nix():
 )
 def test_cpu_windows():
     with pytest.raises(RuntimeError):
-        _ = ProcessLocalMemoryConsumption()
+        _ = LocalProcessMemoryConsumption()
