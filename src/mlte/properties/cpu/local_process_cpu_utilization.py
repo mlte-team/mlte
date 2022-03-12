@@ -54,12 +54,12 @@ def _get_cpu_usage(pid: int) -> float:
         return -1.0
 
 
-class ProcessLocalCPUUtilization(Property):
+class LocalProcessCPUUtilization(Property):
     """Measures CPU utilization for a local training process."""
 
     def __init__(self):
-        """Initialize a new ProcessLocalCPUUtilization property."""
-        super().__init__("ProcessLocalCPUUtilization")
+        """Initialize a new LocalProcessCPUUtilization property."""
+        super().__init__("LocalProcessCPUUtilization")
         if is_windows():
             raise RuntimeError(
                 f"Property {self.name} is not supported on Windows."

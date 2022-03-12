@@ -1,7 +1,7 @@
-from .process_local_cpu_utilization import (
-    ProcessLocalCPUUtilization,
+from .local_process_cpu_utilization import (
+    LocalProcessCPUUtilization,
     CPUStatistics,
 )
 
 # TODO(Kyle): Find a more elegant way to express these exports
-__all__ = ["ProcessLocalCPUUtilization", "CPUStatistics"]
+__all__ = ["LocalProcessCPUUtilization", "CPUStatistics"]
