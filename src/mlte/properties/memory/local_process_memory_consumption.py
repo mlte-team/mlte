@@ -62,12 +62,12 @@ def _get_memory_usage(pid: int) -> int:
         return 0
 
 
-class ProcessLocalMemoryConsumption(Property):
+class LocalProcessMemoryConsumption(Property):
     """Measure memory consumption for a local training process."""
 
     def __init__(self):
-        """Initialize a ProcessLocalMemoryConsumption instance."""
-        super().__init__("ProcessLocalMemoryConsumption")
+        """Initialize a LocalProcessMemoryConsumption instance."""
+        super().__init__("LocalProcessMemoryConsumption")
         if is_windows():
             raise RuntimeError(
                 f"Property {self.name} is not supported on Windows."
