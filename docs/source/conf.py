@@ -3,6 +3,7 @@ Configuration file for sphinx documentation builder.
 """
 
 import os
+import re
 import sys
 # Allow sphinx to find package for docstrings
 sys.path.insert(0, os.path.abspath('../../src/'))

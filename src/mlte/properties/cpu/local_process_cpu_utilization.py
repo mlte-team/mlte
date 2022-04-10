@@ -4,6 +4,7 @@ CPU utilization measurement for local training processes.
 
 import time
 import subprocess
+from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..property import Property
@@ -19,10 +20,14 @@ class CPUStatistics:
 
     def __init__(self, avg: float, min: float, max: float):
         """
-        Initialize a CPUStatistics instance
-        :param avg The average utilization
-        :param min The minimum utilization
-        :param max The maximum utilization
+        Initialize a CPUStatistics instance.
+
+        :param avg: The average utilization
+        :type avg: float
+        :param min: The minimum utilization
+        :type min: float
+        :param max: The maximum utilization
+        :type max: float
         """
         self.avg = avg
         self.min = min
@@ -40,8 +45,12 @@ class CPUStatistics:
 def _get_cpu_usage(pid: int) -> float:
     """
     Get the current CPU usage for the process with `pid`.
-    :param pid The identifier of the process
-    :return The current CPU utilization as percentage
+
+    :param pid: The identifier of the process
+    :type pid: int
+
+    :return: The current CPU utilization as percentage
+    :rtype: float
     """
     try:
         stdout = subprocess.check_output(
@@ -65,7 +74,7 @@ class LocalProcessCPUUtilization(Property):
                 f"Property {self.name} is not supported on Windows."
             )
 
-    def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
+    def evaluate(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
         """
         Monitor the CPU utilization of process at `pid` until exit.
 
@@ -77,6 +86,12 @@ class LocalProcessCPUUtilization(Property):
         :return: The collection of CPU usage statistics
         :rtype: CPUStatistics
         """
+        return LocalProcessCPUUtilization._semantics(
+            self._evaluate(pid, poll_interval)
+        )
+
+    def _evaluate(self, pid: int, poll_interval: int) -> Dict[str, Any]:
+        """See evaluate()."""
         stats = []
         while True:
             util = _get_cpu_usage(pid)
@@ -85,4 +100,20 @@ class LocalProcessCPUUtilization(Property):
             stats.append(util)
             time.sleep(poll_interval)
 
-        return CPUStatistics(sum(stats) / len(stats), min(stats), max(stats))
+        return {
+            "avg_utilization": sum(stats) / len(stats),
+            "min_utilization": min(stats),
+            "max_utilization": max(stats),
+        }
+
+    @staticmethod
+    def _semantics(output: Dict[str, Any]) -> CPUStatistics:
+        """Provide semantics for property output."""
+        assert "avg_utilization" in output, "Broken invariant."
+        assert "min_utilization" in output, "Broken invariant."
+        assert "max_utilization" in output, "Broken invariant."
+        return CPUStatistics(
+            avg=output["avg_utilization"],
+            min=output["min_utilization"],
+            max=output["max_utilization"],
+        )

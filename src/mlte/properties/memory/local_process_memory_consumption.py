@@ -4,6 +4,7 @@ Memory consumption measurement for local training processes.
 
 import time
 import subprocess
+from typing import Dict, Any
 
 from ..property import Property
 from ...platform.os import is_windows
@@ -44,8 +45,12 @@ class MemoryStatistics:
 def _get_memory_usage(pid: int) -> int:
     """
     Get the current memory usage for the process with `pid`.
-    :param pid The identifier of the process
-    :return The current memory usage in KB
+
+    :param pid: The identifier of the process
+    :type pid: int
+
+    :return: The current memory usage in KB
+    :rtype: int
     """
     # sudo pmap 917 | tail -n 1 | awk '/[0-9]K/{print $2}'
     try:
@@ -73,7 +78,7 @@ class LocalProcessMemoryConsumption(Property):
                 f"Property {self.name} is not supported on Windows."
             )
 
-    def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
+    def evaluate(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
 
@@ -85,6 +90,12 @@ class LocalProcessMemoryConsumption(Property):
         :return The collection of memory usage statistics
         :rtype: MemoryStatistics
         """
+        return LocalProcessMemoryConsumption._semantics(
+            self._evaluate(pid, poll_interval)
+        )
+
+    def _evaluate(self, pid: int, poll_interval: int) -> Dict[str, Any]:
+        """See evaluate()."""
         stats = []
         while True:
             kb = _get_memory_usage(pid)
@@ -93,4 +104,20 @@ class LocalProcessMemoryConsumption(Property):
             stats.append(kb)
             time.sleep(poll_interval)
 
-        return MemoryStatistics(sum(stats) / len(stats), min(stats), max(stats))
+        return {
+            "avg_consumption": sum(stats) / len(stats),
+            "min_consumption": min(stats),
+            "max_consumption": max(stats),
+        }
+
+    @staticmethod
+    def _semantics(output: Dict[str, Any]) -> MemoryStatistics:
+        """Provide semantics for property output."""
+        assert "avg_consumption" in output, "Broken invariant."
+        assert "min_consumption" in output, "Broken invariant."
+        assert "max_consumption" in output, "Broken invariant."
+        return MemoryStatistics(
+            avg=output["avg_consumption"],
+            min=output["min_consumption"],
+            max=output["max_consumption"],
+        )
