@@ -144,7 +144,10 @@ class LocalProcessCPUUtilization(Property):
                 lambda stats: Success()
                 if stats.max <= threshold
                 else Failure(
-                    f"Maximum utilization {stats.max:.2f} exceeds threshold {threshold:.2f}"
+                    (
+                        f"Maximum utilization {stats.max:.2f}"
+                        "exceeds threshold {threshold:.2f}"
+                    )
                 ),
             )
         )
@@ -162,7 +165,10 @@ class LocalProcessCPUUtilization(Property):
                 lambda stats: Success()
                 if stats.avg <= threshold
                 else Failure(
-                    f"Average utilization {stats.avg:.2f} exceeds threshold {threshold:.2f}"
+                    (
+                        f"Average utilization {stats.avg:.2f}"
+                        "exceeds threshold {threshold:.2f}"
+                    )
                 ),
             )
         )

@@ -4,7 +4,7 @@ Superclass for all model properties.
 
 import abc
 import typing
-from typing import Any
+from typing import Any, List
 
 from .property_token import PropertyToken
 from .evaluation import EvaluationResult, Opaque
@@ -37,7 +37,7 @@ class Property(metaclass=abc.ABCMeta):
         self.token = PropertyToken(self.name)
         """The property token, a unique identifier for the property instance."""
 
-        self.validators = []
+        self.validators: List[Validator] = []
         """The collection of property validators."""
 
     @abc.abstractmethod

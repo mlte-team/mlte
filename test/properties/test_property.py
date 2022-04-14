@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 from mlte.properties import Property
 from mlte.properties.evaluation import EvaluationResult
-from mlte.properties.validation import Validator, Success, Failure, Ignore
+from mlte.properties.validation import Validator, Success
 
 
 class DummyEvaluationResult(EvaluationResult):

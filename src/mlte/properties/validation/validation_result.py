@@ -3,7 +3,7 @@ The result of property validation.
 """
 
 import abc
-from typing import Iterable
+from typing import List
 
 
 def _has_callable(type, name) -> bool:
@@ -31,7 +31,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
 class ValidationResultSet:
     """A collection of ValidationResult instances."""
 
-    def __init__(self, property, results: Iterable[ValidationResult]):
+    def __init__(self, property, results: List[ValidationResult]):
         """
         Initialize a ValidationResultSet instance.
 
@@ -74,7 +74,7 @@ class ValidationResultSet:
 class Success(ValidationResult):
     """Indicates successful property validation."""
 
-    def __init__(self, message: str = None):
+    def __init__(self, message: str = ""):
         """
         Initialize a Success validation result instance.
 
@@ -96,7 +96,7 @@ class Success(ValidationResult):
 class Failure(ValidationResult):
     """Indicates failed property validation."""
 
-    def __init__(self, message: str = None):
+    def __init__(self, message: str = ""):
         """
         Initialize a Failure validation result instance.
 

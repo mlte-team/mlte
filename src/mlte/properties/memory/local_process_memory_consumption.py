@@ -147,7 +147,10 @@ class LocalProcessMemoryConsumption(Property):
                 lambda stats: Success()
                 if stats.max <= threshold
                 else Failure(
-                    f"Maximum consumption {stats.max} exceeds threshold {threshold}"
+                    (
+                        f"Maximum consumption {stats.max}"
+                        "exceeds threshold {threshold}"
+                    )
                 ),
             )
         )
@@ -165,7 +168,10 @@ class LocalProcessMemoryConsumption(Property):
                 lambda stats: Success()
                 if stats.avg <= threshold
                 else Failure(
-                    f"Average utilization {stats.avg} exceeds threshold {threshold}"
+                    (
+                        f"Average utilization {stats.avg}"
+                        "exceeds threshold {threshold}"
+                    )
                 ),
             )
         )

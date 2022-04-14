@@ -2,6 +2,7 @@
 The interface for property validation.
 """
 
+import typing
 from typing import Callable
 from ..evaluation import EvaluationResult
 from ..validation import ValidationResult
@@ -12,6 +13,7 @@ class Validator:
     The Validator class defines the interface for property validators.
     """
 
+    @typing.no_type_check
     def __init__(
         self,
         identifier: str,
@@ -25,10 +27,10 @@ class Validator:
         :param callback: The callable that implements validation
         :type callback: Callable[[EvaluationResult], ValidationResult]
         """
-        self.identifier = identifier
+        self.identifier: str = identifier
         """The human-readable identifier for the Validator."""
 
-        self.callback = callback
+        self.callback: Callable[[EvaluationResult], ValidationResult] = callback
         """The callback that implements validation."""
 
     def __call__(self, result: EvaluationResult) -> ValidationResult:

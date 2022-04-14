@@ -12,5 +12,6 @@ __all__ = [
     "ValidationResultSet",
     "Success",
     "Failure",
+    "Ignore",
     "Validator",
 ]
