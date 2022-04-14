@@ -35,8 +35,13 @@ class CPUStatistics(EvaluationResult):
         super().__init__(property)
 
         self.avg = avg
+        """The average CPU utilization."""
+
         self.min = min
+        """The minimum CPU utilization."""
+
         self.max = max
+        """The maximum CPU utilization."""
 
     def __str__(self) -> str:
         """Return a string representation of CPUStatistics."""

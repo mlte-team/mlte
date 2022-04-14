@@ -21,7 +21,9 @@ class Integer(EvaluationResult):
         :type value: int
         """
         super().__init__(property)
+
         self.value = value
+        """The wrapped integer value."""
 
     def __str__(self) -> str:
         """Return a string representation of the Integer."""

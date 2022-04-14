@@ -47,3 +47,4 @@ autoapi_type = "python"
 autoapi_dirs = ["../../src"]
 autoapi_options = ["members", "special-members", "undoc-members", "imported-members"]
 autoapi_add_toctree_entry = False
+autoapi_python_class_content = "both"

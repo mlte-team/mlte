@@ -24,18 +24,23 @@ class MemoryStatistics(EvaluationResult):
 
         :param property: The generating property
         :type property: Property
-        :param avg: The average memory consumtion (bytes)
+        :param avg: The average memory consumption
         :type avg: float
-        :param min: The minimum memory consumption (bytes)
+        :param min: The minimum memory consumption
         :type avg: float
-        :param max: The maximum memory consumption (bytes)
+        :param max: The maximum memory consumption
         :type max: float
         """
         super().__init__(property)
 
         self.avg = avg
+        """The average memory consumption (KB)."""
+
         self.min = min
+        """The minimum memory consumption (KB)."""
+
         self.max = max
+        """The maximum memory consumption (KB)."""
 
     def __str__(self) -> str:
         """Return a string representation of MemoryStatistics."""

@@ -23,5 +23,6 @@ class Opaque(EvaluationResult):
         :type data: Dict
         """
         super().__init__(property)
-        # The raw output dictionary from property invocation
+
         self.data = data
+        """The raw output from property execution."""

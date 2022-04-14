@@ -28,6 +28,7 @@ class PropertyToken:
         self.hash = uuid.uuid4().hex
 
     def __eq__(self, other: object) -> bool:
+        """Determine if two PropertyToken instances are equal."""
         if not isinstance(other, PropertyToken):
             return False
         return (
@@ -36,6 +37,7 @@ class PropertyToken:
         )
 
     def __ne__(self, other: object) -> bool:
+        """Determine if two PropertyToken instances are not equal."""
         return not self.__eq__(other)
 
     def __str__(self) -> str:
