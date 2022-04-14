@@ -2,19 +2,30 @@
 The result of property validation.
 """
 
+import abc
 from typing import Iterable
 
 
-class ValidationResult:
+def _has_callable(type, name) -> bool:
+    """Determine if `type` has a callable attribute with the given name."""
+    return hasattr(type, name) and callable(getattr(type, name))
+
+
+class ValidationResult(metaclass=abc.ABCMeta):
     """The base class for property validation results."""
 
-    def __init__(self, property):
-        """
-        Initialize a ValidationResult instance.
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        """Define the interface for all concrete ValidationResult."""
+        return all(
+            _has_callable(subclass, method)
+            for method in ["__bool__", "__str__"]
+        )
 
-        :param property: The generating property
-        :type property: Property
-        """
+    def __init__(self):
+        raise NotImplementedError(
+            "Cannot instantiate abstract ValidationResult."
+        )
 
 
 class ValidationResultSet:
@@ -77,6 +88,10 @@ class Success(ValidationResult):
         """Implicit boolean conversion."""
         return True
 
+    def __str__(self) -> str:
+        """String representation."""
+        return "Success"
+
 
 class Failure(ValidationResult):
     """Indicates failed property validation."""
@@ -95,6 +110,10 @@ class Failure(ValidationResult):
         """Implicit boolean conversion."""
         return False
 
+    def __str__(self) -> str:
+        """String representation."""
+        return "Failure"
+
 
 class Ignore(ValidationResult):
     """Indicates ignored property validation."""
@@ -108,3 +127,11 @@ class Ignore(ValidationResult):
         """
         self.message = message
         """The message indicating the reason validation is ignored."""
+
+    def __bool__(self) -> bool:
+        """Implicit boolean conversion."""
+        raise RuntimeError("Boolean conversion for Ignore() is ambiguous.")
+
+    def __str__(self) -> str:
+        """String representation."""
+        return "Ignore"
