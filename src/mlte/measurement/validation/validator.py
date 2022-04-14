@@ -1,5 +1,5 @@
 """
-The interface for property validation.
+The interface for measurement validation.
 """
 
 import typing
@@ -10,7 +10,7 @@ from ..validation import ValidationResult
 
 class Validator:
     """
-    The Validator class defines the interface for property validators.
+    The Validator class defines the interface for measurement validators.
     """
 
     @typing.no_type_check
@@ -37,10 +37,10 @@ class Validator:
         """
         Invoke the validation callback
 
-        :param result: The result of property evaluation
+        :param result: The result of measurement evaluation
         :type result: EvaluationResult
 
-        :return: The result of property validation
+        :return: The result of measurement validation
         :rtype: ValidationResult
         """
         return self.callback(result)

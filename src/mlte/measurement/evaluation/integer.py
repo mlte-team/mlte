@@ -11,16 +11,16 @@ class Integer(EvaluationResult):
     interface for a single integer value.
     """
 
-    def __init__(self, property, value: int):
+    def __init__(self, measurement, value: int):
         """
         Initialize an Integer instance.
 
-        :param property: The generating property
-        :type property: Property
+        :param measurement: The generating measurement
+        :type measurement: Measurement
         :param value: The integer value
         :type value: int
         """
-        super().__init__(property)
+        super().__init__(measurement)
 
         self.value = value
         """The wrapped integer value."""

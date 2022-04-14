@@ -1,12 +1,12 @@
 """
-Superclass for all model properties.
+Superclass for all measurements.
 """
 
 import abc
 import typing
 from typing import Any, List
 
-from .property_token import PropertyToken
+from .measurement_token import MeasurementToken
 from .evaluation import EvaluationResult, Opaque
 from .validation import ValidationResultSet, Validator, Ignore
 
@@ -16,42 +16,42 @@ def _has_callable(type, name) -> bool:
     return hasattr(type, name) and callable(getattr(type, name))
 
 
-class Property(metaclass=abc.ABCMeta):
+class Measurement(metaclass=abc.ABCMeta):
     """
-    The superclass for all model properties.
+    The superclass for all model measurements.
     """
 
     @classmethod
     def __subclasshook__(cls, subclass):
-        """Define the interface for all concrete properties."""
+        """Define the interface for all concrete masurements."""
         return all(_has_callable(subclass, method) for method in ["__call__"])
 
     def __init__(self, name: str):
         """
-        Initialize a new Property instance.
-        :param name The name of the property
+        Initialize a new Measurement instance.
+        :param name The name of the measurement
         """
         self.name = name
-        """The name of the property (human-readable identifier)"""
+        """The name of the measurement (human-readable identifier)"""
 
-        self.token = PropertyToken(self.name)
-        """The property token, a unique identifier for the property instance."""
+        self.token = MeasurementToken(self.name)
+        """A unique identifier for the measurement instance."""
 
         self.validators: List[Validator] = []
-        """The collection of property validators."""
+        """The collection of measurement validators."""
 
     @abc.abstractmethod
     @typing.no_type_check
     def __call__(self, *args, **kwargs) -> Any:
-        """Evaluate a property and return results without semantics."""
-        raise NotImplementedError("Cannot evaluate abstract property.")
+        """Evaluate a measurement and return results without semantics."""
+        raise NotImplementedError("Cannot evaluate abstract measurement.")
 
     @typing.no_type_check
     def evaluate(self, *args, **kwargs) -> EvaluationResult:
         """
-        Evaluate a property and return results with semantics.
+        Evaluate a measurement and return results with semantics.
 
-        :return: The result of property execution, with semantics
+        :return: The result of measurement execution, with semantics
         :rtype: EvaluationResult
         """
         data = self(*args, **kwargs)
@@ -64,9 +64,9 @@ class Property(metaclass=abc.ABCMeta):
     @typing.no_type_check
     def validate(self, *args, **kwargs) -> ValidationResultSet:
         """
-        Evaluate the property and validate results.
+        Evaluate the measurement and validate results.
 
-        :return: The results of property validation
+        :return: The results of measurement validation
         :rtype: ValidationResultSet
         """
         result = self.evaluate(*args, **kwargs)
@@ -76,27 +76,27 @@ class Property(metaclass=abc.ABCMeta):
 
     def add_validator(self, validator: Validator):
         """
-        Add a validator to the property.
+        Add a validator to the measurement.
 
         :param validator: The validator instance
         :type validator: Validator
         """
         if any(v.identifier == "__ignore__" for v in self.validators):
-            raise RuntimeError("Cannot add validator for ignored property.")
+            raise RuntimeError("Cannot add validator for ignored measurement.")
         if any(v.identifier == validator.identifier for v in self.validators):
             raise RuntimeError("Validator identifiers must be unique.")
         self.validators.append(validator)
 
     def ignore(self, reason: str):
         """
-        Indicate that property validation is ignored.
+        Indicate that measurement validation is ignored.
 
-        :param reason: The reason that property validation is ignored
+        :param reason: The reason that measurement validation is ignored
         :type reason: str
         """
         if len(self.validators) > 0:
             raise RuntimeError(
-                "Cannot ignore() validation for property with validators."
+                "Cannot ignore() validation for measurement with validators."
             )
 
         self.validators.append(

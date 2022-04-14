@@ -1,5 +1,5 @@
 """
-Unit test for LocalProcessMemoryConsumption property.
+Unit test for LocalProcessMemoryConsumption measurement.
 """
 
 import os
@@ -9,7 +9,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties.memory import LocalProcessMemoryConsumption
+from mlte.measurement.memory import LocalProcessMemoryConsumption
 
 from ...support.meta import path_to_support
 
