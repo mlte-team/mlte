@@ -8,20 +8,23 @@ from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..property import Property
+from ..result import EvaluationResult
 from ...platform.os import is_windows
 
 
-class CPUStatistics:
+class CPUStatistics(EvaluationResult):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
     CPU consumption statistics for a running process.
     """
 
-    def __init__(self, avg: float, min: float, max: float):
+    def __init__(self, property: Property, avg: float, min: float, max: float):
         """
         Initialize a CPUStatistics instance.
 
+        :param property: The generating property
+        :type property: Property
         :param avg: The average utilization
         :type avg: float
         :param min: The minimum utilization
@@ -29,9 +32,16 @@ class CPUStatistics:
         :param max: The maximum utilization
         :type max: float
         """
+        super().__init__(property)
+
         self.avg = avg
+        """The average CPU utilization."""
+
         self.min = min
+        """The minimum CPU utilization."""
+
         self.max = max
+        """The maximum CPU utilization."""
 
     def __str__(self) -> str:
         """Return a string representation of CPUStatistics."""
@@ -74,7 +84,7 @@ class LocalProcessCPUUtilization(Property):
                 f"Property {self.name} is not supported on Windows."
             )
 
-    def evaluate(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
+    def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
         """
         Monitor the CPU utilization of process at `pid` until exit.
 
@@ -84,14 +94,8 @@ class LocalProcessCPUUtilization(Property):
         :type poll_interval: int
 
         :return: The collection of CPU usage statistics
-        :rtype: CPUStatistics
+        :rtype: Dict
         """
-        return LocalProcessCPUUtilization._semantics(
-            self._evaluate(pid, poll_interval)
-        )
-
-    def _evaluate(self, pid: int, poll_interval: int) -> Dict[str, Any]:
-        """See evaluate()."""
         stats = []
         while True:
             util = _get_cpu_usage(pid)
@@ -106,14 +110,22 @@ class LocalProcessCPUUtilization(Property):
             "max_utilization": max(stats),
         }
 
-    @staticmethod
-    def _semantics(output: Dict[str, Any]) -> CPUStatistics:
-        """Provide semantics for property output."""
-        assert "avg_utilization" in output, "Broken invariant."
-        assert "min_utilization" in output, "Broken invariant."
-        assert "max_utilization" in output, "Broken invariant."
+    def semantics(self, data: Dict[str, Any]) -> CPUStatistics:
+        """
+        Provide semantics for property output.
+
+        :param data: Property output data
+        :type data: Dict
+
+        :return: CPU utilization statistics
+        :rtype: CPUStatistics
+        """
+        assert "avg_utilization" in data, "Broken invariant."
+        assert "min_utilization" in data, "Broken invariant."
+        assert "max_utilization" in data, "Broken invariant."
         return CPUStatistics(
-            avg=output["avg_utilization"],
-            min=output["min_utilization"],
-            max=output["max_utilization"],
+            self,
+            avg=data["avg_utilization"],
+            min=data["min_utilization"],
+            max=data["max_utilization"],
         )

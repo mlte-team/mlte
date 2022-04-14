@@ -6,6 +6,7 @@ import os
 from typing import Dict, Any
 
 from ..property import Property
+from ..result import Integer
 
 
 class LocalModelSize(Property):
@@ -15,7 +16,7 @@ class LocalModelSize(Property):
         """Initialize a new LocalModelSize property."""
         super().__init__("LocalModelSize")
 
-    def evaluate(self, path: str) -> int:
+    def __call__(self, path: str) -> Dict[str, Any]:
         """
         Compute the size of the model at `path`.
 
@@ -23,12 +24,8 @@ class LocalModelSize(Property):
         :type path: str
 
         :return: The size of the model, in bytes
-        :rtype: int
+        :rtype: Dict
         """
-        return LocalModelSize._semantics(self._evaluate(path))
-
-    def _evaluate(self, path: str) -> Dict[str, Any]:
-        """See evaluate()."""
         if not os.path.isfile(path) and not os.path.isdir(path):
             raise RuntimeError(f"Invalid path: {path}")
 
@@ -48,8 +45,7 @@ class LocalModelSize(Property):
 
         return {"total_size": total_size}
 
-    @staticmethod
-    def _semantics(output: Dict[str, Any]) -> int:
+    def semantics(self, data: Dict[str, Any]) -> Integer:
         """Provide semantics for property output."""
-        assert "total_size" in output, "Broken invariant."
-        return int(output["total_size"])
+        assert "total_size" in data, "Broken invariant."
+        return Integer(self, data["total_size"])

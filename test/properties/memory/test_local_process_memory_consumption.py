@@ -36,7 +36,7 @@ def test_memory_nix():
     prop = LocalProcessMemoryConsumption()
 
     # Capture memory consumption; blocks until process exit
-    stat = prop(prog.pid)
+    stat = prop.evaluate(prog.pid)
 
     assert len(str(stat)) > 0
     assert int(time.time() - start) >= SPIN_DURATION

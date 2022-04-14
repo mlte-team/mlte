@@ -7,31 +7,40 @@ import subprocess
 from typing import Dict, Any
 
 from ..property import Property
+from ..result import EvaluationResult
 from ...platform.os import is_windows
 
 
-class MemoryStatistics:
+class MemoryStatistics(EvaluationResult):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
     consumption statistics for a running process.
     """
 
-    def __init__(self, avg: float, min: int, max: int):
+    def __init__(self, property: Property, avg: float, min: int, max: int):
         """
         Initialize a MemoryStatistics instance.
 
-        :param avg: The average memory consumtion (bytes)
+        :param property: The generating property
+        :type property: Property
+        :param avg: The average memory consumption
         :type avg: float
-        :param min: The minimum memory consumption (bytes)
+        :param min: The minimum memory consumption
         :type avg: float
-        :param max: The maximum memory consumption (bytes)
+        :param max: The maximum memory consumption
         :type max: float
         """
-        # The statistics
+        super().__init__(property)
+
         self.avg = avg
+        """The average memory consumption (KB)."""
+
         self.min = min
+        """The minimum memory consumption (KB)."""
+
         self.max = max
+        """The maximum memory consumption (KB)."""
 
     def __str__(self) -> str:
         """Return a string representation of MemoryStatistics."""
@@ -78,7 +87,7 @@ class LocalProcessMemoryConsumption(Property):
                 f"Property {self.name} is not supported on Windows."
             )
 
-    def evaluate(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
+    def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
         """
         Monitor memory consumption of process at `pid` until exit.
 
@@ -88,14 +97,8 @@ class LocalProcessMemoryConsumption(Property):
         :type poll_interval: int
 
         :return The collection of memory usage statistics
-        :rtype: MemoryStatistics
+        :rtype: Dict
         """
-        return LocalProcessMemoryConsumption._semantics(
-            self._evaluate(pid, poll_interval)
-        )
-
-    def _evaluate(self, pid: int, poll_interval: int) -> Dict[str, Any]:
-        """See evaluate()."""
         stats = []
         while True:
             kb = _get_memory_usage(pid)
@@ -110,14 +113,22 @@ class LocalProcessMemoryConsumption(Property):
             "max_consumption": max(stats),
         }
 
-    @staticmethod
-    def _semantics(output: Dict[str, Any]) -> MemoryStatistics:
-        """Provide semantics for property output."""
-        assert "avg_consumption" in output, "Broken invariant."
-        assert "min_consumption" in output, "Broken invariant."
-        assert "max_consumption" in output, "Broken invariant."
+    def semantics(self, data: Dict[str, Any]) -> MemoryStatistics:
+        """
+        Provide semantics for property output.
+
+        :param data: Property output data
+        :type data: Dict
+
+        :return: Memory consumption statistics
+        :rtype: MemoryStatistics
+        """
+        assert "avg_consumption" in data, "Broken invariant."
+        assert "min_consumption" in data, "Broken invariant."
+        assert "max_consumption" in data, "Broken invariant."
         return MemoryStatistics(
-            avg=output["avg_consumption"],
-            min=output["min_consumption"],
-            max=output["max_consumption"],
+            self,
+            avg=data["avg_consumption"],
+            min=data["min_consumption"],
+            max=data["max_consumption"],
         )

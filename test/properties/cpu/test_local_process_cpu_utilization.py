@@ -37,7 +37,7 @@ def test_cpu_nix():
     prop = LocalProcessCPUUtilization()
 
     # Capture CPU utilization; blocks until process exit
-    stat = prop(prog.pid)
+    stat = prop.evaluate(prog.pid)
 
     assert len(str(stat)) > 0
     # Test for passage of time
