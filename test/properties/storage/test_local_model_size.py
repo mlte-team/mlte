@@ -101,9 +101,9 @@ def test_file():
     create_fs_hierarchy(model)
 
     prop = LocalModelSize()
-    size = prop("model")
+    size = prop.evaluate("model")
 
-    assert size == expected_hierarchy_size(model)
+    assert size.value == expected_hierarchy_size(model)
     os.remove("model")
 
 
@@ -113,7 +113,7 @@ def test_directory():
     create_fs_hierarchy(model)
 
     prop = LocalModelSize()
-    size = prop("model")
+    size = prop.evaluate("model")
 
-    assert size == expected_hierarchy_size(model)
+    assert size.value == expected_hierarchy_size(model)
     shutil.rmtree("model")

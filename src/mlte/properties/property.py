@@ -4,13 +4,10 @@ Superclass for all model properties.
 
 import abc
 import typing
-from typing import Dict, Any
+from typing import Any
 
-# The callable property instance methods
-PROPERTY_METHODS = ["evaluate", "__call__", "_evaluate"]
-
-# The callable property class methods
-PROPERTY_CLASS_METHODS = ["_semantics"]
+from .property_token import PropertyToken
+from .result import EvaluationResult, Opaque
 
 
 def _has_callable(type, name) -> bool:
@@ -26,38 +23,30 @@ class Property(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete properties."""
-        return all(
-            _has_callable(subclass, method) for method in PROPERTY_METHODS
-        ) and all(
-            _has_callable(subclass, method) for method in PROPERTY_CLASS_METHODS
-        )
+        return all(_has_callable(subclass, method) for method in ["__call__"])
 
     def __init__(self, name: str):
         """
         Initialize a new Property instance.
         :param name The name of the property
         """
+        # The name of the property (human-readable identifier)
         self.name = name
+        # The property token
+        self.token = PropertyToken(self.name)
 
     @abc.abstractmethod
     @typing.no_type_check
-    def evaluate(self, *args, **kwargs) -> Any:
-        """Evaluate a property and return results with semantics."""
-        raise NotImplementedError("Cannot evaluate abstract property.")
-
     def __call__(self, *args, **kwargs) -> Any:
-        """Evaluate a property and return results with semantics."""
-        return self.evaluate(*args, **kwargs)
-
-    @abc.abstractmethod
-    @typing.no_type_check
-    def _evaluate(self, *args, **kwargs) -> Dict[str, Any]:
         """Evaluate a property and return results without semantics."""
         raise NotImplementedError("Cannot evaluate abstract property.")
 
-    @abc.abstractstaticmethod
-    def _semantics(self, output: Dict[str, Any]) -> Any:
-        """
-        Dervice semantics from raw property output.
-        :param output: The raw output of the property
-        """
+    @typing.no_type_check
+    def evaluate(self, *args, **kwargs) -> EvaluationResult:
+        """Evaluate a property and return results with semantics."""
+        data = self(*args, **kwargs)
+        return (
+            self.semantics(data)
+            if hasattr(self, "semantics")
+            else Opaque(self, data)
+        )
