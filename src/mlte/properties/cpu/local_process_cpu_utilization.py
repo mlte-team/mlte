@@ -8,7 +8,8 @@ from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..property import Property
-from ..result import EvaluationResult
+from ..evaluation import EvaluationResult
+from ..validation import Validator, Success, Failure
 from ...platform.os import is_windows
 
 
@@ -128,4 +129,40 @@ class LocalProcessCPUUtilization(Property):
             avg=data["avg_utilization"],
             min=data["min_utilization"],
             max=data["max_utilization"],
+        )
+
+    def add_validator_max_utilization_not_greater_than(self, threshold: float):
+        """
+        Add a validator for maximum CPU utilization.
+
+        :param threshold: The threshold value for maximum utilization
+        :type threshold: float
+        """
+        self.add_validator(
+            Validator(
+                "MaximumUtilization",
+                lambda stats: Success()
+                if stats.max <= threshold
+                else Failure(
+                    f"Maximum utilization {stats.max:.2f} exceeds threshold {threshold:.2f}"
+                ),
+            )
+        )
+
+    def add_validator_avg_utilization_not_greater_than(self, threshold: float):
+        """
+        Add a validator for average CPU utilization.
+
+        :param threshold: The threshold value for average utilization
+        :type threshold: float
+        """
+        self.add_validator(
+            Validator(
+                "AverageUtilization",
+                lambda stats: Success()
+                if stats.avg <= threshold
+                else Failure(
+                    f"Average utilization {stats.avg:.2f} exceeds threshold {threshold:.2f}"
+                ),
+            )
         )

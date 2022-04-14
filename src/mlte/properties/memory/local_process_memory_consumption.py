@@ -7,7 +7,8 @@ import subprocess
 from typing import Dict, Any
 
 from ..property import Property
-from ..result import EvaluationResult
+from ..evaluation import EvaluationResult
+from ..validation import Validator, Success, Failure
 from ...platform.os import is_windows
 
 
@@ -131,4 +132,40 @@ class LocalProcessMemoryConsumption(Property):
             avg=data["avg_consumption"],
             min=data["min_consumption"],
             max=data["max_consumption"],
+        )
+
+    def add_validator_max_consumption_not_greater_than(self, threshold: int):
+        """
+        Add a validator for maximum memory consumption.
+
+        :param threshold: The threshold value for maximum consumption
+        :type threshold: int
+        """
+        self.add_validator(
+            Validator(
+                "MaximumConsumption",
+                lambda stats: Success()
+                if stats.max <= threshold
+                else Failure(
+                    f"Maximum consumption {stats.max} exceeds threshold {threshold}"
+                ),
+            )
+        )
+
+    def add_validator_avg_consumption_not_greater_than(self, threshold: float):
+        """
+        Add a validator for average memory consumption.
+
+        :param threshold: The threshold value for average consumption
+        :type threshold: int
+        """
+        self.add_validator(
+            Validator(
+                "AverageConsumption",
+                lambda stats: Success()
+                if stats.avg <= threshold
+                else Failure(
+                    f"Average utilization {stats.avg} exceeds threshold {threshold}"
+                ),
+            )
         )
