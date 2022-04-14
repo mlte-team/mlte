@@ -1,5 +1,5 @@
 """
-The result of property validation.
+The result of measurement validation.
 """
 
 import abc
@@ -12,7 +12,7 @@ def _has_callable(type, name) -> bool:
 
 
 class ValidationResult(metaclass=abc.ABCMeta):
-    """The base class for property validation results."""
+    """The base class for measurement validation results."""
 
     @classmethod
     def __subclasshook__(cls, subclass):
@@ -31,17 +31,17 @@ class ValidationResult(metaclass=abc.ABCMeta):
 class ValidationResultSet:
     """A collection of ValidationResult instances."""
 
-    def __init__(self, property, results: List[ValidationResult]):
+    def __init__(self, measurement, results: List[ValidationResult]):
         """
         Initialize a ValidationResultSet instance.
 
-        :param property: The generating property
-        :type property: Property
+        :param measurement: The generating measurement
+        :type measurement: Measurement
         :param results: The collection of ValidationResult
         :type results: Iterable[ValidationResult]
         """
-        self.token = property.token
-        """The token for the originating property."""
+        self.token = measurement.token
+        """The token for the originating measurement."""
         self.results = results
         """The collection of validation results."""
 
@@ -72,7 +72,7 @@ class ValidationResultSet:
 
 
 class Success(ValidationResult):
-    """Indicates successful property validation."""
+    """Indicates successful measurement validation."""
 
     def __init__(self, message: str = ""):
         """
@@ -94,7 +94,7 @@ class Success(ValidationResult):
 
 
 class Failure(ValidationResult):
-    """Indicates failed property validation."""
+    """Indicates failed measurement validation."""
 
     def __init__(self, message: str = ""):
         """
@@ -116,7 +116,7 @@ class Failure(ValidationResult):
 
 
 class Ignore(ValidationResult):
-    """Indicates ignored property validation."""
+    """Indicates ignored measurement validation."""
 
     def __init__(self, message: str):
         """

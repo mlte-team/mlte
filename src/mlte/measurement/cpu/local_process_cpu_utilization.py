@@ -7,7 +7,7 @@ import subprocess
 from typing import Dict, Any
 from subprocess import SubprocessError
 
-from ..property import Property
+from ..measurement import Measurement
 from ..evaluation import EvaluationResult
 from ..validation import Validator, Success, Failure
 from ...platform.os import is_windows
@@ -20,12 +20,14 @@ class CPUStatistics(EvaluationResult):
     CPU consumption statistics for a running process.
     """
 
-    def __init__(self, property: Property, avg: float, min: float, max: float):
+    def __init__(
+        self, measurement: Measurement, avg: float, min: float, max: float
+    ):
         """
         Initialize a CPUStatistics instance.
 
-        :param property: The generating property
-        :type property: Property
+        :param measurement: The generating measurement
+        :type measurement: Measurement
         :param avg: The average utilization
         :type avg: float
         :param min: The minimum utilization
@@ -33,7 +35,7 @@ class CPUStatistics(EvaluationResult):
         :param max: The maximum utilization
         :type max: float
         """
-        super().__init__(property)
+        super().__init__(measurement)
 
         self.avg = avg
         """The average CPU utilization."""
@@ -74,15 +76,15 @@ def _get_cpu_usage(pid: int) -> float:
         return -1.0
 
 
-class LocalProcessCPUUtilization(Property):
-    """Measures CPU utilization for a local training process."""
+class LocalProcessCPUUtilization(Measurement):
+    """Measures CPU utilization for a local process."""
 
     def __init__(self):
-        """Initialize a new LocalProcessCPUUtilization property."""
+        """Initialize a new LocalProcessCPUUtilization measurement."""
         super().__init__("LocalProcessCPUUtilization")
         if is_windows():
             raise RuntimeError(
-                f"Property {self.name} is not supported on Windows."
+                f"Measurement {self.name} is not supported on Windows."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
@@ -113,9 +115,9 @@ class LocalProcessCPUUtilization(Property):
 
     def semantics(self, data: Dict[str, Any]) -> CPUStatistics:
         """
-        Provide semantics for property output.
+        Provide semantics for measurement output.
 
-        :param data: Property output data
+        :param data: Measurement output data
         :type data: Dict
 
         :return: CPU utilization statistics

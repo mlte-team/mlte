@@ -6,7 +6,7 @@ import time
 import subprocess
 from typing import Dict, Any
 
-from ..property import Property
+from ..measurement import Measurement
 from ..evaluation import EvaluationResult
 from ..validation import Validator, Success, Failure
 from ...platform.os import is_windows
@@ -19,12 +19,14 @@ class MemoryStatistics(EvaluationResult):
     consumption statistics for a running process.
     """
 
-    def __init__(self, property: Property, avg: float, min: int, max: int):
+    def __init__(
+        self, measurement: Measurement, avg: float, min: int, max: int
+    ):
         """
         Initialize a MemoryStatistics instance.
 
-        :param property: The generating property
-        :type property: Property
+        :param measurement: The generating measurement
+        :type measurement: Measurement
         :param avg: The average memory consumption
         :type avg: float
         :param min: The minimum memory consumption
@@ -32,7 +34,7 @@ class MemoryStatistics(EvaluationResult):
         :param max: The maximum memory consumption
         :type max: float
         """
-        super().__init__(property)
+        super().__init__(measurement)
 
         self.avg = avg
         """The average memory consumption (KB)."""
@@ -77,7 +79,7 @@ def _get_memory_usage(pid: int) -> int:
         return 0
 
 
-class LocalProcessMemoryConsumption(Property):
+class LocalProcessMemoryConsumption(Measurement):
     """Measure memory consumption for a local training process."""
 
     def __init__(self):
@@ -85,7 +87,7 @@ class LocalProcessMemoryConsumption(Property):
         super().__init__("LocalProcessMemoryConsumption")
         if is_windows():
             raise RuntimeError(
-                f"Property {self.name} is not supported on Windows."
+                f"Measurement {self.name} is not supported on Windows."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
@@ -116,9 +118,9 @@ class LocalProcessMemoryConsumption(Property):
 
     def semantics(self, data: Dict[str, Any]) -> MemoryStatistics:
         """
-        Provide semantics for property output.
+        Provide semantics for measurement output.
 
-        :param data: Property output data
+        :param data: Measurement output data
         :type data: Dict
 
         :return: Memory consumption statistics

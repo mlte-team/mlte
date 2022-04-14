@@ -1,26 +1,26 @@
 """
-Unit tests for base Property functionality.
+Unit tests for base Measurement functionality.
 """
 
 import pytest
 from typing import Dict, Any
 
-from mlte.properties import Property
-from mlte.properties.evaluation import EvaluationResult
-from mlte.properties.validation import Validator, Success
+from mlte.measurement import Measurement
+from mlte.measurement.evaluation import EvaluationResult
+from mlte.measurement.validation import Validator, Success
 
 
 class DummyEvaluationResult(EvaluationResult):
-    def __init__(self, property, value: bool):
-        super().__init__(property)
+    def __init__(self, measurement, value: bool):
+        super().__init__(measurement)
         self.value = value
 
 
-class DummyProperty(Property):
-    """A dummy property for unit tests."""
+class DummyMeasurement(Measurement):
+    """A dummy measurement for unit tests."""
 
     def __init__(self):
-        super().__init__("DummyProperty")
+        super().__init__("DummyMeasurement")
 
     def __call__(self, value: bool) -> Dict[str, Any]:
         return {"value": value}
@@ -30,24 +30,24 @@ class DummyProperty(Property):
 
 
 def test_execution():
-    p = DummyProperty()
+    p = DummyMeasurement()
     r = p(True)
     assert "value" in r
     assert r["value"]
 
-    p = DummyProperty()
+    p = DummyMeasurement()
     r = p(False)
     assert "value" in r
     assert not r["value"]
 
 
 def test_evaluation():
-    p = DummyProperty()
+    p = DummyMeasurement()
     r = p.evaluate(True)
     assert isinstance(r, DummyEvaluationResult)
     assert r.value
 
-    p = DummyProperty()
+    p = DummyMeasurement()
     r = p.evaluate(False)
     assert isinstance(r, DummyEvaluationResult)
     assert not r.value
@@ -55,19 +55,19 @@ def test_evaluation():
 
 def test_validation():
     # Attempt to add duplicate validators
-    p = DummyProperty()
+    p = DummyMeasurement()
     p.add_validator(Validator("Test", lambda _: Success()))
     with pytest.raises(RuntimeError):
         p.add_validator(Validator("Test", lambda _: Success()))
 
-    # Attempt to ignore a property with a validator
-    p = DummyProperty()
+    # Attempt to ignore a measurement with a validator
+    p = DummyMeasurement()
     p.add_validator(Validator("Test", lambda _: Success()))
     with pytest.raises(RuntimeError):
         p.ignore("I don't care about validation.")
 
-    # Attempt to add validator to ignored property
-    p = DummyProperty()
+    # Attempt to add validator to ignored measurement
+    p = DummyMeasurement()
     p.ignore("I don't care about validation.")
     with pytest.raises(RuntimeError):
         p.add_validator(Validator("Test", lambda _: Success()))

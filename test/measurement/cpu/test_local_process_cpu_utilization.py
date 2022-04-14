@@ -1,5 +1,5 @@
 """
-Unit test for LocalProcessCPUUtilization property.
+Unit test for LocalProcessCPUUtilization measurement.
 """
 
 
@@ -10,7 +10,7 @@ import threading
 import subprocess
 
 from mlte.platform.os import is_windows, is_nix
-from mlte.properties.cpu import LocalProcessCPUUtilization
+from mlte.measurement.cpu import LocalProcessCPUUtilization
 
 from ...support.meta import path_to_support
 

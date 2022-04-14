@@ -1,13 +1,13 @@
 """
-Unit test for LocalModelSize property.
+Unit test for LocalObjectSize measurement.
 """
 
 import os
 import shutil
 from typing import Dict, Any
 
-from mlte.properties.storage import LocalModelSize
-from mlte.properties.validation import ValidationResult
+from mlte.measurement.storage import LocalObjectSize
+from mlte.measurement.validation import ValidationResult
 
 
 def _create_file(path: str, size: int):
@@ -101,7 +101,7 @@ def test_file():
     model = {"model": 32}
     create_fs_hierarchy(model)
 
-    prop = LocalModelSize()
+    prop = LocalObjectSize()
     size = prop.evaluate("model")
 
     assert size.value == expected_hierarchy_size(model)
@@ -113,7 +113,7 @@ def test_directory():
     model = {"model": {"params": 1024, "hyperparams": 32}}
     create_fs_hierarchy(model)
 
-    prop = LocalModelSize()
+    prop = LocalObjectSize()
     size = prop.evaluate("model")
 
     assert size.value == expected_hierarchy_size(model)
@@ -124,7 +124,7 @@ def test_validation_success():
     model = {"model": 64}
     create_fs_hierarchy(model)
 
-    prop = LocalModelSize()
+    prop = LocalObjectSize()
     prop.add_validator_size_not_greater_than(threshold=64)
 
     results = prop.validate("model")
@@ -139,7 +139,7 @@ def test_validation_failure():
     model = {"model": 64}
     create_fs_hierarchy(model)
 
-    prop = LocalModelSize()
+    prop = LocalObjectSize()
     prop.add_validator_size_not_greater_than(threshold=32)
 
     results = prop.validate("model")
