@@ -7,6 +7,7 @@ import shutil
 from typing import Dict, Any
 
 from mlte.properties.storage import LocalModelSize
+from mlte.properties.validation import ValidationResult
 
 
 def _create_file(path: str, size: int):
@@ -117,3 +118,33 @@ def test_directory():
 
     assert size.value == expected_hierarchy_size(model)
     shutil.rmtree("model")
+
+
+def test_validation_success():
+    model = {"model": 64}
+    create_fs_hierarchy(model)
+
+    prop = LocalModelSize()
+    prop.add_validator_size_not_greater_than(threshold=64)
+
+    results = prop.validate("model")
+    assert len(results) == 1
+    assert isinstance(results[0], ValidationResult)
+    assert bool(results[0])
+
+    os.remove("model")
+
+
+def test_validation_failure():
+    model = {"model": 64}
+    create_fs_hierarchy(model)
+
+    prop = LocalModelSize()
+    prop.add_validator_size_not_greater_than(threshold=32)
+
+    results = prop.validate("model")
+    assert len(results) == 1
+    assert isinstance(results[0], ValidationResult)
+    assert not bool(results[0])
+
+    os.remove("model")

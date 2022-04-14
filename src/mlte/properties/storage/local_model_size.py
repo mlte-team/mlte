@@ -6,7 +6,8 @@ import os
 from typing import Dict, Any
 
 from ..property import Property
-from ..result import Integer
+from ..evaluation import Integer
+from ..validation import Validator, Success, Failure
 
 
 class LocalModelSize(Property):
@@ -49,3 +50,21 @@ class LocalModelSize(Property):
         """Provide semantics for property output."""
         assert "total_size" in data, "Broken invariant."
         return Integer(self, data["total_size"])
+
+    def add_validator_size_not_greater_than(self, threshold: int):
+        """
+        Add a validator for the size of the model.
+
+        :param threshold: The threshold for model size, in bytes
+        :type threshold: int
+        """
+        self.add_validator(
+            Validator(
+                "MaximumSize",
+                lambda size: Success()
+                if size.value <= threshold
+                else Failure(
+                    f"Model size {size} exceeds threshold {threshold}"
+                ),
+            )
+        )
