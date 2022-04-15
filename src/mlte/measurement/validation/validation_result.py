@@ -27,6 +27,20 @@ class ValidationResult(metaclass=abc.ABCMeta):
             "Cannot instantiate abstract ValidationResult."
         )
 
+    def from_validator(self, validator_name: str):
+        """
+        Set the `validator_name` field of the ValidationResult
+        to indicate the validator that produced the result.
+
+        :param validator_name: The name of the validator
+        :type validator_name: str
+
+        :return: The ValidationResult instance (`self`)
+        :rtype: ValidationResult
+        """
+        self.validator_name = validator_name
+        return self
+
 
 class ValidationResultSet:
     """A collection of ValidationResult instances."""
@@ -78,11 +92,15 @@ class Success(ValidationResult):
         """
         Initialize a Success validation result instance.
 
+        :param validator_name: The name of the validator
+        :type validator_name: str
         :param message: Optional message
         :type message: str
         """
         self.message = message
         """The message indicating the reason for success."""
+        self.validator_name = ""
+        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -100,11 +118,15 @@ class Failure(ValidationResult):
         """
         Initialize a Failure validation result instance.
 
+        :param validator_name: The name of the validator
+        :type validator_name: str
         :param message: Optional message
         :type message: str
         """
         self.message = message
         """The message indicating the reason for failure."""
+        self.validator_name = ""
+        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -127,6 +149,8 @@ class Ignore(ValidationResult):
         """
         self.message = message
         """The message indicating the reason validation is ignored."""
+        self.validator_name = ""
+        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""

@@ -136,43 +136,59 @@ class LocalProcessMemoryConsumption(Measurement):
             max=data["max_consumption"],
         )
 
-    def add_validator_max_consumption_not_greater_than(self, threshold: int):
+    def with_validator_max_consumption_not_greater_than(
+        self, threshold: int
+    ) -> Measurement:
         """
         Add a validator for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption
         :type threshold: int
+
+        :return: The measurement instance (`self`)
+        :rtype: Measurement
         """
-        self.add_validator(
+        return self.with_validator(
             Validator(
                 "MaximumConsumption",
-                lambda stats: Success()
+                lambda stats: Success(
+                    f"Maximum consumption {stats.max} "
+                    f"below threshold {threshold}"
+                )
                 if stats.max <= threshold
                 else Failure(
                     (
-                        f"Maximum consumption {stats.max}"
-                        "exceeds threshold {threshold}"
+                        f"Maximum consumption {stats.max} "
+                        f"exceeds threshold {threshold}"
                     )
                 ),
             )
         )
 
-    def add_validator_avg_consumption_not_greater_than(self, threshold: float):
+    def with_validator_avg_consumption_not_greater_than(
+        self, threshold: float
+    ) -> Measurement:
         """
         Add a validator for average memory consumption.
 
         :param threshold: The threshold value for average consumption
         :type threshold: int
+
+        :return: The measurement instance (`self`)
+        :rtype: Measurement
         """
-        self.add_validator(
+        return self.with_validator(
             Validator(
                 "AverageConsumption",
-                lambda stats: Success()
+                lambda stats: Success(
+                    f"Average consumption {stats.avg} "
+                    f"below threshold {threshold}"
+                )
                 if stats.avg <= threshold
                 else Failure(
                     (
-                        f"Average utilization {stats.avg}"
-                        "exceeds threshold {threshold}"
+                        f"Average consumption {stats.avg} "
+                        f"exceeds threshold {threshold}"
                     )
                 ),
             )

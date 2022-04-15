@@ -5,6 +5,7 @@
 format:
 	black src/
 	black test/
+	black testbed/
 
 # Lint all source code
 .PHONY: lint
