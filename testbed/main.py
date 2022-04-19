@@ -35,12 +35,12 @@ def spin_for(seconds: int):
 
 
 def main() -> int:
-    p = StorageCost()
-    print(p.description)
-    p = TrainingComputeCost()
-    print(p.description)
-    p = TrainingMemoryCost()
-    print(p.description)
+    suite = Suite(
+        "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
+    )
+    suite.save("tmp/suite.json")
+
+    suite = Suite.from_file("tmp/suite.json")
 
     # local_size = LocalObjectSize().with_validator_size_not_greater_than(
     #     threshold=54000

@@ -135,8 +135,7 @@ class Suite:
         document = {
             "name": self.name,
             "properties": [
-                {"name": property.name, "repr": repr(property)}
-                for property in self.properties
+                property._to_document() for property in self.properties
             ],
         }
         with open(path, "w") as f:
@@ -170,7 +169,7 @@ class Suite:
 
         suite = Suite(document["name"])
         for pdoc in document["properties"]:
-            suite.add_property(Property._load_from_document(pdoc))
+            suite.add_property(Property._from_document(pdoc))
 
         return suite
 

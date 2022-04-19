@@ -42,10 +42,23 @@ class Property(metaclass=abc.ABCMeta):
         self.description = description
         """The description of the property."""
 
-    @staticmethod
-    def _load_from_document(document: Dict[str, str]) -> Property:
+    def _to_document(self) -> Dict[str, str]:
         """
-        Load a Property instance from its identifier.
+        Save a Property instance to a document.
+
+        :return: The document
+        :rtype: Dict[str, str]
+        """
+        return {
+            "name": self.name,
+            "repr": repr(self),
+            "description": self.description,
+        }
+
+    @staticmethod
+    def _from_document(document: Dict[str, str]) -> Property:
+        """
+        Load a Property instance from a document.
 
         :param document: The document for the saved propery
         :type document: Dict[str, str]
