@@ -28,15 +28,19 @@ class Property(metaclass=abc.ABCMeta):
             for method in ["__init__", "__repr__"]
         )
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, description: str):
         """
         Initialize a Property instance.
 
         :param name: The name of the property
         :type name: str
+        :param description: The description of the property
+        :type description: str
         """
         self.name: str = name
         """The name of the property."""
+        self.description = description
+        """The description of the property."""
 
     @staticmethod
     def _load_from_document(document: Dict[str, str]) -> Property:
