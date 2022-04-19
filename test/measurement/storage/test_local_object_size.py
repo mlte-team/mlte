@@ -124,8 +124,7 @@ def test_validation_success():
     model = {"model": 64}
     create_fs_hierarchy(model)
 
-    prop = LocalObjectSize()
-    prop.add_validator_size_not_greater_than(threshold=64)
+    prop = LocalObjectSize().with_validator_size_not_greater_than(threshold=64)
 
     results = prop.validate("model")
     assert len(results) == 1
@@ -139,8 +138,7 @@ def test_validation_failure():
     model = {"model": 64}
     create_fs_hierarchy(model)
 
-    prop = LocalObjectSize()
-    prop.add_validator_size_not_greater_than(threshold=32)
+    prop = LocalObjectSize().with_validator_size_not_greater_than(threshold=32)
 
     results = prop.validate("model")
     assert len(results) == 1

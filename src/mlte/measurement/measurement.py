@@ -2,6 +2,8 @@
 Superclass for all measurements.
 """
 
+from __future__ import annotations
+
 import abc
 import typing
 from typing import Any, List
@@ -23,7 +25,7 @@ class Measurement(metaclass=abc.ABCMeta):
 
     @classmethod
     def __subclasshook__(cls, subclass):
-        """Define the interface for all concrete masurements."""
+        """Define the interface for all concrete measurements."""
         return all(_has_callable(subclass, method) for method in ["__call__"])
 
     def __init__(self, name: str):
@@ -71,21 +73,29 @@ class Measurement(metaclass=abc.ABCMeta):
         """
         result = self.evaluate(*args, **kwargs)
         return ValidationResultSet(
-            self, [validator(result) for validator in self.validators]
+            self,
+            [
+                validator(result).from_validator(validator.identifier)
+                for validator in self.validators
+            ],
         )
 
-    def add_validator(self, validator: Validator):
+    def with_validator(self, validator: Validator) -> Measurement:
         """
         Add a validator to the measurement.
 
         :param validator: The validator instance
         :type validator: Validator
+
+        :return: The measurement instance (`self`)
+        :rtype: Measurement
         """
         if any(v.identifier == "__ignore__" for v in self.validators):
             raise RuntimeError("Cannot add validator for ignored measurement.")
         if any(v.identifier == validator.identifier for v in self.validators):
             raise RuntimeError("Validator identifiers must be unique.")
         self.validators.append(validator)
+        return self
 
     def ignore(self, reason: str):
         """
@@ -93,6 +103,9 @@ class Measurement(metaclass=abc.ABCMeta):
 
         :param reason: The reason that measurement validation is ignored
         :type reason: str
+
+        :return: The measurement instance (`self`)
+        :rtype: Measurement
         """
         if len(self.validators) > 0:
             raise RuntimeError(
@@ -102,3 +115,4 @@ class Measurement(metaclass=abc.ABCMeta):
         self.validators.append(
             Validator("__ignore__", lambda _: Ignore(reason))
         )
+        return self

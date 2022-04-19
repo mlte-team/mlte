@@ -55,19 +55,20 @@ def test_evaluation():
 
 def test_validation():
     # Attempt to add duplicate validators
-    p = DummyMeasurement()
-    p.add_validator(Validator("Test", lambda _: Success()))
+    p = DummyMeasurement().with_validator(
+        Validator("Test", lambda _: Success())
+    )
     with pytest.raises(RuntimeError):
-        p.add_validator(Validator("Test", lambda _: Success()))
+        p.with_validator(Validator("Test", lambda _: Success()))
 
     # Attempt to ignore a measurement with a validator
-    p = DummyMeasurement()
-    p.add_validator(Validator("Test", lambda _: Success()))
+    p = DummyMeasurement().with_validator(
+        Validator("Test", lambda _: Success())
+    )
     with pytest.raises(RuntimeError):
         p.ignore("I don't care about validation.")
 
     # Attempt to add validator to ignored measurement
-    p = DummyMeasurement()
-    p.ignore("I don't care about validation.")
+    p = DummyMeasurement().ignore("I don't care about validation.")
     with pytest.raises(RuntimeError):
-        p.add_validator(Validator("Test", lambda _: Success()))
+        p.with_validator(Validator("Test", lambda _: Success()))

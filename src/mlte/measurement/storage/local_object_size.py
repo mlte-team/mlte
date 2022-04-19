@@ -51,17 +51,24 @@ class LocalObjectSize(Measurement):
         assert "total_size" in data, "Broken invariant."
         return Integer(self, data["total_size"])
 
-    def add_validator_size_not_greater_than(self, threshold: int):
+    def with_validator_size_not_greater_than(
+        self, threshold: int
+    ) -> Measurement:
         """
         Add a validator for the size of the object.
 
         :param threshold: The threshold for object size, in bytes
         :type threshold: int
+
+        :return: The measurement instance (`self`)
+        :rtype: Measurement
         """
-        self.add_validator(
+        return self.with_validator(
             Validator(
                 "MaximumSize",
-                lambda size: Success()
+                lambda size: Success(
+                    f"Object size {size} below threshold {threshold}"
+                )
                 if size.value <= threshold
                 else Failure(
                     f"Object size {size} exceeds threshold {threshold}"
