@@ -5,8 +5,10 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import os
+import time
 import json
-from typing import List, Dict, Union
+from itertools import groupby, combinations
+from typing import List, Dict, Iterable, Any
 
 from ..properties import Property
 from ..measurement.validation import ValidationResult
@@ -25,22 +27,32 @@ def _unique(collection: List[str]) -> bool:
     return len(set(collection)) == len(collection)
 
 
-JSONValue = Union[str, int, float, List[object], Dict[str, object]]
-"""An alias for typed JSON objects."""
+def _all_equal(iterable: Iterable[Any]) -> bool:
+    """
+    Determine if all elements of an iterable are equivalent.
+
+    :param iterable: The iterable
+    :type iterable: Iterable[Any]
+
+    :return: `True` if all elements are equal, `False` otherwise
+    :rtype: bool
+    """
+    g = groupby(iterable)
+    return next(g, True) and not next(g, False)  # type: ignore
 
 
 class SuiteReport:
     """SuiteReport represents the result of collecting a Suite."""
 
-    def __init__(self, data: Dict[str, JSONValue]):
+    def __init__(self, document: Dict[str, Any]):
         """
         Initialize a SuiteReport instance.
 
-        :param data: The data produced by the Suite
-        :type data: Dict[str, JSONValue]]
+        :param document: The data produced by the Suite
+        :type document: Dict[str, Any]]
         """
-        self.data = data
-        """The data produced by the Suite."""
+        self.document = document
+        """The document produced by the Suite."""
 
 
 class Suite:
@@ -177,65 +189,166 @@ class Suite:
     # Report Generation
     # -------------------------------------------------------------------------
 
-    def collect(self, *results: ValidationResult) -> SuiteReport:
+    def collect(
+        self, *results: ValidationResult, strict: bool = True
+    ) -> SuiteReport:
         """
         Collect validation results from all measurements,
         and generate a SuiteReport from these measurements.
 
         :param results: Validation results
         :type results: ValidationResult
+        :param strict: Flag indicating that all properties
+        must have at least one associated measurement to
+        proceed with report generation (default: `True`)
+        :type strict: bool
 
         :return: The suite report
         :rtype: SuiteReport
         """
-        pass
+        self._validate_uniqueness(*results)
+        self._validate_bindings(*results)
+        if strict:
+            self._validate_property_coverage(*results)
 
-    # def collect(self, *results: ValidationResult) -> SuiteResult:
-    #     """
-    #     Combine validation results from all measurements in the Suite.
+        properties = [
+            self._collect_property(property, *results)
+            for property in self.properties
+        ]
+        document: Dict[str, Any] = {
+            "name": self.name,
+            "timestamp": int(time.time()),
+            "properties": properties,
+        }
+        return SuiteReport(document)
 
-    #     :param results: The validation results from all measurements
-    #     :type results: ValidationResultSet
-    #     """
-    #     for property in self.properties:
-    #         for measurement in property.measurements:
-    #             n_matches = sum(
-    #                 1 for r in results if r.token == measurement.token
-    #             )
-    #             if n_matches == 0:
-    #                 raise RuntimeError(
-    #                     (
-    #                         "No validation result found for property "
-    #                         f"{property.name}, measurement {measurement.name}"
-    #                     )
-    #                 )
-    #             elif n_matches > 1:
-    #                 raise RuntimeError(
-    #                     (
-    #                         f"Multiple validation results found for property "
-    #                         f"{property.name}, measurement {measurement.name}"
-    #                     )
-    #                 )
+    def _validate_uniqueness(self, *results: ValidationResult):
+        """
+        Validate the uniqueness of validation results.
 
-    #     # Format results
-    #     output = {}
-    #     for property in self.properties:
-    #         property_results = {}
+        :param results: The validation results
+        :type results: ValidationResult
 
-    #         for measurement in property.measurements:
-    #             measurement_results = {}
+        :raises RuntimeError: If any two results are equivalent
+        """
+        for pair in combinations(results, 2):
+            if pair[0] == pair[1]:
+                raise RuntimeError("All validation results must be unique")
 
-    #             validation_results: ValidationResultSet = [
-    #                 r for r in results if r.token == measurement.token
-    #             ][0]
-    #             for validation_result in validation_results:
-    #                 measurement_results[validation_result.validator_name] = {
-    #                     "result": f"{validation_result}",
-    #                     "message": validation_result.message,
-    #                 }
+    def _validate_bindings(self, *results: ValidationResult):
+        """
+        Validate bindings.
 
-    #             property_results[measurement.name] = measurement_results
+        :param results: Validation results
+        :type results: ValidationResult
 
-    #         output[property.name] = property_results
+        :raises RuntimeError: If any validation result is not bound
+        :raises RuntimeError: If any validation result is bound
+        to a property that does not exist in the suite
+        """
+        if not all(r._is_bound() for r in results):
+            raise RuntimeError("All ValidationResult must be bound.")
+        _ = all(self._validate_bindings_for_result(r) for r in results)
 
-    #     return SuiteResult(output)
+    def _validate_bindings_for_result(self, result: ValidationResult):
+        """
+        Validate the bindings for an individual ValidationResult.
+
+        :param result: The validation result
+        :type result: ValidationResult
+
+        :raises RuntimeError: If any validation result is bound
+        to a property that does not exist in the suite
+        """
+        property_names = [p.name for p in self.properties]
+        if not all(
+            name in property_names for name in result.binding.property_names
+        ):
+            raise RuntimeError(
+                (
+                    f"Result from validator {result.validator_name} "
+                    "bound to nonexistent property."
+                )
+            )
+
+    def _validate_property_coverage(self, *results: ValidationResult):
+        """
+        Ensure that every property in the suite has at
+        least one associated measurement in `results`.
+
+        :param results: The validation results
+        :type results: ValidationResult
+
+        :raises RuntimeError: If any property is uncovered
+        """
+        for property in self.properties:
+            if not any(
+                property.name in r.binding.property_names for r in results
+            ):
+                raise RuntimeError(
+                    f"Property {property.name} has no bound measurements"
+                )
+
+    def _collect_property(
+        self, property: Property, *results: ValidationResult
+    ) -> Dict[str, Any]:
+        """
+        Collect the results for an individual property
+        from result set into a property-level document.
+
+        :param property: The property of interest
+        :type property: Property
+        :param results: The result collection
+        :type results: ValidationResult
+
+        :return: The property-level document
+        :rtype: Dict[str, Any]
+        """
+        # Filter results relevant to property
+        results_for_property = [
+            r for r in results if property.name in r.binding.property_names
+        ]
+        measurements = []
+        for _, group in groupby(
+            results_for_property, key=lambda vr: vr.binding.measurement_name
+        ):
+            measurements.append(
+                self._collect_measurement(*(vr for vr in group))
+            )
+
+        document = {
+            "name": property.name,
+            "description": property.description,
+            "measurements": measurements,
+        }
+        return document
+
+    def _collect_measurement(
+        self, *results: ValidationResult
+    ) -> Dict[str, Any]:
+        """
+        Collect results into a measurement-level document.
+
+        :param result: The validation results for the measurement
+        :type results: ValidationResult
+
+        :return: The measurement-level document
+        :rtype: Dict[str, Any]
+        """
+        assert len(results) > 0, "Broken invariant."
+        assert _all_equal(
+            result.binding.measurement_name for result in results
+        ), "Broken invariant."
+        measurement_name = results[0].binding.measurement_name
+        document = {
+            "name": measurement_name,
+            "validators": [
+                {
+                    "name": vr.validator_name,
+                    "result": f"{vr}",
+                    "message": vr.message,
+                }
+                for vr in results
+            ],
+        }
+        return document

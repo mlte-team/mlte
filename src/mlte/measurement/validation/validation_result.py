@@ -2,6 +2,8 @@
 The result of measurement validation.
 """
 
+from __future__ import annotations
+
 import abc
 from typing import List
 
@@ -28,6 +30,11 @@ class Binding(metaclass=abc.ABCMeta):
         """
         Initialize a Binding instance.
         """
+        self.measurement_name = ""
+        """The name of the measurement that is bound."""
+        self.property_names: List[str] = []
+        """The names of the properties to which measurement is bound."""
+
         raise NotImplementedError("Cannot instantiate abstract Binding")
 
     def __bool__(self) -> bool:
@@ -35,6 +42,20 @@ class Binding(metaclass=abc.ABCMeta):
         raise NotImplementedError(
             "Boolean conversion of abstract Binding is ambiguous."
         )
+
+    def __eq__(self, other: object) -> bool:
+        """Equality comparison."""
+        if not isinstance(other, Binding):
+            raise NotImplementedError(
+                f"Equality on Binding and {type(other).__name__}"
+            )
+        return self.measurement_name == other.measurement_name and set(
+            self.property_names
+        ) == set(other.property_names)
+
+    def __neq__(self, other: object) -> bool:
+        """Inequality comparison."""
+        return not (self == other)
 
 
 class Bound(Binding):
@@ -59,6 +80,11 @@ class Bound(Binding):
         """Implicit boolean conversion."""
         return True
 
+    def __str__(self) -> str:
+        """Return a string representation of Bound."""
+        property_names = ",".join(name for name in self.property_names)
+        return f"Bound: {self.measurement_name} -> {property_names}"
+
 
 class Unbound(Binding):
     """An Unbound instand represents an unbound measurement."""
@@ -67,11 +93,18 @@ class Unbound(Binding):
         """
         Initialize a Unbound instance.
         """
-        pass
+        self.measurement_name = ""
+        """The name of the measurement that is bound."""
+        self.property_names: List[str] = []
+        """The names of the properties to which measurement is bound."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
         return False
+
+    def __str__(self) -> str:
+        """Return a string representation of Unbound."""
+        return "Unbound"
 
 
 # -----------------------------------------------------------------------------
@@ -101,6 +134,9 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.binding: Binding = Unbound()
         """The Binding for the ValidationResult."""
 
+        self.message = ""
+        """The message indicating the reason for status."""
+
     def from_validator(self, validator):
         """
         Set the `validator_name` field of the ValidationResult
@@ -127,6 +163,30 @@ class ValidationResult(metaclass=abc.ABCMeta):
         """
         self.binding = binding
         return self
+
+    def _is_bound(self) -> bool:
+        """
+        Determine if the ValidationResult is bound to a property.
+
+        :return: `True` if the result is bound, `False` otherwise
+        :rtype: bool
+        """
+        return bool(self.binding)
+
+    def __eq__(self, other: object) -> bool:
+        """Equality comparison."""
+        if not isinstance(other, ValidationResult):
+            raise NotImplementedError(
+                f"Equality on ValidationResult and {type(other).__name__}"
+            )
+        return (
+            self.validator_name == other.validator_name
+            and self.binding == other.binding
+        )
+
+    def __neq__(self, other: object) -> bool:
+        """Inequality comparison."""
+        return not (self == other)
 
 
 class Success(ValidationResult):

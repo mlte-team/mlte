@@ -106,8 +106,7 @@ def _load_from_document(document: Dict[str, str]) -> Property:
         )
         try:
             class_: Type[Property] = getattr(module, classname)
-        except Exception as e:
-            print(type(e))
+        except AttributeError:
             continue
 
         # Instantiate the property

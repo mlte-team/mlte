@@ -4,14 +4,17 @@ A simple program for testing functionality during development.
 
 import sys
 import json
+import operator
+import functools
 import threading
 import subprocess
+from typing import Any, List
 from resolver import package_root
 
 sys.path.append(package_root())
 
+from mlte.core import bind
 from mlte.suites import Suite
-
 from mlte.properties.costs import (
     StorageCost,
     TrainingComputeCost,
@@ -34,34 +37,42 @@ def spin_for(seconds: int):
     return prog
 
 
+def combine(*collection: List[Any]) -> List[Any]:
+    return functools.reduce(operator.add, collection, [])
+
+
 def main() -> int:
     suite = Suite(
         "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
     )
-    suite.save("tmp/suite.json")
 
-    suite = Suite.from_file("tmp/suite.json")
+    local_size = bind(
+        LocalObjectSize().with_validator_size_not_greater_than(threshold=54000),
+        suite.get_property("StorageCost"),
+    )
+    local_cpu = bind(
+        LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
+            threshold=0.85
+        ),
+        suite.get_property("TrainingComputeCost"),
+    )
+    local_mem = bind(
+        LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
+            threshold=8192
+        ),
+        suite.get_property("TrainingMemoryCost"),
+    )
 
-    # local_size = LocalObjectSize().with_validator_size_not_greater_than(
-    #     threshold=54000
-    # )
-    # local_cpu = LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
-    #     threshold=0.85
-    # )
-    # local_mem = LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
-    #     threshold=8192
-    # )
+    size_result = local_size.validate("test/")
 
-    # size_result = local_size.validate("test/")
+    prog = spin_for(5)
+    cpu_result = local_cpu.validate(prog.pid)
 
-    # prog = spin_for(5)
-    # cpu_result = local_cpu.validate(prog.pid)
+    prog = spin_for(5)
+    mem_result = local_mem.validate(prog.pid)
 
-    # prog = spin_for(5)
-    # mem_result = local_mem.validate(prog.pid)
-
-    # data = suite.collect(size_result, cpu_result, mem_result)
-    # print(json.dumps(data))
+    report = suite.collect(*combine(size_result, cpu_result, mem_result))
+    print(json.dumps(report.document))
 
     return EXIT_SUCCESS
 
