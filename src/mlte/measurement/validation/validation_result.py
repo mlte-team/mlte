@@ -11,6 +11,74 @@ def _has_callable(type, name) -> bool:
     return hasattr(type, name) and callable(getattr(type, name))
 
 
+# -----------------------------------------------------------------------------
+# Measurement Binding
+# -----------------------------------------------------------------------------
+
+
+class Binding(metaclass=abc.ABCMeta):
+    """The base class for measurement bindings."""
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        """Define the interface for all concrete ValidationResult."""
+        return all(_has_callable(subclass, method) for method in ["__bool__"])
+
+    def __init__(self):
+        """
+        Initialize a Binding instance.
+        """
+        raise NotImplementedError("Cannot instantiate abstract Binding")
+
+    def __bool__(self) -> bool:
+        """Implicit boolean conversion."""
+        raise NotImplementedError(
+            "Boolean conversion of abstract Binding is ambiguous."
+        )
+
+
+class Bound(Binding):
+    """A Bound instance represents a binding from measurement to property."""
+
+    def __init__(self, measurement, *properties: str):
+        """
+        Initialize a Bound instance.
+
+        :param measurement: The Measurement to which binding is attached
+        :type measurement: Measurement
+        :param properties: The names of the properties
+        to which the measurement is bound
+        :type properties: str
+        """
+        self.measurement_name = measurement.name
+        """The name of the measurement that is bound."""
+        self.property_names: List[str] = [name for name in properties]
+        """The names of the properties to which measurement is bound."""
+
+    def __bool__(str) -> bool:
+        """Implicit boolean conversion."""
+        return True
+
+
+class Unbound(Binding):
+    """An Unbound instand represents an unbound measurement."""
+
+    def __init__(self):
+        """
+        Initialize a Unbound instance.
+        """
+        pass
+
+    def __bool__(self) -> bool:
+        """Implicit boolean conversion."""
+        return False
+
+
+# -----------------------------------------------------------------------------
+# Validation Results
+# -----------------------------------------------------------------------------
+
+
 class ValidationResult(metaclass=abc.ABCMeta):
     """The base class for measurement validation results."""
 
@@ -23,66 +91,42 @@ class ValidationResult(metaclass=abc.ABCMeta):
         )
 
     def __init__(self):
-        raise NotImplementedError(
-            "Cannot instantiate abstract ValidationResult."
-        )
+        """
+        Initialize a ValidationResult instance.
+        """
 
-    def from_validator(self, validator_name: str):
+        self.validator_name = ""
+        """The name of the validator that produced the result."""
+
+        self.binding: Binding = Unbound()
+        """The Binding for the ValidationResult."""
+
+    def from_validator(self, validator):
         """
         Set the `validator_name` field of the ValidationResult
         to indicate the validator that produced the result.
 
-        :param validator_name: The name of the validator
-        :type validator_name: str
+        :param validator: The Validator instance that produced the result
+        :type validator: Validator
 
         :return: The ValidationResult instance (`self`)
         :rtype: ValidationResult
         """
-        self.validator_name = validator_name
+        self.validator_name = validator.name
         return self
 
-
-class ValidationResultSet:
-    """A collection of ValidationResult instances."""
-
-    def __init__(self, measurement, results: List[ValidationResult]):
+    def with_binding(self, binding: Binding):
         """
-        Initialize a ValidationResultSet instance.
+        Set the `binding` field of the ValidationResult.
 
-        :param measurement: The generating measurement
-        :type measurement: Measurement
-        :param results: The collection of ValidationResult
-        :type results: Iterable[ValidationResult]
-        """
-        self.token = measurement.token
-        """The token for the originating measurement."""
-        self.results = results
-        """The collection of validation results."""
+        :param binding: The Binding instance
+        :type binding: Binding
 
-    def __len__(self) -> int:
-        """
-        Return the number of results in the collection.
-
-        :return The number of results in the collection
-        :type: int
-        """
-        return len(self.results)
-
-    def __getitem__(self, index: int) -> ValidationResult:
-        """
-        Get the validation result at the specified index.
-
-        :param index: The index of interest
-        :type index: int
-
-        :return: The validation result
+        :return: The ValidationResult instance (`self`)
         :rtype: ValidationResult
         """
-        return self.results[index]
-
-    def __iter__(self):
-        """Iterate over the results of the collection."""
-        return (result for result in self.results)
+        self.binding = binding
+        return self
 
 
 class Success(ValidationResult):
@@ -97,10 +141,10 @@ class Success(ValidationResult):
         :param message: Optional message
         :type message: str
         """
+        super().__init__()
+
         self.message = message
         """The message indicating the reason for success."""
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -123,10 +167,10 @@ class Failure(ValidationResult):
         :param message: Optional message
         :type message: str
         """
+        super().__init__()
+
         self.message = message
         """The message indicating the reason for failure."""
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -147,10 +191,10 @@ class Ignore(ValidationResult):
         :param message: Message indicating the reason validation is ignored
         :type message: str
         """
+        super().__init__()
+
         self.message = message
         """The message indicating the reason validation is ignored."""
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""

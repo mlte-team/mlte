@@ -1,17 +1,21 @@
 from .validation_result import (
     ValidationResult,
-    ValidationResultSet,
     Success,
     Failure,
     Ignore,
+    Binding,
+    Bound,
+    Unbound,
 )
 from .validator import Validator
 
 __all__ = [
     "ValidationResult",
-    "ValidationResultSet",
     "Success",
     "Failure",
     "Ignore",
     "Validator",
+    "Binding",
+    "Bound",
+    "Unbound",
 ]

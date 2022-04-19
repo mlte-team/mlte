@@ -3,7 +3,6 @@ TrainingMemoryCost property definition.
 """
 
 from ..property import Property
-from ...measurement import Measurement
 
 
 class TrainingMemoryCost(Property):
@@ -12,11 +11,12 @@ class TrainingMemoryCost(Property):
     of model training associated with memory resources.
     """
 
-    def __init__(self, *measurements: Measurement):
+    def __init__(self):
         """
         Initialize a TrainingMemoryCost instance.
-
-        :param measurements: The measurements associated with the property
-        :type measurements: Measurement
         """
-        super().__init__("TrainingMemoryCost", *measurements)
+        super().__init__("TrainingMemoryCost")
+
+    def __repr__(self) -> str:
+        """Return the representation needed to reconstruct the object."""
+        return f"{self.name}()"

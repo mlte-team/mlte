@@ -3,7 +3,6 @@ TrainingComputeCost property definition.
 """
 
 from ..property import Property
-from ...measurement import Measurement
 
 
 class TrainingComputeCost(Property):
@@ -12,11 +11,12 @@ class TrainingComputeCost(Property):
     of model training associated with compute resources.
     """
 
-    def __init__(self, *measurements: Measurement):
+    def __init__(self):
         """
         Initialize a TrainingComputeCost instance.
-
-        :param measurements: The measurements associated with the property
-        :type measurements: Measurement
         """
-        super().__init__("TrainingComputeCost", *measurements)
+        super().__init__("TrainingComputeCost")
+
+    def __repr__(self) -> str:
+        """Return the representation needed to reconstruct the object."""
+        return f"{self.name}()"

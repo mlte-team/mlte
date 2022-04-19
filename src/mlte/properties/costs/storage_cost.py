@@ -3,7 +3,6 @@ StorageCost property definition.
 """
 
 from ..property import Property
-from ...measurement import Measurement
 
 
 class StorageCost(Property):
@@ -11,11 +10,10 @@ class StorageCost(Property):
     The StorageCost property reflects the cost of model storage.
     """
 
-    def __init__(self, *measurements: Measurement):
-        """
-        Initialize a StorageCost instance.
+    def __init__(self):
+        """Initialize a StorageCost instance."""
+        super().__init__("StorageCost")
 
-        :param measurements: The measurements associated with the property
-        :type measurements: Measurement
-        """
-        super().__init__("StorageCost", *measurements)
+    def __repr__(self) -> str:
+        """Return the representation needed to reconstruct the object."""
+        return f"{self.name}()"
