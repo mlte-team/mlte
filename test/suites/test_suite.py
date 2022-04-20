@@ -6,10 +6,9 @@ import os
 import pytest
 from typing import Dict, Any
 
-from mlte.core import bind
 from mlte.suites import Suite
 from mlte.properties import Property
-from mlte.measurement import Measurement
+from mlte.measurement import Measurement, bind
 from mlte.measurement.validation import Validator, Success
 from mlte.properties.costs import StorageCost
 

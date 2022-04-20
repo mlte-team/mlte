@@ -5,7 +5,7 @@ Bind a measurement to one or more properties.
 from typing import Union
 
 from ..properties import Property
-from ..measurement import Measurement
+from .measurement import Measurement
 
 
 def bind(

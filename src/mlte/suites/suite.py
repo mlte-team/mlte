@@ -65,6 +65,8 @@ class Suite:
         """
         Initialize a Suite instance.
 
+        :param name: The identifier for the suite
+        :type name: str
         :param properties: The collection of properties that compose the suite
         :type properties: Property
         """
@@ -194,13 +196,16 @@ class Suite:
     ) -> SuiteReport:
         """
         Collect validation results from all measurements,
-        and generate a SuiteReport from these measurements.
+        and generate a suite report from these measurements.
+
+        If the `strict` flag is set to `True`, then all properties
+        declared in the suite must have at least one (1) measurement
+        bound to them in order to proceed with report generation.
+        Suite collection is set to `strict` mode by default.
 
         :param results: Validation results
         :type results: ValidationResult
-        :param strict: Flag indicating that all properties
-        must have at least one associated measurement to
-        proceed with report generation (default: `True`)
+        :param strict: Flag indicating strict measurement requirements
         :type strict: bool
 
         :return: The suite report
