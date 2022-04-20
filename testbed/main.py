@@ -8,7 +8,7 @@ import operator
 import functools
 import threading
 import subprocess
-from typing import Any, List
+from typing import Any, List, Iterable, Union
 from resolver import package_root
 
 sys.path.append(package_root())
@@ -21,6 +21,7 @@ from mlte.properties.costs import (
     TrainingMemoryCost,
 )
 
+from mlte.measurement.utility import concurrently, flatten
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.cpu import LocalProcessCPUUtilization
 from mlte.measurement.memory import LocalProcessMemoryConsumption
@@ -35,10 +36,6 @@ def spin_for(seconds: int):
     thread = threading.Thread(target=lambda: prog.wait())
     thread.start()
     return prog
-
-
-def combine(*collection: List[Any]) -> List[Any]:
-    return functools.reduce(operator.add, collection, [])
 
 
 def main() -> int:
@@ -66,12 +63,12 @@ def main() -> int:
     size_result = local_size.validate("test/")
 
     prog = spin_for(5)
-    cpu_result = local_cpu.validate(prog.pid)
+    results = concurrently(
+        lambda: local_cpu.validate(prog.pid),
+        lambda: local_mem.validate(prog.pid),
+    )
 
-    prog = spin_for(5)
-    mem_result = local_mem.validate(prog.pid)
-
-    report = suite.collect(*combine(size_result, cpu_result, mem_result))
+    report = suite.collect(*flatten(size_result, results))
     print(json.dumps(report.document))
 
     return EXIT_SUCCESS
