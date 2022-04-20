@@ -1,4 +1,4 @@
+from .bind import bind
 from .measurement import Measurement
-from .measurement_token import MeasurementToken
 
-__all__ = ["Measurement", "MeasurementToken"]
+__all__ = ["Measurement", "bind"]

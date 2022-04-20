@@ -2,23 +2,14 @@
 The superclass for all model properties.
 """
 
+from __future__ import annotations
+
 import abc
-from typing import List
+import importlib
+from typing import Dict, Type
 
-from ..measurement import Measurement
-
-
-def _unique(collection: List[str]) -> bool:
-    """
-    Determine if all elements of a collection are unique.
-
-    :param collection: The collection
-    :type collection: Iterable
-
-    :return: `True` if all elements are unique, `False` otherwise
-    :rtype: bool
-    """
-    return len(set(collection)) == len(collection)
+# The names of the properties submodules
+SUBMODULES = ["costs"]
 
 
 def _has_callable(type, name) -> bool:
@@ -32,36 +23,93 @@ class Property(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete properties."""
-        return all(_has_callable(subclass, method) for method in ["__init__"])
+        return all(
+            _has_callable(subclass, method)
+            for method in ["__init__", "__repr__"]
+        )
 
-    def __init__(self, name: str, *measurements: Measurement):
+    def __init__(self, name: str, description: str):
         """
         Initialize a Property instance.
 
         :param name: The name of the property
         :type name: str
-        :param measurements: The collection of measurements for the property
-        :type measurements: Measurement
+        :param description: The description of the property
+        :type description: str
         """
         self.name: str = name
         """The name of the property."""
-        self.measurements: List[Measurement] = [m for m in measurements]
-        """The collection of measurements for the property."""
+        self.description = description
+        """The description of the property."""
 
-        if not _unique([m.name for m in measurements]):
-            raise RuntimeError(
-                "All measurements for a property must be unique."
-            )
-
-    def add_measurement(self, measurement: Measurement):
+    def _to_document(self) -> Dict[str, str]:
         """
-        Add a measurement for the property instance.
+        Save a Property instance to a document.
 
-        :param measurement: The measurement instance
-        :type measurement: Measurement
+        :return: The document
+        :rtype: Dict[str, str]
         """
-        self.measurements.append(measurement)
-        if not _unique([m.name for m in self.measurements]):
-            raise RuntimeError(
-                "All measurements for a property must be unique."
-            )
+        return {
+            "name": self.name,
+            "repr": repr(self),
+            "description": self.description,
+        }
+
+    @staticmethod
+    def _from_document(document: Dict[str, str]) -> Property:
+        """
+        Load a Property instance from a document.
+
+        :param document: The document for the saved propery
+        :type document: Dict[str, str]
+
+        :return: The loaded property
+        :rtype: Property
+        """
+        return _load_from_document(document)
+
+
+def _get_class_name(property_repr: str) -> str:
+    """
+    Extract the class name from the property representation.
+
+    :param property_repr: The representation
+    :type property_repr: str
+
+    :return: The class name
+    :rtype: str
+    """
+    return property_repr[: property_repr.index("(")]
+
+
+def _load_from_document(document: Dict[str, str]) -> Property:
+    """
+    Load a Property instance from its identifier.
+
+    :param name: The name of the property
+    :type name: str
+
+    :return: The loaded property
+    :rtype: Property
+    """
+    if "name" not in document or "repr" not in document:
+        raise RuntimeError("Saved property is malformed.")
+    property_repr = document["repr"]
+
+    # Extract the classname from the call
+    classname = _get_class_name(property_repr)
+
+    # Load the class type from the module
+    for submodule in SUBMODULES:
+        module = importlib.import_module(
+            f".{submodule}", package="mlte.properties"
+        )
+        try:
+            class_: Type[Property] = getattr(module, classname)
+        except AttributeError:
+            continue
+
+        # Instantiate the property
+        return class_()  # type: ignore
+
+    raise RuntimeError(f"Property {document['name']} not found")

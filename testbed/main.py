@@ -4,18 +4,24 @@ A simple program for testing functionality during development.
 
 import sys
 import json
+import operator
+import functools
 import threading
 import subprocess
+from typing import Any, List, Iterable, Union
 from resolver import package_root
 
 sys.path.append(package_root())
 
+from mlte.core import bind
 from mlte.suites import Suite
+from mlte.properties.costs import (
+    StorageCost,
+    TrainingComputeCost,
+    TrainingMemoryCost,
+)
 
-from mlte.properties.costs import StorageCost
-from mlte.properties.costs import TrainingComputeCost
-from mlte.properties.costs import TrainingMemoryCost
-
+from mlte.measurement.utility import concurrently, flatten
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.cpu import LocalProcessCPUUtilization
 from mlte.measurement.memory import LocalProcessMemoryConsumption
@@ -33,32 +39,37 @@ def spin_for(seconds: int):
 
 
 def main() -> int:
-    local_size = LocalObjectSize().with_validator_size_not_greater_than(
-        threshold=54000
-    )
-    local_cpu = LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
-        threshold=0.85
-    )
-    local_mem = LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
-        threshold=8192
+    suite = Suite(
+        "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
     )
 
-    suite = Suite(
-        StorageCost(local_size),
-        TrainingComputeCost(local_cpu),
-        TrainingMemoryCost(local_mem),
+    local_size = bind(
+        LocalObjectSize().with_validator_size_not_greater_than(threshold=54000),
+        suite.get_property("StorageCost"),
+    )
+    local_cpu = bind(
+        LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
+            threshold=0.85
+        ),
+        suite.get_property("TrainingComputeCost"),
+    )
+    local_mem = bind(
+        LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
+            threshold=8192
+        ),
+        suite.get_property("TrainingMemoryCost"),
     )
 
     size_result = local_size.validate("test/")
 
     prog = spin_for(5)
-    cpu_result = local_cpu.validate(prog.pid)
+    results = concurrently(
+        lambda: local_cpu.validate(prog.pid),
+        lambda: local_mem.validate(prog.pid),
+    )
 
-    prog = spin_for(5)
-    mem_result = local_mem.validate(prog.pid)
-
-    data = suite.collect(size_result, cpu_result, mem_result)
-    print(json.dumps(data))
+    report = suite.collect(*flatten(size_result, results))
+    print(json.dumps(report.document))
 
     return EXIT_SUCCESS
 

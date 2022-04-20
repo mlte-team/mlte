@@ -22,5 +22,5 @@ class EvaluationResult(metaclass=abc.ABCMeta):
         :param measurement: The generating measurement
         :type measurement: Measurement
         """
-        # Store the token of the generating measurement
-        self.token = measurement.token
+        # Store the name of the generating measurement
+        self.measurement_name = measurement.name

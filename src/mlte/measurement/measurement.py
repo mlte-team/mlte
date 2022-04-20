@@ -8,9 +8,9 @@ import abc
 import typing
 from typing import Any, List
 
-from .measurement_token import MeasurementToken
+from .validation import Binding, Bound, Unbound
 from .evaluation import EvaluationResult, Opaque
-from .validation import ValidationResultSet, Validator, Ignore
+from .validation import ValidationResult, Validator, Ignore
 
 
 def _has_callable(type, name) -> bool:
@@ -36,8 +36,8 @@ class Measurement(metaclass=abc.ABCMeta):
         self.name = name
         """The name of the measurement (human-readable identifier)"""
 
-        self.token = MeasurementToken(self.name)
-        """A unique identifier for the measurement instance."""
+        self.binding: Binding = Unbound()
+        """The measurement to property binding."""
 
         self.validators: List[Validator] = []
         """The collection of measurement validators."""
@@ -64,21 +64,36 @@ class Measurement(metaclass=abc.ABCMeta):
         )
 
     @typing.no_type_check
-    def validate(self, *args, **kwargs) -> ValidationResultSet:
+    def validate(self, *args, **kwargs) -> List[ValidationResult]:
         """
         Evaluate the measurement and validate results.
 
         :return: The results of measurement validation
-        :rtype: ValidationResultSet
+        :rtype: List[ValidationResult]
         """
         result = self.evaluate(*args, **kwargs)
-        return ValidationResultSet(
-            self,
-            [
-                validator(result).from_validator(validator.identifier)
-                for validator in self.validators
-            ],
-        )
+        # Invoke each validator on the result of property evaluation;
+        # inject the name of the producing validator and the current
+        # binding status for the measurement into the ValidationResult
+        return [
+            validator(result)
+            .from_validator(validator)
+            .with_binding(self.binding)
+            for validator in self.validators
+        ]
+
+    def add_validator(self, validator: Validator):
+        """
+        Add a validator to the measurement.
+
+        :param validator: The validator instance
+        :type validator: Validator
+        """
+        if any(v.name == "__ignore__" for v in self.validators):
+            raise RuntimeError("Cannot add validator for ignored measurement.")
+        if any(v.name == validator.name for v in self.validators):
+            raise RuntimeError("Validator name must be unique.")
+        self.validators.append(validator)
 
     def with_validator(self, validator: Validator) -> Measurement:
         """
@@ -90,11 +105,7 @@ class Measurement(metaclass=abc.ABCMeta):
         :return: The measurement instance (`self`)
         :rtype: Measurement
         """
-        if any(v.identifier == "__ignore__" for v in self.validators):
-            raise RuntimeError("Cannot add validator for ignored measurement.")
-        if any(v.identifier == validator.identifier for v in self.validators):
-            raise RuntimeError("Validator identifiers must be unique.")
-        self.validators.append(validator)
+        self.add_validator(validator)
         return self
 
     def ignore(self, reason: str):
@@ -116,3 +127,23 @@ class Measurement(metaclass=abc.ABCMeta):
             Validator("__ignore__", lambda _: Ignore(reason))
         )
         return self
+
+    def _bind(self, *properties: str):
+        """
+        Bind the Measurement to a particular property.
+
+        :param properties Names of the properties to which measurement is bound
+        :type properties: str
+        """
+        if self._is_bound():
+            raise RuntimeError("Cannot bind a bound measurement.")
+        self.binding = Bound(self, *properties)
+
+    def _is_bound(self) -> bool:
+        """
+        Determine if the measurement is already bound.
+
+        :return: `True` if the measurement is bound, `False` otherwise
+        :rtype: bool
+        """
+        return bool(self.binding)

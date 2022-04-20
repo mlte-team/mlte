@@ -16,18 +16,18 @@ class Validator:
     @typing.no_type_check
     def __init__(
         self,
-        identifier: str,
+        name: str,
         callback: Callable[[EvaluationResult], ValidationResult],
     ):
         """
         Initialize a Validator instance.
 
-        :param identifier: The validator identifier
-        :type identifier: str
+        :param name: The validator identifier
+        :type name: str
         :param callback: The callable that implements validation
         :type callback: Callable[[EvaluationResult], ValidationResult]
         """
-        self.identifier: str = identifier
+        self.name: str = name
         """The human-readable identifier for the Validator."""
 
         self.callback: Callable[[EvaluationResult], ValidationResult] = callback
