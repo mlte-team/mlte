@@ -1,0 +1,54 @@
+{
+    "name": "MySuite",
+    "timestamp": 1650662303,
+    "properties": [
+        {
+            "name": "StorageCost",
+            "description": "The StorageCost property assesses the storage requirements of a model. These requirements may be expressed in a variety of ways, including the physical size of the model when it is persisted to stable storage, or the number of parameters it contains.",
+            "measurements": [
+                {
+                    "name": "LocalObjectSize",
+                    "validators": [
+                        {
+                            "name": "MaximumSize",
+                            "result": "Success",
+                            "message": "Object size 15264 below threshold 54000"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "TrainingComputeCost",
+            "description": "The TrainingComputeCost property assesses the computational requirements of model training. This might be measured in terms of CPU utilization for training processes that run locally, or the cost of compute resources required for training processes that run on on-demand cloud infrastructure.",
+            "measurements": [
+                {
+                    "name": "LocalProcessCPUUtilization",
+                    "validators": [
+                        {
+                            "name": "MaximumUtilization",
+                            "result": "Success",
+                            "message": "Maximum utilization 0.02 below threshold 0.85"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "TrainingMemoryCost",
+            "description": "The TrainingMemoryCost property assesses the memory requirements of model training. This might be measured by the memory requirements of training processes that run locally, or the cost of memory resources required for training processes that run on on-demand cloud infrastructure.",
+            "measurements": [
+                {
+                    "name": "LocalProcessMemoryConsumption",
+                    "validators": [
+                        {
+                            "name": "MaximumConsumption",
+                            "result": "Failure",
+                            "message": "Maximum consumption 18284 exceeds threshold 8192"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Suite Report",
+    "type": "object",
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "description": "The version identifier for the schema."
+        },
+        "properties": {
+            "type": "array",
+            "description": "The set of properties that compose the suite.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the property."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the property."
+                    },
+                    "measurements": {
+                        "type": "array",
+                        "description": "The set of measurements associated with the property.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the measurement."
+                                },
+                                "validators": {
+                                    "type": "array",
+                                    "description": "The set of validators for the measurement.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "The name of the validator."
+                                            },
+                                            "result": {
+                                                "type": "string",
+                                                "description": "The text describing the result of validation."
+                                            },
+                                            "message": {
+                                                "type": "string",
+                                                "description": "The text elaborating on the validation result."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+             
+        }
+    },
+    "additionalProperties": false
+}
