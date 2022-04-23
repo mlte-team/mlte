@@ -7,6 +7,14 @@
             "type": "string",
             "description": "The version identifier for the schema."
         },
+        "name": {
+            "type": "string",
+            "description": "A human-readable identifier for the suite."
+        },
+        "timestamp": {
+            "type": "string",
+            "description": "The timestamp at which the report was generated, in UNIX format."
+        },
         "properties": {
             "type": "array",
             "description": "The set of properties that compose the suite.",
@@ -60,5 +68,6 @@
              
         }
     },
-    "additionalProperties": false
+    "additionalProperties": false,
+    "required": ["schema_version", "name", "timestamp", "properties"]
 }

@@ -2,59 +2,55 @@
 Unit tests for report schemas.
 """
 
-import threading
-import subprocess
-from jsonschema import validate
+import pytest
+from jsonschema import ValidationError
 
 from mlte.suites import Suite
-from mlte.properties.costs import (
-    StorageCost,
-    TrainingComputeCost,
-    TrainingMemoryCost,
-)
+from mlte.properties.costs import StorageCost
 
 from mlte.measurement import bind
-from mlte.measurement.utility import concurrently, flatten
+from mlte.measurement.utility import flatten
 from mlte.measurement.storage import LocalObjectSize
-from mlte.measurement.cpu import LocalProcessCPUUtilization
-from mlte.measurement.memory import LocalProcessMemoryConsumption
+
+from mlte.internal.schema import validate_suite_schema
 
 
-def spin_for(seconds: int):
-    """Run the spin.py program for `seconds`."""
-    prog = subprocess.Popen(["python", "test/support/spin.py", f"{seconds}"])
-    thread = threading.Thread(target=lambda: prog.wait())
-    thread.start()
-    return prog
+def test_empty_instance():
+    # Ensure that an empty report passes validation
+    suite = Suite("MySuite")
+    report = suite.collect()
+    validate_suite_schema(report.document)
 
-def test_schema():
-    suite = Suite(
-        "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
-    )
+
+def test_instance_with_content():
+    # Ensure that a report with content passes validation
+    suite = Suite("MySuite", StorageCost())
 
     local_size = bind(
         LocalObjectSize().with_validator_size_not_greater_than(threshold=54000),
         suite.get_property("StorageCost"),
     )
-    local_cpu = bind(
-        LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
-            threshold=0.85
-        ),
-        suite.get_property("TrainingComputeCost"),
-    )
-    local_mem = bind(
-        LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
-            threshold=8192
-        ),
-        suite.get_property("TrainingMemoryCost"),
+
+    size_result = local_size.validate("test/")
+    report = suite.collect(*flatten(size_result))
+
+    validate_suite_schema(report.document)
+
+
+def test_failure():
+    # Test that an invalid suite fails validation
+    suite = Suite("MySuite", StorageCost())
+
+    local_size = bind(
+        LocalObjectSize().with_validator_size_not_greater_than(threshold=54000),
+        suite.get_property("StorageCost"),
     )
 
     size_result = local_size.validate("test/")
+    report = suite.collect(*flatten(size_result))
 
-    prog = spin_for(5)
-    results = concurrently(
-        lambda: local_cpu.validate(prog.pid),
-        lambda: local_mem.validate(prog.pid),
-    )
+    del report.document["name"]
+    document = {}
 
-    report = suite.collect(*flatten(size_result, results))
+    with pytest.raises(ValidationError):
+        validate_suite_schema(document)

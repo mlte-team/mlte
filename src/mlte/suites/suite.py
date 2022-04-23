@@ -12,6 +12,7 @@ from typing import List, Dict, Iterable, Any
 
 from ..properties import Property
 from ..measurement.validation import ValidationResult
+from ..internal.schema import SUITE_LATEST_SCHEMA_VERSION
 
 
 def _unique(collection: List[str]) -> bool:
@@ -221,8 +222,9 @@ class Suite:
             for property in self.properties
         ]
         document: Dict[str, Any] = {
+            "schema_version": SUITE_LATEST_SCHEMA_VERSION,
             "name": self.name,
-            "timestamp": int(time.time()),
+            "timestamp": f"{int(time.time())}",
             "properties": properties,
         }
         return SuiteReport(document)

@@ -3,7 +3,8 @@ A model test report.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import List, Optional
+
 
 class ReportAttribute:
     """The base class for report attributes."""
@@ -13,6 +14,7 @@ class ReportAttribute:
 
     def from_json():
         pass
+
 
 @dataclass
 class ReportMetadata(ReportAttribute):
@@ -30,12 +32,14 @@ class ReportMetadata(ReportAttribute):
     artifacts_url: Optional[str] = None
     """The URL for model artifacts."""
 
+
 @dataclass
 class ModelOverview(ReportAttribute):
     """The model overview field of the report."""
-    
+
     text: Optional[str] = None
     """The text that appears in the ModelOverview field."""
+
 
 @dataclass
 class Report(ReportAttribute):
@@ -43,5 +47,3 @@ class Report(ReportAttribute):
 
     report_metadata: ReportMetadata = field(default_factory=ReportMetadata)
     """The report metadata."""
-
-    model
