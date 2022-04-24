@@ -15,7 +15,7 @@ docutils==0.18.1
 filelock==3.6.0
 flake8==4.0.1
 idna==3.3
-importlib-metadata==4.11.2
+importlib-metadata==4.2.0
 importlib-resources==5.7.1
 iniconfig==1.1.1
 jeepney==0.7.1
