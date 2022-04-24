@@ -49,8 +49,8 @@ def test_failure():
     size_result = local_size.validate("test/")
     report = suite.collect(*flatten(size_result))
 
+    # Remove a required field
     del report.document["name"]
-    document = {}
 
     with pytest.raises(ValidationError):
-        validate_suite_schema(document)
+        validate_suite_schema(report.document)

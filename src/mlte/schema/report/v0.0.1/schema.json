@@ -1,12 +1,168 @@
 {
-    "version": "",
-    "metadata": {},
-    "model_details": {},
-    "model_specification": {},
-    "data": {
-
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Model Report",
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "description": "The version identifier for the schema."
+        },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "project_name": {
+                    "type": "string",
+                    "description": "The name of the project."
+                },
+                "authors": {
+                    "type": "array",
+                    "description": "The authors of the report",
+                    "items": {
+                        "type": "string",
+                        "description": "The name of an individual author."
+                    }
+                },
+                "source_url": {
+                    "type": "string",
+                    "description": "The URL for project source."
+                },
+                "artifact_url": {
+                    "type": "string",
+                    "description": "The URL for project artifacts."
+                },
+                "timestamp": {
+                    "type": "string",
+                    "description": "The timestamp at which the report was generated, in UNIX format."
+                }
+            }
+        },
+        "model_details": {
+            "type": "object",
+            "description": "Metadata about the model.",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the model."
+                },
+                "overview": {
+                    "type": "string",
+                    "description": "A brief overview of the model."
+                },
+                "documentation": {
+                    "type": "string",
+                    "description": "A detailed description of the model."
+                }
+            }
+        },
+        "model_specification": {
+            "type": "object",
+            "description": "Implementation details for model ",
+            "properties": {
+                "domain": {
+                    "type": "string",
+                    "description": "The model domain."
+                },
+                "architecture": {
+                    "type": "string",
+                    "description": "A description of the model architecture."
+                },
+                "input": {
+                    "type": "string",
+                    "description": "A description of model inputs."
+                },
+                "output": {
+                    "type": "string",
+                    "description": "A description of model outputs."
+                },
+                "data": {
+                    "type": "array",
+                    "description": "A description of the dataset(s) used to train the model.",
+                    "items": {
+                        "$ref": "#/definitions/dataset"
+                    }
+                }
+            }
+        },
+        "considerations": {
+            "type": "object",
+            "description": "Model considerations.",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "description": "A description of the intended users of the model.",
+                    "items": {
+                        "$ref": "#/definitions/user"
+                    }
+                },
+                "use_cases": {
+                    "type": "array",
+                    "description": "A description of the intended use cases for the model.",
+                    "items": {
+                        "$ref": "#/definitions/use_case"
+                    }
+                },
+                "limitations": {
+                    "type": "array",
+                    "description": "A description of the known technical limitations of the model.",
+                    "items": {
+                        "$ref": "#/definitions/limitation"
+                    }
+                }
+            }
+        },
+        "suite": {
+            "type": "object",
+            "description": "The model test suite results."
+        }
     },
-    "users": {},
-    "limitations": {},
-    "suite": {}
+    "additionalProperties": false,
+    "required": [
+        "schema_version"
+    ],
+    "definitions": {
+        "dataset": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "The name of the dataset.",
+                    "type": "string"
+                },
+                "link": {
+                    "description": "A link to the dataset.",
+                    "type": "string",
+                    "format": "uri"
+                },
+                "description": {
+                    "description": "A description of the dataset. Can describe size of dataset, whether it's used for training, testing, or validation, etc.",
+                    "type": "string"
+                }
+            }
+        },
+        "user": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "A description of the intended user."
+                }
+            }
+        },
+        "use_case": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "A description of the use case."
+                }
+            }
+        },
+        "limitation": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "A description of the limitation."
+                }
+            }
+        }
+    }
 }

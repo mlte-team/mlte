@@ -99,7 +99,10 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
         "schema", subdirectory, f"v{version}", _SCHEMA_FILE_NAME
     )
     # Locate the artifact, load, and return it
-    return json.loads(pkgutil.get_data("mlte", path))
+    data = pkgutil.get_data("mlte", path)
+    if data is None:
+        raise ValueError(f"Schema {path} not found.")
+    return json.loads(data)  # type: ignore
 
 
 def _find_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:
