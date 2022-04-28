@@ -4,16 +4,12 @@ A simple program for testing functionality during development.
 
 import sys
 import json
-import operator
-import functools
 import threading
 import subprocess
-from typing import Any, List, Iterable, Union
 from resolver import package_root
 
 sys.path.append(package_root())
 
-from mlte.core import bind
 from mlte.suites import Suite
 from mlte.properties.costs import (
     StorageCost,
@@ -21,6 +17,7 @@ from mlte.properties.costs import (
     TrainingMemoryCost,
 )
 
+from mlte.measurement import bind
 from mlte.measurement.utility import concurrently, flatten
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.cpu import LocalProcessCPUUtilization

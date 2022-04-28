@@ -1,3 +1,3 @@
-from .suite import Suite
+from .suite import Suite, SuiteReport
 
-__all__ = ["Suite"]
+__all__ = ["Suite", "SuiteReport"]
