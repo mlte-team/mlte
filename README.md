@@ -5,22 +5,12 @@
 [![Tests](https://github.com/turingcompl33t/mlte/actions/workflows/tests.yaml/badge.svg)](https://github.com/turingcompl33t/mlte/actions/workflows/tests.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-### Installation
+### Getting Started
+
+`mlte` is available on [PyPI](https://pypi.org/project/mlte-python/). Install the latest version with:
 
 ```bash
 $ pip install mlte-python
 ```
 
-### Usage
-
-A simple example that measures the CPU utilization of a local model training process:
-
-```python
-from mlte.properties.cpu import LocalProcessCPUUtilization
-
-pid = spawn_training_process()
-cpu = LocalProcessCPUUtilization()
-
-metrics = cpu(pid)
-print(metrics)
-```
+Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more details on getting started with `mlte`.
