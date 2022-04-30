@@ -87,7 +87,7 @@ We utilize [Github Actions](https://docs.github.com/en/actions) for continuous i
 
 ## Documentation
 
-We build documentation with [`sphinx`](https://www.sphinx-doc.org/en/master/) and host documentation on (ReadTheDocs)[https://readthedocs.org/].
+We build documentation with [`sphinx`](https://www.sphinx-doc.org/en/master/) and host documentation on [ReadTheDocs](https://readthedocs.org/).
 
 We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
 
