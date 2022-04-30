@@ -1,7 +1,7 @@
 Welcome to mlte's Home on ReadTheDocs!
 ======================================
 
-`mlte` is a toolkit for machine learning testing and evaluation.
+`mlte` is a toolkit for machine learning testing and evaluation!
 
 .. note::
 
