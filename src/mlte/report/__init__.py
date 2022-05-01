@@ -10,6 +10,8 @@ from .report import (
     Report,
 )
 
+from .render import render
+
 __all__ = [
     "Dataset",
     "User",
@@ -20,4 +22,5 @@ __all__ = [
     "ModelSpecification",
     "Considerations",
     "Report",
+    "render",
 ]
