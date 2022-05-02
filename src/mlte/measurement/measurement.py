@@ -77,8 +77,9 @@ class Measurement(metaclass=abc.ABCMeta):
         # binding status for the measurement into the ValidationResult
         return [
             validator(result)
-            .from_validator(validator)
-            .with_binding(self.binding)
+            ._from_data(result)
+            ._from_validator(validator)
+            ._with_binding(self.binding)
             for validator in self.validators
         ]
 

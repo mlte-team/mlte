@@ -11,6 +11,8 @@ import subprocess
 
 from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.cpu import LocalProcessCPUUtilization
+from mlte.measurement.cpu.local_process_cpu_utilization import CPUStatistics
+from mlte.measurement.validation import Validator, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -30,7 +32,7 @@ def spin_for(seconds: int):
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_nix():
+def test_cpu_nix_evaluate():
     start = time.time()
 
     prog = spin_for(5)
@@ -45,8 +47,54 @@ def test_cpu_nix():
 
 
 @pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
+def test_cpu_nix_validate_success():
+    prog = spin_for(5)
+    prop = LocalProcessCPUUtilization().with_validator(
+        Validator("Succeed", lambda _: Success())
+    )
+
+    # Evaluate and run validators
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert bool(results[0])
+
+    # Data is accessible from validation result
+    result = results[0]
+    assert isinstance(result.data, CPUStatistics)
+
+
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
+def test_cpu_nix_validate_failure():
+    prog = spin_for(5)
+    prop = LocalProcessCPUUtilization().with_validator(
+        Validator("Fail", lambda _: Failure())
+    )
+
+    # Evaluate and run validators
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert not bool(results[0])
+
+    # Data is accessible from validation result
+    result = results[0]
+    assert isinstance(result.data, CPUStatistics)
+
+
+@pytest.mark.skipif(
     is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_windows():
+def test_cpu_windows_evaluate():
+    with pytest.raises(RuntimeError):
+        _ = LocalProcessCPUUtilization()
+
+
+@pytest.mark.skipif(
+    is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
+def test_cpu_windows_validate():
     with pytest.raises(RuntimeError):
         _ = LocalProcessCPUUtilization()
