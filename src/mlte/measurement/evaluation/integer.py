@@ -1,5 +1,5 @@
 """
-An EvaluationResult instance for single, integer values.
+An EvaluationResult instance for a scalar, integral value.
 """
 
 from .evalution_result import EvaluationResult
@@ -20,6 +20,8 @@ class Integer(EvaluationResult):
         :param value: The integer value
         :type value: int
         """
+        assert isinstance(value, int), "Argument must be `int`."
+
         super().__init__(measurement)
 
         self.value = value
