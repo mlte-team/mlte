@@ -10,9 +10,9 @@ import json
 from itertools import groupby, combinations
 from typing import List, Dict, Iterable, Any
 
-from ..properties import Property
+from ..property import Property
 from ..measurement.validation import ValidationResult
-from ..internal.schema import SUITE_LATEST_SCHEMA_VERSION
+from .._private.schema import SUITE_LATEST_SCHEMA_VERSION
 
 
 def _unique(collection: List[str]) -> bool:

@@ -3,7 +3,7 @@ TrainingMemoryCost property definition.
 """
 
 from ..property import Property
-from ...internal.text import cleantext
+from ..._private.text import cleantext
 
 
 class TrainingMemoryCost(Property):

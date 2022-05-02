@@ -6,11 +6,11 @@ import os
 import pytest
 from typing import Dict, Any
 
-from mlte.suites import Suite
-from mlte.properties import Property
+from mlte.suite import Suite
+from mlte.property import Property
 from mlte.measurement import Measurement, bind
 from mlte.measurement.validation import Validator, Success
-from mlte.properties.costs import StorageCost
+from mlte.property.costs import StorageCost
 
 
 class DummyProperty(Property):

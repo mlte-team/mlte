@@ -3,15 +3,17 @@ A simple program for testing functionality during development.
 """
 
 import sys
-import json
+import time
 import threading
 import subprocess
 from resolver import package_root
 
 sys.path.append(package_root())
 
-from mlte.suites import Suite
-from mlte.properties.costs import (
+from mlte.report import Report, Dataset, User, UseCase, Limitation, render
+
+from mlte.suite import Suite, SuiteReport
+from mlte.property.costs import (
     StorageCost,
     TrainingComputeCost,
     TrainingMemoryCost,
@@ -35,7 +37,45 @@ def spin_for(seconds: int):
     return prog
 
 
-def main() -> int:
+def build_report() -> Report:
+    report = Report()
+    report.metadata.project_name = "ProjectName"
+    report.metadata.authors = ["Foo", "Bar"]
+    report.metadata.source_url = "https://github.com/mlte-team"
+    report.metadata.artifacts_url = "https://github.com/mlte-team"
+    report.metadata.timestamp = f"{int(time.time())}"
+
+    report.model_details.name = "ModelName"
+    report.model_details.overview = "Model overview."
+    report.model_details.documentation = "Model documentation."
+
+    report.model_specification.domain = "ModelDomain"
+    report.model_specification.architecture = "ModelArchitecture"
+    report.model_specification.input = "ModelInput"
+    report.model_specification.output = "ModelOutput"
+    report.model_specification.data = [
+        Dataset("Dataset0", "https://github.com/mlte-team", "Description"),
+        Dataset("Dataset1", "https://github.com/mlte-team", "Description."),
+    ]
+
+    report.considerations.users = [
+        User("User0", "User description 0."),
+        User("User1", "User description 1."),
+    ]
+    report.considerations.use_cases = [
+        UseCase("UseCase0", "Use case description 0."),
+        UseCase("UseCase1", "Use case description 1."),
+    ]
+    report.considerations.limitations = [
+        Limitation("Limitation0", "Limitation description 0."),
+        Limitation("Limitation1", "Limitation description 1."),
+    ]
+    return report
+
+
+def build_suite() -> SuiteReport:
+    report = build_report()
+
     suite = Suite(
         "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
     )
@@ -66,7 +106,15 @@ def main() -> int:
     )
 
     report = suite.collect(*flatten(size_result, results))
-    print(json.dumps(report.document))
+    return report
+
+
+def main() -> int:
+    report = build_report()
+    report.suite = build_suite()
+
+    html = report.to_html()
+    render(html)
 
     return EXIT_SUCCESS
 

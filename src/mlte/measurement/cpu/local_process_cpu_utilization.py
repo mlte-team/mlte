@@ -10,7 +10,7 @@ from subprocess import SubprocessError
 from ..measurement import Measurement
 from ..evaluation import EvaluationResult
 from ..validation import Validator, Success, Failure
-from ...platform.os import is_windows
+from ..._private.platform import is_windows
 
 
 class CPUStatistics(EvaluationResult):

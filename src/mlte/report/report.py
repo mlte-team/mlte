@@ -11,12 +11,15 @@ Acknowledgements:
 
 from __future__ import annotations
 
+import json
+import typing
 import dataclasses
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 
-from ..suites import SuiteReport
-from ..internal.schema import REPORT_LATEST_SCHEMA_VERSION
+from .html import _connected, _generate_html
+from ..suite import SuiteReport
+from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 
 
 class ReportAttribute:
@@ -58,6 +61,9 @@ class Dataset(ReportAttribute):
 class User(ReportAttribute):
     """A description of an intended user of the model."""
 
+    identifier: Optional[str] = None
+    """An identifier for the intender user."""
+
     description: Optional[str] = None
     """A description of the intended user."""
 
@@ -66,6 +72,9 @@ class User(ReportAttribute):
 class UseCase(ReportAttribute):
     """A description of an intended use case of the model."""
 
+    identifier: Optional[str] = None
+    """An identifier for the use case."""
+
     description: Optional[str] = None
     """A description of the use case."""
 
@@ -73,6 +82,9 @@ class UseCase(ReportAttribute):
 @dataclass
 class Limitation(ReportAttribute):
     """A description of a technical limitation of the model."""
+
+    identifier: Optional[str] = None
+    """An identifier for the limitation."""
 
     description: Optional[str] = None
     """A description of the limitation."""
@@ -172,13 +184,14 @@ class Report(ReportAttribute):
     suite: SuiteReport = field(default_factory=lambda: SuiteReport({}))
     """The model test suite report."""
 
-    def json(self) -> Dict[str, Any]:
+    def _finalize(self) -> Dict[str, Any]:
         """
-        Convert a ReportAttribute instance to a JSON document.
+        Finalize construction of the Report instance.
 
-        :return: The converted document
+        :return: Report document
         :rtype: Dict[str, Any]
         """
+        # TODO(Kyle): We should perform validation here
         document = dataclasses.asdict(
             self,
             dict_factory=lambda properties: {k: v for k, v in properties if v},
@@ -188,3 +201,58 @@ class Report(ReportAttribute):
         # Manually insert the schema version
         document["schema_version"] = REPORT_LATEST_SCHEMA_VERSION
         return document
+
+    @typing.no_type_check
+    def to_json(
+        self, path: Optional[str] = None
+    ) -> Union[Dict[str, Any], None]:
+        """
+        Convert the Report to a JSON document.
+
+        The converted document is saved to the provided `path`
+        if it is specified, otherwise it is returned as a Python
+        dictionary.
+
+        :param path: The path to which document is saved
+        :type path: Optional[str]
+
+        :return: Python-dict representation of JSON document, or None
+        :rtype: Union[Dict[str, Any], None]
+        """
+        document = self._finalize()
+        if path is None:
+            return document
+
+        with open(path, "w") as f:
+            json.dump(document, f, indent=2)
+
+        return None
+
+    def to_html(self, path: Optional[str] = None) -> Union[str, None]:
+        """
+        Convert the Report to an HTML document.
+
+        The converted document is saved to the provided `path`
+        if it is specified, otherwise it is returned as a string.
+
+        :param path: The path to which document is saved
+        :type path: Optional[str]
+
+        :return: String representation of HTML document, or None
+        :rtype: Union[str, None]
+
+        :raises RuntimeError: If network connection is unavailable
+        """
+        if not _connected():
+            raise RuntimeError(
+                "HTML report generation requires a network connection."
+            )
+
+        # Generate the string representation of HTML document
+        html = _generate_html(self._finalize())
+
+        if path is not None:
+            with open(path, "w") as f:
+                f.write(html)
+
+        return html if path is None else None
