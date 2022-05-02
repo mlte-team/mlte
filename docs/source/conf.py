@@ -15,7 +15,7 @@ copyright = "2022, Kyle Dotterrer"
 author = "Kyle Dotterrer"
 
 release = '0.1'
-version = '0.1.3'
+version = '0.1.4'
 
 # -- General configuration
 extensions = [
