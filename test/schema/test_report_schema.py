@@ -7,8 +7,8 @@ import pytest
 from jsonschema import ValidationError
 
 from mlte.report import Report, Dataset, User, UseCase, Limitation
-from mlte.suites import SuiteReport
-from mlte.internal.schema import validate_report_schema
+from mlte.suite import SuiteReport
+from mlte._private.schema import validate_report_schema
 
 
 def test_empty_instance():

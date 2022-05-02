@@ -3,7 +3,7 @@ StorageCost property definition.
 """
 
 from ..property import Property
-from ...internal.text import cleantext
+from ..._private.text import cleantext
 
 
 class StorageCost(Property):

@@ -12,8 +12,8 @@ sys.path.append(package_root())
 
 from mlte.report import Report, Dataset, User, UseCase, Limitation, render
 
-from mlte.suites import Suite, SuiteReport
-from mlte.properties.costs import (
+from mlte.suite import Suite, SuiteReport
+from mlte.property.costs import (
     StorageCost,
     TrainingComputeCost,
     TrainingMemoryCost,

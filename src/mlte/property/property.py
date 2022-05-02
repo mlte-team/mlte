@@ -102,7 +102,7 @@ def _load_from_document(document: Dict[str, str]) -> Property:
     # Load the class type from the module
     for submodule in SUBMODULES:
         module = importlib.import_module(
-            f".{submodule}", package="mlte.properties"
+            f".{submodule}", package="mlte.property"
         )
         try:
             class_: Type[Property] = getattr(module, classname)

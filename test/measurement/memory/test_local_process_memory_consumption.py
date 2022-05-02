@@ -8,7 +8,7 @@ import pytest
 import threading
 import subprocess
 
-from mlte.platform.os import is_windows, is_nix
+from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.memory import LocalProcessMemoryConsumption
 
 from ...support.meta import path_to_support

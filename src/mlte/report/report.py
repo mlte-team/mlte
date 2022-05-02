@@ -19,8 +19,8 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
 from .config import REPORT_GENERATION_ENDPOINT
-from ..suites import SuiteReport
-from ..internal.schema import REPORT_LATEST_SCHEMA_VERSION
+from ..suite import SuiteReport
+from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 
 
 class ReportAttribute:

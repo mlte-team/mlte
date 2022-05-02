@@ -5,14 +5,14 @@ Unit tests for report schemas.
 import pytest
 from jsonschema import ValidationError
 
-from mlte.suites import Suite
-from mlte.properties.costs import StorageCost
+from mlte.suite import Suite
+from mlte.property.costs import StorageCost
 
 from mlte.measurement import bind
 from mlte.measurement.utility import flatten
 from mlte.measurement.storage import LocalObjectSize
 
-from mlte.internal.schema import validate_suite_schema
+from mlte._private.schema import validate_suite_schema
 
 
 def test_empty_instance():
