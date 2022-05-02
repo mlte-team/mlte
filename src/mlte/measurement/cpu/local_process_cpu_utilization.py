@@ -77,7 +77,19 @@ def _get_cpu_usage(pid: int) -> float:
 
 
 class LocalProcessCPUUtilization(Measurement):
-    """Measures CPU utilization for a local process."""
+    """
+    Measures CPU utilization for a local process.
+
+    **Example Usage**
+
+    >>> from mlte.measurement.cpu import LocalProcessCPUUtilization
+    >>> m = LocalProcessCPUUtilization()
+    >>> s = m.evaluate(spawn_training_process().pid)
+    >>> s
+    Average: 0.35
+    Minimum: 0.20
+    Maximum: 0.50
+    """
 
     def __init__(self):
         """Initialize a new LocalProcessCPUUtilization measurement."""

@@ -80,7 +80,19 @@ def _get_memory_usage(pid: int) -> int:
 
 
 class LocalProcessMemoryConsumption(Measurement):
-    """Measure memory consumption for a local training process."""
+    """
+    Measure memory consumption for a local training process.
+
+    **Example Usage**
+
+    >>> from mlte.measurement.memory import LocalProcessMemoryConsumption
+    >>> m = LocalProcessMemoryConsumption()
+    >>> s = m.evaluate(spawn_training_process().pid)
+    >>> s
+    Average: 2048
+    Minimum: 1024
+    Maximum: 8192
+    """
 
     def __init__(self):
         """Initialize a LocalProcessMemoryConsumption instance."""

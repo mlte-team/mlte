@@ -11,7 +11,17 @@ from ..validation import Validator, Success, Failure
 
 
 class LocalObjectSize(Measurement):
-    """Measure the size of a locally-stored object."""
+    """
+    Measure the size of a locally-stored object.
+
+    **Example Usage**
+
+    >>> from mlte.measurement.storage import LocalObjectSize
+    >>> m = LocalObjectSize()
+    >>> s = m.evaluate("model/")
+    >>> s
+    1024
+    """
 
     def __init__(self):
         """Initialize a new LocalObjectSize measurement."""

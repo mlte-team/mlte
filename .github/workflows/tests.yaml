@@ -23,10 +23,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions black flake8 mypy
     - name: Format with black
-      run: black --check src/ && black --check test/
+      run: black --check src/ && black --check test/ && black --check examples/
     - name: Lint with flake8
-      run: flake8 src/ && flake8 test/
+      run: flake8 src/ && flake8 test/ && flake8 examples/
     - name: Typecheck with mypy
-      run: mypy src/ && mypy test/
+      run: mypy src/ && mypy test/ && mypy examples/
     - name: Test with tox
       run: tox --develop
