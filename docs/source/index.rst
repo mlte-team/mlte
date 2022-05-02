@@ -8,7 +8,7 @@ Machine Learning Test and Evaluation (`MLTE`) Documentation
   :alt: AI2T Framework Diagram
 
 **Version** 1.2.1
-**Useful Links** [Source Repository](https://github.com/mlte-team/mlte) &#124; [A2IT Framework](https://github.com/mlte-team/a2it) &#124; [A2IT Appendix](https://github.com/mlte-team/a2it/blob/master/framework/appendix/appendix_index.md) &#124; [Contact Email](mlte.team.info@gmail.com)   
+**Useful Links** `Source Repository <https://github.com/mlte-team/mlte>`_ \| `A2IT Framework <https://github.com/mlte-team/a2it>`_ \| `A2IT Appendix <https://github.com/mlte-team/a2it/blob/master/framework/appendix/appendix_index.md>`_ \| `Contact Email <mlte.team.info@gmail.com>`_  
 
 Contents
 --------
