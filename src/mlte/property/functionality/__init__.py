@@ -1,3 +1,3 @@
-from .accuracy import Accuracy
+from .task_efficacy import TaskEfficacy
 
-__all__ = ["Accuracy"]
+__all__ = ["TaskEfficacy"]
