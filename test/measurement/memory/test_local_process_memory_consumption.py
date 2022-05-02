@@ -10,6 +10,10 @@ import subprocess
 
 from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.memory import LocalProcessMemoryConsumption
+from mlte.measurement.memory.local_process_memory_consumption import (
+    MemoryStatistics,
+)
+from mlte.measurement.validation import Validator, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -29,7 +33,7 @@ def spin_for(seconds: int):
 @pytest.mark.skipif(
     is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
-def test_memory_nix():
+def test_memory_nix_evaluate():
     start = time.time()
 
     prog = spin_for(5)
@@ -43,8 +47,52 @@ def test_memory_nix():
 
 
 @pytest.mark.skipif(
+    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
+def test_memory_nix_validate_success():
+    prog = spin_for(5)
+    prop = LocalProcessMemoryConsumption().with_validator(
+        Validator("Succeed", lambda _: Success())
+    )
+
+    # Capture memory consumption; blocks until process exit
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert bool(results[0])
+
+    result = results[0]
+    assert isinstance(result.data, MemoryStatistics)
+
+
+@pytest.mark.skipif(
+    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
+def test_memory_nix_validate_failure():
+    prog = spin_for(5)
+    prop = LocalProcessMemoryConsumption().with_validator(
+        Validator("Fail", lambda _: Failure())
+    )
+
+    # Capture memory consumption; blocks until process exit
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert not bool(results[0])
+
+    result = results[0]
+    assert isinstance(result.data, MemoryStatistics)
+
+
+@pytest.mark.skipif(
     is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
-def test_cpu_windows():
+def test_memory_windows_evaluate():
+    with pytest.raises(RuntimeError):
+        _ = LocalProcessMemoryConsumption()
+
+
+@pytest.mark.skipif(
+    is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
+def test_memory_windows_validate():
     with pytest.raises(RuntimeError):
         _ = LocalProcessMemoryConsumption()

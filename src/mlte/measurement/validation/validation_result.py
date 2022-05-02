@@ -5,7 +5,10 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from typing import List
+from copy import deepcopy
+from typing import List, Optional
+
+from mlte.measurement.evaluation.evalution_result import EvaluationResult
 
 
 def _has_callable(type, name) -> bool:
@@ -131,13 +134,19 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = ""
         """The name of the validator that produced the result."""
 
+        self.data: Optional[EvaluationResult] = None
+        """
+        The EvaluationResult on which the Validator
+        that produced this ValidationResult was invoked.
+        """
+
         self.binding: Binding = Unbound()
         """The Binding for the ValidationResult."""
 
         self.message = ""
         """The message indicating the reason for status."""
 
-    def from_validator(self, validator):
+    def _from_validator(self, validator) -> ValidationResult:
         """
         Set the `validator_name` field of the ValidationResult
         to indicate the validator that produced the result.
@@ -151,7 +160,26 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = validator.name
         return self
 
-    def with_binding(self, binding: Binding):
+    def _from_data(self, data: EvaluationResult) -> ValidationResult:
+        """
+        Set the `data` field of the ValidationResult
+        to indicate the EvaluationResult from which
+        it was generated.
+
+        :param data: The EvaluationResult on which the
+        Validator that produced this instance was invoked
+        :type data: EvaluationResult
+
+        :return: The ValidationResult instance (`self`)
+        :rtype: ValidationResult
+        """
+        # TODO(Kyle): This is probably not necessary,
+        # and is certainly overkill for the current
+        # measurements that we have implemented. Revisit.
+        self.data = deepcopy(data)
+        return self
+
+    def _with_binding(self, binding: Binding) -> ValidationResult:
         """
         Set the `binding` field of the ValidationResult.
 
