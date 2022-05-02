@@ -18,6 +18,7 @@ from urllib import request
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
+from .render import _connected
 from .config import REPORT_GENERATION_ENDPOINT
 from ..suite import SuiteReport
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
@@ -241,7 +242,14 @@ class Report(ReportAttribute):
 
         :return: String representation of HTML document, or None
         :rtype: Union[str, None]
+
+        :raises RuntimeError: If network connection is unavailable
         """
+        if not _connected():
+            raise RuntimeError(
+                "HTML report generation requires a network connection."
+            )
+
         document = self._finalize()
 
         req = request.Request(
