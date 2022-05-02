@@ -14,12 +14,10 @@ from __future__ import annotations
 import json
 import typing
 import dataclasses
-from urllib import request
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
-from .render import _connected
-from .config import REPORT_GENERATION_ENDPOINT
+from .html import _connected, _generate_html
 from ..suite import SuiteReport
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 
@@ -250,24 +248,11 @@ class Report(ReportAttribute):
                 "HTML report generation requires a network connection."
             )
 
-        document = self._finalize()
+        # Generate the string representation of HTML document
+        html = _generate_html(self._finalize())
 
-        req = request.Request(
-            REPORT_GENERATION_ENDPOINT,
-            method="POST",
-            data=json.dumps(document).encode("utf-8"),
-        )
-        req.add_header("Content-Type", "application/json; charset=utf-8")
-
-        with request.urlopen(req) as response:
-            # TODO(Kyle): Better error handling.
-            if response.status != 200:
-                raise RuntimeError("Request failed.")
-
-            if path is None:
-                return str(response.read().decode("utf-8"))
-
+        if path is not None:
             with open(path, "w") as f:
-                f.write(response.read().decode("utf-8"))
+                f.write(html)
 
-        return None
+        return html if path is None else None

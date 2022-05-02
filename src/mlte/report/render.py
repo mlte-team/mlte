@@ -3,50 +3,12 @@ Utilities for report rendering.
 """
 
 import os
-import socket
 import tempfile
 import webbrowser
 from typing import Union, Optional
 
 from .report import Report
-
-# The endpoint for resolving endpoints for report generation
-RESOLUTION_ENDPOINT = "https://github.com/mlte-team/mlte"
-
-
-def _connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 2) -> bool:
-    """
-    Determine if internet connectivity is available.
-
-    :param host: The host used to test connectivity
-    :type host: str
-    :param port: The port used to test connectivity
-    :type port: int
-    :param timeout: The connection timeout
-    :type timeout: int
-
-    :return `True` if connected to the internet, `False` otherwise
-    :rtype: bool
-    """
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error:
-        return False
-
-
-def _resolve_endpoint(meta_endpoint: str = RESOLUTION_ENDPOINT) -> str:
-    """
-    Resolve the endpoint for report generation.
-
-    :param meta_endpoint: The endpoint for resolution requests
-    :type meta_endpoint: str
-
-    :return: A report generation endpoint
-    :rtype: str
-    """
-    pass
+from .html import _connected
 
 
 def render(target: Union[Report, str]):
