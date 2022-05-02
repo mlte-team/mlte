@@ -1,11 +1,7 @@
-Welcome to mlte's Home on ReadTheDocs!
+Machine Learning Test and Evaluation (MLTE) Documentation
 ======================================
 
-`mlte` is a toolkit for machine learning testing and evaluation!
-
-.. note::
-
-   This project is under active development.
+`mlte` is a toolkit for machine learning test and evaluation.
 
 Contents
 --------
@@ -13,5 +9,12 @@ Contents
 .. toctree::
    :maxdepth: 1
    
-   development.md
+   quickstart.md
    api
+   development.md
+   
+
+.. note::
+
+   This project is under active development.
+
