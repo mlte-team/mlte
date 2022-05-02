@@ -3,11 +3,34 @@ Utilities for report rendering.
 """
 
 import os
+import socket
 import tempfile
 import webbrowser
 from typing import Union, Optional
 
 from .report import Report
+
+
+def _connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 2) -> bool:
+    """
+    Determine if internet connectivity is available.
+
+    :param host: The host used to test connectivity
+    :type host: str
+    :param port: The port used to test connectivity
+    :type port: int
+    :param timeout: The connection timeout
+    :type timeout: int
+
+    :return `True` if connected to the internet, `False` otherwise
+    :rtype: bool
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error:
+        return False
 
 
 def render(target: Union[Report, str]):
@@ -26,6 +49,11 @@ def render(target: Union[Report, str]):
     :type target: Union[Report, str]
     """
     # TODO(Kyle): Validate HTML input.
+
+    if not _connected():
+        raise RuntimeError(
+            "An internet connection is required to render a report."
+        )
 
     html: Optional[str] = (
         target.to_html() if isinstance(target, Report) else target
