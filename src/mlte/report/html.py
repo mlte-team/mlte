@@ -9,8 +9,7 @@ from urllib import request
 from typing import Dict, Any
 
 # The endpoint for resolving endpoints for report generation
-# TODO(Kyle): Update to master branch
-RESOLUTION_ENDPOINT = "https://raw.githubusercontent.com/mlte-team/mlte/feature-report-rendering/assets/endpoints.txt"  # noqa
+RESOLUTION_ENDPOINT = "https://raw.githubusercontent.com/mlte-team/mlte/master/assets/endpoints.txt"  # noqa
 
 
 def _connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 2) -> bool:
