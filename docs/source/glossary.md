@@ -43,3 +43,11 @@ This glossary hopes to definitively represent the conventions applied in MLTE an
 **Performance Metric:** After determining a baseline test, teams must pick a performance metric. There are a wide range of metrics that could be appropriate depending on the type of model and the context in which the task is performed. 
 
 **Scalability:** Is the ability of AI to perform at the size, speed, and complexity required. 
+
+**Properties:** Properties are the characteristics or traits of a ML model or system. Developers will consider priorities, tradeoffs, and weaknesses of their model in the context of the system and prioritize properties for testing. The categories that organize properties are listed in [SDMT](https://github.com/mlte-team/a2it/blob/master/framework/1_SDMT.md). Properties in MLTE are an abstract element that are measured by measurements and validated by validators which are bound to properties. 
+
+**Measurement:** Measurements are the isntances that assesses a property. For example, the total local process memory consumptions is a *measurement* that measures the *property* of Training Memory Cost. 
+
+**Suites:** Suites are collections of properties and their associated measurements and bound validators. Suits help contain and organize the *MLTE* properties so that models can be easily re-evaluted. It also aids in the generation of the *MLTE* report.
+ 
+**Report:** Report contains a number of subclasses that are returned and displayed in the automatically generated *MLTE* report. The report renders as a web page and is opened automatically in an available window of the default browser. 
