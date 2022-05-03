@@ -39,6 +39,8 @@ def load_model(path: str):
 ```
 
 ## Select Measurements
+Currently there are several measurements already implemented in *MLTE* measurement pacakage. As development continues, more measurements will be added. Below we demonstrate the process of binding measurements and their associated validators to the respective properties in a suite collection. 
+
 ```python
 from mlte.measurement import bind
 from mlte.measurement.storage import LocalObjectSize
@@ -72,6 +74,8 @@ measure_mem = bind(
 ```
 
 ## Define a Custom Measurement
+*MLTE* allows users to easly implement their own custom measurements. This is an important feature becuase many models may require unique or novel measurements for different properties. Below is a demostration of creating a novel "classification accuracy" metric in *MLTE*. 
+
 ```python
 from typing import Dict, Any
 
@@ -128,6 +132,7 @@ measure_accuracy = bind(
 ```
 
 ## Collect and Validate Measurements
+Measurements have an associated validator that must be validated. Below we demonstrate the validation process
 
 ```python
 import threading
@@ -169,6 +174,7 @@ print(cost_results[1][0].message)
 ```
 
 ## Build a Suite
+Suites are collections of properties that developers have prioritized for evaluating the model. Below we show the creation of a suite that contains four properties, accuracy, storage costs, training compute cost, and training memory cost. The Suite is named "DigitRecognizer1.0"
 
 ```python
 from mlte.suites import Suite
@@ -188,6 +194,8 @@ suite.add_property(TrainingMemoryCost())
 ```
 
 ## Build a Report
+Automatically generated reports are an important function of *MLTE*. The report format was heavily influenced by [ModelCards](https://ai.googleblog.com/2020/07/introducing-model-card-toolkit-for.html)
+
 ```python
 import time
 from mlte.report import (
@@ -245,6 +253,7 @@ report.considerations.limitations = [
 ```
 
 ## Generate a Report
+After a report is created, it must be generated to create and display the html output
 
 ```python
 import time
