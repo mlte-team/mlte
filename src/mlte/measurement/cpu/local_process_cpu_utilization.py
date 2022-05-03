@@ -67,7 +67,7 @@ def _get_cpu_usage(pid: int) -> float:
     """
     try:
         stdout = subprocess.check_output(
-            ["ps", "-p", f"{pid}", "-o", "%cpu"]
+            ["ps", "-p", f"{pid}", "-o", "%cpu"], stderr=subprocess.DEVNULL
         ).decode("utf-8")
         return float(stdout.strip().split("\n")[1].strip())
     except SubprocessError:
