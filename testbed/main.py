@@ -67,8 +67,18 @@ def build_report() -> Report:
         UseCase("UseCase1", "Use case description 1."),
     ]
     report.considerations.limitations = [
-        Limitation("Limitation0", "Limitation description 0."),
-        Limitation("Limitation1", "Limitation description 1."),
+        Limitation(
+            "Limitation0",
+            """
+            Limitation 0 description is defined in a block, multiline string.
+            """,
+        ),
+        Limitation(
+            "Limitation1",
+            """
+            Limitation 1 description is defined in a block, multiline string.
+            """,
+        ),
     ]
     return report
 
