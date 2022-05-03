@@ -19,6 +19,8 @@ from typing import List, Optional, Dict, Any, Union
 
 from .html import _connected, _generate_html
 from ..suite import SuiteReport
+
+from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 
 
@@ -56,6 +58,11 @@ class Dataset(ReportAttribute):
     description: Optional[str] = None
     """A description of the dataset."""
 
+    def __setattr__(self, name: Any, value: Any) -> None:
+        """Clean text when adding attributes."""
+        value = cleantext(value) if isinstance(value, str) else value
+        super().__setattr__(name, value)
+
 
 @dataclass
 class User(ReportAttribute):
@@ -66,6 +73,11 @@ class User(ReportAttribute):
 
     description: Optional[str] = None
     """A description of the intended user."""
+
+    def __setattr__(self, name: Any, value: Any) -> None:
+        """Clean text when adding attributes."""
+        value = cleantext(value) if isinstance(value, str) else value
+        super().__setattr__(name, value)
 
 
 @dataclass
@@ -78,6 +90,11 @@ class UseCase(ReportAttribute):
     description: Optional[str] = None
     """A description of the use case."""
 
+    def __setattr__(self, name: Any, value: Any) -> None:
+        """Clean text when adding attributes."""
+        value = cleantext(value) if isinstance(value, str) else value
+        super().__setattr__(name, value)
+
 
 @dataclass
 class Limitation(ReportAttribute):
@@ -88,6 +105,11 @@ class Limitation(ReportAttribute):
 
     description: Optional[str] = None
     """A description of the limitation."""
+
+    def __setattr__(self, name: Any, value: Any) -> None:
+        """Clean text when adding attributes."""
+        value = cleantext(value) if isinstance(value, str) else value
+        super().__setattr__(name, value)
 
 
 # -----------------------------------------------------------------------------
@@ -127,6 +149,11 @@ class ModelDetails(ReportAttribute):
 
     documentation: Optional[str] = None
     """A detailed description of the model."""
+
+    def __setattr__(self, name: Any, value: Any) -> None:
+        """Clean text when adding attributes."""
+        value = cleantext(value) if isinstance(value, str) else value
+        super().__setattr__(name, value)
 
 
 @dataclass
