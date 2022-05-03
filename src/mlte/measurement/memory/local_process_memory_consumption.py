@@ -19,20 +19,18 @@ class MemoryStatistics(EvaluationResult):
     consumption statistics for a running process.
     """
 
-    def __init__(
-        self, measurement: Measurement, avg: float, min: int, max: int
-    ):
+    def __init__(self, measurement: Measurement, avg: int, min: int, max: int):
         """
         Initialize a MemoryStatistics instance.
 
         :param measurement: The generating measurement
         :type measurement: Measurement
         :param avg: The average memory consumption
-        :type avg: float
+        :type avg: int
         :param min: The minimum memory consumption
-        :type avg: float
+        :type avg: int
         :param max: The maximum memory consumption
-        :type max: float
+        :type max: int
         """
         super().__init__(measurement)
 
@@ -48,7 +46,7 @@ class MemoryStatistics(EvaluationResult):
     def __str__(self) -> str:
         """Return a string representation of MemoryStatistics."""
         s = ""
-        s += f"Average: {int(self.avg)}\n"
+        s += f"Average: {self.avg}\n"
         s += f"Minimum: {self.min}\n"
         s += f"Maximum: {self.max}"
         return s
@@ -118,7 +116,7 @@ class LocalProcessMemoryConsumption(Measurement):
             time.sleep(poll_interval)
 
         return {
-            "avg_consumption": sum(stats) / len(stats),
+            "avg_consumption": int(sum(stats) / len(stats)),
             "min_consumption": min(stats),
             "max_consumption": max(stats),
         }
