@@ -1,7 +1,7 @@
 Machine Learning Test and Evaluation (`MLTE`) Documentation
 ======================================
 
-`MLTE` (pronounced "melt") is a Python toolkit for machine learning (ML) test and evaluation. `MLTE` was developed as an practical implementation for the Army Artificial Intelligence Testing (A2IT) framework, but can be used for testing and evaluating any ML system. 
+`MLTE` (pronounced "melt") is a Python toolkit for machine learning (ML) test and evaluation. `MLTE` was developed as a practical implementation for the Army Artificial Intelligence Testing (A2IT) framework, but can be used for testing and evaluating any ML system. 
 
 **Version** 0.1.4
 
