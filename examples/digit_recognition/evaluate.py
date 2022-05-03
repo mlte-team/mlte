@@ -5,9 +5,13 @@ An example demonstrating model evaluation with MLTE.
 import os
 import sys
 import time
+import argparse
 import threading
 import subprocess
 from typing import Tuple, List, Dict, Any
+
+import mlflow
+from mlflow import log_param
 
 # Silence warnings from Tensorflow
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -285,7 +289,7 @@ class ClassificationAccuracy(Measurement):
 
 
 # -----------------------------------------------------------------------------
-# Collect Measurements
+# Collect Measurements + Integrate with External Tools
 # -----------------------------------------------------------------------------
 
 
@@ -311,30 +315,39 @@ def collect_measurements(
         load_model(MODEL_PATH), X_test, y_test
     )
     print(f"[+] {test_accuracy[0].message}")
+    log_param("test_accuracy", test_accuracy[0].data["accuracy"])
 
     # Validate model size
     model_size = measure_size.validate(MODEL_PATH)
     print(f"[+] {model_size[0].message}")
+    log_param("model_size", model_size[0].data.value)
 
     program = _spawn_training_process()
     cost_results = concurrently(
         lambda: measure_cpu.validate(program.pid),
         lambda: measure_mem.validate(program.pid),
     )
+
     print(f"[+] {cost_results[0][0].message}")
     print(f"[+] {cost_results[1][0].message}")
+
+    log_param("avg_cpu_utilization", cost_results[0][0].data.avg)
+    log_param("avg_memory_consumption", cost_results[0][1].data.avg)
 
     return flatten(test_accuracy, model_size, cost_results)
 
 
 # -----------------------------------------------------------------------------
-# Integrate with External Tools
-# -----------------------------------------------------------------------------
-
-
-# -----------------------------------------------------------------------------
 # Generate a Report
 # -----------------------------------------------------------------------------
+
+
+def parse_arguments() -> str:
+    """Parse commandline arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("tracking_uri", type=str, help="MLflow tracking URI.")
+    args = parser.parse_args()
+    return args.tracking_uri
 
 
 def main() -> int:
@@ -344,6 +357,10 @@ def main() -> int:
     assert os.path.exists(
         MODEL_PATH
     ), "Trained model should be present before evaluation."
+    tracking_uri = parse_arguments()
+
+    mlflow.set_tracking_uri(tracking_uri)
+    mlflow.set_experiment("digit-recognizer")
 
     # Build the initial report
     report = build_report()
