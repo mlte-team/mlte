@@ -8,7 +8,7 @@ If *MLTE* is not already installed in your work environemnt, you will need to in
 %pip install mlte-python
 ```
 
-# Model Setup
+## Model Setup
 Below is a code snippet to load a the common example MNIST dataset and pretrained tensorflow model. This model will be used to demonstrate the functionality of *MLTE*.
 
 ```python
