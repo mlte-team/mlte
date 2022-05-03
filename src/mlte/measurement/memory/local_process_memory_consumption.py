@@ -67,12 +67,19 @@ def _get_memory_usage(pid: int) -> int:
     # sudo pmap 917 | tail -n 1 | awk '/[0-9]K/{print $2}'
     try:
         with subprocess.Popen(
-            ["pmap", f"{pid}"], stdout=subprocess.PIPE
+            ["pmap", f"{pid}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
         ) as pmap, subprocess.Popen(
-            ["tail", "-n", "1"], stdin=pmap.stdout, stdout=subprocess.PIPE
+            ["tail", "-n", "1"],
+            stdin=pmap.stdout,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
         ) as tail:
             used = subprocess.check_output(
-                ["awk", "/[0-9]K/{print $2}"], stdin=tail.stdout
+                ["awk", "/[0-9]K/{print $2}"],
+                stdin=tail.stdout,
+                stderr=subprocess.DEVNULL,
             )
         return int(used.decode("utf-8").strip()[:-1])
     except ValueError:
