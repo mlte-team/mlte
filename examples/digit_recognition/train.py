@@ -1,11 +1,19 @@
-# train.py
-# Training script for ResNet152 image classifier.
+"""
+Training script for ResNet152 image classifier.
+
+Usage:
+    train.py <PATH> --epochs <N_EPOCHS>
+
+Arguments:
+    - PATH The path to which the trained model is saved
+    - N_EPOCHS The number of epochs for which model is trained
+"""
 
 import sys
 import argparse
 import tensorflow as tf
 from typing import Tuple
-from tensorflow.keras import datasets, layers, models, losses, Model
+from tensorflow.keras import datasets, layers, losses, Model
 
 # Script exit codes
 EXIT_SUCCESS = 0
@@ -29,7 +37,7 @@ def parse_arguments() -> Tuple[str, int]:
         "-e",
         type=int,
         default=DEFAULT_N_EPOCHS,
-        help=f"The default number of training epochs (default: {DEFAULT_N_EPOCHS})",
+        help=f"Default number of training epochs (default: {DEFAULT_N_EPOCHS})",
     )
     args = parser.parse_args()
     return args.path, args.epochs

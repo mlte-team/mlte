@@ -25,3 +25,6 @@ src/mlte_python.egg-info/
 # Packaging artifacts
 dist/
 build/
+
+# Example artifacts
+model.tf
