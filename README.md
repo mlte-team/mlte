@@ -14,3 +14,5 @@ $ pip install mlte-python
 ```
 
 Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more details on getting started with `mlte`.
+
+This is some test text that will be removed in the subsequent commit.
