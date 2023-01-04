@@ -130,7 +130,7 @@ class Metadata(ReportAttribute):
     source_url: Optional[str] = None
     """The URL for model source."""
 
-    artifacts_url: Optional[str] = None
+    artifact_url: Optional[str] = None
     """The URL for model artifacts."""
 
     timestamp: Optional[str] = None
