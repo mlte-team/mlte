@@ -21,7 +21,7 @@ def test_valid_instance():
     report.metadata.project_name = "ProjectName"
     report.metadata.authors = ["Foo", "Bar"]
     report.metadata.source_url = "https://github.com/mlte-team"
-    report.metadata.artifacts_url = "https://github.com/mlte-team"
+    report.metadata.artifact_url = "https://github.com/mlte-team"
     report.metadata.timestamp = f"{int(time.time())}"
 
     report.model_details.name = "ModelName"
