@@ -12,7 +12,7 @@ sys.path.append(package_root())
 
 from mlte.report import Report, Dataset, User, UseCase, Limitation, render
 
-from mlte.suite import Suite, SuiteReport
+from mlte.spec import Spec, SpecReport
 from mlte.property.costs import (
     StorageCost,
     TrainingComputeCost,
@@ -83,28 +83,28 @@ def build_report() -> Report:
     return report
 
 
-def build_suite() -> SuiteReport:
+def build_spec() -> SpecReport:
     report = build_report()
 
-    suite = Suite(
-        "MySuite", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
+    spec = Spec(
+        "MySpec", StorageCost(), TrainingComputeCost(), TrainingMemoryCost()
     )
 
     local_size = bind(
         LocalObjectSize().with_validator_size_not_greater_than(threshold=54000),
-        suite.get_property("StorageCost"),
+        spec.get_property("StorageCost"),
     )
     local_cpu = bind(
         LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(
             threshold=0.85
         ),
-        suite.get_property("TrainingComputeCost"),
+        spec.get_property("TrainingComputeCost"),
     )
     local_mem = bind(
         LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(
             threshold=8192
         ),
-        suite.get_property("TrainingMemoryCost"),
+        spec.get_property("TrainingMemoryCost"),
     )
 
     size_result = local_size.validate("test/")
@@ -115,13 +115,13 @@ def build_suite() -> SuiteReport:
         lambda: local_mem.validate(prog.pid),
     )
 
-    report = suite.collect(*flatten(size_result, results))
+    report = spec.collect(*flatten(size_result, results))
     return report
 
 
 def main() -> int:
     report = build_report()
-    report.suite = build_suite()
+    report.spec = build_spec()
 
     html = report.to_html()
     render(html)

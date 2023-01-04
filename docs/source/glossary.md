@@ -49,5 +49,3 @@ This glossary definitively represents the conventions applied in MLTE and its AP
 **Performance Metric:** After determining a baseline test, teams must pick a performance metric. There are a wide range of metrics that could be appropriate depending on the type of model and the context in which the task is performed. 
 
 **Scalability:** The ability of AI to perform at the size, speed, and complexity required. 
-
-**Suites:** Suites are collections of properties and their associated measurements and bound validators. Suites help contain and organize the *MLTE* properties so that models can be easily re-evaluted. They also aid in the generation of the *MLTE* report.

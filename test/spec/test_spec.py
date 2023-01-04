@@ -1,12 +1,12 @@
 """
-Unit tests for Suite functionality.
+Unit tests for Spec functionality.
 """
 
 import os
 import pytest
 from typing import Dict, Any
 
-from mlte.suite import Suite
+from mlte.spec import Spec
 from mlte.property import Property
 from mlte.measurement import Measurement, bind
 from mlte.measurement.validation import Validator, Success
@@ -35,78 +35,78 @@ class DummyMeasurement1(Measurement):
 
 
 def test_save(tmp_path):
-    path = os.path.join(tmp_path.as_posix(), "suite.json")
+    path = os.path.join(tmp_path.as_posix(), "spec.json")
 
-    suite = Suite("MySuite", StorageCost())
-    suite.save(path)
+    spec = Spec("MySpec", StorageCost())
+    spec.save(path)
     assert os.path.exists(path) and os.path.isfile(path)
 
 
 def test_load(tmp_path):
-    path = os.path.join(tmp_path.as_posix(), "suite.json")
+    path = os.path.join(tmp_path.as_posix(), "spec.json")
 
-    suite = Suite("MySuite", StorageCost())
-    suite.save(path)
+    spec = Spec("MySpec", StorageCost())
+    spec.save(path)
     assert os.path.exists(path) and os.path.isfile(path)
 
-    suite = Suite.from_file(path)
-    assert suite.name == "MySuite"
-    assert suite.has_property("StorageCost")
+    spec = Spec.from_file(path)
+    assert spec.name == "MySpec"
+    assert spec.has_property("StorageCost")
 
 
 def test_bind0():
     # Binding to existing property should succeed
-    suite = Suite("MySuite", DummyProperty())
-    _ = bind(DummyMeasurement0(), suite.get_property("DummyProperty"))
+    spec = Spec("MySpec", DummyProperty())
+    _ = bind(DummyMeasurement0(), spec.get_property("DummyProperty"))
     assert True
 
 
 def test_bind1():
     # Binding to nonexistent property should fail
-    suite = Suite("MySuite")
+    spec = Spec("MySpec")
     with pytest.raises(RuntimeError):
-        _ = bind(DummyMeasurement0(), suite.get_property("DummyProperty"))
+        _ = bind(DummyMeasurement0(), spec.get_property("DummyProperty"))
 
 
 def test_collect_empty_fail():
     # Collect on empty collection with `strict = True` should fail
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     with pytest.raises(RuntimeError):
-        _ = suite.collect()
+        _ = spec.collect()
 
 
 def test_collect_empty_success():
     # Collect on empty collection with `strict = False` should succeed
-    suite = Suite("MySuite", DummyProperty())
-    _ = suite.collect(strict=False)
+    spec = Spec("MySpec", DummyProperty())
+    _ = spec.collect(strict=False)
 
 
 def test_collect_bound_success():
     # Collect with bound measurement should succeed
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     valid = bind(
         DummyMeasurement0().with_validator(
             Validator("MyValidator", lambda _: Success())
         ),
-        suite.get_property("DummyProperty"),
+        spec.get_property("DummyProperty"),
     )
-    _ = suite.collect(*valid.validate(True))
+    _ = spec.collect(*valid.validate(True))
 
 
 def test_collect_unbound_failure():
     # Collect with unbound measurement should fail
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     valid = DummyMeasurement0().with_validator(
         Validator("MyValidator", lambda _: Success())
     )
     with pytest.raises(RuntimeError):
-        _ = suite.collect(*valid.validate(True))
+        _ = spec.collect(*valid.validate(True))
 
 
 def test_collect_bound_failure():
     # Collect with measurement bound to
     # missing property should fail
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     valid = bind(
         DummyMeasurement0().with_validator(
             Validator("MyValidator", lambda _: Success())
@@ -114,12 +114,12 @@ def test_collect_bound_failure():
         "DummyPropertyFoo",
     )
     with pytest.raises(RuntimeError):
-        _ = suite.collect(*valid.validate(True))
+        _ = spec.collect(*valid.validate(True))
 
 
 def test_collect_unique():
     # Collect with duplicated results should fail
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     m0 = bind(
         DummyMeasurement0().with_validator(
             Validator("MyValidator", lambda _: Success())
@@ -132,12 +132,12 @@ def test_collect_unique():
         ),
         "DummyProperty",
     )
-    _ = suite.collect(*(*m0.validate(True), *m1.validate(True)))
+    _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
 
 
 def test_collect_duplicates():
     # Collect with duplicated results should fail
-    suite = Suite("MySuite", DummyProperty())
+    spec = Spec("MySpec", DummyProperty())
     m0 = bind(
         DummyMeasurement0().with_validator(
             Validator("MyValidator", lambda _: Success())
@@ -151,4 +151,4 @@ def test_collect_duplicates():
         "DummyProperty",
     )
     with pytest.raises(RuntimeError):
-        _ = suite.collect(*(*m0.validate(True), *m1.validate(True)))
+        _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
