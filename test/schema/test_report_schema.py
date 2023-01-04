@@ -7,7 +7,7 @@ import pytest
 from jsonschema import ValidationError
 
 from mlte.report import Report, Dataset, User, UseCase, Limitation
-from mlte.suite import SuiteReport
+from mlte.spec import SpecReport
 from mlte._private.schema import validate_report_schema
 
 
@@ -50,7 +50,7 @@ def test_valid_instance():
         Limitation("Limitation description 1."),
     ]
 
-    report.suite = SuiteReport({})
+    report.spec = SpecReport({})
 
     validate_report_schema(report.to_json())
 

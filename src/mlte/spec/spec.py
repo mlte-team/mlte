@@ -12,7 +12,7 @@ from typing import List, Dict, Iterable, Any
 
 from ..property import Property
 from ..measurement.validation import ValidationResult
-from .._private.schema import SUITE_LATEST_SCHEMA_VERSION
+from .._private.schema import SPEC_LATEST_SCHEMA_VERSION
 
 
 def _unique(collection: List[str]) -> bool:
@@ -42,49 +42,49 @@ def _all_equal(iterable: Iterable[Any]) -> bool:
     return next(g, True) and not next(g, False)  # type: ignore
 
 
-class SuiteReport:
-    """SuiteReport represents the result of collecting a Suite."""
+class SpecReport:
+    """SpecReport represents the result of collecting a Spec."""
 
     def __init__(self, document: Dict[str, Any]):
         """
-        Initialize a SuiteReport instance.
+        Initialize a SpecReport instance.
 
-        :param document: The data produced by the Suite
+        :param document: The data produced by the Spec
         :type document: Dict[str, Any]]
         """
         self.document = document
-        """The document produced by the Suite."""
+        """The document produced by the Spec."""
 
 
-class Suite:
+class Spec:
     """
-    The Suite class integrates properties, measurements,
+    The Spec class integrates properties, measurements,
     and the results of measurement evaluation and validation.
     """
 
     def __init__(self, name: str, *properties: Property):
         """
-        Initialize a Suite instance.
+        Initialize a Spec instance.
 
-        :param name: The identifier for the suite
+        :param name: The identifier for the spec
         :type name: str
-        :param properties: The collection of properties that compose the suite
+        :param properties: The collection of properties that compose the spec
         :type properties: Property
         """
         # TODO(Kyle): What additional metadata should
-        # we store at the level of a Suite?
+        # we store at the level of a Spec?
 
         if not isinstance(name, str):
-            raise RuntimeError(f"Invalid name for Suite: {name}")
+            raise RuntimeError(f"Invalid name for Spec: {name}")
 
         self.name = name
-        """The human-readable identifier for the Suite."""
+        """The human-readable identifier for the Spec."""
 
         self.properties = [p for p in properties]
-        """The collection of properties that compose the Suite."""
+        """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
-            raise RuntimeError("All properties in Suite must be unique.")
+            raise RuntimeError("All properties in Spec must be unique.")
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -92,23 +92,23 @@ class Suite:
 
     def add_property(self, property: Property):
         """
-        Add a property to the suite.
+        Add a property to the spec.
 
         :param property: The property to add
         :type property: Property
         """
         if property.name in (p.name for p in self.properties):
-            raise RuntimeError("Properties in Suite must be unique.")
+            raise RuntimeError("Properties in Spec must be unique.")
         self.properties.append(property)
 
     def has_property(self, name: str) -> bool:
         """
-        Determine if the suite contains a particular property.
+        Determine if the spec contains a particular property.
 
         :param name: The name of the property
         :type name: str
 
-        :return: `True` if the suite has the property, `False` otherwise
+        :return: `True` if the spec has the property, `False` otherwise
         :rtype: bool
         """
         return any(property.name == name for property in self.properties)
@@ -138,9 +138,9 @@ class Suite:
 
     def save(self, path: str):
         """
-        Save the Suite to `path`.
+        Save the Spec to `path`.
 
-        :param path: The path to which the Suite is saved
+        :param path: The path to which the Spec is saved
         :type path: str
         """
         # TODO(Kyle): Implement this.
@@ -157,36 +157,36 @@ class Suite:
             json.dump(document, f)
 
     @staticmethod
-    def from_file(path: str) -> Suite:
+    def from_file(path: str) -> Spec:
         """
-        Load a Suite instance from file.
+        Load a Spec instance from file.
 
-        :param path: The path to the saved Suite
+        :param path: The path to the saved Spec
         :type path: str
 
-        :return: The loaded Suite
-        :rtype: Suite
+        :return: The loaded Spec
+        :rtype: Spec
         """
         if not os.path.exists(path):
-            raise RuntimeError(f"Suite does not exist at path {path}")
+            raise RuntimeError(f"Spec does not exist at path {path}")
         if not os.path.isfile(path):
-            raise RuntimeError(f"Suite at path {path} is not a file")
+            raise RuntimeError(f"Spec at path {path} is not a file")
 
         with open(path, "r") as f:
             document = json.load(f)
 
         if "name" not in document:
-            raise RuntimeError(f"Suite at path {path} missing 'name'")
+            raise RuntimeError(f"Spec at path {path} missing 'name'")
         if "properties" not in document:
-            raise RuntimeError(f"Suite at path {path} missing 'properties'")
+            raise RuntimeError(f"Spec at path {path} missing 'properties'")
         if not isinstance(document["properties"], list):
-            raise RuntimeError(f"Suite at path {path} is corrupt")
+            raise RuntimeError(f"Spec at path {path} is corrupt")
 
-        suite = Suite(document["name"])
+        spec = Spec(document["name"])
         for pdoc in document["properties"]:
-            suite.add_property(Property._from_document(pdoc))
+            spec.add_property(Property._from_document(pdoc))
 
-        return suite
+        return spec
 
     # -------------------------------------------------------------------------
     # Report Generation
@@ -194,23 +194,23 @@ class Suite:
 
     def collect(
         self, *results: ValidationResult, strict: bool = True
-    ) -> SuiteReport:
+    ) -> SpecReport:
         """
         Collect validation results from all measurements,
-        and generate a suite report from these measurements.
+        and generate a spec report from these measurements.
 
         If the `strict` flag is set to `True`, then all properties
-        declared in the suite must have at least one (1) measurement
+        declared in the spec must have at least one (1) measurement
         bound to them in order to proceed with report generation.
-        Suite collection is set to `strict` mode by default.
+        Spec collection is set to `strict` mode by default.
 
         :param results: Validation results
         :type results: ValidationResult
         :param strict: Flag indicating strict measurement requirements
         :type strict: bool
 
-        :return: The suite report
-        :rtype: SuiteReport
+        :return: The spec report
+        :rtype: SpecReport
         """
         self._validate_uniqueness(*results)
         self._validate_bindings(*results)
@@ -222,12 +222,12 @@ class Suite:
             for property in self.properties
         ]
         document: Dict[str, Any] = {
-            "schema_version": SUITE_LATEST_SCHEMA_VERSION,
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
             "name": self.name,
             "timestamp": f"{int(time.time())}",
             "properties": properties,
         }
-        return SuiteReport(document)
+        return SpecReport(document)
 
     def _validate_uniqueness(self, *results: ValidationResult):
         """
@@ -251,7 +251,7 @@ class Suite:
 
         :raises RuntimeError: If any validation result is not bound
         :raises RuntimeError: If any validation result is bound
-        to a property that does not exist in the suite
+        to a property that does not exist in the spec
         """
         if not all(r._is_bound() for r in results):
             raise RuntimeError("All ValidationResult must be bound.")
@@ -265,7 +265,7 @@ class Suite:
         :type result: ValidationResult
 
         :raises RuntimeError: If any validation result is bound
-        to a property that does not exist in the suite
+        to a property that does not exist in the spec
         """
         property_names = [p.name for p in self.properties]
         if not all(
@@ -280,7 +280,7 @@ class Suite:
 
     def _validate_property_coverage(self, *results: ValidationResult):
         """
-        Ensure that every property in the suite has at
+        Ensure that every property in the spec has at
         least one associated measurement in `results`.
 
         :param results: The validation results

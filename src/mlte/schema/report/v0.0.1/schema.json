@@ -109,9 +109,9 @@
                 }
             }
         },
-        "suite": {
+        "spec": {
             "type": "object",
-            "description": "The model test suite results."
+            "description": "The model test spec results."
         }
     },
     "additionalProperties": false,

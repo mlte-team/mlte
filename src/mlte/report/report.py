@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
 from .html import _connected, _generate_html
-from ..suite import SuiteReport
+from ..spec import SpecReport
 
 from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
@@ -208,8 +208,8 @@ class Report(ReportAttribute):
     considerations: Considerations = field(default_factory=Considerations)
     """Model considerations."""
 
-    suite: SuiteReport = field(default_factory=lambda: SuiteReport({}))
-    """The model test suite report."""
+    spec: SpecReport = field(default_factory=lambda: SpecReport({}))
+    """The model test spec report."""
 
     def _finalize(self) -> Dict[str, Any]:
         """
@@ -223,8 +223,8 @@ class Report(ReportAttribute):
             self,
             dict_factory=lambda properties: {k: v for k, v in properties if v},
         )
-        # Manually serialize the suite-level document
-        document["suite"] = self.suite.document
+        # Manually serialize the spec-level document
+        document["spec"] = self.spec.document
         # Manually insert the schema version
         document["schema_version"] = REPORT_LATEST_SCHEMA_VERSION
         return document

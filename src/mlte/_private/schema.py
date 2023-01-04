@@ -15,13 +15,13 @@ import pkgutil
 import jsonschema
 from typing import Any, Dict, Optional
 
-# The identifier for the latest schema for suites
-SUITE_LATEST_SCHEMA_VERSION = "0.0.1"
+# The identifier for the latest schema for specs
+SPEC_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for reports
 REPORT_LATEST_SCHEMA_VERSION = "0.0.1"
 
-# Version identifiers for suite schemas
-_SUITE_SCHEMA_VERSIONS = frozenset(("0.0.1",))
+# Version identifiers for spec schemas
+_SPEC_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 # Version identifier for report schemas
 _REPORT_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 
@@ -33,11 +33,11 @@ _SCHEMA_FILE_NAME = "schema.json"
 # -----------------------------------------------------------------------------
 
 
-def validate_suite_schema(
+def validate_spec_schema(
     document: Dict[str, Any], version: Optional[str] = None
 ):
     """
-    Validate the schema of a suite output document.
+    Validate the schema of a spec output document.
 
     :param document: The document instance
     :type document: Dict[str, Any]
@@ -48,16 +48,16 @@ def validate_suite_schema(
     :raises ValidationError: If the instance fails validation
     """
     version = (
-        version or document.get("schema_version") or SUITE_LATEST_SCHEMA_VERSION
+        version or document.get("schema_version") or SPEC_LATEST_SCHEMA_VERSION
     )
-    jsonschema.validate(instance=document, schema=_find_suite_schema(version))
+    jsonschema.validate(instance=document, schema=_find_spec_schema(version))
 
 
 def validate_report_schema(
     document: Dict[str, Any], version: Optional[str] = None
 ):
     """
-    Validate the schema of a suite output document.
+    Validate the schema of a spec output document.
 
     :param document: The document instance
     :type document: Dict[str, Any]
@@ -105,9 +105,9 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
     return json.loads(data)  # type: ignore
 
 
-def _find_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:
+def _find_spec_schema(version: Optional[str] = None) -> Dict[str, Any]:
     """
-    Find, load, and return the JSON schema for suite output.
+    Find, load, and return the JSON schema for spec output.
 
     :param version: The version identifier for the schema
     :type version: Optional[str]
@@ -118,10 +118,10 @@ def _find_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:
     :raises ValueError: If an invalid schema is specified
     """
     if version is None:
-        version = SUITE_LATEST_SCHEMA_VERSION
-    if version not in _SUITE_SCHEMA_VERSIONS:
-        raise ValueError(f"Invalid suite schema version {version} specified.")
-    return _find_schema(version, "suite")
+        version = SPEC_LATEST_SCHEMA_VERSION
+    if version not in _SPEC_SCHEMA_VERSIONS:
+        raise ValueError(f"Invalid spec schema version {version} specified.")
+    return _find_schema(version, "spec")
 
 
 def _find_report_schema(version: Optional[str] = None):

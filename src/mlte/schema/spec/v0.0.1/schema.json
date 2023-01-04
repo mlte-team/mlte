@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Suite Report",
+    "title": "Specification Report",
     "type": "object",
     "properties": {
         "schema_version": {
@@ -9,7 +9,7 @@
         },
         "name": {
             "type": "string",
-            "description": "A human-readable identifier for the suite."
+            "description": "A human-readable identifier for the specification."
         },
         "timestamp": {
             "type": "string",
@@ -17,7 +17,7 @@
         },
         "properties": {
             "type": "array",
-            "description": "The set of properties that compose the suite.",
+            "description": "The set of properties that compose the specification.",
             "items": {
                 "type": "object",
                 "properties": {

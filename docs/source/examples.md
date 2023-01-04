@@ -39,7 +39,7 @@ def load_model(path: str):
 ```
 
 ## Select Measurements
-Currently there are several measurements already implemented in *MLTE* measurement pacakage. As development continues, more measurements will be added. Below we demonstrate the process of binding measurements and their associated validators to the respective properties in a suite collection. 
+Currently there are several measurements already implemented in *MLTE* measurement pacakage. As development continues, more measurements will be added. Below we demonstrate the process of binding measurements and their associated validators to the respective properties in a specification collection. 
 
 ```python
 from mlte.measurement import bind
@@ -52,24 +52,24 @@ MB = 2**20
 GB = 2**30
 
 # Create a measurement for the size of the trained model;
-# attach a validator for the size, and bind to suite property
+# attach a validator for the size, and bind to spec property
 measure_size = bind(
     LocalObjectSize().with_validator_size_not_greater_than(threshold=64*MB),
-    suite.get_property("StorageCost")
+    spec.get_property("StorageCost")
 )
 
 # Create a measurement for the CPU utilization of the training process;
-# attach a validator for the maximum utilization, and bind to suite property
+# attach a validator for the maximum utilization, and bind to spec property
 measure_cpu = bind(
     LocalProcessCPUUtilization().with_validator_max_utilization_not_greater_than(threshold=0.9),
-    suite.get_property("TrainingComputeCost")
+    spec.get_property("TrainingComputeCost")
 )
 
 # Create a measurement for memory consumption of the training process;
-# attach a validator for the maximum consumption, and bind to suite property
+# attach a validator for the maximum consumption, and bind to spec property
 measure_mem = bind(
     LocalProcessMemoryConsumption().with_validator_max_consumption_not_greater_than(threshold=1*GB/KB),
-    suite.get_property("TrainingMemoryCost")
+    spec.get_property("TrainingMemoryCost")
 )
 ```
 
@@ -124,10 +124,10 @@ class ClassificationAccuracy(Measurement):
         )
 
 # Create a measurement for classification accuracy;
-# add a validator for the minimum acceptable accuracy, and bind to suite property
+# add a validator for the minimum acceptable accuracy, and bind to spec property
 measure_accuracy = bind(
     ClassificationAccuracy().with_validator_accuracy_not_less_than(threshold=0.65),
-    suite.get_property("Accuracy")
+    spec.get_property("Accuracy")
 )
 ```
 
@@ -173,11 +173,11 @@ print(cost_results[0][0].message)
 print(cost_results[1][0].message)
 ```
 
-## Build a Suite
-Suites are collections of properties that developers have prioritized for evaluating the model. Below we show the creation of a suite that contains four properties, accuracy, storage costs, training compute cost, and training memory cost. The Suite is named "DigitRecognizer1.0"
+## Build a Specification
+Specifications are collections of properties that developers have prioritized for evaluating the model. Below we show the creation of a spec that contains four properties, accuracy, storage costs, training compute cost, and training memory cost. The `Spec` is named "DigitRecognizer1.0"
 
 ```python
-from mlte.suites import Suite
+from mlte.spec import Spec
 from mlte.properties.costs import (
     StorageCost,
     TrainingComputeCost,
@@ -185,12 +185,12 @@ from mlte.properties.costs import (
 )
 from mlte.properties.functionality import Accuracy
 
-# Construct a suite with the selected properties
-suite = Suite("DigitRecognizer1.0")
-suite.add_property(Accuracy())
-suite.add_property(StorageCost())
-suite.add_property(TrainingComputeCost())
-suite.add_property(TrainingMemoryCost())
+# Construct a spec with the selected properties
+spec = Spec("DigitRecognizer1.0")
+spec.add_property(Accuracy())
+spec.add_property(StorageCost())
+spec.add_property(TrainingComputeCost())
+spec.add_property(TrainingMemoryCost())
 ```
 
 ## Build a Report
