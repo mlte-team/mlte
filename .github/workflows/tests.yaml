@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox tox-gh-actions black flake8 mypy
+        pip install tox tox-gh-actions importlib-metadata==4.13.0 black flake8 mypy
     - name: Format with black
       run: black --check src/ && black --check test/
     - name: Lint with flake8
