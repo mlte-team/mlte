@@ -4,12 +4,12 @@ An opaque evaluation result, without semantics.
 
 from typing import Dict, Any
 
-from .evalution_result import EvaluationResult
+from .result import Result
 
 
-class Opaque(EvaluationResult):
+class Opaque(Result):
     """
-    The 'default' EvaluationResult instance for custom
+    The 'default' Result instance for custom
     measurements that do not define a `semantics()` method.
     """
 

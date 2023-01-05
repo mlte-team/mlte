@@ -2,12 +2,12 @@
 An EvaluationResult instance for a scalar, real value.
 """
 
-from .evalution_result import EvaluationResult
+from .result import Result
 
 
-class Real(EvaluationResult):
+class Real(Result):
     """
-    Real implements the EvaluationResult
+    Real implements the Result
     interface for a single real value.
     """
 

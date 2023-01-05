@@ -1,4 +1,4 @@
-from .bind import bind
 from .measurement import Measurement
+from .measurement_metadata import MeasurementMetadata
 
-__all__ = ["Measurement", "bind"]
+__all__ = ["Measurement", "MeasurementMetadata"]
