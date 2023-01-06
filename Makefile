@@ -23,4 +23,4 @@ typecheck:
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py38 -- test/measurement/result/test_opaque.py
+	tox --develop -e py38 -- test/measurement/storage/test_local_object_size.py

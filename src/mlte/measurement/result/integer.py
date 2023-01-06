@@ -84,7 +84,7 @@ class Integer(Result):
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
             )
-            if self.value < value
+            if integer.value < value
             else Failure(
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
@@ -105,7 +105,7 @@ class Integer(Result):
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than or equal to threshold {value}"
             )
-            if self.value <= value
+            if integer.value <= value
             else Failure(
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
