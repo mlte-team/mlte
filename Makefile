@@ -23,4 +23,4 @@ typecheck:
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py38 -- test/measurement/cpu/test_local_process_cpu_utilization.py
+	tox --develop -e py38 -- test/measurement/memory/test_local_process_memory_consumption.py

@@ -153,27 +153,6 @@ class CPUStatistics(Result):
         )
 
 
-def _get_cpu_usage(pid: int) -> float:
-    """
-    Get the current CPU usage for the process with `pid`.
-
-    :param pid: The identifier of the process
-    :type pid: int
-
-    :return: The current CPU utilization as percentage
-    :rtype: float
-    """
-    try:
-        stdout = subprocess.check_output(
-            ["ps", "-p", f"{pid}", "-o", "%cpu"], stderr=subprocess.DEVNULL
-        ).decode("utf-8")
-        return float(stdout.strip().split("\n")[1].strip())
-    except SubprocessError:
-        return -1.0
-    except ValueError:
-        return -1.0
-
-
 # -----------------------------------------------------------------------------
 # LocalProcessCPUUtilization
 # -----------------------------------------------------------------------------
@@ -221,3 +200,29 @@ class LocalProcessCPUUtilization(Measurement):
             min=min(stats),
             max=max(stats),
         )
+
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
+def _get_cpu_usage(pid: int) -> float:
+    """
+    Get the current CPU usage for the process with `pid`.
+
+    :param pid: The identifier of the process
+    :type pid: int
+
+    :return: The current CPU utilization as percentage
+    :rtype: float
+    """
+    try:
+        stdout = subprocess.check_output(
+            ["ps", "-p", f"{pid}", "-o", "%cpu"], stderr=subprocess.DEVNULL
+        ).decode("utf-8")
+        return float(stdout.strip().split("\n")[1].strip())
+    except SubprocessError:
+        return -1.0
+    except ValueError:
+        return -1.0
