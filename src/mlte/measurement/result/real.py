@@ -49,6 +49,8 @@ class Real(Result):
         """
         Deserialize an Real from a JSON object.
 
+        :param measurement_metadata: The generating measurement's metadata
+        :type measurement_metadata: MeasurementMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 

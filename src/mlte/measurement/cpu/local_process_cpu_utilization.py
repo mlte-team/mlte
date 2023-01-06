@@ -2,18 +2,29 @@
 CPU utilization measurement for local training processes.
 """
 
+from __future__ import annotations
+
 import time
 import subprocess
 from typing import Dict, Any
 from subprocess import SubprocessError
 
-from ..measurement import Measurement
-from ..evaluation import EvaluationResult
-from ..validation import Validator, Success, Failure
-from ..._private.platform import is_windows
+from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement.result import Result
+from mlte.measurement.validation import (
+    Validator,
+    ValidationResult,
+    Success,
+    Failure,
+)
+from mlte._private.platform import is_windows
+
+# -----------------------------------------------------------------------------
+# CPUStatistics
+# -----------------------------------------------------------------------------
 
 
-class CPUStatistics(EvaluationResult):
+class CPUStatistics(Result):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
@@ -21,13 +32,17 @@ class CPUStatistics(EvaluationResult):
     """
 
     def __init__(
-        self, measurement: Measurement, avg: float, min: float, max: float
+        self,
+        measurement_metadata: MeasurementMetadata,
+        avg: float,
+        min: float,
+        max: float,
     ):
         """
         Initialize a CPUStatistics instance.
 
-        :param measurement: The generating measurement
-        :type measurement: Measurement
+        :param measurement_metadata: The generating measurement's metadata
+        :type measurement_metadata: MeasurementMetadata
         :param avg: The average utilization
         :type avg: float
         :param min: The minimum utilization
@@ -35,7 +50,7 @@ class CPUStatistics(EvaluationResult):
         :param max: The maximum utilization
         :type max: float
         """
-        super().__init__(measurement)
+        super().__init__(self, measurement_metadata)
 
         self.avg = avg
         """The average CPU utilization, as a proportion."""
@@ -46,6 +61,37 @@ class CPUStatistics(EvaluationResult):
         self.max = max
         """The maximum CPU utilization, as a proportion."""
 
+    def serialize(self) -> Dict[str, Any]:
+        """
+        Serialize an CPUStatistics to a JSON object.
+
+        :return: The JSON object
+        :rtype: Dict[str, Any]
+        """
+        return {"avg": self.avg, "min": self.min, "max": self.max}
+
+    @staticmethod
+    def deserialize(
+        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+    ) -> CPUStatistics:
+        """
+        Deserialize an CPUStatistics from a JSON object.
+
+        :param measurement_metadata: The generating measurement's metadata
+        :type measurement_metadata: MeasurementMetadata
+        :param json: The JSON object
+        :type json: Dict[str, Any]
+
+        :return: The deserialized instance
+        :rtype: Integer
+        """
+        return CPUStatistics(
+            measurement_metadata,
+            avg=json["avg"],
+            min=json["min"],
+            max=json["max"],
+        )
+
     def __str__(self) -> str:
         """Return a string representation of CPUStatistics."""
         s = ""
@@ -53,6 +99,58 @@ class CPUStatistics(EvaluationResult):
         s += f"Minimum: {self.min:.2f}%\n"
         s += f"Maximum: {self.max:.2f}%"
         return s
+
+    def max_utilization_less_than(self, threshold: float) -> ValidationResult:
+        """
+        Construct and invoke a validator for maximum CPU utilization.
+
+        :param threshold: The threshold value for maximum utilization
+        :type threshold: float
+
+        :return: The validation result
+        :rtype: ValidationResult
+        """
+        return Validator(
+            "MaximumUtilization",
+            lambda stats: Success(
+                f"Maximum utilization {stats.max:.2f} "
+                f"below threshold {threshold:.2f}"
+            )
+            if stats.max < threshold
+            else Failure(
+                (
+                    f"Maximum utilization {stats.max:.2f} "
+                    f"exceeds threshold {threshold:.2f}"
+                )
+            ),
+        )(self)
+
+    def average_utilization_less_than(
+        self, threshold: float
+    ) -> ValidationResult:
+        """
+        Construct and invoke a validator for average CPU utilization.
+
+        :param threshold: The threshold value for average utilization
+        :type threshold: float
+
+        :return: The validation result
+        :rtype: ValidationResult
+        """
+        return Validator(
+            "AverageUtilization",
+            lambda stats: Success(
+                f"Average utilization {stats.max:.2f} "
+                f"below threshold {threshold:.2f}"
+            )
+            if stats.avg < threshold
+            else Failure(
+                (
+                    f"Average utilization {stats.avg:.2f} "
+                    "exceeds threshold {threshold:.2f}"
+                )
+            ),
+        )
 
 
 def _get_cpu_usage(pid: int) -> float:
@@ -76,18 +174,28 @@ def _get_cpu_usage(pid: int) -> float:
         return -1.0
 
 
+# -----------------------------------------------------------------------------
+# LocalProcessCPUUtilization
+# -----------------------------------------------------------------------------
+
+
 class LocalProcessCPUUtilization(Measurement):
     """Measures CPU utilization for a local process."""
 
-    def __init__(self):
-        """Initialize a new LocalProcessCPUUtilization measurement."""
-        super().__init__("LocalProcessCPUUtilization")
+    def __init__(self, identifier: str):
+        """
+        Initialize a new LocalProcessCPUUtilization measurement.
+
+        :param identifier: A unique identifier for the measurement
+        :type identifier: str
+        """
+        super().__init__(self, identifier)
         if is_windows():
             raise RuntimeError(
                 f"Measurement {self.name} is not supported on Windows."
             )
 
-    def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
+    def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
         """
         Monitor the CPU utilization of process at `pid` until exit.
 
@@ -107,86 +215,9 @@ class LocalProcessCPUUtilization(Measurement):
             stats.append(util / 100.0)
             time.sleep(poll_interval)
 
-        return {
-            "avg_utilization": sum(stats) / len(stats),
-            "min_utilization": min(stats),
-            "max_utilization": max(stats),
-        }
-
-    def semantics(self, data: Dict[str, Any]) -> CPUStatistics:
-        """
-        Provide semantics for measurement output.
-
-        :param data: Measurement output data
-        :type data: Dict
-
-        :return: CPU utilization statistics
-        :rtype: CPUStatistics
-        """
-        assert "avg_utilization" in data, "Broken invariant."
-        assert "min_utilization" in data, "Broken invariant."
-        assert "max_utilization" in data, "Broken invariant."
         return CPUStatistics(
-            self,
-            avg=data["avg_utilization"],
-            min=data["min_utilization"],
-            max=data["max_utilization"],
-        )
-
-    def with_validator_max_utilization_not_greater_than(
-        self, threshold: float
-    ) -> Measurement:
-        """
-        Add a validator for maximum CPU utilization.
-
-        :param threshold: The threshold value for maximum utilization
-        :type threshold: float
-
-        :return: The measurement instance (`self`)
-        :rtype: Measurement
-        """
-        return self.with_validator(
-            Validator(
-                "MaximumUtilization",
-                lambda stats: Success(
-                    f"Maximum utilization {stats.max:.2f} "
-                    f"below threshold {threshold:.2f}"
-                )
-                if stats.max <= threshold
-                else Failure(
-                    (
-                        f"Maximum utilization {stats.max:.2f} "
-                        f"exceeds threshold {threshold:.2f}"
-                    )
-                ),
-            )
-        )
-
-    def with_validator_avg_utilization_not_greater_than(
-        self, threshold: float
-    ) -> Measurement:
-        """
-        Add a validator for average CPU utilization.
-
-        :param threshold: The threshold value for average utilization
-        :type threshold: float
-
-        :return: The measurement instance (`self`)
-        :rtype: Measurement
-        """
-        return self.with_validator(
-            Validator(
-                "AverageUtilization",
-                lambda stats: Success(
-                    f"Average utilization {stats.max:.2f} "
-                    f"below threshold {threshold:.2f}"
-                )
-                if stats.avg <= threshold
-                else Failure(
-                    (
-                        f"Average utilization {stats.avg:.2f} "
-                        "exceeds threshold {threshold:.2f}"
-                    )
-                ),
-            )
+            self.metadata,
+            avg=sum(stats) / len(stats),
+            min=min(stats),
+            max=max(stats),
         )

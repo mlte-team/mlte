@@ -69,7 +69,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
         # TODO(Kyle): This is probably not necessary,
         # and is certainly overkill for the current
         # measurements that we have implemented. Revisit.
-        self.data = deepcopy(result)
+        self.result = deepcopy(result)
         return self
 
     def __eq__(self, other: object) -> bool:
