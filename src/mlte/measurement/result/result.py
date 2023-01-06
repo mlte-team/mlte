@@ -101,9 +101,7 @@ class Result(metaclass=abc.ABCMeta):
         )
 
     @classmethod
-    def load(
-        cls, identifier: str, version: Optional[int] = None
-    ) -> Dict[str, Any]:
+    def load(cls, identifier: str, version: Optional[int] = None) -> Result:
         """
         Load non-semantically-enriched result data from an artifact store.
         This data may then be passed to the type-specific load() method to
@@ -115,8 +113,8 @@ class Result(metaclass=abc.ABCMeta):
         the latest version of the result is read
         :type version: int
 
-        :return: Raw result data
-        :rtype: Dict[str, Any]
+        :return: The loaded result
+        :rtype: Result
         """
         state = global_state()
         _check_global_state(state)

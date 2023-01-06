@@ -9,6 +9,7 @@ import pytest
 import threading
 import subprocess
 
+import mlte
 from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
 from mlte.measurement.validation import Validator, Success, Failure
@@ -94,3 +95,20 @@ def test_cpu_windows_evaluate():
 def test_cpu_windows_validate():
     with pytest.raises(RuntimeError):
         _ = LocalProcessCPUUtilization("identifier")
+
+
+def test_result_save_load(tmp_path):
+    mlte.set_model("mymodel", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
+    p = spin_for(5)
+
+    m = LocalProcessCPUUtilization("identifier")
+
+    stats: CPUStatistics = m.evaluate(p.pid)
+    stats.save()
+
+    r: CPUStatistics = CPUStatistics.load("identifier")
+    assert r.avg == stats.avg
+    assert r.min == stats.min
+    assert r.max == stats.max

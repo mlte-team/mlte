@@ -4,7 +4,7 @@ An opaque evaluation result, without semantics.
 
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from .result import Result
 from ..measurement_metadata import MeasurementMetadata
@@ -76,3 +76,69 @@ class Opaque(Result):
     def __setitem__(self, key: str, value: str) -> None:
         """Raise ValueError to indicate Opaque is read-only."""
         raise ValueError("Opaque is read-only.")
+
+    def __eq__(self, other: Opaque) -> bool:
+        """Compare Opaque instances for equality."""
+        return _equal(self, other)
+
+    def __neq__(self, other: Opaque) -> bool:
+        """Compare Opaque instances for inequality."""
+        return not _equal(self, other)
+
+
+def _equal(a: Opaque, b: Opaque) -> bool:
+    return (
+        a.measurement_typename == b.measurement_typename
+        and a.measurement_identifier == b.measurement_identifier
+        and _equal_helper_dict(a.data, b.data)
+    )
+
+
+def _equal_helper_dict(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
+    akeys = set(a.keys())
+    bkeys = set(b.keys())
+    if not (len(akeys) == len(bkeys) == len(akeys.intersection(bkeys))):
+        return False
+
+    for k in akeys:
+        assert k in a and k in b, "Broken invariant."
+        if type(a[k]) != type(b[k]):
+            return False
+
+        # NOTE(Kyle): This only considers dict and list for
+        # custom comparison; expand to include other containers
+        if isinstance(a[k], dict):
+            if not _equal_helper_dict(a[k], b[k]):
+                return False
+        elif isinstance(a[k], list):
+            if not _equal_helper_list(a[k], b[k]):
+                return False
+        else:
+            if a[k] != b[k]:
+                return False
+
+    return True
+
+
+def _equal_helper_list(a: List[Any], b: List[Any]) -> bool:
+    if len(a) != len(b):
+        return False
+
+    for i in range(len(a)):
+        aitem = a[i]
+        bitem = b[i]
+
+        if type(aitem) != type(bitem):
+            return False
+
+        if isinstance(aitem, dict):
+            if not _equal_helper_dict(aitem, bitem):
+                return False
+        elif isinstance(aitem, list):
+            if not _equal_helper_list(aitem, bitem):
+                return False
+        else:
+            if aitem != bitem:
+                return False
+
+    return True

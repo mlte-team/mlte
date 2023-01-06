@@ -4,6 +4,7 @@ Unit tests for Real.
 
 import pytest
 
+import mlte
 from mlte.measurement import Measurement, MeasurementMetadata
 from mlte.measurement.result import Real
 
@@ -37,6 +38,22 @@ def test_real_serde():
     serialized = r.serialize()
     recovered = Real.deserialize(m, serialized)
     assert recovered == r
+
+
+def test_real_save_load(tmp_path):
+    mlte.set_model("mymodel", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
+    m = MeasurementMetadata("typename", "identifier")
+    i = Real(m, 3.14)
+
+    # Save
+    i.save()
+
+    # Recover
+    r = Real.load("identifier")
+
+    assert r == i
 
 
 def test_real_e2e():

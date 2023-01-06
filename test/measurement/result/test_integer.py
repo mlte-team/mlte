@@ -4,6 +4,7 @@ Unit tests for Integer.
 
 import pytest
 
+import mlte
 from mlte.measurement import Measurement, MeasurementMetadata
 from mlte.measurement.result import Integer
 
@@ -38,6 +39,22 @@ def test_integer_serde():
     serialized = i.serialize()
     recovered = Integer.deserialize(m, serialized)
     assert recovered == i
+
+
+def test_integer_save_load(tmp_path):
+    mlte.set_model("mymodel", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
+    m = MeasurementMetadata("typename", "identifier")
+    i = Integer(m, 1)
+
+    # Save
+    i.save()
+
+    # Recover
+    r = Integer.load("identifier")
+
+    assert r == i
 
 
 def test_integer_e2e():
