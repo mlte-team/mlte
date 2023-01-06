@@ -2,30 +2,58 @@
 An opaque evaluation result, without semantics.
 """
 
+from __future__ import annotations
+
 from typing import Dict, Any
 
 from .result import Result
+from ..measurement_metadata import MeasurementMetadata
 
 
 class Opaque(Result):
     """
-    The 'default' Result instance for custom
-    measurements that do not define a `semantics()` method.
+    The 'default' Result instance for measurements that do not provide their own.
     """
 
-    def __init__(self, measurement, data: Dict[str, Any]):
+    def __init__(
+        self, measurement_metadata: MeasurementMetadata, data: Dict[str, Any]
+    ):
         """
         Initialize an Opaque instance.
 
-        :param measurement: The generating measurement
-        :type measurement: Measurement
+        :param measurement_metadata: The generating measurement's metadata
+        :type measurement: MeasurementMetadata
         :param data: The output of the measurement
         :type data: Dict
         """
-        super().__init__(measurement)
+        super().__init__(self, measurement_metadata)
 
         self.data = data
         """The raw output from measurement execution."""
+
+    def serialize(self) -> Dict[str, Any]:
+        """
+        Serialize an Opaque to a JSON object.
+
+        :return: The JSON object
+        :rtype: Dict[str, Any]
+        """
+        return {"data": self.data}
+
+    @staticmethod
+    def deserialize(
+        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+    ) -> Opaque:
+        """
+        Deserialize an Opaque from a JSON object.
+
+        :param json: The JSON object
+        :type json: Dict[str, Any]
+
+        :return: The deserialized instance
+        :rtype: Opaque
+        """
+        return Opaque(measurement_metadata, json["data"])
 
     def __getitem__(self, key: str) -> Any:
         """

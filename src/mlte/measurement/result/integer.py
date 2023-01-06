@@ -12,8 +12,7 @@ from ..measurement_metadata import MeasurementMetadata
 
 class Integer(Result):
     """
-    Integer implements the Result
-    interface for a single integer value.
+    Integer implements the Result interface for a single integer value.
     """
 
     def __init__(self, measurement_metadata: MeasurementMetadata, value: int):
@@ -59,6 +58,16 @@ class Integer(Result):
     def __str__(self) -> str:
         """Return a string representation of the Integer."""
         return f"{self.value}"
+
+    def __eq__(self, other: Integer) -> bool:
+        """Comparison between Integer values."""
+        assert isinstance(other, Integer), "Broken precondition."
+        return self.value == other.value
+
+    def __neq__(self, other: Integer) -> bool:
+        """Comparison between Integer values."""
+        assert isinstance(other, Integer), "Broken precondition."
+        return not self.__eq__(other)
 
     def less_than(self, value: int) -> ValidationResult:
         """
