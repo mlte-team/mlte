@@ -118,7 +118,8 @@ def _read_result(result_path: Path, version: Optional[int] = None) -> Result:
     ), "Broken invariant."
 
     # Filter to only include the version of interest
-    # TODO(Kyle): Determine how we want to handle multiversioning from user perspective
+    # TODO(Kyle): Determine how we want to handle
+    # multiversioning from user perspective / interface
     version = (
         max(_available_result_versions(result_path))
         if version is None
@@ -188,7 +189,8 @@ def read_result(
     result_path = _result_path(version_path, result_identifier)
     if not result_path.exists():
         raise RuntimeError(
-            f"Failed to read result, result with identifier {result_identifier} not found."
+            f"Failed to read result, "
+            f"result with identifier {result_identifier} not found."
         )
 
     if (
@@ -196,7 +198,8 @@ def read_result(
         and result_version not in _available_result_versions(result_path)
     ):
         raise RuntimeError(
-            f"Failed to read result, requested version {result_version} not found."
+            f"Failed to read result, "
+            f"requested version {result_version} not found."
         )
 
     result = _read_result(result_path, result_version)
@@ -263,5 +266,6 @@ def _check_exists(
     version_path = model_path / model_version
     if not version_path.exists():
         raise RuntimeError(
-            f"Model version {model_version} for model {model_identifier} not found."
+            f"Model version {model_version} "
+            "for model {model_identifier} not found."
         )

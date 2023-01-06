@@ -107,7 +107,8 @@ class Real(Result):
         return Validator(
             "LessOrEqualTo",
             lambda real: Success(
-                f"Real magnitude {real.value} less than or equal to threshold {value}"
+                f"Real magnitude {real.value} "
+                "less than or equal to threshold {value}"
             )
             if self.value <= value
             else Failure(

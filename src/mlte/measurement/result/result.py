@@ -22,11 +22,14 @@ def _has_callable(type, name) -> bool:
 
 
 def _check_global_state(state: GlobalState):
-    """Ensure that the global state contains information necessary to save/load results."""
+    """
+    Ensure that the global state contains
+    information necessary to save/load results.
+    """
     if not state.has_model():
-        raise RuntimeError(f"Set model context prior to saving result.")
+        raise RuntimeError("Set model context prior to saving result.")
     if not state.has_artifact_store_uri():
-        raise RuntimeError(f"Set artifact store URI prior to saving result.")
+        raise RuntimeError("Set artifact store URI prior to saving result.")
 
 
 class Result(metaclass=abc.ABCMeta):

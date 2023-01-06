@@ -105,7 +105,8 @@ class Integer(Result):
         return Validator(
             "LessOrEqualTo",
             lambda integer: Success(
-                f"Integer magnitude {integer.value} less than or equal to threshold {value}"
+                f"Integer magnitude {integer.value} "
+                "less than or equal to threshold {value}"
             )
             if integer.value <= value
             else Failure(

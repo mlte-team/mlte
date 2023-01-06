@@ -12,7 +12,8 @@ from ..measurement_metadata import MeasurementMetadata
 
 class Opaque(Result):
     """
-    The 'default' Result instance for measurements that do not provide their own.
+    The 'default' Result instance for
+    measurements that do not provide their own.
     """
 
     def __init__(
@@ -102,7 +103,7 @@ def _equal_helper_dict(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
 
     for k in akeys:
         assert k in a and k in b, "Broken invariant."
-        if type(a[k]) != type(b[k]):
+        if not isinstance(a[k], type(b[k])):
             return False
 
         # NOTE(Kyle): This only considers dict and list for
