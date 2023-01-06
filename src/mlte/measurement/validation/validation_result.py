@@ -8,6 +8,7 @@ import abc
 from copy import deepcopy
 from typing import Optional
 
+from mlte.property import Property
 from ..result import Result
 
 
@@ -48,6 +49,18 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
         self.message = ""
         """The message indicating the reason for status."""
+
+    def bind(self, property: Property):
+        """
+        Bind a ValidationResult instance to Property `property`.
+
+        :param property: The property to which the validation result is bound
+        :type property: Property
+        """
+        assert self.result is not None, "Broken precondition."
+        if self.result.binding.is_bound():
+            raise RuntimeError("Attempt to bind a previously-bound entity.")
+        self.result.bind(property)
 
     def _with_result(self, result: Result) -> ValidationResult:
         """

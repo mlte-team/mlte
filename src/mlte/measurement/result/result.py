@@ -7,8 +7,10 @@ import abc
 
 from typing import Dict, Any, Optional
 
+from mlte.property import Property
 from mlte._global import global_state, GlobalState
 from mlte.store.api import read_result, write_result
+from mlte.measurement._binding import Binding, Bound, Unbound
 
 # NOTE(Kyle): This must remain a relative import to
 # circumvent a circular import issue, until we do a
@@ -66,6 +68,9 @@ class Result(metaclass=abc.ABCMeta):
         self.measurement_identifier = measurement_metadata.identifier
         # Store the type of the result itself
         self.type = type(instance).__name__
+
+        # The binding state for the result
+        self.binding = Unbound()
 
     @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
@@ -136,12 +141,24 @@ class Result(metaclass=abc.ABCMeta):
 
         # TODO: Validate response
 
-        return cls.deserialize(
+        result: Result = cls.deserialize(
             MeasurementMetadata(
                 json["measurement_typename"], json["measurement_identifier"]
             ),
             json["payload"],
         )
+        return result._with_binding(Binding.from_json(json["binding"]))
+
+    def bind(self, property: Property):
+        """
+        Bind the Result instance to Property `property`.
+
+        :param property: The property to which the result is bound
+        :type property: Property
+        """
+        if self.binding.is_bound():
+            raise RuntimeError("Attempt to bind previously-bound entity.")
+        self.binding = Bound(property.name)
 
     def _serialize_header(self) -> Dict[str, Any]:
         """Return the header for serialization."""
@@ -149,11 +166,16 @@ class Result(metaclass=abc.ABCMeta):
             "measurement_typename": self.measurement_typename,
             "measurement_identifier": self.measurement_identifier,
             "result_type": self.type,
+            "binding": self.binding.to_json(),
         }
 
-    @staticmethod
-    def _deserialize_header(json: Dict[str, Any]) -> MeasurementMetadata:
-        """TODO"""
-        return MeasurementMetadata(
-            json["measurement_typename"], json["measurement_identifier"]
-        )
+    def _with_binding(self, binding: Binding) -> Result:
+        """
+        Apply a particular binding the the Result instance.
+
+        :param binding: The binding that is applied
+        :type binding: Binding
+        """
+        assert not self.binding.is_bound(), "Broken precondition."
+        self.binding = binding
+        return self
