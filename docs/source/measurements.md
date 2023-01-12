@@ -1,6 +1,6 @@
 # Measurements
 
-Here is a list of the current measurements that MLTE offers:
+MLTE offers the following measurements:
 * local_process_cpu_utilization: CPU utilization measurement for local training processes
 * local_process_memory_consumption: Memory consumption measurement for local training processes
 * local_object_size: Storage capacity measurement for locally-stored objects
