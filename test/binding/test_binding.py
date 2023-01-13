@@ -32,7 +32,7 @@ def test_equality2():
     assert a != b
 
 
-def test_equality2():
+def test_equality3():
     a = Binding({"foo": ["bar", "baz"]})
     b = Binding({"foo": ["woo", "baz"]})
     assert a != b

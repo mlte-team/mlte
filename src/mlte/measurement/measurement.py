@@ -7,8 +7,6 @@ from __future__ import annotations
 import abc
 import typing
 
-from mlte.property import Property
-from ._binding import Bound, Unbound
 from .result import Result
 from .measurement_metadata import MeasurementMetadata
 
@@ -40,9 +38,6 @@ class Measurement(metaclass=abc.ABCMeta):
         self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
 
-        self.binding = Unbound()
-        """The measurement's binding."""
-
     @abc.abstractmethod
     @typing.no_type_check
     def __call__(self, *args, **kwargs) -> Result:
@@ -57,21 +52,5 @@ class Measurement(metaclass=abc.ABCMeta):
         :return: The result of measurement execution, with semantics
         :rtype: Result
         """
-        # Evaluate the measurement, and propagate binding
-        return self.__call__(*args, **kwargs)._with_binding(self.binding)
-
-    def bind(self, property: Property):
-        """
-        Bind the Measurement instance to Property `property`.
-
-        Binding a Measurement has a slightly different meaning from
-        binding a Result. Precisely, binding a Measurement entails
-        that the Result produced by the Measurement inherits the binding,
-        meaning that the result need not be bound after it is produced.
-
-        :param property: The property to which the measurement is bound
-        :type property: Property
-        """
-        if self.binding.is_bound():
-            raise RuntimeError("Attempt to bind a previously-bound entity.")
-        self.binding = Bound(property.name)
+        # Evaluate the measurement
+        return self.__call__(*args, **kwargs)

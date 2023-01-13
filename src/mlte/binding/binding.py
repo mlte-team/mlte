@@ -31,16 +31,16 @@ def _verify_integrity(description: Dict[str, List[str]]):
     # Ensure that all keys are `str`
     for k in description.keys():
         if not isinstance(k, str):
-            raise RuntimeError(f"All property identifiers must be `str`.")
+            raise RuntimeError("All property identifiers must be `str`.")
     # Ensure all values are `list`
     for v in description.values():
         if not isinstance(v, list):
-            raise RuntimeError(f"All values in Binding must be `list`.")
+            raise RuntimeError("All values in Binding must be `list`.")
     # Ensure all values in each list are `str`
     for v in description.values():
         for e in v:
             if not isinstance(e, str):
-                raise RuntimeError(f"All result identifiers must be `str`.")
+                raise RuntimeError("All result identifiers must be `str`.")
 
 
 class Binding:
@@ -62,7 +62,7 @@ class Binding:
     def identifiers_for(self, property_name: str) -> List[str]:
         """
         Return the identifiers corresponding to a particular property name.
-        
+
         :param property_name: The name of the property\
         :type property_name: str
         :return: A collection of result identifiers

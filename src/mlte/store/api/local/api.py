@@ -326,7 +326,7 @@ def read_binding(
     assert model_version_path.is_dir(), "Broken invariant."
 
     if not _binding_is_saved(model_version_path):
-        raise RuntimeError(f"Failed to read binding, no binding is saved.")
+        raise RuntimeError("Failed to read binding, no binding is saved.")
 
     return _read_binding(model_version_path)
 
