@@ -14,12 +14,19 @@ from .data_model import (
 # The prefix that indicates a local filesystem directory is used
 LOCAL_URI_PREFIX = "local://"
 
+# The name of the file that contains serialized specs
+SPEC_FILENAME = "spec.json"
+# The name of the file that contains serialized bindings
+BINDING_FILENAME = "binding.json"
+
 """
 The overall structure for the directory hierarchy looks like:
 
 root/
   model_identifier0/
     model_version0/
+      spec.json                 <- ONLY present if Spec is saved
+      binding.json              <- ONLY present if Binding is saved
       result_identifier0.json
 
 The data for an individual result is then stored within a JSON file.
@@ -94,8 +101,72 @@ def _result_path(model_version_path: Path, result_identifier: str):
     return Path(str(path).replace(" ", "-"))
 
 
+def _spec_is_saved(model_version_path: Path) -> bool:
+    """
+    Determine if a specification is saved to the store for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+
+    :return: `True` if a binding is present, `False` otherwise
+    :rtype: bool
+    """
+    assert model_version_path.is_dir(), "Broken precondition."
+    return (model_version_path / SPEC_FILENAME).is_file()
+
+
+def _binding_is_saved(model_version_path: Path) -> bool:
+    """
+    Determine if a binding is saved to the store for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+
+    :return: `True` if a binding is present, `False` otherwise
+    :rtype: bool
+    """
+    assert model_version_path.is_dir(), "Broken precondition."
+    return (model_version_path / BINDING_FILENAME).is_file()
+
+
 # -----------------------------------------------------------------------------
-# Read
+# Read / Write Binding
+# -----------------------------------------------------------------------------
+
+
+def _read_binding(model_version_path: Path) -> Dict[str, Any]:
+    """
+    Read binding data for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+
+    :return: The binding data
+    :rtype: Dict[str, Any]
+    """
+    binding_path = model_version_path / BINDING_FILENAME
+    assert binding_path.is_file(), "Broken invariant."
+
+    with open(binding_path, "r") as f:
+        return json.load(f)
+
+
+def _write_binding(model_version_path: Path, data: Dict[str, Any]):
+    """
+    Write binding data for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+    :param data: The binding data
+    :type data: Dict[str, Any]
+    """
+    binding_path = model_version_path / BINDING_FILENAME
+    with open(binding_path, "w") as f:
+        json.dump(data, f)
+
+
+# -----------------------------------------------------------------------------
+# Read Result
 # -----------------------------------------------------------------------------
 
 
@@ -131,7 +202,7 @@ def _read_result(result_path: Path, version: Optional[int] = None) -> Result:
 
 
 # -----------------------------------------------------------------------------
-# Write
+# Write Result
 # -----------------------------------------------------------------------------
 
 
@@ -240,6 +311,50 @@ def write_result(
 
     result_path = _result_path(version_path, result_identifier)
     _write_result(result_path, result, result.tag)
+
+
+def read_binding(
+    uri: str, model_identifier: str, model_version: str
+) -> Dict[str, Any]:
+    """TODO(Kyle)"""
+    root = _parse_root_path(uri)
+    assert root.exists(), "Broken precondition."
+
+    _check_exists(root, model_identifier, model_version)
+
+    model_version_path = root / model_identifier / model_version
+    assert model_version_path.is_dir(), "Broken invariant."
+
+    if not _binding_is_saved(model_version_path):
+        raise RuntimeError(f"Failed to read binding, no binding is saved.")
+
+    return _read_binding(model_version_path)
+
+
+def write_binding(
+    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
+):
+    """TODO(Kyle)"""
+    root = _parse_root_path(uri)
+    assert root.exists(), "Broken precondition."
+
+    # Create model directory
+    model_path = root / model_identifier
+    if not model_path.exists():
+        model_path.mkdir()
+
+    # Create version directory
+    version_path = model_path / model_version
+    if not version_path.exists():
+        version_path.mkdir()
+
+    model_version_path = root / model_identifier / model_version
+    _write_binding(model_version_path, data)
+
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
 
 
 def _check_exists(
