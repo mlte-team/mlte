@@ -189,23 +189,19 @@ class Spec:
         :rtype: BoundSpec
         """
         self._validate_binding(binding, results, strict)
-        return BoundSpec({})
-        # self._validate_bindings(*results)
-        # if strict:
-        #     self._validate_property_coverage(*results)
 
-        # properties = [
-        #     self._collect_property(property, *results)
-        #     for property in self.properties
-        # ]
-        # document: Dict[str, Any] = {
-        #     "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-        #     "metadata": self._metadata(),
-        #     "properties": properties,
-        # }
-        # return BoundSpec(document)
+        properties = [
+            self._bind_to_property(property, binding, results)
+            for property in self.properties
+        ]
+        document: Dict[str, Any] = {
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
+            "metadata": self._metadata(),
+            "properties": properties,
+        }
+        return BoundSpec(document)
 
-    def _metadata() -> Dict[str, Any]:
+    def _metadata(self) -> Dict[str, Any]:
         """Generate Spec metadata."""
         state = global_state()
         if not state.has_model():
@@ -228,7 +224,7 @@ class Spec:
 
         :param binding: The binding from properties to result
         :type binding: Binding
-        :param results: Validation results
+        :param results: Collection of ValidationResults
         :type results: ValidationResult
         :param strict: Flag indicating strict measurement requirements
         :type strict: bool
@@ -238,10 +234,18 @@ class Spec:
         # Ensure that binding and spec are compatible
         _validate_binding_spec_compatibility(binding, self)
         # Ensure that all results are unique
-        _validate_result_uniqueness(*results)
+        _validate_result_uniqueness(results)
+        # Ensure that each bind point in binding has a result
+        _validate_all_bindings_have_result(binding, results)
+        if strict:
+            # Ensure that every collected result is bound
+            _validate_all_results_have_binding(binding, results)
 
-    def _collect_property(
-        self, property: Property, *results: ValidationResult
+    def _bind_to_property(
+        self,
+        property: Property,
+        binding: Binding,
+        results: Iterable[ValidationResult],
     ) -> Dict[str, Any]:
         """
         Collect the results for an individual property
@@ -249,22 +253,25 @@ class Spec:
 
         :param property: The property of interest
         :type property: Property
-        :param results: The result collection
-        :type results: ValidationResult
+        :param binding: The mapping from properties to results
+        :type binding: Binding
+        :param results: The collection of results
+        :type results: Iterable[ValidationResult]
 
         :return: The property-level document
         :rtype: Dict[str, Any]
         """
         # Filter results relevant to property
-        results_for_property = [
-            r for r in results if property.name in r.binding.property_names
-        ]
+        targets = set(binding.identifiers_for(property.name))
+        assert len(targets) > 0, "Broken invariant."
+
+        results_for_property = [r for r in results if property.name in targets]
         measurements = []
         for _, group in groupby(
-            results_for_property, key=lambda vr: vr.binding.measurement_name
+            results_for_property, key=lambda vr: vr.result.measurement_typename
         ):
             measurements.append(
-                self._collect_measurement(*(vr for vr in group))
+                self._bind_for_measurement([vr for vr in group])
             )
 
         document = {
@@ -274,23 +281,23 @@ class Spec:
         }
         return document
 
-    def _collect_measurement(
-        self, *results: ValidationResult
+    def _bind_for_measurement(
+        self, results: Iterable[ValidationResult]
     ) -> Dict[str, Any]:
         """
         Collect results into a measurement-level document.
 
         :param result: The validation results for the measurement
-        :type results: ValidationResult
+        :type results: Iterable[ValidationResult]
 
         :return: The measurement-level document
         :rtype: Dict[str, Any]
         """
         assert len(results) > 0, "Broken invariant."
         assert _all_equal(
-            result.binding.measurement_name for result in results
+            result.result.measurement_typename for result in results
         ), "Broken invariant."
-        measurement_name = results[0].binding.measurement_name
+        measurement_name = results[0].result.measurement_typename
         document = {
             "name": measurement_name,
             "validators": [
@@ -335,11 +342,14 @@ def _validate_binding_spec_compatibility(binding: Binding, spec: Spec):
     for property in spec.properties:
         if len(binding.identifiers_for(property.name)) < 1:
             raise RuntimeError(
-                f"Binding must include at least one mapping for property {property.name}."
+                "Binding must include at least"
+                f" one mapping for property {property.name}."
             )
     for name in binding.description.keys():
         if not spec.has_property(name):
-            raise RuntimeError(f"Binding contains unnecessary property {name}.")
+            raise RuntimeError(
+                "Binding contains" f" unnecessary property {name}."
+            )
 
 
 def _validate_result_uniqueness(results: Iterable[ValidationResult]):
@@ -347,7 +357,7 @@ def _validate_result_uniqueness(results: Iterable[ValidationResult]):
     Validate the uniqueness of validation results.
 
     :param results: The validation results
-    :type results: ValidationResult
+    :type results: Iterable[ValidationResult]
 
     :raises RuntimeError: If any two results are equivalent
     """
@@ -357,42 +367,52 @@ def _validate_result_uniqueness(results: Iterable[ValidationResult]):
             raise RuntimeError("All validation results must be unique")
 
 
-def _validate_bindings_for_result(self, result: ValidationResult):
+def _validate_all_bindings_have_result(
+    binding: Binding, results: Iterable[ValidationResult]
+):
     """
-    Validate the bindings for an individual ValidationResult.
+    Ensure that at each identifier in a binding has a corresponding result.
 
-    :param result: The validation result
-    :type result: ValidationResult
+    :param binding: The binding
+    :type binding: Binding
+    :param results: The collection of results
+    :type results: Iterable[ValidationResult]
 
-    :raises RuntimeError: If any validation result is bound
-    to a property that does not exist in the spec
+    :raises: RuntimeError
     """
-    property_names = [p.name for p in self.properties]
-    if not all(
-        name in property_names for name in result.binding.property_names
-    ):
-        raise RuntimeError(
-            (
-                f"Result from validator {result.validator_name} "
-                "bound to nonexistent property."
-            )
-        )
+    result_identifiers = set(vr.result.identifier.name for vr in results)
+    for property_name, identifiers in binding.description.items():
+        for identifier in identifiers:
+            if identifier not in result_identifiers:
+                raise RuntimeError(
+                    f"Missing result to bind to {identifier}"
+                    f" for property {property_name}."
+                )
 
 
-def _validate_property_coverage(self, *results: ValidationResult):
+def _validate_all_results_have_binding(
+    binding: Binding, results: Iterable[ValidationResult]
+):
     """
-    Ensure that every property in the spec has at
-    least one associated measurement in `results`.
+    Ensure that each result has a corresponding identifier in binding.
 
-    :param results: The validation results
-    :type results: ValidationResult
+    :param binding: The binding
+    :type binding: Binding
+    :param results: The collection of results
+    :type results: Iterable[ValidationResult]
 
-    :raises RuntimeError: If any property is uncovered
+    :raises: RuntimeError
     """
-    for property in self.properties:
-        if not any(property.name in r.binding.property_names for r in results):
+    result_identifiers = set(vr.result.identifier.name for vr in results)
+
+    binding_identifiers = set(
+        id for collection in binding.description.values() for id in collection
+    )
+    for result_identifier in result_identifiers:
+        if result_identifier not in binding_identifiers:
             raise RuntimeError(
-                f"Property {property.name} has no bound measurements"
+                f"Result with identifier {result_identifier}"
+                " is not bound to any property."
             )
 
 

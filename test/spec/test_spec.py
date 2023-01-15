@@ -76,3 +76,29 @@ def test_bind_unique():
         _ = spec.bind(
             Binding({"property": ["id"]}), [i0.less_than(3), i1.less_than(3)]
         )
+
+
+def test_bind_coverage():
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["id"]})
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [])
+
+
+def test_bind_extra0():
+    # With strict = True, binding unnecessary result fails
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["i0"]})
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])
+
+
+def test_success():
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["i0", "i1"]})
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
+
+    _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])

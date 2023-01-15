@@ -14,18 +14,11 @@ from mlte.measurement.storage import LocalObjectSize
 from mlte._private.schema import validate_spec_schema
 
 
-def test_empty_instance():
-    # Ensure that an empty report passes validation
-    spec = Spec("MySpec")
-    report = spec.collect()
-    validate_spec_schema(report.document)
-
-
 # TODO(Kyle): Fix to make functional
 @pytest.mark.skip()
 def test_instance_with_content():
     # Ensure that a report with content passes validation
-    spec = Spec("MySpec", StorageCost())
+    spec = Spec(StorageCost())
 
     local_size = LocalObjectSize()
 

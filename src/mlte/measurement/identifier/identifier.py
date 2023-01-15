@@ -30,9 +30,9 @@ class Identifier:
     @staticmethod
     def from_json(json: Dict[str, Any]) -> Identifier:
         """Deserialize from JSON document."""
-        if not "name" in json:
+        if "name" not in json:
             raise RuntimeError(
-                f"Cannot deserialize Identifier, missing key 'name'."
+                "Cannot deserialize Identifier, missing key 'name'."
             )
         return Identifier(name=json["name"])
 
