@@ -9,6 +9,7 @@ from typing import Dict, Any, Optional
 
 from mlte._global import global_state, GlobalState
 from mlte.store.api import read_result, write_result
+from mlte.measurement.identifier import Identifier
 
 # NOTE(Kyle): This must remain a relative import to
 # circumvent a circular import issue, until we do a
@@ -60,12 +61,14 @@ class Result(metaclass=abc.ABCMeta):
         :param measurement_metadata: The generating measurement's metadata
         :type measurement: MeasurementMetdata
         """
-        # Store the type of the generating measurement
+        self.identifier: Identifier = measurement_metadata.identifier
+        """The identifier for the result"""
+
         self.measurement_typename = measurement_metadata.typename
-        # Store the identifier for the generating measurement
-        self.measurement_identifier = measurement_metadata.identifier
-        # Store the type of the result itself
-        self.type = type(instance).__name__
+        """The type of the generating measurement."""
+
+        self.typename = type(instance).__name__
+        """The type of the result itself."""
 
     @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
@@ -98,8 +101,11 @@ class Result(metaclass=abc.ABCMeta):
             artifact_store_uri,
             model_identifier,
             model_version,
-            self.measurement_identifier,
-            {**self._serialize_header(), "payload": {**self.serialize()}},
+            self.identifier.name,
+            {
+                "metadata": self._serialize_metadata(),
+                "payload": {**self.serialize()},
+            },
             tag,
         )
 
@@ -136,18 +142,20 @@ class Result(metaclass=abc.ABCMeta):
 
         # TODO: Validate response
 
+        metadata = json["metadata"]
         result: Result = cls.deserialize(
             MeasurementMetadata(
-                json["measurement_typename"], json["measurement_identifier"]
+                metadata["measurement"]["typename"],
+                Identifier.from_json(metadata["identifier"]),
             ),
             json["payload"],
         )
         return result
 
-    def _serialize_header(self) -> Dict[str, Any]:
+    def _serialize_metadata(self) -> Dict[str, Any]:
         """Return the header for serialization."""
         return {
-            "measurement_typename": self.measurement_typename,
-            "measurement_identifier": self.measurement_identifier,
-            "result_type": self.type,
+            "identifier": self.identifier.to_json(),
+            "measurement": {"typename": self.measurement_typename},
+            "result": {"typename": self.typename},
         }

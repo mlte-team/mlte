@@ -36,7 +36,7 @@ def test_cpu_nix_evaluate():
     start = time.time()
 
     p = spin_for(5)
-    m = LocalProcessCPUUtilization("identifier")
+    m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
     stat = m.evaluate(p.pid)
@@ -51,7 +51,7 @@ def test_cpu_nix_evaluate():
 )
 def test_cpu_nix_validate_success():
     p = spin_for(5)
-    m = LocalProcessCPUUtilization("identifier")
+    m = LocalProcessCPUUtilization("id")
 
     stats = m.evaluate(p.pid)
 
@@ -69,7 +69,7 @@ def test_cpu_nix_validate_success():
 def test_cpu_nix_validate_failure():
     p = spin_for(5)
 
-    m = LocalProcessCPUUtilization("identifier")
+    m = LocalProcessCPUUtilization("id")
 
     stats = m.evaluate(p.pid)
 
@@ -86,7 +86,7 @@ def test_cpu_nix_validate_failure():
 )
 def test_cpu_windows_evaluate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessCPUUtilization("identifier")
+        _ = LocalProcessCPUUtilization("id")
 
 
 @pytest.mark.skipif(
@@ -94,7 +94,7 @@ def test_cpu_windows_evaluate():
 )
 def test_cpu_windows_validate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessCPUUtilization("identifier")
+        _ = LocalProcessCPUUtilization("id")
 
 
 def test_result_save_load(tmp_path):
@@ -103,12 +103,12 @@ def test_result_save_load(tmp_path):
 
     p = spin_for(5)
 
-    m = LocalProcessCPUUtilization("identifier")
+    m = LocalProcessCPUUtilization("id")
 
     stats: CPUStatistics = m.evaluate(p.pid)
     stats.save()
 
-    r: CPUStatistics = CPUStatistics.load("identifier")
+    r: CPUStatistics = CPUStatistics.load("id")
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

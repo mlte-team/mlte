@@ -3,84 +3,76 @@ Unit tests for Spec functionality.
 """
 
 import pytest
-from typing import Dict, Any
 
+import mlte
 from mlte.spec import Spec
-from mlte.property import Property
-from mlte.measurement import Measurement
+from mlte.binding import Binding
 from mlte.property.costs import StorageCost
-
-
-class DummyProperty(Property):
-    def __init__(self):
-        super().__init__("DummyProperty", "A dummy measurement.")
-
-
-class DummyMeasurement0(Measurement):
-    def __init__(self, identifier: str):
-        super().__init__(self, identifier)
-
-    def __call__(self, value: bool) -> Dict[str, Any]:
-        return {"value": value}
-
-
-class DummyMeasurement1(Measurement):
-    def __init__(self, identifier: str):
-        super().__init__(self, identifier)
-
-    def __call__(self, value: bool) -> Dict[str, Any]:
-        return {"value": value}
+from mlte.measurement.result import Integer
+from mlte.measurement import MeasurementMetadata, Identifier
 
 
 def test_save(tmp_path):
-    path = (tmp_path / "spec").with_suffix(".json")
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    spec = Spec("MySpec", StorageCost())
-    spec.save(f"{path}")
-    assert path.exists() and path.is_file()
+    s = Spec(StorageCost())
+    s.save()
 
-
-def test_load(tmp_path):
-    path = (tmp_path / "spec").with_suffix(".json")
-
-    spec = Spec("MySpec", StorageCost())
-    spec.save(f"{path}")
-    assert path.exists() and path.is_file()
-
-    spec = Spec.from_file(f"{path}")
-    assert spec.name == "MySpec"
-    assert spec.has_property("StorageCost")
+    r = Spec.load()
+    assert s == r
 
 
-def test_collect_empty_fail():
-    # Collect on empty collection with `strict = True` should fail
-    spec = Spec("MySpec", DummyProperty())
+def test_load_failure(tmp_path):
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
     with pytest.raises(RuntimeError):
-        _ = spec.collect()
+        _ = Spec.load()
 
 
-def test_collect_empty_success():
-    # Collect on empty collection with `strict = False` should succeed
-    spec = Spec("MySpec", DummyProperty())
-    _ = spec.collect(strict=False)
+def test_compatibility0():
+    # Binding does not cover spec; missing key
 
+    s = Spec(StorageCost())
+    b = Binding({"foobar": ["baz"]})
 
-# TODO(Kyle): Fix to make functional
-@pytest.mark.skip()
-def test_collect_unique():
-    # Collect with duplicated results should fail
-    spec = Spec("MySpec", DummyProperty())
-    m0 = DummyMeasurement0()
-    m1 = DummyMeasurement1()
-    _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
-
-# TODO(Kyle): Fix to make functional
-@pytest.mark.skip()
-def test_collect_duplicates():
-    # Collect with duplicated results should fail
-    spec = Spec("MySpec", DummyProperty())
-    m0 = DummyMeasurement0()
-    m1 = DummyMeasurement0()
     with pytest.raises(RuntimeError):
-        _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
+        _ = s.bind(b, [i])
+
+
+def test_compatibility1():
+    # Binding does not cover spec; empty mapping
+
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": []})
+
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [i])
+
+
+def test_compatibility2():
+    # Binding includes extra property
+
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["id"], "foobar": ["baz"]})
+
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [i])
+
+
+def test_bind_unique():
+    # Collect with duplicated results should fail
+    spec = Spec(StorageCost())
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("id")), 2)
+    with pytest.raises(RuntimeError):
+        _ = spec.bind(
+            Binding({"property": ["id"]}), [i0.less_than(3), i1.less_than(3)]
+        )

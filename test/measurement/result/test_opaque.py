@@ -5,7 +5,7 @@ Unit tests for Opaque.
 import pytest
 
 import mlte
-from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement import Measurement, MeasurementMetadata, Identifier
 from mlte.measurement.result import Opaque
 
 
@@ -38,7 +38,7 @@ def test_opaque():
 
 
 def test_opaque_equality():
-    m = MeasurementMetadata("typename", "identifier")
+    m = MeasurementMetadata("typename", Identifier("id"))
 
     a = Opaque(m, {"foo": "bar"})
     b = Opaque(m, {"foo": "bar"})
@@ -61,14 +61,14 @@ def test_opaque_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    m = MeasurementMetadata("typename", "identifier")
+    m = MeasurementMetadata("typename", Identifier("id"))
     i = Opaque(m, {"foo": "bar"})
 
     # Save
     i.save()
 
     # Recover
-    r = Opaque.load("identifier")
+    r = Opaque.load("id")
 
     assert r == i
 

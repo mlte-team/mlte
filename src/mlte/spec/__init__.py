@@ -1,3 +1,3 @@
-from .spec import Spec, SpecReport
+from .spec import Spec, BoundSpec
 
-__all__ = ["Spec", "SpecReport"]
+__all__ = ["Spec", "BoundSpec"]

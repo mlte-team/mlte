@@ -162,7 +162,12 @@ class LocalProcessMemoryConsumption(Measurement):
     """Measure memory consumption for a local training process."""
 
     def __init__(self, identifier: str):
-        """Initialize a LocalProcessMemoryConsumption instance."""
+        """
+        Initialize a LocalProcessMemoryConsumption instance.
+
+        :param identifier: A unique identifier for the measurement
+        :type identifier: str
+        """
         super().__init__(self, identifier)
         if is_windows():
             raise RuntimeError(

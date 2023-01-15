@@ -4,8 +4,8 @@ Storage capacity measurement for locally-stored objects.
 
 import os
 
-from ..measurement import Measurement
-from ..result import Integer
+from mlte.measurement import Measurement
+from mlte.measurement.result import Integer
 
 
 class LocalObjectSize(Measurement):

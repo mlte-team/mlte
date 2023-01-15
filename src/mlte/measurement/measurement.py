@@ -9,6 +9,7 @@ import typing
 
 from .result import Result
 from .measurement_metadata import MeasurementMetadata
+from .identifier import Identifier
 
 
 def _has_callable(type, name) -> bool:
@@ -32,10 +33,12 @@ class Measurement(metaclass=abc.ABCMeta):
 
         :param instance: The invoking instance (Measurement subclass)
         :type instance: Measurement
-        :param identifier: A human-readable, unique identifier for the instance
+        :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
+        self.metadata = MeasurementMetadata(
+            type(instance).__name__, Identifier(identifier)
+        )
         """The metadata for the measurement instance."""
 
     @abc.abstractmethod

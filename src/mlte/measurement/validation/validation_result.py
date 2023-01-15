@@ -74,16 +74,14 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
+        assert self.result is not None, "Broken precondition."
         if not isinstance(other, ValidationResult):
-            raise NotImplementedError(
-                f"Equality on ValidationResult and {type(other).__name__}"
-            )
-        # TODO(Kyle): Use result information as well
-        return self.validator_name == other.validator_name
+            return False
+        return self.result.identifier == other.result.identifier
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
-        return not (self == other)
+        return not self.__eq__(other)
 
 
 class Success(ValidationResult):
