@@ -10,6 +10,7 @@ from typing import Dict, Any, Optional
 from mlte._global import global_state, GlobalState
 from mlte.store.api import read_result, write_result
 from mlte.measurement.identifier import Identifier
+from mlte._private.schema import RESULT_LATEST_SCHEMA_VERSION
 
 # NOTE(Kyle): This must remain a relative import to
 # circumvent a circular import issue, until we do a
@@ -103,6 +104,7 @@ class Result(metaclass=abc.ABCMeta):
             model_version,
             self.identifier.name,
             {
+                "schema_version": RESULT_LATEST_SCHEMA_VERSION,
                 "metadata": self._serialize_metadata(),
                 "payload": {**self.serialize()},
             },

@@ -15,14 +15,18 @@ import pkgutil
 import jsonschema
 from typing import Any, Dict, Optional
 
-# The identifier for the latest schema for specs
+# The identifier for the latest schema for Result
+RESULT_LATEST_SCHEMA_VERSION = "0.0.1"
+# The identifier for the latest schema for Spec
 SPEC_LATEST_SCHEMA_VERSION = "0.0.1"
-# The identifier for the latest schema for reports
+# The identifier for the latest schema for Report
 REPORT_LATEST_SCHEMA_VERSION = "0.0.1"
 
-# Version identifiers for spec schemas
+# Version identifiers for Result schemas
+_RESULT_SCHEMA_VERSIONS = frozenset(("0.0.1",))
+# Version identifiers for Spec schemas
 _SPEC_SCHEMA_VERSIONS = frozenset(("0.0.1",))
-# Version identifier for report schemas
+# Version identifier for Report schemas
 _REPORT_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 
 # The name of the schema file for all schemas
@@ -33,11 +37,30 @@ _SCHEMA_FILE_NAME = "schema.json"
 # -----------------------------------------------------------------------------
 
 
+def validate_result_schema(
+    document: Dict[str, Any], version: Optional[str] = None
+):
+    """
+    Validate the schema of a Result document.
+
+    :param document: The document instance
+    :type document: Dict[str, Any]
+    :param version: The identifier for the schema version
+    :type version: Optional[str]
+    """
+    version = (
+        version
+        or document.get("schema_version")
+        or RESULT_LATEST_SCHEMA_VERSION
+    )
+    jsonschema.validate(instance=document, schema=_find_result_schema(version))
+
+
 def validate_spec_schema(
     document: Dict[str, Any], version: Optional[str] = None
 ):
     """
-    Validate the schema of a spec output document.
+    Validate the schema of a Spec document.
 
     :param document: The document instance
     :type document: Dict[str, Any]
@@ -105,9 +128,28 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
     return json.loads(data)  # type: ignore
 
 
+def _find_result_schema(version: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Find, load, and return the JSON schema for Result output.
+
+    :param version: The version identifier for the schema
+    :type version: Optional[str]
+
+    :return: The loaded schema
+    :rtype: Dict[str, Any]
+
+    :raises ValueError: If an invalid schema is specified
+    """
+    if version is None:
+        version = RESULT_LATEST_SCHEMA_VERSION
+    if version not in _RESULT_SCHEMA_VERSIONS:
+        raise ValueError(f"Invalid result schema version {version} specified.")
+    return _find_schema(version, "result")
+
+
 def _find_spec_schema(version: Optional[str] = None) -> Dict[str, Any]:
     """
-    Find, load, and return the JSON schema for spec output.
+    Find, load, and return the JSON schema for Spec output.
 
     :param version: The version identifier for the schema
     :type version: Optional[str]
@@ -126,7 +168,7 @@ def _find_spec_schema(version: Optional[str] = None) -> Dict[str, Any]:
 
 def _find_report_schema(version: Optional[str] = None):
     """
-    Find, load, and return the JSON schema for report output.
+    Find, load, and return the JSON schema for Report output.
 
     :param version: The version identifier for the schema
     :type version: Optional[str]
