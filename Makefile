@@ -23,4 +23,4 @@ typecheck:
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py38 -- test/schema/test_result_schema.py
+	tox --develop -e py38 -- test/binding/

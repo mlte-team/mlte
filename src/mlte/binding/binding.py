@@ -3,11 +3,12 @@ Implementation of Binding and related types.
 """
 
 from __future__ import annotations
-from typing import Dict, List
+from typing import Dict, List, Any
 
 
 from mlte._global import global_state, GlobalState
 from mlte.store.api import read_binding, write_binding
+from mlte._private.schema import BINDING_LATEST_SCHEMA_VERSION
 
 
 def _check_global_state(state: GlobalState):
@@ -88,7 +89,7 @@ class Binding:
             artifact_store_uri,
             model_identifier,
             model_version,
-            self.description,
+            self._serialize(),
         )
 
     @staticmethod
@@ -107,7 +108,71 @@ class Binding:
 
         # Read the binding from the artifact store
         data = read_binding(artifact_store_uri, model_identifier, model_version)
-        return Binding(description=data)
+        return Binding(description=Binding._deserialize(data))
+
+    def _serialize(self) -> Dict[str, Any]:
+        """
+        Serialize internal data to JSON document.
+
+        :return: The serialized representation of the Binding instance
+        :rtype: Dict[str, Any]
+        """
+        return {
+            "schema_version": BINDING_LATEST_SCHEMA_VERSION,
+            "properties": [
+                self._serialize_property(property_name)
+                for property_name in self.description.keys()
+            ],
+        }
+
+    def _serialize_property(self, property_name: str) -> Dict[str, Any]:
+        """
+        Serialize an individual property within the binding.
+
+        :param property_name: The name of the property to serialize
+        :type property_name: str
+
+        :return: The serialized content
+        :rtype: Dict[str, Any]
+        """
+        assert property_name in self.description, "Broken precondition."
+        return {
+            "name": property_name,
+            "results": [
+                self._serialize_result(result_id)
+                for result_id in self.description[property_name]
+            ],
+        }
+
+    def _serialize_result(self, result_id: str) -> Dict[str, Any]:
+        """
+        Serialize an individual result within the binding.
+
+        :param result_id: The result identifier
+        :type result_id: str
+
+        :return: The serialized content
+        :rtype: Dict[str, Any]
+        """
+        return {"identifier": result_id}
+
+    @staticmethod
+    def _deserialize(document: Dict[str, Any]) -> Dict[str, List[str]]:
+        """
+        Deserialize binding from JSON document.
+
+        :param document: The JSON document
+        :type document: Dict[str, Any]
+
+        :return: The deserialized descritption
+        :rtype: Dict[str, List[str]]
+        """
+        description = {}
+        for property in document["properties"]:
+            description[property["name"]] = [
+                result["identifier"] for result in property["results"]
+            ]
+        return description
 
     def __eq__(self, other: Binding) -> bool:
         """Compare Binding instances for equality."""
