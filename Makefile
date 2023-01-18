@@ -6,6 +6,7 @@ format:
 	black src/
 	black test/
 	black testbed/
+	black demo/*.py
 
 # Lint all source code
 .PHONY: lint
