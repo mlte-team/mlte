@@ -21,6 +21,8 @@ RESULT_LATEST_SCHEMA_VERSION = "0.0.1"
 BINDING_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for Spec
 SPEC_LATEST_SCHEMA_VERSION = "0.0.1"
+# The identifier for the latest schema for BoundSpec
+BOUNDSPEC_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for Report
 REPORT_LATEST_SCHEMA_VERSION = "0.0.1"
 
@@ -30,6 +32,8 @@ _RESULT_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 _BINDING_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 # Version identifiers for Spec schemas
 _SPEC_SCHEMA_VERSIONS = frozenset(("0.0.1",))
+# Version identifiers for BoundSpec schemas
+_BOUNDSPEC_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 # Version identifier for Report schemas
 _REPORT_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 
@@ -97,6 +101,28 @@ def validate_spec_schema(
         version or document.get("schema_version") or SPEC_LATEST_SCHEMA_VERSION
     )
     jsonschema.validate(instance=document, schema=_find_spec_schema(version))
+
+
+def validate_boundspec_schema(
+    document: Dict[str, Any], version: Optional[str] = None
+):
+    """
+    Validate the schema of a BoundSpec document.
+
+    :param document: The document instance
+    :type document: Dict[str, Any]
+    :param version: The identifier for the schema version
+    :type version: Optional[str]
+
+    :raises ValueError: If an invalid schema is specified
+    :raises ValidationError: If the instance fails validation
+    """
+    version = (
+        version or document.get("schema_version") or SPEC_LATEST_SCHEMA_VERSION
+    )
+    jsonschema.validate(
+        instance=document, schema=_find_boundspec_schema(version)
+    )
 
 
 def validate_report_schema(
@@ -206,6 +232,25 @@ def _find_spec_schema(version: Optional[str] = None) -> Dict[str, Any]:
     if version not in _SPEC_SCHEMA_VERSIONS:
         raise ValueError(f"Invalid spec schema version {version} specified.")
     return _find_schema(version, "spec")
+
+
+def _find_boundspec_schema(version: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Find, load, and return the JSON schema for BoundSpec output.
+
+    :param version: The version identifier for the schema
+    :type version: Optional[str]
+
+    :return: The loaded schema
+    :rtype: Dict[str, Any]
+
+    :raises ValueError: If an invalid schema is specified
+    """
+    if version is None:
+        version = BOUNDSPEC_LATEST_SCHEMA_VERSION
+    if version not in _BOUNDSPEC_SCHEMA_VERSIONS:
+        raise ValueError(f"Invalid spec schema version {version} specified.")
+    return _find_schema(version, "boundspec")
 
 
 def _find_report_schema(version: Optional[str] = None):

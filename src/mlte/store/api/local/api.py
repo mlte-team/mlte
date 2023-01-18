@@ -16,6 +16,8 @@ LOCAL_URI_PREFIX = "local://"
 
 # The name of the file that contains serialized specs
 SPEC_FILENAME = "spec.json"
+# The name of the file that contains serialized boundspecs
+BOUNDSPEC_FILENAME = "boundspec.json"
 # The name of the file that contains serialized bindings
 BINDING_FILENAME = "binding.json"
 
@@ -27,6 +29,7 @@ root/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
       binding.json              <- ONLY present if Binding is saved
+      boundspec.json            <- ONLY present if BoundSpec is saved
       result_identifier0.json
 
 The data for an individual result is then stored within a JSON file.
@@ -108,7 +111,7 @@ def _spec_is_saved(model_version_path: Path) -> bool:
     :param model_version_path: The path to the model version
     :type model_version_path: Path
 
-    :return: `True` if a binding is present, `False` otherwise
+    :return: `True` if a specification is present, `False` otherwise
     :rtype: bool
     """
     assert model_version_path.is_dir(), "Broken precondition."
@@ -127,6 +130,20 @@ def _binding_is_saved(model_version_path: Path) -> bool:
     """
     assert model_version_path.is_dir(), "Broken precondition."
     return (model_version_path / BINDING_FILENAME).is_file()
+
+
+def _boundspec_is_saved(model_version_path: Path) -> bool:
+    """
+    Determine if a bound specification is saved to the store for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+
+    :return: `True` if a bound specification is present, `False` otherwise
+    :rtype: bool
+    """
+    assert model_version_path.is_dir(), "Broken precondition."
+    return (model_version_path / BOUNDSPEC_FILENAME).is_file()
 
 
 # -----------------------------------------------------------------------------
@@ -197,6 +214,42 @@ def _write_spec(model_version_path: Path, data: Dict[str, Any]):
     :type data: Dict[str, Any]
     """
     spec_path = model_version_path / SPEC_FILENAME
+    with open(spec_path, "w") as f:
+        json.dump(data, f)
+
+
+# -----------------------------------------------------------------------------
+# Read / Write BoundSpec
+# -----------------------------------------------------------------------------
+
+
+def _read_boundspec(model_version_path: Path) -> Dict[str, Any]:
+    """
+    Read bound specification data for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+
+    :return: The bound specification data
+    :rtype: Dict[str, Any]
+    """
+    spec_path = model_version_path / BOUNDSPEC_FILENAME
+    assert spec_path.is_file(), "Broken invariant."
+
+    with open(spec_path, "r") as f:
+        return json.load(f)
+
+
+def _write_boundspec(model_version_path: Path, data: Dict[str, Any]):
+    """
+    Write bound specification data for model version.
+
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+    :param data: The specification data
+    :type data: Dict[str, Any]
+    """
+    spec_path = model_version_path / BOUNDSPEC_FILENAME
     with open(spec_path, "w") as f:
         json.dump(data, f)
 
@@ -425,6 +478,45 @@ def write_spec(
 
     model_version_path = root / model_identifier / model_version
     _write_spec(model_version_path, data)
+
+
+def read_boundspec(
+    uri: str, model_identifier: str, model_version: str
+) -> Dict[str, Any]:
+    """TODO(Kyle)"""
+    root = _parse_root_path(uri)
+    assert root.exists(), "Broken precondition."
+
+    _check_exists(root, model_identifier, model_version)
+
+    model_version_path = root / model_identifier / model_version
+    assert model_version_path.is_dir(), "Broken invariant."
+
+    if not _boundspec_is_saved(model_version_path):
+        raise RuntimeError("Failed to read binding, no binding is saved.")
+
+    return _read_boundspec(model_version_path)
+
+
+def write_boundspec(
+    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
+):
+    """TODO(Kyle)"""
+    root = _parse_root_path(uri)
+    assert root.exists(), "Broken precondition."
+
+    # Create model directory
+    model_path = root / model_identifier
+    if not model_path.exists():
+        model_path.mkdir()
+
+    # Create version directory
+    version_path = model_path / model_version
+    if not version_path.exists():
+        version_path.mkdir()
+
+    model_version_path = root / model_identifier / model_version
+    _write_boundspec(model_version_path, data)
 
 
 # -----------------------------------------------------------------------------

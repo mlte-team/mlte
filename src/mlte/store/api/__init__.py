@@ -5,6 +5,8 @@ from mlte.store.api.api import (
     write_binding,
     read_spec,
     write_spec,
+    write_boundspec,
+    read_boundspec,
 )
 
 __all__ = [
@@ -14,4 +16,6 @@ __all__ = [
     "write_binding",
     "read_spec",
     "write_spec",
+    "write_boundspec",
+    "read_boundspec",
 ]

@@ -145,7 +145,11 @@ class Spec:
         :return: The serialized content
         :rtype: Dict[str, Any]
         """
-        return {"properties": [p._to_json() for p in self.properties]}
+        # TODO(Kyle): Include additional metdata?
+        return {
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
+            "properties": [p._to_json() for p in self.properties],
+        }
 
     @staticmethod
     def _from_json(json: Dict[str, Any]) -> Spec:
@@ -210,7 +214,7 @@ class Spec:
         return {
             "model_identifier": model_identifier,
             "model_version": model_version,
-            "timestamp": f"{int(time.time())}",
+            "timestamp": int(time.time()),
         }
 
     def _validate_binding(
