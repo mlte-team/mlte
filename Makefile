@@ -25,3 +25,10 @@ typecheck:
 .PHONY: test
 test:
 	tox --develop -e py38
+
+.PHONY: demo
+cleandemo:
+	rm -f demo/models/*
+	rm -f demo/media/*
+	rm -f demo/data/*
+	rm -rf demo/store/*

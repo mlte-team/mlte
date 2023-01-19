@@ -115,3 +115,46 @@ class Real(Result):
                 f"Real magnitude {real.value} exceeds threshold {value}"
             ),
         )(self)
+
+    def greater_than(self, value: float) -> ValidationResult:
+        """
+        Determine if real is strictly greater than `value`.
+
+        :param value: The threshold value
+        :type value: float
+
+        :return: The result of validation
+        :rtype: ValidationResult
+        """
+        return Validator(
+            "LessThan",
+            lambda real: Success(
+                f"Real magnitude {real.value} greater than threshold {value}"
+            )
+            if self.value > value
+            else Failure(
+                f"Real magnitude {real.value} below threshold {value}"
+            ),
+        )(self)
+
+    def greater_or_equal_to(self, value: float) -> ValidationResult:
+        """
+        Determine if real is greater than or equal to `value`.
+
+        :param value: The threshold value
+        :type value: float
+
+        :return: The result of validation
+        :rtype: ValidationResult
+        """
+        return Validator(
+            "LessOrEqualTo",
+            lambda real: Success(
+                f"Real magnitude {real.value} "
+                "greater than or equal to threshold {value}"
+            )
+            if self.value >= value
+            else Failure(
+                f"Real magnitude {real.value} below threshold {value}"
+            ),
+        )(self)

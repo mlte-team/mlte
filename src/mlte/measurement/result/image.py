@@ -75,7 +75,7 @@ class Image(Result):
             base64.decodebytes(json["image"].encode("utf-8")),
         )
 
-    def less_than(self, reason: str) -> ValidationResult:
+    def ignore(self, reason: str) -> ValidationResult:
         """
         Ignore an image result.
 
@@ -87,5 +87,5 @@ class Image(Result):
         """
         return Validator(
             "Ignore",
-            Ignore(reason),
+            lambda _: Ignore(reason),
         )(self)

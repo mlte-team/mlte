@@ -106,7 +106,7 @@ class Integer(Result):
             "LessOrEqualTo",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
-                "less than or equal to threshold {value}"
+                f"less than or equal to threshold {value}"
             )
             if integer.value <= value
             else Failure(
