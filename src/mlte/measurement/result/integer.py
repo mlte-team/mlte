@@ -1,5 +1,5 @@
 """
-An Result instance for a scalar, integral value.
+A Result instance for a scalar, integral value.
 """
 from __future__ import annotations
 

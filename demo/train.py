@@ -89,6 +89,7 @@ def save_model(model, path: Path):
     with path.open("wb") as f:
         pickle.dump(model, f)
 
+
 def main() -> int:
     dataset_dir, models_dir = parse_arguments()
     if not dataset_dir.is_dir():
