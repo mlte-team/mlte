@@ -108,7 +108,7 @@ class Real(Result):
             "LessOrEqualTo",
             lambda real: Success(
                 f"Real magnitude {real.value} "
-                "less than or equal to threshold {value}"
+                f"less than or equal to threshold {value}"
             )
             if self.value <= value
             else Failure(
@@ -151,7 +151,7 @@ class Real(Result):
             "LessOrEqualTo",
             lambda real: Success(
                 f"Real magnitude {real.value} "
-                "greater than or equal to threshold {value}"
+                f"greater than or equal to threshold {value}"
             )
             if self.value >= value
             else Failure(

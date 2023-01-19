@@ -269,7 +269,10 @@ class Spec:
         targets = set(binding.identifiers_for(property.name))
         assert len(targets) > 0, "Broken invariant."
 
-        results_for_property = [r for r in results if property.name in targets]
+        # TODO(Kyle): Clean this up.
+        results_for_property = [
+            r for r in results if str(r.result.identifier) in targets
+        ]
         measurements = []
         for _, group in groupby(
             results_for_property, key=lambda vr: vr.result.measurement_typename

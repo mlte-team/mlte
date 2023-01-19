@@ -32,3 +32,4 @@ cleandemo:
 	rm -f demo/media/*
 	rm -f demo/data/*
 	rm -rf demo/store/*
+	rm -f demo/reports/*
