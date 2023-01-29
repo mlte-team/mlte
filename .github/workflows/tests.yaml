@@ -25,7 +25,7 @@ jobs:
     - name: Format with black
       run: black --check src/ && black --check test/
     - name: Lint with flake8
-      run: flake8 --ignore E501,E503 src/ && flake8 --ignore E501,E503 test/
+      run: flake8 --ignore E501,W503 src/ && flake8 --ignore E501,W503 test/
     - name: Typecheck with mypy
       run: mypy src/ && mypy test/
     - name: Test with tox
