@@ -48,5 +48,5 @@ def test_save_load(tmp_path):
     img = Image(MeasurementMetadata("typename", Identifier("id")), local_path)
     img.save()
 
-    r: Image = Image.load("id")
+    r: Image = Image.load("id")  # type: ignore
     assert r.image == r.image

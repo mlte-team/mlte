@@ -265,17 +265,21 @@ class Spec:
         :return: The property-level document
         :rtype: Dict[str, Any]
         """
+        assert all(
+            r.result is not None for r in results
+        ), "Broken precondition."
+
         # Filter results relevant to property
         targets = set(binding.identifiers_for(property.name))
         assert len(targets) > 0, "Broken invariant."
 
         # TODO(Kyle): Clean this up.
         results_for_property = [
-            r for r in results if str(r.result.identifier) in targets
+            r for r in results if str(r.result.identifier) in targets  # type: ignore
         ]
         measurements = []
         for _, group in groupby(
-            results_for_property, key=lambda vr: vr.result.measurement_typename
+            results_for_property, key=lambda vr: vr.result.measurement_typename  # type: ignore
         ):
             measurements.append(
                 self._bind_for_measurement([vr for vr in group])
@@ -289,7 +293,7 @@ class Spec:
         return document
 
     def _bind_for_measurement(
-        self, results: Iterable[ValidationResult]
+        self, results: List[ValidationResult]
     ) -> Dict[str, Any]:
         """
         Collect results into a measurement-level document.
@@ -302,9 +306,9 @@ class Spec:
         """
         assert len(results) > 0, "Broken invariant."
         assert _all_equal(
-            result.result.measurement_typename for result in results
+            result.result.measurement_typename for result in results  # type: ignore
         ), "Broken invariant."
-        measurement_name = results[0].result.measurement_typename
+        measurement_name = results[0].result.measurement_typename  # type: ignore
         document = {
             "name": measurement_name,
             "validators": [
@@ -322,9 +326,12 @@ class Spec:
     # Equality Testing
     # -------------------------------------------------------------------------
 
-    def __eq__(self, other: Spec) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Compare Spec instances for equality."""
-        return _equal(self, other)
+        if not isinstance(other, Spec):
+            return False
+        reference: Spec = other
+        return _equal(self, reference)
 
     def __neq__(self, other: Spec) -> bool:
         """Compare Spec instances for inequality."""
@@ -387,7 +394,7 @@ def _validate_all_bindings_have_result(
 
     :raises: RuntimeError
     """
-    result_identifiers = set(vr.result.identifier.name for vr in results)
+    result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
     for property_name, identifiers in binding.description.items():
         for identifier in identifiers:
             if identifier not in result_identifiers:
@@ -410,7 +417,7 @@ def _validate_all_results_have_binding(
 
     :raises: RuntimeError
     """
-    result_identifiers = set(vr.result.identifier.name for vr in results)
+    result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
 
     binding_identifiers = set(
         id for collection in binding.description.values() for id in collection

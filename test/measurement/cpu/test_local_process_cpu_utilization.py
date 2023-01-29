@@ -108,7 +108,7 @@ def test_result_save_load(tmp_path):
     stats: CPUStatistics = m.evaluate(p.pid)
     stats.save()
 
-    r: CPUStatistics = CPUStatistics.load("id")
+    r: CPUStatistics = CPUStatistics.load("id")  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
