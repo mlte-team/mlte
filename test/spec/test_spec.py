@@ -2,153 +2,103 @@
 Unit tests for Spec functionality.
 """
 
-import os
 import pytest
-from typing import Dict, Any
 
+import mlte
 from mlte.spec import Spec
-from mlte.property import Property
-from mlte.measurement import Measurement, bind
-from mlte.measurement.validation import Validator, Success
+from mlte.binding import Binding
 from mlte.property.costs import StorageCost
-
-
-class DummyProperty(Property):
-    def __init__(self):
-        super().__init__("DummyProperty", "A dummy measurement.")
-
-
-class DummyMeasurement0(Measurement):
-    def __init__(self):
-        super().__init__("DummyMeasurement0")
-
-    def __call__(self, value: bool) -> Dict[str, Any]:
-        return {"value": value}
-
-
-class DummyMeasurement1(Measurement):
-    def __init__(self):
-        super().__init__("DummyMeasurement1")
-
-    def __call__(self, value: bool) -> Dict[str, Any]:
-        return {"value": value}
+from mlte.measurement.result import Integer
+from mlte.measurement import MeasurementMetadata, Identifier
 
 
 def test_save(tmp_path):
-    path = os.path.join(tmp_path.as_posix(), "spec.json")
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    spec = Spec("MySpec", StorageCost())
-    spec.save(path)
-    assert os.path.exists(path) and os.path.isfile(path)
+    s = Spec(StorageCost())
+    s.save()
 
-
-def test_load(tmp_path):
-    path = os.path.join(tmp_path.as_posix(), "spec.json")
-
-    spec = Spec("MySpec", StorageCost())
-    spec.save(path)
-    assert os.path.exists(path) and os.path.isfile(path)
-
-    spec = Spec.from_file(path)
-    assert spec.name == "MySpec"
-    assert spec.has_property("StorageCost")
+    r = Spec.load()
+    assert s == r
 
 
-def test_bind0():
-    # Binding to existing property should succeed
-    spec = Spec("MySpec", DummyProperty())
-    _ = bind(DummyMeasurement0(), spec.get_property("DummyProperty"))
-    assert True
+def test_load_failure(tmp_path):
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-
-def test_bind1():
-    # Binding to nonexistent property should fail
-    spec = Spec("MySpec")
     with pytest.raises(RuntimeError):
-        _ = bind(DummyMeasurement0(), spec.get_property("DummyProperty"))
+        _ = Spec.load()
 
 
-def test_collect_empty_fail():
-    # Collect on empty collection with `strict = True` should fail
-    spec = Spec("MySpec", DummyProperty())
+def test_compatibility0():
+    # Binding does not cover spec; missing key
+
+    s = Spec(StorageCost())
+    b = Binding({"foobar": ["baz"]})
+
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+
     with pytest.raises(RuntimeError):
-        _ = spec.collect()
+        _ = s.bind(b, [i])  # type: ignore
 
 
-def test_collect_empty_success():
-    # Collect on empty collection with `strict = False` should succeed
-    spec = Spec("MySpec", DummyProperty())
-    _ = spec.collect(strict=False)
+def test_compatibility1():
+    # Binding does not cover spec; empty mapping
 
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": []})
 
-def test_collect_bound_success():
-    # Collect with bound measurement should succeed
-    spec = Spec("MySpec", DummyProperty())
-    valid = bind(
-        DummyMeasurement0().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        spec.get_property("DummyProperty"),
-    )
-    _ = spec.collect(*valid.validate(True))
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
-
-def test_collect_unbound_failure():
-    # Collect with unbound measurement should fail
-    spec = Spec("MySpec", DummyProperty())
-    valid = DummyMeasurement0().with_validator(
-        Validator("MyValidator", lambda _: Success())
-    )
     with pytest.raises(RuntimeError):
-        _ = spec.collect(*valid.validate(True))
+        _ = s.bind(b, [i])  # type: ignore
 
 
-def test_collect_bound_failure():
-    # Collect with measurement bound to
-    # missing property should fail
-    spec = Spec("MySpec", DummyProperty())
-    valid = bind(
-        DummyMeasurement0().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        "DummyPropertyFoo",
-    )
+def test_compatibility2():
+    # Binding includes extra property
+
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["id"], "foobar": ["baz"]})
+
+    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+
     with pytest.raises(RuntimeError):
-        _ = spec.collect(*valid.validate(True))
+        _ = s.bind(b, [i])  # type: ignore
 
 
-def test_collect_unique():
+def test_bind_unique():
     # Collect with duplicated results should fail
-    spec = Spec("MySpec", DummyProperty())
-    m0 = bind(
-        DummyMeasurement0().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        "DummyProperty",
-    )
-    m1 = bind(
-        DummyMeasurement1().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        "DummyProperty",
-    )
-    _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
-
-
-def test_collect_duplicates():
-    # Collect with duplicated results should fail
-    spec = Spec("MySpec", DummyProperty())
-    m0 = bind(
-        DummyMeasurement0().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        "DummyProperty",
-    )
-    m1 = bind(
-        DummyMeasurement0().with_validator(
-            Validator("MyValidator", lambda _: Success())
-        ),
-        "DummyProperty",
-    )
+    spec = Spec(StorageCost())
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("id")), 2)
     with pytest.raises(RuntimeError):
-        _ = spec.collect(*(*m0.validate(True), *m1.validate(True)))
+        _ = spec.bind(
+            Binding({"property": ["id"]}), [i0.less_than(3), i1.less_than(3)]
+        )
+
+
+def test_bind_coverage():
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["id"]})
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [])
+
+
+def test_bind_extra0():
+    # With strict = True, binding unnecessary result fails
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["i0"]})
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
+    with pytest.raises(RuntimeError):
+        _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])
+
+
+def test_success():
+    s = Spec(StorageCost())
+    b = Binding({"StorageCost": ["i0", "i1"]})
+    i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
+    i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
+
+    _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])
