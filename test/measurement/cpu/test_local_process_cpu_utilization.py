@@ -97,6 +97,9 @@ def test_cpu_windows_validate():
         _ = LocalProcessCPUUtilization("id")
 
 
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
 def test_result_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
