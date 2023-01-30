@@ -237,3 +237,5 @@ def _get_memory_usage(pid: int) -> int:
         return int(used.decode("utf-8").strip()[:-1])
     except ValueError:
         return 0
+    except FileNotFoundError as e:
+        raise RuntimeError("External program needed to evaluate was not found: " + str(e))
