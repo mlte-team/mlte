@@ -9,7 +9,7 @@ import subprocess
 from typing import Dict, Any
 from subprocess import SubprocessError
 
-from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement import ProcessMeasurement, MeasurementMetadata
 from mlte.measurement.result import Result
 from mlte.measurement.validation import (
     Validator,
@@ -158,7 +158,7 @@ class CPUStatistics(Result):
 # -----------------------------------------------------------------------------
 
 
-class LocalProcessCPUUtilization(Measurement):
+class LocalProcessCPUUtilization(ProcessMeasurement):
     """Measures CPU utilization for a local process."""
 
     def __init__(self, identifier: str):
