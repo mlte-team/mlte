@@ -7,6 +7,10 @@ from typing import Optional, Dict, Any
 from mlte.store.api.uri import parse_uri_type, UriType
 import mlte.store.api.local as local
 
+# -----------------------------------------------------------------------------
+# Result
+# -----------------------------------------------------------------------------
+
 
 def read_result(
     uri: str,
@@ -56,6 +60,11 @@ def write_result(
         assert False, "Unreachable."
 
 
+# -----------------------------------------------------------------------------
+# Binding
+# -----------------------------------------------------------------------------
+
+
 def read_binding(
     uri: str, model_identifier: str, model_version
 ) -> Dict[str, Any]:
@@ -82,6 +91,11 @@ def write_binding(
         assert False, "Unreachable."
 
 
+# -----------------------------------------------------------------------------
+# Spec
+# -----------------------------------------------------------------------------
+
+
 def read_spec(uri: str, model_identifier: str, model_version) -> Dict[str, Any]:
     """TODO(Kyle)"""
     uri_type = parse_uri_type(uri)
@@ -104,6 +118,11 @@ def write_spec(
         local.write_spec(uri, model_identifier, model_version, data)
     else:
         assert False, "Unreachable."
+
+
+# -----------------------------------------------------------------------------
+# BoundSpec
+# -----------------------------------------------------------------------------
 
 
 def read_boundspec(
