@@ -87,7 +87,7 @@ class Backend:
         :param model_identifier: The (optional) identifier for the model of interest
         :type model_identifier: Optional[str]
 
-        :return: A collection of metadata for the models of interest
+        :return: {"models": [{ ... model document ...} ...]}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -115,7 +115,7 @@ class Backend:
         :param result_version: The (optional) version for the result
         :type result_version: Optional[int]
 
-        :return: The result
+        :return: {"results": [{ ...  result document ...}]}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -133,7 +133,7 @@ class Backend:
         :param tag: The (optional) result tag to limit returned results
         :type tag: Optional[int]
 
-        :return: A collection of the results matching the query
+        :return: {"results": [{ ... result document ... } ...]}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -164,7 +164,7 @@ class Backend:
         :param result_tag: An optional tag for the result
         :type result_tag: Optional[str]
 
-        :return: The number of objects written
+        :return: {"written": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -192,7 +192,7 @@ class Backend:
         :param result_version: The version for the result
         :type result_version: int
 
-        :return: The number of objects deleted
+        :return: {"deleted": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -210,7 +210,7 @@ class Backend:
         :param result_identifier: The identifier for the result of interest
         :type result_identifier: str
 
-        :return: The number of objects deleted
+        :return: {"deleted": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -231,7 +231,7 @@ class Backend:
         :param result_tag: An (optional) tag to filter results that are deleted
         :type result_tag: Optional[str]
 
-        :return: The number of objects deleted
+        :return: {"deleted": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
@@ -251,14 +251,14 @@ class Backend:
         :param model_version: The model version
         :type model_version: str
 
-        :return: The binding data
+        :return: {"binding": { ... binding document ... }}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     def write_binding(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """
         Write a binding for the model context.
 
@@ -268,6 +268,9 @@ class Backend:
         :type model_version: str
         :param data: The binding data
         :type data: Dict[str, Any]
+
+        :return: {"written": <COUNT>}
+        :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
@@ -286,14 +289,14 @@ class Backend:
         :param model_version: The model version
         :type model_version: str
 
-        :return: The specification data
+        :return: {"spec": { ... specification document ...}}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     def write_spec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """
         Write a specification for the model context.
 
@@ -303,6 +306,9 @@ class Backend:
         :type model_version: str
         :param data: The specification data
         :type data: Dict[str, Any]
+
+        :return: {"written": <COUNT>} on success
+        :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
@@ -321,14 +327,14 @@ class Backend:
         :param model_version: The model version
         :type model_version: str
 
-        :return: The bound specification data data
+        :return: {"boundspec": { ... bound specification document ... }}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     def write_boundspec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """
         Write a bound specification for the model context.
 
@@ -338,5 +344,8 @@ class Backend:
         :type model_version: str
         :param data: The bound specification data
         :type data: Dict[str, Any]
+
+        :return: {"written": <COUNT>}
+        :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")

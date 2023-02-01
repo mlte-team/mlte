@@ -500,7 +500,7 @@ class FilesystemBackend(Backend):
             if model_identifier is not None
             else results
         )
-        return {"results": results}
+        return {"models": [r.to_json() for r in results]}
 
     def read_result(
         self,
@@ -677,11 +677,11 @@ class FilesystemBackend(Backend):
         if not _binding_is_saved(model_version_path):
             raise RuntimeError("Failed to read binding, no binding is saved.")
 
-        return _read_binding(model_version_path)
+        return {"binding": _read_binding(model_version_path)}
 
     def write_binding(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
 
@@ -698,6 +698,8 @@ class FilesystemBackend(Backend):
         model_version_path = self.root / model_identifier / model_version
         _write_binding(model_version_path, data)
 
+        return {"written": 1}
+
     def read_spec(
         self, model_identifier: str, model_version: str
     ) -> Dict[str, Any]:
@@ -712,11 +714,11 @@ class FilesystemBackend(Backend):
         if not _spec_is_saved(model_version_path):
             raise RuntimeError("Failed to read binding, no binding is saved.")
 
-        return _read_spec(model_version_path)
+        return {"spec": _read_spec(model_version_path)}
 
     def write_spec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
 
@@ -733,6 +735,8 @@ class FilesystemBackend(Backend):
         model_version_path = self.root / model_identifier / model_version
         _write_spec(model_version_path, data)
 
+        return {"written": 1}
+
     def read_boundspec(
         self, model_identifier: str, model_version: str
     ) -> Dict[str, Any]:
@@ -747,11 +751,11 @@ class FilesystemBackend(Backend):
         if not _boundspec_is_saved(model_version_path):
             raise RuntimeError("Failed to read binding, no binding is saved.")
 
-        return _read_boundspec(model_version_path)
+        return {"boundspec": _read_boundspec(model_version_path)}
 
     def write_boundspec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
 
@@ -767,6 +771,8 @@ class FilesystemBackend(Backend):
 
         model_version_path = self.root / model_identifier / model_version
         _write_boundspec(model_version_path, data)
+
+        return {"written": 1}
 
     def _check_exists(
         self, model_identifier: str, model_version: Optional[str] = None

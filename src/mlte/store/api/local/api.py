@@ -12,7 +12,7 @@ from ...backend.fs import FilesystemBackend
 LOCAL_URI_PREFIX = "local://"
 
 # -----------------------------------------------------------------------------
-# API Interface
+# Result
 # -----------------------------------------------------------------------------
 
 
@@ -25,9 +25,13 @@ def read_result(
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.read_result(
+    document = backend.read_result(
         model_identifier, model_version, result_identifier, result_version
     )
+    assert "results" in document, "Broken invariant."
+    assert len(document["results"]) == 1, "Broken invariant."
+    result: Dict[str, Any] = document["results"][0]
+    return result
 
 
 def write_result(
@@ -37,16 +41,25 @@ def write_result(
     result_identifier: str,
     result_data: Dict[str, Any],
     result_tag: Optional[str],
-):
+) -> int:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.write_result(
+    document = backend.write_result(
         model_identifier,
         model_version,
         result_identifier,
         result_data,
         result_tag,
     )
+    assert "written" in document, "Broken invariant."
+    assert document["written"] == 1, "Broken invariant."
+    count: int = document["written"]
+    return count
+
+
+# -----------------------------------------------------------------------------
+# Binding
+# -----------------------------------------------------------------------------
 
 
 def read_binding(
@@ -54,15 +67,27 @@ def read_binding(
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.read_binding(model_identifier, model_version)
+    document = backend.read_binding(model_identifier, model_version)
+    assert "binding" in document, "Broken precondition."
+    binding: Dict[str, Any] = document["binding"]
+    return binding
 
 
 def write_binding(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
+) -> int:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.write_binding(model_identifier, model_version, data)
+    document = backend.write_binding(model_identifier, model_version, data)
+    assert "written" in document, "Broken invariant."
+    assert document["written"] == 1, "Broken invariant."
+    count: int = document["written"]
+    return count
+
+
+# -----------------------------------------------------------------------------
+# Specification
+# -----------------------------------------------------------------------------
 
 
 def read_spec(
@@ -70,15 +95,27 @@ def read_spec(
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.read_spec(model_identifier, model_version)
+    document = backend.read_spec(model_identifier, model_version)
+    assert "spec" in document, "Broken invariant."
+    spec: Dict[str, Any] = document["spec"]
+    return spec
 
 
 def write_spec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
+) -> int:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.write_spec(model_identifier, model_version, data)
+    document = backend.write_spec(model_identifier, model_version, data)
+    assert "written" in document, "Broken invariant."
+    assert document["written"] == 1, "Broken invariant"
+    count: int = document["written"]
+    return count
+
+
+# -----------------------------------------------------------------------------
+# Bound Specification
+# -----------------------------------------------------------------------------
 
 
 def read_boundspec(
@@ -86,15 +123,22 @@ def read_boundspec(
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.read_boundspec(model_identifier, model_version)
+    document = backend.read_boundspec(model_identifier, model_version)
+    assert "boundspec" in document, "Broken invariant."
+    boundspec: Dict[str, Any] = document["boundspec"]
+    return boundspec
 
 
 def write_boundspec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
+) -> int:
     """TODO(Kyle)"""
     backend = _get_backend(uri)
-    return backend.write_boundspec(model_identifier, model_version, data)
+    document = backend.write_boundspec(model_identifier, model_version, data)
+    assert "written" in document, "Broken invariant."
+    assert document["written"] == 1, "Broken invariant."
+    count: int = document["written"]
+    return count
 
 
 # -----------------------------------------------------------------------------
