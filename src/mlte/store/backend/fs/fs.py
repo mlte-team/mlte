@@ -64,10 +64,15 @@ def _parse_root_path(uri: BackendURI) -> Path:
     :return: The parsed path
     :rtype: Path
     """
-    assert uri.uri.startswith("file://") or uri.uri.startswith(
+    uristr: str = uri.uri
+    assert uristr.startswith("fs://") or uristr.startswith(
         "local://"
     ), "Broken precondition."
-    return Path(uri.uri[len("file://") :])
+    return (
+        Path(uristr[len("fs://") :])
+        if uristr.startswith("fs://")
+        else Path(uristr[len("local://") :])
+    )
 
 
 # -----------------------------------------------------------------------------

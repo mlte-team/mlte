@@ -50,9 +50,7 @@ class BackendURI:
         :return: The parsed BackendURI
         :rtype: BackendURI
         """
-        if uri.startswith("fs://"):
-            return BackendURI(uri, BackendType.FS)
-        elif uri.startswith("local://"):
+        if uri.startswith("fs://") or uri.startswith("local://"):
             return BackendURI(uri, BackendType.FS)
         raise RuntimeError(f"Unrecognized backend store URI: {uri}.")
 

@@ -5,7 +5,7 @@ Application entry point.
 import argparse
 import logging
 import sys
-from typing import Optional
+from typing import Optional, Dict, Any
 
 import uvicorn
 from ..backend import Backend, initialize_backend
@@ -53,7 +53,7 @@ def parse_arguments():
     )
     # TODO(Kyle): Set a reasonable default
     parser.add_argument(
-        "--backend-store-uri",
+        "--backend-uri",
         type=str,
         required=True,
         help="The URI for the backend store.",
@@ -62,7 +62,7 @@ def parse_arguments():
         "--verbose", action="store_true", help="Enable verbose output."
     )
     args = parser.parse_args()
-    return args.host, args.port, args.backend_store_uri, args.verbose
+    return args.host, args.port, args.backend_uri, args.verbose
 
 
 # -----------------------------------------------------------------------------
@@ -84,13 +84,12 @@ async def get_healthcheck():
 async def get_models():
     """Get metadata for all existing models."""
     try:
-        models = g_store.read_model_metadata()
+        document = g_store.read_model_metadata()
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=f"{e}")
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
-
-    return models
+    return document
 
 
 @g_app.get("/metadata/model/{model_identifier}")
@@ -101,13 +100,12 @@ async def get_model(model_identifier: str):
     :type model_identifier: str
     """
     try:
-        models = g_store.read_model_metadata(model_identifier)
-        assert len(models) == 1, "Broken invariant."
+        document = g_store.read_model_metadata(model_identifier)
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=f"{e}")
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
-    return models
+    return document
 
 
 # -----------------------------------------------------------------------------
@@ -137,15 +135,14 @@ async def get_result_version(
     """
     try:
         # Read the result from the store
-        results = g_store.read_result(
+        document = g_store.read_result(
             model_identifier, model_version, result_identifier, result_version
         )
-        assert results is not None, "Broken invariant."
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=f"{e}")
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
-    return results
+    return document
 
 
 @g_app.get("/result/{model_identifier}/{model_version}/{result_identifier}")
@@ -165,15 +162,14 @@ async def get_result(
     """
     try:
         # Result the result from the store
-        results = g_store.read_result(
+        document = g_store.read_result(
             model_identifier, model_version, result_identifier
         )
-        assert results is not None, "Broken invariant."
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=f"{e}")
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
-    return results
+    return document
 
 
 @g_app.get("/result/{model_identifier}/{model_version}")
@@ -192,14 +188,14 @@ async def get_results(
     :type result_tag: Optional[str]
     """
     try:
-        results = g_store.read_results(
+        document = g_store.read_results(
             model_identifier, model_version, result_tag
         )
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=f"{e}")
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
-    return results
+    return document
 
 
 # -----------------------------------------------------------------------------
@@ -221,7 +217,7 @@ async def post_result(
 
     try:
         # Write the result to the backend
-        written = g_store.write_result(
+        document = g_store.write_result(
             model_identifier,
             model_version,
             result.identifier,
@@ -231,7 +227,7 @@ async def post_result(
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
 
-    return written
+    return document
 
 
 # -----------------------------------------------------------------------------
@@ -260,7 +256,7 @@ async def delete_result_version(
     :type result_version: int
     """
     try:
-        deleted = g_store.delete_result_version(
+        document = g_store.delete_result_version(
             model_identifier, model_version, result_identifier, result_version
         )
     except RuntimeError as e:
@@ -268,7 +264,7 @@ async def delete_result_version(
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
 
-    return deleted
+    return document
 
 
 @g_app.delete("/result/{model_identifier}/{model_version}/{result_identifier}")
@@ -285,7 +281,7 @@ async def delete_result(
     :type result_identifier: str
     """
     try:
-        deleted = g_store.delete_result(
+        document = g_store.delete_result(
             model_identifier, model_version, result_identifier
         )
     except RuntimeError as e:
@@ -293,7 +289,7 @@ async def delete_result(
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
 
-    return deleted
+    return document
 
 
 @g_app.delete("/result/{model_identifier}/{model_version}")
@@ -310,7 +306,7 @@ async def delete_results(
     :type result_tag: Optional[str]
     """
     try:
-        deleted = g_store.delete_results(
+        document = g_store.delete_results(
             model_identifier, model_version, result_tag
         )
     except RuntimeError as e:
@@ -318,7 +314,7 @@ async def delete_results(
     except Exception:
         raise HTTPException(status_code=500, detail="Internal server error.")
 
-    return deleted
+    return document
 
 
 # -----------------------------------------------------------------------------
@@ -326,21 +322,48 @@ async def delete_results(
 # -----------------------------------------------------------------------------
 
 
-def main() -> int:
+def run(
+    host: str,
+    port: int,
+    backend_uri: str,
+    verbose: bool,
+    **kwargs: Dict[str, Any],
+) -> int:
+    """
+    Run the server.
+
+    :param host: The host address to which the server binds
+    :type host: str
+    :param port: The port to which the server binds
+    :type port: int
+    :param backend_uri: The backend URI
+    :type backend_uri: str
+    :param verbose: Enable verbose logging
+    :type verbose: bool
+    :param kwargs: Catch-all for keyword arguments
+    :type kwargs: Dict[str, Any]
+
+    :return: An error code
+    :rtype: int
+    """
     global g_store
 
-    host, port, backend_store_uri, verbose = parse_arguments()
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
 
     # Initialize the backend store
     try:
-        g_store = initialize_backend(backend_store_uri)
+        g_store = initialize_backend(backend_uri)
     except RuntimeError as e:
         logging.error(f"{e}")
         return EXIT_FAILURE
 
     uvicorn.run(g_app, host=host, port=port)
     return EXIT_SUCCESS
+
+
+def main() -> int:
+    host, port, backend_uri, verbose = parse_arguments()
+    return run(host, port, backend_uri, verbose)
 
 
 if __name__ == "__main__":
