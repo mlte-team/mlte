@@ -1,5 +1,5 @@
 """
-Base class for measurement of external processes.
+Base class for measurement of external processes asynchronally.
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from typing import List
 from .measurement import Measurement
 from .result import Result
 from mlte._private.platform import is_windows
-from mlte.job import job
+from mlte._private import job
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement
@@ -25,13 +25,16 @@ class ProcessMeasurement(Measurement):
         """
         Initialize an external process running training or similar script.
 
-        :param script: The path to a Python script with the training or equivalent process to run.
+        :param script: The full path to a Python script with the training or equivalent process to run.
         :type identifier: str
 
         :param arguments: A list of string arguments for the process.
         :type identifier: List[str[]
+
+        :return: the id of the process that was created.
+        :rtype: int
         """        
-        return job.spawn_python_training_job(script, arguments)
+        return job.spawn_python_job(script, arguments)
 
     def __init__(self, instance: ProcessMeasurement, identifier: str):
         """
@@ -46,17 +49,15 @@ class ProcessMeasurement(Measurement):
                 f"Measurement {self.name} is not supported on Windows."
             )
         self.thread = None
-        self.results = None
+        self.result = None
 
-    def evaluate_async(self, pid:int, *args, **kwargs):
+    def evaluate_async(self, pid: int, *args, **kwargs):
         """
-        Monitor an external process at `pid` until in a separate thread.
+        Monitor an external process at `pid` in a separate thread until it stops.
+        Equivalent to evaluate(), but does not return the result immediately as it works in the background.
 
         :param pid: The process identifier
         :type pid: int
-
-        :return: The result of measurement execution, with semantics
-        :rtype: Result
         """
 
         # Evaluate the measurement
@@ -70,13 +71,13 @@ class ProcessMeasurement(Measurement):
  
     def _run_call(self, pid, *args, **kwargs):
         """
-        Runs the internall call, and stores its results when it finishes.
+        Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
         """
-        self.results = self.__call__(pid, *args, **kwargs)
+        self.result = self.__call__(pid, *args, **kwargs)
 
-    def wait_for_result(self, *args, **kwargs) -> Result:
+    def wait_for_result(self) -> Result:
         """
-        Evaluate a measurement done by an external process, by waiting for the thread to finish.
+        Needed to get the results of a measurement executed in parallel using evaluate_async. Waits for the thread to finish.
 
         :return: The result of measurement execution, with semantics
         :rtype: Result
