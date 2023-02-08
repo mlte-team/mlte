@@ -85,4 +85,4 @@ class ProcessMeasurement(Measurement):
         # Wait for thread to finish, and return results once it is done.
         while self.thread.is_alive():
             time.sleep(1)
-        return self.results        
+        return self.result        
