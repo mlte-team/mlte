@@ -8,7 +8,7 @@ import time
 import subprocess
 from typing import Dict, Any
 
-from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement import ProcessMeasurement, MeasurementMetadata
 from mlte.measurement.result import Result
 from mlte.measurement.validation import (
     Validator,
@@ -158,7 +158,7 @@ class MemoryStatistics(Result):
 # -----------------------------------------------------------------------------
 
 
-class LocalProcessMemoryConsumption(Measurement):
+class LocalProcessMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a local training process."""
 
     def __init__(self, identifier: str):
