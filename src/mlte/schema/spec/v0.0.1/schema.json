@@ -1,34 +1,73 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Specification",
+    "title": "Specification Report",
     "type": "object",
     "properties": {
         "schema_version": {
             "type": "string",
             "description": "The version identifier for the schema."
         },
+        "name": {
+            "type": "string",
+            "description": "A human-readable identifier for the specification."
+        },
+        "timestamp": {
+            "type": "string",
+            "description": "The timestamp at which the report was generated, in UNIX format."
+        },
         "properties": {
             "type": "array",
-            "description": "The collection of properties of which the specification is composed.",
+            "description": "The set of properties that compose the specification.",
             "items": {
                 "type": "object",
                 "properties": {
                     "name": {
                         "type": "string",
-                        "description": "The identifier for the property." 
-                    },
-                    "repr": {
-                        "type": "string",
-                        "description": "The representation required to reproduce the property."
+                        "description": "The name of the property."
                     },
                     "description": {
                         "type": "string",
-                        "description": "The property description."
+                        "description": "The description of the property."
+                    },
+                    "measurements": {
+                        "type": "array",
+                        "description": "The set of measurements associated with the property.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the measurement."
+                                },
+                                "validators": {
+                                    "type": "array",
+                                    "description": "The set of validators for the measurement.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "The name of the validator."
+                                            },
+                                            "result": {
+                                                "type": "string",
+                                                "description": "The text describing the result of validation."
+                                            },
+                                            "message": {
+                                                "type": "string",
+                                                "description": "The text elaborating on the validation result."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
+             
         }
     },
     "additionalProperties": false,
-    "required": ["schema_version"]
+    "required": ["schema_version", "name", "timestamp", "properties"]
 }

@@ -17,7 +17,7 @@ class TrainingMemoryCost(Property):
         Initialize a TrainingMemoryCost instance.
         """
         super().__init__(
-            self.__class__.__name__,
+            "TrainingMemoryCost",
             cleantext(
                 """
                 The TrainingMemoryCost property assesses the

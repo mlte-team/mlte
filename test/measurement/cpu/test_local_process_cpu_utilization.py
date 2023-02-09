@@ -9,9 +9,9 @@ import pytest
 import threading
 import subprocess
 
-import mlte
 from mlte._private.platform import is_windows, is_nix
-from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
+from mlte.measurement.cpu import LocalProcessCPUUtilization
+from mlte.measurement.cpu.local_process_cpu_utilization import CPUStatistics
 from mlte.measurement.validation import Validator, Success, Failure
 
 from ...support.meta import path_to_support
@@ -35,11 +35,11 @@ def spin_for(seconds: int):
 def test_cpu_nix_evaluate():
     start = time.time()
 
-    p = spin_for(5)
-    m = LocalProcessCPUUtilization("id")
+    prog = spin_for(5)
+    prop = LocalProcessCPUUtilization()
 
     # Capture CPU utilization; blocks until process exit
-    stat = m.evaluate(p.pid)
+    stat = prop.evaluate(prog.pid)
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -50,35 +50,38 @@ def test_cpu_nix_evaluate():
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_success():
-    p = spin_for(5)
-    m = LocalProcessCPUUtilization("id")
+    prog = spin_for(5)
+    prop = LocalProcessCPUUtilization().with_validator(
+        Validator("Succeed", lambda _: Success())
+    )
 
-    stats = m.evaluate(p.pid)
-
-    vr = Validator("Succeed", lambda _: Success())(stats)
-    assert bool(vr)
+    # Evaluate and run validators
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert bool(results[0])
 
     # Data is accessible from validation result
-    assert vr.result is not None
-    assert isinstance(vr.result, CPUStatistics)
+    result = results[0]
+    assert isinstance(result.data, CPUStatistics)
 
 
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_failure():
-    p = spin_for(5)
+    prog = spin_for(5)
+    prop = LocalProcessCPUUtilization().with_validator(
+        Validator("Fail", lambda _: Failure())
+    )
 
-    m = LocalProcessCPUUtilization("id")
-
-    stats = m.evaluate(p.pid)
-
-    vr = Validator("Fail", lambda _: Failure())(stats)
-    assert not bool(vr)
+    # Evaluate and run validators
+    results = prop.validate(prog.pid)
+    assert len(results) == 1
+    assert not bool(results[0])
 
     # Data is accessible from validation result
-    assert vr.result is not None
-    assert isinstance(vr.result, CPUStatistics)
+    result = results[0]
+    assert isinstance(result.data, CPUStatistics)
 
 
 @pytest.mark.skipif(
@@ -86,7 +89,7 @@ def test_cpu_nix_validate_failure():
 )
 def test_cpu_windows_evaluate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessCPUUtilization("id")
+        _ = LocalProcessCPUUtilization()
 
 
 @pytest.mark.skipif(
@@ -94,24 +97,4 @@ def test_cpu_windows_evaluate():
 )
 def test_cpu_windows_validate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessCPUUtilization("id")
-
-
-@pytest.mark.skipif(
-    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
-)
-def test_result_save_load(tmp_path):
-    mlte.set_model("mymodel", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
-
-    p = spin_for(5)
-
-    m = LocalProcessCPUUtilization("id")
-
-    stats: CPUStatistics = m.evaluate(p.pid)
-    stats.save()
-
-    r: CPUStatistics = CPUStatistics.load("id")  # type: ignore
-    assert r.avg == stats.avg
-    assert r.min == stats.min
-    assert r.max == stats.max
+        _ = LocalProcessCPUUtilization()

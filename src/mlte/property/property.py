@@ -9,7 +9,7 @@ import importlib
 from typing import Dict, Type
 
 # The names of the properties submodules
-SUBMODULES = ["costs", "functionality"]
+SUBMODULES = ["costs"]
 
 
 def _has_callable(type, name) -> bool:
@@ -42,9 +42,9 @@ class Property(metaclass=abc.ABCMeta):
         self.description = description
         """The description of the property."""
 
-    def _to_json(self) -> Dict[str, str]:
+    def _to_document(self) -> Dict[str, str]:
         """
-        Save a Property instance to a JSON document.
+        Save a Property instance to a document.
 
         :return: The document
         :rtype: Dict[str, str]
@@ -56,11 +56,11 @@ class Property(metaclass=abc.ABCMeta):
         }
 
     @staticmethod
-    def _from_json(document: Dict[str, str]) -> Property:
+    def _from_document(document: Dict[str, str]) -> Property:
         """
-        Load a Property instance from a JSON document.
+        Load a Property instance from a document.
 
-        :param document: The document for the saved property
+        :param document: The document for the saved propery
         :type document: Dict[str, str]
 
         :return: The loaded property

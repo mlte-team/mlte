@@ -2,8 +2,8 @@
 TaskEfficacy property definition.
 """
 
-from mlte.property import Property
-from mlte._private.text import cleantext
+from ..property import Property
+from ..._private.text import cleantext
 
 
 class TaskEfficacy(Property):
@@ -15,7 +15,7 @@ class TaskEfficacy(Property):
     def __init__(self):
         """Initialize a TaskEfficacy instance."""
         super().__init__(
-            self.__class__.__name__,
+            "TaskEfficacy",
             cleantext(
                 """
                 The TaskEfficacy property assesses a model's ability
