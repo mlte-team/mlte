@@ -25,9 +25,3 @@ src/mlte_python.egg-info/
 # Packaging artifacts
 dist/
 build/
-
-demo/data
-demo/models
-demo/store
-demo/media
-demo/reports

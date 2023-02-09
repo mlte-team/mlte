@@ -17,7 +17,7 @@ class TrainingComputeCost(Property):
         Initialize a TrainingComputeCost instance.
         """
         super().__init__(
-            self.__class__.__name__,
+            "TrainingComputeCost",
             cleantext(
                 """
                 The TrainingComputeCost property assesses the

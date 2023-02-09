@@ -10,8 +10,6 @@ from typing import Dict, Any
 
 # The endpoint for resolving endpoints for report generation
 RESOLUTION_ENDPOINT = "https://raw.githubusercontent.com/mlte-team/mlte/master/assets/endpoints.txt"  # noqa
-# The local endpoint
-LOCAL_ENDPOINT = "http://localhost:8000/html"
 
 
 def _connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 2) -> bool:
@@ -36,14 +34,10 @@ def _connected(host: str = "8.8.8.8", port: int = 53, timeout: int = 2) -> bool:
         return False
 
 
-def _resolve_endpoint(
-    local: bool, meta_endpoint: str = RESOLUTION_ENDPOINT
-) -> str:
+def _resolve_endpoint(meta_endpoint: str = RESOLUTION_ENDPOINT) -> str:
     """
     Resolve the endpoint for report generation.
 
-    :param local: Indicates to resolve to local address
-    :type local: bool
     :param meta_endpoint: The endpoint for resolution requests
     :type meta_endpoint: str
 
@@ -52,8 +46,6 @@ def _resolve_endpoint(
 
     :raises RuntimeError: If unable to resolve endpoint
     """
-    if local:
-        return LOCAL_ENDPOINT
     with tempfile.NamedTemporaryFile() as f:
         path = f.name
         try:
@@ -71,14 +63,12 @@ def _resolve_endpoint(
         raise RuntimeError("Unreachable")
 
 
-def _generate_html(document: Dict[str, Any], local: bool) -> str:
+def _generate_html(document: Dict[str, Any]) -> str:
     """
     Generate the HTML representation of a Report.
 
     :param document: The JSON document representation of the report
     :type document: Dict[str, Any]
-    :param local: Indicates that the HTML generation server runs locally
-    :type local: bool
 
     :return: The HTML representation of the report, as a string
     :rtype: str
@@ -88,7 +78,7 @@ def _generate_html(document: Dict[str, Any], local: bool) -> str:
     assert _connected(), "Broken precondition."
 
     # Resolve the endpoint for report generation
-    endpoint = _resolve_endpoint(local)
+    endpoint = _resolve_endpoint()
 
     # Construct the request with the report document
     req = request.Request(
