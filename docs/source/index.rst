@@ -1,11 +1,12 @@
 Machine Learning Test and Evaluation (`MLTE`) Documentation
 ======================================
 
-`MLTE` (pronounced "melt") is a Python library that creates an infrastructure for machine learning (ML) test and evaluation. `MLTE` was developed as reference implementation for the MLTE framework, but can be used for testing and evaluating any ML system. 
+`MLTE` (pronounced "melt") is a Python library containing an infrastructure for machine learning (ML) test and evaluation. `MLTE` was developed as a reference implementation for the MLTE framework, which compiles state- of-the-art evaluation techniques into an organizational process for interdisciplinary teams, including model developers, software engineers, system owners, and other stakeholders. 
 
-**Version** 0.1.4
+**Version:**  
+0.1.4
 
-**Useful Links**  
+**Useful Links:**  
 `Source Repository <https://github.com/mlte-team/mlte>`_ \| `MLTE Framework <https://github.com/mlte-team/mlte-framework>`_ \| `Contact Email <mlte.team.info@gmail.com>`_  
 
 Contents
@@ -14,12 +15,11 @@ Contents
 .. toctree::
    :maxdepth: 1
    
-   quickstart.md
-   examples.md
-   glossary.md
-   api
+   getting_started.md
+   user_guide
+   extending_mlte.md
    development.md
-   measurements.md
+   api
 
 .. note::
 
