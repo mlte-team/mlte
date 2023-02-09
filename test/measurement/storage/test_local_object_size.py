@@ -2,42 +2,47 @@
 Unit test for LocalObjectSize measurement.
 """
 
-import os
-import shutil
+from pathlib import Path
 from typing import Dict, Any
 
 from mlte.measurement.storage import LocalObjectSize
+from mlte.measurement.result import Integer
 from mlte.measurement.validation import ValidationResult
 
+# -----------------------------------------------------------------------------
+# Directory Hierarchy Construction
+# -----------------------------------------------------------------------------
 
-def _create_file(path: str, size: int):
+
+def _create_file(path: Path, size: int):
     """
     Create a file at `path` with size `size`.
 
     :param path: The path at which the file is created
-    :type path: str
+    :type path: Path
     :param size: The size of the file, in bytes
     :type size: int
     """
-    with open(path, "w") as f:
+    with path.open("w") as f:
         # TODO(Kyle): Increase functionality of this
         for _ in range(size):
             f.write("a")
 
-    assert os.path.exists(path) and os.path.isfile(path)
+    assert path.exists() and path.is_file()
 
 
-def _create_fs_hierarchy(prefix: str, template: Dict[str, Any]):
+def _create_fs_hierarchy(root: Path, template: Dict[str, Any]):
     """
     Construct a directory hierarchy described by `template`.
 
     This function is intended to be invoked recursively.
 
+    :param root: The path to the root from which to begin construction
     :param template: The template that describes the hierarchy
     """
-
+    assert root.exists() and root.is_dir(), "Broken precondition."
     for name, value in template.items():
-        local_prefix = os.path.join(prefix, name)
+        local_prefix = root / name
         if isinstance(value, int):
             # This (K, V) requests file creation;
             # the value is the size of the file
@@ -45,21 +50,27 @@ def _create_fs_hierarchy(prefix: str, template: Dict[str, Any]):
         else:
             # Assume this (K, V) requests directory creation;
             # the value is the remainder of the template
-            os.mkdir(local_prefix)
+            local_prefix.mkdir()
             _create_fs_hierarchy(local_prefix, value)
 
 
-def create_fs_hierarchy(template: Dict[str, Any]):
+def create_fs_hierarchy(root: Path, template: Dict[str, Any]):
     """
     Construct a directory hierarchy described by `template`.
 
     This function is the entry point for recursive construction.
 
+    :param base: The path to the root directory for the hierarchy
     :param template: The template that describes the hierarchy
     """
 
     assert len(template) == 1, "Root of hierarchy must have size 1."
-    _create_fs_hierarchy(os.getcwd(), template)
+    _create_fs_hierarchy(root, template)
+
+
+# -----------------------------------------------------------------------------
+# Directory Hierarchy Analysis
+# -----------------------------------------------------------------------------
 
 
 def _expected_hierarchy_size(template: Dict[str, Any]) -> int:
@@ -96,53 +107,64 @@ def expected_hierarchy_size(template: Dict[str, Any]) -> int:
     return _expected_hierarchy_size(template)
 
 
-def test_file():
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+
+
+def test_file(tmp_path):
     # Test with a model represented as file
     model = {"model": 32}
-    create_fs_hierarchy(model)
+    create_fs_hierarchy(tmp_path, model)
 
-    prop = LocalObjectSize()
-    size = prop.evaluate("model")
+    m = LocalObjectSize("identifier")
 
+    size: Integer = m.evaluate(str(tmp_path / "model"))
     assert size.value == expected_hierarchy_size(model)
-    os.remove("model")
 
 
-def test_directory():
+def test_directory(tmp_path):
     # Test with a model represented as directory
     model = {"model": {"params": 1024, "hyperparams": 32}}
-    create_fs_hierarchy(model)
+    create_fs_hierarchy(tmp_path, model)
 
-    prop = LocalObjectSize()
-    size = prop.evaluate("model")
+    m = LocalObjectSize("identifier")
 
+    size: Integer = m.evaluate(str(tmp_path / "model"))
     assert size.value == expected_hierarchy_size(model)
-    shutil.rmtree("model")
 
 
-def test_validation_success():
-    model = {"model": 64}
-    create_fs_hierarchy(model)
+def test_validation_less_than(tmp_path):
+    create_fs_hierarchy(tmp_path, {"model": 64})
 
-    prop = LocalObjectSize().with_validator_size_not_greater_than(threshold=64)
+    m = LocalObjectSize("identifier")
 
-    results = prop.validate("model")
-    assert len(results) == 1
-    assert isinstance(results[0], ValidationResult)
-    assert bool(results[0])
+    size: Integer = m.evaluate(str(tmp_path / "model"))
 
-    os.remove("model")
+    # Validation success
+    v = size.less_than(128)
+    assert isinstance(v, ValidationResult)
+    assert bool(v)
+
+    # Validation failure
+    v = size.less_than(64)
+    assert isinstance(v, ValidationResult)
+    assert not bool(v)
 
 
-def test_validation_failure():
-    model = {"model": 64}
-    create_fs_hierarchy(model)
+def test_validation_less_or_equal_to(tmp_path):
+    create_fs_hierarchy(tmp_path, {"model": 64})
 
-    prop = LocalObjectSize().with_validator_size_not_greater_than(threshold=32)
+    m = LocalObjectSize("identifier")
 
-    results = prop.validate("model")
-    assert len(results) == 1
-    assert isinstance(results[0], ValidationResult)
-    assert not bool(results[0])
+    size: Integer = m.evaluate(str(tmp_path / "model"))
 
-    os.remove("model")
+    # Validation success
+    v = size.less_or_equal_to(64)
+    assert isinstance(v, ValidationResult)
+    assert bool(v)
+
+    # Validation failure
+    v = size.less_or_equal_to(63)
+    assert isinstance(v, ValidationResult)
+    assert not bool(v)

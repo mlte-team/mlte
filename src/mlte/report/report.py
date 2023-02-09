@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
 from .html import _connected, _generate_html
-from ..spec import SpecReport
+from ..spec import BoundSpec
 
 from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
@@ -208,7 +208,7 @@ class Report(ReportAttribute):
     considerations: Considerations = field(default_factory=Considerations)
     """Model considerations."""
 
-    spec: SpecReport = field(default_factory=lambda: SpecReport({}))
+    spec: BoundSpec = field(default_factory=lambda: BoundSpec({}))
     """The model test spec report."""
 
     def _finalize(self) -> Dict[str, Any]:
@@ -255,7 +255,9 @@ class Report(ReportAttribute):
 
         return None
 
-    def to_html(self, path: Optional[str] = None) -> Union[str, None]:
+    def to_html(
+        self, path: Optional[str] = None, local: bool = False
+    ) -> Union[str, None]:
         """
         Convert the Report to an HTML document.
 
@@ -264,6 +266,8 @@ class Report(ReportAttribute):
 
         :param path: The path to which document is saved
         :type path: Optional[str]
+        :param local: Indicates that the HTML generation server runs locally
+        :type local: bool
 
         :return: String representation of HTML document, or None
         :rtype: Union[str, None]
@@ -276,7 +280,7 @@ class Report(ReportAttribute):
             )
 
         # Generate the string representation of HTML document
-        html = _generate_html(self._finalize())
+        html = _generate_html(self._finalize(), local)
 
         if path is not None:
             with open(path, "w") as f:
