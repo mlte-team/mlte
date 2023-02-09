@@ -6,108 +6,14 @@ from __future__ import annotations
 
 import abc
 from copy import deepcopy
-from typing import List, Optional
+from typing import Optional
 
-from mlte.measurement.evaluation.evalution_result import EvaluationResult
+from ..result import Result
 
 
 def _has_callable(type, name) -> bool:
     """Determine if `type` has a callable attribute with the given name."""
     return hasattr(type, name) and callable(getattr(type, name))
-
-
-# -----------------------------------------------------------------------------
-# Measurement Binding
-# -----------------------------------------------------------------------------
-
-
-class Binding(metaclass=abc.ABCMeta):
-    """The base class for measurement bindings."""
-
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        """Define the interface for all concrete ValidationResult."""
-        return all(_has_callable(subclass, method) for method in ["__bool__"])
-
-    def __init__(self):
-        """
-        Initialize a Binding instance.
-        """
-        self.measurement_name = ""
-        """The name of the measurement that is bound."""
-        self.property_names: List[str] = []
-        """The names of the properties to which measurement is bound."""
-
-        raise NotImplementedError("Cannot instantiate abstract Binding")
-
-    def __bool__(self) -> bool:
-        """Implicit boolean conversion."""
-        raise NotImplementedError(
-            "Boolean conversion of abstract Binding is ambiguous."
-        )
-
-    def __eq__(self, other: object) -> bool:
-        """Equality comparison."""
-        if not isinstance(other, Binding):
-            raise NotImplementedError(
-                f"Equality on Binding and {type(other).__name__}"
-            )
-        return self.measurement_name == other.measurement_name and set(
-            self.property_names
-        ) == set(other.property_names)
-
-    def __neq__(self, other: object) -> bool:
-        """Inequality comparison."""
-        return not (self == other)
-
-
-class Bound(Binding):
-    """A Bound instance represents a binding from measurement to property."""
-
-    def __init__(self, measurement, *properties: str):
-        """
-        Initialize a Bound instance.
-
-        :param measurement: The Measurement to which binding is attached
-        :type measurement: Measurement
-        :param properties: The names of the properties
-        to which the measurement is bound
-        :type properties: str
-        """
-        self.measurement_name = measurement.name
-        """The name of the measurement that is bound."""
-        self.property_names: List[str] = [name for name in properties]
-        """The names of the properties to which measurement is bound."""
-
-    def __bool__(str) -> bool:
-        """Implicit boolean conversion."""
-        return True
-
-    def __str__(self) -> str:
-        """Return a string representation of Bound."""
-        property_names = ",".join(name for name in self.property_names)
-        return f"Bound: {self.measurement_name} -> {property_names}"
-
-
-class Unbound(Binding):
-    """An Unbound instand represents an unbound measurement."""
-
-    def __init__(self):
-        """
-        Initialize a Unbound instance.
-        """
-        self.measurement_name = ""
-        """The name of the measurement that is bound."""
-        self.property_names: List[str] = []
-        """The names of the properties to which measurement is bound."""
-
-    def __bool__(self) -> bool:
-        """Implicit boolean conversion."""
-        return False
-
-    def __str__(self) -> str:
-        """Return a string representation of Unbound."""
-        return "Unbound"
 
 
 # -----------------------------------------------------------------------------
@@ -134,41 +40,28 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = ""
         """The name of the validator that produced the result."""
 
-        self.data: Optional[EvaluationResult] = None
+        self.result: Optional[Result] = None
         """
-        The EvaluationResult on which the Validator
+        The Result on which the Validator
         that produced this ValidationResult was invoked.
         """
-
-        self.binding: Binding = Unbound()
-        """The Binding for the ValidationResult."""
 
         self.message = ""
         """The message indicating the reason for status."""
 
-    def _from_validator(self, validator) -> ValidationResult:
+    def _with_result(self, result: Result) -> ValidationResult:
         """
-        Set the `validator_name` field of the ValidationResult
-        to indicate the validator that produced the result.
-
-        :param validator: The Validator instance that produced the result
-        :type validator: Validator
-
-        :return: The ValidationResult instance (`self`)
-        :rtype: ValidationResult
-        """
-        self.validator_name = validator.name
-        return self
-
-    def _from_data(self, data: EvaluationResult) -> ValidationResult:
-        """
-        Set the `data` field of the ValidationResult
-        to indicate the EvaluationResult from which
+        Set the `result` field of the ValidationResult
+        to indicate the Result instance from which
         it was generated.
 
-        :param data: The EvaluationResult on which the
+        This hook allows us to embed the result instance within
+        the ValidationResult so that we can use the result
+        information later when it is used to generate a report.
+
+        :param result: The Result instance on which the
         Validator that produced this instance was invoked
-        :type data: EvaluationResult
+        :type result: Result
 
         :return: The ValidationResult instance (`self`)
         :rtype: ValidationResult
@@ -176,45 +69,19 @@ class ValidationResult(metaclass=abc.ABCMeta):
         # TODO(Kyle): This is probably not necessary,
         # and is certainly overkill for the current
         # measurements that we have implemented. Revisit.
-        self.data = deepcopy(data)
+        self.result = deepcopy(result)
         return self
-
-    def _with_binding(self, binding: Binding) -> ValidationResult:
-        """
-        Set the `binding` field of the ValidationResult.
-
-        :param binding: The Binding instance
-        :type binding: Binding
-
-        :return: The ValidationResult instance (`self`)
-        :rtype: ValidationResult
-        """
-        self.binding = binding
-        return self
-
-    def _is_bound(self) -> bool:
-        """
-        Determine if the ValidationResult is bound to a property.
-
-        :return: `True` if the result is bound, `False` otherwise
-        :rtype: bool
-        """
-        return bool(self.binding)
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
+        assert self.result is not None, "Broken precondition."
         if not isinstance(other, ValidationResult):
-            raise NotImplementedError(
-                f"Equality on ValidationResult and {type(other).__name__}"
-            )
-        return (
-            self.validator_name == other.validator_name
-            and self.binding == other.binding
-        )
+            return False
+        return self.result.identifier == other.result.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
-        return not (self == other)
+        return not self.__eq__(other)
 
 
 class Success(ValidationResult):

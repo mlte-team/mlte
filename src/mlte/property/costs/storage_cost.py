@@ -14,7 +14,7 @@ class StorageCost(Property):
     def __init__(self):
         """Initialize a StorageCost instance."""
         super().__init__(
-            "StorageCost",
+            self.__class__.__name__,
             cleantext(
                 """
                 The StorageCost property assesses the storage requirements of a

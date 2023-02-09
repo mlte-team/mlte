@@ -4,7 +4,7 @@ The interface for measurement validation.
 
 import typing
 from typing import Callable
-from ..evaluation import EvaluationResult
+from ..result import Result
 from ..validation import ValidationResult
 
 
@@ -17,7 +17,7 @@ class Validator:
     def __init__(
         self,
         name: str,
-        callback: Callable[[EvaluationResult], ValidationResult],
+        callback: Callable[[Result], ValidationResult],
     ):
         """
         Initialize a Validator instance.
@@ -25,22 +25,22 @@ class Validator:
         :param name: The validator identifier
         :type name: str
         :param callback: The callable that implements validation
-        :type callback: Callable[[EvaluationResult], ValidationResult]
+        :type callback: Callable[[Result], ValidationResult]
         """
         self.name: str = name
         """The human-readable identifier for the Validator."""
 
-        self.callback: Callable[[EvaluationResult], ValidationResult] = callback
+        self.callback: Callable[[Result], ValidationResult] = callback
         """The callback that implements validation."""
 
-    def __call__(self, result: EvaluationResult) -> ValidationResult:
+    def __call__(self, result: Result) -> ValidationResult:
         """
         Invoke the validation callback
 
         :param result: The result of measurement evaluation
-        :type result: EvaluationResult
+        :type result: Result
 
         :return: The result of measurement validation
         :rtype: ValidationResult
         """
-        return self.callback(result)
+        return self.callback(result)._with_result(result)

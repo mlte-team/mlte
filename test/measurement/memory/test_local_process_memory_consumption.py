@@ -8,9 +8,10 @@ import pytest
 import threading
 import subprocess
 
+import mlte
 from mlte._private.platform import is_windows, is_nix
-from mlte.measurement.memory import LocalProcessMemoryConsumption
-from mlte.measurement.memory.local_process_memory_consumption import (
+from mlte.measurement.memory import (
+    LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
 from mlte.measurement.validation import Validator, Success, Failure
@@ -36,13 +37,13 @@ def spin_for(seconds: int):
 def test_memory_nix_evaluate():
     start = time.time()
 
-    prog = spin_for(5)
-    prop = LocalProcessMemoryConsumption()
+    p = spin_for(5)
+    m = LocalProcessMemoryConsumption("identifier")
 
     # Capture memory consumption; blocks until process exit
-    stat = prop.evaluate(prog.pid)
+    stats = m.evaluate(p.pid)
 
-    assert len(str(stat)) > 0
+    assert len(str(stats)) > 0
     assert int(time.time() - start) >= SPIN_DURATION
 
 
@@ -50,36 +51,36 @@ def test_memory_nix_evaluate():
     is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
 def test_memory_nix_validate_success():
-    prog = spin_for(5)
-    prop = LocalProcessMemoryConsumption().with_validator(
-        Validator("Succeed", lambda _: Success())
-    )
+    p = spin_for(5)
 
-    # Capture memory consumption; blocks until process exit
-    results = prop.validate(prog.pid)
-    assert len(results) == 1
-    assert bool(results[0])
+    m = LocalProcessMemoryConsumption("identifier")
 
-    result = results[0]
-    assert isinstance(result.data, MemoryStatistics)
+    # Blocks until process exit
+    stats = m.evaluate(p.pid)
+
+    vr = Validator("Succeed", lambda _: Success())(stats)
+    assert bool(vr)
+
+    assert vr.result is not None
+    assert isinstance(vr.result, MemoryStatistics)
 
 
 @pytest.mark.skipif(
     is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
 def test_memory_nix_validate_failure():
-    prog = spin_for(5)
-    prop = LocalProcessMemoryConsumption().with_validator(
-        Validator("Fail", lambda _: Failure())
-    )
+    p = spin_for(5)
 
-    # Capture memory consumption; blocks until process exit
-    results = prop.validate(prog.pid)
-    assert len(results) == 1
-    assert not bool(results[0])
+    m = LocalProcessMemoryConsumption("identifier")
 
-    result = results[0]
-    assert isinstance(result.data, MemoryStatistics)
+    # Blocks until process exit
+    stats = m.evaluate(p.pid)
+
+    vr = Validator("Fail", lambda _: Failure())(stats)
+    assert not bool(vr)
+
+    assert vr.result is not None
+    assert isinstance(vr.result, MemoryStatistics)
 
 
 @pytest.mark.skipif(
@@ -87,7 +88,7 @@ def test_memory_nix_validate_failure():
 )
 def test_memory_windows_evaluate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption()
+        _ = LocalProcessMemoryConsumption("id")
 
 
 @pytest.mark.skipif(
@@ -95,4 +96,24 @@ def test_memory_windows_evaluate():
 )
 def test_memory_windows_validate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption()
+        _ = LocalProcessMemoryConsumption("id")
+
+
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
+def test_result_save_load(tmp_path):
+    mlte.set_model("mymodel", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
+    p = spin_for(5)
+
+    m = LocalProcessMemoryConsumption("identifier")
+
+    stats: MemoryStatistics = m.evaluate(p.pid)
+    stats.save()
+
+    r: MemoryStatistics = MemoryStatistics.load("identifier")  # type: ignore
+    assert r.avg == stats.avg
+    assert r.min == stats.min
+    assert r.max == stats.max
