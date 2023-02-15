@@ -74,7 +74,7 @@ def test_opaque_save_load(tmp_path):
 
 
 def test_opqaue_serde():
-    m = MeasurementMetadata("typename", "identifier")
+    m = MeasurementMetadata("typename", Identifier("id"))
     o = Opaque(m, {"value": 1})
 
     serialized = o.serialize()

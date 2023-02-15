@@ -97,6 +97,9 @@ def test_cpu_windows_validate():
         _ = LocalProcessCPUUtilization("id")
 
 
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
 def test_result_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
@@ -108,7 +111,7 @@ def test_result_save_load(tmp_path):
     stats: CPUStatistics = m.evaluate(p.pid)
     stats.save()
 
-    r: CPUStatistics = CPUStatistics.load("id")
+    r: CPUStatistics = CPUStatistics.load("id")  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

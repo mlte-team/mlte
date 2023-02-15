@@ -88,7 +88,7 @@ def test_memory_nix_validate_failure():
 )
 def test_memory_windows_evaluate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption()
+        _ = LocalProcessMemoryConsumption("id")
 
 
 @pytest.mark.skipif(
@@ -96,9 +96,12 @@ def test_memory_windows_evaluate():
 )
 def test_memory_windows_validate():
     with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption()
+        _ = LocalProcessMemoryConsumption("id")
 
 
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
 def test_result_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
@@ -110,7 +113,7 @@ def test_result_save_load(tmp_path):
     stats: MemoryStatistics = m.evaluate(p.pid)
     stats.save()
 
-    r: MemoryStatistics = MemoryStatistics.load("identifier")
+    r: MemoryStatistics = MemoryStatistics.load("identifier")  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

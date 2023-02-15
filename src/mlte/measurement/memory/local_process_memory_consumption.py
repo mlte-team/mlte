@@ -110,7 +110,7 @@ class MemoryStatistics(Result):
         :return: The validation result
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "MaximumConsumption",
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
@@ -124,6 +124,7 @@ class MemoryStatistics(Result):
                 )
             ),
         )(self)
+        return result
 
     def average_consumption_less_than(
         self, threshold: float
@@ -137,7 +138,7 @@ class MemoryStatistics(Result):
         :return: The validation result
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "AverageConsumption",
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
@@ -151,6 +152,7 @@ class MemoryStatistics(Result):
                 )
             ),
         )(self)
+        return result
 
 
 # -----------------------------------------------------------------------------
@@ -171,10 +173,10 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         super().__init__(self, identifier)
         if is_windows():
             raise RuntimeError(
-                f"Measurement {self.name} is not supported on Windows."
+                f"Measurement {self.identifier} is not supported on Windows."
             )
 
-    def __call__(self, pid: int, poll_interval: int = 1) -> Dict[str, Any]:
+    def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
 
@@ -183,8 +185,8 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         :param poll_interval: The poll interval, in seconds
         :type poll_interval: int
 
-        :return The collection of memory usage statistics
-        :rtype: Dict
+        :return: The captured statistics
+        :rtype: MemoryStatistics
         """
         stats = []
         while True:

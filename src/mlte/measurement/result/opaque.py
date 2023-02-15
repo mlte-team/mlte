@@ -78,13 +78,16 @@ class Opaque(Result):
         """Raise ValueError to indicate Opaque is read-only."""
         raise ValueError("Opaque is read-only.")
 
-    def __eq__(self, other: Opaque) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Compare Opaque instances for equality."""
-        return _equal(self, other)
+        if not isinstance(other, Opaque):
+            return False
+        reference: Opaque = other
+        return _equal(self, reference)
 
-    def __neq__(self, other: Opaque) -> bool:
+    def __neq__(self, other: object) -> bool:
         """Compare Opaque instances for inequality."""
-        return not _equal(self, other)
+        return not self.__eq__(other)
 
 
 def _equal(a: Opaque, b: Opaque) -> bool:

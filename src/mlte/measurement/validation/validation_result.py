@@ -77,7 +77,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
         assert self.result is not None, "Broken precondition."
         if not isinstance(other, ValidationResult):
             return False
-        return self.result.identifier == other.result.identifier
+        return self.result.identifier == other.result.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
