@@ -13,6 +13,7 @@ mlte.egg-info
 
 # pytest artifacts
 .coverage
+.coverage.*
 
 # sphinx artifacts
 build/
@@ -26,6 +27,10 @@ src/mlte_python.egg-info/
 dist/
 build/
 
+# OSX artifacts
+.DS_Store
+
+# Demo artifacts
 demo/data
 demo/models
 demo/store
