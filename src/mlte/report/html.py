@@ -92,7 +92,9 @@ def _generate_html(document: Dict[str, Any], local: bool) -> str:
 
     # Construct the request with the report document
     req = request.Request(
-        endpoint, method="POST", data=json.dumps(document).encode("utf-8"),
+        endpoint,
+        method="POST",
+        data=json.dumps(document).encode("utf-8"),
     )
     req.add_header("Content-Type", "application/json; charset=utf-8")
 
