@@ -25,9 +25,9 @@ jobs:
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
-      run: check-lint
+      run: make check-lint
     - name: Typecheck with mypy
-      run: check-typecheck
+      run: make check-typecheck
     - name: Test with tox
       run: tox --develop
 
