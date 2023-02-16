@@ -170,10 +170,12 @@ We maintain a distinct set of Python dependencies for each minor version of Pyth
 Install the desired version with:
 
 ```bash
+export VERSION=3.8.16
+
 # Install the desired version
-pyenv install 3.8.16
+pyenv install $VERSION
 # Activate the desired version
-pyenv shell 3.8.16
+pyenv shell $VERSION
 # Confirm the version
 python --version
 Python 3.8.16
@@ -190,7 +192,7 @@ pip install pip-tools
 Now use the `pip-compile` functionality within `pip-tools` to compile the `requirements.in` file to a pinned `requirements.txt`:
 
 ```bash
-pip-compile -r --verbose --output-file requirements_dev_3.8.16.txt requirements_dev.in
+pip-compile -r --verbose --output-file "requirements_dev_${VERSION}.txt" requirements_dev.in
 ```
 
 Now deactivate the current environment, and create a new one for development to ensure that dependency specification is functioning as expected:
@@ -200,7 +202,7 @@ deactivate
 rm -rf env
 python -m venv env
 source ./env/bin/activate
-pip install -r requirements_dev_3.8.16.txt
+pip install -r "requirements_dev_${VERSION}.txt"
 ```
 
 ```bash
