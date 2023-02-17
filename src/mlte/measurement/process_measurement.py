@@ -50,6 +50,7 @@ class ProcessMeasurement(Measurement):
             )
         self.thread = None
         self.result = None
+        self.error = None
 
     def evaluate_async(self, pid: int, *args, **kwargs):
         """
@@ -61,19 +62,19 @@ class ProcessMeasurement(Measurement):
         """
 
         # Evaluate the measurement
-        try:
-            self.thread = threading.Thread(target=lambda: self._run_call(pid, *args, **kwargs))
-            self.thread.start()
-
-            return 
-        except FileNotFoundError as e:
-            raise RuntimeError("External program needed to evaluate was not found: " + str(e))            
+        self.error = None
+        self.result = None
+        self.thread = threading.Thread(target=lambda: self._run_call(pid, *args, **kwargs))
+        self.thread.start()
  
     def _run_call(self, pid, *args, **kwargs):
         """
         Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
         """
-        self.result = self.__call__(pid, *args, **kwargs)
+        try:
+            self.result = self.__call__(pid, *args, **kwargs)
+        except Exception as e:
+            self.error = "Could not evaluate process: " + str(e)
 
     def wait_for_result(self) -> Result:
         """
@@ -85,4 +86,9 @@ class ProcessMeasurement(Measurement):
         # Wait for thread to finish, and return results once it is done.
         while self.thread.is_alive():
             time.sleep(1)
+
+        # If an exception was raised, return it here as an exception as well.
+        if self.error is not None:
+            raise RuntimeError(self.error)
+        
         return self.result        
