@@ -1,5 +1,4 @@
 import sys
-import os
 import threading
 import subprocess
 from typing import List
@@ -7,14 +6,48 @@ from pathlib import Path
 
 
 def _get_interpreter_path() -> Path:
-    """Get the path to the current interpreter."""
+    """
+    Get the path to the current interpreter.
+
+    :return: Path to the Python executable currently being used.
+    :rtype: Path    
+    """
     return Path(sys.executable)
 
 
 def spawn_python_job(script_path: str, arguments: List[str]) -> int:
-    """Spawn the Python job from the given script and arguments, and return its process identifier."""
-    python = _get_interpreter_path()
-    command = [python, script_path]
+    """
+    Spawn the Python job from the given script and arguments, and return its process identifier.
+
+    :param script: The full path to a Python script with the training or equivalent process to run.
+    :type script: str
+
+    :param arguments: A list of string arguments for the process.
+    :type arguments: List[str[]
+
+    :return: Process id of the process that was created.
+    :rtype: int    
+    """
+    python_executable = _get_interpreter_path()
+    new_arguments = [script_path]
+    new_arguments.extend(arguments)
+    return spawn_job(python_executable, new_arguments)
+
+
+def spawn_job(executable: str, arguments: List[str]) -> int:
+    """
+    Spawn a process from the given executable and arguments, and return its process identifier.
+
+    :param script: The full path to an executable process to run.
+    :type script: str
+
+    :param arguments: A list of string arguments for the process.
+    :type arguments: List[str[]
+
+    :return: Process id of the process that was created.
+    :rtype: int    
+    """
+    command = [executable]
     command.extend(arguments)
 
     p = subprocess.Popen(command)

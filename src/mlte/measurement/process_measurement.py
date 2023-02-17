@@ -26,10 +26,10 @@ class ProcessMeasurement(Measurement):
         Initialize an external process running training or similar script.
 
         :param script: The full path to a Python script with the training or equivalent process to run.
-        :type identifier: str
+        :type script: str
 
         :param arguments: A list of string arguments for the process.
-        :type identifier: List[str[]
+        :type arguments: List[str[]
 
         :return: the id of the process that was created.
         :rtype: int
