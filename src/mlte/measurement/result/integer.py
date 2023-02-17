@@ -61,14 +61,14 @@ class Integer(Result):
         """Return a string representation of the Integer."""
         return f"{self.value}"
 
-    def __eq__(self, other: Integer) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Comparison between Integer values."""
-        assert isinstance(other, Integer), "Broken precondition."
+        if not isinstance(other, Integer):
+            return False
         return self.value == other.value
 
     def __neq__(self, other: Integer) -> bool:
         """Comparison between Integer values."""
-        assert isinstance(other, Integer), "Broken precondition."
         return not self.__eq__(other)
 
     def less_than(self, value: int) -> ValidationResult:
@@ -81,7 +81,7 @@ class Integer(Result):
         :return: The result of validation
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "LessThan",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
@@ -91,6 +91,7 @@ class Integer(Result):
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
         )(self)
+        return result
 
     def less_or_equal_to(self, value: int) -> ValidationResult:
         """
@@ -102,7 +103,7 @@ class Integer(Result):
         :return: The result of validation
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "LessOrEqualTo",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
@@ -113,3 +114,4 @@ class Integer(Result):
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
         )(self)
+        return result

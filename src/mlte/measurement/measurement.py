@@ -41,6 +41,11 @@ class Measurement(metaclass=abc.ABCMeta):
         )
         """The metadata for the measurement instance."""
 
+    @property
+    def identifier(self) -> Identifier:
+        """Return the measurement identifier."""
+        return self.metadata.identifier
+
     @abc.abstractmethod
     @typing.no_type_check
     def __call__(self, *args, **kwargs) -> Result:

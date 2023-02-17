@@ -40,7 +40,7 @@ def test_compatibility0():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])
+        _ = s.bind(b, [i])  # type: ignore
 
 
 def test_compatibility1():
@@ -52,7 +52,7 @@ def test_compatibility1():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])
+        _ = s.bind(b, [i])  # type: ignore
 
 
 def test_compatibility2():
@@ -64,7 +64,7 @@ def test_compatibility2():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])
+        _ = s.bind(b, [i])  # type: ignore
 
 
 def test_bind_unique():

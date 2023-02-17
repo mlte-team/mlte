@@ -174,11 +174,13 @@ class Binding:
             ]
         return description
 
-    def __eq__(self, other: Binding) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Compare Binding instances for equality."""
+        if not isinstance(other, Binding):
+            return False
         return _equal(self, other)
 
-    def __neq__(self, other: Binding) -> bool:
+    def __neq__(self, other: object) -> bool:
         """Compare binding instances for inequality."""
         return not self.__eq__(other)
 

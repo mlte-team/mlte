@@ -165,7 +165,8 @@ def _read_binding(model_version_path: Path) -> Dict[str, Any]:
     assert binding_path.is_file(), "Broken invariant."
 
     with open(binding_path, "r") as f:
-        return json.load(f)
+        result: Dict[str, Any] = json.load(f)
+        return result
 
 
 def _write_binding(model_version_path: Path, data: Dict[str, Any]):
@@ -201,7 +202,8 @@ def _read_spec(model_version_path: Path) -> Dict[str, Any]:
     assert spec_path.is_file(), "Broken invariant."
 
     with open(spec_path, "r") as f:
-        return json.load(f)
+        result: Dict[str, Any] = json.load(f)
+        return result
 
 
 def _write_spec(model_version_path: Path, data: Dict[str, Any]):
@@ -237,7 +239,8 @@ def _read_boundspec(model_version_path: Path) -> Dict[str, Any]:
     assert spec_path.is_file(), "Broken invariant."
 
     with open(spec_path, "r") as f:
-        return json.load(f)
+        result: Dict[str, Any] = json.load(f)
+        return result
 
 
 def _write_boundspec(model_version_path: Path, data: Dict[str, Any]):
@@ -270,7 +273,7 @@ def _read_result(result_path: Path, version: Optional[int] = None) -> Result:
     :rtype: Result
     """
     with result_path.open("r") as f:
-        result = Result.from_json(json.load(f))
+        result: Result = Result.from_json(json.load(f))
 
     # Ensure requested version is present
     assert (version is None) or (
@@ -286,7 +289,6 @@ def _read_result(result_path: Path, version: Optional[int] = None) -> Result:
         else version
     )
     result.versions = [v for v in result.versions if v.version == version]
-
     return result
 
 

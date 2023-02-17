@@ -85,7 +85,8 @@ class Image(Result):
         :return: The result of validation
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "Ignore",
             lambda _: Ignore(reason),
         )(self)
+        return result

@@ -40,17 +40,17 @@ def test_equality3():
 
 def test_integrity0():
     with pytest.raises(RuntimeError):
-        _ = Binding({1: ["foo", "bar"]})
+        _ = Binding({1: ["foo", "bar"]})  # type: ignore
 
 
 def test_integrity1():
     with pytest.raises(RuntimeError):
-        _ = Binding({"foo": "bar"})
+        _ = Binding({"foo": "bar"})  # type: ignore
 
 
 def test_integrity2():
     with pytest.raises(RuntimeError):
-        _ = Binding({"foo": ["bar", 2]})
+        _ = Binding({"foo": ["bar", 2]})  # type: ignore
 
 
 def test_save_load0(tmp_path):

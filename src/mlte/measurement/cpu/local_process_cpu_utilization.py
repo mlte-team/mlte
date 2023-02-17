@@ -110,7 +110,7 @@ class CPUStatistics(Result):
         :return: The validation result
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "MaximumUtilization",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
@@ -124,6 +124,7 @@ class CPUStatistics(Result):
                 )
             ),
         )(self)
+        return result
 
     def average_utilization_less_than(
         self, threshold: float
@@ -137,7 +138,7 @@ class CPUStatistics(Result):
         :return: The validation result
         :rtype: ValidationResult
         """
-        return Validator(
+        result: ValidationResult = Validator(
             "AverageUtilization",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
@@ -150,7 +151,8 @@ class CPUStatistics(Result):
                     "exceeds threshold {threshold:.2f}"
                 )
             ),
-        )
+        )(self)
+        return result
 
 
 # -----------------------------------------------------------------------------
@@ -171,7 +173,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         super().__init__(self, identifier)
         if is_windows():
             raise RuntimeError(
-                f"Measurement {self.name} is not supported on Windows."
+                f"Measurement {self.identifier} is not supported on Windows."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
