@@ -9,10 +9,10 @@ Create a Python virtual environment and install the required development package
 ```bash
 $ python -m venv env
 $ source ./env/bin/activate
-$ pip install -r requirements_dev_3.8.16.txt
+$ pip install -r requirements_dev_3.8.txt
 ```
 
-We only maintain a single `requirements.txt` file for each minor release of Python; that is, if the patch version in the filename of `requirements.txt` does not match your patch version, this can be safely ignored. See [Development Dependencies](#development-dependencies) for further information.
+We only maintain a single `requirements.txt` file for each minor release of Python; that is, the patch version is not included in the name of the `requirements.txt` to reflect the fact that dependencies should remain stable across all patches within a minor version. See [Development Dependencies](#development-dependencies) for further information.
 
 Now you are ready to start working on `mlte`!
 
@@ -159,9 +159,9 @@ $ twine upload dist/*
 
 We maintain a distinct set of Python dependencies for each minor version of Python that `mlte` supports. Currently, MLTE supports the following Python versions:
 
-- `3.8.16`
-- `3.9.16`
-- `3.10.10`
+- `3.8`
+- `3.9`
+- `3.10`
 
 [`pyenv`](https://github.com/pyenv/pyenv) can be used to manage multiple Python versions locally. Repeat the following procedure for each desired version. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `mlte`.
 
@@ -170,7 +170,7 @@ We maintain a distinct set of Python dependencies for each minor version of Pyth
 Install the desired version with:
 
 ```bash
-export VERSION=3.8.16
+export VERSION=3.8
 
 # Install the desired version
 pyenv install $VERSION
