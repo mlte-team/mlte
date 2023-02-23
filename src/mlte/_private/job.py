@@ -1,3 +1,7 @@
+"""
+Optional helpers that can be used to start external processes.
+"""
+
 import sys
 import threading
 import subprocess
@@ -29,8 +33,7 @@ def spawn_python_job(script_path: str, arguments: List[str]) -> int:
     :rtype: int    
     """
     python_executable = _get_interpreter_path()
-    new_arguments = [script_path]
-    new_arguments.extend(arguments)
+    new_arguments = [script_path, *arguments]
     return spawn_job(python_executable, new_arguments)
 
 
@@ -47,8 +50,7 @@ def spawn_job(executable: str, arguments: List[str]) -> int:
     :return: Process id of the process that was created.
     :rtype: int    
     """
-    command = [executable]
-    command.extend(arguments)
+    command = [executable, *arguments]
 
     p = subprocess.Popen(command)
     thread = threading.Thread(target=lambda: p.wait())

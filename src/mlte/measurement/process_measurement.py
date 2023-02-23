@@ -1,5 +1,5 @@
 """
-Base class for measurement of external processes asynchronally.
+Base class for measurement of external processes asynchronously.
 """
 
 from __future__ import annotations
@@ -44,10 +44,6 @@ class ProcessMeasurement(Measurement):
         :type identifier: str
         """
         super().__init__(instance, identifier)        
-        if is_windows():
-            raise RuntimeError(
-                f"Measurement {self.name} is not supported on Windows."
-            )
         self.thread = None
         self.result = None
         self.error = None
@@ -74,18 +70,21 @@ class ProcessMeasurement(Measurement):
         try:
             self.result = self.__call__(pid, *args, **kwargs)
         except Exception as e:
-            self.error = "Could not evaluate process: " + str(e)
+            self.error = "Could not evaluate process: {e}"
 
-    def wait_for_result(self) -> Result:
+    def wait_for_result(self, poll_interval: int=1) -> Result:
         """
         Needed to get the results of a measurement executed in parallel using evaluate_async. Waits for the thread to finish.
+
+        :param poll_interval: The poll interval in seconds
+        :type poll_interval: int        
 
         :return: The result of measurement execution, with semantics
         :rtype: Result
         """
         # Wait for thread to finish, and return results once it is done.
         while self.thread.is_alive():
-            time.sleep(1)
+            time.sleep(poll_interval)
 
         # If an exception was raised, return it here as an exception as well.
         if self.error is not None:
