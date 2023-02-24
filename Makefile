@@ -41,13 +41,11 @@ check-format:
 # Lint all source code
 .PHONY: lint
 lint:
-	flake8 src/
-	flake8 test/
+	flake8 --append-config .flake8 src/
+	flake8 --append-config .flake8 test/
 
 .PHONY: check-lint
-check-lint:
-	flake8 src/
-	flake8 test/
+check-lint: lint
 
 # Typecheck all source code
 .PHONY: typecheck
