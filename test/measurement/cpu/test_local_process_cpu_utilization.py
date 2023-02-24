@@ -49,6 +49,24 @@ def test_cpu_nix_evaluate():
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
+def test_cpu_nix_evaluate_async():
+    start = time.time()
+
+    p = spin_for(5)
+    m = LocalProcessCPUUtilization("id")
+
+    # Capture CPU utilization; blocks until process exit
+    m.evaluate_async(p.pid)
+    stat = m.wait_for_result()
+
+    assert len(str(stat)) > 0
+    # Test for passage of time
+    assert int(time.time() - start) >= SPIN_DURATION    
+
+
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
 def test_cpu_nix_validate_success():
     p = spin_for(5)
     m = LocalProcessCPUUtilization("id")
@@ -68,7 +86,6 @@ def test_cpu_nix_validate_success():
 )
 def test_cpu_nix_validate_failure():
     p = spin_for(5)
-
     m = LocalProcessCPUUtilization("id")
 
     stats = m.evaluate(p.pid)
