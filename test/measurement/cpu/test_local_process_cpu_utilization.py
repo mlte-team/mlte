@@ -61,7 +61,7 @@ def test_cpu_nix_evaluate_async():
 
     assert len(str(stat)) > 0
     # Test for passage of time
-    assert int(time.time() - start) >= SPIN_DURATION    
+    assert int(time.time() - start) >= SPIN_DURATION
 
 
 @pytest.mark.skipif(

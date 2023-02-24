@@ -14,7 +14,7 @@ def _get_interpreter_path() -> Path:
     Get the path to the current interpreter.
 
     :return: Path to the Python executable currently being used.
-    :rtype: Path    
+    :rtype: Path
     """
     return Path(sys.executable)
 
@@ -30,7 +30,7 @@ def spawn_python_job(script_path: str, arguments: List[str]) -> int:
     :type arguments: List[str[]
 
     :return: Process id of the process that was created.
-    :rtype: int    
+    :rtype: int
     """
     python_executable = _get_interpreter_path()
     new_arguments = [script_path, *arguments]
@@ -48,7 +48,7 @@ def spawn_job(executable: str, arguments: List[str]) -> int:
     :type arguments: List[str[]
 
     :return: Process id of the process that was created.
-    :rtype: int    
+    :rtype: int
     """
     command = [executable, *arguments]
 

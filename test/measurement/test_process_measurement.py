@@ -5,9 +5,7 @@ Unit test for ProcessMeasurement.
 import os
 import time
 
-from mlte.measurement import (
-    ProcessMeasurement
-)
+from mlte.measurement import ProcessMeasurement
 
 from ..support.meta import path_to_support
 

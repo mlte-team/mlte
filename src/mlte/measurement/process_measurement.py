@@ -17,6 +17,7 @@ from mlte._private import job
 # ProcessMeasurement
 # -----------------------------------------------------------------------------
 
+
 class ProcessMeasurement(Measurement):
     """Base class to be extended to measure external processes."""
 
@@ -33,7 +34,7 @@ class ProcessMeasurement(Measurement):
 
         :return: the id of the process that was created.
         :rtype: int
-        """        
+        """
         return job.spawn_python_job(script, arguments)
 
     def __init__(self, instance: ProcessMeasurement, identifier: str):
@@ -43,7 +44,7 @@ class ProcessMeasurement(Measurement):
         :param identifier: A unique identifier for the measurement
         :type identifier: str
         """
-        super().__init__(instance, identifier)        
+        super().__init__(instance, identifier)
         self.thread = None
         self.result = None
         self.error = None
@@ -60,9 +61,11 @@ class ProcessMeasurement(Measurement):
         # Evaluate the measurement
         self.error = None
         self.result = None
-        self.thread = threading.Thread(target=lambda: self._run_call(pid, *args, **kwargs))
+        self.thread = threading.Thread(
+            target=lambda: self._run_call(pid, *args, **kwargs)
+        )
         self.thread.start()
- 
+
     def _run_call(self, pid, *args, **kwargs):
         """
         Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
@@ -72,12 +75,12 @@ class ProcessMeasurement(Measurement):
         except Exception as e:
             self.error = "Could not evaluate process: {e}"
 
-    def wait_for_result(self, poll_interval: int=1) -> Result:
+    def wait_for_result(self, poll_interval: int = 1) -> Result:
         """
         Needed to get the results of a measurement executed in parallel using evaluate_async. Waits for the thread to finish.
 
         :param poll_interval: The poll interval in seconds
-        :type poll_interval: int        
+        :type poll_interval: int
 
         :return: The result of measurement execution, with semantics
         :rtype: Result
@@ -89,5 +92,5 @@ class ProcessMeasurement(Measurement):
         # If an exception was raised, return it here as an exception as well.
         if self.error is not None:
             raise RuntimeError(self.error)
-        
-        return self.result        
+
+        return self.result
