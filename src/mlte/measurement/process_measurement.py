@@ -86,7 +86,9 @@ class ProcessMeasurement(Measurement):
         """
         # Wait for thread to finish, and return results once it is done.
         if self.thread is None:
-            raise Exception("Can't wait for result, no process is currently running.")
+            raise Exception(
+                "Can't wait for result, no process is currently running."
+            )
         while self.thread.is_alive():
             time.sleep(poll_interval)
 
