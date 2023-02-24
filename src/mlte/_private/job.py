@@ -32,7 +32,7 @@ def spawn_python_job(script_path: str, arguments: List[str]) -> int:
     :return: Process id of the process that was created.
     :rtype: int
     """
-    python_executable = _get_interpreter_path()
+    python_executable = str(_get_interpreter_path())
     new_arguments = [script_path, *arguments]
     return spawn_job(python_executable, new_arguments)
 

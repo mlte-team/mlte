@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import threading
 import time
-from typing import List
+from typing import List, Optional
 
 from .measurement import Measurement
 from .result import Result
@@ -44,9 +44,9 @@ class ProcessMeasurement(Measurement):
         :type identifier: str
         """
         super().__init__(instance, identifier)
-        self.thread = None
-        self.result = None
-        self.error = None
+        self.thread: Optional[threading.Thread] = None
+        self.result: Optional[Result] = None
+        self.error: str = ""
 
     def evaluate_async(self, pid: int, *args, **kwargs):
         """
@@ -58,7 +58,7 @@ class ProcessMeasurement(Measurement):
         """
 
         # Evaluate the measurement
-        self.error = None
+        self.error = ""
         self.result = None
         self.thread = threading.Thread(
             target=lambda: self._run_call(pid, *args, **kwargs)
@@ -85,11 +85,15 @@ class ProcessMeasurement(Measurement):
         :rtype: Result
         """
         # Wait for thread to finish, and return results once it is done.
+        if self.thread is None:
+            raise Exception("Can't wait for result, no process is currently running.")
         while self.thread.is_alive():
             time.sleep(poll_interval)
 
         # If an exception was raised, return it here as an exception as well.
-        if self.error is not None:
+        if self.error != "":
             raise RuntimeError(self.error)
 
+        if self.result is None:
+            raise Exception("No valid result was returned from measurement.")
         return self.result
