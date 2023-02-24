@@ -10,7 +10,6 @@ from typing import List
 
 from .measurement import Measurement
 from .result import Result
-from mlte._private.platform import is_windows
 from mlte._private import job
 
 # -----------------------------------------------------------------------------
@@ -73,7 +72,7 @@ class ProcessMeasurement(Measurement):
         try:
             self.result = self.__call__(pid, *args, **kwargs)
         except Exception as e:
-            self.error = "Could not evaluate process: {e}"
+            self.error = f"Could not evaluate process: {e}"
 
     def wait_for_result(self, poll_interval: int = 1) -> Result:
         """

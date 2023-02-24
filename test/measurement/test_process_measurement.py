@@ -3,7 +3,6 @@ Unit test for ProcessMeasurement.
 """
 
 import os
-import time
 
 from mlte.measurement import ProcessMeasurement
 

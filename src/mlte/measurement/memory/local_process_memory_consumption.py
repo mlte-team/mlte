@@ -241,5 +241,5 @@ def _get_memory_usage(pid: int) -> int:
         return 0
     except FileNotFoundError as e:
         raise RuntimeError(
-            "External program needed to get memory usage was not found: {e}"
+            f"External program needed to get memory usage was not found: {e}"
         )
