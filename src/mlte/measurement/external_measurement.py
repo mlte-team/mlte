@@ -23,7 +23,7 @@ class ExternalMeasurement(Measurement):
             raise Exception(
                 f"Result type provided is not a subtype of Result: {self.result_type}"
             )
-        self.result_type: type = result_type       
+        self.result_type: type = result_type
 
     def __call__(self, *args, **kwargs) -> Result:
         """Evaluate a measurement and return results without semantics."""
