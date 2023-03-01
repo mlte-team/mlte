@@ -50,6 +50,23 @@ def test_memory_nix_evaluate():
 @pytest.mark.skipif(
     is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
+def test_memory_nix_evaluate_async():
+    start = time.time()
+
+    p = spin_for(5)
+    m = LocalProcessMemoryConsumption("identifier")
+
+    # Capture memory consumption; blocks until process exit
+    m.evaluate_async(p.pid)
+    stats = m.wait_for_result()
+
+    assert len(str(stats)) > 0
+    assert int(time.time() - start) >= SPIN_DURATION
+
+
+@pytest.mark.skipif(
+    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+)
 def test_memory_nix_validate_success():
     p = spin_for(5)
 
