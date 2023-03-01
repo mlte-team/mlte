@@ -9,5 +9,5 @@ __all__ = [
     "MeasurementMetadata",
     "Identifier",
     "ProcessMeasurement",
-    "ExternalMeasurement"
+    "ExternalMeasurement",
 ]
