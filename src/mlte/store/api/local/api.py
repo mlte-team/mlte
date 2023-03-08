@@ -182,7 +182,7 @@ def _write_binding(model_version_path: Path, data: Dict[str, Any]):
     """
     binding_path = model_version_path / BINDING_FILENAME
     with open(binding_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 
 # -----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ def _write_spec(model_version_path: Path, data: Dict[str, Any]):
     """
     spec_path = model_version_path / SPEC_FILENAME
     with open(spec_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 
 # -----------------------------------------------------------------------------
@@ -256,7 +256,7 @@ def _write_boundspec(model_version_path: Path, data: Dict[str, Any]):
     """
     spec_path = model_version_path / BOUNDSPEC_FILENAME
     with open(spec_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 
 # -----------------------------------------------------------------------------
@@ -324,10 +324,10 @@ def _write_result(result_path: Path, result: Result, tag: Optional[str]):
 
         # Persist updates
         with result_path.open("w") as f:
-            json.dump(mutating.to_json(), f)
+            json.dump(mutating.to_json(), f, indent=4)
     else:
         with result_path.open("w") as f:
-            json.dump(result.to_json(), f)
+            json.dump(result.to_json(), f, indent=4)
 
 
 # -----------------------------------------------------------------------------
