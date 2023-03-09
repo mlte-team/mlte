@@ -100,10 +100,9 @@ def _result_path(model_version_path: Path, result_identifier: str) -> Path:
     :return: The formatted result path
     :rtype: Path
     """
-    path = (
+    return (
         model_version_path / result_identifier.replace(" ", "-")
     ).with_suffix(".json")
-    return Path(str(path))
 
 
 def _spec_is_saved(model_version_path: Path) -> bool:
