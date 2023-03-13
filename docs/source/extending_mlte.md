@@ -8,13 +8,11 @@ If you are looking to use your own functions or those from another library (such
 from sklearn.metrics import accuracy_score
 
 from mlte.measurement.result import Real
-from mlte.measurement import MeasurementMetadata, Identifier
+from mlte.measurement import ExternalMeasurement
 
 # Evaluate performance
-accuracy = Real(
-    MeasurementMetadata("accuracy_score", Identifier("accuracy")),
-    accuracy_score(y_test, y_pred)
-)
+accuracy_measurement = ExternalMeasurement("accuracy", Real)
+accuracy = accuracy_measurement.evaluate(accuracy_score(y_test, y_pred))
 
 # Inspect result
 print(accuracy)
@@ -33,14 +31,12 @@ See below for an example of how to write a MLTE result type, regardless of wheth
 
 ```Python
 from sklearn.metrics import confusion_matrix
-from mlte.measurement import MeasurementMetadata, Identifier
 from confusion_matrix import ConfusionMatrix
+from mlte.measurement import ExternalMeasurement
 
 # Generate result
-matrix = ConfusionMatrix(
-    MeasurementMetadata("confusion_matrix", Identifier("confusion matrix")),
-    confusion_matrix(y_test, y_pred)
-)
+matrix_measurement = ExternalMeasurement("confusion matrix", ConfusionMatrix)
+matrix = matrix_measurement.evaluate(confusion_matrix(y_test, y_pred))
 
 # Inspect
 print(matrix)
