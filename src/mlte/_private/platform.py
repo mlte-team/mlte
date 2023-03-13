@@ -34,4 +34,3 @@ def is_macos():
     :rtype: bool
     """
     return sys.platform == "darwin"
-    
