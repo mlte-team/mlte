@@ -21,9 +21,9 @@ class ProcessMeasurement(Measurement):
     """Base class to be extended to measure external processes."""
 
     @staticmethod
-    def start_process(script: str, arguments: List[str]) -> int:
+    def start_script(script: str, arguments: List[str]) -> int:
         """
-        Initialize an external process running training or similar script.
+        Initialize an external Python process running training or similar script.
 
         :param script: The full path to a Python script with the training or equivalent process to run.
         :type script: str
@@ -35,6 +35,22 @@ class ProcessMeasurement(Measurement):
         :rtype: int
         """
         return job.spawn_python_job(script, arguments)
+
+    @staticmethod
+    def start_process(process: str, arguments: List[str]) -> int:
+        """
+        Initialize an external process running training or similar.
+
+        :param process: The full path to a process to run.
+        :type script: str
+
+        :param arguments: A list of string arguments for the process.
+        :type arguments: List[str[]
+
+        :return: the id of the process that was created.
+        :rtype: int
+        """
+        return job.spawn_job(process, arguments)
 
     def __init__(self, instance: ProcessMeasurement, identifier: str):
         """
