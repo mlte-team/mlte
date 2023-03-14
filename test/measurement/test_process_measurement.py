@@ -25,9 +25,7 @@ def test_start_script_job():
 
 
 def test_start_general_job():
-    spin = os.path.join(
-        path_to_support(), str(Path(sys.executable))
-    )
+    spin = os.path.join(path_to_support(), str(Path(sys.executable)))
     args = ["spin.py", f"{SPIN_DURATION}"]
 
     # Spawn external job; blocks until process exit
