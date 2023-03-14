@@ -198,11 +198,7 @@ class Spec:
             self._bind_to_property(property, binding, results)
             for property in self.properties
         ]
-        document: Dict[str, Any] = {
-            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "metadata": self._metadata(),
-            "properties": properties,
-        }
+        document = self._spec_document(properties)
         return BoundSpec(document)
 
     def _metadata(self) -> Dict[str, Any]:
@@ -216,6 +212,44 @@ class Spec:
             "model_version": model_version,
             "timestamp": int(time.time()),
         }
+
+    def _spec_document(
+        self, properties_document: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """
+        Generate the spec document.
+
+        :param properties_document: The property of interest
+        :type property: Property
+
+        :return: The spec document
+        :rtype: dict[str, Any]
+        """
+        document = {
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
+            "metadata": self._metadata(),
+            "properties": properties_document,
+        }
+        return document
+
+    def _property_document(
+        self, property: Property, measurements: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """
+        Generate a property document.
+
+        :param property: The property of interest
+        :type property: Property
+
+        :return: The property-level document
+        :rtype: dict[str, Any]
+        """
+        document = {
+            "name": property.name,
+            "description": property.description,
+            "measurements": measurements,
+        }
+        return document
 
     def _validate_binding(
         self,
@@ -285,11 +319,7 @@ class Spec:
                 self._bind_for_measurement([vr for vr in group])
             )
 
-        document = {
-            "name": property.name,
-            "description": property.description,
-            "measurements": measurements,
-        }
+        document = self._property_document(property, measurements)
         return document
 
     def _bind_for_measurement(

@@ -62,3 +62,7 @@ class Measurement(metaclass=abc.ABCMeta):
         """
         # Evaluate the measurement
         return self.__call__(*args, **kwargs)
+
+    def __str__(self) -> str:
+        """Return a string representation of a Measurement."""
+        return f"{self.metadata.typename}-{self.metadata.identifier}"
