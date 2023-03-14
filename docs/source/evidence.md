@@ -64,19 +64,17 @@ size.save()
 ```
 
 ## Ingest External Functionality
-Users can wrap the output of external measurements in a suitable Result type to integrate them into MLTE. In the following example, we wrap the output from the accuracy score function from [scikit learn](https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score) with a built in MLTE type (Real) to integrate it with our collection of evidence. The Real Result instance is then persisted to the MLTE artifact store.
+Users can wrap the output of external measurements in a suitable Result type to integrate them into MLTE. In the following example, we wrap the output from the accuracy score function from [scikit learn](https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score) with a built in MLTE type (Real) to integrate it with our collection of evidence, by using ExternalMeasurement. The Real Result instance is then persisted to the MLTE artifact store.
 
 ```Python
 from sklearn.metrics import accuracy_score
 
 from mlte.measurement.result import Real
-from mlte.measurement import MeasurementMetadata, Identifier
+from mlte.measurement import ExternalMeasurement
 
 # Evaluate performance
-accuracy = Real(
-    MeasurementMetadata("accuracy_score", Identifier("accuracy")),
-    accuracy_score(y_test, y_pred)
-)
+accuracy_measurement = ExternalMeasurement("accuracy", Real)
+accuracy = accuracy_measurement.evaluate(accuracy_score(y_test, y_pred))
 
 # Inspect result
 print(accuracy)
@@ -90,14 +88,12 @@ Here, we define a custom Result type to cope with the output of a third-party li
 
 ```Python
 from sklearn.metrics import confusion_matrix
-from mlte.measurement import MeasurementMetadata, Identifier
 from confusion_matrix import ConfusionMatrix
+from mlte.measurement import ExternalMeasurement
 
 # Generate result
-matrix = ConfusionMatrix(
-    MeasurementMetadata("confusion_matrix", Identifier("confusion matrix")),
-    confusion_matrix(y_test, y_pred)
-)
+matrix_measurement = ExternalMeasurement("confusion matrix", ConfusionMatrix)
+matrix = matrix_measurement.evaluate(confusion_matrix(y_test, y_pred))
 
 # Inspect
 print(matrix)
