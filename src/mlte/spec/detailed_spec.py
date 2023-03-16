@@ -32,7 +32,7 @@ class DetailedSpec(Spec):
 
         # Stored the measurements indexed by property name.
         self.measurements: dict[str, list[Measurement]] = {
-            property.name: [str(m) for m in measurements]
+            property.name: [m for m in measurements]
             for (property, measurements) in properties.items()
         }
 
@@ -43,8 +43,31 @@ class DetailedSpec(Spec):
     def generate_document(self) -> dict[str, Any]:
         """Generates a document with the detailed spec."""
         property_docs = [
-            self._property_document(property, self.measurements[property.name])
+            self._property_document(
+                property,
+                self._generate_measurements_document(
+                    self.measurements[property.name]
+                ),
+            )
             for property in self.properties
         ]
         document = self._spec_document(property_docs)
+        return document
+
+    def _generate_measurements_document(
+        self, measurements: list[Measurement]
+    ) -> list[dict[str, Any]]:
+        """
+        Collect info into a measurement-level document.
+
+        :return: The measurement-level document
+        :rtype: dict[str, Any]
+        """
+        document = [
+            {
+                "name": str(measurement.metadata.identifier),
+                "type": measurement.metadata.typename,
+            }
+            for measurement in measurements
+        ]
         return document
