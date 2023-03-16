@@ -3,6 +3,7 @@ Platform discovery.
 """
 
 import os
+import sys
 
 
 def is_windows() -> bool:
@@ -23,3 +24,13 @@ def is_nix() -> bool:
     :rtype: bool
     """
     return os.name == "posix"
+
+
+def is_macos():
+    """
+    Determine if the platform is macOS.
+
+    :return: `True` if the OS is macOS, `False` otherwise.
+    :rtype: bool
+    """
+    return sys.platform == "darwin"

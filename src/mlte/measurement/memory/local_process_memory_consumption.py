@@ -16,7 +16,7 @@ from mlte.measurement.validation import (
     Success,
     Failure,
 )
-from mlte._private.platform import is_windows
+from mlte._private.platform import is_windows, is_macos
 
 
 # -----------------------------------------------------------------------------
@@ -171,9 +171,9 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         :type identifier: str
         """
         super().__init__(self, identifier)
-        if is_windows():
+        if is_windows() or is_macos():
             raise RuntimeError(
-                f"Measurement {self.identifier} is not supported on Windows."
+                f"Measurement {self.identifier} is not supported on Windows or macOS."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
