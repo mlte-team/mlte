@@ -72,6 +72,23 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.result = deepcopy(result)
         return self
 
+    def _from_validator(self, validator) -> ValidationResult:
+        """
+        Set the `validator_name` field of the ValidationResult
+        to indicate the Validator instance from which it was generated.
+
+        This hook allows us to embed the name of the Validator into
+        the produced ValidationResult at the point it is produced.
+
+        :param validator: The Validator instance
+        :type validator: Validator
+
+        :return: The ValidationResult instance (`self`)
+        :rtype: ValidationResult
+        """
+        self.validator_name = validator.name
+        return self
+
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
         assert self.result is not None, "Broken precondition."
