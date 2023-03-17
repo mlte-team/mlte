@@ -29,7 +29,7 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py38
 
   test_3-9:
     runs-on: ${{ matrix.os }}
@@ -55,7 +55,7 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py39
 
   test_3-10:
     runs-on: ${{ matrix.os }}
@@ -81,4 +81,4 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py310
