@@ -9,7 +9,7 @@ import subprocess
 from typing import Dict, Any
 from subprocess import SubprocessError
 
-from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement import ProcessMeasurement, MeasurementMetadata
 from mlte.measurement.result import Result
 from mlte.measurement.validation import (
     Validator,
@@ -160,7 +160,7 @@ class CPUStatistics(Result):
 # -----------------------------------------------------------------------------
 
 
-class LocalProcessCPUUtilization(Measurement):
+class LocalProcessCPUUtilization(ProcessMeasurement):
     """Measures CPU utilization for a local process."""
 
     def __init__(self, identifier: str):
@@ -228,3 +228,7 @@ def _get_cpu_usage(pid: int) -> float:
         return -1.0
     except ValueError:
         return -1.0
+    except FileNotFoundError as e:
+        raise RuntimeError(
+            f"External program needed to get CPU usage was not found: {e}"
+        )

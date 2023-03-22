@@ -8,7 +8,7 @@ import time
 import subprocess
 from typing import Dict, Any
 
-from mlte.measurement import Measurement, MeasurementMetadata
+from mlte.measurement import ProcessMeasurement, MeasurementMetadata
 from mlte.measurement.result import Result
 from mlte.measurement.validation import (
     Validator,
@@ -16,7 +16,7 @@ from mlte.measurement.validation import (
     Success,
     Failure,
 )
-from mlte._private.platform import is_windows
+from mlte._private.platform import is_windows, is_macos
 
 
 # -----------------------------------------------------------------------------
@@ -160,7 +160,7 @@ class MemoryStatistics(Result):
 # -----------------------------------------------------------------------------
 
 
-class LocalProcessMemoryConsumption(Measurement):
+class LocalProcessMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a local training process."""
 
     def __init__(self, identifier: str):
@@ -171,9 +171,9 @@ class LocalProcessMemoryConsumption(Measurement):
         :type identifier: str
         """
         super().__init__(self, identifier)
-        if is_windows():
+        if is_windows() or is_macos():
             raise RuntimeError(
-                f"Measurement {self.identifier} is not supported on Windows."
+                f"Measurement {self.identifier} is not supported on Windows or macOS."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
@@ -239,3 +239,7 @@ def _get_memory_usage(pid: int) -> int:
         return int(used.decode("utf-8").strip()[:-1])
     except ValueError:
         return 0
+    except FileNotFoundError as e:
+        raise RuntimeError(
+            f"External program needed to get memory usage was not found: {e}"
+        )

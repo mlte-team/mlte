@@ -4,13 +4,15 @@ This document describes some of the development practices used within `mlte`.
 
 ## Quickstart
 
-Create a Python virtual environment and install the required development packages:
+Create a Python virtual environment and install the required development packages. Install the set of depenencies that are relevant for the version of Python that you plan to use for development. For example, if you are using Python version `3.8`, installation looks like:
 
 ```bash
 $ python -m venv env
 $ source ./env/bin/activate
-$ pip install -r requirements_dev.txt
+$ pip install -r requirements_dev_3.8.txt
 ```
+
+We only maintain a single `requirements.txt` file for each minor release of Python; that is, the patch version is not included in the name of the `requirements.txt` to reflect the fact that dependencies should remain stable across all patches within a minor version. See [Development Dependencies](#development-dependencies) for further information.
 
 Now you are ready to start working on `mlte`!
 
@@ -152,3 +154,62 @@ Finally, upload the package to `PyPi`:
 ```
 $ twine upload dist/*
 ```
+
+## Development Dependencies
+
+We maintain a distinct set of Python dependencies for each minor version of Python that `mlte` supports. Currently, MLTE supports the following Python versions:
+
+- `3.8`
+- `3.9`
+- `3.10`
+
+[`pyenv`](https://github.com/pyenv/pyenv) can be used to manage multiple Python versions locally. Repeat the following procedure for each desired version. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `mlte`.
+
+**Establishing Depdencies for a Particular Python Version**
+
+Install the desired version with:
+
+```bash
+export VERSION=3.8
+
+# Install the desired version
+pyenv install $VERSION
+# Activate the desired version
+pyenv shell $VERSION
+# Confirm the version
+python --version
+Python 3.8.16
+```
+
+With the proper version activated, create a virtual environment for requirements generation, and install [`pip-tools`](https://github.com/jazzband/pip-tools):
+
+```bash
+python -m venv env
+source ./env/bin/activate
+pip install pip-tools
+```
+
+Now use the `pip-compile` functionality within `pip-tools` to compile the `requirements.in` file to a pinned `requirements.txt`:
+
+```bash
+pip-compile -r --verbose --output-file "requirements_dev_${VERSION}.txt" requirements_dev.in
+```
+
+Now deactivate the current environment, and create a new one for development to ensure that dependency specification is functioning as expected:
+
+```bash
+deactivate
+rm -rf env
+python -m venv env
+source ./env/bin/activate
+pip install -r "requirements_dev_${VERSION}.txt"
+```
+
+```bash
+# Check QA mechanisms
+make check
+# Run tests
+make test
+```
+
+Once all QA checks and unit tests pass, we can be assured that the environment dependencies are properly specified.

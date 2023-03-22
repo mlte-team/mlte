@@ -14,6 +14,7 @@ mlte.egg-info
 # pytest artifacts
 .coverage
 .coverage.*
+*.coverage
 
 # sphinx artifacts
 build/
