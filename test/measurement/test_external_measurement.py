@@ -39,6 +39,19 @@ def test_evaluate_external():
     assert result == expected_result
 
 
+def test_evaluate_collect_data():
+    expected_value = 1000
+    expected_result = Integer(
+        MeasurementMetadata("dummy", Identifier("test")), expected_value
+    )
+
+    measurement = ExternalMeasurement("dummy", Integer)
+    result = measurement.collect_data(expected_value)
+
+    assert isinstance(result, Integer)
+    assert result == expected_result
+
+
 def test_invalid_result_type():
     with pytest.raises(Exception):
         ExternalMeasurement("dummy", int)
