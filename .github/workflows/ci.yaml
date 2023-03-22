@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements_dev_3.8.txt
+        pip install -r requirements_dev_3.8.txt && pip install tox-gh-actions
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
@@ -29,7 +29,7 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py38
 
   test_3-9:
     runs-on: ${{ matrix.os }}
@@ -47,7 +47,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements_dev_3.9.txt
+        pip install -r requirements_dev_3.9.txt && pip install tox-gh-actions
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
@@ -55,7 +55,7 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py39
 
   test_3-10:
     runs-on: ${{ matrix.os }}
@@ -73,7 +73,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements_dev_3.10.txt
+        pip install -r requirements_dev_3.10.txt && pip install tox-gh-actions
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
@@ -81,4 +81,4 @@ jobs:
     - name: Typecheck with mypy
       run: make check-typecheck
     - name: Test with tox
-      run: tox --develop
+      run: tox --develop -e py310
