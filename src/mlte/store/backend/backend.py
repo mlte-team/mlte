@@ -146,7 +146,7 @@ class Backend:
         model_version: str,
         result_identifier: str,
         result_data: Dict[str, Any],
-        result_tag: Optional[str],
+        result_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Write an individual result to the backend store.

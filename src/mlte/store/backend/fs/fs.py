@@ -562,7 +562,7 @@ class FilesystemBackend(Backend):
         model_version: str,
         result_identifier: str,
         result_data: Dict[str, Any],
-        result_tag: Optional[str],
+        result_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."

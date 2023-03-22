@@ -148,7 +148,7 @@ class TestDefinition:
         path = Path(__file__)
         while path.name != TEST_DIRECTORY_NAME:
             path = path.parent
-        path = path.parent / "server" / "main.py"
+        path = path.parent / "src" / "mlte" / "store" / "frontend" / "server.py"
         assert path.exists(), "Failed to locate storage server program."
         return path.resolve().as_posix()
 
