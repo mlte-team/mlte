@@ -9,7 +9,7 @@ import threading
 import subprocess
 
 import mlte
-from mlte._private.platform import is_windows, is_nix
+from mlte._private.platform import is_windows, is_nix, is_macos
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
@@ -32,7 +32,8 @@ def spin_for(seconds: int):
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_windows() or is_macos(),
+    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
 )
 def test_memory_nix_evaluate():
     start = time.time()
@@ -48,7 +49,8 @@ def test_memory_nix_evaluate():
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_windows() or is_macos(),
+    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
 )
 def test_memory_nix_evaluate_async():
     start = time.time()
@@ -65,7 +67,8 @@ def test_memory_nix_evaluate_async():
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_windows() or is_macos(),
+    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
 )
 def test_memory_nix_validate_success():
     p = spin_for(5)
@@ -83,7 +86,8 @@ def test_memory_nix_validate_success():
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="ProcessLocalCPUUtilization not supported on Windows."
+    is_windows() or is_macos(),
+    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
 )
 def test_memory_nix_validate_failure():
     p = spin_for(5)
@@ -117,7 +121,8 @@ def test_memory_windows_validate():
 
 
 @pytest.mark.skipif(
-    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+    is_windows() or is_macos(),
+    reason="LocalProcessCPUUtilization not supported on Windows or OSX.",
 )
 def test_result_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")

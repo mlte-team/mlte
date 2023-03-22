@@ -43,4 +43,4 @@ class Validator:
         :return: The result of measurement validation
         :rtype: ValidationResult
         """
-        return self.callback(result)._with_result(result)
+        return self.callback(result)._from_validator(self)._with_result(result)
