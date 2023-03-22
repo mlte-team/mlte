@@ -4,11 +4,9 @@ Unit test for ExternalMeasurement.
 import pytest
 
 from mlte.measurement.result import Integer
-from mlte.measurement import (
-    MeasurementMetadata,
-    Identifier,
-    ExternalMeasurement,
-)
+from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement.identifier import Identifier
+from mlte.measurement import ExternalMeasurement
 
 
 def _dummy_calculation(x: int, y: int):
