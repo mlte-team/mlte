@@ -7,6 +7,24 @@
             "type": "string",
             "description": "The version identifier for the schema."
         },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "model_identifier": {
+                    "type": "string",
+                    "description": "The model identifier string."
+                },
+                "model_version": {
+                    "type": "string",
+                    "description": "The model version string."
+                },
+                "timestamp": {
+                    "type": "integer",
+                    "description": "The timestamp at which the report was generated (seconds since epoch)."
+                }
+            },
+            "additionalProperties": false
+        },        
         "properties": {
             "type": "array",
             "description": "The collection of properties of which the specification is composed.",
@@ -24,7 +42,32 @@
                     "description": {
                         "type": "string",
                         "description": "The property description."
-                    }
+                    },
+                    "measurements": {
+                        "type": "array",
+                        "description": "The set of measurement conditions.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the measurement."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "The type of the measurement."
+                                },                                
+                                "validator": {
+                                    "type": "string",
+                                    "description": "The validator method to use on a result from this measurement to validate it."
+                                },
+                                "threshold": {
+                                    "type": "string",
+                                    "description": "Validation parameter."
+                                }
+                            }
+                        }
+                    }                    
                 }
             }
         }
