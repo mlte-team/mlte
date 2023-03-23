@@ -15,24 +15,26 @@ from mlte.measurement.result import Result
 # -----------------------------------------------------------------------------
 
 
-class Condition():
-
-    def __init__(self, measurement: Measurement, validator: str, threshold: Any) -> None:
+class Condition:
+    def __init__(
+        self, measurement: Measurement, validator: str, threshold: Any
+    ) -> None:
+        """Creates a condition."""
         self.measurement = measurement
         self.validator = validator
         self.threshold = threshold
 
-    def as_dict(self):
+    def to_json(self) -> dict[str, Any]:
         """Returns this condition as a dictionary."""
         return {
             "name": str(self.measurement.metadata.identifier),
             "type": self.measurement.metadata.typename,
             "validator": self.validator,
-            "threshold": self.threshold
+            "threshold": self.threshold,
         }
-    
+
     def validate(self, result: Result) -> ValidationResult:
         """Validates if the given result matches the condition."""
         validator = getattr(result, self.validator)
-        validation_result = validator(self.threshold)
+        validation_result: ValidationResult = validator(self.threshold)
         return validation_result
