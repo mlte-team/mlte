@@ -6,7 +6,8 @@ from pathlib import Path
 
 import mlte
 import requests
-from mlte.measurement import MeasurementMetadata, Identifier
+from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement.identifier import Identifier
 from mlte.measurement.result import Image
 
 # A cute image for testing purposes

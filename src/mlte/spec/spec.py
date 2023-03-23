@@ -11,7 +11,7 @@ from typing import List, Dict, Iterable, Any, Union
 from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte._global import global_state, GlobalState
+from mlte._global import global_state
 from mlte.store.api import read_spec, write_spec
 from mlte.binding import Binding
 from .bound_spec import BoundSpec
@@ -42,17 +42,6 @@ def _all_equal(iterable: Iterable[Any]) -> bool:
     """
     g = groupby(iterable)
     return next(g, True) and not next(g, False)  # type: ignore
-
-
-def _check_global_state(state: GlobalState):
-    """
-    Ensure that the global state contains
-    information necessary to save/load results.
-    """
-    if not state.has_model():
-        raise RuntimeError("Set model context prior to saving result.")
-    if not state.has_artifact_store_uri():
-        raise RuntimeError("Set artifact store URI prior to saving result.")
 
 
 # -----------------------------------------------------------------------------
@@ -106,7 +95,7 @@ class Spec:
     def save(self):
         """Persist the specification to artifact store."""
         state = global_state()
-        _check_global_state(state)
+        state.check()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -128,7 +117,7 @@ class Spec:
         :rtype: Spec
         """
         state = global_state()
-        _check_global_state(state)
+        state.check()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()

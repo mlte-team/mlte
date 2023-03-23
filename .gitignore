@@ -37,3 +37,6 @@ demo/models
 demo/store
 demo/media
 demo/reports
+
+# VS Code local configs.
+.vscode/

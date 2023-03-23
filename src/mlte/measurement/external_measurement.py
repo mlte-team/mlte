@@ -29,3 +29,8 @@ class ExternalMeasurement(Measurement):
         """Evaluate a measurement and return results without semantics."""
         result: Result = self.result_type(self.metadata, *args, **kwargs)
         return result
+
+    def collect_data(self, *args, **kwargs) -> Result:
+        """Collect data without evaluating a function. Currently works the same as evaluate()."""
+        result: Result = self.result_type(self.metadata, *args, **kwargs)
+        return result

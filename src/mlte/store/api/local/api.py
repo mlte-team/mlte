@@ -148,21 +148,23 @@ def _boundspec_is_saved(model_version_path: Path) -> bool:
 
 
 # -----------------------------------------------------------------------------
-# Read / Write Binding
+# Read / Write, for general artifacts.
 # -----------------------------------------------------------------------------
 
 
-def _read_binding(model_version_path: Path) -> Dict[str, Any]:
+def _read_artifact(model_version_path: Path, filename: str) -> Dict[str, Any]:
     """
-    Read binding data for model version.
+    Read artifact data for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
+    :param filename: The file name
+    :type filename: str
 
     :return: The binding data
     :rtype: Dict[str, Any]
     """
-    binding_path = model_version_path / BINDING_FILENAME
+    binding_path = model_version_path / filename
     assert binding_path.is_file(), "Broken invariant."
 
     with open(binding_path, "r") as f:
@@ -170,91 +172,21 @@ def _read_binding(model_version_path: Path) -> Dict[str, Any]:
         return result
 
 
-def _write_binding(model_version_path: Path, data: Dict[str, Any]):
+def _write_artifact(
+    model_version_path: Path, filename: str, data: Dict[str, Any]
+):
     """
-    Write binding data for model version.
+    Write artifact data for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
+    :param filename: The file name
+    :type filename: str
     :param data: The binding data
     :type data: Dict[str, Any]
     """
-    binding_path = model_version_path / BINDING_FILENAME
+    binding_path = model_version_path / filename
     with open(binding_path, "w") as f:
-        json.dump(data, f, indent=4)
-
-
-# -----------------------------------------------------------------------------
-# Read / Write Spec
-# -----------------------------------------------------------------------------
-
-
-def _read_spec(model_version_path: Path) -> Dict[str, Any]:
-    """
-    Read specification data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: The specification data
-    :rtype: Dict[str, Any]
-    """
-    spec_path = model_version_path / SPEC_FILENAME
-    assert spec_path.is_file(), "Broken invariant."
-
-    with open(spec_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
-
-
-def _write_spec(model_version_path: Path, data: Dict[str, Any]):
-    """
-    Write specification data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-    :param data: The specification data
-    :type data: Dict[str, Any]
-    """
-    spec_path = model_version_path / SPEC_FILENAME
-    with open(spec_path, "w") as f:
-        json.dump(data, f, indent=4)
-
-
-# -----------------------------------------------------------------------------
-# Read / Write BoundSpec
-# -----------------------------------------------------------------------------
-
-
-def _read_boundspec(model_version_path: Path) -> Dict[str, Any]:
-    """
-    Read bound specification data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: The bound specification data
-    :rtype: Dict[str, Any]
-    """
-    spec_path = model_version_path / BOUNDSPEC_FILENAME
-    assert spec_path.is_file(), "Broken invariant."
-
-    with open(spec_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
-
-
-def _write_boundspec(model_version_path: Path, data: Dict[str, Any]):
-    """
-    Write bound specification data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-    :param data: The specification data
-    :type data: Dict[str, Any]
-    """
-    spec_path = model_version_path / BOUNDSPEC_FILENAME
-    with open(spec_path, "w") as f:
         json.dump(data, f, indent=4)
 
 
@@ -420,7 +352,7 @@ def read_binding(
     if not _binding_is_saved(model_version_path):
         raise RuntimeError("Failed to read binding, no binding is saved.")
 
-    return _read_binding(model_version_path)
+    return _read_artifact(model_version_path, BINDING_FILENAME)
 
 
 def write_binding(
@@ -441,7 +373,7 @@ def write_binding(
         version_path.mkdir()
 
     model_version_path = root / model_identifier / model_version
-    _write_binding(model_version_path, data)
+    _write_artifact(model_version_path, BINDING_FILENAME, data)
 
 
 def read_spec(
@@ -459,7 +391,7 @@ def read_spec(
     if not _spec_is_saved(model_version_path):
         raise RuntimeError("Failed to read binding, no binding is saved.")
 
-    return _read_spec(model_version_path)
+    return _read_artifact(model_version_path, SPEC_FILENAME)
 
 
 def write_spec(
@@ -480,7 +412,7 @@ def write_spec(
         version_path.mkdir()
 
     model_version_path = root / model_identifier / model_version
-    _write_spec(model_version_path, data)
+    _write_artifact(model_version_path, SPEC_FILENAME, data)
 
 
 def read_boundspec(
@@ -498,7 +430,7 @@ def read_boundspec(
     if not _boundspec_is_saved(model_version_path):
         raise RuntimeError("Failed to read binding, no binding is saved.")
 
-    return _read_boundspec(model_version_path)
+    return _read_artifact(model_version_path, BOUNDSPEC_FILENAME)
 
 
 def write_boundspec(
@@ -519,7 +451,7 @@ def write_boundspec(
         version_path.mkdir()
 
     model_version_path = root / model_identifier / model_version
-    _write_boundspec(model_version_path, data)
+    _write_artifact(model_version_path, BOUNDSPEC_FILENAME, data)
 
 
 # -----------------------------------------------------------------------------

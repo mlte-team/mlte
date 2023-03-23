@@ -7,7 +7,7 @@ import abc
 
 from typing import Dict, Any, Optional
 
-from mlte._global import global_state, GlobalState
+from mlte._global import global_state
 from mlte.store.api import read_result, write_result
 from mlte.measurement.identifier import Identifier
 from mlte._private.schema import RESULT_LATEST_SCHEMA_VERSION
@@ -21,17 +21,6 @@ from ..measurement_metadata import MeasurementMetadata
 def _has_callable(type, name) -> bool:
     """Determine if `type` has a callable attribute with the given name."""
     return hasattr(type, name) and callable(getattr(type, name))
-
-
-def _check_global_state(state: GlobalState):
-    """
-    Ensure that the global state contains
-    information necessary to save/load results.
-    """
-    if not state.has_model():
-        raise RuntimeError("Set model context prior to saving result.")
-    if not state.has_artifact_store_uri():
-        raise RuntimeError("Set artifact store URI prior to saving result.")
 
 
 class Result(metaclass=abc.ABCMeta):
@@ -92,7 +81,7 @@ class Result(metaclass=abc.ABCMeta):
         :type tag: str
         """
         state = global_state()
-        _check_global_state(state)
+        state.check()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -128,7 +117,7 @@ class Result(metaclass=abc.ABCMeta):
         :rtype: Result
         """
         state = global_state()
-        _check_global_state(state)
+        state.check()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()

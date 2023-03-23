@@ -9,7 +9,8 @@ from mlte.spec import Spec
 from mlte.binding import Binding
 from mlte.property.costs import StorageCost
 from mlte.measurement.result import Integer
-from mlte.measurement import MeasurementMetadata, Identifier
+from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement.identifier import Identifier
 
 
 def test_save(tmp_path):

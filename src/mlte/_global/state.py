@@ -50,6 +50,20 @@ class GlobalState:
         assert self.has_artifact_store_uri(), "Broken precondition."
         return self.artifact_store_uri
 
+    def check(self):
+        """
+        Ensure that the global state contains
+        information necessary to save/load artifacts.
+        """
+        if not self.has_model():
+            raise RuntimeError(
+                "Set model context prior to saving or loading artifacts."
+            )
+        if not self.has_artifact_store_uri():
+            raise RuntimeError(
+                "Set artifact store URI prior to saving or loading artifacts."
+            )
+
 
 # Singleton global state
 g_state = GlobalState()
