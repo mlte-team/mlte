@@ -110,7 +110,7 @@ class Spec:
         :return: The property name if found, None otherwise
         :rtype: str
         """
-        for (property_name, conditions) in self.conditions.items():
+        for property_name, conditions in self.conditions.items():
             for condition in conditions:
                 if condition.measurement.identifier == measurement_id:
                     return property_name
