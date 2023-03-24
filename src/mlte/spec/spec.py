@@ -188,8 +188,14 @@ class Spec:
         :return: The deserialized specification
         :rtype: Spec
         """
-        # TODO: extend this to load conditions/measurements
-        return Spec({Property._from_json(d): [] for d in json["properties"]})
+        return Spec(
+            {
+                Property._from_json(d): [
+                    Condition.from_json(c) for c in d["measurements"]
+                ]
+                for d in json["properties"]
+            }
+        )
 
     def _spec_document(
         self, properties_document: list[dict[str, Any]]
