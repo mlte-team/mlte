@@ -123,6 +123,15 @@ class Spec:
         """
         if property_name not in self.conditions:
             self.conditions[property_name] = []
+
+        # Check we are not adding a condition again.
+        for curr_conditions in self.conditions.values():
+            for curr_condition in curr_conditions:
+                if curr_condition.get_id() == condition.get_id():
+                    raise RuntimeError(
+                        f"Condition with id '{condition.get_id()}' alreadty exists for property '{property_name}'"
+                    )
+
         self.conditions[property_name].append(condition)
 
     # -------------------------------------------------------------------------

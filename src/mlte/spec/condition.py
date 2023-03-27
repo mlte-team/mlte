@@ -69,8 +69,22 @@ class Condition:
             measurement_metadata, document["validator"], document["threshold"]
         )
 
+    def get_id(self) -> str:
+        """
+        Returns a string version of the id for this condition, through its measurement.
+
+        :return: The string version of its id.
+        :rtype: str
+        """
+        return str(self.measurement_metadata.identifier)
+
     def validate(self, result: Result) -> ValidationResult:
-        """Validates if the given result matches the condition."""
+        """
+        Validates if the given result matches the condition.
+
+        :return: The result of validating this condition.
+        :rtype: ValidationResult
+        """
         try:
             validator = getattr(result, self.validator)
         except AttributeError:
