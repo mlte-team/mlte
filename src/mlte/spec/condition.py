@@ -24,6 +24,11 @@ class Condition:
         threshold: Any,
     ) -> None:
         """Creates a condition."""
+        if type(measurement_metadata) != MeasurementMetadata:
+            raise RuntimeError(
+                "Object provided to create Condition is not of MeasurementMetadata type."
+            )
+
         self.measurement_metadata = measurement_metadata
         self.validator = validator
         self.threshold = threshold
@@ -70,7 +75,7 @@ class Condition:
             validator = getattr(result, self.validator)
         except AttributeError:
             raise RuntimeError(
-                f"Invalid validation method provided: {self.validator} for result of type {result.typename}"
+                f"Invalid validation method provided: '{self.validator}()' method not found for result of type {result.typename}"
             )
         validation_result: ValidationResult = validator(self.threshold)
         return validation_result

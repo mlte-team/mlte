@@ -300,6 +300,16 @@ class Spec:
     ) -> list[ValidationResult]:
         """Validates all conditions for a given property, for the given results."""
         conditions = self.conditions[property.name]
+
+        # Check that all conditions have results to be validated.
+        for condition in conditions:
+            measurement_id = str(condition.measurement_metadata.identifier)
+            if measurement_id not in results:
+                raise RuntimeError(
+                    f"Condition for measurement '{measurement_id}' does not have a result that can be validated."
+                )
+
+        # Validate and aggregate the results for all conditions.
         validation_results = [
             condition.validate(
                 results[str(condition.measurement_metadata.identifier)]
