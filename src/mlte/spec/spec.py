@@ -274,66 +274,6 @@ class Spec:
         return document
 
     # -------------------------------------------------------------------------
-    # Result validation against conditions.
-    # -------------------------------------------------------------------------
-
-    def add_result(self, result: Result):
-        """Adds a result associated to a property and measurements."""
-        measurement_id = result.identifier
-        property = self.get_property_for_measurement(measurement_id)
-        if property is None:
-            raise RuntimeError("Property not found")
-
-        if property not in self.results:
-            self.results[property] = {}
-        self.results[property][str(measurement_id)] = result
-
-    def validate_and_bind(self) -> BoundSpec:
-        """Validates the internal properties given its conditions and the stored results, and generates a BoundSpec from it."""
-        validated_results = self._validate_properties()
-        return BoundSpec(self._bound_spec_document(validated_results))
-
-    def _validate_properties(self) -> dict[str, list[ValidationResult]]:
-        """Validates a set of conditions by property."""
-        # Check that all propertoes have results to be validated.
-        for property in self.properties:
-            if property.name not in self.results:
-                raise RuntimeError(
-                    f"Property '{property.name}' does not have a result that can be validated."
-                )
-
-        results = {
-            property.name: self._validate_property(
-                property, self.results[property.name]
-            )
-            for property in self.properties
-        }
-        return results
-
-    def _validate_property(
-        self, property: Property, results: dict[str, Result]
-    ) -> list[ValidationResult]:
-        """Validates all conditions for a given property, for the given results."""
-        conditions = self.conditions[property.name]
-
-        # Check that all conditions have results to be validated.
-        for condition in conditions:
-            measurement_id = str(condition.measurement_metadata.identifier)
-            if measurement_id not in results:
-                raise RuntimeError(
-                    f"Condition for measurement '{measurement_id}' does not have a result that can be validated."
-                )
-
-        # Validate and aggregate the results for all conditions.
-        validation_results = [
-            condition.validate(
-                results[str(condition.measurement_metadata.identifier)]
-            )
-            for condition in conditions
-        ]
-        return validation_results
-
-    # -------------------------------------------------------------------------
     # Specification Binding
     # -------------------------------------------------------------------------
 
@@ -368,7 +308,7 @@ class Spec:
             for property in self.properties
         }
 
-        return BoundSpec(self._bound_spec_document(results_by_property))
+        return self.generate_bound_spec(results_by_property)
 
     def _validate_binding(
         self,
@@ -437,15 +377,15 @@ class Spec:
     # BoundSpec document generation.
     # -------------------------------------------------------------------------
 
-    def _bound_spec_document(
+    def generate_bound_spec(
         self, results: dict[str, list[ValidationResult]]
-    ) -> dict[str, Any]:
+    ) -> BoundSpec:
         """Generates a bound spec with the validation results."""
         property_docs = [
             self._validated_property_document(property, results[property.name])
             for property in self.properties
         ]
-        return self._spec_document(property_docs)
+        return BoundSpec(self._spec_document(property_docs))
 
     def _validated_property_document(
         self, property: Property, results_for_property: list[ValidationResult]
