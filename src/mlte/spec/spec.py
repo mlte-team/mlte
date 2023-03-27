@@ -18,6 +18,7 @@ from .bound_spec import BoundSpec
 from .condition import Condition
 from mlte.measurement.identifier import Identifier
 from mlte.measurement.result import Result
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
 def _unique(collection: List[str]) -> bool:
@@ -119,7 +120,13 @@ class Spec:
 
     def add_condition(self, property_name: str, condition: Condition):
         """
-        Adds the given condition to the property
+        Adds the given condition to the property.
+
+        :param property_name: The name of the property we are adding the condition for.
+        :type property_name: str
+
+        :param condition: The condition we want to add to this property.
+        :type condition: Condition
         """
         if property_name not in self.conditions:
             self.conditions[property_name] = []
@@ -133,6 +140,31 @@ class Spec:
                     )
 
         self.conditions[property_name].append(condition)
+
+    def add_condition_from_result(
+        self, property_name: str, result: Result, validator: str, threshold: Any
+    ):
+        """
+        Adds a condition for the given property, with information from a result, plus additional condition info.
+
+        :param property_name: The name of the property we are adding the condition for.
+        :type property_name: str
+
+        :param result: The result we are adding a condition to, to obtain measurement info from.
+        :type result: Result
+
+        :param validator: The validator method for the condition.
+        :type validator: str
+
+        :param threshold: The threshold value for the validation.
+        :type threshold: Any
+        """
+        condition = Condition(
+            MeasurementMetadata(result.measurement_typename, result.identifier),
+            validator,
+            threshold,
+        )
+        self.add_condition(property_name, condition)
 
     # -------------------------------------------------------------------------
     # Save / Load
