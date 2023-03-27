@@ -43,13 +43,13 @@ class SpecValidator:
         :type result: Result
         """
         measurement_id = result.identifier
-        property = self.spec.get_property_for_measurement(measurement_id)
-        if property is None:
+        property_name = self.spec.get_property_for_measurement(measurement_id)
+        if property_name is None:
             raise RuntimeError("Property not found")
 
-        if property not in self.results:
-            self.results[property] = {}
-        self.results[property][str(measurement_id)] = result
+        if property_name not in self.results:
+            self.results[property_name] = {}
+        self.results[property_name][str(measurement_id)] = result
 
     def validate_and_bind(self) -> BoundSpec:
         """
@@ -62,7 +62,12 @@ class SpecValidator:
         return self.spec.generate_bound_spec(validated_results)
 
     def _validate_properties(self) -> dict[str, list[ValidationResult]]:
-        """Validates a set of conditions by property."""
+        """
+        Validates a set of conditions by property.
+
+        :return: A document indicating, for each property, a list of ValidationResults
+        :rtype: dict[str, list[ValidationResult]]
+        """
         # Check that all propertoes have results to be validated.
         for property in self.spec.properties:
             if property.name not in self.results:
@@ -70,6 +75,7 @@ class SpecValidator:
                     f"Property '{property.name}' does not have a result that can be validated."
                 )
 
+        # Validate and aggregate the results for all properties.
         results = {
             property.name: self._validate_property(
                 property, self.results[property.name]
@@ -81,7 +87,18 @@ class SpecValidator:
     def _validate_property(
         self, property: Property, results: dict[str, Result]
     ) -> list[ValidationResult]:
-        """Validates all conditions for a given property, for the given results."""
+        """
+        Validates all conditions for a given property, for the given results.
+
+        :param property: The property we want to validate.
+        :type property: Property
+
+        :param results: A list of results to validate, ordered by measurement id.
+        :type results: dict[str, Result]
+
+        :return: A list of ValidationResults with the validations for all conditions for this property.
+        :rtype: list[ValidationResult]
+        """
         conditions = self.spec.conditions[property.name]
 
         # Check that all conditions have results to be validated.
@@ -92,7 +109,7 @@ class SpecValidator:
                     f"Condition for measurement '{measurement_id}' does not have a result that can be validated."
                 )
 
-        # Validate and aggregate the results for all conditions.
+        # Validate and aggregate the results for all conditions for this property.
         validation_results = [
             condition.validate(
                 results[str(condition.measurement_metadata.identifier)]
