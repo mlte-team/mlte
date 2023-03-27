@@ -286,7 +286,13 @@ class Spec:
 
     def _validate_properties(self) -> dict[str, list[ValidationResult]]:
         """Validates a set of conditions by property."""
-        # TODO: add way to catch when results don't have a property.
+        # Check that all propertoes have results to be validated.
+        for property in self.properties:
+            if property.name not in self.results:
+                raise RuntimeError(
+                    f"Property '{property.name}' does not have a result that can be validated."
+                )
+
         results = {
             property.name: self._validate_property(
                 property, self.results[property.name]
