@@ -112,7 +112,7 @@ class Spec:
         """
         for property_name, conditions in self.conditions.items():
             for condition in conditions:
-                if condition.measurement.identifier == measurement_id:
+                if condition.measurement_metadata.identifier == measurement_id:
                     return property_name
 
         return None
@@ -301,7 +301,9 @@ class Spec:
         """Validates all conditions for a given property, for the given results."""
         conditions = self.conditions[property.name]
         validation_results = [
-            condition.validate(results[str(condition.measurement.identifier)])
+            condition.validate(
+                results[str(condition.measurement_metadata.identifier)]
+            )
             for condition in conditions
         ]
         return validation_results

@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from mlte.measurement import Measurement
 from mlte.measurement.validation import ValidationResult
 from mlte.measurement.result import Result
 from mlte.measurement.measurement_metadata import MeasurementMetadata
@@ -19,18 +18,21 @@ from mlte.measurement.identifier import Identifier
 
 class Condition:
     def __init__(
-        self, measurement: Measurement, validator: str, threshold: Any
+        self,
+        measurement_metadata: MeasurementMetadata,
+        validator: str,
+        threshold: Any,
     ) -> None:
         """Creates a condition."""
-        self.measurement = measurement
+        self.measurement_metadata = measurement_metadata
         self.validator = validator
         self.threshold = threshold
 
     def to_json(self) -> dict[str, Any]:
         """Returns this condition as a dictionary."""
         return {
-            "name": str(self.measurement.metadata.identifier),
-            "type": self.measurement.metadata.typename,
+            "name": str(self.measurement_metadata.identifier),
+            "type": self.measurement_metadata.typename,
             "validator": self.validator,
             "threshold": self.threshold,
         }
@@ -55,18 +57,20 @@ class Condition:
             raise RuntimeError("Saved condition is malformed.")
 
         # Load measurement data.
-        # TODO: make this work. Do we really need to load the measurement type just to create a measurement?
-        measurement = Measurement(None, "")
-        measurement.metadata = MeasurementMetadata(
+        measurement_metadata = MeasurementMetadata(
             document["type"], Identifier(document["name"])
         )
-
         return Condition(
-            measurement, document["validator"], document["threshold"]
+            measurement_metadata, document["validator"], document["threshold"]
         )
 
     def validate(self, result: Result) -> ValidationResult:
         """Validates if the given result matches the condition."""
-        validator = getattr(result, self.validator)
+        try:
+            validator = getattr(result, self.validator)
+        except AttributeError:
+            raise RuntimeError(
+                f"Invalid validation method provided: {self.validator} for result of type {result.typename}"
+            )
         validation_result: ValidationResult = validator(self.threshold)
         return validation_result
