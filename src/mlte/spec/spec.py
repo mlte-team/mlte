@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from itertools import groupby, combinations
-from typing import List, Dict, Iterable, Any, Union
+from typing import Iterable, Any, Union
 
 from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
@@ -21,12 +21,12 @@ from mlte.measurement.result import Result
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
-def _unique(collection: List[str]) -> bool:
+def _unique(collection: list[str]) -> bool:
     """
     Determine if all elements of a collection are unique.
 
     :param collection: The collection
-    :type collection: Iterable
+    :type collection: list[str]
 
     :return: `True` if all elements are unique, `False` otherwise
     :rtype: bool
@@ -219,12 +219,12 @@ class Spec:
         return self._spec_document(self._properties_document())
 
     @staticmethod
-    def _from_json(json: Dict[str, Any]) -> Spec:
+    def _from_json(json: dict[str, Any]) -> Spec:
         """
         Deserialize Spec content from JSON document.
 
         :param json: The json document
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized specification
         :rtype: Spec
@@ -387,8 +387,8 @@ class Spec:
         :param results: The collection of results
         :type results: Iterable[ValidationResult]
 
-        :return: The property-level document
-        :rtype: Dict[str, Any]
+        :return: A list of the ValidationResults for the given property.
+        :rtype: list[ValidationResult]
         """
         assert all(
             r.result is not None for r in results
@@ -412,7 +412,15 @@ class Spec:
     def generate_bound_spec(
         self, results: dict[str, list[ValidationResult]]
     ) -> BoundSpec:
-        """Generates a bound spec with the validation results."""
+        """
+        Generates a bound spec with the validation results.
+
+        :param result: The ValidationResults to bind to the spec, ordered by property.
+        :type results: dict[str, list[ValidationResult]]
+
+        :return: A BoundSpec associating the Spec with the specific ValidationResults.
+        :rtype: BoundSpec
+        """
         property_docs = [
             self._validated_property_document(property, results[property.name])
             for property in self.properties
@@ -421,7 +429,7 @@ class Spec:
 
     def _validated_property_document(
         self, property: Property, results_for_property: list[ValidationResult]
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Collect results into a property-level document that includes measurement validation results.
 
@@ -443,16 +451,16 @@ class Spec:
         return document
 
     def _measurement_results_document(
-        self, results: List[ValidationResult]
-    ) -> Dict[str, Any]:
+        self, results: list[ValidationResult]
+    ) -> dict[str, Any]:
         """
         Collect results into a measurement-level document.
 
         :param result: The validation results for the measurement
-        :type results: Iterable[ValidationResult]
+        :type results: list[ValidationResult]
 
         :return: The measurement-level document
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         assert len(results) > 0, "Broken invariant."
         assert _all_equal(

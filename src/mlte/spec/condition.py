@@ -17,6 +17,11 @@ from mlte.measurement.identifier import Identifier
 
 
 class Condition:
+    """
+    The Condition class defines a relation between a measurement,
+    a validation method and a threshold/parameter, that will be part of a spec.
+    """
+
     def __init__(
         self,
         measurement_metadata: MeasurementMetadata,
