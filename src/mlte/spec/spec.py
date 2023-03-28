@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from itertools import groupby, combinations
-from typing import Iterable, Any, Union, Optional
+from typing import Iterable, Any, Union
 
 from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
@@ -16,9 +16,8 @@ from mlte.store.api import read_spec, write_spec
 from mlte.binding import Binding
 from .bound_spec import BoundSpec
 from .condition import Condition
+from mlte.measurement import Measurement
 from mlte.measurement.identifier import Identifier
-from mlte.measurement.result import Result
-from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
 def _unique(collection: list[str]) -> bool:
@@ -59,52 +58,26 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(
-        self,
-        properties: Optional[list[Property]] = None,
-        property_conditions: Optional[dict[Property, list[Condition]]] = None,
-    ):
+    def __init__(self, *properties: Property):
         """
         Initialize a Spec instance. Only one of the two arguments should be provided, not both.
 
         :param properties: The collection of properties that compose the spec.
         :type conditions: list[Property]
-
-        :param conditions: The collection of properties that compose the spec, and also their conditions.
-        :type conditions: dict[Property, list[Condition]]
         """
         # TODO(Kyle): What additional metadata should
         # we store at the level of a Spec?
 
-        if properties is None and property_conditions is None:
-            raise RuntimeError(
-                "You must provide either a list of properties or properties and their conditions to create a Spec."
-            )
-        if properties is not None and property_conditions is not None:
-            raise RuntimeError(
-                "You must provide either a list of properties or properties and their conditions to create a Spec, not both."
-            )
-
-        if properties is not None:
-            self.properties = properties
-        elif property_conditions is not None:
-            self.properties = [p for p in list(property_conditions.keys())]
+        self.properties = [p for p in properties]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        # Store the conditions indexed by property name.
-        self.conditions: dict[str, list[Condition]] = {}
-        if property_conditions is None:
-            self.conditions = {
-                property.name: [] for property in self.properties
-            }
-        else:
-            self.conditions = {
-                property.name: [c for c in conditions]
-                for (property, conditions) in property_conditions.items()
-            }
+        # Set up dict to store conditions.
+        self.conditions: dict[str, list[Condition]] = {
+            property.name: [] for property in self.properties
+        }
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -150,30 +123,38 @@ class Spec:
         :param condition: The condition we want to add to this property.
         :type condition: Condition
         """
+        if not any(
+            property.name == property_name for property in self.properties
+        ):
+            raise RuntimeError(
+                f"Property {property_name} is not part of this Specification."
+            )
+
+        # Check we are not adding a condition again. If we are, replace the previous one with the new one.
         if property_name not in self.conditions:
             self.conditions[property_name] = []
-
-        # Check we are not adding a condition again.
-        for curr_conditions in self.conditions.values():
-            for curr_condition in curr_conditions:
-                if curr_condition.get_id() == condition.get_id():
-                    raise RuntimeError(
-                        f"Condition with id '{condition.get_id()}' alreadty exists for property '{property_name}'"
-                    )
+        for curr_condition in self.conditions[property_name]:
+            if curr_condition.get_id() == condition.get_id():
+                self.conditions[property_name].remove(curr_condition)
+                break
 
         self.conditions[property_name].append(condition)
 
-    def add_condition_from_result(
-        self, property_name: str, result: Result, validator: str, threshold: Any
+    def add_condition_from_measurement(
+        self,
+        property_name: str,
+        measurement: Measurement,
+        validator: str,
+        threshold: Any,
     ):
         """
-        Adds a condition for the given property, with information from a result, plus additional condition info.
+        Adds a condition for the given property, with information from a measurement, plus additional condition info.
 
         :param property_name: The name of the property we are adding the condition for.
         :type property_name: str
 
-        :param result: The result we are adding a condition to, to obtain measurement info from.
-        :type result: Result
+        :param measurement: The measurement we are adding a condition to.
+        :type measurement: Measurement
 
         :param validator: The validator method for the condition.
         :type validator: str
@@ -181,11 +162,7 @@ class Spec:
         :param threshold: The threshold value for the validation.
         :type threshold: Any
         """
-        condition = Condition(
-            MeasurementMetadata(result.measurement_typename, result.identifier),
-            validator,
-            threshold,
-        )
+        condition = Condition(measurement.metadata, validator, threshold)
         self.add_condition(property_name, condition)
 
     # -------------------------------------------------------------------------
@@ -251,14 +228,14 @@ class Spec:
         :return: The deserialized specification
         :rtype: Spec
         """
-        return Spec(
-            property_conditions={
-                Property._from_json(d): [
-                    Condition.from_json(c) for c in d["measurements"]
-                ]
-                for d in json["properties"]
-            }
-        )
+        spec = Spec(*[Property._from_json(d) for d in json["properties"]])
+        for property_doc in json["properties"]:
+            for condition_doc in property_doc["measurements"]:
+                spec.add_condition(
+                    property_doc["name"], Condition.from_json(condition_doc)
+                )
+
+        return spec
 
     def _spec_document(
         self, properties_document: list[dict[str, Any]]

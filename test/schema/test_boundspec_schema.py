@@ -20,7 +20,7 @@ def test_schema(tmp_path):
     # A dummy result
     i = Integer(MeasurementMetadata("typename", Identifier("id")), 1)
 
-    spec = Spec({StorageCost(): []})
+    spec = Spec(StorageCost())
     bound = spec.bind(Binding({"StorageCost": ["id"]}), [i.less_than(3)])
     bound.save()
 
