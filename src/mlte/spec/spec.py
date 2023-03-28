@@ -17,7 +17,6 @@ from mlte.binding import Binding
 from .bound_spec import BoundSpec
 from .condition import Condition
 from mlte.measurement import Measurement
-from mlte.measurement.identifier import Identifier
 
 
 def _unique(collection: list[str]) -> bool:
@@ -96,23 +95,6 @@ class Spec:
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
 
-    def get_property_for_measurement(self, measurement_id: Identifier):
-        """
-        Returns the name of a property given a measurement id associated to it.
-
-        :param measurement_id: The identifier of the measurement
-        :type measurement_id: Identifier
-
-        :return: The property name if found, None otherwise
-        :rtype: str
-        """
-        for property_name, conditions in self.conditions.items():
-            for condition in conditions:
-                if condition.measurement_metadata.identifier == measurement_id:
-                    return property_name
-
-        return None
-
     def add_condition(self, property_name: str, condition: Condition):
         """
         Adds the given condition to the property.
@@ -129,18 +111,18 @@ class Spec:
             raise RuntimeError(
                 f"Property {property_name} is not part of this Specification."
             )
-
-        # Check we are not adding a condition again. If we are, replace the previous one with the new one.
         if property_name not in self.conditions:
             self.conditions[property_name] = []
-        for curr_condition in self.conditions[property_name]:
-            if curr_condition.get_id() == condition.get_id():
-                self.conditions[property_name].remove(curr_condition)
-                break
 
-        self.conditions[property_name].append(condition)
+        # Only add condition if it is not already there for this property.
+        found = any(
+            curr_condition == condition
+            for curr_condition in self.conditions[property_name]
+        )
+        if not found:
+            self.conditions[property_name].append(condition)
 
-    def add_condition_from_measurement(
+    def add_condition_for_measurement(
         self,
         property_name: str,
         measurement: Measurement,
@@ -162,7 +144,9 @@ class Spec:
         :param threshold: The threshold value for the validation.
         :type threshold: Any
         """
-        condition = Condition(measurement.metadata, validator, threshold)
+        condition = Condition(
+            measurement.metadata.typename, validator, threshold
+        )
         self.add_condition(property_name, condition)
 
     # -------------------------------------------------------------------------

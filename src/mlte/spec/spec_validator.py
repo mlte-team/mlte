@@ -35,21 +35,16 @@ class SpecValidator:
         self.results: dict[str, dict[str, Result]] = {}
         """Where temporary results will be gathered for validation."""
 
-    def add_result(self, result: Result):
+    def add_result(self, property_name: str, validator: str, result: Result):
         """
         Adds a result associated to a property and measurements.
 
         :param result: The result to add to the list
         :type result: Result
         """
-        measurement_id = result.identifier
-        property_name = self.spec.get_property_for_measurement(measurement_id)
-        if property_name is None:
-            raise RuntimeError("Property not found")
-
         if property_name not in self.results:
             self.results[property_name] = {}
-        self.results[property_name][str(measurement_id)] = result
+        self.results[property_name][validator] = result
 
     def validate_and_bind(self) -> BoundSpec:
         """
@@ -93,7 +88,7 @@ class SpecValidator:
         :param property: The property we want to validate.
         :type property: Property
 
-        :param results: A list of results to validate, ordered by measurement id.
+        :param results: A list of results to validate, ordered by validator.
         :type results: dict[str, Result]
 
         :return: A list of ValidationResults with the validations for all conditions for this property.
@@ -103,17 +98,15 @@ class SpecValidator:
 
         # Check that all conditions have results to be validated.
         for condition in conditions:
-            measurement_id = str(condition.measurement_metadata.identifier)
-            if measurement_id not in results:
+            validator = condition.validator
+            if validator not in results:
                 raise RuntimeError(
-                    f"Condition for measurement '{measurement_id}' does not have a result that can be validated."
+                    f"Condition for validator '{validator}' does not have a result that can be validated."
                 )
 
         # Validate and aggregate the results for all conditions for this property.
         validation_results = [
-            condition.validate(
-                results[str(condition.measurement_metadata.identifier)]
-            )
+            condition.validate(results[condition.validator])
             for condition in conditions
         ]
         return validation_results

@@ -8,8 +8,6 @@ from typing import Any
 
 from mlte.measurement.validation import ValidationResult
 from mlte.measurement.result import Result
-from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.identifier import Identifier
 
 # -----------------------------------------------------------------------------
 # Condition
@@ -24,25 +22,18 @@ class Condition:
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        measurement_type: str,
         validator: str,
         threshold: Any,
     ) -> None:
-        """Creates a condition."""
-        if type(measurement_metadata) != MeasurementMetadata:
-            raise RuntimeError(
-                "Object provided to create Condition is not of MeasurementMetadata type."
-            )
-
-        self.measurement_metadata = measurement_metadata
+        self.measurement_type = measurement_type
         self.validator = validator
         self.threshold = threshold
 
     def to_json(self) -> dict[str, Any]:
         """Returns this condition as a dictionary."""
         return {
-            "name": str(self.measurement_metadata.identifier),
-            "type": self.measurement_metadata.typename,
+            "measurement_type": self.measurement_type,
             "validator": self.validator,
             "threshold": self.threshold,
         }
@@ -59,29 +50,17 @@ class Condition:
         :rtype: Condition
         """
         if (
-            "name" not in document
-            or "type" not in document
+            "measurement_type" not in document
             or "validator" not in document
             or "threshold" not in document
         ):
             raise RuntimeError("Saved condition is malformed.")
 
-        # Load measurement data.
-        measurement_metadata = MeasurementMetadata(
-            document["type"], Identifier(document["name"])
-        )
         return Condition(
-            measurement_metadata, document["validator"], document["threshold"]
+            document["measurement_type"],
+            document["validator"],
+            document["threshold"],
         )
-
-    def get_id(self) -> str:
-        """
-        Returns a string version of the id for this condition, through its measurement.
-
-        :return: The string version of its id.
-        :rtype: str
-        """
-        return str(self.measurement_metadata.identifier)
 
     def validate(self, result: Result) -> ValidationResult:
         """
@@ -98,3 +77,25 @@ class Condition:
             )
         validation_result: ValidationResult = validator(self.threshold)
         return validation_result
+
+    def __str__(self):
+        return f"{self.measurement_type}-{self.validator}-{self.threshold}"
+
+    # -------------------------------------------------------------------------
+    # Equality Testing
+    # -------------------------------------------------------------------------
+
+    def __eq__(self, other: object) -> bool:
+        """Compare Condition instances for equality."""
+        if not isinstance(other, Condition):
+            return False
+        reference: Condition = other
+        return (
+            self.measurement_type == reference.measurement_type
+            and self.validator == reference.validator
+            and self.threshold == reference.threshold
+        )
+
+    def __neq__(self, other: Condition) -> bool:
+        """Compare Condition instances for inequality."""
+        return not self.__eq__(other)
