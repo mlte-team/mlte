@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from itertools import groupby, combinations
-from typing import Iterable, Any, Union
+from typing import Iterable, Any, Union, Optional
 
 from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
@@ -59,30 +59,52 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, property_conditions: dict[Property, list[Condition]]):
+    def __init__(
+        self,
+        properties: Optional[list[Property]] = None,
+        property_conditions: Optional[dict[Property, list[Condition]]] = None,
+    ):
         """
-        Initialize a Spec instance.
+        Initialize a Spec instance. Only one of the two arguments should be provided, not both.
 
-        :param conditions: The collection of properties that compose the spec, and optionally their conditions.
+        :param properties: The collection of properties that compose the spec.
+        :type conditions: list[Property]
+
+        :param conditions: The collection of properties that compose the spec, and also their conditions.
         :type conditions: dict[Property, list[Condition]]
         """
         # TODO(Kyle): What additional metadata should
         # we store at the level of a Spec?
 
-        self.properties = [p for p in list(property_conditions.keys())]
+        if properties is None and property_conditions is None:
+            raise RuntimeError(
+                "You must provide either a list of properties or properties and their conditions to create a Spec."
+            )
+        if properties is not None and property_conditions is not None:
+            raise RuntimeError(
+                "You must provide either a list of properties or properties and their conditions to create a Spec, not both."
+            )
+
+        if properties is not None:
+            self.properties = properties
+        elif property_conditions is not None:
+            self.properties = [p for p in list(property_conditions.keys())]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
         # Store the conditions indexed by property name.
-        self.conditions: dict[str, list[Condition]] = {
-            property.name: [c for c in conditions]
-            for (property, conditions) in property_conditions.items()
-        }
-
-        self.results: dict[str, dict[str, Result]] = {}
-        """Where temporary results will be gathered for validation."""
+        self.conditions: dict[str, list[Condition]] = {}
+        if property_conditions is None:
+            self.conditions = {
+                property.name: [] for property in self.properties
+            }
+        else:
+            self.conditions = {
+                property.name: [c for c in conditions]
+                for (property, conditions) in property_conditions.items()
+            }
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -230,7 +252,7 @@ class Spec:
         :rtype: Spec
         """
         return Spec(
-            {
+            property_conditions={
                 Property._from_json(d): [
                     Condition.from_json(c) for c in d["measurements"]
                 ]
