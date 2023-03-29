@@ -30,7 +30,7 @@ class ExternalMeasurement(Measurement):
         result: Result = self.result_type(self.metadata, *args, **kwargs)
         return result
 
-    def collect_data(self, *args, **kwargs) -> Result:
-        """Collect data without evaluating a function. Currently works the same as evaluate()."""
+    def ingest(self, *args, **kwargs) -> Result:
+        """Ingest data without evaluating a function, to wrap it as the configured Result type. Currently works the same as evaluate()."""
         result: Result = self.result_type(self.metadata, *args, **kwargs)
         return result
