@@ -34,7 +34,7 @@ class BoundSpec:
     def save(self):
         """Save BoundSpec instance to artifact store."""
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -51,7 +51,7 @@ class BoundSpec:
         :rtype: BoundSpec
         """
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
