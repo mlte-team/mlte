@@ -94,11 +94,11 @@ class Spec:
         """
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
-    
+
     def add_condition(
         self,
         property_name: str,
-        measurement_type: Type,
+        measurement_type: Type[Measurement],
         validator: str,
         threshold: Any,
     ):
@@ -118,7 +118,7 @@ class Spec:
         :type threshold: Any
         """
         condition = Condition(measurement_type.__name__, validator, threshold)
-        self._add_condition(property_name, condition)    
+        self._add_condition(property_name, condition)
 
     def _add_condition(self, property_name: str, condition: Condition):
         """
