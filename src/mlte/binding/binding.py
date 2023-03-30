@@ -68,7 +68,7 @@ class Binding:
     def save(self):
         """Save the Binding instance to artifact store."""
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -90,7 +90,7 @@ class Binding:
         :rtype: Binding
         """
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()

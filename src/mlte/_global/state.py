@@ -50,7 +50,7 @@ class GlobalState:
         assert self.has_artifact_store_uri(), "Broken precondition."
         return self.artifact_store_uri
 
-    def check(self):
+    def ensure_initialized(self):
         """
         Ensure that the global state contains
         information necessary to save/load artifacts.

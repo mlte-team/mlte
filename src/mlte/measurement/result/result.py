@@ -81,7 +81,7 @@ class Result(metaclass=abc.ABCMeta):
         :type tag: str
         """
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -117,7 +117,7 @@ class Result(metaclass=abc.ABCMeta):
         :rtype: Result
         """
         state = global_state()
-        state.check()
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
