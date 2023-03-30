@@ -64,19 +64,16 @@ class Spec:
         :param properties: The collection of properties that compose the spec.
         :type conditions: list[Property]
         """
-        # TODO(Kyle): What additional metadata should
-        # we store at the level of a Spec?
-
         self.properties = [p for p in properties]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        # Set up dict to store conditions.
         self.conditions: dict[str, list[Condition]] = {
             property.name: [] for property in self.properties
         }
+        """A dict to store conditions by property."""
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -450,14 +447,7 @@ class Spec:
         measurement_name = results[0].result.measurement_typename  # type: ignore
         document = {
             "name": measurement_name,
-            "validators": [
-                {
-                    "name": vr.validator_name,
-                    "result": f"{vr}",
-                    "message": vr.message,
-                }
-                for vr in results
-            ],
+            "validators": [vr.to_json() for vr in results],
         }
         return document
 
