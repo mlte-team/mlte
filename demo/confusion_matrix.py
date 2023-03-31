@@ -44,7 +44,7 @@ class ConfusionMatrix(Result):
         self, threshold: int
     ) -> ValidationResult:
         return Validator(
-            "MisclassCountLessThan",
+            "misclassification_count_less_than",
             lambda cm: Success(
                 f"Misclass count {cm.misclassifications} less than threshold {threshold}"
             )

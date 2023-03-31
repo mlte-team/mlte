@@ -82,7 +82,7 @@ class Integer(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessThan",
+            "less_than",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
             )
@@ -104,7 +104,7 @@ class Integer(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessOrEqualTo",
+            "less_or_equal_to",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
                 f"less than or equal to threshold {value}"

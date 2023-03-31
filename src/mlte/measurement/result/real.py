@@ -84,7 +84,7 @@ class Real(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessThan",
+            "less_than",
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
             )
@@ -106,7 +106,7 @@ class Real(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessOrEqualTo",
+            "less_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"less than or equal to threshold {value}"
@@ -129,7 +129,7 @@ class Real(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessThan",
+            "greater_than",
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
             )
@@ -151,7 +151,7 @@ class Real(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "LessOrEqualTo",
+            "greater_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"greater than or equal to threshold {value}"

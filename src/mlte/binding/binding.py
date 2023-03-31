@@ -3,9 +3,14 @@ Implementation of Binding and related types.
 """
 
 from __future__ import annotations
-from typing import Dict, List, Any
 
+from itertools import combinations
+from typing import Dict, List, Any, Iterable
 
+from mlte.property import Property
+from mlte.measurement.validation import ValidationResult
+from mlte.spec import Spec
+from mlte.spec.bound_spec import BoundSpec
 from mlte._global import global_state
 from mlte.store.api import read_binding, write_binding
 from mlte._private.schema import BINDING_LATEST_SCHEMA_VERSION
@@ -163,6 +168,176 @@ class Binding:
             ]
         return description
 
+    # -------------------------------------------------------------------------
+    # Specification Binding
+    # -------------------------------------------------------------------------
+
+    def bind(
+        self,
+        spec: Spec,
+        results: Iterable[ValidationResult],
+        strict: bool = True,
+    ) -> BoundSpec:
+        """
+        Collect validation results and bind them to properties.
+
+        If the `strict` flag is set to `True`, then all properties
+        declared in the spec must have at least one (1) result
+        bound to them in order to proceed with report generation.
+        Spec collection is set to `strict` mode by default.
+
+        :param binding: The binding from properties to result
+        :type binding: Binding
+        :param results: Validation results
+        :type results: ValidationResult
+        :param strict: Flag indicating strict measurement requirements
+        :type strict: bool
+
+        :return: The bound specification
+        :rtype: BoundSpec
+        """
+        # Validate binding and group validated results by property.
+        self._validate_binding(results, strict, spec)
+
+        results_by_property = {
+            property.name: self._bind_to_property(property, results)
+            for property in spec.properties
+        }
+
+        return spec.generate_bound_spec(results_by_property)
+
+    def _validate_binding(
+        self,
+        results: Iterable[ValidationResult],
+        strict: bool,
+        spec: Spec,
+    ):
+        """
+        Validate correctness upon binding.
+
+        :param results: Collection of ValidationResults
+        :type results: ValidationResult
+        :param strict: Flag indicating strict measurement requirements
+        :type strict: bool
+
+        :raises RuntimeError
+        """
+        self._validate_binding_spec_compatibility(spec)
+
+        # Ensure that all results are unique
+        _validate_result_uniqueness(results)
+        # Ensure that each bind point in binding has a result
+        self._validate_all_bindings_have_result(results)
+        if strict:
+            # Ensure that every collected result is bound
+            self._validate_all_results_have_binding(results)
+
+    def _validate_binding_spec_compatibility(self, spec: Spec):
+        """
+        Validate that a Binding is appropriate for a Spec.
+
+        - Ensure that each property in the spec is included in the binding
+        - Ensure that each property in spec has at least 1 associated identifier
+        - Ensure that binding does not have extraneous properties
+
+        :param binding: The binding of interest
+        :type binding: Binding
+        :param spec: The spec of interest
+        :type spec: Spec
+
+        :raises: RuntimeError
+        """
+        for property in spec.properties:
+            if len(self.identifiers_for(property.name)) < 1:
+                raise RuntimeError(
+                    "Binding must include at least"
+                    f" one mapping for property {property.name}."
+                )
+        for name in self.description.keys():
+            if not spec.has_property(name):
+                raise RuntimeError(
+                    "Binding contains" f" unnecessary property {name}."
+                )
+
+    def _validate_all_bindings_have_result(
+        self, results: Iterable[ValidationResult]
+    ):
+        """
+        Ensure that at each identifier in a binding has a corresponding result.
+
+        :param binding: The binding
+        :type binding: Binding
+        :param results: The collection of results
+        :type results: Iterable[ValidationResult]
+
+        :raises: RuntimeError
+        """
+        result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
+        for property_name, identifiers in self.description.items():
+            for identifier in identifiers:
+                if identifier not in result_identifiers:
+                    raise RuntimeError(
+                        f"Missing result to bind to {identifier}"
+                        f" for property {property_name}."
+                    )
+
+    def _validate_all_results_have_binding(
+        self, results: Iterable[ValidationResult]
+    ):
+        """
+        Ensure that each result has a corresponding identifier in binding.
+
+        :param binding: The binding
+        :type binding: Binding
+        :param results: The collection of results
+        :type results: Iterable[ValidationResult]
+
+        :raises: RuntimeError
+        """
+        result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
+
+        binding_identifiers = set(
+            id for collection in self.description.values() for id in collection
+        )
+        for result_identifier in result_identifiers:
+            if result_identifier not in binding_identifiers:
+                raise RuntimeError(
+                    f"Result with identifier {result_identifier}"
+                    " is not bound to any property."
+                )
+
+    def _bind_to_property(
+        self,
+        property: Property,
+        results: Iterable[ValidationResult],
+    ) -> list[ValidationResult]:
+        """
+        Collect the results for an individual property
+        from result set into a list including only those results.
+
+        :param property: The property of interest
+        :type property: Property
+        :param results: The collection of results
+        :type results: Iterable[ValidationResult]
+
+        :return: A list of the ValidationResults for the given property.
+        :rtype: list[ValidationResult]
+        """
+        assert all(
+            r.result is not None for r in results
+        ), "Broken precondition."
+
+        # Filter results relevant to property
+        targets = set(self.identifiers_for(property.name))
+        assert len(targets) > 0, "Broken invariant."
+
+        # TODO(Kyle): Clean this up.
+        results_for_property = [
+            r for r in results if str(r.result.identifier) in targets  # type: ignore
+        ]
+
+        return results_for_property
+
     def __eq__(self, other: object) -> bool:
         """Compare Binding instances for equality."""
         if not isinstance(other, Binding):
@@ -172,6 +347,21 @@ class Binding:
     def __neq__(self, other: object) -> bool:
         """Compare binding instances for inequality."""
         return not self.__eq__(other)
+
+
+def _validate_result_uniqueness(results: Iterable[ValidationResult]):
+    """
+    Validate the uniqueness of validation results.
+
+    :param results: The validation results
+    :type results: Iterable[ValidationResult]
+
+    :raises RuntimeError: If any two results are equivalent
+    """
+    for pair in combinations(results, 2):
+        # Comparison of ValidationResult compares identifier
+        if pair[0] == pair[1]:
+            raise RuntimeError("All validation results must be unique")
 
 
 def _equal(a: Binding, b: Binding) -> bool:

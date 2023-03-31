@@ -112,7 +112,7 @@ class CPUStatistics(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "MaximumUtilization",
+            "max_utilization_less_than",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -140,7 +140,7 @@ class CPUStatistics(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "AverageUtilization",
+            "average_utilization_less_than",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"

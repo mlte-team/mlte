@@ -112,7 +112,7 @@ class MemoryStatistics(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "MaximumConsumption",
+            "max_consumption_less_than",
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
                 f"below threshold {threshold}"
@@ -140,7 +140,7 @@ class MemoryStatistics(Result):
         :rtype: ValidationResult
         """
         result: ValidationResult = Validator(
-            "AverageConsumption",
+            "average_consumption_less_than",
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
                 f"below threshold {threshold}"
