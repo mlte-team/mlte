@@ -26,6 +26,7 @@ class Condition:
         validator: str,
         threshold: Any,
     ) -> None:
+        """Creates a Condition."""
         self.measurement_type = measurement_type
         self.validator = validator
         self.threshold = threshold

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from itertools import groupby, combinations
-from typing import Iterable, Any, Union
+from typing import Iterable, Any, Union, Type
 
 from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
@@ -64,19 +64,16 @@ class Spec:
         :param properties: The collection of properties that compose the spec.
         :type conditions: list[Property]
         """
-        # TODO(Kyle): What additional metadata should
-        # we store at the level of a Spec?
-
         self.properties = [p for p in properties]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        # Set up dict to store conditions.
         self.conditions: dict[str, list[Condition]] = {
             property.name: [] for property in self.properties
         }
+        """A dict to store conditions by property."""
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -95,7 +92,32 @@ class Spec:
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
 
-    def add_condition(self, property_name: str, condition: Condition):
+    def add_condition(
+        self,
+        property_name: str,
+        measurement_type: Type[Measurement],
+        validator: str,
+        threshold: Any,
+    ):
+        """
+        Adds a condition for the given property, with information from a measurement, plus additional condition info.
+
+        :param property_name: The name of the property we are adding the condition for.
+        :type property_name: str
+
+        :param measurement: The type measurement we are want to have in the condition.
+        :type measurement: Type
+
+        :param validator: The validator method for the condition.
+        :type validator: str
+
+        :param threshold: The threshold value for the validation.
+        :type threshold: Any
+        """
+        condition = Condition(measurement_type.__name__, validator, threshold)
+        self._add_condition(property_name, condition)
+
+    def _add_condition(self, property_name: str, condition: Condition):
         """
         Adds the given condition to the property.
 
@@ -121,33 +143,6 @@ class Spec:
         )
         if not found:
             self.conditions[property_name].append(condition)
-
-    def add_condition_for_measurement(
-        self,
-        property_name: str,
-        measurement: Measurement,
-        validator: str,
-        threshold: Any,
-    ):
-        """
-        Adds a condition for the given property, with information from a measurement, plus additional condition info.
-
-        :param property_name: The name of the property we are adding the condition for.
-        :type property_name: str
-
-        :param measurement: The measurement we are adding a condition to.
-        :type measurement: Measurement
-
-        :param validator: The validator method for the condition.
-        :type validator: str
-
-        :param threshold: The threshold value for the validation.
-        :type threshold: Any
-        """
-        condition = Condition(
-            measurement.metadata.typename, validator, threshold
-        )
-        self.add_condition(property_name, condition)
 
     # -------------------------------------------------------------------------
     # Save / Load
@@ -215,7 +210,7 @@ class Spec:
         spec = Spec(*[Property._from_json(d) for d in json["properties"]])
         for property_doc in json["properties"]:
             for condition_doc in property_doc["measurements"]:
-                spec.add_condition(
+                spec._add_condition(
                     property_doc["name"], Condition.from_json(condition_doc)
                 )
 
@@ -245,7 +240,7 @@ class Spec:
         :rtype: dict[str, Any]
         """
         state = global_state()
-        state.check()
+        state.ensure_initialized()
         model_identifier, model_version = state.get_model()
         return {
             "model_identifier": model_identifier,
@@ -452,14 +447,7 @@ class Spec:
         measurement_name = results[0].result.measurement_typename  # type: ignore
         document = {
             "name": measurement_name,
-            "validators": [
-                {
-                    "name": vr.validator_name,
-                    "result": f"{vr}",
-                    "message": vr.message,
-                }
-                for vr in results
-            ],
+            "validators": [vr.to_json() for vr in results],
         }
         return document
 

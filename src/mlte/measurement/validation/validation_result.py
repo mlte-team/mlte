@@ -89,6 +89,19 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = validator.name
         return self
 
+    def to_json(self) -> dict[str, str]:
+        """
+        Returns this object as a JSON dictionary.
+
+        :return: A JSON-like dictionary with this object.
+        :rtype: dict[str, str]
+        """
+        return {
+            "name": self.validator_name,
+            "result": f"{self}",
+            "message": self.message,
+        }
+
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
         assert self.result is not None, "Broken precondition."
