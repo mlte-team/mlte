@@ -41,7 +41,7 @@ def test_compatibility0():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])  # type: ignore
+        _ = b.bind(s, [i])  # type: ignore
 
 
 def test_compatibility1():
@@ -53,7 +53,7 @@ def test_compatibility1():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])  # type: ignore
+        _ = b.bind(s, [i])  # type: ignore
 
 
 def test_compatibility2():
@@ -65,7 +65,7 @@ def test_compatibility2():
     i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
 
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i])  # type: ignore
+        _ = b.bind(s, [i])  # type: ignore
 
 
 def test_bind_unique():
@@ -73,9 +73,10 @@ def test_bind_unique():
     spec = Spec(StorageCost())
     i0 = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
     i1 = Integer(MeasurementMetadata("dummy", Identifier("id")), 2)
+    binding = Binding({"property": ["id"]})
     with pytest.raises(RuntimeError):
-        _ = spec.bind(
-            Binding({"property": ["id"]}), [i0.less_than(3), i1.less_than(3)]
+        _ = binding.bind(
+            spec, [i0.less_than(3), i1.less_than(3)]
         )
 
 
@@ -83,7 +84,7 @@ def test_bind_coverage():
     s = Spec(StorageCost())
     b = Binding({"StorageCost": ["id"]})
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [])
+        _ = b.bind(s, [])
 
 
 def test_bind_extra0():
@@ -93,7 +94,7 @@ def test_bind_extra0():
     i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
     i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
     with pytest.raises(RuntimeError):
-        _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])
+        _ = b.bind(s, [i0.less_than(3), i1.less_than(3)])
 
 
 def test_success():
@@ -102,4 +103,4 @@ def test_success():
     i0 = Integer(MeasurementMetadata("dummy", Identifier("i0")), 1)
     i1 = Integer(MeasurementMetadata("dummy", Identifier("i1")), 2)
 
-    _ = s.bind(b, [i0.less_than(3), i1.less_than(3)])
+    _ = b.bind(s, [i0.less_than(3), i1.less_than(3)])

@@ -19,7 +19,8 @@ def test_save_load(tmp_path):
     i = Integer(MeasurementMetadata("typename", Identifier("id")), 1)
 
     spec = Spec(StorageCost())
-    bound = spec.bind(Binding({"StorageCost": ["id"]}), [i.less_than(3)])
+    binding = Binding({"StorageCost": ["id"]})
+    bound = binding.bind(spec, [i.less_than(3)])
     bound.save()
 
     r = BoundSpec.load()
