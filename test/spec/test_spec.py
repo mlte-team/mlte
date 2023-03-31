@@ -75,9 +75,7 @@ def test_bind_unique():
     i1 = Integer(MeasurementMetadata("dummy", Identifier("id")), 2)
     binding = Binding({"property": ["id"]})
     with pytest.raises(RuntimeError):
-        _ = binding.bind(
-            spec, [i0.less_than(3), i1.less_than(3)]
-        )
+        _ = binding.bind(spec, [i0.less_than(3), i1.less_than(3)])
 
 
 def test_bind_coverage():
