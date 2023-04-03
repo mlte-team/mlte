@@ -4,11 +4,9 @@ Unit test for ExternalMeasurement.
 import pytest
 
 from mlte.measurement.result import Integer
-from mlte.measurement import (
-    MeasurementMetadata,
-    Identifier,
-    ExternalMeasurement,
-)
+from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement.identifier import Identifier
+from mlte.measurement import ExternalMeasurement
 
 
 def _dummy_calculation(x: int, y: int):
@@ -36,6 +34,19 @@ def test_evaluate_external():
 
     measurement = ExternalMeasurement("dummy", Integer)
     result = measurement.evaluate(_dummy_calculation(x, y))
+
+    assert isinstance(result, Integer)
+    assert result == expected_result
+
+
+def test_evaluate_ingest():
+    expected_value = 1000
+    expected_result = Integer(
+        MeasurementMetadata("dummy", Identifier("test")), expected_value
+    )
+
+    measurement = ExternalMeasurement("dummy", Integer)
+    result = measurement.ingest(expected_value)
 
     assert isinstance(result, Integer)
     assert result == expected_result

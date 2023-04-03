@@ -6,20 +6,9 @@ from __future__ import annotations
 from typing import Dict, List, Any
 
 
-from mlte._global import global_state, GlobalState
+from mlte._global import global_state
 from mlte.store.api import read_binding, write_binding
 from mlte._private.schema import BINDING_LATEST_SCHEMA_VERSION
-
-
-def _check_global_state(state: GlobalState):
-    """
-    Ensure that the global state contains
-    information necessary to save/load results.
-    """
-    if not state.has_model():
-        raise RuntimeError("Set model context prior to saving result.")
-    if not state.has_artifact_store_uri():
-        raise RuntimeError("Set artifact store URI prior to saving result.")
 
 
 def _verify_integrity(description: Dict[str, List[str]]):
@@ -79,7 +68,7 @@ class Binding:
     def save(self):
         """Save the Binding instance to artifact store."""
         state = global_state()
-        _check_global_state(state)
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -101,7 +90,7 @@ class Binding:
         :rtype: Binding
         """
         state = global_state()
-        _check_global_state(state)
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
