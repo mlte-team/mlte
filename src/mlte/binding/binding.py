@@ -302,7 +302,7 @@ class Binding:
         for result_identifier in result_identifiers:
             if result_identifier not in binding_identifiers:
                 raise RuntimeError(
-                    f"Result with identifier {result_identifier}"
+                    f"Result with identifier '{result_identifier}'"
                     " is not bound to any property."
                 )
 

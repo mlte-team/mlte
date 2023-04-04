@@ -259,7 +259,15 @@ class Spec:
         :return: The properties document
         :rtype: dict[str, Any]
         """
-        # TODO: add assertion that if it is not none, property name has to be there.
+        if validated_results is not None:
+            if any(
+                property.name not in validated_results
+                for property in self.properties
+            ):
+                raise RuntimeError(
+                    "There are properties that do not have associated validated results; can't generate document."
+                )
+
         property_docs = [
             self._property_document(
                 property,

@@ -285,7 +285,7 @@ def read_result(
     if not result_path.exists():
         raise RuntimeError(
             f"Failed to read result, "
-            f"result with identifier {result_identifier} not found."
+            f"result with identifier '{result_identifier}' not found."
         )
 
     if (
@@ -474,7 +474,7 @@ def _check_exists(
     model_path = root / model_identifier
     if not model_path.exists():
         raise RuntimeError(
-            f"Model with identifier {model_identifier} not found."
+            f"Model with identifier '{model_identifier}' not found."
         )
 
     if model_version is None:
