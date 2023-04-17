@@ -308,8 +308,8 @@ def write_result(
     _write_result(result_path, result, result.tag)
 
 
-def read_spec(
-    uri: str, model_identifier: str, model_version: str
+def read_artifact(
+    uri: str, model_identifier: str, model_version: str, filename: str
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     root = _parse_root_path(uri)
@@ -320,70 +320,67 @@ def read_spec(
     model_version_path = root / model_identifier / model_version
     assert model_version_path.is_dir(), "Broken invariant."
 
-    if not _artifact_is_saved(model_version_path, SPEC_FILENAME):
-        raise RuntimeError("Failed to read binding, no binding is saved.")
+    if not _artifact_is_saved(model_version_path, filename):
+        raise RuntimeError("Failed to read artifact, artifact is not saved.")
 
-    return _read_artifact(model_version_path, SPEC_FILENAME)
+    return _read_artifact(model_version_path, filename)
+
+
+def write_artifact(
+    uri: str,
+    model_identifier: str,
+    model_version: str,
+    data: Dict[str, Any],
+    filename: str,
+):
+    """TODO(Kyle)"""
+    root = _parse_root_path(uri)
+    assert root.exists(), "Broken precondition."
+
+    # Create model directory
+    model_path = root / model_identifier
+    if not model_path.exists():
+        model_path.mkdir()
+
+    # Create version directory
+    version_path = model_path / model_version
+    if not version_path.exists():
+        version_path.mkdir()
+
+    model_version_path = root / model_identifier / model_version
+    _write_artifact(model_version_path, filename, data)
+
+
+def read_spec(
+    uri: str, model_identifier: str, model_version: str
+) -> Dict[str, Any]:
+    """TODO(Kyle)"""
+    return read_artifact(uri, model_identifier, model_version, SPEC_FILENAME)
 
 
 def write_spec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ):
     """TODO(Kyle)"""
-    root = _parse_root_path(uri)
-    assert root.exists(), "Broken precondition."
-
-    # Create model directory
-    model_path = root / model_identifier
-    if not model_path.exists():
-        model_path.mkdir()
-
-    # Create version directory
-    version_path = model_path / model_version
-    if not version_path.exists():
-        version_path.mkdir()
-
-    model_version_path = root / model_identifier / model_version
-    _write_artifact(model_version_path, SPEC_FILENAME, data)
+    write_artifact(uri, model_identifier, model_version, data, SPEC_FILENAME)
 
 
 def read_boundspec(
     uri: str, model_identifier: str, model_version: str
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
-    root = _parse_root_path(uri)
-    assert root.exists(), "Broken precondition."
-
-    _check_exists(root, model_identifier, model_version)
-
-    model_version_path = root / model_identifier / model_version
-    assert model_version_path.is_dir(), "Broken invariant."
-
-    if not _artifact_is_saved(model_version_path, BOUNDSPEC_FILENAME):
-        raise RuntimeError("Failed to read binding, no binding is saved.")
-
-    return _read_artifact(model_version_path, BOUNDSPEC_FILENAME)
+    return read_artifact(
+        uri, model_identifier, model_version, BOUNDSPEC_FILENAME
+    )
 
 
 def write_boundspec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ):
     """TODO(Kyle)"""
-    root = _parse_root_path(uri)
-    assert root.exists(), "Broken precondition."
-
-    # Create model directory
-    model_path = root / model_identifier
-    if not model_path.exists():
-        model_path.mkdir()
-
-    # Create version directory
-    version_path = model_path / model_version
-    if not version_path.exists():
-        version_path.mkdir()
-
-    model_version_path = root / model_identifier / model_version
-    _write_artifact(model_version_path, BOUNDSPEC_FILENAME, data)
+    write_artifact(
+        uri, model_identifier, model_version, data, BOUNDSPEC_FILENAME
+    )
 
 
 # -----------------------------------------------------------------------------
