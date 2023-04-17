@@ -28,7 +28,6 @@ root/
   model_identifier0/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
-      binding.json              <- ONLY present if Binding is saved
       boundspec.json            <- ONLY present if BoundSpec is saved
       result_identifier0.json
 
