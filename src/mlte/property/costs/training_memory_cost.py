@@ -12,7 +12,7 @@ class TrainingMemoryCost(Property):
     of model training associated with memory resources.
     """
 
-    def __init__(self):
+    def __init__(self, rationale: str):
         """
         Initialize a TrainingMemoryCost instance.
         """
@@ -28,6 +28,7 @@ class TrainingMemoryCost(Property):
                 on on-demand cloud infrastructure.
                 """
             ),
+            rationale,
         )
 
     def __repr__(self) -> str:

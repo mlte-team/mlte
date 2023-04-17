@@ -12,7 +12,7 @@ class TrainingComputeCost(Property):
     of model training associated with compute resources.
     """
 
-    def __init__(self):
+    def __init__(self, rationale: str):
         """
         Initialize a TrainingComputeCost instance.
         """
@@ -28,6 +28,7 @@ class TrainingComputeCost(Property):
                 that run on on-demand cloud infrastructure.
                 """
             ),
+            rationale,
         )
 
     def __repr__(self) -> str:

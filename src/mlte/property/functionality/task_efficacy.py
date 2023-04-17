@@ -12,7 +12,7 @@ class TaskEfficacy(Property):
     a model to perform the task for which it is designed.
     """
 
-    def __init__(self):
+    def __init__(self, rationale: str):
         """Initialize a TaskEfficacy instance."""
         super().__init__(
             self.__class__.__name__,
@@ -25,6 +25,7 @@ class TaskEfficacy(Property):
                 and average precision, but many others are possible.
                 """
             ),
+            rationale,
         )
 
     def __repr__(self) -> str:

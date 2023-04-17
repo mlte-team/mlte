@@ -11,7 +11,7 @@ class StorageCost(Property):
     The StorageCost property reflects the cost of model storage.
     """
 
-    def __init__(self):
+    def __init__(self, rationale: str):
         """Initialize a StorageCost instance."""
         super().__init__(
             self.__class__.__name__,
@@ -23,6 +23,7 @@ class StorageCost(Property):
                 to stable storage, or the number of parameters it contains.
                 """
             ),
+            rationale,
         )
 
     def __repr__(self) -> str:
