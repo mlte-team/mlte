@@ -104,46 +104,18 @@ def _result_path(model_version_path: Path, result_identifier: str) -> Path:
     ).with_suffix(".json")
 
 
-def _spec_is_saved(model_version_path: Path) -> bool:
+def _artifact_is_saved(model_version_path: Path, filename: str) -> bool:
     """
-    Determine if a specification is saved to the store for model version.
+    Determine if an artifact is saved to the store for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
 
-    :return: `True` if a specification is present, `False` otherwise
+    :return: `True` if an artifact is present, `False` otherwise
     :rtype: bool
     """
     assert model_version_path.is_dir(), "Broken precondition."
-    return (model_version_path / SPEC_FILENAME).is_file()
-
-
-def _binding_is_saved(model_version_path: Path) -> bool:
-    """
-    Determine if a binding is saved to the store for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: `True` if a binding is present, `False` otherwise
-    :rtype: bool
-    """
-    assert model_version_path.is_dir(), "Broken precondition."
-    return (model_version_path / BINDING_FILENAME).is_file()
-
-
-def _boundspec_is_saved(model_version_path: Path) -> bool:
-    """
-    Determine if a bound specification is saved to the store for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: `True` if a bound specification is present, `False` otherwise
-    :rtype: bool
-    """
-    assert model_version_path.is_dir(), "Broken precondition."
-    return (model_version_path / BOUNDSPEC_FILENAME).is_file()
+    return (model_version_path / filename).is_file()
 
 
 # -----------------------------------------------------------------------------
@@ -348,7 +320,7 @@ def read_spec(
     model_version_path = root / model_identifier / model_version
     assert model_version_path.is_dir(), "Broken invariant."
 
-    if not _spec_is_saved(model_version_path):
+    if not _artifact_is_saved(model_version_path, SPEC_FILENAME):
         raise RuntimeError("Failed to read binding, no binding is saved.")
 
     return _read_artifact(model_version_path, SPEC_FILENAME)
@@ -387,7 +359,7 @@ def read_boundspec(
     model_version_path = root / model_identifier / model_version
     assert model_version_path.is_dir(), "Broken invariant."
 
-    if not _boundspec_is_saved(model_version_path):
+    if not _artifact_is_saved(model_version_path, BOUNDSPEC_FILENAME):
         raise RuntimeError("Failed to read binding, no binding is saved.")
 
     return _read_artifact(model_version_path, BOUNDSPEC_FILENAME)
