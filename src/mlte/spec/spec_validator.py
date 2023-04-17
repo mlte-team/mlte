@@ -35,7 +35,9 @@ class SpecValidator:
         self.results: dict[str, dict[str, Result]] = {}
         """Where temporary results will be gathered for validation."""
 
-    def add_result(self, property_name: str, validator: str, result: Result):
+    def add_result(
+        self, property_name: str, condition_label: str, result: Result
+    ):
         """
         Adds a result associated to a property and measurements.
 
@@ -44,7 +46,7 @@ class SpecValidator:
         """
         if property_name not in self.results:
             self.results[property_name] = {}
-        self.results[property_name][validator] = result
+        self.results[property_name][condition_label] = result
 
     def validate_and_bind(self) -> BoundSpec:
         """
@@ -98,15 +100,14 @@ class SpecValidator:
 
         # Check that all conditions have results to be validated.
         for condition in conditions:
-            validator = condition.validator
-            if validator not in results:
+            if condition.label not in results:
                 raise RuntimeError(
-                    f"Condition for validator '{validator}' does not have a result that can be validated."
+                    f"Condition '{condition.label}' does not have a result that can be validated."
                 )
 
         # Validate and aggregate the results for all conditions for this property.
         validation_results = [
-            condition.validate(results[condition.validator])
+            condition.validate(results[condition.label])
             for condition in conditions
         ]
         return validation_results
