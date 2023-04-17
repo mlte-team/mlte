@@ -57,7 +57,7 @@ class Property(metaclass=abc.ABCMeta):
             "name": self.name,
             "repr": repr(self),
             "description": self.description,
-            "rationale": self.rationale
+            "rationale": self.rationale,
         }
 
     @staticmethod

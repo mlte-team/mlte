@@ -94,6 +94,7 @@ class Spec:
     def add_condition(
         self,
         property_name: str,
+        label: str,
         measurement_type: Type[Measurement],
         validator: str,
         threshold: Any,
@@ -104,6 +105,9 @@ class Spec:
         :param property_name: The name of the property we are adding the condition for.
         :type property_name: str
 
+        :param label: The name to give the condition to track it.
+        :type label: str
+
         :param measurement: The type measurement we are want to have in the condition.
         :type measurement: Type
 
@@ -113,7 +117,9 @@ class Spec:
         :param threshold: The threshold value for the validation.
         :type threshold: Any
         """
-        condition = Condition(measurement_type.__name__, validator, threshold)
+        condition = Condition(
+            label, measurement_type.__name__, validator, threshold
+        )
         self._add_condition(property_name, condition)
 
     def _add_condition(self, property_name: str, condition: Condition):

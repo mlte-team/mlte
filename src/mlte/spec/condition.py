@@ -22,11 +22,13 @@ class Condition:
 
     def __init__(
         self,
+        label: str,
         measurement_type: str,
         validator: str,
         threshold: Any,
     ) -> None:
         """Creates a Condition."""
+        self.label = label
         self.measurement_type = measurement_type
         self.validator = validator
         self.threshold = threshold
@@ -34,6 +36,7 @@ class Condition:
     def to_json(self) -> dict[str, Any]:
         """Returns this condition as a dictionary."""
         return {
+            "label": self.label,
             "measurement_type": self.measurement_type,
             "validator": self.validator,
             "threshold": self.threshold,
@@ -51,13 +54,15 @@ class Condition:
         :rtype: Condition
         """
         if (
-            "measurement_type" not in document
+            "label" not in document
+            or "measurement_type" not in document
             or "validator" not in document
             or "threshold" not in document
         ):
             raise RuntimeError("Saved condition is malformed.")
 
         return Condition(
+            document["label"],
             document["measurement_type"],
             document["validator"],
             document["threshold"],
@@ -92,7 +97,8 @@ class Condition:
             return False
         reference: Condition = other
         return (
-            self.measurement_type == reference.measurement_type
+            self.label == reference.label
+            and self.measurement_type == reference.measurement_type
             and self.validator == reference.validator
             and self.threshold == reference.threshold
         )
