@@ -56,21 +56,21 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, *properties: Property):
+    def __init__(self, properties: dict[Property, list[Condition]]):
         """
         Initialize a Spec instance. Only one of the two arguments should be provided, not both.
 
         :param properties: The collection of properties that compose the spec.
         :type conditions: list[Property]
         """
-        self.properties = [p for p in properties]
+        self.properties = [p for p in properties.keys()]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
         self.conditions: dict[str, list[Condition]] = {
-            property.name: [] for property in self.properties
+            property.name: properties[property] for property in self.properties
         }
         """A dict to store conditions by property."""
 
@@ -206,7 +206,7 @@ class Spec:
         :return: The deserialized specification
         :rtype: Spec
         """
-        spec = Spec(*[Property._from_json(d) for d in json["properties"]])
+        spec = Spec({Property._from_json(d): [] for d in json["properties"]})
         for property_doc in json["properties"]:
             for measurement_doc in property_doc["measurements"]:
                 for condition_doc in measurement_doc["conditions"]:
