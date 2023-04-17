@@ -56,32 +56,6 @@ def write_result(
         assert False, "Unreachable."
 
 
-def read_binding(
-    uri: str, model_identifier: str, model_version
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_binding(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
-
-
-def write_binding(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        local.write_binding(uri, model_identifier, model_version, data)
-    else:
-        assert False, "Unreachable."
-
-
 def read_spec(uri: str, model_identifier: str, model_version) -> Dict[str, Any]:
     """TODO(Kyle)"""
     uri_type = parse_uri_type(uri)

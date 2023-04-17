@@ -184,8 +184,8 @@ def _write_artifact(
     :param data: The binding data
     :type data: Dict[str, Any]
     """
-    binding_path = model_version_path / filename
-    with open(binding_path, "w") as f:
+    full_path = model_version_path / filename
+    with open(full_path, "w") as f:
         json.dump(data, f, indent=4)
 
 
@@ -334,45 +334,6 @@ def write_result(
 
     result_path = _result_path(version_path, result_identifier)
     _write_result(result_path, result, result.tag)
-
-
-def read_binding(
-    uri: str, model_identifier: str, model_version: str
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    root = _parse_root_path(uri)
-    assert root.exists(), "Broken precondition."
-
-    _check_exists(root, model_identifier, model_version)
-
-    model_version_path = root / model_identifier / model_version
-    assert model_version_path.is_dir(), "Broken invariant."
-
-    if not _binding_is_saved(model_version_path):
-        raise RuntimeError("Failed to read binding, no binding is saved.")
-
-    return _read_artifact(model_version_path, BINDING_FILENAME)
-
-
-def write_binding(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
-    """TODO(Kyle)"""
-    root = _parse_root_path(uri)
-    assert root.exists(), "Broken precondition."
-
-    # Create model directory
-    model_path = root / model_identifier
-    if not model_path.exists():
-        model_path.mkdir()
-
-    # Create version directory
-    version_path = model_path / model_version
-    if not version_path.exists():
-        version_path.mkdir()
-
-    model_version_path = root / model_identifier / model_version
-    _write_artifact(model_version_path, BINDING_FILENAME, data)
 
 
 def read_spec(
