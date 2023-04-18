@@ -8,7 +8,7 @@ import abc
 from copy import deepcopy
 from typing import Optional
 
-from ..result import Result
+from mlte.value import Value
 
 
 def _has_callable(type, name) -> bool:
@@ -40,28 +40,28 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = ""
         """The name of the validator that produced the result."""
 
-        self.result: Optional[Result] = None
+        self.value: Optional[Value] = None
         """
-        The Result on which the Validator
+        The Value on which the Validator
         that produced this ValidationResult was invoked.
         """
 
         self.message = ""
         """The message indicating the reason for status."""
 
-    def _with_result(self, result: Result) -> ValidationResult:
+    def _with_value(self, value: Value) -> ValidationResult:
         """
-        Set the `result` field of the ValidationResult
-        to indicate the Result instance from which
+        Set the `value` field of the ValidationResult
+        to indicate the Value instance from which
         it was generated.
 
-        This hook allows us to embed the result instance within
-        the ValidationResult so that we can use the result
+        This hook allows us to embed the value instance within
+        the ValidationResult so that we can use the value
         information later when it is used to generate a report.
 
-        :param result: The Result instance on which the
+        :param value: The Value instance on which the
         Validator that produced this instance was invoked
-        :type result: Result
+        :type value: Value
 
         :return: The ValidationResult instance (`self`)
         :rtype: ValidationResult
@@ -69,7 +69,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
         # TODO(Kyle): This is probably not necessary,
         # and is certainly overkill for the current
         # measurements that we have implemented. Revisit.
-        self.result = deepcopy(result)
+        self.value = deepcopy(value)
         return self
 
     def _from_validator(self, validator) -> ValidationResult:
@@ -104,10 +104,10 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
-        assert self.result is not None, "Broken precondition."
+        assert self.value is not None, "Broken precondition."
         if not isinstance(other, ValidationResult):
             return False
-        return self.result.identifier == other.result.identifier  # type: ignore
+        return self.value.identifier == other.value.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""

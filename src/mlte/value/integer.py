@@ -1,18 +1,18 @@
 """
-A Result instance for a scalar, integral value.
+A Value instance for a scalar, integral value.
 """
 from __future__ import annotations
 
 from typing import Dict, Any
 
-from .result import Result
+from .value import Value
 from ..validation import Validator, ValidationResult, Success, Failure
-from ..measurement_metadata import MeasurementMetadata
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
-class Integer(Result):
+class Integer(Value):
     """
-    Integer implements the Result interface for a single integer value.
+    Integer implements the Value interface for a single integer value.
     """
 
     def __init__(self, measurement_metadata: MeasurementMetadata, value: int):

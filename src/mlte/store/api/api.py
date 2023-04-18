@@ -8,7 +8,7 @@ from mlte.store.api.uri import parse_uri_type, UriType
 import mlte.store.api.local as local
 
 
-def read_result(
+def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -20,7 +20,7 @@ def read_result(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        return local.read_result(
+        return local.read_value(
             uri,
             model_identifier,
             model_version,
@@ -31,7 +31,7 @@ def read_result(
         assert False, "Unreachable."
 
 
-def write_result(
+def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -44,7 +44,7 @@ def write_result(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        local.write_result(
+        local.write_value(
             uri,
             model_identifier,
             model_version,

@@ -8,14 +8,14 @@ import abc
 from typing import Dict, Any, Optional
 
 from mlte._global import global_state
-from mlte.store.api import read_result, write_result
+from mlte.store.api import read_value, write_value
 from mlte.measurement.identifier import Identifier
-from mlte._private.schema import RESULT_LATEST_SCHEMA_VERSION
+from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
 
 # NOTE(Kyle): This must remain a relative import to
 # circumvent a circular import issue, until we do a
 # better job of decoupling some of these dependencies
-from ..measurement_metadata import MeasurementMetadata
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -23,11 +23,11 @@ def _has_callable(type, name) -> bool:
     return hasattr(type, name) and callable(getattr(type, name))
 
 
-class Result(metaclass=abc.ABCMeta):
+class Value(metaclass=abc.ABCMeta):
     """
-    The Result class serves as the base class of all
-    semantically-enriched measurement evaluation results.
-    The Result provides a common interface for inspecting
+    The Value class serves as the base class of all
+    semantically-enriched measurement evaluation values.
+    The Value provides a common interface for inspecting
     the results of measurement evaluation, and also
     encapsulates the functionality required to uniquely
     associate evaluation results with the originating measurement.
@@ -35,8 +35,8 @@ class Result(metaclass=abc.ABCMeta):
 
     @classmethod
     def __subclasshook__(cls, subclass):
-        """Define the interface for all Result subclasses."""
-        # All subclasses of Result must define serialize() and deserialize()
+        """Define the interface for all Value subclasses."""
+        # All subclasses of Value must define serialize() and deserialize()
         return all(
             _has_callable(subclass, method)
             for method in ["serialize", "deserialize"]
@@ -44,7 +44,7 @@ class Result(metaclass=abc.ABCMeta):
 
     def __init__(self, instance, measurement_metadata: MeasurementMetadata):
         """
-        Initialize a Result instance.
+        Initialize a Value instance.
 
         :param instance: The subclass instance
         :type instance: Measurement
@@ -52,18 +52,18 @@ class Result(metaclass=abc.ABCMeta):
         :type measurement: MeasurementMetdata
         """
         self.identifier: Identifier = measurement_metadata.identifier
-        """The identifier for the result"""
+        """The identifier for the value"""
 
         self.measurement_typename = measurement_metadata.typename
         """The type of the generating measurement."""
 
         self.typename = type(instance).__name__
-        """The type of the result itself."""
+        """The type of the value itself."""
 
     @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
         """TODO"""
-        raise NotImplementedError("Cannot serialize abstract Result.")
+        raise NotImplementedError("Cannot serialize abstract Value.")
 
     @staticmethod
     @abc.abstractmethod
@@ -71,11 +71,11 @@ class Result(metaclass=abc.ABCMeta):
         measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
     ) -> Any:
         """TODO"""
-        raise NotImplementedError("Cannot deserialize abstract Result.")
+        raise NotImplementedError("Cannot deserialize abstract Value.")
 
     def save(self, tag: Optional[str] = None):
         """
-        Save result data to the configured artifact store.
+        Save value data to the configured artifact store.
 
         :param tag: An optional tag to identify groups of results
         :type tag: str
@@ -87,13 +87,13 @@ class Result(metaclass=abc.ABCMeta):
         artifact_store_uri = state.get_artifact_store_uri()
 
         # Use API to save to artifact store
-        write_result(
+        write_value(
             artifact_store_uri,
             model_identifier,
             model_version,
             self.identifier.name,
             {
-                "schema_version": RESULT_LATEST_SCHEMA_VERSION,
+                "schema_version": VALUE_LATEST_SCHEMA_VERSION,
                 "metadata": self._serialize_metadata(),
                 "payload": {**self.serialize()},
             },
@@ -101,20 +101,20 @@ class Result(metaclass=abc.ABCMeta):
         )
 
     @classmethod
-    def load(cls, identifier: str, version: Optional[int] = None) -> Result:
+    def load(cls, identifier: str, version: Optional[int] = None) -> Value:
         """
-        Load non-semantically-enriched result data from an artifact store.
+        Load non-semantically-enriched value data from an artifact store.
         This data may then be passed to the type-specific load() method to
-        fully-reconstruct the loaded result.
+        fully-reconstruct the loaded value.
 
-        :param identifier: The identifier for the result
+        :param identifier: The identifier for the value
         :type identifier: str
         :param version: The optional version identifier; when not specified,
-        the latest version of the result is read
+        the latest version of the value is read
         :type version: int
 
-        :return: The loaded result
-        :rtype: Result
+        :return: The loaded value
+        :rtype: Value
         """
         state = global_state()
         state.ensure_initialized()
@@ -123,7 +123,7 @@ class Result(metaclass=abc.ABCMeta):
         artifact_store_uri = state.get_artifact_store_uri()
 
         # Use API to load from artifact store
-        json = read_result(
+        json = read_value(
             artifact_store_uri,
             model_identifier,
             model_version,
@@ -134,19 +134,19 @@ class Result(metaclass=abc.ABCMeta):
         # TODO: Validate response
 
         metadata = json["metadata"]
-        result: Result = cls.deserialize(
+        value: Value = cls.deserialize(
             MeasurementMetadata(
                 metadata["measurement"]["typename"],
                 Identifier.from_json(metadata["identifier"]),
             ),
             json["payload"],
         )
-        return result
+        return value
 
     def _serialize_metadata(self) -> Dict[str, Any]:
         """Return the header for serialization."""
         return {
             "identifier": self.identifier.to_json(),
             "measurement": {"typename": self.measurement_typename},
-            "result": {"typename": self.typename},
+            "value": {"typename": self.typename},
         }

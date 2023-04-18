@@ -8,7 +8,7 @@ import mlte
 from mlte.measurement import Measurement
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 from mlte.measurement.identifier import Identifier
-from mlte.measurement.result import Real
+from mlte.value import Real
 
 
 class DummyMeasurementReal(Measurement):

@@ -1,13 +1,13 @@
 """
-A collection of properties and their measurements.
+Class in charge of validating a Spec.
 """
 
 from __future__ import annotations
 
 from mlte.property import Property
-from mlte.measurement.validation import ValidationResult
+from mlte.validation import ValidationResult
 from .bound_spec import BoundSpec
-from mlte.measurement.result import Result
+from mlte.value import Value
 from mlte.spec import Spec
 
 
@@ -32,31 +32,29 @@ class SpecValidator:
         self.spec = spec
         """The specification to be validated."""
 
-        self.results: dict[str, dict[str, Result]] = {}
-        """Where temporary results will be gathered for validation."""
+        self.values: dict[str, dict[str, Value]] = {}
+        """Where values will be gathered for validation."""
 
-    def add_result(
-        self, property_name: str, condition_label: str, result: Result
-    ):
+    def add_value(self, property_name: str, condition_label: str, value: Value):
         """
-        Adds a result associated to a property and measurements.
+        Adds a value associated to a property and measurements.
 
-        :param result: The result to add to the list
-        :type result: Result
+        :param value: The value to add to the list
+        :type value: Value
         """
-        if property_name not in self.results:
-            self.results[property_name] = {}
-        self.results[property_name][condition_label] = result
+        if property_name not in self.values:
+            self.values[property_name] = {}
+        self.values[property_name][condition_label] = value
 
-    def validate_and_bind(self) -> BoundSpec:
+    def validate(self) -> BoundSpec:
         """
-        Validates the internal properties given its conditions and the stored results, and generates a BoundSpec from it.
+        Validates the internal properties given its conditions and the stored values, and generates a BoundSpec from it.
 
-        :return: The bound specification
+        :return: The validated specification
         :rtype: BoundSpec
         """
-        validated_results = self._validate_properties()
-        return self.spec.generate_bound_spec(validated_results)
+        results = self._validate_properties()
+        return self.spec.generate_bound_spec(results)
 
     def _validate_properties(self) -> dict[str, list[ValidationResult]]:
         """
@@ -65,49 +63,48 @@ class SpecValidator:
         :return: A document indicating, for each property, a list of ValidationResults
         :rtype: dict[str, list[ValidationResult]]
         """
-        # Check that all propertoes have results to be validated.
+        # Check that all properties have values to be validated.
         for property in self.spec.properties:
-            if property.name not in self.results:
+            if property.name not in self.values:
                 raise RuntimeError(
-                    f"Property '{property.name}' does not have a result that can be validated."
+                    f"Property '{property.name}' does not have a value that can be validated."
                 )
 
         # Validate and aggregate the results for all properties.
         results = {
             property.name: self._validate_property(
-                property, self.results[property.name]
+                property, self.values[property.name]
             )
             for property in self.spec.properties
         }
         return results
 
     def _validate_property(
-        self, property: Property, results: dict[str, Result]
+        self, property: Property, values: dict[str, Value]
     ) -> list[ValidationResult]:
         """
-        Validates all conditions for a given property, for the given results.
+        Validates all conditions for a given property, for the given values.
 
         :param property: The property we want to validate.
         :type property: Property
 
-        :param results: A list of results to validate, ordered by validator.
-        :type results: dict[str, Result]
+        :param values: A list of values to validate.
+        :type values: dict[str, Value]
 
         :return: A list of ValidationResults with the validations for all conditions for this property.
         :rtype: list[ValidationResult]
         """
+        # Check that all conditions have values to be validated.
         conditions = self.spec.conditions[property.name]
-
-        # Check that all conditions have results to be validated.
         for condition in conditions:
-            if condition.label not in results:
+            if condition.label not in values:
                 raise RuntimeError(
-                    f"Condition '{condition.label}' does not have a result that can be validated."
+                    f"Condition '{condition.label}' does not have a value that can be validated."
                 )
 
         # Validate and aggregate the results for all conditions for this property.
-        validation_results = [
-            condition.validate(results[condition.label])
+        results = [
+            condition.validate(values[condition.label])
             for condition in conditions
         ]
-        return validation_results
+        return results

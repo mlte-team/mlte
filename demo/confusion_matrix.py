@@ -1,5 +1,5 @@
 """
-Implementation of ConfusionMatrix result.
+Implementation of ConfusionMatrix value.
 """
 
 from __future__ import annotations
@@ -7,9 +7,9 @@ from typing import Dict, Any
 
 import numpy as np
 
-from mlte.measurement.result import Result
+from mlte.value import Value
 from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.validation import (
+from mlte.validation import (
     Validator,
     ValidationResult,
     Success,
@@ -17,7 +17,7 @@ from mlte.measurement.validation import (
 )
 
 
-class ConfusionMatrix(Result):
+class ConfusionMatrix(Value):
     def __init__(
         self, measurement_metadata: MeasurementMetadata, matrix: np.ndarray
     ):

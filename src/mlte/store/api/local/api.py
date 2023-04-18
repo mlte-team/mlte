@@ -1,5 +1,5 @@
 """
-Result persistence API for local filesystem.
+Value persistence API for local filesystem.
 """
 
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Set, Dict, Any
 
 from .data_model import (
-    Result,
+    Value,
     ResultVersion,
 )
 
@@ -29,9 +29,9 @@ root/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
       boundspec.json            <- ONLY present if BoundSpec is saved
-      result_identifier0.json
+      value_identifier0.json
 
-The data for an individual result is then stored within a JSON file.
+The data for an individual value is then stored within a JSON file.
 The structure of this JSON file looks like:
 
 {
@@ -74,33 +74,33 @@ def _parse_root_path(uri: str) -> Path:
 # -----------------------------------------------------------------------------
 
 
-def _available_result_versions(result_path: Path) -> Set[int]:
+def _available_value_versions(value_path: Path) -> Set[int]:
     """
-    Get the available versions for a result.
-    :param result_path: The path to the result
-    :type result_path: Path
-    :return: The available versions for the result
+    Get the available versions for a value.
+    :param value_path: The path to the value
+    :type value_path: Path
+    :return: The available versions for the value
     :rtype: Set[int]
     """
-    with open(result_path.as_posix(), "r") as f:
+    with open(value_path.as_posix(), "r") as f:
         document = json.load(f)
         return set(e["version"] for e in document["versions"])
 
 
-def _result_path(model_version_path: Path, result_identifier: str) -> Path:
+def _value_path(model_version_path: Path, value_identifier: str) -> Path:
     """
-    Form the result path from model version path and result identifier.
+    Form the value path from model version path and value identifier.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
-    :param result_identifier: The identifier for the result
-    :type result_identifier: str
+    :param value_identifier: The identifier for the value
+    :type value_identifier: str
 
-    :return: The formatted result path
+    :return: The formatted value path
     :rtype: Path
     """
     return (
-        model_version_path / result_identifier.replace(" ", "-")
+        model_version_path / value_identifier.replace(" ", "-")
     ).with_suffix(".json")
 
 
@@ -139,8 +139,8 @@ def _read_artifact(model_version_path: Path, filename: str) -> Dict[str, Any]:
     assert binding_path.is_file(), "Broken invariant."
 
     with open(binding_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
+        artifact: Dict[str, Any] = json.load(f)
+        return artifact
 
 
 def _write_artifact(
@@ -162,74 +162,74 @@ def _write_artifact(
 
 
 # -----------------------------------------------------------------------------
-# Read Result
+# Read Value
 # -----------------------------------------------------------------------------
 
 
-def _read_result(result_path: Path, version: Optional[int] = None) -> Result:
+def _read_value(value_path: Path, version: Optional[int] = None) -> Value:
     """
-    Read the data for an individual result.
-    :param result_path: The path to the result
-    :type result_path: Path
+    Read the data for an individual value.
+    :param value_path: The path to the value
+    :type value_path: Path
     :param version: The (optional) version identifier
     :type version: Optional[int]
-    :return: The read result
-    :rtype: Result
+    :return: The read value
+    :rtype: Value
     """
-    with result_path.open("r") as f:
-        result: Result = Result.from_json(json.load(f))
+    with value_path.open("r") as f:
+        value: Value = Value.from_json(json.load(f))
 
     # Ensure requested version is present
     assert (version is None) or (
-        version in set(v.version for v in result.versions)
+        version in set(v.version for v in value.versions)
     ), "Broken invariant."
 
     # Filter to only include the version of interest
     # TODO(Kyle): Determine how we want to handle
     # multiversioning from user perspective / interface
     version = (
-        max(_available_result_versions(result_path))
+        max(_available_value_versions(value_path))
         if version is None
         else version
     )
-    result.versions = [v for v in result.versions if v.version == version]
-    return result
+    value.versions = [v for v in value.versions if v.version == version]
+    return value
 
 
 # -----------------------------------------------------------------------------
-# Write Result
+# Write Value
 # -----------------------------------------------------------------------------
 
 
-def _write_result(result_path: Path, result: Result, tag: Optional[str]):
+def _write_value(value_path: Path, value: Value, tag: Optional[str]):
     """
-    Write a result to the file at `result_path`.
-    :param result_path: The path to the result
-    :type result_path: Path
-    :param result: The result
-    :type result: Result
+    Write a value to the file at `value_path`.
+    :param value_path: The path to the value
+    :type value_path: Path
+    :param value: The value
+    :type value: Value
     """
-    if result_path.exists():
-        new_version = max(_available_result_versions(result_path)) + 1
+    if value_path.exists():
+        new_version = max(_available_value_versions(value_path)) + 1
 
         # Read existing document
-        with result_path.open("r") as f:
-            mutating = Result.from_json(json.load(f))
+        with value_path.open("r") as f:
+            mutating = Value.from_json(json.load(f))
 
         # Update tag
         mutating.tag = tag
 
-        # Update result version
+        # Update value version
         mutating.versions.append(
-            ResultVersion(version=new_version, data=result.versions[0].data)
+            ResultVersion(version=new_version, data=value.versions[0].data)
         )
 
         # Persist updates
-        with result_path.open("w") as f:
+        with value_path.open("w") as f:
             json.dump(mutating.to_json(), f, indent=4)
     else:
-        with result_path.open("w") as f:
-            json.dump(result.to_json(), f, indent=4)
+        with value_path.open("w") as f:
+            json.dump(value.to_json(), f, indent=4)
 
 
 # -----------------------------------------------------------------------------
@@ -237,12 +237,12 @@ def _write_result(result_path: Path, result: Result, tag: Optional[str]):
 # -----------------------------------------------------------------------------
 
 
-def read_result(
+def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_version: Optional[int] = None,
+    value_identifier: str,
+    value_version: Optional[int] = None,
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     root = _parse_root_path(uri)
@@ -252,45 +252,45 @@ def read_result(
     version_path = root / model_identifier / model_version
     assert version_path.exists(), "Broken invariant."
 
-    result_path = _result_path(version_path, result_identifier)
-    if not result_path.exists():
+    value_path = _value_path(version_path, value_identifier)
+    if not value_path.exists():
         raise RuntimeError(
-            f"Failed to read result, "
-            f"result with identifier '{result_identifier}' not found."
+            f"Failed to read value, "
+            f"value with identifier '{value_identifier}' not found."
         )
 
     if (
-        result_version is not None
-        and result_version not in _available_result_versions(result_path)
+        value_version is not None
+        and value_version not in _available_value_versions(value_path)
     ):
         raise RuntimeError(
-            f"Failed to read result, "
-            f"requested version {result_version} not found."
+            f"Failed to read value, "
+            f"requested version {value_version} not found."
         )
 
-    result = _read_result(result_path, result_version)
-    assert len(result.versions) == 1, "Broken invariant."
-    return result.versions[0].data
+    value = _read_value(value_path, value_version)
+    assert len(value.versions) == 1, "Broken invariant."
+    return value.versions[0].data
 
 
-def write_result(
+def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_data: Dict[str, Any],
-    result_tag: Optional[str],
+    value_identifier: str,
+    value_data: Dict[str, Any],
+    value_tag: Optional[str],
 ):
     """TODO(Kyle)"""
     root = _parse_root_path(uri)
     assert root.exists(), "Broken precondition."
 
     # Construct internal data model
-    result = Result.from_json(
+    value = Value.from_json(
         {
-            "identifier": result_identifier,
-            "tag": result_tag if result_tag is not None else "",
-            "versions": [{"version": 0, "data": result_data}],
+            "identifier": value_identifier,
+            "tag": value_tag if value_tag is not None else "",
+            "versions": [{"version": 0, "data": value_data}],
         }
     )
 
@@ -304,8 +304,8 @@ def write_result(
     if not version_path.exists():
         version_path.mkdir()
 
-    result_path = _result_path(version_path, result_identifier)
-    _write_result(result_path, result, result.tag)
+    value_path = _value_path(version_path, value_identifier)
+    _write_value(value_path, value, value.tag)
 
 
 def read_artifact(

@@ -10,7 +10,7 @@ sys.path.append(package_root())
 
 import mlte
 from mlte.measurement.storage import LocalObjectSize
-from mlte.measurement.result import Integer
+from mlte.value import Integer
 
 # Script exit codes
 EXIT_SUCCESS = 0

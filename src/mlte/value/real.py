@@ -1,19 +1,19 @@
 """
-An EvaluationResult instance for a scalar, real value.
+An Value instance for a scalar, real value.
 """
 
 from __future__ import annotations
 
 from typing import Dict, Any
 
-from .result import Result
+from .value import Value
 from ..validation import Validator, ValidationResult, Success, Failure
-from ..measurement_metadata import MeasurementMetadata
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
-class Real(Result):
+class Real(Value):
     """
-    Real implements the Result
+    Real implements the Value
     interface for a single real value.
     """
 

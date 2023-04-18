@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from mlte.measurement.validation import ValidationResult
-from mlte.measurement.result import Result
+from mlte.validation import ValidationResult
+from mlte.value import Value
 
 # -----------------------------------------------------------------------------
 # Condition
@@ -68,18 +68,18 @@ class Condition:
             document["threshold"],
         )
 
-    def validate(self, result: Result) -> ValidationResult:
+    def validate(self, value: Value) -> ValidationResult:
         """
-        Validates if the given result matches the condition.
+        Validates if the given value matches the condition.
 
         :return: The result of validating this condition.
         :rtype: ValidationResult
         """
         try:
-            validator = getattr(result, self.validator)
+            validator = getattr(value, self.validator)
         except AttributeError:
             raise RuntimeError(
-                f"Invalid validation method provided: '{self.validator}()' method not found for result of type {result.typename}"
+                f"Invalid validation method provided: '{self.validator}()' method not found for value of type {value.typename}"
             )
         validation_result: ValidationResult = validator(self.threshold)
         return validation_result

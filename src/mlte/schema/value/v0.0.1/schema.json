@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Result",
+    "title": "Value",
     "properties": {
         "schema_version": {
             "type": "string",
@@ -27,12 +27,12 @@
                         }
                     }
                 },
-                "result": {
+                "value": {
                     "type": "object",
                     "properties": {
                         "typename": {
                             "type": "string",
-                            "description": "The typename identifier for the result itself."
+                            "description": "The typename identifier for the value itself."
                         }
                     }
                 }

@@ -4,9 +4,8 @@ Unit tests for BoundSpec functionality.
 
 import mlte
 from mlte.spec import Spec, BoundSpec
-from mlte.binding import Binding
 from mlte.property.costs import StorageCost
-from mlte.measurement.result import Integer
+from mlte.value import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 from mlte.measurement.identifier import Identifier
 

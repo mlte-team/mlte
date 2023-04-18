@@ -1,18 +1,18 @@
 """
-An opaque evaluation result, without semantics.
+An opaque evaluation value, without semantics.
 """
 
 from __future__ import annotations
 
 from typing import Dict, Any, List
 
-from .result import Result
-from ..measurement_metadata import MeasurementMetadata
+from .value import Value
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
-class Opaque(Result):
+class Opaque(Value):
     """
-    The 'default' Result instance for
+    The 'default' Value instance for
     measurements that do not provide their own.
     """
 

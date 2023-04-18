@@ -1,5 +1,5 @@
 """
-A Result instance for image media.
+A Value instance for image media.
 """
 from __future__ import annotations
 
@@ -7,14 +7,14 @@ from pathlib import Path
 import base64
 from typing import Dict, Any, Union
 
-from .result import Result
+from .value import Value
 from ..validation import Validator, ValidationResult, Ignore
-from ..measurement_metadata import MeasurementMetadata
+from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 
-class Image(Result):
+class Image(Value):
     """
-    Image implements the Result interface for image media.
+    Image implements the Value interface for image media.
     """
 
     def __init__(
@@ -77,7 +77,7 @@ class Image(Result):
 
     def ignore(self, reason: str) -> ValidationResult:
         """
-        Ignore an image result.
+        Ignore an image value.
 
         :param reason: The reason for ignoring the image
         :type reason: str

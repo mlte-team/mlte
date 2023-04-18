@@ -1,13 +1,13 @@
 """
-Unit tests for Result schema.
+Unit tests for Value schema.
 """
 
 import mlte
-from mlte.measurement.result import Integer, Real, Opaque
+from mlte.value import Integer, Real, Opaque
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 from mlte.measurement.identifier import Identifier
-from mlte._private.schema import validate_result_schema
-from mlte.store.api import read_result
+from mlte._private.schema import validate_value_schema
+from mlte.store.api import read_value
 
 
 def test_real(tmp_path):
@@ -17,8 +17,8 @@ def test_real(tmp_path):
     r = Real(MeasurementMetadata("typename", Identifier("id")), 3.14)
     r.save()
 
-    d = read_result(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_result_schema(d)
+    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
+    validate_value_schema(d)
 
 
 def test_integer(tmp_path):
@@ -28,8 +28,8 @@ def test_integer(tmp_path):
     r = Integer(MeasurementMetadata("typename", Identifier("id")), 3)
     r.save()
 
-    d = read_result(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_result_schema(d)
+    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
+    validate_value_schema(d)
 
 
 def test_opaque(tmp_path):
@@ -41,5 +41,5 @@ def test_opaque(tmp_path):
     )
     r.save()
 
-    d = read_result(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_result_schema(d)
+    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
+    validate_value_schema(d)

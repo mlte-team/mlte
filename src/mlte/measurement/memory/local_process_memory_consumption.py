@@ -10,8 +10,8 @@ from typing import Dict, Any
 
 from ..process_measurement import ProcessMeasurement
 from ..measurement_metadata import MeasurementMetadata
-from mlte.measurement.result import Result
-from mlte.measurement.validation import (
+from mlte.value import Value
+from mlte.validation import (
     Validator,
     ValidationResult,
     Success,
@@ -25,7 +25,7 @@ from mlte._private.platform import is_windows, is_macos
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(Result):
+class MemoryStatistics(Value):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
