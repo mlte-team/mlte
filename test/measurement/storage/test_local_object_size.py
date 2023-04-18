@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Dict, Any
 
 from mlte.measurement.storage import LocalObjectSize
-from mlte.measurement.result import Integer
-from mlte.measurement.validation import ValidationResult
+from mlte.value import Integer
+from mlte.validation import ValidationResult
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction

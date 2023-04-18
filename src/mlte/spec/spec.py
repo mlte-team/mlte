@@ -9,7 +9,7 @@ from itertools import groupby
 from typing import Iterable, Any, Union, Type, Optional
 
 from mlte.property import Property
-from mlte.measurement.validation import ValidationResult
+from mlte.validation import ValidationResult
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.store.api import read_spec, write_spec

@@ -11,24 +11,24 @@ from mlte.property.functionality import TaskEfficacy
 
 
 def test_storage_cost():
-    p = StorageCost()
+    p = StorageCost("test")
     assert p.name == "StorageCost"
     assert len(p.description) > 0
 
 
 def test_training_compute_cost():
-    p = TrainingComputeCost()
+    p = TrainingComputeCost("test")
     assert p.name == "TrainingComputeCost"
     assert len(p.description) > 0
 
 
 def test_training_memory_cost():
-    p = TrainingMemoryCost()
+    p = TrainingMemoryCost("test")
     assert p.name == "TrainingMemoryCost"
     assert len(p.description) > 0
 
 
 def test_task_efficiacy():
-    p = TaskEfficacy()
+    p = TaskEfficacy("test")
     assert p.name == "TaskEfficacy"
     assert len(p.description) > 0

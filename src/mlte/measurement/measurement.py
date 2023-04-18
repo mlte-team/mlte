@@ -8,8 +8,8 @@ import abc
 import typing
 
 from mlte.value import Value
-from .measurement_metadata import MeasurementMetadata
-from .identifier import Identifier
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.identifier import Identifier
 
 
 def _has_callable(type, name) -> bool:

@@ -2,7 +2,7 @@
 MeasurementMetadata class definition.
 """
 
-from .identifier import Identifier
+from mlte.identifier import Identifier
 
 
 class MeasurementMetadata:

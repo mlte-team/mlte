@@ -9,7 +9,7 @@ from typing import Dict, Any, Union
 
 from .value import Value
 from ..validation import Validator, ValidationResult, Ignore
-from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
 class Image(Value):

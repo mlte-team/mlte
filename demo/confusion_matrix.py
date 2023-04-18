@@ -8,7 +8,7 @@ from typing import Dict, Any
 import numpy as np
 
 from mlte.value import Value
-from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 from mlte.validation import (
     Validator,
     ValidationResult,

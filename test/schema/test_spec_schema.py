@@ -13,7 +13,7 @@ def test_instance_with_content(tmp_path):
     mlte.set_model("model", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    spec = Spec(StorageCost())
+    spec = Spec({StorageCost("test"): []})
     spec.save()
 
     doc = read_spec(f"local://{tmp_path}", "model", "0.0.1")

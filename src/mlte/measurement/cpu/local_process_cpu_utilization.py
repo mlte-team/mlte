@@ -10,7 +10,7 @@ from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..process_measurement import ProcessMeasurement
-from ..measurement_metadata import MeasurementMetadata
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 from mlte.value import Value
 from mlte.validation import (
     Validator,

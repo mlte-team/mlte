@@ -9,13 +9,13 @@ from typing import Dict, Any, Optional
 
 from mlte._global import global_state
 from mlte.store.api import read_value, write_value
-from mlte.measurement.identifier import Identifier
+from mlte.identifier import Identifier
 from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
 
 # NOTE(Kyle): This must remain a relative import to
 # circumvent a circular import issue, until we do a
 # better job of decoupling some of these dependencies
-from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -47,9 +47,9 @@ class Value(metaclass=abc.ABCMeta):
         Initialize a Value instance.
 
         :param instance: The subclass instance
-        :type instance: Measurement
+        :type instance: Value
         :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetdata
+        :type measurement: MeasurementMetadata
         """
         self.identifier: Identifier = measurement_metadata.identifier
         """The identifier for the value"""

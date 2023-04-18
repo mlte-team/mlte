@@ -4,8 +4,8 @@ Unit tests for Value schema.
 
 import mlte
 from mlte.value import Integer, Real, Opaque
-from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.identifier import Identifier
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.identifier import Identifier
 from mlte._private.schema import validate_value_schema
 from mlte.store.api import read_value
 

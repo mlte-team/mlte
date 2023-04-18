@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, Any, List
 
 from .value import Value
-from mlte.measurement.measurement_metadata import MeasurementMetadata
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
 class Opaque(Value):
