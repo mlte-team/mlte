@@ -8,7 +8,7 @@ import abc
 from copy import deepcopy
 from typing import Optional
 
-from mlte.value import Value
+from mlte.measurement_metadata.measurement_metadata  import MeasurementMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -32,7 +32,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
             for method in ["__bool__", "__str__"]
         )
 
-    def __init__(self):
+    def __init__(self, message: str, measurement_metadata: MeasurementMetadata):
         """
         Initialize a ValidationResult instance.
         """
@@ -40,13 +40,12 @@ class ValidationResult(metaclass=abc.ABCMeta):
         self.validator_name = ""
         """The name of the validator that produced the result."""
 
-        self.value: Optional[Value] = None
+        self.value = measurement_metadata
         """
-        The Value on which the Validator
-        that produced this ValidationResult was invoked.
+        The information about the measurement from which this was obtained.
         """
 
-        self.message = ""
+        self.message = message
         """The message indicating the reason for status."""
 
     def _with_value(self, value: Value) -> ValidationResult:
