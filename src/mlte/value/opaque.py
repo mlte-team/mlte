@@ -92,8 +92,7 @@ class Opaque(Value):
 
 def _equal(a: Opaque, b: Opaque) -> bool:
     return (
-        a.measurement_typename == b.measurement_typename
-        and a.identifier == b.identifier
+        a.measurement_metadata == b.measurement_metadata
         and _equal_helper_dict(a.data, b.data)
     )
 

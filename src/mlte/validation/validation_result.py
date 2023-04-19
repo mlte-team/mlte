@@ -5,10 +5,9 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from copy import deepcopy
 from typing import Optional
 
-from mlte.measurement_metadata.measurement_metadata  import MeasurementMetadata
+from mlte.measurement_metadata import MeasurementMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -32,43 +31,42 @@ class ValidationResult(metaclass=abc.ABCMeta):
             for method in ["__bool__", "__str__"]
         )
 
-    def __init__(self, message: str, measurement_metadata: MeasurementMetadata):
+    def __init__(self, message: str):
         """
         Initialize a ValidationResult instance.
-        """
-
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
-
-        self.value = measurement_metadata
-        """
-        The information about the measurement from which this was obtained.
         """
 
         self.message = message
         """The message indicating the reason for status."""
 
-    def _with_value(self, value: Value) -> ValidationResult:
+        self.validator_name = ""
+        """The name of the validator that produced the result."""
+
+        self.measurement_metadata: Optional[MeasurementMetadata] = None
         """
-        Set the `value` field of the ValidationResult
-        to indicate the Value instance from which
+        The information about the measurement from which this was obtained.
+        """
+
+    def _with_measurement_metadata(
+        self, measurement_metadata: MeasurementMetadata
+    ) -> ValidationResult:
+        """
+        Set the `measurement_metadata` field of the ValidationResult
+        to indicate the measurement metadata info from which
         it was generated.
 
-        This hook allows us to embed the value instance within
-        the ValidationResult so that we can use the value
+        This hook allows us to embed the measurement metadata within
+        the ValidationResult so that we can use the measurement metadata
         information later when it is used to generate a report.
 
-        :param value: The Value instance on which the
+        :param measurement_metadata: The measurement metadata on which the
         Validator that produced this instance was invoked
-        :type value: Value
+        :type measurement_metadata: MeasurementMetadata
 
         :return: The ValidationResult instance (`self`)
         :rtype: ValidationResult
         """
-        # TODO(Kyle): This is probably not necessary,
-        # and is certainly overkill for the current
-        # measurements that we have implemented. Revisit.
-        self.value = deepcopy(value)
+        self.measurement_metadata = measurement_metadata
         return self
 
     def _from_validator(self, validator) -> ValidationResult:
@@ -103,10 +101,10 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
-        assert self.value is not None, "Broken precondition."
+        assert self.measurement_metadata is not None, "Broken precondition."
         if not isinstance(other, ValidationResult):
             return False
-        return self.value.identifier == other.value.identifier  # type: ignore
+        return self.measurement_metadata.identifier == other.value.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
@@ -125,10 +123,7 @@ class Success(ValidationResult):
         :param message: Optional message
         :type message: str
         """
-        super().__init__()
-
-        self.message = message
-        """The message indicating the reason for success."""
+        super().__init__(message)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -151,10 +146,7 @@ class Failure(ValidationResult):
         :param message: Optional message
         :type message: str
         """
-        super().__init__()
-
-        self.message = message
-        """The message indicating the reason for failure."""
+        super().__init__(message)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -175,10 +167,7 @@ class Ignore(ValidationResult):
         :param message: Message indicating the reason validation is ignored
         :type message: str
         """
-        super().__init__()
-
-        self.message = message
-        """The message indicating the reason validation is ignored."""
+        super().__init__(message)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""

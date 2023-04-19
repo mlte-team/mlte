@@ -81,8 +81,8 @@ def test_memory_nix_validate_success():
     vr = Validator("Succeed", lambda _: Success())(stats)
     assert bool(vr)
 
-    assert vr.value is not None
-    assert isinstance(vr.value, MemoryStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata.typename, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(

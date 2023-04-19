@@ -13,7 +13,6 @@ from mlte.property.costs import StorageCost
 
 from mlte.value import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.identifier import Identifier
 
 
 def test_save(tmp_path):
@@ -40,7 +39,7 @@ def test_compatibility0():
     s = Spec(StorageCost())
     b = Binding({"foobar": ["baz"]})
 
-    i = Integer(MeasurementMetadata("dummy", Identifier("id")), 1)
+    i = Integer(MeasurementMetadata("dummy", "id"), 1)
 
     with pytest.raises(RuntimeError):
         _ = b.bind(s, [i])  # type: ignore

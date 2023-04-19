@@ -11,7 +11,6 @@ from mlte.spec import Spec
 from mlte.property.costs import StorageCost
 from mlte.value import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.identifier import Identifier
 from mlte.store.api import read_boundspec
 from mlte._private.schema import validate_boundspec_schema
 
@@ -20,7 +19,7 @@ def test_schema(tmp_path):
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
     # A dummy result
-    i = Integer(MeasurementMetadata("typename", Identifier("id")), 1)
+    i = Integer(MeasurementMetadata("typename", "id"), 1)
 
     spec = Spec(StorageCost())
     binding = Binding({"StorageCost": ["id"]})

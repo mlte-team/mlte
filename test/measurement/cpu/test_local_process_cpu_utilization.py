@@ -77,8 +77,8 @@ def test_cpu_nix_validate_success():
     assert bool(vr)
 
     # Data is accessible from validation result
-    assert vr.value is not None
-    assert isinstance(vr.value, CPUStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata.typename, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(

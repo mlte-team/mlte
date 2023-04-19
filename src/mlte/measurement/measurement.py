@@ -8,8 +8,7 @@ import abc
 import typing
 
 from mlte.value import Value
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
-from mlte.identifier import Identifier
+from mlte.measurement_metadata import MeasurementMetadata, Identifier
 
 
 def _has_callable(type, name) -> bool:
@@ -36,9 +35,7 @@ class Measurement(metaclass=abc.ABCMeta):
         :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = MeasurementMetadata(
-            type(instance).__name__, Identifier(identifier)
-        )
+        self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
 
     @property
@@ -65,4 +62,4 @@ class Measurement(metaclass=abc.ABCMeta):
 
     def __str__(self) -> str:
         """Return a string representation of a Measurement."""
-        return f"{self.metadata.typename}-{self.metadata.identifier}"
+        return f"{self.metadata}"
