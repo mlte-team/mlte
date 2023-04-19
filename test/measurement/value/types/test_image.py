@@ -7,7 +7,7 @@ from pathlib import Path
 import mlte
 import requests
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
-from mlte.value import Image
+from mlte.value.types import Image
 
 # A cute image for testing purposes
 IMAGE_URL = "https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8Y3V0ZSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80"  # noqa

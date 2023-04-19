@@ -9,7 +9,7 @@ Unit tests for BoundSpec functionality.
 import mlte
 from mlte.spec import Spec, BoundSpec
 from mlte.property.costs import StorageCost
-from mlte.value import Integer
+from mlte.value.types import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 def test_save_load(tmp_path):

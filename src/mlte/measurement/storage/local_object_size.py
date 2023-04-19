@@ -5,7 +5,7 @@ Storage capacity measurement for locally-stored objects.
 import os
 
 from mlte.measurement import Measurement
-from mlte.value import Integer
+from mlte.value.types import Integer
 
 
 class LocalObjectSize(Measurement):

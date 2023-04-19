@@ -7,7 +7,7 @@ import pytest
 import mlte
 from mlte.measurement import Measurement
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
-from mlte.value import Integer
+from mlte.value.types import Integer
 
 
 class DummyMeasurementInteger(Measurement):

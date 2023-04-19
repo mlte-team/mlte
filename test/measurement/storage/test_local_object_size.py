@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 from mlte.measurement.storage import LocalObjectSize
-from mlte.value import Integer
+from mlte.value.types import Integer
 from mlte.validation import ValidationResult
 
 # -----------------------------------------------------------------------------

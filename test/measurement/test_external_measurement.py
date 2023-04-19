@@ -3,7 +3,7 @@ Unit test for ExternalMeasurement.
 """
 import pytest
 
-from mlte.value import Integer
+from mlte.value.types import Integer
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 from mlte.measurement import ExternalMeasurement
 

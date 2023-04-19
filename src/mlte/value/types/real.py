@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from typing import Dict, Any
 
-from .value import Value
-from ..validation import Validator, ValidationResult, Success, Failure
+from ..value import Value
+from mlte.validation import Validator, ValidationResult, Success, Failure
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 

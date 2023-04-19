@@ -11,7 +11,7 @@ import mlte
 from mlte.spec import Spec
 from mlte.property.costs import StorageCost
 
-from mlte.value import Integer
+from mlte.value.types import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 
 

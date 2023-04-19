@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Dict, Any, List
 
-from .value import Value
+from ..value import Value
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 

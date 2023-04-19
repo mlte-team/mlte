@@ -84,7 +84,7 @@ class CPUStatistics(Value):
         :type json: Dict[str, Any]
 
         :return: The deserialized instance
-        :rtype: Integer
+        :rtype: CPUStatistics
         """
         return CPUStatistics(
             measurement_metadata,

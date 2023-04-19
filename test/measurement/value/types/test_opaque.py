@@ -7,7 +7,7 @@ import pytest
 import mlte
 from mlte.measurement import Measurement
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
-from mlte.value import Opaque
+from mlte.value.types import Opaque
 
 
 class DummyMeasurementOpaque(Measurement):

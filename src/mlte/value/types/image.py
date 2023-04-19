@@ -7,8 +7,8 @@ from pathlib import Path
 import base64
 from typing import Dict, Any, Union
 
-from .value import Value
-from ..validation import Validator, ValidationResult, Ignore
+from ..value import Value
+from mlte.validation import Validator, ValidationResult, Ignore
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
