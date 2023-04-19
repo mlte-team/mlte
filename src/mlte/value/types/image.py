@@ -8,7 +8,7 @@ import base64
 from typing import Dict, Any, Union
 
 from ..value import Value
-from mlte.validation import Validator, ValidationResult, Ignore
+from mlte.validation import Validator, Result, Ignore
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
@@ -75,7 +75,7 @@ class Image(Value):
             base64.decodebytes(json["image"].encode("utf-8")),
         )
 
-    def ignore(self, reason: str) -> ValidationResult:
+    def ignore(self, reason: str) -> Result:
         """
         Ignore an image value.
 
@@ -83,9 +83,9 @@ class Image(Value):
         :type reason: str
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "Ignore",
             lambda _: Ignore(reason),
         )(self)

@@ -5,7 +5,7 @@ Class in charge of validating a Spec.
 from __future__ import annotations
 
 from mlte.property import Property
-from mlte.validation import ValidationResult
+from mlte.validation import Result
 from .bound_spec import BoundSpec
 from mlte.value import Value
 from mlte.spec import Spec
@@ -56,12 +56,12 @@ class SpecValidator:
         results = self._validate_properties()
         return self.spec.generate_bound_spec(results)
 
-    def _validate_properties(self) -> dict[str, list[ValidationResult]]:
+    def _validate_properties(self) -> dict[str, list[Result]]:
         """
         Validates a set of conditions by property.
 
-        :return: A document indicating, for each property, a list of ValidationResults
-        :rtype: dict[str, list[ValidationResult]]
+        :return: A document indicating, for each property, a list of Results
+        :rtype: dict[str, list[Result]]
         """
         # Check that all properties have values to be validated.
         for property in self.spec.properties:
@@ -81,7 +81,7 @@ class SpecValidator:
 
     def _validate_property(
         self, property: Property, values: dict[str, Value]
-    ) -> list[ValidationResult]:
+    ) -> list[Result]:
         """
         Validates all conditions for a given property, for the given values.
 
@@ -91,8 +91,8 @@ class SpecValidator:
         :param values: A list of values to validate.
         :type values: dict[str, Value]
 
-        :return: A list of ValidationResults with the validations for all conditions for this property.
-        :rtype: list[ValidationResult]
+        :return: A list of Results with the validations for all conditions for this property.
+        :rtype: list[Result]
         """
         # Check that all conditions have values to be validated.
         conditions = self.spec.conditions[property.name]

@@ -20,12 +20,12 @@ def _has_callable(type, name) -> bool:
 # -----------------------------------------------------------------------------
 
 
-class ValidationResult(metaclass=abc.ABCMeta):
+class Result(metaclass=abc.ABCMeta):
     """The base class for measurement validation results."""
 
     @classmethod
     def __subclasshook__(cls, subclass):
-        """Define the interface for all concrete ValidationResult."""
+        """Define the interface for all concrete Result."""
         return all(
             _has_callable(subclass, method)
             for method in ["__bool__", "__str__"]
@@ -33,7 +33,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
     def __init__(self, message: str):
         """
-        Initialize a ValidationResult instance.
+        Initialize a Result instance.
         """
 
         self.message = message
@@ -49,39 +49,39 @@ class ValidationResult(metaclass=abc.ABCMeta):
 
     def _with_measurement_metadata(
         self, measurement_metadata: MeasurementMetadata
-    ) -> ValidationResult:
+    ) -> Result:
         """
-        Set the `measurement_metadata` field of the ValidationResult
+        Set the `measurement_metadata` field of the Result
         to indicate the measurement metadata info from which
         it was generated.
 
         This hook allows us to embed the measurement metadata within
-        the ValidationResult so that we can use the measurement metadata
+        the Result so that we can use the measurement metadata
         information later when it is used to generate a report.
 
         :param measurement_metadata: The measurement metadata on which the
         Validator that produced this instance was invoked
         :type measurement_metadata: MeasurementMetadata
 
-        :return: The ValidationResult instance (`self`)
-        :rtype: ValidationResult
+        :return: The Result instance (`self`)
+        :rtype: Result
         """
         self.measurement_metadata = measurement_metadata
         return self
 
-    def _from_validator(self, validator) -> ValidationResult:
+    def _from_validator(self, validator) -> Result:
         """
-        Set the `validator_name` field of the ValidationResult
+        Set the `validator_name` field of the Result
         to indicate the Validator instance from which it was generated.
 
         This hook allows us to embed the name of the Validator into
-        the produced ValidationResult at the point it is produced.
+        the produced Result at the point it is produced.
 
         :param validator: The Validator instance
         :type validator: Validator
 
-        :return: The ValidationResult instance (`self`)
-        :rtype: ValidationResult
+        :return: The Result instance (`self`)
+        :rtype: Result
         """
         self.validator_name = validator.name
         return self
@@ -102,7 +102,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
         assert self.measurement_metadata is not None, "Broken precondition."
-        if not isinstance(other, ValidationResult):
+        if not isinstance(other, Result):
             return False
         return self.measurement_metadata.identifier == other.value.identifier  # type: ignore
 
@@ -111,7 +111,7 @@ class ValidationResult(metaclass=abc.ABCMeta):
         return not self.__eq__(other)
 
 
-class Success(ValidationResult):
+class Success(Result):
     """Indicates successful measurement validation."""
 
     def __init__(self, message: str = ""):
@@ -134,7 +134,7 @@ class Success(ValidationResult):
         return "Success"
 
 
-class Failure(ValidationResult):
+class Failure(Result):
     """Indicates failed measurement validation."""
 
     def __init__(self, message: str = ""):
@@ -157,7 +157,7 @@ class Failure(ValidationResult):
         return "Failure"
 
 
-class Ignore(ValidationResult):
+class Ignore(Result):
     """Indicates ignored measurement validation."""
 
     def __init__(self, message: str):

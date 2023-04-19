@@ -14,7 +14,7 @@ from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 from mlte.value import Value
 from mlte.validation import (
     Validator,
-    ValidationResult,
+    Result,
     Success,
     Failure,
 )
@@ -101,7 +101,7 @@ class CPUStatistics(Value):
         s += f"Maximum: {self.max:.2f}%"
         return s
 
-    def max_utilization_less_than(self, threshold: float) -> ValidationResult:
+    def max_utilization_less_than(self, threshold: float) -> Result:
         """
         Construct and invoke a validator for maximum CPU utilization.
 
@@ -109,9 +109,9 @@ class CPUStatistics(Value):
         :type threshold: float
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "max_utilization_less_than",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
@@ -127,9 +127,7 @@ class CPUStatistics(Value):
         )(self)
         return result
 
-    def average_utilization_less_than(
-        self, threshold: float
-    ) -> ValidationResult:
+    def average_utilization_less_than(self, threshold: float) -> Result:
         """
         Construct and invoke a validator for average CPU utilization.
 
@@ -137,9 +135,9 @@ class CPUStatistics(Value):
         :type threshold: float
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "average_utilization_less_than",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "

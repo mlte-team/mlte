@@ -5,7 +5,7 @@ The interface for measurement validation.
 import typing
 from typing import Callable
 from mlte.value import Value
-from ..validation import ValidationResult
+from . import Result
 
 
 class Validator:
@@ -17,7 +17,7 @@ class Validator:
     def __init__(
         self,
         name: str,
-        callback: Callable[[Value], ValidationResult],
+        callback: Callable[[Value], Result],
     ):
         """
         Initialize a Validator instance.
@@ -25,15 +25,15 @@ class Validator:
         :param name: The validator identifier
         :type name: str
         :param callback: The callable that implements validation
-        :type callback: Callable[[Value], ValidationResult]
+        :type callback: Callable[[Value], Result]
         """
         self.name: str = name
         """The human-readable identifier for the Validator."""
 
-        self.callback: Callable[[Value], ValidationResult] = callback
+        self.callback: Callable[[Value], Result] = callback
         """The callback that implements validation."""
 
-    def __call__(self, value: Value) -> ValidationResult:
+    def __call__(self, value: Value) -> Result:
         """
         Invoke the validation callback
 
@@ -41,7 +41,7 @@ class Validator:
         :type value: Value
 
         :return: The result of measurement validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
         return (
             self.callback(value)

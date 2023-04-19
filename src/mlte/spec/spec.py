@@ -9,7 +9,7 @@ from itertools import groupby
 from typing import Iterable, Any, Union, Type, Optional
 
 from mlte.property import Property
-from mlte.validation import ValidationResult
+from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.store.api import read_spec, write_spec
@@ -224,7 +224,7 @@ class Spec:
 
     def _spec_document(
         self,
-        validated_results: Optional[dict[str, list[ValidationResult]]] = None,
+        validated_results: Optional[dict[str, list[Result]]] = None,
     ) -> dict[str, Any]:
         """
         Generate the spec document.
@@ -257,7 +257,7 @@ class Spec:
 
     def _properties_document(
         self,
-        validated_results: Optional[dict[str, list[ValidationResult]]] = None,
+        validated_results: Optional[dict[str, list[Result]]] = None,
     ) -> list[dict[str, Any]]:
         """
         Generates a document with info an all properties.
@@ -286,7 +286,7 @@ class Spec:
         return property_docs
 
     def _property_document(
-        self, property: Property, validated_results: list[ValidationResult]
+        self, property: Property, validated_results: list[Result]
     ) -> dict[str, Any]:
         """
         Generate a property document.
@@ -306,7 +306,7 @@ class Spec:
     def _measurements_document(
         self,
         conditions: list[Condition],
-        validated_results: list[ValidationResult],
+        validated_results: list[Result],
     ) -> list[dict[str, Any]]:
         """
         Generate a measurements document.
@@ -332,7 +332,7 @@ class Spec:
     def _measurement_document(
         self,
         conditions: list[Condition],
-        validated_results: list[ValidationResult],
+        results: list[Result],
     ) -> dict[str, Any]:
         """Returns a document with information for a measurement type."""
         assert len(conditions) > 0, "Broken invariant."
@@ -350,9 +350,9 @@ class Spec:
                     condition,
                     next(
                         (
-                            vr
-                            for vr in validated_results
-                            if vr.validator_name == condition.validator
+                            result
+                            for result in results
+                            if result.validator_name == condition.validator
                         ),
                         None,
                     ),
@@ -365,7 +365,7 @@ class Spec:
     def _condition_document(
         self,
         condition: Condition,
-        validated_result: Optional[ValidationResult] = None,
+        validated_result: Optional[Result] = None,
     ) -> dict[str, Any]:
         """Returns a document with information for a given condition, optionally with validation results."""
         document = condition.to_json()
@@ -378,15 +378,15 @@ class Spec:
     # -------------------------------------------------------------------------
 
     def generate_bound_spec(
-        self, results: dict[str, list[ValidationResult]]
+        self, results: dict[str, list[Result]]
     ) -> BoundSpec:
         """
         Generates a bound spec with the validation results.
 
-        :param result: The ValidationResults to bind to the spec, ordered by property.
-        :type results: dict[str, list[ValidationResult]]
+        :param result: The Results to bind to the spec, ordered by property.
+        :type results: dict[str, list[Result]]
 
-        :return: A BoundSpec associating the Spec with the specific ValidationResults.
+        :return: A BoundSpec associating the Spec with the specific Results.
         :rtype: BoundSpec
         """
         return BoundSpec(self._spec_document(results))

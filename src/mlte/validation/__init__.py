@@ -1,4 +1,4 @@
-from .validation_result import ValidationResult, Success, Failure, Ignore
+from .result import Result, Success, Failure, Ignore
 from .validator import Validator
 
-__all__ = ["ValidationResult", "Success", "Failure", "Ignore", "Validator"]
+__all__ = ["Result", "Success", "Failure", "Ignore", "Validator"]

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from ..value import Value
-from mlte.validation import Validator, ValidationResult, Success, Failure
+from mlte.validation import Validator, Result, Success, Failure
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
@@ -73,7 +73,7 @@ class Real(Value):
         """Comparison between Real values."""
         return not self.__eq__(other)
 
-    def less_than(self, value: float) -> ValidationResult:
+    def less_than(self, value: float) -> Result:
         """
         Determine if real is strictly less than `value`.
 
@@ -81,9 +81,9 @@ class Real(Value):
         :type value: float
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "less_than",
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
@@ -95,7 +95,7 @@ class Real(Value):
         )(self)
         return result
 
-    def less_or_equal_to(self, value: float) -> ValidationResult:
+    def less_or_equal_to(self, value: float) -> Result:
         """
         Determine if real is less than or equal to `value`.
 
@@ -103,9 +103,9 @@ class Real(Value):
         :type value: float
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "less_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
@@ -118,7 +118,7 @@ class Real(Value):
         )(self)
         return result
 
-    def greater_than(self, value: float) -> ValidationResult:
+    def greater_than(self, value: float) -> Result:
         """
         Determine if real is strictly greater than `value`.
 
@@ -126,9 +126,9 @@ class Real(Value):
         :type value: float
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "greater_than",
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
@@ -140,7 +140,7 @@ class Real(Value):
         )(self)
         return result
 
-    def greater_or_equal_to(self, value: float) -> ValidationResult:
+    def greater_or_equal_to(self, value: float) -> Result:
         """
         Determine if real is greater than or equal to `value`.
 
@@ -148,9 +148,9 @@ class Real(Value):
         :type value: float
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "greater_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "

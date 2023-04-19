@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from ..value import Value
-from mlte.validation import Validator, ValidationResult, Success, Failure
+from mlte.validation import Validator, Result, Success, Failure
 from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 
 
@@ -71,7 +71,7 @@ class Integer(Value):
         """Comparison between Integer values."""
         return not self.__eq__(other)
 
-    def less_than(self, value: int) -> ValidationResult:
+    def less_than(self, value: int) -> Result:
         """
         Determine if integer is strictly less than `value`.
 
@@ -79,9 +79,9 @@ class Integer(Value):
         :type value: int
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "less_than",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
@@ -93,7 +93,7 @@ class Integer(Value):
         )(self)
         return result
 
-    def less_or_equal_to(self, value: int) -> ValidationResult:
+    def less_or_equal_to(self, value: int) -> Result:
         """
         Determine if integer is less than or equal to `value`.
 
@@ -101,9 +101,9 @@ class Integer(Value):
         :type value: int
 
         :return: The result of validation
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
+        result: Result = Validator(
             "less_or_equal_to",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "

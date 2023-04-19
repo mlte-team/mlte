@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 from mlte.measurement.storage import LocalObjectSize
 from mlte.value.types import Integer
-from mlte.validation import ValidationResult
+from mlte.validation import Result
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction
@@ -143,12 +143,12 @@ def test_validation_less_than(tmp_path):
 
     # Validation success
     v = size.less_than(128)
-    assert isinstance(v, ValidationResult)
+    assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
     v = size.less_than(64)
-    assert isinstance(v, ValidationResult)
+    assert isinstance(v, Result)
     assert not bool(v)
 
 
@@ -161,10 +161,10 @@ def test_validation_less_or_equal_to(tmp_path):
 
     # Validation success
     v = size.less_or_equal_to(64)
-    assert isinstance(v, ValidationResult)
+    assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
     v = size.less_or_equal_to(63)
-    assert isinstance(v, ValidationResult)
+    assert isinstance(v, Result)
     assert not bool(v)

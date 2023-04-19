@@ -57,7 +57,7 @@ from mlte.measurement.result import Integer
 model_size: Integer = Integer.load("model size")
 model_size = model_size.less_than(3000)
 
-# ValidationResults support introspection
+# Results support introspection
 print(model_size)
 ```
 

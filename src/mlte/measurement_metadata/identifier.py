@@ -9,8 +9,8 @@ from typing import Dict, Any
 class Identifier:
     """
     Identifier is a simple class that standardizes
-    the manner in which Measurements, Results, and
-    ValidationResults are uniquely identified throughout
+    the manner in which Measurements, Values, and
+    Results are uniquely identified throughout
     their lifetimes.
     """
 
