@@ -37,7 +37,7 @@ class MeasurementMetadata:
                 "Cannot deserialize MeasurementMetadata, missing key 'typename'."
             )
         return MeasurementMetadata(
-            typename=json["typename"], identifier=json["identifier"]
+            typename=json["typename"], identifier=json["identifier"]["name"]
         )
 
     def __str__(self) -> str:

@@ -74,7 +74,7 @@ def test_opaque_save_load(tmp_path):
     assert r == i
 
 
-def test_opqaue_serde():
+def test_opaque_serde():
     m = MeasurementMetadata("typename", "id")
     o = Opaque(m, {"value": 1})
 
