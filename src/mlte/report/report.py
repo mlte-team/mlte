@@ -24,6 +24,7 @@ from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 
 
+@dataclass
 class ReportAttribute:
     """The base class for report attributes."""
 
@@ -34,10 +35,11 @@ class ReportAttribute:
         :return: The converted document
         :rtype: Dict[str, Any]
         """
-        return dataclasses.asdict(
+        document: Dict[str, Any] = dataclasses.asdict(
             self,
             dict_factory=lambda properties: {k: v for k, v in properties if v},
         )
+        return document
 
 
 # -----------------------------------------------------------------------------
