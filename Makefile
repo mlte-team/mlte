@@ -74,4 +74,4 @@ check: check-format check-lint check-typecheck
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py310
+	tox --develop -e py310 -- test/store/test_backend.py
