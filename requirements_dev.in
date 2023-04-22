@@ -1,6 +1,7 @@
 jsonschema
 fastapi
 uvicorn
+httpx
 requests
 pytest
 pytest-cov

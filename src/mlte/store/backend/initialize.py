@@ -8,6 +8,6 @@ step in the backend initialization lifecyle.
 from mlte.store.backend.engine import g_engine
 
 
-def initialize_engine() -> None:
+def initialize_engine(uri: str) -> None:
     """Initialize the engine for use."""
     g_engine.initialize()

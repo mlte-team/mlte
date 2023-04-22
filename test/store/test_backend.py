@@ -2,18 +2,28 @@
 Unit tests for backend implementation.
 """
 
-from copy import deepcopy
-
 import pytest
 from typing import Any
 
-from mlte.store.backend.initialize import initialize_backend
-from .support.backend import TestDefinition
-from .support.backend.fs import (
-    construct_uri,
-    create_temporary_directory,
-    delete_temporary_directory,
-)
+from mlte.store.backend import SessionHandle
+from .fixture.backend import fs_handle  # noqa
+
+
+# -----------------------------------------------------------------------------
+# Test Definitions
+# -----------------------------------------------------------------------------
+
+"""
+This list contains the global collection of test handles.
+However, because we cannot directly parametrize a test with
+a fixture function, we specify via strings and then use the
+`request` fixture to translate this into the actual fixture.
+"""
+HANDLES = ["fs_handle"]
+
+# -----------------------------------------------------------------------------
+# Utilities
+# -----------------------------------------------------------------------------
 
 
 def result_from(*args: Any) -> Any:
@@ -25,78 +35,51 @@ def result_from(*args: Any) -> Any:
 # Test Cases
 # -----------------------------------------------------------------------------
 
-DEFINITIONS = [
-    TestDefinition(
-        "fs",
-        "artifact:uri",
-        {},
-        [create_temporary_directory, construct_uri],
-        [delete_temporary_directory],
-    )
-]
 
-
-@pytest.fixture()
-def backend(request):
-    """A fixture to perform setup and teardown."""
-    d: TestDefinition = request.param
-    try:
-        d.setup()
-        yield d
-    finally:
-        d.teardown()
-
-
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_initialize(backend):
-    d: TestDefinition = backend
-    _ = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_initialize(handle_fixture: str, request: pytest.FixtureRequest):
+    _: SessionHandle = request.getfixturevalue(handle_fixture)
     assert True
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
-
-    _ = store.write_result(
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write(handle_fixture: str, request: pytest.FixtureRequest):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
+    _ = handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
     assert True
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_read(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
-
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_read(handle_fixture: str, request: pytest.FixtureRequest):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
     r0 = result_from("r0", "", [(0, {"hello": "world"})])
-    _ = store.write_result("m0", "v0", "r0", r0)
+    _ = handle.write_result("m0", "v0", "r0", r0)
     assert True
 
-    _ = store.read_result("m0", "v0", "r0")
+    _ = handle.read_result("m0", "v0", "r0")
     assert True
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_read_latest(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_read_latest(handle_fixture: str, request: pytest.FixtureRequest):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"1": "1"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"2": "2"})])
     )
 
-    _ = store.read_result("m0", "v0", "r0")
+    _ = handle.read_result("m0", "v0", "r0")
     _ = result_from(
         "r0", "", [(0, {"0": "0"}), (1, {"1": "1"}), (2, {"2": "2"})]
     )
@@ -104,134 +87,139 @@ def test_write_read_latest(backend):
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_read_version(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_read_version(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
     v0 = result_from("r0", "", [(0, {"0": "0"})])
-    store.write_result("m0", "v0", "r0", v0)
+    handle.write_result("m0", "v0", "r0", v0)
 
     v1 = result_from("r0", "", [(1, {"1": "1"})])
-    store.write_result("m0", "v0", "r0", v1)
+    handle.write_result("m0", "v0", "r0", v1)
 
     v2 = result_from("r0", "", [(2, {"2": "2"})])
-    store.write_result("m0", "v0", "r0", v2)
+    handle.write_result("m0", "v0", "r0", v2)
 
     for vid, exp in zip([0, 1, 2], [v0, v1, v2]):
-        _ = store.read_result("m0", "v0", "r0", vid)
+        _ = handle.read_result("m0", "v0", "r0", vid)
         assert True
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_read_bad_version(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_read_bad_version(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
 
     with pytest.raises(RuntimeError):
-        store.read_result("m0", "v0", "r0", 2)
+        handle.read_result("m0", "v0", "r0", 2)
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_read_nonexistent_model(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_read_nonexistent_model(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
     with pytest.raises(RuntimeError):
-        _ = store.read_result("fakemodel", "fakeversion", "fakeresult")
+        _ = handle.read_result("fakemodel", "fakeversion", "fakeresult")
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_delete_result_version(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_delete_result_version(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
-    _ = store.read_result("m0", "v0", "r0")
+    _ = handle.read_result("m0", "v0", "r0")
 
-    store.delete_result_version("m0", "v0", "r0", 0)
+    handle.delete_result_version("m0", "v0", "r0", 0)
 
     # Reading exact version should fail
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r0", 0)
+        _ = handle.read_result("m0", "v0", "r0", 0)
 
     # Reading latest should fail
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r0")
+        _ = handle.read_result("m0", "v0", "r0")
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_write_delete_result(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_write_delete_result(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
-    _ = store.read_result("m0", "v0", "r0")
+    _ = handle.read_result("m0", "v0", "r0")
 
-    store.delete_result("m0", "v0", "r0")
+    handle.delete_result("m0", "v0", "r0")
 
     # Reading latest should fail
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r0")
+        _ = handle.read_result("m0", "v0", "r0")
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_delete_results(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_delete_results(handle_fixture: str, request: pytest.FixtureRequest):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "", [(0, {"0": "0"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r1", result_from("r1", "", [(0, {"1": "1"})])
     )
 
-    store.delete_results("m0", "v0")
+    handle.delete_results("m0", "v0")
 
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r0")
+        _ = handle.read_result("m0", "v0", "r0")
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r1")
+        _ = handle.read_result("m0", "v0", "r1")
 
 
 @pytest.mark.skip(reason="Awaiting refactor for internal artifact format.")
-@pytest.mark.parametrize("backend", deepcopy(DEFINITIONS), indirect=["backend"])
-def test_delete_results_with_tag(backend):
-    d: TestDefinition = backend
-    store = initialize_backend(d.uri, d.environment)
+@pytest.mark.parametrize("handle_fixture", HANDLES)
+def test_delete_results_with_tag(
+    handle_fixture: str, request: pytest.FixtureRequest
+):
+    handle: SessionHandle = request.getfixturevalue(handle_fixture)
 
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r0", result_from("r0", "t0", [(0, {"0": "0"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r1", result_from("r1", "t0", [(0, {"1": "1"})])
     )
-    store.write_result(
+    handle.write_result(
         "m0", "v0", "r2", result_from("r2", "", [(0, {"2": "2"})])
     )
 
-    store.delete_results("m0", "v0", "t0")
+    handle.delete_results("m0", "v0", "t0")
 
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r0")
+        _ = handle.read_result("m0", "v0", "r0")
     with pytest.raises(RuntimeError):
-        _ = store.read_result("m0", "v0", "r1")
+        _ = handle.read_result("m0", "v0", "r1")
 
-    _ = store.read_result("m0", "v0", "r2")
+    _ = handle.read_result("m0", "v0", "r2")

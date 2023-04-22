@@ -214,6 +214,7 @@ class FilesystemSessionHandle(SessionHandle):
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
+
         self._check_exists(model_identifier, model_version)
 
         version_path = self.root / model_identifier / model_version

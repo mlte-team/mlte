@@ -1,11 +1,13 @@
 """
+cli/cli.py
+
 Top-level command line interface.
 """
 
 import sys
 import argparse
 
-import mlte.store.frontend.server as server
+import mlte.store.main as server
 
 # CLI exit codes
 EXIT_SUCCESS = 0
@@ -57,7 +59,6 @@ def _attach_store(
         default=_DEFAULT_PORT,
         help=f"The port on which the server listens (default: {_DEFAULT_PORT})",
     )
-    # TODO(Kyle): Set a reasonable default
     parser.add_argument(
         "--backend-uri",
         type=str,

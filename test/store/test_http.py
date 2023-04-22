@@ -1,64 +1,53 @@
 """
+test/store/test_http.py
+
 Test the HTTP interface for storage server(s).
+
+NOTE: We currently rely on a hack to enable HTTP tests.
+Upon import of the fixtures below, the api_router object
+is imported. This triggers FastAPI's dependency injection
+system to resolve dependencies on routes, namely the
+dependency on the backend SessionHandle. Because the fixture-
+level data is not available at the time this is evaluated,
+the global engine is configured based on the values in the
+global settings object. These values are read from the
+environment, rather than from the local test configuration.
+To avoid engine initialization failures (as a result of
+nonexistent resources e.g. directories) we create a single,
+temporary directory in test/store/data/store that is used to
+initialize the default backend at important time. At test
+time, this backend is overridden by the test local config.
 """
 
-from copy import deepcopy
 from typing import Any, Dict, List, Tuple
 
 import pytest
 from deepdiff import DeepDiff
 from fastapi.testclient import TestClient
 
-from mlte.store.main import g_app
 from mlte.store.models import Result, ResultVersion
-from .support.http import TestDefinition, get
-from .support.http.fs import (
-    create_store_uri,
-    create_temporary_directory,
-    delete_temporary_directory,
-)
-
-# The test client for issuing requests to the app
-client = TestClient(g_app)
+from .fixture.http import fs_client, fs_handle  # noqa
 
 # -----------------------------------------------------------------------------
 # Test Definitions
 # -----------------------------------------------------------------------------
 
 """
-This list contains the global collection of test definitions that
-are executed for each test. Adding a new backend consists of
-adding a new TestDefinition to this collection as appropriate.
+This list contains the global collection of test clients.
+However, because we cannot directly parametrize a test with
+a fixture function, we specify via strings and then use the
+`request` fixture to translate this into the actual fixture.
 """
-DEFINITIONS = [
-    TestDefinition(
-        "fs",
-        ["--backend-store-uri", "artifact:uri"],
-        {},
-        [create_temporary_directory, create_store_uri],
-        [delete_temporary_directory],
-    )
-]
+CLIENTS = ["fs_client"]
 
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
 
 
-@pytest.fixture()
-def server(request):
-    """A fixture to perform setup and teardown."""
-    d: TestDefinition = request.param
-    try:
-        d.setup()
-        yield d
-    finally:
-        d.teardown()
-
-
-def equal(a: Result, b: Result) -> bool:
+def equal(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
     """Compare results for equality."""
-    return not DeepDiff(a.to_json(), b.to_json())
+    return not DeepDiff(a, b)
 
 
 def result_from(
@@ -77,87 +66,79 @@ def result_from(
 # -----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("server", deepcopy(DEFINITIONS), indirect=["server"])
-def test_init(server):
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_init(client_fixture: str, request: pytest.FixtureRequest):
     """Ensure that server can initialize."""
-    d: TestDefinition = server
-    d.start()
-
-    res = get("/healthcheck")
+    client: TestClient = request.getfixturevalue(client_fixture)
+    res = client.get("/api/healthz")
     assert res.status_code == 200
 
 
-# @pytest.mark.parametrize("server", deepcopy(DEFINITIONS), indirect=["server"])
-# def test_write(server):
-#     """Ensure that write can be performed successfully."""
-#     d: TestDefinition = server
-#     d.start()
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_write(client_fixture: str, request: pytest.FixtureRequest):
+    """Ensure that write can be performed successfully."""
+    client: TestClient = request.getfixturevalue(client_fixture)
 
-#     res = post(
-#         "/result/m0/v0",
-#         json=result_from("r0", "", [(0, {"hello": "world"})]).to_json(),
-#     )
-#     assert res.status_code == 200
-
-
-# @pytest.mark.parametrize("server", deepcopy(DEFINITIONS), indirect=["server"])
-# def test_read(server):
-#     """Ensure that a read on empty store gives 404."""
-#     d: TestDefinition = server
-#     d.start()
-
-#     # Read many results
-#     res = get("/result/m0/v0")
-#     assert res.status_code == 404
-
-#     # Read individual result
-#     res = get("/result/m0/v0/r0")
-#     assert res.status_code == 404
-
-#     # Read single version
-#     res = get("/result/m0/v0/r0/0")
-#     assert res.status_code == 404
+    res = client.post(
+        "/api/result/m0/v0",
+        json=result_from("r0", "", [(0, {"hello": "world"})]).to_json(),
+    )
+    assert res.status_code == 200
 
 
-# @pytest.mark.parametrize("server", deepcopy(DEFINITIONS), indirect=["server"])
-# def test_delete(server):
-#     """Ensure that delete on empty store gives 404."""
-#     d: TestDefinition = server
-#     d.start()
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_read(client_fixture: str, request: pytest.FixtureRequest):
+    """Ensure that a read on empty store gives expected response."""
+    client: TestClient = request.getfixturevalue(client_fixture)
 
-#     res = delete("/result/m0/v0")
-#     assert res.status_code == 404
+    # Read many results
+    res = client.get("/api/result/m0/v0")
+    assert res.status_code == 404
 
-#     res = delete("/result/m0/v0/r0")
-#     assert res.status_code == 404
+    # Read individual result
+    res = client.get("/api/result/m0/v0/r0")
+    assert res.status_code == 404
 
-#     res = delete("/result/m0/v0/r0/0")
-#     assert res.status_code == 404
+    # Read single version
+    res = client.get("/api/result/m0/v0/r0/0")
+    assert res.status_code == 404
 
 
-# @pytest.mark.parametrize("server", deepcopy(DEFINITIONS), indirect=["server"])
-# def test_write_read_delete(server):
-#     """Ensure that a written result can be read and deleted."""
-#     d: TestDefinition = server
-#     d.start()
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_delete(client_fixture: str, request: pytest.FixtureRequest):
+    """Ensure that delete on empty store gives 404."""
+    client: TestClient = request.getfixturevalue(client_fixture)
 
-#     r = result_from("r0", "", [(0, {"hello": "world"})])
+    res = client.delete("/api/result/m0/v0")
+    assert res.status_code == 404
 
-#     res = post("/result/m0/v0", json=r.to_json())
-#     assert res.status_code == 200
+    res = client.delete("/api/result/m0/v0/r0")
+    assert res.status_code == 404
 
-#     res = get("/result/m0/v0/r0")
-#     assert res.status_code == 200
-#     assert "results" in res.json()
+    res = client.delete("/api/result/m0/v0/r0/0")
+    assert res.status_code == 404
 
-#     results = res.json()["results"]
-#     assert len(results) == 1
 
-#     result = Result.from_json(results[0])
-#     assert equal(r, result)
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_write_read_delete(client_fixture: str, request: pytest.FixtureRequest):
+    """Ensure that a written result can be read and deleted."""
+    client: TestClient = request.getfixturevalue(client_fixture)
 
-#     res = delete("/result/m0/v0/r0")
-#     assert res.status_code == 200
+    r = result_from("r0", "", [(0, {"hello": "world"})])
 
-#     res = get("/result/m0/v0/r0")
-#     assert res.status_code == 404
+    res = client.post("/api/result/m0/v0", json=r.to_json())
+    assert res.status_code == 200
+
+    res = client.get("/api/result/m0/v0/r0")
+    assert res.status_code == 200
+    assert "results" in res.json()
+
+    results = res.json()["results"]
+    assert len(results) == 1
+    assert equal(r.versions[0].data, results[0])
+
+    res = client.delete("/api/result/m0/v0/r0")
+    assert res.status_code == 200
+
+    res = client.get("/api/result/m0/v0/r0")
+    assert res.status_code == 404

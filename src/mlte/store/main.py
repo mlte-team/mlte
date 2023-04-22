@@ -8,38 +8,37 @@ import logging
 import sys
 
 import uvicorn
-from fastapi import FastAPI
 from mlte.store.api.api import api_router
 import mlte.store.backend as backend
+import mlte.store.backend.engine as engine
+import mlte.store.app_factory as app_factory
 from mlte.store.core.config import settings
 
 # Application exit codes
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
-# The global FastAPI application
-g_app = FastAPI(
-    title="MLTE Artifact Store",
-    docs_url=f"{settings.API_PREFIX}/docs",
-    redoc_url=f"{settings.API_PREFIX}/redoc",
-    openapi_url=f"{settings.API_PREFIX}/openapi.json",
-)
+def run(host: str, port: int, backend_uri: str):
+    """
+    Run the artifact store application.
+    """
+    # The global FastAPI application
+    app = app_factory.create()
 
+    # Initialize the backend
+    engine.create_engine(backend_uri)
+
+    # Inject routes
+    app.include_router(api_router, prefix=settings.API_PREFIX)
+
+    # Run the server
+    uvicorn.run(app, host=host, port=port)
+    return EXIT_SUCCESS
 
 def main() -> int:
     # TODO(Kyle): use log level.
     logging.basicConfig(level=logging.INFO)
-
-    # Initialize the backend
-    backend.initialize_engine()
-
-    # Inject routes
-    g_app.include_router(api_router, prefix=settings.API_PREFIX)
-
-    # Run the server
-    uvicorn.run(g_app, host=settings.APP_HOST, port=int(settings.APP_PORT))
-    return EXIT_SUCCESS
-
+    return run(settings.APP_HOST, int(settings.APP_PORT), settings.BACKEND_URI)
 
 if __name__ == "__main__":
     sys.exit(main())

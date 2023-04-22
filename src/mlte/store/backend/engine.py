@@ -5,6 +5,7 @@ Backend engine creation. This is the first
 step in the backend initialization lifecycle.
 """
 
+from typing import Optional
 from mlte.store.backend import BackendEngine, BackendURI, BackendType
 from mlte.store.backend.fs import FilesystemBackendEngine
 from mlte.store.core.config import settings
@@ -21,13 +22,18 @@ def _parse_uri(uri: str) -> BackendURI:
     return BackendURI.from_string(uri)
 
 
-def create_engine() -> BackendEngine:
+def create_engine(uri: str) -> BackendEngine:
     """
-    Create the
+    Create the backend engine.
+    :param uri: The URI string
+    :type uri: str
+    :return: The engine
+    :rtype: BackendEngine
     """
-    parsed_uri = _parse_uri(settings.BACKEND_URI)
+    parsed_uri = _parse_uri(uri)
     if parsed_uri.type == BackendType.FS:
-        return FilesystemBackendEngine.create(parsed_uri)
+        engine = FilesystemBackendEngine.create(parsed_uri)
+        engine.initialize()
     raise RuntimeError(f"Unknown URI type: {parsed_uri}.")
 
 
