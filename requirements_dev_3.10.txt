@@ -27,7 +27,9 @@ chardet==5.1.0
 charset-normalizer==3.0.1
     # via requests
 click==8.1.3
-    # via black
+    # via
+    #   black
+    #   uvicorn
 colorama==0.4.6
     # via tox
 coverage[toml]==7.1.0
@@ -50,6 +52,8 @@ filelock==3.9.0
     #   virtualenv
 flake8==6.0.0
     # via -r requirements_dev.in
+h11==0.14.0
+    # via uvicorn
 idna==3.4
     # via
     #   anyio
@@ -174,6 +178,8 @@ urllib3==1.26.14
     # via
     #   requests
     #   twine
+uvicorn==0.21.1
+    # via -r requirements_dev.in
 virtualenv==20.19.0
     # via tox
 webencodings==0.5.1
