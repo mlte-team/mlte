@@ -6,19 +6,8 @@ from __future__ import annotations
 
 from typing import Dict, Any
 
-from mlte._global import global_state, GlobalState
+from mlte._global import global_state
 from mlte.store.api import read_boundspec, write_boundspec
-
-
-def _check_global_state(state: GlobalState):
-    """
-    Ensure that the global state contains
-    information necessary to save/load results.
-    """
-    if not state.has_model():
-        raise RuntimeError("Set model context prior to saving result.")
-    if not state.has_artifact_store_uri():
-        raise RuntimeError("Set artifact store URI prior to saving result.")
 
 
 # -----------------------------------------------------------------------------
@@ -45,7 +34,7 @@ class BoundSpec:
     def save(self):
         """Save BoundSpec instance to artifact store."""
         state = global_state()
-        _check_global_state(state)
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
@@ -62,7 +51,7 @@ class BoundSpec:
         :rtype: BoundSpec
         """
         state = global_state()
-        _check_global_state(state)
+        state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()

@@ -8,7 +8,8 @@ import time
 import subprocess
 from typing import Dict, Any
 
-from mlte.measurement import ProcessMeasurement, MeasurementMetadata
+from ..process_measurement import ProcessMeasurement
+from ..measurement_metadata import MeasurementMetadata
 from mlte.measurement.result import Result
 from mlte.measurement.validation import (
     Validator,
