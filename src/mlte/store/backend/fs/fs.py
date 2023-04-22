@@ -98,11 +98,6 @@ class FilesystemBackendEngine(BackendEngine):
                 f"Root data storage location does not exist: {self.root}."
             )
 
-    def initialize(self) -> None:
-        """Initialize the backend."""
-        # No-op for filesystem backend
-        pass
-
     def handle(self) -> FilesystemSessionHandle:
         """
         Return a new handle to the backend session.

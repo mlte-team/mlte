@@ -22,7 +22,7 @@ def script() -> Path:
 
 def execute_cli() -> int:
     """Execute the CLI script."""
-    command = [python(), script()]
+    command = [str(python()), str(script())]
     p = subprocess.run(command)
     return p.returncode
 

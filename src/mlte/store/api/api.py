@@ -14,4 +14,4 @@ api_router.include_router(health.router, prefix="/healthz", tags=["health"])
 api_router.include_router(
     metadata.router, prefix="/metadata", tags=["metadata"]
 )
-# api_router.include_router(result.router, prefix="/result", tags=["result"])
+api_router.include_router(result.router, prefix="/result", tags=["result"])

@@ -2,21 +2,6 @@
 test/store/test_http.py
 
 Test the HTTP interface for storage server(s).
-
-NOTE: We currently rely on a hack to enable HTTP tests.
-Upon import of the fixtures below, the api_router object
-is imported. This triggers FastAPI's dependency injection
-system to resolve dependencies on routes, namely the
-dependency on the backend SessionHandle. Because the fixture-
-level data is not available at the time this is evaluated,
-the global engine is configured based on the values in the
-global settings object. These values are read from the
-environment, rather than from the local test configuration.
-To avoid engine initialization failures (as a result of
-nonexistent resources e.g. directories) we create a single,
-temporary directory in test/store/data/store that is used to
-initialize the default backend at important time. At test
-time, this backend is overridden by the test local config.
 """
 
 from typing import Any, Dict, List, Tuple
@@ -26,7 +11,7 @@ from deepdiff import DeepDiff
 from fastapi.testclient import TestClient
 
 from mlte.store.models import Result, ResultVersion
-from .fixture.http import fs_client, fs_handle  # noqa
+from .fixture.http import fs_client, fs_engine  # noqa
 
 # -----------------------------------------------------------------------------
 # Test Definitions

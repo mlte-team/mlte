@@ -65,9 +65,6 @@ def _attach_store(
         required=True,
         help="The URI for the backend store.",
     )
-    parser.add_argument(
-        "--verbose", action="store_true", help="Enable verbose output."
-    )
 
 
 # -----------------------------------------------------------------------------
@@ -80,10 +77,10 @@ def run():
     parser = _prepare_parser()
     args = vars(parser.parse_args())
 
-    run = args.get("func")
-    if run:
+    try:
+        run = args.pop("func")
         return run(**args)
-    else:
+    except KeyError:
         parser.print_help()
         return EXIT_SUCCESS
 

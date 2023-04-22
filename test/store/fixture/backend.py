@@ -19,5 +19,4 @@ from mlte.store.backend.engine import create_engine
 @pytest.fixture
 def fs_handle(tmp_path: Path) -> SessionHandle:
     engine = create_engine(f"fs://{tmp_path}")
-    engine.initialize()
     return engine.handle()

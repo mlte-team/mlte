@@ -331,15 +331,6 @@ class BackendEngine:
         """
         self.uri = uri
 
-    def initialize(self) -> None:
-        """
-        Initialize the backend. This is the lifecycle hook
-        that should be used for initial setup of the engine.
-        For instance, a database backend should create tables
-        when this lifecycle hook is invoked.
-        """
-        raise NotImplementedError("Cannot initilaize abstract BackendEngine.")
-
     def handle(self) -> SessionHandle:
         """
         Return a handle to the underlying engine.

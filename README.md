@@ -14,7 +14,3 @@ $ pip install mlte-python
 ```
 
 Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more details on getting started with `mlte`.
-
-```bash
-PYTHONPATH=./src/ python src/mlte/store/main.py
-```
