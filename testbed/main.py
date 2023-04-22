@@ -11,7 +11,7 @@ sys.path.append(package_root())
 import mlte
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.result import Integer
-import mlte.store.api as api
+import mlte.api as api
 
 # Script exit codes
 EXIT_SUCCESS = 0

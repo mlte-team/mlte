@@ -1,76 +1,37 @@
 """
-Backend storage interface.
+store/backend/backend.py
+
+Generic backend storage interface.
 """
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Optional, Dict, Any
 
-# -----------------------------------------------------------------------------
-# BackendType
-# -----------------------------------------------------------------------------
 
-
-class BackendType(Enum):
-    """Represents the type of backend store."""
-
-    # Use the local filesystem as the backend store
-    FS = 0
+from mlte.store.backend.backend_uri import BackendURI
 
 
 # -----------------------------------------------------------------------------
-# BackendURI
+# SessionHandle
 # -----------------------------------------------------------------------------
 
 
-class BackendURI:
-    """Represents the URI for a backend store."""
+class SessionHandle:
+    """Represents an abstract handle on a backend session."""
 
-    def __init__(self, uri: str, type: BackendType):
+    def __init__(self):
+        """Initialize a SessionHandle instance."""
+        pass
+
+    def close(self) -> None:
         """
-        Initialize a BackendURI instance.
-        :param uri: The URI
-        :type uri: str
-        :param type: The type of the backend store
-        :type type: StoreType
+        Close a Backend instance.
+        :return: `None`
         """
-        self.uri = uri
-        """The string that represents the URI."""
-
-        self.type = type
-        """The type identifier for the URI."""
-
-    @staticmethod
-    def from_string(uri: str) -> BackendURI:
-        """
-        Parse a BackendURI from a string.
-        :param uri: The URI
-        :type uri: str
-        :return: The parsed BackendURI
-        :rtype: BackendURI
-        """
-        if uri.startswith("fs://") or uri.startswith("local://"):
-            return BackendURI(uri, BackendType.FS)
-        raise RuntimeError(f"Unrecognized backend store URI: {uri}.")
-
-
-# -----------------------------------------------------------------------------
-# Backend
-# -----------------------------------------------------------------------------
-
-
-class Backend:
-    """Represents an abstract backend store."""
-
-    def __init__(self, uri: BackendURI):
-        """
-        Initialize a Backend instance.
-        :param uri: The URI that indicates the backend of interest
-        :type uri: BackendURI
-        """
-        self.uri = uri
-        """The backend URI."""
+        raise NotImplementedError(
+            "Cannot invoke method on abstract SessionHandle."
+        )
 
     # -------------------------------------------------------------------------
     # Interface: Read Metadata
@@ -347,3 +308,55 @@ class Backend:
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
+
+
+# -----------------------------------------------------------------------------
+# BackendEngine
+# -----------------------------------------------------------------------------
+
+
+class BackendEngine:
+    """
+    Represents an abstract backend engine.
+
+    The engine is the "static" part of a backend configuration.
+    In contrast, a session handle represents an active session.
+    """
+
+    def __init__(self, *, uri: BackendURI):
+        """
+        Initialize a BackendEngine instance.
+        :param uri: The parsed URI
+        :type uri: BackendURI
+        """
+        self.uri = uri
+
+    def initialize(self) -> None:
+        """
+        Initialize the backend. This is the lifecycle hook
+        that should be used for initial setup of the engine.
+        For instance, a database backend should create tables
+        when this lifecycle hook is invoked.
+        """
+        raise NotImplementedError("Cannot initilaize abstract BackendEngine.")
+
+    def handle(self) -> SessionHandle:
+        """
+        Return a handle to the underlying engine.
+        :return: The session handle
+        :rtype: SessionHandle
+        """
+        raise NotImplementedError(
+            "Cannot get handle to abstract BackendEngine."
+        )
+
+    @staticmethod
+    def create(uri: BackendURI) -> BackendEngine:
+        """
+        Create a new BackendEngine instance.
+        :param uri: The backend URI
+        :type uri: BackendURI
+        :return: The backend engine
+        :rtype: BackendEngine
+        """
+        raise NotImplementedError("Cannot create abstract BackendEngine.")

@@ -6,7 +6,7 @@ import mlte
 from mlte.spec import Spec
 from mlte.property.costs import StorageCost
 from mlte._private.schema import validate_spec_schema
-from mlte.store.api import read_spec
+from mlte.api import read_spec
 
 
 def test_instance_with_content(tmp_path):

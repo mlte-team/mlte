@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from mlte._global import global_state
-from mlte.store.api import read_boundspec, write_boundspec
+from mlte.api import read_boundspec, write_boundspec
 
 
 # -----------------------------------------------------------------------------

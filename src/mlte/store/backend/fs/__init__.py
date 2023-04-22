@@ -1,3 +1,3 @@
-from .fs import FilesystemBackend, FilesystemBackendBuilder
+from .fs import FilesystemBackendEngine, FilesystemSessionHandle
 
-__all__ = ["FilesystemBackend", "FilesystemBackendBuilder"]
+__all__ = ["FilesystemBackendEngine", "FilesystemSessionHandle"]

@@ -1,4 +1,11 @@
-from .backend import Backend, BackendURI, BackendType
-from .initialize import initialize_backend
+from .backend import BackendEngine, SessionHandle
+from .backend_uri import BackendURI, BackendType
+from .initialize import initialize_engine
 
-__all__ = ["initialize_backend", "Backend", "BackendURI", "BackendType"]
+__all__ = [
+    "BackendEngine",
+    "SessionHandle",
+    "BackendURI",
+    "BackendType",
+    "initialize_engine",
+]

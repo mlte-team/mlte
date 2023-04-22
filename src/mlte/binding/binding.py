@@ -7,7 +7,7 @@ from typing import Dict, List, Any
 
 
 from mlte._global import global_state
-from mlte.store.api import read_binding, write_binding
+from mlte.api import read_binding, write_binding
 from mlte._private.schema import BINDING_LATEST_SCHEMA_VERSION
 
 
