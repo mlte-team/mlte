@@ -8,6 +8,7 @@ import sys
 import argparse
 
 import mlte.store.main as server
+from mlte.store.core.config import settings
 
 # CLI exit codes
 EXIT_SUCCESS = 0
@@ -15,11 +16,6 @@ EXIT_FAILURE = 1
 
 # The global name of the program
 _PROGRAM_NAME = "mlte"
-
-# The deafult host address to which the server binds
-_DEFAULT_HOST = "localhost"
-# The default port on which the server listens
-_DEFAULT_PORT = 8080
 
 # -----------------------------------------------------------------------------
 # Parsing Setup
@@ -50,14 +46,14 @@ def _attach_store(
     parser.add_argument(
         "--host",
         type=str,
-        default=_DEFAULT_HOST,
-        help=f"The host address to which the server binds (default: {_DEFAULT_HOST})",
+        default=settings.APP_HOST,
+        help=f"The host address to which the server binds (default: {settings.APP_HOST})",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=_DEFAULT_PORT,
-        help=f"The port on which the server listens (default: {_DEFAULT_PORT})",
+        default=int(settings.APP_PORT),
+        help=f"The port on which the server listens (default: {settings.APP_PORT})",
     )
     parser.add_argument(
         "--backend-uri",

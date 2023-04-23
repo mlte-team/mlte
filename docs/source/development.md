@@ -155,6 +155,27 @@ Finally, upload the package to `PyPi`:
 $ twine upload dist/*
 ```
 
+### Docker Integration
+
+We package the `mlte` artifact store as a Docker container image. To build the image from the source repository, run:
+
+```bash
+# From the repository root
+docker build . -f docker/Dockerfile.store -t mlte-store
+```
+
+Run the container with:
+
+```bash
+docker run --rm -p 8080:8080 mlte-store
+```
+
+This binds the artifact store to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The artifact store implementation writes data to `/mnt/store` within the container. We can utilize a [bind mount](https://docs.docker.com/storage/bind-mounts/) to extend the life of this data beyond the life of the container:
+
+```bash
+docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
+```
+
 ## Development Dependencies
 
 We maintain a distinct set of Python dependencies for each minor version of Python that `mlte` supports. Currently, MLTE supports the following Python versions:
