@@ -56,12 +56,12 @@ class SpecValidator:
         results = self._validate_properties()
         return self.spec.generate_bound_spec(results)
 
-    def _validate_properties(self) -> dict[str, list[Result]]:
+    def _validate_properties(self) -> dict[str, dict[str, Result]]:
         """
         Validates a set of conditions by property.
 
-        :return: A document indicating, for each property, a list of Results
-        :rtype: dict[str, list[Result]]
+        :return: A document indicating, for each property, a dictionary with the Result for each Condition label.
+        :rtype: dict[str, dict[str, Result]]
         """
         # Check that all properties have values to be validated.
         for property in self.spec.properties:
@@ -81,7 +81,7 @@ class SpecValidator:
 
     def _validate_property(
         self, property: Property, values: dict[str, Value]
-    ) -> list[Result]:
+    ) -> dict[str, Result]:
         """
         Validates all conditions for a given property, for the given values.
 
@@ -91,7 +91,7 @@ class SpecValidator:
         :param values: A list of values to validate.
         :type values: dict[str, Value]
 
-        :return: A list of Results with the validations for all conditions for this property.
+        :return: A dict of Results with the validations for each conditions for this property.
         :rtype: list[Result]
         """
         # Check that all conditions have values to be validated.
@@ -103,8 +103,8 @@ class SpecValidator:
                 )
 
         # Validate and aggregate the results for all conditions for this property.
-        results = [
-            condition.validate(values[condition.label])
+        results = {
+            condition.label: condition.validate(values[condition.label])
             for condition in conditions
-        ]
+        }
         return results

@@ -224,10 +224,13 @@ class Spec:
 
     def _spec_document(
         self,
-        validated_results: Optional[dict[str, list[Result]]] = None,
+        results: Optional[dict[str, dict[str, Result]]] = None,
     ) -> dict[str, Any]:
         """
         Generate the spec document.
+
+        :param result: The Results of validations, ordered by property and condition (optional).
+        :type results: dict[str, dict[str, Result]]
 
         :return: The spec document
         :rtype: dict[str, Any]
@@ -235,7 +238,7 @@ class Spec:
         document = {
             "schema_version": SPEC_LATEST_SCHEMA_VERSION,
             "metadata": self._metadata_document(),
-            "properties": self._properties_document(validated_results),
+            "properties": self._properties_document(results),
         }
         return document
 
@@ -257,18 +260,20 @@ class Spec:
 
     def _properties_document(
         self,
-        validated_results: Optional[dict[str, list[Result]]] = None,
+        results: Optional[dict[str, dict[str, Result]]] = None,
     ) -> list[dict[str, Any]]:
         """
         Generates a document with info an all properties.
 
+        :param result: The Results of validations, ordered by property and condition (optional).
+        :type results: dict[str, dict[str, Result]]
+
         :return: The properties document
         :rtype: dict[str, Any]
         """
-        if validated_results is not None:
+        if results is not None:
             if any(
-                property.name not in validated_results
-                for property in self.properties
+                property.name not in results for property in self.properties
             ):
                 raise RuntimeError(
                     "There are properties that do not have associated validated results; can't generate document."
@@ -277,45 +282,47 @@ class Spec:
         property_docs = [
             self._property_document(
                 property,
-                validated_results[property.name]
-                if validated_results is not None
-                else [],
+                results[property.name] if results is not None else {},
             )
             for property in self.properties
         ]
         return property_docs
 
     def _property_document(
-        self, property: Property, validated_results: list[Result]
+        self, property: Property, results: dict[str, Result]
     ) -> dict[str, Any]:
         """
         Generate a property document.
 
         :param property: The property of interest
         :type property: Property
+        :param result: The Results of validations, ordered by condition.
+        :type results: dict[str, Result]
 
         :return: The property-level document
         :rtype: dict[str, Any]
         """
         document: dict[str, Any] = property._to_json()
         document["measurements"] = self._measurements_document(
-            self.conditions[property.name], validated_results
+            self.conditions[property.name], results
         )
         return document
 
     def _measurements_document(
         self,
         conditions: list[Condition],
-        validated_results: list[Result],
+        results: dict[str, Result],
     ) -> list[dict[str, Any]]:
         """
         Generate a measurements document.
 
-        :param property: The property of interest
-        :type property: Property
+        :param conditions: A list of Conditions.
+        :type conditions: list[Condition]
+        :param result: The Results of validations, ordered by condition.
+        :type results: dict[str, Result]
 
-        :return: The property-level document
-        :rtype: dict[str, Any]
+        :return: The measurements/conditions-level document
+        :rtype: list[dict[str, Any]]
         """
         conditions_by_measurement = []
         for _, group in groupby(
@@ -324,7 +331,7 @@ class Spec:
             conditions_by_measurement.append([condition for condition in group])
 
         document = [
-            self._measurement_document(conditions, validated_results)
+            self._measurement_document(conditions, results)
             for conditions in conditions_by_measurement
         ]
         return document
@@ -332,9 +339,19 @@ class Spec:
     def _measurement_document(
         self,
         conditions: list[Condition],
-        results: list[Result],
+        results: dict[str, Result],
     ) -> dict[str, Any]:
-        """Returns a document with information for a measurement type."""
+        """
+        Returns a document with information for a measurement type.
+
+        :param conditions: A list of Conditions to add.
+        :type conditions: list[Condition]
+        :param result: The Results of validations, ordered by condition.
+        :type results: dict[str, Result]
+
+        :return: The document for a specific measurement.
+        :rtype: dict[str, Any]
+        """
         assert len(conditions) > 0, "Broken invariant."
         assert _all_equal(
             condition.measurement_type for condition in conditions  # type: ignore
@@ -342,20 +359,15 @@ class Spec:
 
         measurement_type = conditions[0].measurement_type  # type: ignore
 
-        # Obtain validation results from validator name.
+        # Proper results are obtained form the condition label.
         document = {
             "measurement_type": measurement_type,
             "conditions": [
                 self._condition_document(
                     condition,
-                    next(
-                        (
-                            result
-                            for result in results
-                            if result.validator_name == condition.validator
-                        ),
-                        None,
-                    ),
+                    results[condition.label]
+                    if condition.label in results
+                    else None,
                 )
                 for condition in conditions
             ],
@@ -365,12 +377,22 @@ class Spec:
     def _condition_document(
         self,
         condition: Condition,
-        validated_result: Optional[Result] = None,
+        result: Optional[Result] = None,
     ) -> dict[str, Any]:
-        """Returns a document with information for a given condition, optionally with validation results."""
+        """
+        Returns a document with information for a given condition, optionally with validation result.
+
+        :param condition: The condition to turn into a document.
+        :type condition: Condition
+        :param result: The Result of validating the Condition, if any.
+        :type result: Optional[Result]
+
+        :return: The document for the specific condition.
+        :rtype: dict[str, Any]
+        """
         document = condition.to_json()
-        if validated_result is not None:
-            document["validation"] = validated_result.to_json()
+        if result is not None:
+            document["validation"] = result.to_json()
         return document
 
     # -------------------------------------------------------------------------
@@ -378,13 +400,13 @@ class Spec:
     # -------------------------------------------------------------------------
 
     def generate_bound_spec(
-        self, results: dict[str, list[Result]]
+        self, results: dict[str, dict[str, Result]]
     ) -> BoundSpec:
         """
         Generates a bound spec with the validation results.
 
-        :param result: The Results to bind to the spec, ordered by property.
-        :type results: dict[str, list[Result]]
+        :param result: The Results to bind to the spec, ordered by property and condition.
+        :type results: dict[str, dict[str, Result]]
 
         :return: A BoundSpec associating the Spec with the specific Results.
         :rtype: BoundSpec
