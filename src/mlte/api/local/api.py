@@ -14,7 +14,7 @@ from mlte.store.backend.fs import (
 LOCAL_URI_PREFIX = "local://"
 
 # -----------------------------------------------------------------------------
-# Result
+# Value
 # -----------------------------------------------------------------------------
 
 
@@ -22,36 +22,36 @@ def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_version: Optional[int] = None,
+    value_identifier: str,
+    value_version: Optional[int] = None,
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
     document = handle.read_value(
-        model_identifier, model_version, result_identifier, result_version
+        model_identifier, model_version, value_identifier, value_version
     )
-    assert "results" in document, "Broken invariant."
-    assert len(document["results"]) == 1, "Broken invariant."
-    result: Dict[str, Any] = document["results"][0]
-    return result
+    assert "values" in document, "Broken invariant."
+    assert len(document["values"]) == 1, "Broken invariant."
+    value: Dict[str, Any] = document["values"][0]
+    return value
 
 
 def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_data: Dict[str, Any],
-    result_tag: Optional[str],
+    value_identifier: str,
+    value_data: Dict[str, Any],
+    value_tag: Optional[str],
 ) -> int:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
     document = handle.write_value(
         model_identifier,
         model_version,
-        result_identifier,
-        result_data,
-        result_tag,
+        value_identifier,
+        value_data,
+        value_tag,
     )
     assert "written" in document, "Broken invariant."
     assert document["written"] == 1, "Broken invariant."

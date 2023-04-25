@@ -9,46 +9,46 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from mlte.store.api import dependencies
 from mlte.store.backend import SessionHandle
-from mlte.store.models import Result
+from mlte.store.models import Value
 
 # The router exported by this submodule
 router = APIRouter()
 
 
 # -----------------------------------------------------------------------------
-# Routes: Read Results
+# Routes: Read Values
 # -----------------------------------------------------------------------------
 
 
 @router.get(
-    "/{model_identifier}/{model_version}/{result_identifier}/{result_version}"
+    "/{model_identifier}/{model_version}/{value_identifier}/{value_version}"
 )
-async def get_result_version(
+async def get_value_version(
     *,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_version: int,
+    value_identifier: str,
+    value_version: int,
 ):
     """
-    Get an individual result version.
+    Get an individual value version.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_identifier: The identifier for the result of interest
-    :type result_identifier: str
-    :param result_version: The version identifier for the result of interest
-    :type result_version: int
+    :param value_identifier: The identifier for the value of interest
+    :type value_identifier: str
+    :param value_version: The version identifier for the value of interest
+    :type value_version: int
     """
     with dependencies.get_handle() as handle:
         try:
-            # Read the result from the store
+            # Read the value from the store
             document = handle.read_value(
                 model_identifier,
                 model_version,
-                result_identifier,
-                result_version,
+                value_identifier,
+                value_version,
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")
@@ -59,27 +59,27 @@ async def get_result_version(
         return document
 
 
-@router.get("/{model_identifier}/{model_version}/{result_identifier}")
-async def get_result(
+@router.get("/{model_identifier}/{model_version}/{value_identifier}")
+async def get_value(
     *,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
+    value_identifier: str,
 ):
     """
-    Get an individual result.
+    Get an individual value.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_identifier: The identifier for the result of interest
-    :type result_identifier: str
+    :param value_identifier: The identifier for the value of interest
+    :type value_identifier: str
     """
     with dependencies.get_handle() as handle:
         try:
-            # Result the result from the store
+            # Value the value from the store
             document = handle.read_value(
-                model_identifier, model_version, result_identifier
+                model_identifier, model_version, value_identifier
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")
@@ -91,25 +91,25 @@ async def get_result(
 
 
 @router.get("/{model_identifier}/{model_version}")
-async def get_results(
+async def get_values(
     *,
     model_identifier: str,
     model_version: str,
-    result_tag: Optional[str] = None,
+    value_tag: Optional[str] = None,
 ):
     """
-    Get a result or a collection of results.
+    Get a value or a collection of values.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_tag: The tag for the result of interest
-    :type result_tag: Optional[str]
+    :param value_tag: The tag for the value of interest
+    :type value_tag: Optional[str]
     """
     with dependencies.get_handle() as handle:
         try:
-            document = handle.read_results(
-                model_identifier, model_version, result_tag
+            document = handle.read_values(
+                model_identifier, model_version, value_tag
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")
@@ -121,36 +121,36 @@ async def get_results(
 
 
 # -----------------------------------------------------------------------------
-# Routes: Write Results
+# Routes: Write Values
 # -----------------------------------------------------------------------------
 
 
 @router.post("/{model_identifier}/{model_version}")
-async def post_result(
+async def post_value(
     *,
     model_identifier: str,
     model_version: str,
-    result: Result,
+    value: Value,
 ):
     """
-    Post a result or collection of results.
+    Post a value or collection of values.
     :param handle: The backend session handle
     :type handle: SessionHandle
-    :param result: The result to write
-    :type result: RequestModelResult
+    :param value: The value to write
+    :type value: Value
     """
-    if len(result.versions) != 1:
+    if len(value.versions) != 1:
         raise HTTPException(status_code=500, detail="Update this code.")
 
     with dependencies.get_handle() as handle:
         try:
-            # Write the result to the backend
+            # Write the value to the backend
             document = handle.write_value(
                 model_identifier,
                 model_version,
-                result.identifier,
-                result.versions[0].data,
-                result.tag,
+                value.identifier,
+                value.versions[0].data,
+                value.tag,
             )
         except Exception:
             raise HTTPException(
@@ -161,39 +161,39 @@ async def post_result(
 
 
 # -----------------------------------------------------------------------------
-# Routes: Delete Results
+# Routes: Delete Values
 # -----------------------------------------------------------------------------
 
 
 @router.delete(
-    "/{model_identifier}/{model_version}/{result_identifier}/{result_version}"
+    "/{model_identifier}/{model_version}/{value_identifier}/{value_version}"
 )
-async def delete_result_version(
+async def delete_value_version(
     *,
     handle: SessionHandle = Depends(dependencies.get_handle),
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_version: int,
+    value_identifier: str,
+    value_version: int,
 ):
     """
-    Delete an individual result version.
+    Delete an individual value version.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_identifier: The identifier for the result of interest
-    :type result_identifier: str
-    :param result_version: The version identifier for the result
-    :type result_version: int
+    :param value_identifier: The identifier for the value of interest
+    :type value_identifier: str
+    :param value_version: The version identifier for the value
+    :type value_version: int
     """
     with dependencies.get_handle() as handle:
         try:
-            document = handle.delete_result_version(
+            document = handle.delete_value_version(
                 model_identifier,
                 model_version,
-                result_identifier,
-                result_version,
+                value_identifier,
+                value_version,
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")
@@ -205,26 +205,26 @@ async def delete_result_version(
         return document
 
 
-@router.delete("/{model_identifier}/{model_version}/{result_identifier}")
-async def delete_result(
+@router.delete("/{model_identifier}/{model_version}/{value_identifier}")
+async def delete_value(
     *,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
+    value_identifier: str,
 ):
     """
-    Delete an individual result.
+    Delete an individual value.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_identifier: The identifier for the result of interest
-    :type result_identifier: str
+    :param value_identifier: The identifier for the value of interest
+    :type value_identifier: str
     """
     with dependencies.get_handle() as handle:
         try:
-            document = handle.delete_result(
-                model_identifier, model_version, result_identifier
+            document = handle.delete_value(
+                model_identifier, model_version, value_identifier
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")
@@ -237,25 +237,25 @@ async def delete_result(
 
 
 @router.delete("/{model_identifier}/{model_version}")
-async def delete_results(
+async def delete_values(
     *,
     model_identifier: str,
     model_version: str,
-    result_tag: Optional[str] = None,
+    value_tag: Optional[str] = None,
 ):
     """
-    Delete a collection of results.
+    Delete a collection of values.
     :param model_identifier: The identifier for the model of interest
     :type model_identifier: str
     :param model_version: The version string for the model of interest
     :type model_version: str
-    :param result_tag: The (optional) tag that identifies results of interest
-    :type result_tag: Optional[str]
+    :param value_tag: The (optional) tag that identifies values of interest
+    :type value_tag: Optional[str]
     """
     with dependencies.get_handle() as handle:
         try:
-            document = handle.delete_results(
-                model_identifier, model_version, result_tag
+            document = handle.delete_values(
+                model_identifier, model_version, value_tag
             )
         except RuntimeError as e:
             raise HTTPException(status_code=404, detail=f"{e}")

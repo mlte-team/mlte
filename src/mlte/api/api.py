@@ -18,8 +18,8 @@ def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_version: Optional[int] = None,
+    value_identifier: str,
+    value_version: Optional[int] = None,
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     uri_type = parse_uri_type(uri)
@@ -30,8 +30,8 @@ def read_value(
             uri,
             model_identifier,
             model_version,
-            result_identifier,
-            result_version,
+            value_identifier,
+            value_version,
         )
     else:
         assert False, "Unreachable."
@@ -41,9 +41,9 @@ def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
-    result_identifier: str,
-    result_data: Dict[str, Any],
-    result_tag: Optional[str],
+    value_identifier: str,
+    value_data: Dict[str, Any],
+    value_tag: Optional[str],
 ) -> int:
     """TODO(Kyle)"""
     uri_type = parse_uri_type(uri)
@@ -54,9 +54,9 @@ def write_value(
             uri,
             model_identifier,
             model_version,
-            result_identifier,
-            result_data,
-            result_tag,
+            value_identifier,
+            value_data,
+            value_tag,
         )
     else:
         assert False, "Unreachable."

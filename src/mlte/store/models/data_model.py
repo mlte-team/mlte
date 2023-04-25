@@ -7,12 +7,12 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 
 
-class ResultVersion(BaseModel):
-    """Represents an individual result version."""
+class ValueVersion(BaseModel):
+    """Represents an individual value version."""
 
     # The version identifier
     version: int
-    # The result payload
+    # The value payload
     data: Dict[str, Any]
 
     def to_json(self) -> Dict[str, Any]:
@@ -25,18 +25,18 @@ class ResultVersion(BaseModel):
         assert all(
             n in json for n in ["version", "data"]
         ), "Broken precondition."
-        return ResultVersion(version=json["version"], data=json["data"])
+        return ValueVersion(version=json["version"], data=json["data"])
 
 
-class Result(BaseModel):
-    """Represents an individual result (a collection of versions)."""
+class Value(BaseModel):
+    """Represents an individual value (a collection of versions)."""
 
-    # The identifier for the result
+    # The identifier for the value
     identifier: str
-    # The tag associated with the result
+    # The tag associated with the value
     tag: Optional[str] = None
-    # A collection of result versions
-    versions: List[ResultVersion]
+    # A collection of value versions
+    versions: List[ValueVersion]
 
     def to_json(self) -> Dict[str, Any]:
         """Serialize to JSON object."""
@@ -52,10 +52,10 @@ class Result(BaseModel):
         assert all(
             n in json for n in ["identifier", "tag", "versions"]
         ), "Broken precondition."
-        return Result(
+        return Value(
             identifier=json["identifier"],
             tag=None if json["tag"] == "" else json["tag"],
-            versions=[ResultVersion.from_json(v) for v in json["versions"]],
+            versions=[ValueVersion.from_json(v) for v in json["versions"]],
         )
 
 

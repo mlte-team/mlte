@@ -32,9 +32,9 @@ root/
       spec.json                 <- ONLY present if Spec is saved
       binding.json              <- ONLY present if Binding is saved
       boundspec.json            <- ONLY present if BoundSpec is saved
-      result_identifier0.json
+      value_identifier0.json
 
-The data for an individual result is then stored within a JSON file.
+The data for an individual value is then stored within a JSON file.
 The structure of this JSON file looks like:
 
 {
@@ -154,11 +154,11 @@ class FilesystemSessionHandle(SessionHandle):
                 f"Model with identifier {model_identifier} does not exist."
             )
 
-        # Collect results
-        results: List[ModelMetadata] = []
+        # Collect models
+        models: List[ModelMetadata] = []
         for model_path in available_models:
             available_versions = storage.available_model_versions(model_path)
-            results.append(
+            models.append(
                 ModelMetadata(
                     identifier=ModelIdentifier(model_path.name),
                     versions=[ModelVersion(v.name) for v in available_versions],
@@ -166,19 +166,19 @@ class FilesystemSessionHandle(SessionHandle):
             )
 
         # Filter by queried model, if applicable
-        results = (
-            [r for r in results if r.identifier.identifier == model_identifier]
+        models = (
+            [m for m in models if m.identifier.identifier == model_identifier]
             if model_identifier is not None
-            else results
+            else models
         )
-        return {"models": [r.to_json() for r in results]}
+        return {"models": [r.to_json() for r in models]}
 
     def read_value(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_version: Optional[int] = None,
+        value_identifier: str,
+        value_version: Optional[int] = None,
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
@@ -187,24 +187,24 @@ class FilesystemSessionHandle(SessionHandle):
         version_path = self.root / model_identifier / model_version
         assert version_path.exists(), "Broken invariant."
 
-        result_path = (version_path / result_identifier).with_suffix(".json")
-        if not result_path.exists():
+        value_path = (version_path / value_identifier).with_suffix(".json")
+        if not value_path.exists():
             raise RuntimeError(
-                f"Failed to read result, result with identifier {result_identifier} not found."
+                f"Failed to read value, value with identifier {value_identifier} not found."
             )
 
         if (
-            result_version is not None
-            and result_version
-            not in storage.available_result_versions(result_path)
+            value_version is not None
+            and value_version
+            not in storage.available_value_versions(value_path)
         ):
             raise RuntimeError(
-                f"Failed to read result, requested version {result_version} not found."
+                f"Failed to read value, requested version {value_version} not found."
             )
 
-        return {"results": [storage.read_value(result_path, result_version)]}
+        return {"values": [storage.read_value(value_path, value_version)]}
 
-    def read_results(
+    def read_values(
         self, model_identifier: str, model_version: str, tag: Optional[str]
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
@@ -215,22 +215,22 @@ class FilesystemSessionHandle(SessionHandle):
         version_path = self.root / model_identifier / model_version
         assert version_path.exists(), "Broken invariant."
 
-        # Query results and filter by tag, if applicable
-        available_results = storage.available_results(version_path)
+        # Query values and filter by tag, if applicable
+        available_values = storage.available_valuess(version_path)
         if tag is not None:
-            available_results = [
-                p for p in available_results if storage.read_tag(p) == tag
+            available_values = [
+                p for p in available_values if storage.read_tag(p) == tag
             ]
 
-        return {"results": [storage.read_value(p) for p in available_results]}
+        return {"values": [storage.read_value(p) for p in available_values]}
 
     def write_value(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_data: Dict[str, Any],
-        result_tag: Optional[str] = None,
+        value_identifier: str,
+        value_data: Dict[str, Any],
+        value_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
@@ -245,19 +245,17 @@ class FilesystemSessionHandle(SessionHandle):
         if not version_path.exists():
             version_path.mkdir()
 
-        result_path = (version_path / result_identifier).with_suffix(".json")
-        storage.write_value(
-            result_path, result_identifier, result_data, result_tag
-        )
+        value_path = (version_path / value_identifier).with_suffix(".json")
+        storage.write_value(value_path, value_identifier, value_data, value_tag)
 
         return {"written": 1}
 
-    def delete_result_version(
+    def delete_value_version(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_version: int,
+        value_identifier: str,
+        value_version: int,
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
@@ -266,30 +264,30 @@ class FilesystemSessionHandle(SessionHandle):
         version_path = self.root / model_identifier / model_version
         assert version_path.exists(), "Broken invariant."
 
-        result_path = (version_path / result_identifier).with_suffix(".json")
-        if not result_path.exists():
+        value_path = (version_path / value_identifier).with_suffix(".json")
+        if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete result version, result with identifier {result_identifier} does not exist."
+                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
             )
 
-        available_versions = storage.available_result_versions(result_path)
-        if result_version not in available_versions:
+        available_versions = storage.available_value_versions(value_path)
+        if value_version not in available_versions:
             raise RuntimeError(
-                f"Cannot delete result version, version {result_version} does not exist."
+                f"Cannot delete value version, version {value_version} does not exist."
             )
 
-        storage.delete_result_version(result_path, result_version)
+        storage.delete_value_version(value_path, value_version)
 
-        # Version deletion may have deleted the result entirety;
+        # Version deletion may have deleted the value entirety;
         # check to determine if this deletion must propagate
-        storage.propagate_deleted_result(
+        storage.propagate_deleted_value(
             self.root / model_identifier, model_version
         )
 
         return {"deleted": 1}
 
-    def delete_result(
-        self, model_identifier: str, model_version: str, result_identifier: str
+    def delete_value(
+        self, model_identifier: str, model_version: str, value_identifier: str
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
@@ -298,26 +296,26 @@ class FilesystemSessionHandle(SessionHandle):
         version_path = self.root / model_identifier / model_version
         assert version_path.exists(), "Broken invariant."
 
-        result_path = (version_path / result_identifier).with_suffix(".json")
-        if not result_path.exists():
+        value_path = (version_path / value_identifier).with_suffix(".json")
+        if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete result version, result with identifier {result_identifier} does not exist."
+                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
             )
 
-        storage.delete_result(result_path)
+        storage.delete_value(value_path)
 
-        # Result deletion may have removed last result in version
-        storage.propagate_deleted_result(
+        # Value deletion may have removed last value in version
+        storage.propagate_deleted_value(
             self.root / model_identifier, model_version
         )
 
         return {"deleted": 1}
 
-    def delete_results(
+    def delete_values(
         self,
         model_identifier: str,
         model_version: str,
-        result_tag: Optional[str] = None,
+        value_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
         assert self.root.exists(), "Broken precondition."
@@ -326,23 +324,23 @@ class FilesystemSessionHandle(SessionHandle):
         version_path = self.root / model_identifier / model_version
         assert version_path.exists(), "Broken invariant."
 
-        # Query all available results
-        result_paths = storage.available_results(version_path)
+        # Query all available values
+        value_paths = storage.available_valuess(version_path)
         # Filter by tag, if applicable
-        result_paths = (
-            [p for p in result_paths if storage.read_tag(p) == result_tag]
-            if result_tag is not None
-            else result_paths
+        value_paths = (
+            [p for p in value_paths if storage.read_tag(p) == value_tag]
+            if value_tag is not None
+            else value_paths
         )
 
-        storage.delete_results(result_paths)
+        storage.delete_values(value_paths)
 
-        # Result deletion may result in removal of model version
-        storage.propagate_deleted_result(
+        # Value deletion may value in removal of model version
+        storage.propagate_deleted_value(
             self.root / model_identifier, model_version
         )
 
-        return {"deleted": len(result_paths)}
+        return {"deleted": len(value_paths)}
 
     def read_spec(
         self, model_identifier: str, model_version: str

@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Set, List, Optional, Dict, Any
 
-from .data_model import Result, ResultVersion
+from .data_model import Value, ValueVersion
 
 # A sentinel value to indicate that the latest version should be read
 # TODO(Kyle): Refactor this to something more type-safe
@@ -27,25 +27,25 @@ BINDING_FILENAME = "binding.json"
 # -----------------------------------------------------------------------------
 
 
-def available_result_versions(result_path: Path) -> Set[int]:
+def available_value_versions(value_path: Path) -> Set[int]:
     """
-    Get the available versions for a result.
-    :param result_path: The path to the result
-    :type result_path: Path
-    :return: The available versions for the result
+    Get the available versions for a value.
+    :param value_path: The path to the value
+    :type value_path: Path
+    :return: The available versions for the value
     :rtype: Set[int]
     """
-    with open(result_path.as_posix(), "r") as f:
+    with open(value_path.as_posix(), "r") as f:
         document = json.load(f)
         return set(e["version"] for e in document["versions"])
 
 
-def available_results(version_path: Path) -> List[Path]:
+def available_valuess(version_path: Path) -> List[Path]:
     """
-    Get all available results for a particular model version.
+    Get all available values for a particular model version.
     :param version_path: The path to model version directory
     :type version_path: Path
-    :return: A collection of paths for all results
+    :return: A collection of paths for all values
     :rtype: List[Path]
     """
     return [x for x in version_path.glob("*") if x.is_file()]
@@ -73,18 +73,18 @@ def available_models(root_path: Path) -> List[Path]:
     return [x for x in root_path.glob("*") if x.is_dir()]
 
 
-def read_tag(result_path: Path) -> str:
+def read_tag(value_path: Path) -> str:
     """
-    Read the tag for an individual result.
-    :param result_path: The path to the result
-    :type result_path: Path
+    Read the tag for an individual value.
+    :param value_path: The path to the value
+    :type value_path: Path
     :return: The tag
     :rtype: str
     """
-    with result_path.open("r") as f:
+    with value_path.open("r") as f:
         document = json.load(f)
-        result: str = document["tag"]
-        return result
+        value: str = document["tag"]
+        return value
 
 
 def spec_is_saved(model_version_path: Path) -> bool:
@@ -130,40 +130,40 @@ def boundspec_is_saved(model_version_path: Path) -> bool:
 
 
 # -----------------------------------------------------------------------------
-# Read / Write Result
+# Read / Write Value
 # -----------------------------------------------------------------------------
 
 
 def read_value(
-    result_path: Path, version: Optional[int] = None
+    value_path: Path, version: Optional[int] = None
 ) -> Dict[str, Any]:
     """
-    Read the data for an individual result.
-    :param result_path: The path to the result
-    :type result_path: Path
+    Read the data for an individual value.
+    :param value_path: The path to the value
+    :type value_path: Path
     :param version: The (optional) version identifier
     :type version: Optional[int]
-    :return: The read result
+    :return: The read value
     :rtype: Dict[str, Any]
     """
-    with result_path.open("r") as f:
-        result = Result.from_json(json.load(f))
+    with value_path.open("r") as f:
+        value = Value.from_json(json.load(f))
 
     # Ensure requested version is present
     assert (version is None) or (
-        version in set(v.version for v in result.versions)
+        version in set(v.version for v in value.versions)
     ), "Broken invariant."
 
     # Filter to only include the version of interest
     # TODO(Kyle): Determine how we want to handle
     # multiversioning from user perspective / interface
     version = (
-        max(available_result_versions(result_path))
+        max(available_value_versions(value_path))
         if version is None
         else version
     )
 
-    versions = [v for v in result.versions if v.version == version]
+    versions = [v for v in value.versions if v.version == version]
     assert len(versions) == 1, "Broken invariant."
 
     data: Dict[str, Any] = versions[0].data
@@ -171,100 +171,100 @@ def read_value(
 
 
 def write_value(
-    result_path: Path, identifier: str, data: Dict[str, Any], tag: Optional[str]
+    value_path: Path, identifier: str, data: Dict[str, Any], tag: Optional[str]
 ):
     """
-    Write a result to the file at `result_path`.
-    :param result_path: The path to the result
-    :param identifier: The result identifier
+    Write a value to the file at `value_path`.
+    :param value_path: The path to the value
+    :param identifier: The value identifier
     :type identifier: str
-    :type result_path: Path
-    :param data: The result data
+    :type value_path: Path
+    :param data: The value data
     :type data: Dict[str, Any]
-    :param tag: The result tag
+    :param tag: The value tag
     :type tag: Optional[str]
     """
-    if result_path.exists():
-        new_version = max(available_result_versions(result_path)) + 1
+    if value_path.exists():
+        new_version = max(available_value_versions(value_path)) + 1
 
         # Read existing document
-        with result_path.open("r") as f:
-            mutating = Result.from_json(json.load(f))
+        with value_path.open("r") as f:
+            mutating = Value.from_json(json.load(f))
 
         # Update tag
         mutating.tag = tag
 
-        # Update result version
-        mutating.versions.append(ResultVersion(version=new_version, data=data))
+        # Update value version
+        mutating.versions.append(ValueVersion(version=new_version, data=data))
 
         # Persist updates
-        with result_path.open("w") as f:
+        with value_path.open("w") as f:
             json.dump(mutating.to_json(), f)
     else:
-        result = Result(
-            identifier=identifier, versions=[ResultVersion(0, data)], tag=tag
+        value = Value(
+            identifier=identifier, versions=[ValueVersion(0, data)], tag=tag
         )
-        with result_path.open("w") as f:
-            json.dump(result.to_json(), f)
+        with value_path.open("w") as f:
+            json.dump(value.to_json(), f)
 
 
-def delete_result_version(result_path: Path, version: int):
+def delete_value_version(value_path: Path, version: int):
     """
-    Delete an individual version for a result.
-    :param result_path: The path to the result
-    :type result_path: Path
+    Delete an individual version for a value.
+    :param value_path: The path to the value
+    :type value_path: Path
     :param version: The target version
     :type version: int
     """
-    assert result_path.exists(), "Broken precondition."
-    with result_path.open("r") as f:
-        result = Result.from_json(json.load(f))
+    assert value_path.exists(), "Broken precondition."
+    with value_path.open("r") as f:
+        value = Value.from_json(json.load(f))
 
     # Update versions data
     assert version in set(
-        v.version for v in result.versions
+        v.version for v in value.versions
     ), "Broken invariant."
-    result.versions = [v for v in result.versions if v.version != version]
+    value.versions = [v for v in value.versions if v.version != version]
 
-    # If no versions remain, delete this result
-    if len(result.versions) == 0:
-        result_path.unlink()
+    # If no versions remain, delete this value
+    if len(value.versions) == 0:
+        value_path.unlink()
         return
 
     # Otherwise, versions remain, write updated content
-    with result_path.open("w") as f:
-        json.dump(result.to_json(), f)
+    with value_path.open("w") as f:
+        json.dump(value.to_json(), f)
 
 
-def delete_result(result_path: Path):
+def delete_value(value_path: Path):
     """
-    Delete an individual result.
+    Delete an individual value.
     """
-    assert result_path.exists(), "Broken precondition."
+    assert value_path.exists(), "Broken precondition."
 
-    # Deleting all of the result versions implicitly deletes the result
-    available_versions = available_result_versions(result_path)
+    # Deleting all of the value versions implicitly deletes the value
+    available_versions = available_value_versions(value_path)
     assert len(available_versions) > 0, "Broken invariant."
     for version in available_versions:
-        delete_result_version(result_path, version)
+        delete_value_version(value_path, version)
 
-    assert not result_path.exists(), "Broken postcondition."
+    assert not value_path.exists(), "Broken postcondition."
 
 
-def delete_results(result_paths: List[Path]):
+def delete_values(value_paths: List[Path]):
     """
-    Delete a collection of results.
+    Delete a collection of values.
     """
-    assert len(result_paths) > 0, "Broken precondition."
-    for path in result_paths:
-        delete_result(path)
+    assert len(value_paths) > 0, "Broken precondition."
+    for path in value_paths:
+        delete_value(path)
 
-    assert all(not p.exists() for p in result_paths), "Broken postcondition."
+    assert all(not p.exists() for p in value_paths), "Broken postcondition."
 
 
-def propagate_deleted_result(model_path: Path, model_version: str):
+def propagate_deleted_value(model_path: Path, model_version: str):
     """
-    Propagate the deletion of one or more results to higher-level structures.
+    Propagate the deletion of one or more values to higher-level structures.
     :param model_path: The path to the model directory
     :type model_path: Path
     :param model_version: The string identifier for model version
@@ -272,9 +272,9 @@ def propagate_deleted_result(model_path: Path, model_version: str):
     """
     assert model_path.exists(), "Broken precondition."
 
-    # If all results are deleted, remove the model version
+    # If all valueas are deleted, remove the model version
     version_path = model_path / model_version
-    if len(available_results(version_path)) == 0:
+    if len(available_valuess(version_path)) == 0:
         version_path.rmdir()
 
     # If all model versions are deleted, remove the model
@@ -301,8 +301,8 @@ def read_spec(model_version_path: Path) -> Dict[str, Any]:
     assert spec_path.is_file(), "Broken invariant."
 
     with open(spec_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
+        spec: Dict[str, Any] = json.load(f)
+        return spec
 
 
 def write_spec(model_version_path: Path, data: Dict[str, Any]):
@@ -338,8 +338,8 @@ def read_boundspec(model_version_path: Path) -> Dict[str, Any]:
     assert spec_path.is_file(), "Broken invariant."
 
     with open(spec_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
+        boundspec: Dict[str, Any] = json.load(f)
+        return boundspec
 
 
 def write_boundspec(model_version_path: Path, data: Dict[str, Any]):

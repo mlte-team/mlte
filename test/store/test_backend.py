@@ -148,7 +148,7 @@ def test_write_delete_result_version(
     )
     _ = handle.read_value("m0", "v0", "r0")
 
-    handle.delete_result_version("m0", "v0", "r0", 0)
+    handle.delete_value_version("m0", "v0", "r0", 0)
 
     # Reading exact version should fail
     with pytest.raises(RuntimeError):
@@ -171,7 +171,7 @@ def test_write_delete_result(
     )
     _ = handle.read_value("m0", "v0", "r0")
 
-    handle.delete_result("m0", "v0", "r0")
+    handle.delete_value("m0", "v0", "r0")
 
     # Reading latest should fail
     with pytest.raises(RuntimeError):
@@ -190,7 +190,7 @@ def test_delete_results(handle_fixture: str, request: pytest.FixtureRequest):
         "m0", "v0", "r1", result_from("r1", "", [(0, {"1": "1"})])
     )
 
-    handle.delete_results("m0", "v0")
+    handle.delete_values("m0", "v0")
 
     with pytest.raises(RuntimeError):
         _ = handle.read_value("m0", "v0", "r0")
@@ -215,7 +215,7 @@ def test_delete_results_with_tag(
         "m0", "v0", "r2", result_from("r2", "", [(0, {"2": "2"})])
     )
 
-    handle.delete_results("m0", "v0", "t0")
+    handle.delete_values("m0", "v0", "t0")
 
     with pytest.raises(RuntimeError):
         _ = handle.read_value("m0", "v0", "r0")
