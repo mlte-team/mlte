@@ -5,12 +5,9 @@ Unit tests for Spec functionality.
 import pytest
 
 import mlte
-from mlte.spec import Spec, Condition, SpecValidator
+from mlte.spec import Spec, Condition
 from mlte.property.costs import StorageCost
 from mlte.measurement import ExternalMeasurement
-
-from mlte.value.types import Integer
-from mlte.measurement_metadata import MeasurementMetadata
 
 
 def test_save(tmp_path):
