@@ -183,13 +183,13 @@ def write_value(
 
         # Persist updates
         with value_path.open("w") as f:
-            json.dump(mutating.to_json(), f)
+            json.dump(mutating.to_json(), f, indent=4)
     else:
         value = Value(
             identifier=identifier, versions=[ValueVersion(0, data)], tag=tag
         )
         with value_path.open("w") as f:
-            json.dump(value.to_json(), f)
+            json.dump(value.to_json(), f, indent=4)
 
 
 def delete_value_version(value_path: Path, version: int):
@@ -217,7 +217,7 @@ def delete_value_version(value_path: Path, version: int):
 
     # Otherwise, versions remain, write updated content
     with value_path.open("w") as f:
-        json.dump(value.to_json(), f)
+        json.dump(value.to_json(), f, ident=4)
 
 
 def delete_value(value_path: Path):
@@ -267,6 +267,46 @@ def propagate_deleted_value(model_path: Path, model_version: str):
 
 
 # -----------------------------------------------------------------------------
+# Read / Write, for general artifacts.
+# -----------------------------------------------------------------------------
+
+
+def _read_artifact(model_version_path: Path, filename: str) -> Dict[str, Any]:
+    """
+    Read artifact data for model version.
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+    :param filename: The file name
+    :type filename: str
+    :return: The binding data
+    :rtype: Dict[str, Any]
+    """
+    binding_path = model_version_path / filename
+    assert binding_path.is_file(), "Broken invariant."
+
+    with open(binding_path, "r") as f:
+        artifact: Dict[str, Any] = json.load(f)
+        return artifact
+
+
+def _write_artifact(
+    model_version_path: Path, filename: str, data: Dict[str, Any]
+):
+    """
+    Write artifact data for model version.
+    :param model_version_path: The path to the model version
+    :type model_version_path: Path
+    :param filename: The file name
+    :type filename: str
+    :param data: The binding data
+    :type data: Dict[str, Any]
+    """
+    full_path = model_version_path / filename
+    with open(full_path, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+# -----------------------------------------------------------------------------
 # Read / Write Spec
 # -----------------------------------------------------------------------------
 
@@ -281,12 +321,7 @@ def read_spec(model_version_path: Path) -> Dict[str, Any]:
     :return: The specification data
     :rtype: Dict[str, Any]
     """
-    spec_path = model_version_path / SPEC_FILENAME
-    assert spec_path.is_file(), "Broken invariant."
-
-    with open(spec_path, "r") as f:
-        spec: Dict[str, Any] = json.load(f)
-        return spec
+    return _read_artifact(model_version_path, SPEC_FILENAME)
 
 
 def write_spec(model_version_path: Path, data: Dict[str, Any]):
@@ -298,9 +333,7 @@ def write_spec(model_version_path: Path, data: Dict[str, Any]):
     :param data: The specification data
     :type data: Dict[str, Any]
     """
-    spec_path = model_version_path / SPEC_FILENAME
-    with open(spec_path, "w") as f:
-        json.dump(data, f)
+    _write_artifact(model_version_path, SPEC_FILENAME, data)
 
 
 # -----------------------------------------------------------------------------
@@ -318,12 +351,7 @@ def read_boundspec(model_version_path: Path) -> Dict[str, Any]:
     :return: The bound specification data
     :rtype: Dict[str, Any]
     """
-    spec_path = model_version_path / BOUNDSPEC_FILENAME
-    assert spec_path.is_file(), "Broken invariant."
-
-    with open(spec_path, "r") as f:
-        boundspec: Dict[str, Any] = json.load(f)
-        return boundspec
+    return _read_artifact(model_version_path, BOUNDSPEC_FILENAME)
 
 
 def write_boundspec(model_version_path: Path, data: Dict[str, Any]):
@@ -335,6 +363,4 @@ def write_boundspec(model_version_path: Path, data: Dict[str, Any]):
     :param data: The specification data
     :type data: Dict[str, Any]
     """
-    spec_path = model_version_path / BOUNDSPEC_FILENAME
-    with open(spec_path, "w") as f:
-        json.dump(data, f)
+    _write_artifact(model_version_path, BOUNDSPEC_FILENAME, data)
