@@ -17,7 +17,13 @@ def test_save(tmp_path):
     mlte.set_model("model", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    s = Spec({StorageCost("rationale"): [Condition("test", ExternalMeasurement.__name__, "less_than", 3)]})
+    s = Spec(
+        {
+            StorageCost("rationale"): [
+                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+            ]
+        }
+    )
     s.save()
 
     r = Spec.load()
@@ -35,18 +41,28 @@ def test_load_failure(tmp_path):
 def test_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec({StorageCost("rationale"): [], StorageCost("rationale2"): []})
-    
+
 
 def test_add_condition():
     spec = Spec({StorageCost("rationale"): []})
-    spec.add_condition("StorageCost", "test", ExternalMeasurement, "less_than", 3)
+    spec.add_condition(
+        "StorageCost", "test", ExternalMeasurement, "less_than", 3
+    )
 
-    assert spec.conditions["StorageCost"][0] == Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+    assert spec.conditions["StorageCost"][0] == Condition(
+        "test", ExternalMeasurement.__name__, "less_than", 3
+    )
 
 
 def test_no_result():
     # Spec validator does not have value for condition.
-    spec = Spec({StorageCost("rationale"): [Condition("test", ExternalMeasurement.__name__, "less_than", 3)]})
+    spec = Spec(
+        {
+            StorageCost("rationale"): [
+                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+            ]
+        }
+    )
 
     results = {}
     with pytest.raises(RuntimeError):

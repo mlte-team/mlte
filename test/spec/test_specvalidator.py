@@ -14,7 +14,13 @@ from mlte.measurement_metadata import MeasurementMetadata
 
 def test_no_property():
     # Spec validator does not have value for property.
-    spec = Spec({StorageCost("rationale"): [Condition("test", ExternalMeasurement.__name__, "less_than", 3)]})
+    spec = Spec(
+        {
+            StorageCost("rationale"): [
+                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+            ]
+        }
+    )
     specValidator = SpecValidator(spec)
 
     with pytest.raises(RuntimeError):
@@ -23,7 +29,13 @@ def test_no_property():
 
 def test_no_condition():
     # Spec validator does not have value for condition.
-    spec = Spec({StorageCost("rationale"): [Condition("test", ExternalMeasurement.__name__, "less_than", 3)]})
+    spec = Spec(
+        {
+            StorageCost("rationale"): [
+                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+            ]
+        }
+    )
     specValidator = SpecValidator(spec)
 
     i = Integer(MeasurementMetadata("typename", "id"), 1)
@@ -34,7 +46,13 @@ def test_no_condition():
 
 
 def test_success():
-    spec = Spec({StorageCost("rationale"): [Condition("test", ExternalMeasurement.__name__, "less_than", 3)]})
+    spec = Spec(
+        {
+            StorageCost("rationale"): [
+                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+            ]
+        }
+    )
     specValidator = SpecValidator(spec)
 
     i = Integer(MeasurementMetadata("typename", "id"), 1)
