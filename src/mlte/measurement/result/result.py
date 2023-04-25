@@ -8,7 +8,7 @@ import abc
 from typing import Dict, Any, Optional
 
 from mlte._global import global_state
-from mlte.store.api import read_result, write_result
+from mlte.api import read_result, write_result
 from mlte.measurement.identifier import Identifier
 from mlte._private.schema import RESULT_LATEST_SCHEMA_VERSION
 

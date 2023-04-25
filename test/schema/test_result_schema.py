@@ -7,7 +7,7 @@ from mlte.measurement.result import Integer, Real, Opaque
 from mlte.measurement.measurement_metadata import MeasurementMetadata
 from mlte.measurement.identifier import Identifier
 from mlte._private.schema import validate_result_schema
-from mlte.store.api import read_result
+from mlte.api import read_result
 
 
 def test_real(tmp_path):

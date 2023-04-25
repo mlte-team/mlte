@@ -1,132 +1,17 @@
 """
-Generic API wrapper.
+store/api/api.py
+
+Top-level API functionality.
 """
 
-from typing import Optional, Dict, Any
+from fastapi import APIRouter
 
-from mlte.store.api.uri import parse_uri_type, UriType
-import mlte.store.api.local as local
+from mlte.store.api.endpoints import health, metadata, result
 
-
-def read_result(
-    uri: str,
-    model_identifier: str,
-    model_version: str,
-    result_identifier: str,
-    result_version: Optional[int] = None,
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_result(
-            uri,
-            model_identifier,
-            model_version,
-            result_identifier,
-            result_version,
-        )
-    else:
-        assert False, "Unreachable."
-
-
-def write_result(
-    uri: str,
-    model_identifier: str,
-    model_version: str,
-    result_identifier: str,
-    result_data: Dict[str, Any],
-    result_tag: Optional[str],
-):
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        local.write_result(
-            uri,
-            model_identifier,
-            model_version,
-            result_identifier,
-            result_data,
-            result_tag,
-        )
-    else:
-        assert False, "Unreachable."
-
-
-def read_binding(
-    uri: str, model_identifier: str, model_version
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_binding(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
-
-
-def write_binding(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        local.write_binding(uri, model_identifier, model_version, data)
-    else:
-        assert False, "Unreachable."
-
-
-def read_spec(uri: str, model_identifier: str, model_version) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_spec(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
-
-
-def write_spec(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        local.write_spec(uri, model_identifier, model_version, data)
-    else:
-        assert False, "Unreachable."
-
-
-def read_boundspec(
-    uri: str, model_identifier: str, model_version
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_boundspec(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
-
-
-def write_boundspec(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-):
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        local.write_boundspec(uri, model_identifier, model_version, data)
-    else:
-        assert False, "Unreachable."
+# The base API router across all endpoints
+api_router = APIRouter()
+api_router.include_router(health.router, prefix="/healthz", tags=["health"])
+api_router.include_router(
+    metadata.router, prefix="/metadata", tags=["metadata"]
+)
+api_router.include_router(result.router, prefix="/result", tags=["result"])

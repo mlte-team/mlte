@@ -12,7 +12,7 @@ from mlte.property import Property
 from mlte.measurement.validation import ValidationResult
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
-from mlte.store.api import read_spec, write_spec
+from mlte.api import read_spec, write_spec
 from mlte.binding import Binding
 from .bound_spec import BoundSpec
 

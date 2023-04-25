@@ -5,7 +5,7 @@ Unit tests for Binding schema validation.
 import mlte
 from mlte.binding import Binding
 from mlte._private.schema import validate_binding_schema
-from mlte.store.api import read_binding
+from mlte.api import read_binding
 
 
 def test_schema_validation(tmp_path):
