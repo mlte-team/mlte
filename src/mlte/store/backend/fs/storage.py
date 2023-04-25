@@ -134,7 +134,7 @@ def boundspec_is_saved(model_version_path: Path) -> bool:
 # -----------------------------------------------------------------------------
 
 
-def read_result(
+def read_value(
     result_path: Path, version: Optional[int] = None
 ) -> Dict[str, Any]:
     """
@@ -170,7 +170,7 @@ def read_result(
     return data
 
 
-def write_result(
+def write_value(
     result_path: Path, identifier: str, data: Dict[str, Any], tag: Optional[str]
 ):
     """
@@ -280,43 +280,6 @@ def propagate_deleted_result(model_path: Path, model_version: str):
     # If all model versions are deleted, remove the model
     if len(available_model_versions(model_path)) == 0:
         model_path.rmdir()
-
-
-# -----------------------------------------------------------------------------
-# Read / Write Binding
-# -----------------------------------------------------------------------------
-
-
-def read_binding(model_version_path: Path) -> Dict[str, Any]:
-    """
-    Read binding data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: The binding data
-    :rtype: Dict[str, Any]
-    """
-    binding_path = model_version_path / BINDING_FILENAME
-    assert binding_path.is_file(), "Broken invariant."
-
-    with open(binding_path, "r") as f:
-        result: Dict[str, Any] = json.load(f)
-        return result
-
-
-def write_binding(model_version_path: Path, data: Dict[str, Any]):
-    """
-    Write binding data for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-    :param data: The binding data
-    :type data: Dict[str, Any]
-    """
-    binding_path = model_version_path / BINDING_FILENAME
-    with open(binding_path, "w") as f:
-        json.dump(data, f)
 
 
 # -----------------------------------------------------------------------------

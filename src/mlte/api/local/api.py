@@ -1,5 +1,5 @@
 """
-Result persistence API for local filesystem.
+Value persistence API for local filesystem.
 """
 
 from typing import Optional, Dict, Any
@@ -18,7 +18,7 @@ LOCAL_URI_PREFIX = "local://"
 # -----------------------------------------------------------------------------
 
 
-def read_result(
+def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -27,7 +27,7 @@ def read_result(
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
-    document = handle.read_result(
+    document = handle.read_value(
         model_identifier, model_version, result_identifier, result_version
     )
     assert "results" in document, "Broken invariant."
@@ -36,7 +36,7 @@ def read_result(
     return result
 
 
-def write_result(
+def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -46,41 +46,13 @@ def write_result(
 ) -> int:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
-    document = handle.write_result(
+    document = handle.write_value(
         model_identifier,
         model_version,
         result_identifier,
         result_data,
         result_tag,
     )
-    assert "written" in document, "Broken invariant."
-    assert document["written"] == 1, "Broken invariant."
-    count: int = document["written"]
-    return count
-
-
-# -----------------------------------------------------------------------------
-# Binding
-# -----------------------------------------------------------------------------
-
-
-def read_binding(
-    uri: str, model_identifier: str, model_version: str
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    handle = _get_backend_handle(uri)
-    document = handle.read_binding(model_identifier, model_version)
-    assert "binding" in document, "Broken precondition."
-    binding: Dict[str, Any] = document["binding"]
-    return binding
-
-
-def write_binding(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-) -> int:
-    """TODO(Kyle)"""
-    handle = _get_backend_handle(uri)
-    document = handle.write_binding(model_identifier, model_version, data)
     assert "written" in document, "Broken invariant."
     assert document["written"] == 1, "Broken invariant."
     count: int = document["written"]

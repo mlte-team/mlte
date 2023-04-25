@@ -10,11 +10,11 @@ import mlte.api.local as local
 # TODO(Kyle): Enforce schema of documents for each type here within API.
 
 # -----------------------------------------------------------------------------
-# Result
+# Value
 # -----------------------------------------------------------------------------
 
 
-def read_result(
+def read_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -26,7 +26,7 @@ def read_result(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        return local.read_result(
+        return local.read_value(
             uri,
             model_identifier,
             model_version,
@@ -37,7 +37,7 @@ def read_result(
         assert False, "Unreachable."
 
 
-def write_result(
+def write_value(
     uri: str,
     model_identifier: str,
     model_version: str,
@@ -50,7 +50,7 @@ def write_result(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        return local.write_result(
+        return local.write_value(
             uri,
             model_identifier,
             model_version,
@@ -58,37 +58,6 @@ def write_result(
             result_data,
             result_tag,
         )
-    else:
-        assert False, "Unreachable."
-
-
-# -----------------------------------------------------------------------------
-# Binding
-# -----------------------------------------------------------------------------
-
-
-def read_binding(
-    uri: str, model_identifier: str, model_version
-) -> Dict[str, Any]:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_binding(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
-
-
-def write_binding(
-    uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
-) -> int:
-    """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.write_binding(uri, model_identifier, model_version, data)
     else:
         assert False, "Unreachable."
 

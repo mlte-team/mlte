@@ -30,7 +30,7 @@ def main() -> int:
     r: Integer = m.evaluate(os.path.abspath(__file__))
     r.save()
 
-    result = api.read_result(uri, "FakeModel", "0.0.1", "file size")
+    result = api.read_value(uri, "FakeModel", "0.0.1", "file size")
     print(result)
 
     return EXIT_SUCCESS

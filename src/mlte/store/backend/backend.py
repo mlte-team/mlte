@@ -55,7 +55,7 @@ class SessionHandle:
     # Interface: Read Results
     # -------------------------------------------------------------------------
 
-    def read_result(
+    def read_value(
         self,
         model_identifier: str,
         model_version: str,
@@ -101,7 +101,7 @@ class SessionHandle:
     # Interface: Write Results
     # -------------------------------------------------------------------------
 
-    def write_result(
+    def write_value(
         self,
         model_identifier: str,
         model_version: str,
@@ -191,44 +191,6 @@ class SessionHandle:
         :type result_tag: Optional[str]
 
         :return: {"deleted": <COUNT>}
-        :rtype: Dict[str, Any]
-        """
-        raise NotImplementedError("Cannot invoke method on abstract Backend.")
-
-    # -------------------------------------------------------------------------
-    # Interface: Binding
-    # -------------------------------------------------------------------------
-
-    def read_binding(
-        self, model_identifier: str, model_version: str
-    ) -> Dict[str, Any]:
-        """
-        Read a binding for the model context.
-
-        :param model_identifier: The model identifier
-        :type model_identifier: str
-        :param model_version: The model version
-        :type model_version: str
-
-        :return: {"binding": { ... binding document ... }}
-        :rtype: Dict[str, Any]
-        """
-        raise NotImplementedError("Cannot invoke method on abstract Backend.")
-
-    def write_binding(
-        self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        Write a binding for the model context.
-
-        :param model_identifier: The model identifier
-        :type model_identifier: str
-        :param model_version: The model version
-        :type model_version: str
-        :param data: The binding data
-        :type data: Dict[str, Any]
-
-        :return: {"written": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")

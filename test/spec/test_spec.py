@@ -8,6 +8,7 @@ import mlte
 from mlte.spec import Spec, Condition
 from mlte.property.costs import StorageCost
 from mlte.measurement import ExternalMeasurement
+from mlte.validation import Result
 
 
 def test_save(tmp_path):
@@ -61,6 +62,6 @@ def test_no_result():
         }
     )
 
-    results = {}
+    results: dict[str, dict[str, Result]] = {}
     with pytest.raises(RuntimeError):
         _ = spec.generate_bound_spec(results)

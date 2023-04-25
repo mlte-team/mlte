@@ -173,7 +173,7 @@ class FilesystemSessionHandle(SessionHandle):
         )
         return {"models": [r.to_json() for r in results]}
 
-    def read_result(
+    def read_value(
         self,
         model_identifier: str,
         model_version: str,
@@ -202,7 +202,7 @@ class FilesystemSessionHandle(SessionHandle):
                 f"Failed to read result, requested version {result_version} not found."
             )
 
-        return {"results": [storage.read_result(result_path, result_version)]}
+        return {"results": [storage.read_value(result_path, result_version)]}
 
     def read_results(
         self, model_identifier: str, model_version: str, tag: Optional[str]
@@ -222,9 +222,9 @@ class FilesystemSessionHandle(SessionHandle):
                 p for p in available_results if storage.read_tag(p) == tag
             ]
 
-        return {"results": [storage.read_result(p) for p in available_results]}
+        return {"results": [storage.read_value(p) for p in available_results]}
 
-    def write_result(
+    def write_value(
         self,
         model_identifier: str,
         model_version: str,
@@ -246,7 +246,7 @@ class FilesystemSessionHandle(SessionHandle):
             version_path.mkdir()
 
         result_path = (version_path / result_identifier).with_suffix(".json")
-        storage.write_result(
+        storage.write_value(
             result_path, result_identifier, result_data, result_tag
         )
 
@@ -343,43 +343,6 @@ class FilesystemSessionHandle(SessionHandle):
         )
 
         return {"deleted": len(result_paths)}
-
-    def read_binding(
-        self, model_identifier: str, model_version: str
-    ) -> Dict[str, Any]:
-        """TODO(Kyle)"""
-        assert self.root.exists(), "Broken precondition."
-
-        self._check_exists(model_identifier, model_version)
-
-        model_version_path = self.root / model_identifier / model_version
-        assert model_version_path.is_dir(), "Broken invariant."
-
-        if not storage.binding_is_saved(model_version_path):
-            raise RuntimeError("Failed to read binding, no binding is saved.")
-
-        return {"binding": storage.read_binding(model_version_path)}
-
-    def write_binding(
-        self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """TODO(Kyle)"""
-        assert self.root.exists(), "Broken precondition."
-
-        # Create model directory
-        model_path = self.root / model_identifier
-        if not model_path.exists():
-            model_path.mkdir()
-
-        # Create version directory
-        version_path = model_path / model_version
-        if not version_path.exists():
-            version_path.mkdir()
-
-        model_version_path = self.root / model_identifier / model_version
-        storage.write_binding(model_version_path, data)
-
-        return {"written": 1}
 
     def read_spec(
         self, model_identifier: str, model_version: str

@@ -44,7 +44,7 @@ async def get_result_version(
     with dependencies.get_handle() as handle:
         try:
             # Read the result from the store
-            document = handle.read_result(
+            document = handle.read_value(
                 model_identifier,
                 model_version,
                 result_identifier,
@@ -78,7 +78,7 @@ async def get_result(
     with dependencies.get_handle() as handle:
         try:
             # Result the result from the store
-            document = handle.read_result(
+            document = handle.read_value(
                 model_identifier, model_version, result_identifier
             )
         except RuntimeError as e:
@@ -145,7 +145,7 @@ async def post_result(
     with dependencies.get_handle() as handle:
         try:
             # Write the result to the backend
-            document = handle.write_result(
+            document = handle.write_value(
                 model_identifier,
                 model_version,
                 result.identifier,
