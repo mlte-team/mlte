@@ -12,6 +12,7 @@ from mlte.measurement import ExternalMeasurement
 from mlte.api import read_boundspec
 from mlte._private.schema import validate_boundspec_schema
 
+
 def test_schema(tmp_path):
     mlte.set_model("model", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")

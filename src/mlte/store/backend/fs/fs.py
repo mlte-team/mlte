@@ -390,7 +390,9 @@ class FilesystemSessionHandle(SessionHandle):
         assert model_version_path.is_dir(), "Broken invariant."
 
         if not storage.boundspec_is_saved(model_version_path):
-            raise RuntimeError("Failed to read boundspec, no boundpsec is saved.")
+            raise RuntimeError(
+                "Failed to read boundspec, no boundpsec is saved."
+            )
 
         return {"boundspec": storage.read_boundspec(model_version_path)}
 
