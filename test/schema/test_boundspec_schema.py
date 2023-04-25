@@ -11,7 +11,7 @@ from mlte.spec import Spec
 from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
 from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.store.api import read_boundspec
+from mlte.api import read_boundspec
 from mlte._private.schema import validate_boundspec_schema
 
 def test_schema(tmp_path):
