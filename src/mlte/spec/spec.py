@@ -214,11 +214,10 @@ class Spec:
         """
         spec = Spec({Property._from_json(d): [] for d in json["properties"]})
         for property_doc in json["properties"]:
-            for measurement_doc in property_doc["measurements"]:
-                for condition_doc in measurement_doc["conditions"]:
-                    spec._add_condition(
-                        property_doc["name"], Condition.from_json(condition_doc)
-                    )
+            for condition_doc in property_doc["conditions"]:
+                spec._add_condition(
+                    property_doc["name"], Condition.from_json(condition_doc)
+                )
 
         return spec
 
@@ -303,25 +302,25 @@ class Spec:
         :rtype: dict[str, Any]
         """
         document: dict[str, Any] = property._to_json()
-        document["measurements"] = self._measurements_document(
+        document["conditions"] = self._conditions_document(
             self.conditions[property.name], results
         )
         return document
 
-    def _measurements_document(
+    def _conditions_document(
         self,
         conditions: list[Condition],
         results: dict[str, Result],
     ) -> list[dict[str, Any]]:
         """
-        Generate a measurements document.
+        Generate a conditions document.
 
         :param conditions: A list of Conditions.
         :type conditions: list[Condition]
-        :param result: The Results of validations, ordered by condition.
+        :param result: The optional Results of validations, ordered by condition.
         :type results: dict[str, Result]
 
-        :return: The measurements/conditions-level document
+        :return: The conditions-level document
         :rtype: list[dict[str, Any]]
         """
         conditions_by_measurement = []
@@ -331,47 +330,14 @@ class Spec:
             conditions_by_measurement.append([condition for condition in group])
 
         document = [
-            self._measurement_document(conditions, results)
-            for conditions in conditions_by_measurement
+            self._condition_document(
+                condition,
+                results[condition.label]
+                if condition.label in results
+                else None,
+            )
+            for condition in conditions
         ]
-        return document
-
-    def _measurement_document(
-        self,
-        conditions: list[Condition],
-        results: dict[str, Result],
-    ) -> dict[str, Any]:
-        """
-        Returns a document with information for a measurement type.
-
-        :param conditions: A list of Conditions to add.
-        :type conditions: list[Condition]
-        :param result: The Results of validations, ordered by condition.
-        :type results: dict[str, Result]
-
-        :return: The document for a specific measurement.
-        :rtype: dict[str, Any]
-        """
-        assert len(conditions) > 0, "Broken invariant."
-        assert _all_equal(
-            condition.measurement_type for condition in conditions  # type: ignore
-        ), "Broken invariant."
-
-        measurement_type = conditions[0].measurement_type  # type: ignore
-
-        # Proper results are obtained form the condition label.
-        document = {
-            "measurement_type": measurement_type,
-            "conditions": [
-                self._condition_document(
-                    condition,
-                    results[condition.label]
-                    if condition.label in results
-                    else None,
-                )
-                for condition in conditions
-            ],
-        }
         return document
 
     def _condition_document(

@@ -39,39 +39,48 @@
                         "type": "string",
                         "description": "The description of the property."
                     },
-                    "measurements": {
+                    "conditions": {
                         "type": "array",
-                        "description": "The set of measurements associated with the property.",
+                        "description": "The set of measurement conditions.",
                         "items": {
                             "type": "object",
                             "properties": {
-                                "name": {
+                                "label": {
                                     "type": "string",
-                                    "description": "The name of the measurement."
+                                    "description": "The name of the condition."
                                 },
-                                "validators": {
-                                    "type": "array",
-                                    "description": "The set of validators for the measurement.",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {
-                                                "type": "string",
-                                                "description": "The name of the validator."
-                                            },
-                                            "result": {
-                                                "type": "string",
-                                                "description": "The text describing the result of validation."
-                                            },
-                                            "message": {
-                                                "type": "string",
-                                                "description": "The text elaborating on the validation result."
-                                            }
+                                "measurement_type": {
+                                    "type": "string",
+                                    "description": "The type of the measurement."
+                                },                                
+                                "validator": {
+                                    "type": "string",
+                                    "description": "The validator method to use on a result from this measurement to validate it."
+                                },
+                                "threshold": {
+                                    "type": ["number","string","boolean","object","array", "null"],
+                                    "description": "Validation parameter."
+                                },
+                                "validation": {
+                                    "type": "object",
+                                    "description": "The validation result.",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "The name of the validator."
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "The text describing the result of validation."
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "The text elaborating on the validation result."
                                         }
                                     }
-                                }
+                                }                                
                             }
-                        }
+                        }             
                     }
                 }
             }
