@@ -30,7 +30,6 @@ root/
   model_identifier0/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
-      binding.json              <- ONLY present if Binding is saved
       boundspec.json            <- ONLY present if BoundSpec is saved
       value_identifier0.json
 
@@ -354,7 +353,7 @@ class FilesystemSessionHandle(SessionHandle):
         assert model_version_path.is_dir(), "Broken invariant."
 
         if not storage.spec_is_saved(model_version_path):
-            raise RuntimeError("Failed to read binding, no binding is saved.")
+            raise RuntimeError("Failed to read spec, no spec is saved.")
 
         return {"spec": storage.read_spec(model_version_path)}
 
@@ -391,7 +390,7 @@ class FilesystemSessionHandle(SessionHandle):
         assert model_version_path.is_dir(), "Broken invariant."
 
         if not storage.boundspec_is_saved(model_version_path):
-            raise RuntimeError("Failed to read binding, no binding is saved.")
+            raise RuntimeError("Failed to read boundspec, no boundpsec is saved.")
 
         return {"boundspec": storage.read_boundspec(model_version_path)}
 

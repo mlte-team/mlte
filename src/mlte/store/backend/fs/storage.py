@@ -19,8 +19,6 @@ LATEST_VERSION = -1
 SPEC_FILENAME = "spec.json"
 # The name of the file that contains serialized boundspecs
 BOUNDSPEC_FILENAME = "boundspec.json"
-# The name of the file that contains serialized bindings
-BINDING_FILENAME = "binding.json"
 
 # -----------------------------------------------------------------------------
 # Query Metadata
@@ -99,20 +97,6 @@ def spec_is_saved(model_version_path: Path) -> bool:
     """
     assert model_version_path.is_dir(), "Broken precondition."
     return (model_version_path / SPEC_FILENAME).is_file()
-
-
-def binding_is_saved(model_version_path: Path) -> bool:
-    """
-    Determine if a binding is saved to the store for model version.
-
-    :param model_version_path: The path to the model version
-    :type model_version_path: Path
-
-    :return: `True` if a binding is present, `False` otherwise
-    :rtype: bool
-    """
-    assert model_version_path.is_dir(), "Broken precondition."
-    return (model_version_path / BINDING_FILENAME).is_file()
 
 
 def boundspec_is_saved(model_version_path: Path) -> bool:
