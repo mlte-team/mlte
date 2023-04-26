@@ -1,6 +1,7 @@
 """
 Unit tests for Spec functionality.
 """
+from __future__ import annotations
 
 import pytest
 
