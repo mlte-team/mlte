@@ -1,34 +1,5 @@
 # Generating a Report
 
-## Define/Persist a Binding
-In MLTE, a Binding associates individual results with the properties to which they attest. This ensures that all stakeholders gain a concrete understanding of how the model performs with respect to the specific requirements that were defined at the beginning of the evaluation process. See below for an example of defining and persisting a binding.
-
-```Python
-from mlte.binding import Binding
-
-binding = Binding(
-    {
-        "TaskEfficacy": [
-            "accuracy",
-            "confusion matrix",
-            "class distribution"
-        ],
-        "StorageCost": [
-            "model size"
-        ],
-        "TrainingComputeCost": [
-            "training cpu"
-        ],
-        "TrainingMemoryCost": [
-            "training memory"
-        ]
-    }
-)
-
-# Persist the binding
-binding.save()
-```
-
 ## Load a Specification
 In MLTE, loading a specification is simple but requires the proper context to be set up. 
 
@@ -48,36 +19,28 @@ from mlte.spec import Spec, BoundSpec
 spec = Spec.load()
 ```
 
-## Validate a Result
-Once a Binding has been defined, users can load previously generated results and then validate them by invoking type-specific Validator methods. This also requires the context to be set as it is in the above example.
+## Validate Values and get an upadted BoundSpec wih Results
+Now that we have our Spec ready and we have enough evidence, we create a SpecValidator with our spec, and add all the Values we have. With that we can validate our spec and generate an output BoundSpec, with the validation results.
 
 ```Python
-from mlte.measurement.result import Integer
-
-model_size: Integer = Integer.load("model size")
-model_size = model_size.less_than(3000)
-
-# Results support introspection
-print(model_size)
-```
-
-## Bind Validated Results to a Specification
-Once validated, users can bind their validated Results to a specification using their corresponding Properties. 
-
-```Python
-# Bind results to properties, according to Binding
-from mlte.spec import Spec, BoundSpec
-from mlte.measurement.result import Real, Integer
+from mlte.spec import Spec
+from mlte.spec import SpecValidator
+from mlte.value.types import Integer, Real, Image
+from mlte.measurement.cpu import CPUStatistics
 from mlte.measurement.memory import MemoryStatistics
+from confusion_matrix import ConfusionMatrix
 
-bound_spec: BoundSpec = spec.bind(binding, [
-    model_size,
-    cpu_utilization,
-    memory_consumption,
-    accuracy,
-    confusion_matrix,
-    class_distribution
-])
+# Add all values to the validator.
+spec_validator = SpecValidator(spec)
+spec_validator.add_value("StorageCost", "size", Integer.load("model size"))
+spec_validator.add_value("TrainingComputeCost", "cpu", CPUStatistics.load("training cpu"))
+spec_validator.add_value("TrainingMemoryCost", "mem", MemoryStatistics.load("training memory"))
+spec_validator.add_value("TaskEfficacy", "accuracy", Real.load("accuracy"))
+spec_validator.add_value("TaskEfficacy", "confusion matrix", ConfusionMatrix.load("confusion matrix"))
+spec_validator.add_value("TaskEfficacy", "classes", Image.load("class distribution"))
+
+# Validate conditions and get bound details.
+bound_spec = spec_validator.validate()
 
 # BoundSpec also supports persistence
 bound_spec.save()
