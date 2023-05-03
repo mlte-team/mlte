@@ -1,11 +1,27 @@
 <template>
-  <div style='margin:50px'>
-    <UsaTable
-      :headers="head"
-      :rows="rows"
-    >
-    </UsaTable>
-  </div>
+  <NuxtLayout name="base-layout">
+    <UsaAccordion multiselectable bordered>
+      <UsaAccordionItem>
+        <template v-slot:label>
+          <div class="section-header">
+            Your Negotiation Cards         
+          </div>
+        </template>
+        <UsaTable
+          :headers="head"
+          :rows="rows"
+          caption="This is a description for the Negotiation Cards to assist..."
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
+      <UsaAccordionItem label="Specifications">Specifications</UsaAccordionItem>
+      <UsaAccordionItem label="Reports">Reports</UsaAccordionItem>
+      <UsaAccordionItem label="Findings">Findings</UsaAccordionItem>
+      <UsaAccordionItem label="Results">Results</UsaAccordionItem>
+      <UsaAccordionItem label="Values">Values</UsaAccordionItem>
+    </UsaAccordion>
+  </NuxtLayout>
 </template>
   
 <script setup>
@@ -19,17 +35,17 @@
     {
       "id": "month",
       "label": "Month",
-      "sortable": false
+      "sortable": true
     },
     {
       "id": "percent",
       "label": "Percent",
-      "sortable": false
+      "sortable": true
     },
     {
       "id": "count",
       "label": "Count",
-      "sortable": false
+      "sortable": true
     }
   ])
 
@@ -89,5 +105,10 @@
       "count": 0
     }
   ])
-
 </script>
+
+<style>
+.table {
+  width: 100%;
+}
+</style>

@@ -3,6 +3,7 @@ export default defineNuxtConfig({
     target: 'static',
 
     css: [
+        '@/assets/css/styles.css',
         '@/assets/uswds/css/styles.css'
     ],
 })
