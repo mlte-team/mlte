@@ -58,7 +58,7 @@ class Spec:
 
     def __init__(self, properties: dict[Property, list[Condition]]):
         """
-        Initialize a Spec instance. Only one of the two arguments should be provided, not both.
+        Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec.
         :type conditions: list[Property]
