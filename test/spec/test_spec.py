@@ -44,9 +44,8 @@ def test_unique_properties():
 
 def test_add_condition():
     spec = Spec({StorageCost("rationale"): []})
-    spec.add_condition(
-        "StorageCost", "test", ExternalMeasurement, "less_than", 3
-    )
+    condition = Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+    spec._add_condition("StorageCost", condition)
 
     assert spec.conditions["StorageCost"][0] == Condition(
         "test", ExternalMeasurement.__name__, "less_than", 3

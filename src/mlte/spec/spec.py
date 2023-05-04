@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from itertools import groupby
-from typing import Iterable, Any, Union, Type, Optional
+from typing import Iterable, Any, Union, Optional
 
 from mlte.property import Property
 from mlte.validation import Result
@@ -15,7 +15,6 @@ from mlte._global import global_state
 from mlte.api import read_spec, write_spec
 from .bound_spec import BoundSpec
 from .condition import Condition
-from mlte.measurement import Measurement
 
 
 def _unique(collection: list[str]) -> bool:
@@ -90,37 +89,6 @@ class Spec:
         """
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
-
-    def add_condition(
-        self,
-        property_name: str,
-        label: str,
-        measurement_type: Type[Measurement],
-        validator: str,
-        threshold: Any,
-    ):
-        """
-        Adds a condition for the given property, with information from a measurement, plus additional condition info.
-
-        :param property_name: The name of the property we are adding the condition for.
-        :type property_name: str
-
-        :param label: The name to give the condition to track it.
-        :type label: str
-
-        :param measurement: The type measurement we are want to have in the condition.
-        :type measurement: Type
-
-        :param validator: The validator method for the condition.
-        :type validator: str
-
-        :param threshold: The threshold value for the validation.
-        :type threshold: Any
-        """
-        condition = Condition(
-            label, measurement_type.__name__, validator, threshold
-        )
-        self._add_condition(property_name, condition)
 
     def _add_condition(self, property_name: str, condition: Condition):
         """
