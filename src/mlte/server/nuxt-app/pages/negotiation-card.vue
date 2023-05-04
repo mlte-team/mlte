@@ -13,102 +13,136 @@
 
     <h3 class="section-header">System Requirements</h3>
     <div class="input-group">
-      <div v-for="(goal, index) in form.system.goals">
-        <p><b>Goal {{ index + 1 }}</b></p>
+      <h3 class="section-header">Goals</h3>
+      <p>
+        Goals or objectives that the model is going to help satisfy.
+      </p>
+      <div v-for="(goal, goalIndex) in form.system.goals">
+        <p><b>Goal {{ goalIndex + 1 }}</b></p>
 
         <UsaTextInput v-model="goal.description">
           <template v-slot:label>
-            Goals of the system <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+            Goal Description
           </template>
         </UsaTextInput>
 
         <div v-for="(metric, index) in goal.metrics">
           <UsaTextInput v-model="metric.description">
             <template v-slot:label>
-              Metric subfield description @@ TODO: Update this label when list structure changes @@
+              Metric subfield description @@ TODO: Update this label when list structure changes @@@
+              <InfoIcon>
+                For each goal, select a performance metric that captures the system's 
+                ability to accomplish that goal; e.g., acceptance criteria for determining
+                that the model is performing correctly.
+              </InfoIcon>
             </template>
           </UsaTextInput>
 
           <UsaTextInput v-model="metric.baseline">
             <template v-slot:label>
               Baseline
+              <InfoIcon>
+                Select a baseline for each performance metric, which means a measurement that 
+                evaluates whether or not the model will/can achieve the main goal for which it is being created. 
+                If the goal cannot be measured directly, select a reasonable proxy and justify how that will 
+                reliably predict the model’s performance in achieving its goal.
+              </InfoIcon>
             </template>
           </UsaTextInput>
         </div>
+        <DeleteButton @click="deleteGoal(goalIndex)">
+          Delete goal
+        </DeleteButton>
         <hr/>
       </div>
 
-      <button @click="addGoal" class="usa button usa-button--unstyled">
-        <img src="~/assets/uswds/img/usa-icons/add_circle.svg"/> Add more goal(s)
-      </button>
+      <AddButton @click="addGoal()">
+        Add goal
+      </AddButton>
     </div>
 
     <UsaTextInput v-model="form.system.problem_type">
       <template v-slot:label>
-        ML Problem Type <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        ML Problem Type
+        <InfoIcon>
+          Type of ML problem that the model is intended to solve.
+        </InfoIcon>
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.task">
       <template v-slot:label>
-        ML Task <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        ML Task
+        <InfoIcon>
+          Well-defined task that model is expected to perform, or problem that the model is 
+          expected to solve.
+        </InfoIcon>
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.usage_context">
       <template v-slot:label>
-        Usage Context <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Usage Context
+        <InfoIcon>
+          Who is intended to utilize the system/model; how the results of the model are 
+          going to be used by end users or in the context of a larger system.
+        </InfoIcon>
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.fp_risk">
       <template v-slot:label>
-        False Positive Risk <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        False Positive Risk
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.fn_risk">
       <template v-slot:label>
-        False Negative Risk <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        False Negative Risk
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.other_risks">
       <template v-slot:label>
-        Other risks of producing incorrect results <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Other risks of producing incorrect results
       </template>
     </UsaTextInput>
 
     <hr/>
 
     <h3 class="section-header">Data</h3>
+    <p>
+      Details of the data that will influence development efforts; fill out all that are known. For 
+      access / availability, record what needs to happen to access the data, such as accounts that 
+      need to be created or methods for data transportation.
+    </p>
     <UsaTextInput v-model="form.data.source_data_location">
       <template v-slot:label>
-        Source Data Location <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Source Data Location
       </template>
     </UsaTextInput>
     
     <UsaTextInput v-model="form.data.data_classification">
       <template v-slot:label>
-        Data Classification <img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Data Classification
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.data.account_access">
       <template v-slot:label>
-        Account Access / Account Availability<img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Account Access / Account Availability
       </template>
     </UsaTextInput>
 
     <UsaTextInput >
       <template v-slot:label>
-        Labels / Distribution @@ TODO PLACEHOLDER @@<img src="~/assets/uswds/img/usa-icons/info.svg"/>
+        Labels / Distribution @@ TODO PLACEHOLDER @@<img src="~/assets/uswds/img/usa-icons/info.svg" class="inline-icon"/>
       </template>
     </UsaTextInput>
 
-    <button class="usa-button usa-button--unstyled">
-      <img src="~/assets/uswds/img/usa-icons/add_circle.svg"/>Add Additional Labels
-    </button>
+    <AddButton>
+      Add additional labels
+    </AddButton>
 
     <hr/>
 
@@ -153,20 +187,27 @@
         <hr/>
       </div>
 
-      <button @click="addSchema" class="usa-button usa-button--unstyled">
-        <img src="~/assets/uswds/img/usa-icons/add_circle.svg"/>Add additional field(s)
-      </button>
+      <AddButton @click="addSchema()">
+        Add additional field(s)
+      </AddButton>
     </div>
 
     <UsaTextarea v-model="form.data_rights">
       <template v-slot:label>
         Data Rights
+        <InfoIcon>
+          Are there particular ways in which the data can and cannot be used?
+        </InfoIcon>
       </template>
     </UsaTextarea>
 
     <UsaTextarea v-model="form.data_policies">
       <template v-slot:label>
         Data Policies
+        <InfoIcon>
+          Are there policies that govern the data and its use, such as Personally Identifiable 
+          Information [PII]?
+        </InfoIcon>
       </template>
     </UsaTextarea>
 
@@ -175,88 +216,120 @@
     <h3 class="section-header">Model</h3>
     <div class="input-group" style="margin-top: 1em;">
       <h3 class="section-header">Development Compute Resources</h3>
-      <div style="display: inline-block; border: 1px solid red; width: 40%">
-        <UsaTextInput v-model="form.model.development.resources.gpus" type="number">
-          <template v-slot:label>
-            Graphics Processing Units (GPUs)
-          </template>
-        </UsaTextInput>
+      <p>
+        Describe the amount and type of compute resources 
+        needed for training.
+      </p>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput v-model="form.model.development.resources.gpus" type="number">
+            <template v-slot:label>
+              Graphics Processing Units (GPUs)
+            </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput v-model="form.model.development.resources.cpus" type="number">
+            <template v-slot:label>
+              Central Processing Units (CPUs)
+            </template>
+          </UsaTextInput>
+        </div>
       </div>
 
-      <div style="display: inline-block; border: 1px solid green; width: 40%">
-        <UsaTextInput v-model="form.model.development.resources.cpus" type="number">
-          <template v-slot:label>
-            Central Processing Units (CPUs)
-          </template>
-        </UsaTextInput>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput v-model="form.model.development.resources.memory" type="number">
+            <template v-slot:label>
+              Memory
+            </template>
+            <template v-slot:input-suffix>
+              GB
+            </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput v-model="form.model.development.resources.storage" type="number">
+            <template v-slot:label>
+              Storage
+            </template>
+            <template v-slot:input-suffix>
+              GB
+            </template>
+          </UsaTextInput>
+        </div>
       </div>
-
-      <UsaTextInput v-model="form.model.development.resources.memory" type="number">
-        <template v-slot:label>
-          Memory
-        </template>
-        <template v-slot:input-suffix>
-          GB
-        </template>
-      </UsaTextInput>
-
-      <UsaTextInput v-model="form.model.development.resources.storage" type="number">
-        <template v-slot:label>
-          Storage
-        </template>
-        <template v-slot:input-suffix>
-          GB
-        </template>
-      </UsaTextInput>
     </div>
 
-    <UsaTextInput v-model="form.model.production.environment.integration">
+    <UsaTextarea v-model="form.model.production.environment.integration">
       <template v-slot:label>
         Integration
+        <InfoIcon>
+          Describe how the model will be integrated into the system; this likely 
+          includes descriptions of model deployment, application hosting, etc.
+        </InfoIcon>
       </template>
-    </UsaTextInput>
+    </UsaTextarea>
 
     <UsaTextInput v-model="form.model.production.environment.output">
       <template v-slot:label>
         Output
+        <InfoIcon>
+          Describe the output format and specification needed for the system to 
+          ingest model results.
+        </InfoIcon>
       </template>
     </UsaTextInput>
 
     <div class="input-group" style="margin-top: 1em;">
       <h3 class="section-header">Production Compute Resources</h3>
-      <div style="display: inline-block; border: 1px solid red; width: 40%">
-        <UsaTextInput v-model="form.model.production.resources.gpus" type="number">
-          <template v-slot:label>
-            Graphics Processing Units (GPUs)
-          </template>
-        </UsaTextInput>
+      <p>
+        Describe the hardware and software requirements including amount of
+        compute resources needed for inference.
+      </p>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput v-model="form.model.production.resources.gpus" type="number">
+            <template v-slot:label>
+              Graphics Processing Units (GPUs)
+            </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput v-model="form.model.production.resources.cpus" type="number">
+            <template v-slot:label>
+              Central Processing Units (CPUs)
+            </template>
+          </UsaTextInput>
+        </div>
       </div>
 
-      <div style="display: inline-block; border: 1px solid green; width: 40%">
-        <UsaTextInput v-model="form.model.production.resources.cpus" type="number">
-          <template v-slot:label>
-            Central Processing Units (CPUs)
-          </template>
-        </UsaTextInput>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput v-model="form.model.production.resources.memory" type="number">
+            <template v-slot:label>
+              Memory
+            </template>
+            <template v-slot:input-suffix>
+              GB
+            </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput v-model="form.model.production.resources.storage" type="number">
+            <template v-slot:label>
+              Storage
+            </template>
+            <template v-slot:input-suffix>
+              GB
+            </template>
+          </UsaTextInput>
+        </div>
       </div>
-
-      <UsaTextInput v-model="form.model.production.resources.memory" type="number">
-        <template v-slot:label>
-          Memory
-        </template>
-        <template v-slot:input-suffix>
-          GB
-        </template>
-      </UsaTextInput>
-
-      <UsaTextInput v-model="form.model.production.resources.storage" type="number">
-        <template v-slot:label>
-          Storage
-        </template>
-        <template v-slot:input-suffix>
-          GB
-        </template>
-      </UsaTextInput>
     </div>
 
     <hr/>
@@ -355,6 +428,10 @@
 
   function addGoal(){
     form.value.system.goals.push({"description": "", "metrics": [{"performance_metrics": "", "baseline": ""}]})
+  }
+
+  function deleteGoal(index){
+    form.value.system.goals.splice(index, 1);
   }
 
   function addSchema(){
