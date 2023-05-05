@@ -67,6 +67,8 @@ httpcore==0.17.0
     # via httpx
 httpx==0.24.0
     # via -r requirements_dev.in
+flask==2.2.3
+    # via TODO
 idna==3.4
     # via
     #   anyio
@@ -84,6 +86,8 @@ iniconfig==2.0.0
     # via pytest
 isort==5.12.0
     # via -r requirements_dev.in
+itsdangerous==2.1.2
+    # via flask
 jaraco-classes==3.2.3
     # via keyring
 jeepney==0.8.0
@@ -210,6 +214,8 @@ virtualenv==20.19.0
     # via tox
 webencodings==0.5.1
     # via bleach
+werkzeug==2.2.3
+    # via flask
 zipp==3.13.0
     # via
     #   importlib-metadata

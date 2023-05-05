@@ -42,9 +42,9 @@
             <template v-slot:label>
               Baseline
               <InfoIcon>
-                Select a baseline for each performance metric, which means a measurement that 
-                evaluates whether or not the model will/can achieve the main goal for which it is being created. 
-                If the goal cannot be measured directly, select a reasonable proxy and justify how that will 
+                Select a baseline for each performance metric, which means a measurement that <br/>
+                evaluates whether or not the model will/can achieve the main goal for which it is being created. <br/>
+                If the goal cannot be measured directly, select a reasonable proxy and justify how that will <br/>
                 reliably predict the model’s performance in achieving its goal.
               </InfoIcon>
             </template>
@@ -61,14 +61,14 @@
       </AddButton>
     </div>
 
-    <UsaTextInput v-model="form.system.problem_type">
+    <UsaSelect v-model="form.system.problem_type" :options=problem_type_options>
       <template v-slot:label>
         ML Problem Type
         <InfoIcon>
           Type of ML problem that the model is intended to solve.
         </InfoIcon>
       </template>
-    </UsaTextInput>
+    </UsaSelect>
 
     <UsaTextInput v-model="form.system.task">
       <template v-slot:label>
@@ -420,6 +420,18 @@
       }
     }
   })
+
+  var problem_type_options = ([
+    {"value": "Classification", "text": "Classification"},
+    {"value": "Clustering", "text": "Clustering"},
+    {"value": "Trend", "text": "Trend"},
+    {"value": "Alert", "text": "Alert"},
+    {"value": "Forecasting", "text": "Forecasting"},
+    {"value": "Summarization", "text": "Summarization"},
+    {"value": "Benchmarking", "text": "Benchmarking"},
+    {"value": "Goals", "text": "Goals"},
+    {"value": "Other", "text": "Other"},
+  ])
 
 
   function printState(){
