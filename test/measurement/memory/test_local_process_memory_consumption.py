@@ -14,7 +14,7 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.measurement.validation import Validator, Success, Failure
+from mlte.validation import Validator, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -60,7 +60,7 @@ def test_memory_nix_evaluate_async():
 
     # Capture memory consumption; blocks until process exit
     m.evaluate_async(p.pid)
-    stats = m.wait_for_result()
+    stats = m.wait_for_output()
 
     assert len(str(stats)) > 0
     assert int(time.time() - start) >= SPIN_DURATION
@@ -81,8 +81,8 @@ def test_memory_nix_validate_success():
     vr = Validator("Succeed", lambda _: Success())(stats)
     assert bool(vr)
 
-    assert vr.result is not None
-    assert isinstance(vr.result, MemoryStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata.typename, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(
@@ -100,8 +100,8 @@ def test_memory_nix_validate_failure():
     vr = Validator("Fail", lambda _: Failure())(stats)
     assert not bool(vr)
 
-    assert vr.result is not None
-    assert isinstance(vr.result, MemoryStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata.typename, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(

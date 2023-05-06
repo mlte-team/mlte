@@ -1,14 +1,14 @@
 from .data_model import (
-    ResultVersion,
-    Result,
+    ValueVersion,
+    Value,
     ModelIdentifier,
     ModelVersion,
     ModelMetadata,
 )
 
 __all__ = [
-    "ResultVersion",
-    "Result",
+    "ValueVersion",
+    "Value",
     "ModelIdentifier",
     "ModelVersion",
     "ModelMetadata",

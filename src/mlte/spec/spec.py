@@ -5,24 +5,24 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from itertools import groupby, combinations
-from typing import List, Dict, Iterable, Any, Union
+from itertools import groupby
+from typing import Iterable, Any, Union, Optional
 
 from mlte.property import Property
-from mlte.measurement.validation import ValidationResult
+from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
-from mlte.binding import Binding
 from .bound_spec import BoundSpec
+from .condition import Condition
 
 
-def _unique(collection: List[str]) -> bool:
+def _unique(collection: list[str]) -> bool:
     """
     Determine if all elements of a collection are unique.
 
     :param collection: The collection
-    :type collection: Iterable
+    :type collection: list[str]
 
     :return: `True` if all elements are unique, `False` otherwise
     :rtype: bool
@@ -55,21 +55,23 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, *properties: Property):
+    def __init__(self, properties: dict[Property, list[Condition]]):
         """
         Initialize a Spec instance.
 
-        :param properties: The collection of properties that compose the spec
-        :type properties: Property
+        :param properties: The collection of properties that compose the spec.
+        :type conditions: list[Property]
         """
-        # TODO(Kyle): What additional metadata should
-        # we store at the level of a Spec?
-
-        self.properties = [p for p in properties]
+        self.properties = [p for p in properties.keys()]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
+
+        self.conditions: dict[str, list[Condition]] = {
+            property.name: properties[property] for property in self.properties
+        }
+        """A dict to store conditions by property."""
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -87,6 +89,33 @@ class Spec:
         """
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
+
+    def _add_condition(self, property_name: str, condition: Condition):
+        """
+        Adds the given condition to the property.
+
+        :param property_name: The name of the property we are adding the condition for.
+        :type property_name: str
+
+        :param condition: The condition we want to add to this property.
+        :type condition: Condition
+        """
+        if not any(
+            property.name == property_name for property in self.properties
+        ):
+            raise RuntimeError(
+                f"Property {property_name} is not part of this Specification."
+            )
+        if property_name not in self.conditions:
+            self.conditions[property_name] = []
+
+        # Only add condition if it is not already there for this property.
+        found = any(
+            curr_condition == condition
+            for curr_condition in self.conditions[property_name]
+        )
+        if not found:
+            self.conditions[property_name].append(condition)
 
     # -------------------------------------------------------------------------
     # Save / Load
@@ -127,78 +156,68 @@ class Spec:
         )
         return Spec._from_json(json=document)
 
-    def _to_json(self) -> Dict[str, Any]:
+    # -------------------------------------------------------------------------
+    # JSON document generation.
+    # -------------------------------------------------------------------------
+
+    def _to_json(self) -> dict[str, Any]:
         """
-        Serialize Spec content to JSON document
+        Serialize Spec content to JSON-like dict document
 
         :return: The serialized content
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
-        # TODO(Kyle): Include additional metdata?
-        return {
-            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "properties": [p._to_json() for p in self.properties],
-        }
+        return self._spec_document()
 
     @staticmethod
-    def _from_json(json: Dict[str, Any]) -> Spec:
+    def _from_json(json: dict[str, Any]) -> Spec:
         """
         Deserialize Spec content from JSON document.
 
         :param json: The json document
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized specification
         :rtype: Spec
         """
-        return Spec(*[Property._from_json(d) for d in json["properties"]])
+        spec = Spec({Property._from_json(d): [] for d in json["properties"]})
+        for property_doc in json["properties"]:
+            for condition_doc in property_doc["conditions"]:
+                spec._add_condition(
+                    property_doc["name"], Condition.from_json(condition_doc)
+                )
 
-    # -------------------------------------------------------------------------
-    # Specification Binding
-    # -------------------------------------------------------------------------
+        return spec
 
-    def bind(
+    def _spec_document(
         self,
-        binding: Binding,
-        results: Iterable[ValidationResult],
-        strict: bool = True,
-    ) -> BoundSpec:
+        results: Optional[dict[str, dict[str, Result]]] = None,
+    ) -> dict[str, Any]:
         """
-        Collect validation results and bind them to properties.
+        Generate the spec document.
 
-        If the `strict` flag is set to `True`, then all properties
-        declared in the spec must have at least one (1) result
-        bound to them in order to proceed with report generation.
-        Spec collection is set to `strict` mode by default.
+        :param result: The Results of validations, ordered by property and condition (optional).
+        :type results: dict[str, dict[str, Result]]
 
-        :param binding: The binding from properties to result
-        :type binding: Binding
-        :param results: Validation results
-        :type results: ValidationResult
-        :param strict: Flag indicating strict measurement requirements
-        :type strict: bool
-
-        :return: The bound specification
-        :rtype: BoundSpec
+        :return: The spec document
+        :rtype: dict[str, Any]
         """
-        self._validate_binding(binding, results, strict)
-
-        properties = [
-            self._bind_to_property(property, binding, results)
-            for property in self.properties
-        ]
-        document: Dict[str, Any] = {
+        document = {
             "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "metadata": self._metadata(),
-            "properties": properties,
+            "metadata": self._metadata_document(),
+            "properties": self._properties_document(results),
         }
-        return BoundSpec(document)
+        return document
 
-    def _metadata(self) -> Dict[str, Any]:
-        """Generate Spec metadata."""
+    def _metadata_document(self) -> dict[str, Any]:
+        """
+        Generate Spec metadata.
+
+        :return: The metadata document
+        :rtype: dict[str, Any]
+        """
         state = global_state()
-        if not state.has_model():
-            raise RuntimeError("Must set model in mlte context.")
+        state.ensure_initialized()
         model_identifier, model_version = state.get_model()
         return {
             "model_identifier": model_identifier,
@@ -206,110 +225,127 @@ class Spec:
             "timestamp": int(time.time()),
         }
 
-    def _validate_binding(
+    def _properties_document(
         self,
-        binding: Binding,
-        results: Iterable[ValidationResult],
-        strict: bool,
-    ):
+        results: Optional[dict[str, dict[str, Result]]] = None,
+    ) -> list[dict[str, Any]]:
         """
-        Validate correctness upon binding.
+        Generates a document with info an all properties.
 
-        :param binding: The binding from properties to result
-        :type binding: Binding
-        :param results: Collection of ValidationResults
-        :type results: ValidationResult
-        :param strict: Flag indicating strict measurement requirements
-        :type strict: bool
+        :param result: The Results of validations, ordered by property and condition (optional).
+        :type results: dict[str, dict[str, Result]]
 
-        :raises RuntimeError
+        :return: The properties document
+        :rtype: dict[str, Any]
         """
-        # Ensure that binding and spec are compatible
-        _validate_binding_spec_compatibility(binding, self)
-        # Ensure that all results are unique
-        _validate_result_uniqueness(results)
-        # Ensure that each bind point in binding has a result
-        _validate_all_bindings_have_result(binding, results)
-        if strict:
-            # Ensure that every collected result is bound
-            _validate_all_results_have_binding(binding, results)
+        if results is not None:
+            if any(
+                property.name not in results for property in self.properties
+            ):
+                raise RuntimeError(
+                    "There are properties that do not have associated validated results; can't generate document."
+                )
 
-    def _bind_to_property(
-        self,
-        property: Property,
-        binding: Binding,
-        results: Iterable[ValidationResult],
-    ) -> Dict[str, Any]:
+        property_docs = [
+            self._property_document(
+                property,
+                results[property.name] if results is not None else {},
+            )
+            for property in self.properties
+        ]
+        return property_docs
+
+    def _property_document(
+        self, property: Property, results: dict[str, Result]
+    ) -> dict[str, Any]:
         """
-        Collect the results for an individual property
-        from result set into a property-level document.
+        Generate a property document.
 
         :param property: The property of interest
         :type property: Property
-        :param binding: The mapping from properties to results
-        :type binding: Binding
-        :param results: The collection of results
-        :type results: Iterable[ValidationResult]
+        :param result: The Results of validations, ordered by condition.
+        :type results: dict[str, Result]
 
         :return: The property-level document
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
-        assert all(
-            r.result is not None for r in results
-        ), "Broken precondition."
+        document: dict[str, Any] = property._to_json()
+        document["conditions"] = self._conditions_document(
+            self.conditions[property.name], results
+        )
+        return document
 
-        # Filter results relevant to property
-        targets = set(binding.identifiers_for(property.name))
-        assert len(targets) > 0, "Broken invariant."
+    def _conditions_document(
+        self,
+        conditions: list[Condition],
+        results: dict[str, Result],
+    ) -> list[dict[str, Any]]:
+        """
+        Generate a conditions document.
 
-        # TODO(Kyle): Clean this up.
-        results_for_property = [
-            r for r in results if str(r.result.identifier) in targets  # type: ignore
-        ]
-        measurements = []
+        :param conditions: A list of Conditions.
+        :type conditions: list[Condition]
+        :param result: The optional Results of validations, ordered by condition.
+        :type results: dict[str, Result]
+
+        :return: The conditions-level document
+        :rtype: list[dict[str, Any]]
+        """
+        conditions_by_measurement = []
         for _, group in groupby(
-            results_for_property, key=lambda vr: vr.result.measurement_typename  # type: ignore
+            conditions, key=lambda condition: condition.measurement_type
         ):
-            measurements.append(
-                self._bind_for_measurement([vr for vr in group])
+            conditions_by_measurement.append([condition for condition in group])
+
+        document = [
+            self._condition_document(
+                condition,
+                results[condition.label]
+                if condition.label in results
+                else None,
             )
-
-        document = {
-            "name": property.name,
-            "description": property.description,
-            "measurements": measurements,
-        }
+            for condition in conditions
+        ]
         return document
 
-    def _bind_for_measurement(
-        self, results: List[ValidationResult]
-    ) -> Dict[str, Any]:
+    def _condition_document(
+        self,
+        condition: Condition,
+        result: Optional[Result] = None,
+    ) -> dict[str, Any]:
         """
-        Collect results into a measurement-level document.
+        Returns a document with information for a given condition, optionally with validation result.
 
-        :param result: The validation results for the measurement
-        :type results: Iterable[ValidationResult]
+        :param condition: The condition to turn into a document.
+        :type condition: Condition
+        :param result: The Result of validating the Condition, if any.
+        :type result: Optional[Result]
 
-        :return: The measurement-level document
-        :rtype: Dict[str, Any]
+        :return: The document for the specific condition.
+        :rtype: dict[str, Any]
         """
-        assert len(results) > 0, "Broken invariant."
-        assert _all_equal(
-            result.result.measurement_typename for result in results  # type: ignore
-        ), "Broken invariant."
-        measurement_name = results[0].result.measurement_typename  # type: ignore
-        document = {
-            "name": measurement_name,
-            "validators": [
-                {
-                    "name": vr.validator_name,
-                    "result": f"{vr}",
-                    "message": vr.message,
-                }
-                for vr in results
-            ],
-        }
+        document = condition.to_json()
+        if result is not None:
+            document["validation"] = result.to_json()
         return document
+
+    # -------------------------------------------------------------------------
+    # BoundSpec document generation.
+    # -------------------------------------------------------------------------
+
+    def generate_bound_spec(
+        self, results: dict[str, dict[str, Result]]
+    ) -> BoundSpec:
+        """
+        Generates a bound spec with the validation results.
+
+        :param result: The Results to bind to the spec, ordered by property and condition.
+        :type results: dict[str, dict[str, Result]]
+
+        :return: A BoundSpec associating the Spec with the specific Results.
+        :rtype: BoundSpec
+        """
+        return BoundSpec(self._spec_document(results))
 
     # -------------------------------------------------------------------------
     # Equality Testing
@@ -325,98 +361,6 @@ class Spec:
     def __neq__(self, other: Spec) -> bool:
         """Compare Spec instances for inequality."""
         return not self.__eq__(other)
-
-
-def _validate_binding_spec_compatibility(binding: Binding, spec: Spec):
-    """
-    Validate that a Binding is appropriate for a Spec.
-
-    - Ensure that each property in the spec is included in the binding
-    - Ensure that each property in spec has at least 1 associated identifier
-    - Ensure that binding does not have extraneous properties
-
-    :param binding: The binding of interest
-    :type binding: Binding
-    :param spec: The spec of interest
-    :type spec: Spec
-
-    :raises: RuntimeError
-    """
-    for property in spec.properties:
-        if len(binding.identifiers_for(property.name)) < 1:
-            raise RuntimeError(
-                "Binding must include at least"
-                f" one mapping for property {property.name}."
-            )
-    for name in binding.description.keys():
-        if not spec.has_property(name):
-            raise RuntimeError(
-                "Binding contains" f" unnecessary property {name}."
-            )
-
-
-def _validate_result_uniqueness(results: Iterable[ValidationResult]):
-    """
-    Validate the uniqueness of validation results.
-
-    :param results: The validation results
-    :type results: Iterable[ValidationResult]
-
-    :raises RuntimeError: If any two results are equivalent
-    """
-    for pair in combinations(results, 2):
-        # Comparison of ValidationResult compares identifier
-        if pair[0] == pair[1]:
-            raise RuntimeError("All validation results must be unique")
-
-
-def _validate_all_bindings_have_result(
-    binding: Binding, results: Iterable[ValidationResult]
-):
-    """
-    Ensure that at each identifier in a binding has a corresponding result.
-
-    :param binding: The binding
-    :type binding: Binding
-    :param results: The collection of results
-    :type results: Iterable[ValidationResult]
-
-    :raises: RuntimeError
-    """
-    result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
-    for property_name, identifiers in binding.description.items():
-        for identifier in identifiers:
-            if identifier not in result_identifiers:
-                raise RuntimeError(
-                    f"Missing result to bind to {identifier}"
-                    f" for property {property_name}."
-                )
-
-
-def _validate_all_results_have_binding(
-    binding: Binding, results: Iterable[ValidationResult]
-):
-    """
-    Ensure that each result has a corresponding identifier in binding.
-
-    :param binding: The binding
-    :type binding: Binding
-    :param results: The collection of results
-    :type results: Iterable[ValidationResult]
-
-    :raises: RuntimeError
-    """
-    result_identifiers = set(vr.result.identifier.name for vr in results)  # type: ignore
-
-    binding_identifiers = set(
-        id for collection in binding.description.values() for id in collection
-    )
-    for result_identifier in result_identifiers:
-        if result_identifier not in binding_identifiers:
-            raise RuntimeError(
-                f"Result with identifier {result_identifier}"
-                " is not bound to any property."
-            )
 
 
 def _equal(a: Spec, b: Spec) -> bool:

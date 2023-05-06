@@ -12,7 +12,7 @@ import subprocess
 import mlte
 from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
-from mlte.measurement.validation import Validator, Success, Failure
+from mlte.validation import Validator, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -57,7 +57,7 @@ def test_cpu_nix_evaluate_async():
 
     # Capture CPU utilization; blocks until process exit
     m.evaluate_async(p.pid)
-    stat = m.wait_for_result()
+    stat = m.wait_for_output()
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -77,8 +77,8 @@ def test_cpu_nix_validate_success():
     assert bool(vr)
 
     # Data is accessible from validation result
-    assert vr.result is not None
-    assert isinstance(vr.result, CPUStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata.typename, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(
@@ -94,8 +94,8 @@ def test_cpu_nix_validate_failure():
     assert not bool(vr)
 
     # Data is accessible from validation result
-    assert vr.result is not None
-    assert isinstance(vr.result, CPUStatistics)
+    assert vr.measurement_metadata is not None
+    assert vr.measurement_metadata, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(

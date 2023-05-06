@@ -28,7 +28,7 @@ class Property(metaclass=abc.ABCMeta):
             for method in ["__init__", "__repr__"]
         )
 
-    def __init__(self, name: str, description: str):
+    def __init__(self, name: str, description: str, rationale: str):
         """
         Initialize a Property instance.
 
@@ -36,11 +36,15 @@ class Property(metaclass=abc.ABCMeta):
         :type name: str
         :param description: The description of the property
         :type description: str
+        :param rationale: The rationale for using the property
+        :type rationale: str
         """
         self.name: str = name
         """The name of the property."""
         self.description = description
         """The description of the property."""
+        self.rationale = rationale
+        """The rationale for using the property."""
 
     def _to_json(self) -> Dict[str, str]:
         """
@@ -53,6 +57,7 @@ class Property(metaclass=abc.ABCMeta):
             "name": self.name,
             "repr": repr(self),
             "description": self.description,
+            "rationale": self.rationale,
         }
 
     @staticmethod
@@ -95,6 +100,7 @@ def _load_from_document(document: Dict[str, str]) -> Property:
     if "name" not in document or "repr" not in document:
         raise RuntimeError("Saved property is malformed.")
     property_repr = document["repr"]
+    rationale = document["rationale"]
 
     # Extract the classname from the call
     classname = _get_class_name(property_repr)
@@ -110,6 +116,6 @@ def _load_from_document(document: Dict[str, str]) -> Property:
             continue
 
         # Instantiate the property
-        return class_()  # type: ignore
+        return class_(rationale)  # type: ignore
 
     raise RuntimeError(f"Property {document['name']} not found")

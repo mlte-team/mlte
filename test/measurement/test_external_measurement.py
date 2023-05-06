@@ -3,9 +3,8 @@ Unit test for ExternalMeasurement.
 """
 import pytest
 
-from mlte.measurement.result import Integer
-from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.identifier import Identifier
+from mlte.value.types import Integer
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
 from mlte.measurement import ExternalMeasurement
 
 
@@ -29,7 +28,7 @@ def test_evaluate_external():
     y = 2
     expected_value = _dummy_calculation(x, y)
     expected_result = Integer(
-        MeasurementMetadata("dummy", Identifier("test")), expected_value
+        MeasurementMetadata("dummy", "test"), expected_value
     )
 
     measurement = ExternalMeasurement("dummy", Integer)
@@ -42,7 +41,7 @@ def test_evaluate_external():
 def test_evaluate_ingest():
     expected_value = 1000
     expected_result = Integer(
-        MeasurementMetadata("dummy", Identifier("test")), expected_value
+        MeasurementMetadata("dummy", "test"), expected_value
     )
 
     measurement = ExternalMeasurement("dummy", Integer)

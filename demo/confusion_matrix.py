@@ -1,5 +1,5 @@
 """
-Implementation of ConfusionMatrix result.
+Implementation of ConfusionMatrix value.
 """
 
 from __future__ import annotations
@@ -7,17 +7,17 @@ from typing import Dict, Any
 
 import numpy as np
 
-from mlte.measurement.result import Result
-from mlte.measurement.measurement_metadata import MeasurementMetadata
-from mlte.measurement.validation import (
+from mlte.value import Value
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.validation import (
     Validator,
-    ValidationResult,
+    Result,
     Success,
     Failure,
 )
 
 
-class ConfusionMatrix(Result):
+class ConfusionMatrix(Value):
     def __init__(
         self, measurement_metadata: MeasurementMetadata, matrix: np.ndarray
     ):
@@ -26,12 +26,12 @@ class ConfusionMatrix(Result):
         self.matrix: np.ndarray = matrix
         """Underlying matrix represented as numpy array."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         return {"matrix": [[int(val) for val in row] for row in self.matrix]}
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json_: Dict[str, Any]
+        measurement_metadata: MeasurementMetadata, json_: dict[str, Any]
     ) -> ConfusionMatrix:
         return ConfusionMatrix(
             measurement_metadata, np.asarray(json_["matrix"])
@@ -40,11 +40,9 @@ class ConfusionMatrix(Result):
     def __str__(self) -> str:
         return str(self.matrix)
 
-    def misclassification_count_less_than(
-        self, threshold: int
-    ) -> ValidationResult:
+    def misclassification_count_less_than(self, threshold: int) -> Result:
         return Validator(
-            "MisclassCountLessThan",
+            "misclassification_count_less_than",
             lambda cm: Success(
                 f"Misclass count {cm.misclassifications} less than threshold {threshold}"
             )

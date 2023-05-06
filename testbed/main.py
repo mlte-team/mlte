@@ -10,7 +10,7 @@ sys.path.append(package_root())
 
 import mlte
 from mlte.measurement.storage import LocalObjectSize
-from mlte.measurement.result import Integer
+from mlte.value.types import Integer
 import mlte.api as api
 
 # Script exit codes
@@ -30,7 +30,7 @@ def main() -> int:
     r: Integer = m.evaluate(os.path.abspath(__file__))
     r.save()
 
-    result = api.read_result(uri, "FakeModel", "0.0.1", "file size")
+    result = api.read_value(uri, "FakeModel", "0.0.1", "file size")
     print(result)
 
     return EXIT_SUCCESS

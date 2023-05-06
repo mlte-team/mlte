@@ -4,33 +4,33 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
-from .result import Result
+from mlte.value import Value
 from .measurement import Measurement
 
 
 class ExternalMeasurement(Measurement):
-    def __init__(self, identifier: str, result_type: type):
+    def __init__(self, identifier: str, value_type: type):
         """
         Initialize a new ExternalMeasurement measurement.
 
         :param identifier: A unique identifier for the instance
         :type identifier: str
-        :param result_type: The type of the Result this measurement will return.
-        :type result_type: Type
+        :param value_type: The type of the Value this measurement will return.
+        :type value_type: Type
         """
         super().__init__(self, identifier)
-        if not issubclass(Result, result_type):
+        if not issubclass(Value, value_type):
             raise Exception(
-                f"Result type provided is not a subtype of Result: {self.result_type}"
+                f"Value type provided is not a subtype of Value: {self.value_type}"
             )
-        self.result_type: type = result_type
+        self.value_type: type = value_type
 
-    def __call__(self, *args, **kwargs) -> Result:
-        """Evaluate a measurement and return results without semantics."""
-        result: Result = self.result_type(self.metadata, *args, **kwargs)
-        return result
+    def __call__(self, *args, **kwargs) -> Value:
+        """Evaluate a measurement and return values without semantics."""
+        value: Value = self.value_type(self.metadata, *args, **kwargs)
+        return value
 
-    def ingest(self, *args, **kwargs) -> Result:
-        """Ingest data without evaluating a function, to wrap it as the configured Result type. Currently works the same as evaluate()."""
-        result: Result = self.result_type(self.metadata, *args, **kwargs)
-        return result
+    def ingest(self, *args, **kwargs) -> Value:
+        """Ingest data without evaluating a function, to wrap it as the configured Value type. Currently works the same as evaluate()."""
+        value: Value = self.value_type(self.metadata, *args, **kwargs)
+        return value

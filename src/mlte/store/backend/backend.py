@@ -52,76 +52,76 @@ class SessionHandle:
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     # -------------------------------------------------------------------------
-    # Interface: Read Results
+    # Interface: Read Values
     # -------------------------------------------------------------------------
 
-    def read_result(
+    def read_value(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_version: Optional[int] = None,
+        value_identifier: str,
+        value_version: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        Read an individual result from the backend store.
+        Read an individual value from the backend store.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param result_identifier: The identifier for the result of interest
-        :type result_identifier: str
-        :param result_version: The (optional) version for the result
-        :type result_version: Optional[int]
+        :param value_identifier: The identifier for the value of interest
+        :type value_identifier: str
+        :param value_version: The (optional) version for the value
+        :type value_version: Optional[int]
 
-        :return: {"results": [{ ...  result document ...}]}
+        :return: {"values": [{ ...  value document ...}]}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
-    def read_results(
+    def read_values(
         self, model_identifier: str, model_version: str, tag: Optional[str]
     ) -> Dict[str, Any]:
         """
-        Read a collection of results from the backend store.
+        Read a collection of values from the backend store.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param tag: The (optional) result tag to limit returned results
+        :param tag: The (optional) value tag to limit returned values
         :type tag: Optional[int]
 
-        :return: {"results": [{ ... result document ... } ...]}
+        :return: {"values": [{ ... value document ... } ...]}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     # -------------------------------------------------------------------------
-    # Interface: Write Results
+    # Interface: Write Values
     # -------------------------------------------------------------------------
 
-    def write_result(
+    def write_value(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_data: Dict[str, Any],
-        result_tag: Optional[str] = None,
+        value_identifier: str,
+        value_data: Dict[str, Any],
+        value_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        Write an individual result to the backend store.
+        Write an individual value to the backend store.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param result_identifier: The identifier for the result
-        :type result_identifier: str
-        :param result_data: The result data
-        :type result_data: Dict[str, Any]
-        :param result_tag: An optional tag for the result
-        :type result_tag: Optional[str]
+        :param value_identifier: The identifier for the value
+        :type value_identifier: str
+        :param value_data: The value data
+        :type value_data: Dict[str, Any]
+        :param value_tag: An optional tag for the value
+        :type value_tag: Optional[str]
 
         :return: {"written": <COUNT>}
         :rtype: Dict[str, Any]
@@ -129,106 +129,68 @@ class SessionHandle:
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     # -------------------------------------------------------------------------
-    # Interface: Delete Results
+    # Interface: Delete Values
     # -------------------------------------------------------------------------
 
-    def delete_result_version(
+    def delete_value_version(
         self,
         model_identifier: str,
         model_version: str,
-        result_identifier: str,
-        result_version: int,
+        value_identifier: str,
+        value_version: int,
     ) -> Dict[str, Any]:
         """
-        Delete an individual result version.
+        Delete an individual value version.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param result_identifier: The identifier for the result of interest
-        :type result_identifier: str
-        :param result_version: The version for the result
-        :type result_version: int
+        :param value_identifier: The identifier for the value of interest
+        :type value_identifier: str
+        :param value_version: The version for the value
+        :type value_version: int
 
         :return: {"deleted": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
-    def delete_result(
-        self, model_identifier: str, model_version: str, result_identifier: str
+    def delete_value(
+        self, model_identifier: str, model_version: str, value_identifier: str
     ) -> Dict[str, Any]:
         """
-        Delete all versions for a result.
+        Delete all versions for a value.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param result_identifier: The identifier for the result of interest
-        :type result_identifier: str
+        :param value_identifier: The identifier for the value of interest
+        :type value_identifier: str
 
         :return: {"deleted": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
-    def delete_results(
+    def delete_values(
         self,
         model_identifier: str,
         model_version: str,
-        result_tag: Optional[str] = None,
+        value_tag: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        Delete a collection of results.
+        Delete a collection of values.
 
         :param model_identifier: The identifier for the model of interest
         :type model_identifier: str
         :param model_version: The model version string
         :type model_version: str
-        :param result_tag: An (optional) tag to filter results that are deleted
-        :type result_tag: Optional[str]
+        :param value_tag: An (optional) tag to filter values that are deleted
+        :type value_tag: Optional[str]
 
         :return: {"deleted": <COUNT>}
-        :rtype: Dict[str, Any]
-        """
-        raise NotImplementedError("Cannot invoke method on abstract Backend.")
-
-    # -------------------------------------------------------------------------
-    # Interface: Binding
-    # -------------------------------------------------------------------------
-
-    def read_binding(
-        self, model_identifier: str, model_version: str
-    ) -> Dict[str, Any]:
-        """
-        Read a binding for the model context.
-
-        :param model_identifier: The model identifier
-        :type model_identifier: str
-        :param model_version: The model version
-        :type model_version: str
-
-        :return: {"binding": { ... binding document ... }}
-        :rtype: Dict[str, Any]
-        """
-        raise NotImplementedError("Cannot invoke method on abstract Backend.")
-
-    def write_binding(
-        self, model_identifier: str, model_version: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        Write a binding for the model context.
-
-        :param model_identifier: The model identifier
-        :type model_identifier: str
-        :param model_version: The model version
-        :type model_version: str
-        :param data: The binding data
-        :type data: Dict[str, Any]
-
-        :return: {"written": <COUNT>}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")

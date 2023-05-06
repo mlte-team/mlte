@@ -10,11 +10,11 @@ from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..process_measurement import ProcessMeasurement
-from ..measurement_metadata import MeasurementMetadata
-from mlte.measurement.result import Result
-from mlte.measurement.validation import (
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.value import Value
+from mlte.validation import (
     Validator,
-    ValidationResult,
+    Result,
     Success,
     Failure,
 )
@@ -25,7 +25,7 @@ from mlte._private.platform import is_windows
 # -----------------------------------------------------------------------------
 
 
-class CPUStatistics(Result):
+class CPUStatistics(Value):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
@@ -84,7 +84,7 @@ class CPUStatistics(Result):
         :type json: Dict[str, Any]
 
         :return: The deserialized instance
-        :rtype: Integer
+        :rtype: CPUStatistics
         """
         return CPUStatistics(
             measurement_metadata,
@@ -101,7 +101,7 @@ class CPUStatistics(Result):
         s += f"Maximum: {self.max:.2f}%"
         return s
 
-    def max_utilization_less_than(self, threshold: float) -> ValidationResult:
+    def max_utilization_less_than(self, threshold: float) -> Result:
         """
         Construct and invoke a validator for maximum CPU utilization.
 
@@ -109,10 +109,10 @@ class CPUStatistics(Result):
         :type threshold: float
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
-            "MaximumUtilization",
+        result: Result = Validator(
+            "max_utilization_less_than",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -127,9 +127,7 @@ class CPUStatistics(Result):
         )(self)
         return result
 
-    def average_utilization_less_than(
-        self, threshold: float
-    ) -> ValidationResult:
+    def average_utilization_less_than(self, threshold: float) -> Result:
         """
         Construct and invoke a validator for average CPU utilization.
 
@@ -137,10 +135,10 @@ class CPUStatistics(Result):
         :type threshold: float
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
-            "AverageUtilization",
+        result: Result = Validator(
+            "average_utilization_less_than",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"

@@ -7,9 +7,8 @@ from __future__ import annotations
 import abc
 import typing
 
-from .result import Result
-from .measurement_metadata import MeasurementMetadata
-from .identifier import Identifier
+from mlte.value import Value
+from mlte.measurement_metadata import MeasurementMetadata, Identifier
 
 
 def _has_callable(type, name) -> bool:
@@ -36,9 +35,7 @@ class Measurement(metaclass=abc.ABCMeta):
         :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = MeasurementMetadata(
-            type(instance).__name__, Identifier(identifier)
-        )
+        self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
 
     @property
@@ -48,17 +45,21 @@ class Measurement(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     @typing.no_type_check
-    def __call__(self, *args, **kwargs) -> Result:
-        """Evaluate a measurement and return results without semantics."""
+    def __call__(self, *args, **kwargs) -> Value:
+        """Evaluate a measurement and return a value semantics."""
         raise NotImplementedError("Cannot evaluate abstract measurement.")
 
     @typing.no_type_check
-    def evaluate(self, *args, **kwargs) -> Result:
+    def evaluate(self, *args, **kwargs) -> Value:
         """
-        Evaluate a measurement and return results with semantics.
+        Evaluate a measurement and return a value with semantics.
 
-        :return: The result of measurement execution, with semantics
-        :rtype: Result
+        :return: The resulting value of measurement execution, with semantics
+        :rtype: Value
         """
         # Evaluate the measurement
         return self.__call__(*args, **kwargs)
+
+    def __str__(self) -> str:
+        """Return a string representation of a Measurement."""
+        return f"{self.metadata}"

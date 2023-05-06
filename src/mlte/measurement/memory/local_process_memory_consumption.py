@@ -9,11 +9,11 @@ import subprocess
 from typing import Dict, Any
 
 from ..process_measurement import ProcessMeasurement
-from ..measurement_metadata import MeasurementMetadata
-from mlte.measurement.result import Result
-from mlte.measurement.validation import (
+from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.value import Value
+from mlte.validation import (
     Validator,
-    ValidationResult,
+    Result,
     Success,
     Failure,
 )
@@ -25,7 +25,7 @@ from mlte._private.platform import is_windows, is_macos
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(Result):
+class MemoryStatistics(Value):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
@@ -101,7 +101,7 @@ class MemoryStatistics(Result):
         s += f"Maximum: {self.max}"
         return s
 
-    def max_consumption_less_than(self, threshold: int) -> ValidationResult:
+    def max_consumption_less_than(self, threshold: int) -> Result:
         """
         Construct and invoke a validator for maximum memory consumption.
 
@@ -109,10 +109,10 @@ class MemoryStatistics(Result):
         :type threshold: int
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
-            "MaximumConsumption",
+        result: Result = Validator(
+            "max_consumption_less_than",
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
                 f"below threshold {threshold}"
@@ -127,9 +127,7 @@ class MemoryStatistics(Result):
         )(self)
         return result
 
-    def average_consumption_less_than(
-        self, threshold: float
-    ) -> ValidationResult:
+    def average_consumption_less_than(self, threshold: float) -> Result:
         """
         Construct and invoke a validator for average memory consumption.
 
@@ -137,10 +135,10 @@ class MemoryStatistics(Result):
         :type threshold: int
 
         :return: The validation result
-        :rtype: ValidationResult
+        :rtype: Result
         """
-        result: ValidationResult = Validator(
-            "AverageConsumption",
+        result: Result = Validator(
+            "average_consumption_less_than",
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
                 f"below threshold {threshold}"

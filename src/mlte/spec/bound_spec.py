@@ -17,8 +17,7 @@ from mlte.api import read_boundspec, write_boundspec
 
 class BoundSpec:
     """
-    BoundSpec represents the result of binding results
-    to specific properties within a specification.
+    BoundSpec represents a spec with validated results.
     """
 
     def __init__(self, document: Dict[str, Any]):

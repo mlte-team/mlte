@@ -7,12 +7,12 @@ from typing import Any, Dict, List, Optional
 
 
 @dataclass
-class ResultVersion:
-    """Represents an individual result version."""
+class ValueVersion:
+    """Represents an individual value version."""
 
     # The version identifier
     version: int
-    # The result payload
+    # The value payload
     data: Dict[str, Any] = field(default_factory=lambda: {})
 
     def to_json(self) -> Dict[str, Any]:
@@ -25,19 +25,19 @@ class ResultVersion:
         assert all(
             n in json for n in ["version", "data"]
         ), "Broken precondition."
-        return ResultVersion(version=json["version"], data=json["data"])
+        return ValueVersion(version=json["version"], data=json["data"])
 
 
 @dataclass
-class Result:
-    """Represents an individual result (a collection of versions)."""
+class Value:
+    """Represents an individual value (a collection of versions)."""
 
-    # The identifier for the result
+    # The identifier for the value
     identifier: str
-    # The tag associated with the result
+    # The tag associated with the value
     tag: Optional[str] = None
-    # A collection of result versions
-    versions: List[ResultVersion] = field(default_factory=lambda: [])
+    # A collection of value versions
+    versions: List[ValueVersion] = field(default_factory=lambda: [])
 
     def to_json(self) -> Dict[str, Any]:
         """Serialize to JSON object."""
@@ -53,10 +53,10 @@ class Result:
         assert all(
             n in json for n in ["identifier", "tag", "versions"]
         ), "Broken precondition."
-        return Result(
+        return Value(
             identifier=json["identifier"],
             tag=None if json["tag"] == "" else json["tag"],
-            versions=[ResultVersion.from_json(v) for v in json["versions"]],
+            versions=[ValueVersion.from_json(v) for v in json["versions"]],
         )
 
 
