@@ -122,11 +122,11 @@
       </template>
     </UsaTextInput>
     
-    <UsaTextInput v-model="form.data.data_classification">
+    <UsaSelect v-model="form.data.data_classification" :options=classiciation_options>
       <template v-slot:label>
         Data Classification
       </template>
-    </UsaTextInput>
+    </UsaSelect>
 
     <UsaTextInput v-model="form.data.account_access">
       <template v-slot:label>
@@ -424,12 +424,22 @@
   var problem_type_options = ([
     {"value": "Classification", "text": "Classification"},
     {"value": "Clustering", "text": "Clustering"},
+    {"value": "Content Generation", "text": "Content Generation"},
+    {"value": "Detection", "text": "Detection"},
     {"value": "Trend", "text": "Trend"},
     {"value": "Alert", "text": "Alert"},
     {"value": "Forecasting", "text": "Forecasting"},
     {"value": "Summarization", "text": "Summarization"},
     {"value": "Benchmarking", "text": "Benchmarking"},
     {"value": "Goals", "text": "Goals"},
+    {"value": "Other", "text": "Other"},
+  ])
+
+  var classiciation_options = ([
+    {"value": "Unclassified", "text": "Unclassified"},
+    {"value": "Controlled Unclassified Information (CUI)", "text": "Controlled Unclassified Information (CUI)"},
+    {"value": "Personally Identifiable Information (PII)", "text": "Personally Identifiable Information (PII)"},
+    {"value": "Protected Health Information (PHI)", "text": "Protected Health Information (PHI)"},
     {"value": "Other", "text": "Other"},
   ])
 
