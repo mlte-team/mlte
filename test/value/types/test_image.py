@@ -6,7 +6,7 @@ from pathlib import Path
 
 import mlte
 import requests
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value.types import Image
 
 # A cute image for testing purposes
@@ -24,12 +24,12 @@ def download_image(dst_dir: Path) -> Path:
 
 def test_from_str(tmp_path):
     local_path = str(download_image(tmp_path))
-    _ = Image(MeasurementMetadata("typename", "id"), local_path)
+    _ = Image(EvidenceMetadata("typename", "id"), local_path)
 
 
 def test_from_path(tmp_path):
     local_path = download_image(tmp_path)
-    _ = Image(MeasurementMetadata("typename", "id"), local_path)
+    _ = Image(EvidenceMetadata("typename", "id"), local_path)
 
 
 def test_from_bytes(tmp_path):
@@ -37,7 +37,7 @@ def test_from_bytes(tmp_path):
 
     with local_path.open("rb") as f:
         image = f.read()
-    _ = Image(MeasurementMetadata("typename", "id"), image)
+    _ = Image(EvidenceMetadata("typename", "id"), image)
 
 
 def test_save_load(tmp_path):
@@ -45,7 +45,7 @@ def test_save_load(tmp_path):
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
     local_path = download_image(tmp_path)
-    img = Image(MeasurementMetadata("typename", "id"), local_path)
+    img = Image(EvidenceMetadata("typename", "id"), local_path)
     img.save()
 
     r: Image = Image.load("id")  # type: ignore

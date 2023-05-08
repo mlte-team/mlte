@@ -8,7 +8,7 @@ from typing import Dict, Any
 
 from ..value import Value
 from mlte.validation import Validator, Result, Success, Failure
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 class Real(Value):
@@ -17,18 +17,18 @@ class Real(Value):
     interface for a single real value.
     """
 
-    def __init__(self, measurement_metadata: MeasurementMetadata, value: float):
+    def __init__(self, evidence_metadata: EvidenceMetadata, value: float):
         """
         Initialize a Real instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param value: The real value
         :type value: float
         """
         assert isinstance(value, float), "Argument must be `float`."
 
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.value = value
         """The wrapped real value."""
@@ -44,20 +44,20 @@ class Real(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> Real:
         """
         Deserialize an Real from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Real
         """
-        return Real(measurement_metadata, json["value"])
+        return Real(evidence_metadata, json["value"])
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""

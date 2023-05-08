@@ -1,5 +1,5 @@
 """
-MeasurementMetadata class definition.
+EvidenceMetadata class definition.
 """
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from typing import Any
 from .identifier import Identifier
 
 
-class MeasurementMetadata:
-    """A simple wrapper for measurement metadata."""
+class EvidenceMetadata:
+    """A simple wrapper for evidence metadata."""
 
     def __init__(self, typename: str, identifier: str):
         self.typename = typename
@@ -26,29 +26,29 @@ class MeasurementMetadata:
         }
 
     @staticmethod
-    def from_json(json: dict[str, Any]) -> MeasurementMetadata:
+    def from_json(json: dict[str, Any]) -> EvidenceMetadata:
         """Deserialize from JSON document."""
         if "identifier" not in json:
             raise RuntimeError(
-                "Cannot deserialize MeasurementMetadata, missing key 'identifier'."
+                "Cannot deserialize EvidenceMetadata, missing key 'identifier'."
             )
         if "typename" not in json:
             raise RuntimeError(
-                "Cannot deserialize MeasurementMetadata, missing key 'typename'."
+                "Cannot deserialize EvidenceMetadata, missing key 'typename'."
             )
-        return MeasurementMetadata(
+        return EvidenceMetadata(
             typename=json["typename"], identifier=json["identifier"]["name"]
         )
 
     def __str__(self) -> str:
-        """Return a string representation of a MeasurementMetadata."""
+        """Return a string representation of a EvidenceMetadata."""
         return f"{self.typename}-{self.identifier}"
 
     def __eq__(self, other: object) -> bool:
         """Compare instances for equality."""
-        if not isinstance(other, MeasurementMetadata):
+        if not isinstance(other, EvidenceMetadata):
             return False
-        reference: MeasurementMetadata = other
+        reference: EvidenceMetadata = other
         return (
             self.typename == reference.typename
             and self.identifier == reference.identifier

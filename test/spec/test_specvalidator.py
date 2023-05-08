@@ -9,7 +9,7 @@ from mlte.property.costs import StorageCost
 from mlte.measurement import ExternalMeasurement
 
 from mlte.value.types import Integer
-from mlte.measurement_metadata import MeasurementMetadata
+from mlte.evidence import EvidenceMetadata
 
 
 def test_no_property():
@@ -38,7 +38,7 @@ def test_no_condition():
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(MeasurementMetadata("typename", "id"), 1)
+    i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test2", i)
 
     with pytest.raises(RuntimeError):
@@ -55,7 +55,7 @@ def test_success():
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(MeasurementMetadata("typename", "id"), 1)
+    i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test", i)
 
     boundSpec = specValidator.validate()

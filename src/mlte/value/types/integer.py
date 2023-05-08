@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 from ..value import Value
 from mlte.validation import Validator, Result, Success, Failure
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 class Integer(Value):
@@ -15,18 +15,18 @@ class Integer(Value):
     Integer implements the Value interface for a single integer value.
     """
 
-    def __init__(self, measurement_metadata: MeasurementMetadata, value: int):
+    def __init__(self, evidence_metadata: EvidenceMetadata, value: int):
         """
         Initialize an Integer instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param value: The integer value
         :type value: int
         """
         assert isinstance(value, int), "Argument must be `int`."
 
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.value = value
         """The wrapped integer value."""
@@ -42,20 +42,20 @@ class Integer(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> Integer:
         """
         Deserialize an Integer from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Integer
         """
-        return Integer(measurement_metadata, json["value"])
+        return Integer(evidence_metadata, json["value"])
 
     def __str__(self) -> str:
         """Return a string representation of the Integer."""

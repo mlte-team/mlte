@@ -7,7 +7,7 @@ from __future__ import annotations
 import abc
 from typing import Optional
 
-from mlte.measurement_metadata import MeasurementMetadata
+from mlte.evidence import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -42,31 +42,31 @@ class Result(metaclass=abc.ABCMeta):
         self.validator_name = ""
         """The name of the validator that produced the result."""
 
-        self.measurement_metadata: Optional[MeasurementMetadata] = None
+        self.metadata: Optional[EvidenceMetadata] = None
         """
         The information about the measurement from which this was obtained.
         """
 
-    def _with_measurement_metadata(
-        self, measurement_metadata: MeasurementMetadata
+    def _with_evidence_metadata(
+        self, evidence_metadata: EvidenceMetadata
     ) -> Result:
         """
-        Set the `measurement_metadata` field of the Result
-        to indicate the measurement metadata info from which
+        Set the `metadata` field of the Result
+        to indicate the evidence metadata info from which
         it was generated.
 
-        This hook allows us to embed the measurement metadata within
-        the Result so that we can use the measurement metadata
+        This hook allows us to embed the evidence metadata within
+        the Result so that we can use the metadata
         information later when it is used to generate a report.
 
-        :param measurement_metadata: The measurement metadata on which the
+        :param evidence_metadata: The evidence metadata on which the
         Validator that produced this instance was invoked
-        :type measurement_metadata: MeasurementMetadata
+        :type evidence_metadata: EvidenceMetadata
 
         :return: The Result instance (`self`)
         :rtype: Result
         """
-        self.measurement_metadata = measurement_metadata
+        self.metadata = evidence_metadata
         return self
 
     def _from_validator(self, validator) -> Result:
@@ -101,10 +101,10 @@ class Result(metaclass=abc.ABCMeta):
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
-        assert self.measurement_metadata is not None, "Broken precondition."
+        assert self.metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
-        return self.measurement_metadata.identifier == other.value.identifier  # type: ignore
+        return self.metadata.identifier == other.value.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""

@@ -10,7 +10,7 @@ from typing import Dict, Any
 from subprocess import SubprocessError
 
 from ..process_measurement import ProcessMeasurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
     Validator,
@@ -34,7 +34,7 @@ class CPUStatistics(Value):
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        evidence_metadata: EvidenceMetadata,
         avg: float,
         min: float,
         max: float,
@@ -42,8 +42,8 @@ class CPUStatistics(Value):
         """
         Initialize a CPUStatistics instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param avg: The average utilization
         :type avg: float
         :param min: The minimum utilization
@@ -51,7 +51,7 @@ class CPUStatistics(Value):
         :param max: The maximum utilization
         :type max: float
         """
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.avg = avg
         """The average CPU utilization, as a proportion."""
@@ -73,13 +73,13 @@ class CPUStatistics(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
@@ -87,7 +87,7 @@ class CPUStatistics(Value):
         :rtype: CPUStatistics
         """
         return CPUStatistics(
-            measurement_metadata,
+            evidence_metadata,
             avg=json["avg"],
             min=json["min"],
             max=json["max"],

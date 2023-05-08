@@ -9,7 +9,7 @@ from typing import Dict, Any, Union
 
 from ..value import Value
 from mlte.validation import Validator, Result, Ignore
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 class Image(Value):
@@ -19,14 +19,14 @@ class Image(Value):
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        evidence_metadata: EvidenceMetadata,
         image: Union[str, Path, bytes],
     ):
         """
         Initialize an Image instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param path: The path to the image on disk
         :type path: Union[str, Path]
         """
@@ -38,7 +38,7 @@ class Image(Value):
                 image = f.read()
         assert isinstance(image, bytes), "Broken invariant."
 
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         # TODO(Kyle): Unsure if storing media inline is the
         # right way to go here (not scalable); reassess this.
@@ -57,13 +57,13 @@ class Image(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> Image:
         """
         Deserialize an Image from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
@@ -71,7 +71,7 @@ class Image(Value):
         :rtype: Image
         """
         return Image(
-            measurement_metadata,
+            evidence_metadata,
             base64.decodebytes(json["image"].encode("utf-8")),
         )
 

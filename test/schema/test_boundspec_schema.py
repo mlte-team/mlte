@@ -7,7 +7,7 @@ import mlte
 from mlte.spec import Spec, Condition, SpecValidator
 from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
-from mlte.measurement_metadata import MeasurementMetadata
+from mlte.evidence import EvidenceMetadata
 from mlte.measurement import ExternalMeasurement
 from mlte.api import read_boundspec
 from mlte._private.schema import validate_boundspec_schema
@@ -25,7 +25,7 @@ def test_schema(tmp_path):
         }
     )
     specValidator = SpecValidator(spec)
-    i = Integer(MeasurementMetadata("typename", "id"), 1)
+    i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test", i)
     bound = specValidator.validate()
     bound.save()

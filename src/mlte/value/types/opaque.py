@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, Any, List
 
 from ..value import Value
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 class Opaque(Value):
@@ -17,17 +17,17 @@ class Opaque(Value):
     """
 
     def __init__(
-        self, measurement_metadata: MeasurementMetadata, data: Dict[str, Any]
+        self, evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
     ):
         """
         Initialize an Opaque instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param data: The output of the measurement
         :type data: Dict
         """
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.data = data
         """The raw output from measurement execution."""
@@ -43,20 +43,20 @@ class Opaque(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> Opaque:
         """
         Deserialize an Opaque from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Opaque
         """
-        return Opaque(measurement_metadata, json["data"])
+        return Opaque(evidence_metadata, json["data"])
 
     def __getitem__(self, key: str) -> Any:
         """
@@ -91,10 +91,7 @@ class Opaque(Value):
 
 
 def _equal(a: Opaque, b: Opaque) -> bool:
-    return (
-        a.measurement_metadata == b.measurement_metadata
-        and _equal_helper_dict(a.data, b.data)
-    )
+    return a.metadata == b.metadata and _equal_helper_dict(a.data, b.data)
 
 
 def _equal_helper_dict(a: Dict[str, Any], b: Dict[str, Any]) -> bool:

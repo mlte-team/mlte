@@ -8,7 +8,7 @@ from typing import Dict, Any
 import numpy as np
 
 from mlte.value import Value
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.validation import (
     Validator,
     Result,
@@ -18,10 +18,8 @@ from mlte.validation import (
 
 
 class ConfusionMatrix(Value):
-    def __init__(
-        self, measurement_metadata: MeasurementMetadata, matrix: np.ndarray
-    ):
-        super().__init__(self, measurement_metadata)
+    def __init__(self, evidence_metadata: EvidenceMetadata, matrix: np.ndarray):
+        super().__init__(self, evidence_metadata)
 
         self.matrix: np.ndarray = matrix
         """Underlying matrix represented as numpy array."""
@@ -31,11 +29,9 @@ class ConfusionMatrix(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json_: dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json_: dict[str, Any]
     ) -> ConfusionMatrix:
-        return ConfusionMatrix(
-            measurement_metadata, np.asarray(json_["matrix"])
-        )
+        return ConfusionMatrix(evidence_metadata, np.asarray(json_["matrix"]))
 
     def __str__(self) -> str:
         return str(self.matrix)

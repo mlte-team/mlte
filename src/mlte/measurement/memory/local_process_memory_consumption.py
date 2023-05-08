@@ -9,7 +9,7 @@ import subprocess
 from typing import Dict, Any
 
 from ..process_measurement import ProcessMeasurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
     Validator,
@@ -34,7 +34,7 @@ class MemoryStatistics(Value):
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        evidence_metadata: EvidenceMetadata,
         avg: int,
         min: int,
         max: int,
@@ -42,8 +42,8 @@ class MemoryStatistics(Value):
         """
         Initialize a MemoryStatistics instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param avg: The average memory consumption
         :type avg: int
         :param min: The minimum memory consumption
@@ -51,7 +51,7 @@ class MemoryStatistics(Value):
         :param max: The maximum memory consumption
         :type max: int
         """
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.avg = avg
         """The average memory consumption (KB)."""
@@ -73,13 +73,13 @@ class MemoryStatistics(Value):
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
         :type json: Dict[str, Any]
 
@@ -87,7 +87,7 @@ class MemoryStatistics(Value):
         :rtype: MemoryStatistics
         """
         return MemoryStatistics(
-            measurement_metadata,
+            evidence_metadata,
             avg=json["avg"],
             min=json["min"],
             max=json["max"],

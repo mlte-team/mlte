@@ -8,7 +8,7 @@ import abc
 import typing
 
 from mlte.value import Value
-from mlte.measurement_metadata import MeasurementMetadata, Identifier
+from mlte.evidence import EvidenceMetadata, Identifier
 
 
 def _has_callable(type, name) -> bool:
@@ -35,7 +35,7 @@ class Measurement(metaclass=abc.ABCMeta):
         :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
+        self.metadata = EvidenceMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
 
     @property
