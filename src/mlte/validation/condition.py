@@ -8,9 +8,9 @@ from mlte.value import Value
 from . import Result
 
 
-class Validator:
+class Condition:
     """
-    The Validator class defines the interface for measurement validators.
+    The Condition class defines the interface for measurement validators.
     """
 
     @typing.no_type_check
@@ -20,15 +20,15 @@ class Validator:
         callback: Callable[[Value], Result],
     ):
         """
-        Initialize a Validator instance.
+        Initialize a Condition instance.
 
-        :param name: The validator identifier
+        :param name: The condition identifier
         :type name: str
         :param callback: The callable that implements validation
         :type callback: Callable[[Value], Result]
         """
         self.name: str = name
-        """The human-readable identifier for the Validator."""
+        """The human-readable identifier for the Condition."""
 
         self.callback: Callable[[Value], Result] = callback
         """The callback that implements validation."""
@@ -45,6 +45,6 @@ class Validator:
         """
         return (
             self.callback(value)
-            ._from_validator(self)
+            ._from_condition(self)
             ._with_evidence_metadata(value.metadata)
         )

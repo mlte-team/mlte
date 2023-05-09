@@ -12,7 +12,7 @@ import subprocess
 import mlte
 from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
-from mlte.validation import Validator, Success, Failure
+from mlte.validation import Condition, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -73,7 +73,7 @@ def test_cpu_nix_validate_success():
 
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Succeed", lambda _: Success())(stats)
+    vr = Condition("Succeed", lambda _: Success())(stats)
     assert bool(vr)
 
     # Data is accessible from validation result
@@ -90,7 +90,7 @@ def test_cpu_nix_validate_failure():
 
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Fail", lambda _: Failure())(stats)
+    vr = Condition("Fail", lambda _: Failure())(stats)
     assert not bool(vr)
 
     # Data is accessible from validation result

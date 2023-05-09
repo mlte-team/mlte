@@ -8,6 +8,7 @@ import abc
 from typing import Optional
 
 from mlte.evidence import EvidenceMetadata
+from mlte.validation import Condition
 
 
 def _has_callable(type, name) -> bool:
@@ -39,8 +40,8 @@ class Result(metaclass=abc.ABCMeta):
         self.message = message
         """The message indicating the reason for status."""
 
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
+        self.condition_name = ""
+        """The name of the condition that produced the result."""
 
         self.metadata: Optional[EvidenceMetadata] = None
         """
@@ -60,7 +61,7 @@ class Result(metaclass=abc.ABCMeta):
         information later when it is used to generate a report.
 
         :param evidence_metadata: The evidence metadata on which the
-        Validator that produced this instance was invoked
+        Condition that produced this instance was invoked
         :type evidence_metadata: EvidenceMetadata
 
         :return: The Result instance (`self`)
@@ -69,21 +70,21 @@ class Result(metaclass=abc.ABCMeta):
         self.metadata = evidence_metadata
         return self
 
-    def _from_validator(self, validator) -> Result:
+    def _from_condition(self, condition: Condition) -> Result:
         """
-        Set the `validator_name` field of the Result
-        to indicate the Validator instance from which it was generated.
+        Set the `condition_name` field of the Result
+        to indicate the Condition instance from which it was generated.
 
-        This hook allows us to embed the name of the Validator into
+        This hook allows us to embed the name of the Condition into
         the produced Result at the point it is produced.
 
-        :param validator: The Validator instance
-        :type validator: Validator
+        :param condition: The Condition instance
+        :type condition: Condition
 
         :return: The Result instance (`self`)
         :rtype: Result
         """
-        self.validator_name = validator.name
+        self.condition_name = condition.name
         return self
 
     def to_json(self) -> dict[str, str]:
@@ -94,7 +95,7 @@ class Result(metaclass=abc.ABCMeta):
         :rtype: dict[str, str]
         """
         return {
-            "name": self.validator_name,
+            "name": self.condition_name,
             "result": f"{self}",
             "message": self.message,
         }
@@ -118,8 +119,6 @@ class Success(Result):
         """
         Initialize a Success validation result instance.
 
-        :param validator_name: The name of the validator
-        :type validator_name: str
         :param message: Optional message
         :type message: str
         """
@@ -141,8 +140,6 @@ class Failure(Result):
         """
         Initialize a Failure validation result instance.
 
-        :param validator_name: The name of the validator
-        :type validator_name: str
         :param message: Optional message
         :type message: str
         """

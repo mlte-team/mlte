@@ -14,7 +14,7 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.validation import Validator, Success, Failure
+from mlte.validation import Condition, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -78,7 +78,7 @@ def test_memory_nix_validate_success():
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Succeed", lambda _: Success())(stats)
+    vr = Condition("Succeed", lambda _: Success())(stats)
     assert bool(vr)
 
     assert vr.metadata is not None
@@ -97,7 +97,7 @@ def test_memory_nix_validate_failure():
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Fail", lambda _: Failure())(stats)
+    vr = Condition("Fail", lambda _: Failure())(stats)
     assert not bool(vr)
 
     assert vr.metadata is not None

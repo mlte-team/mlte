@@ -8,7 +8,7 @@ import base64
 from typing import Dict, Any, Union
 
 from ..value import Value
-from mlte.validation import Validator, Result, Ignore
+from mlte.validation import Condition, Result, Ignore
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -85,7 +85,7 @@ class Image(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "Ignore",
             lambda _: Ignore(reason),
         )(self)

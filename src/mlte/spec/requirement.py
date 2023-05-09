@@ -1,5 +1,5 @@
 """
-Defines a requirement for a measurement to be approved, including the validator to use and the needed threshold.
+Defines a requirement for a measurement to be approved, including the condition to use and the needed threshold.
 """
 
 from __future__ import annotations

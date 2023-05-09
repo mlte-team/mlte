@@ -10,7 +10,7 @@ import numpy as np
 from mlte.value import Value
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.validation import (
-    Validator,
+    Condition,
     Result,
     Success,
     Failure,
@@ -37,7 +37,7 @@ class ConfusionMatrix(Value):
         return str(self.matrix)
 
     def misclassification_count_less_than(self, threshold: int) -> Result:
-        return Validator(
+        return Condition(
             "misclassification_count_less_than",
             lambda cm: Success(
                 f"Misclass count {cm.misclassifications} less than threshold {threshold}"

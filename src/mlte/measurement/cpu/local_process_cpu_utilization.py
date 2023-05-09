@@ -13,7 +13,7 @@ from ..process_measurement import ProcessMeasurement
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
-    Validator,
+    Condition,
     Result,
     Success,
     Failure,
@@ -103,7 +103,7 @@ class CPUStatistics(Value):
 
     def max_utilization_less_than(self, threshold: float) -> Result:
         """
-        Construct and invoke a validator for maximum CPU utilization.
+        Construct and invoke a condition for maximum CPU utilization.
 
         :param threshold: The threshold value for maximum utilization
         :type threshold: float
@@ -111,7 +111,7 @@ class CPUStatistics(Value):
         :return: The validation result
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "max_utilization_less_than",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
@@ -129,7 +129,7 @@ class CPUStatistics(Value):
 
     def average_utilization_less_than(self, threshold: float) -> Result:
         """
-        Construct and invoke a validator for average CPU utilization.
+        Construct and invoke a condition for average CPU utilization.
 
         :param threshold: The threshold value for average utilization
         :type threshold: float
@@ -137,7 +137,7 @@ class CPUStatistics(Value):
         :return: The validation result
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "average_utilization_less_than",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "

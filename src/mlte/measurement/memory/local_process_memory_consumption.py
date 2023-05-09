@@ -12,7 +12,7 @@ from ..process_measurement import ProcessMeasurement
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
-    Validator,
+    Condition,
     Result,
     Success,
     Failure,
@@ -103,7 +103,7 @@ class MemoryStatistics(Value):
 
     def max_consumption_less_than(self, threshold: int) -> Result:
         """
-        Construct and invoke a validator for maximum memory consumption.
+        Construct and invoke a condition for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption
         :type threshold: int
@@ -111,7 +111,7 @@ class MemoryStatistics(Value):
         :return: The validation result
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "max_consumption_less_than",
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
@@ -129,7 +129,7 @@ class MemoryStatistics(Value):
 
     def average_consumption_less_than(self, threshold: float) -> Result:
         """
-        Construct and invoke a validator for average memory consumption.
+        Construct and invoke a condition for average memory consumption.
 
         :param threshold: The threshold value for average consumption
         :type threshold: int
@@ -137,7 +137,7 @@ class MemoryStatistics(Value):
         :return: The validation result
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "average_consumption_less_than",
             lambda stats: Success(
                 f"Average consumption {stats.avg} "

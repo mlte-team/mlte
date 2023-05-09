@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from ..value import Value
-from mlte.validation import Validator, Result, Success, Failure
+from mlte.validation import Condition, Result, Success, Failure
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -83,7 +83,7 @@ class Real(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "less_than",
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
@@ -105,7 +105,7 @@ class Real(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "less_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
@@ -128,7 +128,7 @@ class Real(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "greater_than",
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
@@ -150,7 +150,7 @@ class Real(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "greater_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "

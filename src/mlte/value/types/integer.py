@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from ..value import Value
-from mlte.validation import Validator, Result, Success, Failure
+from mlte.validation import Condition, Result, Success, Failure
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -81,7 +81,7 @@ class Integer(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "less_than",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
@@ -103,7 +103,7 @@ class Integer(Value):
         :return: The result of validation
         :rtype: Result
         """
-        result: Result = Validator(
+        result: Result = Condition(
             "less_or_equal_to",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
