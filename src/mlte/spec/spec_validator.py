@@ -73,11 +73,10 @@ class SpecValidator:
                     )
 
         # Validate and aggregate the results.
-        results = {
-            str(requirement.identifier): requirement.validate(
-                self.values[str(requirement.identifier)]
-            )
-            for requirement in requirement_list
-            for _, requirement_list in self.spec.requirements.items()
-        }
+        results = {}
+        for _, requirement_list in self.spec.requirements.items():
+            for requirement in requirement_list:
+                results[str(requirement.identifier)] = requirement.validate(
+                    self.values[str(requirement.identifier)]
+                )
         return results
