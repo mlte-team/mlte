@@ -8,7 +8,7 @@ import pytest
 import mlte
 from mlte.spec import Spec, Requirement
 from mlte.property.costs import StorageCost
-from mlte.measurement import ExternalMeasurement
+from mlte.measurement.storage import LocalObjectSize
 from mlte.validation import Result
 
 
@@ -19,9 +19,7 @@ def test_save(tmp_path):
     s = Spec(
         {
             StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
+                Requirement("test", LocalObjectSize.__name__, "less_than", 3)
             ]
         }
     )
@@ -46,28 +44,24 @@ def test_unique_properties():
 
 def test_add_requirement():
     spec = Spec({StorageCost("rationale"): []})
-    requirement = Requirement(
-        "test", ExternalMeasurement.__name__, "less_than", 3
-    )
+    requirement = Requirement("test", LocalObjectSize.__name__, "less_than", 3)
     spec._add_requirement("StorageCost", requirement)
 
     assert spec.requirements["StorageCost"][0] == Requirement(
-        "test", ExternalMeasurement.__name__, "less_than", 3
+        "test", LocalObjectSize.__name__, "less_than", 3
     )
 
 
 def test_no_result():
-    # Spec validator does not have value for requirement.
+    # Spec does not have value for requirement.
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
+                Requirement("test", LocalObjectSize.__name__, "less_than", 3)
             ]
         }
     )
 
-    results: dict[str, dict[str, Result]] = {}
+    results: dict[str, Result] = {}
     with pytest.raises(RuntimeError):
         _ = spec.generate_validatedspec(results)

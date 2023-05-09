@@ -18,6 +18,10 @@ class EvidenceMetadata:
         self.identifier = Identifier(identifier)
         """The identifier for the measurement."""
 
+    def get_id(self) -> str:
+        """Returns the id as a string."""
+        return str(self.identifier)
+
     def to_json(self) -> dict[str, Any]:
         """Serialize to JSON document."""
         return {

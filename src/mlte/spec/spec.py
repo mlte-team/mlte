@@ -191,13 +191,13 @@ class Spec:
 
     def _spec_document(
         self,
-        results: Optional[dict[str, dict[str, Result]]] = None,
+        results: Optional[dict[str, Result]] = None,
     ) -> dict[str, Any]:
         """
         Generate the spec document.
 
-        :param result: The Results of validations, ordered by property and requirement (optional).
-        :type results: dict[str, dict[str, Result]]
+        :param result: The Results of validations, ordered by id (optional).
+        :type results: dict[str, Result]
 
         :return: The spec document
         :rtype: dict[str, Any]
@@ -227,29 +227,21 @@ class Spec:
 
     def _properties_document(
         self,
-        results: Optional[dict[str, dict[str, Result]]] = None,
+        results: Optional[dict[str, Result]] = None,
     ) -> list[dict[str, Any]]:
         """
         Generates a document with info an all properties.
 
-        :param result: The Results of validations, ordered by property and requirement (optional).
-        :type results: dict[str, dict[str, Result]]
+        :param result: The Results of validations, ordered by id (optional).
+        :type results: dict[str, Result]
 
         :return: The properties document
         :rtype: dict[str, Any]
         """
-        if results is not None:
-            if any(
-                property.name not in results for property in self.properties
-            ):
-                raise RuntimeError(
-                    "There are properties that do not have associated validated results; can't generate document."
-                )
-
         property_docs = [
             self._property_document(
                 property,
-                results[property.name] if results is not None else {},
+                results if results is not None else {},
             )
             for property in self.properties
         ]
@@ -263,7 +255,7 @@ class Spec:
 
         :param property: The property of interest
         :type property: Property
-        :param result: The Results of validations, ordered by requirement.
+        :param result: The Results of validations, ordered by id.
         :type results: dict[str, Result]
 
         :return: The property-level document
@@ -302,8 +294,8 @@ class Spec:
         document = [
             self._requirement_document(
                 requirement,
-                results[requirement.label]
-                if requirement.label in results
+                results[str(requirement.identifier)]
+                if str(requirement.identifier) in results
                 else None,
             )
             for requirement in requirements
@@ -336,17 +328,28 @@ class Spec:
     # -------------------------------------------------------------------------
 
     def generate_validatedspec(
-        self, results: dict[str, dict[str, Result]]
+        self, results: dict[str, Result]
     ) -> ValidatedSpec:
         """
         Generates a validated spec with the validation results.
 
-        :param result: The Results to validate to the spec, ordered by property and requirement.
-        :type results: dict[str, dict[str, Result]]
+        :param result: The Results to validate to the spec, ordered by id.
+        :type results: str, dict[str, Result]
 
         :return: A ValidatedSpec associating the Spec with the specific Results.
         :rtype: ValidatedSpec
         """
+        if results is None or len(results) == 0:
+            raise RuntimeError("Can't generate validated spec without results.")
+
+        # Check that all requirements have results.
+        for _, requirement_list in self.requirements.items():
+            for requirement in requirement_list:
+                if str(requirement.identifier) not in results:
+                    raise RuntimeError(
+                        f"Requirement '{requirement.identifier}' does not have a result."
+                    )
+
         return ValidatedSpec(self._spec_document(results))
 
     # -------------------------------------------------------------------------

@@ -17,9 +17,7 @@ def test_save_load(tmp_path):
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
+                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
             ]
         }
     )
@@ -27,7 +25,7 @@ def test_save_load(tmp_path):
 
     # A dummy result
     i = Integer(EvidenceMetadata("typename", "id"), 1)
-    specValidator.add_value("StorageCost", "test", i)
+    specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()
     validatedSpec.save()

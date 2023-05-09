@@ -34,16 +34,14 @@ def test_no_requirement():
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
+                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
             ]
         }
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
-    specValidator.add_value("StorageCost", "test2", i)
+    i = Integer(EvidenceMetadata("typename", "id2"), 1)
+    specValidator.add_value(i)
 
     with pytest.raises(RuntimeError):
         _ = specValidator.validate()
@@ -53,16 +51,14 @@ def test_success():
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
+                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
             ]
         }
     )
     specValidator = SpecValidator(spec)
 
     i = Integer(EvidenceMetadata("typename", "id"), 1)
-    specValidator.add_value("StorageCost", "test", i)
+    specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()
     assert validatedSpec is not None

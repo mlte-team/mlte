@@ -8,6 +8,7 @@ from typing import Any
 
 from mlte.validation import Result
 from mlte.value import Value
+from mlte.evidence import Identifier
 
 # -----------------------------------------------------------------------------
 # Requirement
@@ -22,13 +23,13 @@ class Requirement:
 
     def __init__(
         self,
-        label: str,
+        identifier: str,
         measurement_type: str,
         validator: str,
         threshold: Any,
     ) -> None:
         """Creates a Requirement."""
-        self.label = label
+        self.identifier = Identifier(identifier)
         self.measurement_type = measurement_type
         self.validator = validator
         self.threshold = threshold
@@ -36,7 +37,7 @@ class Requirement:
     def to_json(self) -> dict[str, Any]:
         """Returns this requirement as a dictionary."""
         return {
-            "label": self.label,
+            "identifier": str(self.identifier),
             "measurement_type": self.measurement_type,
             "validator": self.validator,
             "threshold": self.threshold,
@@ -54,7 +55,7 @@ class Requirement:
         :rtype: Requirement
         """
         if (
-            "label" not in document
+            "identifier" not in document
             or "measurement_type" not in document
             or "validator" not in document
             or "threshold" not in document
@@ -62,7 +63,7 @@ class Requirement:
             raise RuntimeError("Saved requirement is malformed.")
 
         return Requirement(
-            document["label"],
+            document["identifier"],
             document["measurement_type"],
             document["validator"],
             document["threshold"],
@@ -97,7 +98,7 @@ class Requirement:
             return False
         reference: Requirement = other
         return (
-            self.label == reference.label
+            self.identifier == reference.identifier
             and self.measurement_type == reference.measurement_type
             and self.validator == reference.validator
             and self.threshold == reference.threshold
