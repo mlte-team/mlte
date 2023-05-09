@@ -8,7 +8,6 @@ import abc
 from typing import Optional
 
 from mlte.evidence import EvidenceMetadata
-from mlte.validation import Condition
 
 
 def _has_callable(type, name) -> bool:
@@ -70,7 +69,7 @@ class Result(metaclass=abc.ABCMeta):
         self.metadata = evidence_metadata
         return self
 
-    def _from_condition(self, condition: Condition) -> Result:
+    def _from_condition(self, condition) -> Result:
         """
         Set the `condition_name` field of the Result
         to indicate the Condition instance from which it was generated.
