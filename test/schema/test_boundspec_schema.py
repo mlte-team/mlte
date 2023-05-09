@@ -1,5 +1,5 @@
 """
-Unit tests for BoundSpec schema.
+Unit tests for ValidatedSpec schema.
 """
 
 
@@ -9,8 +9,8 @@ from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
 from mlte.measurement import ExternalMeasurement
-from mlte.api import read_boundspec
-from mlte._private.schema import validate_boundspec_schema
+from mlte.api import read_validatedspec
+from mlte._private.schema import validate_validatedspec_schema
 
 
 def test_schema(tmp_path):
@@ -29,8 +29,8 @@ def test_schema(tmp_path):
     specValidator = SpecValidator(spec)
     i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test", i)
-    bound = specValidator.validate()
-    bound.save()
+    validatedSpec = specValidator.validate()
+    validatedSpec.save()
 
-    doc = read_boundspec(f"local://{tmp_path}", "model", "0.0.1")
-    validate_boundspec_schema(doc)
+    doc = read_validatedspec(f"local://{tmp_path}", "model", "0.0.1")
+    validate_validatedspec_schema(doc)

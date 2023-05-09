@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Union
 
 from .html import _connected, _generate_html
-from ..spec import BoundSpec
+from ..spec import ValidatedSpec
 
 from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
@@ -210,7 +210,7 @@ class Report(ReportAttribute):
     considerations: Considerations = field(default_factory=Considerations)
     """Model considerations."""
 
-    spec: BoundSpec = field(default_factory=lambda: BoundSpec({}))
+    spec: ValidatedSpec = field(default_factory=lambda: ValidatedSpec({}))
     """The model test spec report."""
 
     def _finalize(self) -> Dict[str, Any]:

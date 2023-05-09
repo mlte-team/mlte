@@ -13,14 +13,14 @@ mlte.set_model("IrisClassifier", "0.0.1")
 mlte.set_artifact_store_uri(f"local://{store_path}")
 
 # Import necessary modules
-from mlte.spec import Spec, BoundSpec
+from mlte.spec import Spec, ValidatedSpec
 
 # Load the specification
 spec = Spec.load()
 ```
 
-## Validate Values and get an upadted BoundSpec wih Results
-Now that we have our Spec ready and we have enough evidence, we create a SpecValidator with our spec, and add all the Values we have. With that we can validate our spec and generate an output BoundSpec, with the validation results.
+## Validate Values and get an upadted ValidatedSpec wih Results
+Now that we have our Spec ready and we have enough evidence, we create a SpecValidator with our spec, and add all the Values we have. With that we can validate our spec and generate an output ValidatedSpec, with the validation results.
 
 ```Python
 from mlte.spec import Spec
@@ -39,11 +39,11 @@ spec_validator.add_value("TaskEfficacy", "accuracy", Real.load("accuracy"))
 spec_validator.add_value("TaskEfficacy", "confusion matrix", ConfusionMatrix.load("confusion matrix"))
 spec_validator.add_value("TaskEfficacy", "classes", Image.load("class distribution"))
 
-# Validate requirements and get bound details.
-bound_spec = spec_validator.validate()
+# Validate requirements and get validated details.
+validated_spec = spec_validator.validate()
 
-# BoundSpec also supports persistence
-bound_spec.save()
+# ValidatedSpec also supports persistence
+validated_spec.save()
 ```
 
 ## Write a Report
@@ -103,8 +103,8 @@ from mlte.report import render
 
 # Build the base report
 report = build_report()
-# Attach the bound specification
-report.spec = bound_spec
+# Attach the validated specification
+report.spec = validated_spec
 
 # Save the report as an HTML document
 report.to_html(REPORTS_DIR / "report.html", local=True)

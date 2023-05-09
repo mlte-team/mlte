@@ -1,9 +1,9 @@
 """
-Unit tests for BoundSpec functionality.
+Unit tests for ValidatedSpec functionality.
 """
 
 import mlte
-from mlte.spec import Spec, BoundSpec, Requirement, SpecValidator
+from mlte.spec import Spec, ValidatedSpec, Requirement, SpecValidator
 from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
@@ -29,8 +29,8 @@ def test_save_load(tmp_path):
     i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test", i)
 
-    bound = specValidator.validate()
-    bound.save()
+    validatedSpec = specValidator.validate()
+    validatedSpec.save()
 
-    r = BoundSpec.load()
-    assert r == bound
+    r = ValidatedSpec.load()
+    assert r == validatedSpec

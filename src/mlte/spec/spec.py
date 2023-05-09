@@ -13,7 +13,7 @@ from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
-from .bound_spec import BoundSpec
+from .validated_spec import ValidatedSpec
 from .requirement import Requirement
 
 
@@ -332,22 +332,22 @@ class Spec:
         return document
 
     # -------------------------------------------------------------------------
-    # BoundSpec document generation.
+    # ValidatedSpec document generation.
     # -------------------------------------------------------------------------
 
-    def generate_bound_spec(
+    def generate_validatedspec(
         self, results: dict[str, dict[str, Result]]
-    ) -> BoundSpec:
+    ) -> ValidatedSpec:
         """
-        Generates a bound spec with the validation results.
+        Generates a validated spec with the validation results.
 
-        :param result: The Results to bind to the spec, ordered by property and requirement.
+        :param result: The Results to validate to the spec, ordered by property and requirement.
         :type results: dict[str, dict[str, Result]]
 
-        :return: A BoundSpec associating the Spec with the specific Results.
-        :rtype: BoundSpec
+        :return: A ValidatedSpec associating the Spec with the specific Results.
+        :rtype: ValidatedSpec
         """
-        return BoundSpec(self._spec_document(results))
+        return ValidatedSpec(self._spec_document(results))
 
     # -------------------------------------------------------------------------
     # Equality Testing

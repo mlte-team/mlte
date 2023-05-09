@@ -88,27 +88,27 @@ def write_spec(
 
 
 # -----------------------------------------------------------------------------
-# Bound Specification
+# Validated Specification
 # -----------------------------------------------------------------------------
 
 
-def read_boundspec(
+def read_validatedspec(
     uri: str, model_identifier: str, model_version: str
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
-    document = handle.read_boundspec(model_identifier, model_version)
-    assert "boundspec" in document, "Broken invariant."
-    boundspec: Dict[str, Any] = document["boundspec"]
-    return boundspec
+    document = handle.read_validatedspec(model_identifier, model_version)
+    assert "validatedspec" in document, "Broken invariant."
+    validatedspec: Dict[str, Any] = document["validatedspec"]
+    return validatedspec
 
 
-def write_boundspec(
+def write_validatedspec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ) -> int:
     """TODO(Kyle)"""
     handle = _get_backend_handle(uri)
-    document = handle.write_boundspec(model_identifier, model_version, data)
+    document = handle.write_validatedspec(model_identifier, model_version, data)
     assert "written" in document, "Broken invariant."
     assert document["written"] == 1, "Broken invariant."
     count: int = document["written"]

@@ -70,4 +70,4 @@ def test_no_result():
 
     results: dict[str, dict[str, Result]] = {}
     with pytest.raises(RuntimeError):
-        _ = spec.generate_bound_spec(results)
+        _ = spec.generate_validatedspec(results)

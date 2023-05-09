@@ -1,5 +1,5 @@
 """
-BoundSpec class implementation.
+ValidatedSpec class implementation.
 """
 
 from __future__ import annotations
@@ -7,22 +7,22 @@ from __future__ import annotations
 from typing import Dict, Any
 
 from mlte._global import global_state
-from mlte.api import read_boundspec, write_boundspec
+from mlte.api import read_validatedspec, write_validatedspec
 
 
 # -----------------------------------------------------------------------------
-# BoundSpec
+# ValidatedSpec
 # -----------------------------------------------------------------------------
 
 
-class BoundSpec:
+class ValidatedSpec:
     """
-    BoundSpec represents a spec with validated results.
+    ValidatedSpec represents a spec with validated results.
     """
 
     def __init__(self, document: Dict[str, Any]):
         """
-        Initialize a BoundSpec instance.
+        Initialize a ValidatedSpec instance.
 
         :param document: The data produced by the Spec
         :type document: Dict[str, Any]]
@@ -31,23 +31,23 @@ class BoundSpec:
         """The document produced by the Spec."""
 
     def save(self):
-        """Save BoundSpec instance to artifact store."""
+        """Save ValidatedSpec instance to artifact store."""
         state = global_state()
         state.ensure_initialized()
 
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
-        write_boundspec(
+        write_validatedspec(
             artifact_store_uri, model_identifier, model_version, self.document
         )
 
     @staticmethod
-    def load() -> BoundSpec:
+    def load() -> ValidatedSpec:
         """
-        Load BoundSpec instance from artifact store.
+        Load ValidatedSpec instance from artifact store.
 
-        :return: The BoundSpec instance
-        :rtype: BoundSpec
+        :return: The ValidatedSpec instance
+        :rtype: ValidatedSpec
         """
         state = global_state()
         state.ensure_initialized()
@@ -55,36 +55,36 @@ class BoundSpec:
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
 
-        return BoundSpec(
-            document=read_boundspec(
+        return ValidatedSpec(
+            document=read_validatedspec(
                 artifact_store_uri, model_identifier, model_version
             )
         )
 
     def __eq__(self, other: object) -> bool:
-        """Test BoundSpec instance for equality."""
-        if not isinstance(other, BoundSpec):
+        """Test ValidatedSpec instance for equality."""
+        if not isinstance(other, ValidatedSpec):
             return False
         return _equal(self, other)
 
     def __neq__(self, other: object) -> bool:
-        """Test BoundSpec instance for inequality."""
+        """Test ValidatedSpec instance for inequality."""
         return not self.__eq__(other)
 
 
-def _equal(a: BoundSpec, b: BoundSpec) -> bool:
+def _equal(a: ValidatedSpec, b: ValidatedSpec) -> bool:
     """
-    Determine if two BoundSpec instances are equal.
+    Determine if two ValidatedSpec instances are equal.
 
     :param a: Input instance
-    :type a: BoundSpec
+    :type a: ValidatedSpec
     :param b: Input instance
-    :type b: BoundSpec
+    :type b: ValidatedSpec
 
     :return: `True` if instances are equal, `False` otherwise
     :rtype: bool
     """
-    # TODO(Kyle): Implement this functionality when BoundSpec fleshed out
+    # TODO(Kyle): Implement this functionality when ValidatedSpec fleshed out
     akeys = set(a.document.keys())
     bkeys = set(b.document.keys())
     return len(akeys) == len(bkeys) == len(akeys.intersection(bkeys))

@@ -3,8 +3,8 @@ from mlte.api.api import (
     write_value,
     read_spec,
     write_spec,
-    write_boundspec,
-    read_boundspec,
+    write_validatedspec,
+    read_validatedspec,
 )
 
 __all__ = [
@@ -12,6 +12,6 @@ __all__ = [
     "write_value",
     "read_spec",
     "write_spec",
-    "write_boundspec",
-    "read_boundspec",
+    "write_validatedspec",
+    "read_validatedspec",
 ]

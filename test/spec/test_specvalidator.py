@@ -29,7 +29,7 @@ def test_no_property():
         _ = specValidator.validate()
 
 
-def test_no_condition():
+def test_no_requirement():
     # Spec validator does not have value for requirement.
     spec = Spec(
         {
@@ -64,5 +64,5 @@ def test_success():
     i = Integer(EvidenceMetadata("typename", "id"), 1)
     specValidator.add_value("StorageCost", "test", i)
 
-    boundSpec = specValidator.validate()
-    assert boundSpec is not None
+    validatedSpec = specValidator.validate()
+    assert validatedSpec is not None

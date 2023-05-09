@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from mlte.property import Property
 from mlte.validation import Result
-from .bound_spec import BoundSpec
+from .validated_spec import ValidatedSpec
 from mlte.value import Value
 from mlte.spec import Spec
 
@@ -48,15 +48,15 @@ class SpecValidator:
             self.values[property_name] = {}
         self.values[property_name][requirement_label] = value
 
-    def validate(self) -> BoundSpec:
+    def validate(self) -> ValidatedSpec:
         """
-        Validates the internal properties given its requirements and the stored values, and generates a BoundSpec from it.
+        Validates the internal properties given its requirements and the stored values, and generates a ValidatedSpec from it.
 
         :return: The validated specification
-        :rtype: BoundSpec
+        :rtype: ValidatedSpec
         """
         results = self._validate_properties()
-        return self.spec.generate_bound_spec(results)
+        return self.spec.generate_validatedspec(results)
 
     def _validate_properties(self) -> dict[str, dict[str, Result]]:
         """

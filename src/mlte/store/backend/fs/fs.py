@@ -30,7 +30,7 @@ root/
   model_identifier0/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
-      boundspec.json            <- ONLY present if BoundSpec is saved
+      validatedspec.json            <- ONLY present if ValidatedSpec is saved
       value_identifier0.json
 
 The data for an individual value is then stored within a JSON file.
@@ -378,7 +378,7 @@ class FilesystemSessionHandle(SessionHandle):
 
         return {"written": 1}
 
-    def read_boundspec(
+    def read_validatedspec(
         self, model_identifier: str, model_version: str
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
@@ -389,14 +389,14 @@ class FilesystemSessionHandle(SessionHandle):
         model_version_path = self.root / model_identifier / model_version
         assert model_version_path.is_dir(), "Broken invariant."
 
-        if not storage.boundspec_is_saved(model_version_path):
+        if not storage.validatedspec_is_saved(model_version_path):
             raise RuntimeError(
-                "Failed to read boundspec, no boundpsec is saved."
+                "Failed to read validatedspec, no validatedpsec is saved."
             )
 
-        return {"boundspec": storage.read_boundspec(model_version_path)}
+        return {"validatedspec": storage.read_validatedspec(model_version_path)}
 
-    def write_boundspec(
+    def write_validatedspec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
@@ -413,7 +413,7 @@ class FilesystemSessionHandle(SessionHandle):
             version_path.mkdir()
 
         model_version_path = self.root / model_identifier / model_version
-        storage.write_boundspec(model_version_path, data)
+        storage.write_validatedspec(model_version_path, data)
 
         return {"written": 1}
 

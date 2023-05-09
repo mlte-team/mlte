@@ -234,36 +234,36 @@ class SessionHandle:
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
     # -------------------------------------------------------------------------
-    # Interface: BoundSpec
+    # Interface: ValidatedSpec
     # -------------------------------------------------------------------------
 
-    def read_boundspec(
+    def read_validatedspec(
         self, model_identifier: str, model_version: str
     ) -> Dict[str, Any]:
         """
-        Read a bound specification for the model context.
+        Read a validated specification for the model context.
 
         :param model_identifier: The model identifier
         :type model_identifier: str
         :param model_version: The model version
         :type model_version: str
 
-        :return: {"boundspec": { ... bound specification document ... }}
+        :return: {"validatedspec": { ... validated specification document ... }}
         :rtype: Dict[str, Any]
         """
         raise NotImplementedError("Cannot invoke method on abstract Backend.")
 
-    def write_boundspec(
+    def write_validatedspec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Write a bound specification for the model context.
+        Write a validated specification for the model context.
 
         :param model_identifier: The model identifier
         :type model_identifier: str
         :param model_version: The model version
         :type model_version: str
-        :param data: The bound specification data
+        :param data: The validated specification data
         :type data: Dict[str, Any]
 
         :return: {"written": <COUNT>}
