@@ -14,7 +14,7 @@ from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
 from .bound_spec import BoundSpec
-from .condition import Condition
+from .requirement import Requirement
 
 
 def _unique(collection: list[str]) -> bool:
@@ -55,12 +55,12 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, properties: dict[Property, list[Condition]]):
+    def __init__(self, properties: dict[Property, list[Requirement]]):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec.
-        :type conditions: list[Property]
+        :type properties: list[Property]
         """
         self.properties = [p for p in properties.keys()]
         """The collection of properties that compose the Spec."""
@@ -68,10 +68,10 @@ class Spec:
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        self.conditions: dict[str, list[Condition]] = {
+        self.requirements: dict[str, list[Requirement]] = {
             property.name: properties[property] for property in self.properties
         }
-        """A dict to store conditions by property."""
+        """A dict to store requirements by property."""
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -90,15 +90,15 @@ class Spec:
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
 
-    def _add_condition(self, property_name: str, condition: Condition):
+    def _add_requirement(self, property_name: str, requirement: Requirement):
         """
-        Adds the given condition to the property.
+        Adds the given requirement to the property.
 
-        :param property_name: The name of the property we are adding the condition for.
+        :param property_name: The name of the property we are adding the requirement for.
         :type property_name: str
 
-        :param condition: The condition we want to add to this property.
-        :type condition: Condition
+        :param requirement: The requirement we want to add to this property.
+        :type requirement: Requirement
         """
         if not any(
             property.name == property_name for property in self.properties
@@ -106,16 +106,16 @@ class Spec:
             raise RuntimeError(
                 f"Property {property_name} is not part of this Specification."
             )
-        if property_name not in self.conditions:
-            self.conditions[property_name] = []
+        if property_name not in self.requirements:
+            self.requirements[property_name] = []
 
-        # Only add condition if it is not already there for this property.
+        # Only add requirement if it is not already there for this property.
         found = any(
-            curr_condition == condition
-            for curr_condition in self.conditions[property_name]
+            curr_requirement == requirement
+            for curr_requirement in self.requirements[property_name]
         )
         if not found:
-            self.conditions[property_name].append(condition)
+            self.requirements[property_name].append(requirement)
 
     # -------------------------------------------------------------------------
     # Save / Load
@@ -182,9 +182,9 @@ class Spec:
         """
         spec = Spec({Property._from_json(d): [] for d in json["properties"]})
         for property_doc in json["properties"]:
-            for condition_doc in property_doc["conditions"]:
-                spec._add_condition(
-                    property_doc["name"], Condition.from_json(condition_doc)
+            for requirement_doc in property_doc["requirements"]:
+                spec._add_requirement(
+                    property_doc["name"], Requirement.from_json(requirement_doc)
                 )
 
         return spec
@@ -196,7 +196,7 @@ class Spec:
         """
         Generate the spec document.
 
-        :param result: The Results of validations, ordered by property and condition (optional).
+        :param result: The Results of validations, ordered by property and requirement (optional).
         :type results: dict[str, dict[str, Result]]
 
         :return: The spec document
@@ -232,7 +232,7 @@ class Spec:
         """
         Generates a document with info an all properties.
 
-        :param result: The Results of validations, ordered by property and condition (optional).
+        :param result: The Results of validations, ordered by property and requirement (optional).
         :type results: dict[str, dict[str, Result]]
 
         :return: The properties document
@@ -263,68 +263,70 @@ class Spec:
 
         :param property: The property of interest
         :type property: Property
-        :param result: The Results of validations, ordered by condition.
+        :param result: The Results of validations, ordered by requirement.
         :type results: dict[str, Result]
 
         :return: The property-level document
         :rtype: dict[str, Any]
         """
         document: dict[str, Any] = property._to_json()
-        document["conditions"] = self._conditions_document(
-            self.conditions[property.name], results
+        document["requirements"] = self._requirements_document(
+            self.requirements[property.name], results
         )
         return document
 
-    def _conditions_document(
+    def _requirements_document(
         self,
-        conditions: list[Condition],
+        requirements: list[Requirement],
         results: dict[str, Result],
     ) -> list[dict[str, Any]]:
         """
-        Generate a conditions document.
+        Generate a requirements document.
 
-        :param conditions: A list of Conditions.
-        :type conditions: list[Condition]
-        :param result: The optional Results of validations, ordered by condition.
+        :param requirements: A list of Requirements.
+        :type requirements: list[Requirement]
+        :param result: The optional Results of validations, ordered by requirement.
         :type results: dict[str, Result]
 
-        :return: The conditions-level document
+        :return: The requirements-level document
         :rtype: list[dict[str, Any]]
         """
-        conditions_by_measurement = []
+        requirements_by_measurement = []
         for _, group in groupby(
-            conditions, key=lambda condition: condition.measurement_type
+            requirements, key=lambda requirement: requirement.measurement_type
         ):
-            conditions_by_measurement.append([condition for condition in group])
+            requirements_by_measurement.append(
+                [requirement for requirement in group]
+            )
 
         document = [
-            self._condition_document(
-                condition,
-                results[condition.label]
-                if condition.label in results
+            self._requirement_document(
+                requirement,
+                results[requirement.label]
+                if requirement.label in results
                 else None,
             )
-            for condition in conditions
+            for requirement in requirements
         ]
         return document
 
-    def _condition_document(
+    def _requirement_document(
         self,
-        condition: Condition,
+        requirement: Requirement,
         result: Optional[Result] = None,
     ) -> dict[str, Any]:
         """
-        Returns a document with information for a given condition, optionally with validation result.
+        Returns a document with information for a given requirement, optionally with validation result.
 
-        :param condition: The condition to turn into a document.
-        :type condition: Condition
-        :param result: The Result of validating the Condition, if any.
+        :param requirement: The requirement to turn into a document.
+        :type requirement: Requirement
+        :param result: The Result of validating the Requirement, if any.
         :type result: Optional[Result]
 
-        :return: The document for the specific condition.
+        :return: The document for the specific requirement.
         :rtype: dict[str, Any]
         """
-        document = condition.to_json()
+        document = requirement.to_json()
         if result is not None:
             document["validation"] = result.to_json()
         return document
@@ -339,7 +341,7 @@ class Spec:
         """
         Generates a bound spec with the validation results.
 
-        :param result: The Results to bind to the spec, ordered by property and condition.
+        :param result: The Results to bind to the spec, ordered by property and requirement.
         :type results: dict[str, dict[str, Result]]
 
         :return: A BoundSpec associating the Spec with the specific Results.

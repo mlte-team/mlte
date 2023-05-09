@@ -39,7 +39,7 @@ spec_validator.add_value("TaskEfficacy", "accuracy", Real.load("accuracy"))
 spec_validator.add_value("TaskEfficacy", "confusion matrix", ConfusionMatrix.load("confusion matrix"))
 spec_validator.add_value("TaskEfficacy", "classes", Image.load("class distribution"))
 
-# Validate conditions and get bound details.
+# Validate requirements and get bound details.
 bound_spec = spec_validator.validate()
 
 # BoundSpec also supports persistence

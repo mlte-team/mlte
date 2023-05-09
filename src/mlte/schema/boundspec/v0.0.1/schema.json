@@ -39,15 +39,15 @@
                         "type": "string",
                         "description": "The description of the property."
                     },
-                    "conditions": {
+                    "requirements": {
                         "type": "array",
-                        "description": "The set of measurement conditions.",
+                        "description": "The set of measurement requirements.",
                         "items": {
                             "type": "object",
                             "properties": {
                                 "label": {
                                     "type": "string",
-                                    "description": "The name of the condition."
+                                    "description": "The name of the requirement."
                                 },
                                 "measurement_type": {
                                     "type": "string",

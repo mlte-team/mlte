@@ -4,7 +4,7 @@ Unit tests for BoundSpec schema.
 
 
 import mlte
-from mlte.spec import Spec, Condition, SpecValidator
+from mlte.spec import Spec, Requirement, SpecValidator
 from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
@@ -20,7 +20,9 @@ def test_schema(tmp_path):
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+                Requirement(
+                    "test", ExternalMeasurement.__name__, "less_than", 3
+                )
             ]
         }
     )

@@ -1,5 +1,5 @@
 """
-Defines a condition for a measurement to be approved, including the validator to use and the needed threshold.
+Defines a requirement for a measurement to be approved, including the validator to use and the needed threshold.
 """
 
 from __future__ import annotations
@@ -10,13 +10,13 @@ from mlte.validation import Result
 from mlte.value import Value
 
 # -----------------------------------------------------------------------------
-# Condition
+# Requirement
 # -----------------------------------------------------------------------------
 
 
-class Condition:
+class Requirement:
     """
-    The Condition class defines a relation between a measurement,
+    The Requirement class defines a relation between a measurement,
     a validation method and a threshold/parameter, that will be part of a spec.
     """
 
@@ -27,14 +27,14 @@ class Condition:
         validator: str,
         threshold: Any,
     ) -> None:
-        """Creates a Condition."""
+        """Creates a Requirement."""
         self.label = label
         self.measurement_type = measurement_type
         self.validator = validator
         self.threshold = threshold
 
     def to_json(self) -> dict[str, Any]:
-        """Returns this condition as a dictionary."""
+        """Returns this requirement as a dictionary."""
         return {
             "label": self.label,
             "measurement_type": self.measurement_type,
@@ -43,15 +43,15 @@ class Condition:
         }
 
     @staticmethod
-    def from_json(document: dict[str, Any]) -> Condition:
+    def from_json(document: dict[str, Any]) -> Requirement:
         """
-        Deserialize a Condition from a JSON-like dict document.
+        Deserialize a Requirement from a JSON-like dict document.
 
         :param json: The json document
         :type json: dict[str, Any]
 
-        :return: The deserialized condition
-        :rtype: Condition
+        :return: The deserialized requirement
+        :rtype: Requirement
         """
         if (
             "label" not in document
@@ -59,9 +59,9 @@ class Condition:
             or "validator" not in document
             or "threshold" not in document
         ):
-            raise RuntimeError("Saved condition is malformed.")
+            raise RuntimeError("Saved requirement is malformed.")
 
-        return Condition(
+        return Requirement(
             document["label"],
             document["measurement_type"],
             document["validator"],
@@ -70,9 +70,9 @@ class Condition:
 
     def validate(self, value: Value) -> Result:
         """
-        Validates if the given value matches the condition.
+        Validates if the given value matches the requirement.
 
-        :return: The result of validating this condition.
+        :return: The result of validating this requirement.
         :rtype: Result
         """
         try:
@@ -92,10 +92,10 @@ class Condition:
     # -------------------------------------------------------------------------
 
     def __eq__(self, other: object) -> bool:
-        """Compare Condition instances for equality."""
-        if not isinstance(other, Condition):
+        """Compare Requirement instances for equality."""
+        if not isinstance(other, Requirement):
             return False
-        reference: Condition = other
+        reference: Requirement = other
         return (
             self.label == reference.label
             and self.measurement_type == reference.measurement_type
@@ -103,6 +103,6 @@ class Condition:
             and self.threshold == reference.threshold
         )
 
-    def __neq__(self, other: Condition) -> bool:
-        """Compare Condition instances for inequality."""
+    def __neq__(self, other: Requirement) -> bool:
+        """Compare Requirement instances for inequality."""
         return not self.__eq__(other)

@@ -1,6 +1,6 @@
 from .spec import Spec
 from .bound_spec import BoundSpec
-from .condition import Condition
+from .requirement import Requirement
 from .spec_validator import SpecValidator
 
-__all__ = ["Spec", "BoundSpec", "Condition", "SpecValidator"]
+__all__ = ["Spec", "BoundSpec", "Requirement", "SpecValidator"]

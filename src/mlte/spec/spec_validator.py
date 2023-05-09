@@ -35,7 +35,9 @@ class SpecValidator:
         self.values: dict[str, dict[str, Value]] = {}
         """Where values will be gathered for validation."""
 
-    def add_value(self, property_name: str, condition_label: str, value: Value):
+    def add_value(
+        self, property_name: str, requirement_label: str, value: Value
+    ):
         """
         Adds a value associated to a property and measurements.
 
@@ -44,11 +46,11 @@ class SpecValidator:
         """
         if property_name not in self.values:
             self.values[property_name] = {}
-        self.values[property_name][condition_label] = value
+        self.values[property_name][requirement_label] = value
 
     def validate(self) -> BoundSpec:
         """
-        Validates the internal properties given its conditions and the stored values, and generates a BoundSpec from it.
+        Validates the internal properties given its requirements and the stored values, and generates a BoundSpec from it.
 
         :return: The validated specification
         :rtype: BoundSpec
@@ -58,9 +60,9 @@ class SpecValidator:
 
     def _validate_properties(self) -> dict[str, dict[str, Result]]:
         """
-        Validates a set of conditions by property.
+        Validates a set of requirements by property.
 
-        :return: A document indicating, for each property, a dictionary with the Result for each Condition label.
+        :return: A document indicating, for each property, a dictionary with the Result for each Requirement label.
         :rtype: dict[str, dict[str, Result]]
         """
         # Check that all properties have values to be validated.
@@ -83,7 +85,7 @@ class SpecValidator:
         self, property: Property, values: dict[str, Value]
     ) -> dict[str, Result]:
         """
-        Validates all conditions for a given property, for the given values.
+        Validates all requirements for a given property, for the given values.
 
         :param property: The property we want to validate.
         :type property: Property
@@ -91,20 +93,20 @@ class SpecValidator:
         :param values: A list of values to validate.
         :type values: dict[str, Value]
 
-        :return: A dict of Results with the validations for each conditions for this property.
+        :return: A dict of Results with the validations for each requirements for this property.
         :rtype: list[Result]
         """
-        # Check that all conditions have values to be validated.
-        conditions = self.spec.conditions[property.name]
-        for condition in conditions:
-            if condition.label not in values:
+        # Check that all requirements have values to be validated.
+        requirements = self.spec.requirements[property.name]
+        for requirement in requirements:
+            if requirement.label not in values:
                 raise RuntimeError(
-                    f"Condition '{condition.label}' does not have a value that can be validated."
+                    f"Requirement '{requirement.label}' does not have a value that can be validated."
                 )
 
-        # Validate and aggregate the results for all conditions for this property.
+        # Validate and aggregate the results for all requirements for this property.
         results = {
-            condition.label: condition.validate(values[condition.label])
-            for condition in conditions
+            requirement.label: requirement.validate(values[requirement.label])
+            for requirement in requirements
         }
         return results

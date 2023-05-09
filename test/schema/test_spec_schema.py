@@ -3,7 +3,7 @@ Unit tests for Spec schema.
 """
 
 import mlte
-from mlte.spec import Spec, Condition
+from mlte.spec import Spec, Requirement
 from mlte.measurement import ExternalMeasurement
 from mlte.property.costs import StorageCost
 from mlte._private.schema import validate_spec_schema
@@ -17,7 +17,9 @@ def test_instance_with_content(tmp_path):
     spec = Spec(
         {
             StorageCost("test"): [
-                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+                Requirement(
+                    "test", ExternalMeasurement.__name__, "less_than", 3
+                )
             ]
         }
     )
