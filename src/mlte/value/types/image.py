@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import base64
-from typing import Dict, Any, Union
+from typing import Any, Union
 
 from ..value import Value
 from mlte.validation import Condition, Result, Ignore
@@ -46,18 +46,18 @@ class Image(Value):
         self.image: bytes = image
         """The data of the referenced image."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an Image to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"image": base64.encodebytes(self.image).decode("utf-8")}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Image:
         """
         Deserialize an Image from a JSON object.
@@ -65,7 +65,7 @@ class Image(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Image

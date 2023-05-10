@@ -1,11 +1,11 @@
 """
 Indicates the outcome of measurement evaluation.
 """
-
 from __future__ import annotations
+
 import abc
 
-from typing import Dict, Any, Optional
+from typing import Any, Optional
 
 from mlte._global import global_state
 from mlte.api import read_value, write_value
@@ -54,14 +54,14 @@ class Value(metaclass=abc.ABCMeta):
         """The type of the value itself."""
 
     @abc.abstractmethod
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """TODO"""
         raise NotImplementedError("Cannot serialize abstract Value.")
 
     @staticmethod
     @abc.abstractmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Any:
         """TODO"""
         raise NotImplementedError("Cannot deserialize abstract Value.")
@@ -133,7 +133,7 @@ class Value(metaclass=abc.ABCMeta):
         )
         return value
 
-    def _serialize_metadata(self) -> Dict[str, Any]:
+    def _serialize_metadata(self) -> dict[str, Any]:
         """Return the header for serialization."""
         return {
             "measurement": self.metadata.to_json(),

@@ -1,10 +1,9 @@
 """
 An opaque evaluation value, without semantics.
 """
-
 from __future__ import annotations
 
-from typing import Dict, Any, List
+from typing import Any
 
 from ..value import Value
 from mlte.evidence.evidence_metadata import EvidenceMetadata
@@ -17,7 +16,7 @@ class Opaque(Value):
     """
 
     def __init__(
-        self, evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
+        self, evidence_metadata: EvidenceMetadata, data: dict[str, Any]
     ):
         """
         Initialize an Opaque instance.
@@ -25,25 +24,25 @@ class Opaque(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param data: The output of the measurement
-        :type data: Dict
+        :type data: dict
         """
         super().__init__(self, evidence_metadata)
 
         self.data = data
         """The raw output from measurement execution."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an Opaque to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"data": self.data}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Opaque:
         """
         Deserialize an Opaque from a JSON object.
@@ -51,7 +50,7 @@ class Opaque(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Opaque
@@ -94,7 +93,7 @@ def _equal(a: Opaque, b: Opaque) -> bool:
     return a.metadata == b.metadata and _equal_helper_dict(a.data, b.data)
 
 
-def _equal_helper_dict(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
+def _equal_helper_dict(a: dict[str, Any], b: dict[str, Any]) -> bool:
     akeys = set(a.keys())
     bkeys = set(b.keys())
     if not (len(akeys) == len(bkeys) == len(akeys.intersection(bkeys))):
@@ -120,7 +119,7 @@ def _equal_helper_dict(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
     return True
 
 
-def _equal_helper_list(a: List[Any], b: List[Any]) -> bool:
+def _equal_helper_list(a: list[Any], b: list[Any]) -> bool:
     if len(a) != len(b):
         return False
 

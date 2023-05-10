@@ -3,7 +3,7 @@ A Value instance for a scalar, integral value.
 """
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 from ..value import Value
 from mlte.validation import Condition, Result, Success, Failure
@@ -31,18 +31,18 @@ class Integer(Value):
         self.value = value
         """The wrapped integer value."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an Integer to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"value": self.value}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Integer:
         """
         Deserialize an Integer from a JSON object.
@@ -50,7 +50,7 @@ class Integer(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Integer

@@ -1,10 +1,9 @@
 """
 An Value instance for a scalar, real value.
 """
-
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 from ..value import Value
 from mlte.validation import Condition, Result, Success, Failure
@@ -33,18 +32,18 @@ class Real(Value):
         self.value = value
         """The wrapped real value."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an Real to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"value": self.value}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Real:
         """
         Deserialize an Real from a JSON object.
@@ -52,7 +51,7 @@ class Real(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Real
