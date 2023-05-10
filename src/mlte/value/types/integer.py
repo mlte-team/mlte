@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..value import Value
-from mlte.validation import Condition, Result, Success, Failure
+from mlte.validation import Condition, Success, Failure
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -71,17 +71,18 @@ class Integer(Value):
         """Comparison between Integer values."""
         return not self.__eq__(other)
 
-    def less_than(self, value: int) -> Result:
+    @classmethod
+    def less_than(self, value: int) -> Condition:
         """
         Determine if integer is strictly less than `value`.
 
         :param value: The threshold value
         :type value: int
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "less_than",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
@@ -90,20 +91,21 @@ class Integer(Value):
             else Failure(
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def less_or_equal_to(self, value: int) -> Result:
+    @classmethod
+    def less_or_equal_to(self, value: int) -> Condition:
         """
         Determine if integer is less than or equal to `value`.
 
         :param value: The threshold value
         :type value: int
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "less_or_equal_to",
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
@@ -113,5 +115,5 @@ class Integer(Value):
             else Failure(
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition

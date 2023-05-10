@@ -13,7 +13,6 @@ from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
     Condition,
-    Result,
     Success,
     Failure,
 )
@@ -101,17 +100,18 @@ class MemoryStatistics(Value):
         s += f"Maximum: {self.max}"
         return s
 
-    def max_consumption_less_than(self, threshold: int) -> Result:
+    @classmethod
+    def max_consumption_less_than(self, threshold: int) -> Condition:
         """
         Construct and invoke a condition for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption
         :type threshold: int
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "max_consumption_less_than",
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
@@ -124,20 +124,21 @@ class MemoryStatistics(Value):
                     f"exceeds threshold {threshold}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def average_consumption_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def average_consumption_less_than(self, threshold: float) -> Condition:
         """
         Construct and invoke a condition for average memory consumption.
 
         :param threshold: The threshold value for average consumption
         :type threshold: int
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "average_consumption_less_than",
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
@@ -150,8 +151,8 @@ class MemoryStatistics(Value):
                     f"exceeds threshold {threshold}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
 
 # -----------------------------------------------------------------------------

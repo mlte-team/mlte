@@ -8,7 +8,7 @@ import base64
 from typing import Any, Union
 
 from ..value import Value
-from mlte.validation import Condition, Result, Ignore
+from mlte.validation import Condition, Ignore
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -75,18 +75,19 @@ class Image(Value):
             base64.decodebytes(json["image"].encode("utf-8")),
         )
 
-    def ignore(self, reason: str) -> Result:
+    @classmethod
+    def ignore(self, reason: str) -> Condition:
         """
         Ignore an image value.
 
         :param reason: The reason for ignoring the image
         :type reason: str
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "Ignore",
             lambda _: Ignore(reason),
-        )(self)
-        return result
+        )
+        return condition

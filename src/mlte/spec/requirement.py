@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from mlte.validation import Result
+from mlte.validation import Result, Condition
 from mlte.value import Value
 from mlte.evidence import Identifier
 
@@ -25,13 +25,13 @@ class Requirement:
         self,
         identifier: str,
         measurement_type: str,
-        validator: str,
+        condition: str,
         threshold: Any,
     ) -> None:
         """Creates a Requirement."""
         self.identifier = Identifier(identifier)
         self.measurement_type = measurement_type
-        self.validator = validator
+        self.validator = condition
         self.threshold = threshold
 
     def to_json(self) -> dict[str, Any]:
@@ -82,7 +82,8 @@ class Requirement:
             raise RuntimeError(
                 f"Invalid validation method provided: '{self.validator}()' method not found for value of type {value.typename}"
             )
-        result: Result = validator(self.threshold)
+        condition: Condition = validator(self.threshold)
+        result: Result = condition(value)
         return result
 
     def __str__(self):

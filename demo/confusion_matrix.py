@@ -36,8 +36,9 @@ class ConfusionMatrix(Value):
     def __str__(self) -> str:
         return str(self.matrix)
 
-    def misclassification_count_less_than(self, threshold: int) -> Result:
-        return Condition(
+    @classmethod
+    def misclassification_count_less_than(self, threshold: int) -> Condition:
+        condition: Condition = Condition(
             "misclassification_count_less_than",
             lambda cm: Success(
                 f"Misclass count {cm.misclassifications} less than threshold {threshold}"
@@ -46,7 +47,8 @@ class ConfusionMatrix(Value):
             else Failure(
                 f"Misclassification count {cm.misclassifications} exceeds threshold {threshold}"
             ),
-        )(self)
+        )
+        return condition
 
     @property
     def misclassifications(self) -> int:

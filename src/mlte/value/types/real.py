@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..value import Value
-from mlte.validation import Condition, Result, Success, Failure
+from mlte.validation import Condition, Success, Failure
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -72,92 +72,96 @@ class Real(Value):
         """Comparison between Real values."""
         return not self.__eq__(other)
 
-    def less_than(self, value: float) -> Result:
+    @classmethod
+    def less_than(self, value: float) -> Condition:
         """
         Determine if real is strictly less than `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "less_than",
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
             )
-            if self.value < value
+            if real.value < value
             else Failure(
                 f"Real magnitude {real.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def less_or_equal_to(self, value: float) -> Result:
+    @classmethod
+    def less_or_equal_to(self, value: float) -> Condition:
         """
         Determine if real is less than or equal to `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "less_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"less than or equal to threshold {value}"
             )
-            if self.value <= value
+            if real.value <= value
             else Failure(
                 f"Real magnitude {real.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def greater_than(self, value: float) -> Result:
+    @classmethod
+    def greater_than(self, value: float) -> Condition:
         """
         Determine if real is strictly greater than `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "greater_than",
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
             )
-            if self.value > value
+            if real.value > value
             else Failure(
                 f"Real magnitude {real.value} below threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def greater_or_equal_to(self, value: float) -> Result:
+    @classmethod
+    def greater_or_equal_to(self, value: float) -> Condition:
         """
         Determine if real is greater than or equal to `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "greater_or_equal_to",
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"greater than or equal to threshold {value}"
             )
-            if self.value >= value
+            if real.value >= value
             else Failure(
                 f"Real magnitude {real.value} below threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition

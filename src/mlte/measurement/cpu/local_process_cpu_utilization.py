@@ -14,7 +14,6 @@ from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
     Condition,
-    Result,
     Success,
     Failure,
 )
@@ -101,17 +100,18 @@ class CPUStatistics(Value):
         s += f"Maximum: {self.max:.2f}%"
         return s
 
-    def max_utilization_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def max_utilization_less_than(self, threshold: float) -> Condition:
         """
         Construct and invoke a condition for maximum CPU utilization.
 
         :param threshold: The threshold value for maximum utilization
         :type threshold: float
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "max_utilization_less_than",
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
@@ -124,20 +124,21 @@ class CPUStatistics(Value):
                     f"exceeds threshold {threshold:.2f}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def average_utilization_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def average_utilization_less_than(self, threshold: float) -> Condition:
         """
         Construct and invoke a condition for average CPU utilization.
 
         :param threshold: The threshold value for average utilization
         :type threshold: float
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Condition(
+        condition: Condition = Condition(
             "average_utilization_less_than",
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
@@ -150,8 +151,8 @@ class CPUStatistics(Value):
                     "exceeds threshold {threshold:.2f}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
 
 # -----------------------------------------------------------------------------
