@@ -72,7 +72,7 @@ class Integer(Value):
         return not self.__eq__(other)
 
     @classmethod
-    def less_than(self, value: int) -> Condition:
+    def less_than(cls, value: int) -> Condition:
         """
         Determine if integer is strictly less than `value`.
 
@@ -95,7 +95,7 @@ class Integer(Value):
         return condition
 
     @classmethod
-    def less_or_equal_to(self, value: int) -> Condition:
+    def less_or_equal_to(cls, value: int) -> Condition:
         """
         Determine if integer is less than or equal to `value`.
 

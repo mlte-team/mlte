@@ -5,8 +5,7 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from itertools import groupby
-from typing import Iterable, Any, Union, Optional
+from typing import Any, Union, Optional
 
 from mlte.property import Property
 from mlte.validation import Result
@@ -28,20 +27,6 @@ def _unique(collection: list[str]) -> bool:
     :rtype: bool
     """
     return len(set(collection)) == len(collection)
-
-
-def _all_equal(iterable: Iterable[Any]) -> bool:
-    """
-    Determine if all elements of an iterable are equivalent.
-
-    :param iterable: The iterable
-    :type iterable: Iterable[Any]
-
-    :return: `True` if all elements are equal, `False` otherwise
-    :rtype: bool
-    """
-    g = groupby(iterable)
-    return next(g, True) and not next(g, False)  # type: ignore
 
 
 # -----------------------------------------------------------------------------

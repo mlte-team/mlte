@@ -6,7 +6,6 @@ import pytest
 
 from mlte.spec import Spec, Requirement, SpecValidator
 from mlte.property.costs import StorageCost
-from mlte.measurement import ExternalMeasurement
 
 from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
@@ -15,13 +14,7 @@ from mlte.evidence import EvidenceMetadata
 def test_no_property():
     # Spec validator does not have value for property.
     spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement(
-                    "test", ExternalMeasurement.__name__, "less_than", 3
-                )
-            ]
-        }
+        {StorageCost("rationale"): [Requirement("test", Integer.less_than(3))]}
     )
     specValidator = SpecValidator(spec)
 
@@ -32,11 +25,7 @@ def test_no_property():
 def test_no_requirement():
     # Spec validator does not have value for requirement.
     spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
-            ]
-        }
+        {StorageCost("rationale"): [Requirement("id", Integer.less_than(3))]}
     )
     specValidator = SpecValidator(spec)
 
@@ -49,11 +38,7 @@ def test_no_requirement():
 
 def test_success():
     spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
-            ]
-        }
+        {StorageCost("rationale"): [Requirement("id", Integer.less_than(3))]}
     )
     specValidator = SpecValidator(spec)
 

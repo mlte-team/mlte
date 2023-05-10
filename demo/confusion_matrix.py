@@ -37,7 +37,7 @@ class ConfusionMatrix(Value):
         return str(self.matrix)
 
     @classmethod
-    def misclassification_count_less_than(self, threshold: int) -> Condition:
+    def misclassification_count_less_than(cls, threshold: int) -> Condition:
         condition: Condition = Condition(
             "misclassification_count_less_than",
             lambda cm: Success(

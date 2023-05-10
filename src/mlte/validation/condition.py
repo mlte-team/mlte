@@ -1,9 +1,11 @@
 """
 The interface for measurement validation.
 """
+from __future__ import annotations
 
 import typing
-from typing import Callable
+from typing import Callable, Any
+
 from mlte.value import Value
 from . import Result
 
@@ -22,13 +24,14 @@ class Condition:
         """
         Initialize a Condition instance.
 
-        :param name: The condition identifier
+        :param name: The name of the name method, for documenting purposes.
         :type name: str
         :param callback: The callable that implements validation
         :type callback: Callable[[Value], Result]
         """
+
         self.name: str = name
-        """The human-readable identifier for the Condition."""
+        """The human-readable identifier for the name method."""
 
         self.callback: Callable[[Value], Result] = callback
         """The callback that implements validation."""
@@ -48,3 +51,56 @@ class Condition:
             ._from_condition(self)
             ._with_evidence_metadata(value.metadata)
         )
+
+    def to_json(self) -> dict[str, Any]:
+        """Returns this requirement as a dictionary."""
+        """        try:
+            validator = getattr(value, self.condition)
+        except AttributeError:
+            raise RuntimeError(
+                f"Invalid validation method provided: '{self.condition}()' method not found for value of type {value.typename}"
+            )
+        condition: Condition = validator(self.threshold)"""
+        return {
+            "name": self.name,
+            "callback": self.callback,  # TODO: serialize callback.
+        }
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> Condition:
+        """
+        Deserialize a Condition from a JSON-like dict document.
+
+        :param json: The json document
+        :type json: dict[str, Any]
+
+        :return: The deserialized Condition
+        :rtype: Condition
+        """
+        if "name" not in document or "callback" not in document:
+            raise RuntimeError("Saved Condition is malformed.")
+
+        condition: Condition = Condition(
+            document["name"],
+            document["callback"],  # TODO: deserialize callback.
+        )
+        return condition
+
+    def __str__(self) -> str:
+        """Return a string representation of Condition."""
+        return f"{self.name}"
+
+    # -------------------------------------------------------------------------
+    # Equality Testing
+    # -------------------------------------------------------------------------
+
+    def __eq__(self, other: object) -> bool:
+        """Compare Condition instances for equality."""
+        if not isinstance(other, Condition):
+            return False
+        reference: Condition = other
+        return self.name == reference.name
+
+    def __neq__(self, other: Condition) -> bool:
+        """Compare Condition instances for inequality."""
+        return not self.__eq__(other)

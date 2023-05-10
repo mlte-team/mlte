@@ -37,7 +37,7 @@ class ExternalMeasurement(Measurement):
         value: Value = self.value_type(self.metadata, *args, **kwargs)
         return value
 
-    @property
+    @classmethod
     def value(self) -> Type[Value]:
         """Returns the class type object for the Value produced by the Measurement."""
         return self.value_type

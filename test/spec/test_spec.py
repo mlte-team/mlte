@@ -19,7 +19,7 @@ def test_save(tmp_path):
     s = Spec(
         {
             StorageCost("rationale"): [
-                Requirement("test", LocalObjectSize.__name__, "less_than", 3)
+                Requirement("test", LocalObjectSize.value().less_than(3))
             ]
         }
     )
@@ -43,19 +43,19 @@ def test_non_unique_properties():
 
 
 def test_non_unique_requirement_ids():
-    requirement1 = Requirement("id1", LocalObjectSize.__name__, "less_than", 5)
-    requirement2 = Requirement("id1", LocalObjectSize.__name__, "less_than", 3)
+    requirement1 = Requirement("id1", LocalObjectSize.value().less_than(5))
+    requirement2 = Requirement("id1", LocalObjectSize.value().less_than(3))
     with pytest.raises(RuntimeError):
         _ = Spec({StorageCost("rationale"): [requirement1, requirement2]})
 
 
 def test_add_requirement():
     spec = Spec({StorageCost("rationale"): []})
-    requirement = Requirement("test", LocalObjectSize.__name__, "less_than", 3)
+    requirement = Requirement("test", LocalObjectSize.value().less_than(3))
     spec._add_requirement("StorageCost", requirement)
 
     assert spec.requirements["StorageCost"][0] == Requirement(
-        "test", LocalObjectSize.__name__, "less_than", 3
+        "test", LocalObjectSize.value().less_than(3)
     )
 
 
@@ -64,7 +64,7 @@ def test_no_result():
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement("test", LocalObjectSize.__name__, "less_than", 3)
+                Requirement("test", LocalObjectSize.value().less_than(3))
             ]
         }
     )

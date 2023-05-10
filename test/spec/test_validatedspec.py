@@ -7,7 +7,6 @@ from mlte.spec import Spec, ValidatedSpec, Requirement, SpecValidator
 from mlte.property.costs import StorageCost
 from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
-from mlte.measurement import ExternalMeasurement
 
 
 def test_save_load(tmp_path):
@@ -17,7 +16,7 @@ def test_save_load(tmp_path):
     spec = Spec(
         {
             StorageCost("rationale"): [
-                Requirement("id", ExternalMeasurement.__name__, "less_than", 3)
+                Requirement("id", Integer.less_than(3))
             ]
         }
     )

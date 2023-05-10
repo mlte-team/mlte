@@ -1,7 +1,6 @@
 """
 Defines a requirement for a measurement to be approved, including the conditions to validate.
 """
-
 from __future__ import annotations
 
 from typing import Any
@@ -17,30 +16,19 @@ from mlte.evidence import Identifier
 
 class Requirement:
     """
-    The Requirement class defines a relation between a measurement,
-    a validation method and a threshold/parameter, that will be part of a spec.
+    The Requirement class defines a named condition that will be used to validate a property.
     """
 
-    def __init__(
-        self,
-        identifier: str,
-        measurement_type: str,
-        condition: str,
-        threshold: Any,
-    ) -> None:
+    def __init__(self, identifier: str, condition: Condition) -> None:
         """Creates a Requirement."""
         self.identifier = Identifier(identifier)
-        self.measurement_type = measurement_type
-        self.validator = condition
-        self.threshold = threshold
+        self.condition = condition
 
     def to_json(self) -> dict[str, Any]:
         """Returns this requirement as a dictionary."""
         return {
             "identifier": str(self.identifier),
-            "measurement_type": self.measurement_type,
-            "validator": self.validator,
-            "threshold": self.threshold,
+            "condition": self.condition.to_json(),
         }
 
     @staticmethod
@@ -54,19 +42,12 @@ class Requirement:
         :return: The deserialized requirement
         :rtype: Requirement
         """
-        if (
-            "identifier" not in document
-            or "measurement_type" not in document
-            or "validator" not in document
-            or "threshold" not in document
-        ):
+        if "identifier" not in document or "condition" not in document:
             raise RuntimeError("Saved requirement is malformed.")
 
         return Requirement(
             document["identifier"],
-            document["measurement_type"],
-            document["validator"],
-            document["threshold"],
+            Condition.from_json(document["condition"]),
         )
 
     def validate(self, value: Value) -> Result:
@@ -76,18 +57,11 @@ class Requirement:
         :return: The result of validating this requirement.
         :rtype: Result
         """
-        try:
-            validator = getattr(value, self.validator)
-        except AttributeError:
-            raise RuntimeError(
-                f"Invalid validation method provided: '{self.validator}()' method not found for value of type {value.typename}"
-            )
-        condition: Condition = validator(self.threshold)
-        result: Result = condition(value)
+        result: Result = self.condition(value)
         return result
 
     def __str__(self):
-        return f"{self.measurement_type}-{self.validator}-{self.threshold}"
+        return f"{self.identifier}-{self.condition}"
 
     # -------------------------------------------------------------------------
     # Equality Testing
@@ -100,9 +74,7 @@ class Requirement:
         reference: Requirement = other
         return (
             self.identifier == reference.identifier
-            and self.measurement_type == reference.measurement_type
-            and self.validator == reference.validator
-            and self.threshold == reference.threshold
+            and self.condition == reference.condition
         )
 
     def __neq__(self, other: Requirement) -> bool:

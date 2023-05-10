@@ -101,7 +101,7 @@ class MemoryStatistics(Value):
         return s
 
     @classmethod
-    def max_consumption_less_than(self, threshold: int) -> Condition:
+    def max_consumption_less_than(cls, threshold: int) -> Condition:
         """
         Construct and invoke a condition for maximum memory consumption.
 
@@ -128,7 +128,7 @@ class MemoryStatistics(Value):
         return condition
 
     @classmethod
-    def average_consumption_less_than(self, threshold: float) -> Condition:
+    def average_consumption_less_than(cls, threshold: float) -> Condition:
         """
         Construct and invoke a condition for average memory consumption.
 
@@ -203,7 +203,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             max=max(stats),
         )
 
-    @property
+    @classmethod
     def value(self) -> Type[MemoryStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return MemoryStatistics

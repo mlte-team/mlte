@@ -9,6 +9,7 @@ import typing
 from typing import Type
 
 from mlte.value import Value
+from mlte.value.types import Opaque
 from mlte.evidence import EvidenceMetadata, Identifier
 
 
@@ -61,12 +62,11 @@ class Measurement(metaclass=abc.ABCMeta):
         # Evaluate the measurement
         return self.__call__(*args, **kwargs)
 
-    @property
-    def value(self) -> Type[Value]:
+    @classmethod
+    def value(cls) -> Type[Value]:
         """Returns the class type object for the Value produced by the Measurement."""
-        raise NotImplementedError(
-            "Cannot return Value type for abstract Measurement."
-        )
+        # Opaque is the default Value type.
+        return Opaque
 
     def __str__(self) -> str:
         """Return a string representation of a Measurement."""

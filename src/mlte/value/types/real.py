@@ -73,7 +73,7 @@ class Real(Value):
         return not self.__eq__(other)
 
     @classmethod
-    def less_than(self, value: float) -> Condition:
+    def less_than(cls, value: float) -> Condition:
         """
         Determine if real is strictly less than `value`.
 
@@ -96,7 +96,7 @@ class Real(Value):
         return condition
 
     @classmethod
-    def less_or_equal_to(self, value: float) -> Condition:
+    def less_or_equal_to(cls, value: float) -> Condition:
         """
         Determine if real is less than or equal to `value`.
 
@@ -120,7 +120,7 @@ class Real(Value):
         return condition
 
     @classmethod
-    def greater_than(self, value: float) -> Condition:
+    def greater_than(cls, value: float) -> Condition:
         """
         Determine if real is strictly greater than `value`.
 
@@ -143,7 +143,7 @@ class Real(Value):
         return condition
 
     @classmethod
-    def greater_or_equal_to(self, value: float) -> Condition:
+    def greater_or_equal_to(cls, value: float) -> Condition:
         """
         Determine if real is greater than or equal to `value`.
 

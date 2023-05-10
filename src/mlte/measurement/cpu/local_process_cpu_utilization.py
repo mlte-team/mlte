@@ -101,7 +101,7 @@ class CPUStatistics(Value):
         return s
 
     @classmethod
-    def max_utilization_less_than(self, threshold: float) -> Condition:
+    def max_utilization_less_than(cls, threshold: float) -> Condition:
         """
         Construct and invoke a condition for maximum CPU utilization.
 
@@ -128,7 +128,7 @@ class CPUStatistics(Value):
         return condition
 
     @classmethod
-    def average_utilization_less_than(self, threshold: float) -> Condition:
+    def average_utilization_less_than(cls, threshold: float) -> Condition:
         """
         Construct and invoke a condition for average CPU utilization.
 
@@ -203,7 +203,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             max=max(stats),
         )
 
-    @property
+    @classmethod
     def value(self) -> Type[CPUStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return CPUStatistics

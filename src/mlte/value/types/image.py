@@ -76,7 +76,7 @@ class Image(Value):
         )
 
     @classmethod
-    def ignore(self, reason: str) -> Condition:
+    def ignore(cls, reason: str) -> Condition:
         """
         Ignore an image value.
 

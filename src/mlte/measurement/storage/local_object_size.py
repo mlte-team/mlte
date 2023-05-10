@@ -50,7 +50,7 @@ class LocalObjectSize(Measurement):
 
         return Integer(self.metadata, total_size)
 
-    @property
+    @classmethod
     def value(self) -> Type[Integer]:
         """Returns the class type object for the Value produced by the Measurement."""
         return Integer
