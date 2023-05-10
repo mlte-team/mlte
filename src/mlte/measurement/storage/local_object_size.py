@@ -3,6 +3,7 @@ Storage capacity measurement for locally-stored objects.
 """
 
 import os
+from typing import Type
 
 from mlte.measurement import Measurement
 from mlte.value.types import Integer
@@ -48,3 +49,8 @@ class LocalObjectSize(Measurement):
                     total_size += os.path.getsize(path)
 
         return Integer(self.metadata, total_size)
+
+    @property
+    def value(self) -> Type[Integer]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        return Integer

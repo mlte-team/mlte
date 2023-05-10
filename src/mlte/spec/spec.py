@@ -283,14 +283,6 @@ class Spec:
         :return: The requirements-level document
         :rtype: list[dict[str, Any]]
         """
-        requirements_by_measurement = []
-        for _, group in groupby(
-            requirements, key=lambda requirement: requirement.measurement_type
-        ):
-            requirements_by_measurement.append(
-                [requirement for requirement in group]
-            )
-
         document = [
             self._requirement_document(
                 requirement,

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 import subprocess
-from typing import Dict, Any
+from typing import Any, Type
 from subprocess import SubprocessError
 
 from ..process_measurement import ProcessMeasurement
@@ -62,18 +62,18 @@ class CPUStatistics(Value):
         self.max = max
         """The maximum CPU utilization, as a proportion."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an CPUStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
@@ -81,7 +81,7 @@ class CPUStatistics(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: CPUStatistics
@@ -185,7 +185,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         :type poll_interval: int
 
         :return: The collection of CPU usage statistics
-        :rtype: Dict
+        :rtype: dict
         """
         stats = []
         while True:
@@ -201,6 +201,11 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             min=min(stats),
             max=max(stats),
         )
+
+    @property
+    def value(self) -> Type[CPUStatistics]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        return CPUStatistics
 
 
 # -----------------------------------------------------------------------------

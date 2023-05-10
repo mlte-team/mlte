@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import abc
 import typing
+from typing import Type
 
 from mlte.value import Value
 from mlte.evidence import EvidenceMetadata, Identifier
@@ -59,6 +60,13 @@ class Measurement(metaclass=abc.ABCMeta):
         """
         # Evaluate the measurement
         return self.__call__(*args, **kwargs)
+
+    @property
+    def value(self) -> Type[Value]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        raise NotImplementedError(
+            "Cannot return Value type for abstract Measurement."
+        )
 
     def __str__(self) -> str:
         """Return a string representation of a Measurement."""

@@ -61,7 +61,7 @@ class ProcessMeasurement(Measurement):
         """
         super().__init__(instance, identifier)
         self.thread: Optional[threading.Thread] = None
-        self.value: Optional[Value] = None
+        self.stored_value: Optional[Value] = None
         self.error: str = ""
 
     def evaluate_async(self, pid: int, *args, **kwargs):
@@ -75,7 +75,7 @@ class ProcessMeasurement(Measurement):
 
         # Evaluate the measurement
         self.error = ""
-        self.value = None
+        self.stored_value = None
         self.thread = threading.Thread(
             target=lambda: self._run_call(pid, *args, **kwargs)
         )
@@ -86,7 +86,7 @@ class ProcessMeasurement(Measurement):
         Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
         """
         try:
-            self.value = self.__call__(pid, *args, **kwargs)
+            self.stored_value = self.__call__(pid, *args, **kwargs)
         except Exception as e:
             self.error = f"Could not evaluate process: {e}"
 
@@ -112,6 +112,6 @@ class ProcessMeasurement(Measurement):
         if self.error != "":
             raise RuntimeError(self.error)
 
-        if self.value is None:
+        if self.stored_value is None:
             raise Exception("No valid value was returned from measurement.")
-        return self.value
+        return self.stored_value
