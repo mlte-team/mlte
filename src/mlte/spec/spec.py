@@ -55,21 +55,33 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, properties: dict[Property, list[Requirement]]):
+    def __init__(
+        self, requirements_by_property: dict[Property, list[Requirement]]
+    ):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec.
         :type properties: list[Property]
         """
-        self.properties = [p for p in properties.keys()]
+        self.properties = [p for p in requirements_by_property.keys()]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
+        if not _unique(
+            [
+                str(requirement.identifier)
+                for _, req_list in requirements_by_property.items()
+                for requirement in req_list
+            ]
+        ):
+            raise RuntimeError("All requirement ids in Spec must be unique.")
+
         self.requirements: dict[str, list[Requirement]] = {
-            property.name: properties[property] for property in self.properties
+            property.name: requirements_by_property[property]
+            for property in self.properties
         }
         """A dict to store requirements by property."""
 

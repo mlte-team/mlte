@@ -37,9 +37,16 @@ def test_load_failure(tmp_path):
         _ = Spec.load()
 
 
-def test_unique_properties():
+def test_non_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec({StorageCost("rationale"): [], StorageCost("rationale2"): []})
+
+
+def test_non_unique_requirement_ids():
+    requirement1 = Requirement("id1", LocalObjectSize.__name__, "less_than", 5)
+    requirement2 = Requirement("id1", LocalObjectSize.__name__, "less_than", 3)
+    with pytest.raises(RuntimeError):
+        _ = Spec({StorageCost("rationale"): [requirement1, requirement2]})
 
 
 def test_add_requirement():
