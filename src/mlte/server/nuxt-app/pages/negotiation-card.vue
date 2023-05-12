@@ -2,7 +2,7 @@
   <NuxtLayout name="base-layout">
     <UsaBreadcrumb :items="path"/>
 
-    <h2 class="section-header">How to use Negotiation Card</h2>
+    <h1 class="section-header">How to use Negotiation Card</h1>
     <p>
       Teams should work through as many of the following items as they can at the IMT negotiation point, using
       the answers to inform initial model development. At the SDMT negotiation point, answers should be
@@ -11,14 +11,14 @@
       of the model and system.
     </p>
 
-    <h3 class="section-header">System Requirements</h3>
+    <h2 class="section-header">System Requirements</h2>
     <div class="input-group">
-      <h3 class="section-header">Goals</h3>
+      <h3>Goals</h3>
       <p>
         Goals or objectives that the model is going to help satisfy.
       </p>
-      <div v-for="(goal, goalIndex) in form.system.goals">
-        <p><b>Goal {{ goalIndex + 1 }}</b></p>
+      <div v-for="(goal, goal_index) in form.system.goals">
+        <p><b>Goal {{ goal_index + 1 }}</b></p>
 
         <UsaTextInput v-model="goal.description">
           <template v-slot:label>
@@ -26,37 +26,50 @@
           </template>
         </UsaTextInput>
 
-        <div v-for="(metric, index) in goal.metrics">
-          <UsaTextInput v-model="metric.description">
-            <template v-slot:label>
-              Metric subfield description @@ TODO: Update this label when list structure changes @@@
-              <InfoIcon>
-                For each goal, select a performance metric that captures the system's 
-                ability to accomplish that goal; e.g., acceptance criteria for determining
-                that the model is performing correctly.
-              </InfoIcon>
-            </template>
-          </UsaTextInput>
+        <h3 class="no-margin-section-header">Metrics</h3>
+        <div v-for="(metric, metric_index) in goal.metrics">
+          <div class="inline-input-left">
+            <UsaTextInput v-model="metric.description">
+              <template v-slot:label>
+                Description
+                <InfoIcon>
+                  For each goal, select a performance metric that captures the system's 
+                  ability to accomplish that goal; e.g., acceptance criteria for determining
+                  that the model is performing correctly.
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+          </div>
 
-          <UsaTextInput v-model="metric.baseline">
-            <template v-slot:label>
-              Baseline
-              <InfoIcon>
-                Select a baseline for each performance metric, which means a measurement that <br/>
-                evaluates whether or not the model will/can achieve the main goal for which it is being created. <br/>
-                If the goal cannot be measured directly, select a reasonable proxy and justify how that will <br/>
-                reliably predict the model’s performance in achieving its goal.
-              </InfoIcon>
-            </template>
-          </UsaTextInput>
+          <div class="inline-input-right">
+            <UsaTextInput v-model="metric.baseline">
+              <template v-slot:label>
+                Baseline
+                <InfoIcon>
+                  Select a baseline for each performance metric, which means a measurement that <br/>
+                  evaluates whether or not the model will/can achieve the main goal for which it is being created. <br/>
+                  If the goal cannot be measured directly, select a reasonable proxy and justify how that will <br/>
+                  reliably predict the model’s performance in achieving its goal.
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+          </div>
+          <div class="inline-button">
+            <DeleteButton @click="deleteMetric(goal_index, metric_index)">
+              Delete Metric
+            </DeleteButton>
+          </div>
         </div>
-        <DeleteButton @click="deleteGoal(goalIndex)">
+        <AddButton @click="addMetric(goal_index)" class="margin-button">
+          Add Metric
+        </AddButton>
+        <DeleteButton @click="deleteGoal(goal_index)">
           Delete goal
         </DeleteButton>
         <hr/>
       </div>
 
-      <AddButton @click="addGoal()">
+      <AddButton @click="addGoal()" class="margin-button">
         Add goal
       </AddButton>
     </div>
@@ -108,114 +121,179 @@
       </template>
     </UsaTextInput>
 
-    <hr/>
-
-    <h3 class="section-header">Data</h3>
+    <h2 class="section-header">Data</h2>
     <p>
       Details of the data that will influence development efforts; fill out all that are known. For 
       access / availability, record what needs to happen to access the data, such as accounts that 
       need to be created or methods for data transportation.
     </p>
-    <UsaTextInput v-model="form.data.source_data_location">
-      <template v-slot:label>
-        Source Data Location
-      </template>
-    </UsaTextInput>
-    
-    <UsaSelect v-model="form.data.data_classification" :options=classiciation_options>
-      <template v-slot:label>
-        Data Classification
-      </template>
-    </UsaSelect>
-
-    <UsaTextInput v-model="form.data.account_access">
-      <template v-slot:label>
-        Account Access / Account Availability
-      </template>
-    </UsaTextInput>
-
-    <UsaTextInput >
-      <template v-slot:label>
-        Labels / Distribution @@ TODO PLACEHOLDER @@<img src="~/assets/uswds/img/usa-icons/info.svg" class="inline-icon"/>
-      </template>
-    </UsaTextInput>
-
-    <AddButton>
-      Add additional labels
-    </AddButton>
-
-    <hr/>
-
-    <div class="input-div">
-      <h3>Data Schema</h3>
-      <div v-for="(schema, index) in form.data_schema" :key="index">
-        <UsaTextInput v-model="schema.field_name">
+    <div class="input-group">
+      <div v-for="(data_item, data_item_index) in form.data">
+        <h3>Data Item {{ data_item_index + 1 }}</h3>
+        <UsaTextInput v-model="data_item.access">
           <template v-slot:label>
-            Field Name
+            Account Access / Account Availability
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="schema.field_description">
-          <template v-slot:label>
-            Field Description
-          </template>
-        </UsaTextarea>
+        <div>
+          <div class="inline-input-left">
+            <UsaTextInput v-model="data_item.description">
+              <template v-slot:label>
+                Data Description
+              </template>
+            </UsaTextInput>
+          </div>
+          
+          <div class="inline-input-right">
+            <UsaTextInput v-model="data_item.source">
+              <template v-slot:label>
+                Source Data Location
+              </template>
+            </UsaTextInput>
+          </div>
+        </div>
 
-        <UsaTextInput v-model="schema.field_type">
+        <UsaSelect v-model="data_item.classification" :options=classiciation_options>
           <template v-slot:label>
-            Field Type
+            Data Classification
+          </template>
+        </UsaSelect>
+
+        <div class="input-group" style="margin-top: 1em;">
+          <div v-for="(label, label_index) in data_item.labels">
+            <div class="inline-input-left">
+              <UsaTextInput v-model="label.description">
+                <template v-slot:label>
+                  Label Description
+                </template>
+              </UsaTextInput>
+            </div>
+
+            <div class="inline-input-right">
+              <UsaTextInput v-model="label.percentage" type="number">
+                <template v-slot:label>
+                  Percentage
+                </template>
+              </UsaTextInput>
+            </div>
+            <div class="inline-button">
+              <DeleteButton @click="deleteLabel(data_item_index, label_index)">
+                Delete label
+              </DeleteButton>
+            </div>
+          </div>
+
+          <AddButton @click="addLabel(data_item_index)" class="margin-button">
+            Add additional label
+          </AddButton>
+        </div>
+
+        <div class="input-group" style="margin-top: 1em;">
+          <h3 class="no-margin-section-header">Data Schema</h3>
+          <div v-for="(field, field_index) in data_item.schema">
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.name">
+                  <template v-slot:label>
+                    Field Name
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.description">
+                  <template v-slot:label>
+                    Field Description
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.type">
+                  <template v-slot:label>
+                    Field Type
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.expected_values">
+                  <template v-slot:label>
+                    Expected Values
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.missing_values">
+                  <template v-slot:label>
+                    Missing Values
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.special_values">
+                  <template v-slot:label>
+                    Special Values
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+            <DeleteButton @click="deleteField(data_item_index, field_index)" class="margin-button">
+              Delete field
+            </DeleteButton>
+            <hr/>
+          </div>
+
+          <AddButton @click="addField(data_item_index)" class="margin-button">
+            Add additional field
+          </AddButton>
+        </div>
+
+        <UsaTextInput v-model="data_item.rights">
+          <template v-slot:label>
+            Data Rights
+            <InfoIcon>
+              Are there particular ways in which the data can and cannot be used?
+            </InfoIcon>
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="schema.expected_values">
+        <UsaTextInput v-model="data_item.policies">
           <template v-slot:label>
-            Expected Values
+            Data Policies
+            <InfoIcon>
+              Are there policies that govern the data and its use, such as Personally Identifiable 
+              Information [PII]?
+            </InfoIcon>
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="schema.missing_values">
+        <UsaTextInput v-model="data_item.identifiable_information">
           <template v-slot:label>
-            Missing Values
+            Identifiable Information
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="schema.special_values">
-          <template v-slot:label>
-            Special Values
-          </template>
-        </UsaTextInput>
+        <DeleteButton @click="deleteDataItem(data_item_index)" class="margin-button">
+          Delete data item
+        </DeleteButton>
         <hr/>
       </div>
-
-      <AddButton @click="addSchema()">
-        Add additional field(s)
+      <AddButton @click="addDataItem()" class="margin-button">
+        Add data item
       </AddButton>
     </div>
 
-    <UsaTextarea v-model="form.data_rights">
-      <template v-slot:label>
-        Data Rights
-        <InfoIcon>
-          Are there particular ways in which the data can and cannot be used?
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
-
-    <UsaTextarea v-model="form.data_policies">
-      <template v-slot:label>
-        Data Policies
-        <InfoIcon>
-          Are there policies that govern the data and its use, such as Personally Identifiable 
-          Information [PII]?
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
-
-    <hr/>
-    
-    <h3 class="section-header">Model</h3>
-    <div class="input-group" style="margin-top: 1em;">
-      <h3 class="section-header">Development Compute Resources</h3>
+    <h2 class="section-header">Model</h2>
+    <div class="input-group">
+      <h3>Development Compute Resources</h3>
       <p>
         Describe the amount and type of compute resources 
         needed for training.
@@ -284,7 +362,7 @@
     </UsaTextInput>
 
     <div class="input-group" style="margin-top: 1em;">
-      <h3 class="section-header">Production Compute Resources</h3>
+      <h3>Production Compute Resources</h3>
       <p>
         Describe the hardware and software requirements including amount of
         compute resources needed for inference.
@@ -332,9 +410,7 @@
       </div>
     </div>
 
-    <hr/>
-
-    <div style="text-align: right;">
+    <div style="text-align: right; margin-top: 1em;">
       <button @click="cancel" class="usa-button cancel-button">
         Cancel
       </button>
@@ -374,29 +450,33 @@
       fn_risk: "",
       other_risks: "",
     },
-    data: {
-      source_data_location: "",
-      data_classification: "",
-      account_access: "",
-      labels: [
-        {
-          identifier: "",
-          distribution: "",
-        }
-      ],
-    },
-    data_schema: [
+    data: [
       {
-        field_name: "",
-        field_description: "",
-        field_type: "",
-        expected_values: "",
-        missing_values: "",
-        special_values: ""
+        access: "",
+        description: "",
+        source: "",
+        classification: "",
+        labels: [
+          {
+            description: "",
+            percentage: 0,
+          }
+        ],
+        schema: [
+          {
+            name: "",
+            description: "",
+            type: "",
+            expected_values: "",
+            missing_values: "",
+            special_values: "",
+          }
+        ],
+        rights: "",
+        policies: "",
+        identifiable_information: ""
       }
     ],
-    data_rights: "",
-    data_policies: "",
     model: {
       development: {
         resources: {
@@ -452,13 +532,75 @@
     form.value.system.goals.push({"description": "", "metrics": [{"performance_metrics": "", "baseline": ""}]})
   }
 
-  function deleteGoal(index){
-    form.value.system.goals.splice(index, 1);
+  function deleteGoal(goal_index){
+    form.value.system.goals.splice(goal_index, 1);
   }
 
-  function addSchema(){
-    form.value.data_schema.push({"field_name": "", "field_description": "", "field_type": "", "expected_values": "",
-                                  "missing_values": "", "special_values": ""})
+  function addMetric(goal_index){
+    form.value.system.goals[goal_index].metrics.push({"description": "", "baseline": ""})
+  }
+
+  function deleteMetric(goal_index, metric_index){
+    form.value.system.goals[goal_index].metrics.splice(metric_index, 1)
+  }
+
+  function addDataItem(){
+    form.value.data.push(
+      {
+        access: "",
+        description: "",
+        source: "",
+        classification: "",
+        labels: [
+          {
+            description: "",
+            percentage: 0,
+          }
+        ],
+        schema: [
+          {
+            name: "",
+            description: "",
+            type: "",
+            expected_values: "",
+            missing_values: "",
+            special_values: "",
+          }
+        ],
+        rights: "",
+        policies: "",
+        identifiable_information: ""
+      }
+    )
+  }
+
+  function deleteDataItem(data_item_index){
+    form.value.data.splice(data_item_index, 1)
+  }
+
+  function addLabel(data_item_index){
+    form.value.data[data_item_index].labels.push({"description": "", "percentage": 0})
+  }
+
+  function deleteLabel(data_item_index, label_index){
+    form.value.data[data_item_index].labels.splice(label_index, 1)
+  }
+
+  function addField(data_item_index){
+    form.value.data[data_item_index].schema.push(
+      {
+        "name": "",
+        "description": "", 
+        "type": "",
+        "expected_values": "",
+        "missing_values": "",
+        "special_values": ""
+      }
+    )
+  }
+
+  function deleteField(data_item_index, field_index){
+    form.value.data[data_item_index].schema.splice(field_index, 1)
   }
 
 </script>

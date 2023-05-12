@@ -1,109 +1,84 @@
 <template>
   <NuxtLayout name="base-layout">
     <UsaAccordion multiselectable bordered>
-      <UsaAccordionItem>
-        <template v-slot:label>
-          <div class="section-header">
-            Your Negotiation Cards         
-          </div>
-        </template>
+      <UsaAccordionItem label="Negotiation Cards">
         <UsaTable
-          :headers="head"
-          :rows="rows"
+          :headers="card_spec_report_headers"
           caption="This is a description for the Negotiation Cards to assist..."
           borderless
           class="table"
         />
       </UsaAccordionItem>
-      <UsaAccordionItem label="Specifications">Specifications</UsaAccordionItem>
-      <UsaAccordionItem label="Reports">Reports</UsaAccordionItem>
-      <UsaAccordionItem label="Findings">Findings</UsaAccordionItem>
-      <UsaAccordionItem label="Results">Results</UsaAccordionItem>
-      <UsaAccordionItem label="Values">Values</UsaAccordionItem>
+
+      <UsaAccordionItem label="Specifications">
+        <UsaTable
+          :headers="card_spec_report_headers"
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
+
+      <UsaAccordionItem label="Reports">
+        <UsaTable
+          :headers="card_spec_report_headers"
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
+
+      <UsaAccordionItem label="Findings">
+        <UsaTable
+          :headers="findings_headers"
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
+
+      <UsaAccordionItem label="Results">
+        <UsaTable
+          :headers="results_headers"
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
+      
+      <UsaAccordionItem label="Values">
+        <UsaTable
+          :headers="values_headers"
+          borderless
+          class="table"
+        />
+      </UsaAccordionItem>
     </UsaAccordion>
   </NuxtLayout>
 </template>
   
 <script setup>
-  var head = ref([
-    {
-      "id": "alphabetical",
-      "label": "Alphabetical",
-      "sortable": false,
-      "headerRow": true
-    },
-    {
-      "id": "month",
-      "label": "Month",
-      "sortable": true
-    },
-    {
-      "id": "percent",
-      "label": "Percent",
-      "sortable": true
-    },
-    {
-      "id": "count",
-      "label": "Count",
-      "sortable": true
-    }
+  var card_spec_report_headers = ref([
+    {"id": "id", "label": "ID", "sortable": true},
+    {"id": "descriptor", "label": "Descriptor", "sortable": true},
+    {"id": "date", "label": "Date", "sortable": true},
   ])
 
-  var rows = ref([
-    {
-      "alphabetical": "Tango",
-      "month": {
-        "sortValue": 3,
-        "displayValue": "March"
-      },
-      "percent": {
-        "sortValue": 0.206,
-        "displayValue": "20.6%"
-      },
-      "count": {
-        "sortValue": 23612,
-        "displayValue": "23,612"
-      }
-    },
-    {
-      "alphabetical": "Foxtrot",
-      "month": {
-        "sortValue": 4,
-        "displayValue": "April"
-      },
-      "percent": {
-        "sortValue": 0.026,
-        "displayValue": "2.6%"
-      },
-      "count": -32
-    },
-    {
-      "alphabetical": "Hilo",
-      "month": {
-        "sortValue": 1,
-        "displayValue": "January"
-      },
-      "percent": {
-        "sortValue": -3.006,
-        "displayValue": "-3.6%"
-      },
-      "count": {
-        "sortValue": 0.002,
-        "displayValue": "0.002"
-      }
-    },
-    {
-      "alphabetical": "Bravo",
-      "month": {
-        "sortValue": 12,
-        "displayValue": "December"
-      },
-      "percent": {
-        "sortValue": -0.036,
-        "displayValue": "-300.6%"
-      },
-      "count": 0
-    }
+  var findings_headers = ref([
+    {"id": "id", "label": "ID", "sortable": true},
+    {"id": "date", "label": "Date", "sortable": true},
+    {"id": "spec", "label": "Spec", "sortable": true},
+  ])
+
+  var results_headers = ref([
+    {"id": "id", "label": "ID", "sortable": true},
+    {"id": "value", "label": "value", "sortable": true},
+    {"id": "condition", "label": "Condition", "sortable": true},
+    {"id": "outcome", "label": "Outcome", "sortable": true},
+    {"id": "Date", "label": "Date", "sortable": true},
+  ])
+
+  var values_headers = ref([
+    {"id": "id", "label": "ID", "sortable": true},
+    {"id": "measurement", "label": "Measurement", "sortable": true},
+    {"id": "type", "label": "Type", "sortable": true},
+    {"id": "date", "label": "Date", "sortable": true},
   ])
 </script>
 
