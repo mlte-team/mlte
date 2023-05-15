@@ -2,11 +2,17 @@
   <div>
     <div style="height: 16px; background-color: #f3ca3e;"/>
     <header>
-      MLTE Machine Learning Test and Evaluation
+      MLTE - Machine Learning Test and Evaluation
     </header>
 
-    <div class="body-div">
-      <slot name="default"/>
+    <div class="flex-container">
+      <div class="sidebar">
+        <slot name="sidebar"/>
+      </div>
+
+      <div class="body-div">
+        <slot name="default"/>
+      </div>
     </div>
 
     <footer>
@@ -18,11 +24,12 @@
         <a>Docs</a>
         <a>User Guide</a>
         <a>Keep in Touch</a>
-        <a>Version</a>
+        <span>Version</span>
       </div>
     </footer>
   </div>
 </template>
+
 
 <style>
   header {
@@ -33,21 +40,31 @@
     background-color: #2d2f30;
   }
 
+  .flex-container {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 25ch;
+    margin-top: 100px;
+    margin-left: 40px;
+  }
+
   .body-div {
-    margin-top: 8px;
-    padding-left: 40px;
-    padding-right: 40px;
+    width: 100%;
     max-width: 100ch;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 8px;
+    margin-left: 40px;
+    padding-right: 40px;
   }
 
   footer {
+    width: 100%;
+    height: 90px;
     margin-top: 8px;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 90px;
     font-size: 16px;
   }
 
@@ -62,7 +79,8 @@
     float: right;
   }
 
-  footer > div > a {
+  footer > div > a,
+  footer > div > span {
     padding-left: 30px;
   }
 </style>

@@ -18,7 +18,7 @@
         Goals or objectives that the model is going to help satisfy.
       </p>
       <div v-for="(goal, goal_index) in form.system.goals">
-        <p><b>Goal {{ goal_index + 1 }}</b></p>
+        <h3>Goal {{ goal_index + 1 }}</h3>
 
         <UsaTextInput v-model="goal.description">
           <template v-slot:label>
@@ -154,7 +154,7 @@
           </div>
         </div>
 
-        <UsaSelect v-model="data_item.classification" :options=classiciation_options>
+        <UsaSelect v-model="data_item.classification" :options=classification_options>
           <template v-slot:label>
             Data Classification
           </template>
@@ -190,8 +190,8 @@
         </div>
 
         <div class="input-group" style="margin-top: 1em;">
-          <h3 class="no-margin-section-header">Data Schema</h3>
           <div v-for="(field, field_index) in data_item.schema">
+          <h3 class="no-margin-section-header">Data Schema {{ data_item_index + 1 }} - {{ field_index + 1 }}</h3>
             <div>
               <div class="inline-input-left">
                 <UsaTextInput v-model="field.name">
@@ -411,12 +411,12 @@
     </div>
 
     <div style="text-align: right; margin-top: 1em;">
-      <button @click="cancel" class="usa-button cancel-button">
+      <UsaButton @click="cancel()" class="secondary-button">
         Cancel
-      </button>
-      <button @click="printState" class="usa-button save-button">
+      </UsaButton>
+      <UsaButton @click="submit()" class="primary-button">
         Save
-      </button>
+      </UsaButton>
     </div>
 
   </NuxtLayout>
@@ -425,11 +425,11 @@
 <script setup>
   var path = ref([
     {
-      "to": "/",
+      "href": "/",
       "text": "Artifact Store"
     },
     {
-      "to": "/negotiation-store",
+      "href": "/negotiation-store",
       "text": "Negotiation Card"
     }
   ])
@@ -515,7 +515,7 @@
     {"value": "Other", "text": "Other"},
   ])
 
-  var classiciation_options = ([
+  var classification_options = ([
     {"value": "Unclassified", "text": "Unclassified"},
     {"value": "Controlled Unclassified Information (CUI)", "text": "Controlled Unclassified Information (CUI)"},
     {"value": "Personally Identifiable Information (PII)", "text": "Personally Identifiable Information (PII)"},
@@ -524,7 +524,7 @@
   ])
 
 
-  function printState(){
+  function submit(){
     console.log(form.value)
   }
 
@@ -604,16 +604,3 @@
   }
 
 </script>
-
-<style>
-.cancel-button {
-  background-color: transparent;
-  box-shadow: inset 0 0 0 2px #d8ac16;
-  color: black;
-}
-
-.save-button {
-  background-color: #d8ac16;
-  color: black;
-}
-</style>

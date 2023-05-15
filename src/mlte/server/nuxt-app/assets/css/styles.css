@@ -24,6 +24,17 @@
     width: 29ch;
 }
 
+.primary-button {   
+    background-color: #d8ac16 !important;
+    color: black !important;
+}
+
+.secondary-button {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px #d8ac16 !important;
+    color: black !important;
+}
+
 .inline-button {
     display: inline-block;
     padding-left: 1em;
