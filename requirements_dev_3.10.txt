@@ -41,6 +41,8 @@ cryptography==40.0.2
     # via secretstorage
 deepdiff==6.3.0
     # via -r requirements_dev.in
+dill==0.3.6
+    # via -r requirements_dev.in
 distlib==0.3.6
     # via virtualenv
 docutils==0.19
