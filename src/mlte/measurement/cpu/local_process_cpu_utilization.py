@@ -113,6 +113,7 @@ class CPUStatistics(Value):
         """
         condition: Condition = Condition(
             "max_utilization_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -140,6 +141,7 @@ class CPUStatistics(Value):
         """
         condition: Condition = Condition(
             "average_utilization_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"

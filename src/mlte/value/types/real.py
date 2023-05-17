@@ -85,6 +85,7 @@ class Real(Value):
         """
         condition: Condition = Condition(
             "less_than",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
             )
@@ -108,6 +109,7 @@ class Real(Value):
         """
         condition: Condition = Condition(
             "less_or_equal_to",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"less than or equal to threshold {value}"
@@ -132,6 +134,7 @@ class Real(Value):
         """
         condition: Condition = Condition(
             "greater_than",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
             )
@@ -155,6 +158,7 @@ class Real(Value):
         """
         condition: Condition = Condition(
             "greater_or_equal_to",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"greater than or equal to threshold {value}"

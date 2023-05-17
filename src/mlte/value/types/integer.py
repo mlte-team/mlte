@@ -84,6 +84,7 @@ class Integer(Value):
         """
         condition: Condition = Condition(
             "less_than",
+            [value],
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
             )
@@ -107,6 +108,7 @@ class Integer(Value):
         """
         condition: Condition = Condition(
             "less_or_equal_to",
+            [value],
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
                 f"less than or equal to threshold {value}"

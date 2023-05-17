@@ -22,6 +22,7 @@ class Condition:
     def __init__(
         self,
         name: str,
+        arguments: list[Any],
         callback: Callable[[Value], Result],
     ):
         """
@@ -35,6 +36,9 @@ class Condition:
 
         self.name: str = name
         """The human-readable identifier for the name method."""
+
+        self.arguments: list[Any] = arguments
+        """The arguments used when validating the condition."""
 
         self.callback: Callable[[Value], Result] = callback
         """The callback that implements validation."""
@@ -66,6 +70,7 @@ class Condition:
         condition: Condition = validator(self.threshold)"""
         return {
             "name": self.name,
+            "arguments": self.arguments,
             "callback": base64.b64encode(dill.dumps(self.callback)).decode(
                 "utf-8"
             ),
@@ -82,11 +87,16 @@ class Condition:
         :return: The deserialized Condition
         :rtype: Condition
         """
-        if "name" not in document or "callback" not in document:
+        if (
+            "name" not in document
+            or "arguments" not in document
+            or "callback" not in document
+        ):
             raise RuntimeError("Saved Condition is malformed.")
 
         condition: Condition = Condition(
             document["name"],
+            document["arguments"],
             dill.loads(
                 base64.b64decode(str(document["callback"]).encode("utf-8"))
             ),

@@ -113,6 +113,7 @@ class MemoryStatistics(Value):
         """
         condition: Condition = Condition(
             "max_consumption_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
                 f"below threshold {threshold}"
@@ -140,6 +141,7 @@ class MemoryStatistics(Value):
         """
         condition: Condition = Condition(
             "average_consumption_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
                 f"below threshold {threshold}"

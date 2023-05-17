@@ -88,6 +88,7 @@ class Image(Value):
         """
         condition: Condition = Condition(
             "Ignore",
+            [reason],
             lambda _: Ignore(reason),
         )
         return condition

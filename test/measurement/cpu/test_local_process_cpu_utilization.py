@@ -73,7 +73,7 @@ def test_cpu_nix_validate_success():
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", lambda _: Success())(stats)
+    vr = Condition("Succeed", [], lambda _: Success())(stats)
     assert bool(vr)
 
     # Data is accessible from validation result
@@ -90,7 +90,7 @@ def test_cpu_nix_validate_failure():
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", lambda _: Failure())(stats)
+    vr = Condition("Fail", [], lambda _: Failure())(stats)
     assert not bool(vr)
 
     # Data is accessible from validation result
