@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import typing
 from typing import Callable, Any
+import base64
+
+import dill
 
 from mlte.value import Value
 from . import Result
@@ -63,7 +66,9 @@ class Condition:
         condition: Condition = validator(self.threshold)"""
         return {
             "name": self.name,
-            "callback": self.callback,  # TODO: serialize callback.
+            "callback": base64.b64encode(dill.dumps(self.callback)).decode(
+                "utf-8"
+            ),
         }
 
     @staticmethod
@@ -82,7 +87,9 @@ class Condition:
 
         condition: Condition = Condition(
             document["name"],
-            document["callback"],  # TODO: deserialize callback.
+            dill.loads(
+                base64.b64decode(str(document["callback"]).encode("utf-8"))
+            ),
         )
         return condition
 

@@ -17,11 +17,7 @@ def test_schema(tmp_path):
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
     spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement("id", Integer.less_than(3))
-            ]
-        }
+        {StorageCost("rationale"): [Requirement("id", Integer.less_than(3))]}
     )
     specValidator = SpecValidator(spec)
     i = Integer(EvidenceMetadata("typename", "id"), 1)

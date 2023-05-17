@@ -14,3 +14,4 @@ types-requests
 twine
 bump2version
 deepdiff
+dill

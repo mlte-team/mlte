@@ -150,7 +150,7 @@ class FilesystemSessionHandle(SessionHandle):
             m.name == model_identifier for m in available_models
         ):
             raise RuntimeError(
-                f"Model with identifier {model_identifier} does not exist."
+                f"Model with identifier '{model_identifier}' does not exist."
             )
 
         # Collect models
@@ -189,7 +189,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Failed to read value, value with identifier {value_identifier} not found."
+                f"Failed to read value, value with identifier '{value_identifier}' not found."
             )
 
         if (
@@ -266,7 +266,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
+                f"Cannot delete value version, value with identifier '{value_identifier}' does not exist."
             )
 
         available_versions = storage.available_value_versions(value_path)
@@ -298,7 +298,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
+                f"Cannot delete value version, value with identifier '{value_identifier}' does not exist."
             )
 
         storage.delete_value(value_path)
@@ -430,7 +430,7 @@ class FilesystemSessionHandle(SessionHandle):
         model_path = self.root / model_identifier
         if not model_path.exists():
             raise RuntimeError(
-                f"Model with identifier {model_identifier} not found."
+                f"Model with identifier '{model_identifier}' not found."
             )
 
         if model_version is None:
