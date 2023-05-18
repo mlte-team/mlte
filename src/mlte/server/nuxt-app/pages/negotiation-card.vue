@@ -526,6 +526,7 @@
 
   function submit(){
     console.log(form.value)
+    console.log(useRoute().query.namespace)
   }
 
   function addGoal(){
@@ -533,7 +534,9 @@
   }
 
   function deleteGoal(goal_index){
-    form.value.system.goals.splice(goal_index, 1);
+    if(confirm("Are you sure you want to delete this goal?")){
+      form.value.system.goals.splice(goal_index, 1);
+    }
   }
 
   function addMetric(goal_index){
@@ -541,7 +544,9 @@
   }
 
   function deleteMetric(goal_index, metric_index){
-    form.value.system.goals[goal_index].metrics.splice(metric_index, 1)
+    if(confirm("Are you sure you want to delete this metric?")){
+      form.value.system.goals[goal_index].metrics.splice(metric_index, 1)
+    }
   }
 
   function addDataItem(){
@@ -575,7 +580,9 @@
   }
 
   function deleteDataItem(data_item_index){
-    form.value.data.splice(data_item_index, 1)
+    if(confirm("Are you sure you want to delete this data item?")){
+      form.value.data.splice(data_item_index, 1)
+    }
   }
 
   function addLabel(data_item_index){
@@ -583,7 +590,9 @@
   }
 
   function deleteLabel(data_item_index, label_index){
-    form.value.data[data_item_index].labels.splice(label_index, 1)
+    if(confirm("Are you sure you want to delete this label?")){
+      form.value.data[data_item_index].labels.splice(label_index, 1)
+    }
   }
 
   function addField(data_item_index){
@@ -600,7 +609,8 @@
   }
 
   function deleteField(data_item_index, field_index){
-    form.value.data[data_item_index].schema.splice(field_index, 1)
+    if(confirm("Are you sure you want to delete this field?")){
+      form.value.data[data_item_index].schema.splice(field_index, 1)
+    }
   }
-
 </script>

@@ -54,56 +54,69 @@
 
     <UsaAccordion multiselectable bordered>
       <UsaAccordionItem label="Negotiation Cards">
-        <UsaTable
-          :headers="card_spec_report_headers"
-          borderless
-          class="table"
-        />
-        <NuxtLink to="/negotiation-card">
-          <UsaButton class="primary-button" style="float: right;">
-            Start new negotiation card
-          </UsaButton>
-        </NuxtLink>
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="card_spec_report_headers"
+            :rows="negotiation_cards"
+            borderless
+            class="table"
+          />
+          <NuxtLink :to="{path: 'negotiation-card', query: {namespace: selected_namespace}}">
+            <UsaButton class="primary-button" style="float: right;">
+              Start new negotiation card
+            </UsaButton>
+          </NuxtLink>
+        </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Specifications">
-        <UsaTable
-          :headers="card_spec_report_headers"
-          borderless
-          class="table"
-        />
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="card_spec_report_headers"
+            borderless
+            class="table"
+          />
+        </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Reports">
-        <UsaTable
-          :headers="card_spec_report_headers"
-          borderless
-          class="table"
-        />
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="card_spec_report_headers"
+            borderless
+            class="table"
+          />
+        </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Findings">
-        <UsaTable
-          :headers="findings_headers"
-          borderless
-          class="table"
-        />
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="findings_headers"
+            borderless
+            class="table"
+          />
+        </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Results">
-        <UsaTable
-          :headers="results_headers"
-          borderless
-          class="table"
-        />
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="results_headers"
+            borderless
+            class="table"
+          />
+        </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Values">
-        <UsaTable
-          :headers="values_headers"
-          borderless
-          class="table"
-        />
+        <div class="scrollable-table-div">
+          <UsaTable
+            :headers="values_headers"
+            borderless
+            class="table"
+          />
+        </div>
       </UsaAccordionItem>
     </UsaAccordion>
   </NuxtLayout>
@@ -162,6 +175,20 @@
     {"id": "date", "label": "Date", "sortable": true},
   ])
 
+  var negotiation_cards = ref([
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"},
+  {"id": "test1", "descriptor": "test1", "date": "test1"}
+  ])
+
 
   function selectNamespace(namespace){
     // TODO : Send request to backend to get new info
@@ -207,6 +234,11 @@
 </script>
 
 <style>
+.scrollable-table-div {
+  overflow-y: auto;
+  height: 14em;
+}
+
 .table {
   width: 100%;
 }
