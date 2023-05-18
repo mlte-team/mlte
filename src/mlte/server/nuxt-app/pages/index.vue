@@ -25,29 +25,30 @@
     <h1>{{ selected_namespace }}</h1>
     <hr/>
 
-    <div style="margin-bottom: 2em;">
-      <div class="inline-input-left">
-        <UsaSelect v-model="selected_model" :options="model_options">
-          <template v-slot:label>
-            Model(s)
-          </template>
-        </UsaSelect>
+    <div style="display: flex">
+      <div class="split-div">
+        <b>Model(s)</b>
+        <div class="scrollable-div">
+          <UsaCheckbox v-for="(model) in model_options" @update:modelValue="updateSelectedModels(model)">
+            {{ model }}
+          </UsaCheckbox>
+        </div>
+        <br/>
       </div>
 
-      <div class="inline-input-left">
-        <UsaSelect v-model="selected_version" :options="version_options">
-          <template v-slot:label>
-            Version(s)
-          </template>
-        </UsaSelect>
+      <div class="split-div">
+        <b>Version(s)</b>
+        <div class="scrollable-div">
+          <UsaCheckbox v-for="(version) in version_options" @update:modelValue="updateSelectedVersions(version)">
+            {{ version }}
+          </UsaCheckbox>
+        </div>
+        <br/>
       </div>
 
-      <div class="inline-input-right">
-        <UsaTextInput v-model="search_input">
-          <template v-slot:label>
-            Search
-          </template>
-        </UsaTextInput>
+      <div>
+        <label class="usa-label" style="margin-top: 0px;">Search</label>
+        <UsaTextInput v-model="search_input" style="width: 100%;"/>
       </div>
     </div>
 
@@ -55,7 +56,6 @@
       <UsaAccordionItem label="Negotiation Cards">
         <UsaTable
           :headers="card_spec_report_headers"
-          caption="This is a description for the Negotiation Cards to assist..."
           borderless
           class="table"
         />
@@ -118,9 +118,7 @@
   ])
 
   var namespaces = ref([
-    "Default",
-    "TEST 1",
-    "Super longg purposes",
+    "Default", "TEST 1", "Super longg purposes",
   ])
 
   var selected_namespace = ref("Default")
@@ -128,16 +126,13 @@
   var new_namespace_input = ref("")
 
   var model_options = ref([
-    {"value": "model1", "text": "model1"},
-    {"value": "model2", "text": "model2"}
+    "model1", "model2", "model3", "model4", "model5", "model6", "model7", "model8"
   ])
-  var selected_model = ref("")
+  var selected_models = ref([])
   var version_options = ref([
-    {"value": "v1", "text": "v1"},
-    {"value": "v2", "text": "v2"},
-    {"value": "v3", "text": "v3"}
+    "v1", "v2", "v3", "v4", "v5", "v6", "v1.5"
   ])
-  var selected_version = ref("")
+  var selected_versions = ref([])
   var search_input = ref("")
 
   var card_spec_report_headers = ref([
@@ -173,20 +168,58 @@
     this.selected_namespace = namespace;
   }
 
-  function addNamespace(namespace){
+  async function addNamespace(namespace){
     // TODO : Post this value to the backend so that it is validated.
+    // TODO : Validate that submitted value isn't empty
     this.namespaces.push(namespace);
     this.new_namespace_flag = false;
+    this.new_namespace_input = ""
+    // const { data } = await useFetch("proxy/healthz");
+    // this.namespaces.push(data)
   }
 
   function deleteNamespace(namespace){
     // TODO : Post this value to the backend
     this.namespaces.splice(this.namespaces.indexOf(namespace), 1)
   }
+
+  function updateSelectedModels(model){
+    // TODO : Post this to packend and get updated data
+    var index = this.selected_models.indexOf(model)
+    if(index == -1){
+      this.selected_models.push(model)
+    }
+    else{
+      this.selected_models.splice(index, 1)
+    }
+  }
+
+  function updateSelectedVersions(version){
+    // TODO : Post this to packend and get updated data
+    var index = this.selected_versions.indexOf(version)
+    if(index == -1){
+      this.selected_versions.push(version)
+    }
+    else{
+      this.selected_versions.splice(index, 1)
+    }
+  }
 </script>
 
 <style>
 .table {
   width: 100%;
+}
+
+.split-div {
+  width: 34ch;
+  margin-right: 1em;
+}
+
+.scrollable-div{
+  border: 1px solid gray;
+  overflow-y: auto;
+  height: 11em;
+  padding-left: .4em;
 }
 </style>

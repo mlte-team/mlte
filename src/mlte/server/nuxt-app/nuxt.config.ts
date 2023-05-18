@@ -6,4 +6,8 @@ export default defineNuxtConfig({
         '@/assets/css/styles.css',
         '@/assets/uswds/css/styles.css'
     ],
+
+    routeRules: {
+        '/proxy/**': { proxy: 'http://localhost:8080/api/**'}
+    }
 })
