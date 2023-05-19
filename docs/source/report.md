@@ -24,7 +24,7 @@ Now that we have our Spec ready and we have enough evidence, we create a SpecVal
 
 ```Python
 from mlte.spec import Spec
-from mlte.spec import SpecValidator
+from mlte.validation import SpecValidator
 from mlte.value.types import Integer, Real, Image
 from mlte.measurement.cpu import CPUStatistics
 from mlte.measurement.memory import MemoryStatistics
