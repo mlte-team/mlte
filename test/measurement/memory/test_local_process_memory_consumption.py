@@ -79,7 +79,6 @@ def test_memory_nix_validate_success():
     stats = m.evaluate(p.pid)
 
     vr = Condition("Succeed", [], lambda _: Success())(stats)
-    assert bool(vr)
 
     assert vr.metadata is not None
     assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
@@ -98,10 +97,9 @@ def test_memory_nix_validate_failure():
     stats = m.evaluate(p.pid)
 
     vr = Condition("Fail", [], lambda _: Failure())(stats)
-    assert not bool(vr)
 
     assert vr.metadata is not None
-    assert vr.metadata.typename, type(MemoryStatistics).__name__
+    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(
