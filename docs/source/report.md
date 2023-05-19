@@ -23,8 +23,7 @@ spec = Spec.load()
 Now that we have our Spec ready and we have enough evidence, we create a SpecValidator with our spec, and add all the Values we have. With that we can validate our spec and generate an output ValidatedSpec, with the validation results.
 
 ```Python
-from mlte.spec import Spec
-from mlte.validation import SpecValidator
+from mlte.spec import Spec, SpecValidator
 from mlte.value.types import Integer, Real, Image
 from mlte.measurement.cpu import CPUStatistics
 from mlte.measurement.memory import MemoryStatistics

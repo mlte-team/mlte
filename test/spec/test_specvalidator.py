@@ -11,6 +11,7 @@ from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
 from mlte.measurement.storage import LocalObjectSize
 
+
 def test_no_property():
     # Spec validator does not have value for property.
     spec = Spec(
@@ -48,6 +49,7 @@ def test_success():
     validatedSpec = specValidator.validate()
     assert validatedSpec is not None
 
+
 def test_no_result():
     # Spec does not have value for requirement.
     spec = Spec(
@@ -57,7 +59,7 @@ def test_no_result():
             ]
         }
     )
-    specValidator = SpecValidator(spec)    
+    specValidator = SpecValidator(spec)
 
     results: dict[str, Result] = {}
     with pytest.raises(RuntimeError):
