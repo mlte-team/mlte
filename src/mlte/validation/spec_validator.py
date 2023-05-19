@@ -55,7 +55,7 @@ class SpecValidator:
         :rtype: ValidatedSpec
         """
         results = self._validate_results()
-        return self.spec.generate_validatedspec(results)
+        return self._generate_validatedspec(results)
 
     def _validate_results(self) -> dict[str, Result]:
         """
@@ -80,3 +80,28 @@ class SpecValidator:
                     self.values[str(requirement.identifier)]
                 )
         return results
+
+    def _generate_validatedspec(
+        self, results: dict[str, Result]
+    ) -> ValidatedSpec:
+        """
+        Generates a validated spec with the validation results.
+
+        :param result: The Results to validate to the spec, ordered by id.
+        :type results: str, dict[str, Result]
+
+        :return: A ValidatedSpec associating the Spec with the specific Results.
+        :rtype: ValidatedSpec
+        """
+        if results is None or len(results) == 0:
+            raise RuntimeError("Can't generate validated spec without results.")
+
+        # Check that all requirements have results.
+        for _, requirement_list in self.spec.requirements.items():
+            for requirement in requirement_list:
+                if str(requirement.identifier) not in results:
+                    raise RuntimeError(
+                        f"Requirement '{requirement.identifier}' does not have a result."
+                    )
+
+        return ValidatedSpec(self.spec.spec_document(results))

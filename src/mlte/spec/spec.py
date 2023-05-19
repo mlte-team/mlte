@@ -12,7 +12,6 @@ from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
-from .validated_spec import ValidatedSpec
 from .requirement import Requirement
 
 
@@ -164,7 +163,7 @@ class Spec:
         :return: The serialized content
         :rtype: dict[str, Any]
         """
-        return self._spec_document()
+        return self.spec_document()
 
     @staticmethod
     def _from_json(json: dict[str, Any]) -> Spec:
@@ -186,7 +185,7 @@ class Spec:
 
         return spec
 
-    def _spec_document(
+    def spec_document(
         self,
         results: Optional[dict[str, Result]] = None,
     ) -> dict[str, Any]:
@@ -311,35 +310,6 @@ class Spec:
         if result is not None:
             document["result"] = result.to_json()
         return document
-
-    # -------------------------------------------------------------------------
-    # ValidatedSpec document generation.
-    # -------------------------------------------------------------------------
-
-    def generate_validatedspec(
-        self, results: dict[str, Result]
-    ) -> ValidatedSpec:
-        """
-        Generates a validated spec with the validation results.
-
-        :param result: The Results to validate to the spec, ordered by id.
-        :type results: str, dict[str, Result]
-
-        :return: A ValidatedSpec associating the Spec with the specific Results.
-        :rtype: ValidatedSpec
-        """
-        if results is None or len(results) == 0:
-            raise RuntimeError("Can't generate validated spec without results.")
-
-        # Check that all requirements have results.
-        for _, requirement_list in self.requirements.items():
-            for requirement in requirement_list:
-                if str(requirement.identifier) not in results:
-                    raise RuntimeError(
-                        f"Requirement '{requirement.identifier}' does not have a result."
-                    )
-
-        return ValidatedSpec(self._spec_document(results))
 
     # -------------------------------------------------------------------------
     # Equality Testing

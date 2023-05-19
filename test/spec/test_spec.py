@@ -9,7 +9,6 @@ import mlte
 from mlte.spec import Spec, Requirement
 from mlte.property.costs import StorageCost
 from mlte.measurement.storage import LocalObjectSize
-from mlte.validation import Result
 
 
 def test_save(tmp_path):
@@ -57,18 +56,3 @@ def test_add_requirement():
     assert spec.requirements["StorageCost"][0] == Requirement(
         "test", LocalObjectSize.value().less_than(3)
     )
-
-
-def test_no_result():
-    # Spec does not have value for requirement.
-    spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement("test", LocalObjectSize.value().less_than(3))
-            ]
-        }
-    )
-
-    results: dict[str, Result] = {}
-    with pytest.raises(RuntimeError):
-        _ = spec.generate_validatedspec(results)
