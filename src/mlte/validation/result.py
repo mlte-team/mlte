@@ -5,7 +5,7 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from typing import Optional
+from typing import Optional, Any
 
 from mlte.evidence import EvidenceMetadata
 
@@ -39,9 +39,6 @@ class Result(metaclass=abc.ABCMeta):
         self.message = message
         """The message indicating the reason for status."""
 
-        self.condition_name = ""
-        """The name of the condition that produced the result."""
-
         self.metadata: Optional[EvidenceMetadata] = None
         """
         The information about the measurement from which this was obtained.
@@ -59,31 +56,14 @@ class Result(metaclass=abc.ABCMeta):
         the Result so that we can use the metadata
         information later when it is used to generate a report.
 
-        :param evidence_metadata: The evidence metadata on which the
-        Condition that produced this instance was invoked
+        :param evidence_metadata: The evidence metadata of the
+        Value from which was this instance was generated.
         :type evidence_metadata: EvidenceMetadata
 
         :return: The Result instance (`self`)
         :rtype: Result
         """
         self.metadata = evidence_metadata
-        return self
-
-    def _from_condition(self, condition) -> Result:
-        """
-        Set the `condition_name` field of the Result
-        to indicate the Condition instance from which it was generated.
-
-        This hook allows us to embed the name of the Condition into
-        the produced Result at the point it is produced.
-
-        :param condition: The Condition instance
-        :type condition: Condition
-
-        :return: The Result instance (`self`)
-        :rtype: Result
-        """
-        self.condition_name = condition.name
         return self
 
     def to_json(self) -> dict[str, str]:
@@ -93,11 +73,13 @@ class Result(metaclass=abc.ABCMeta):
         :return: A JSON-like dictionary with this object.
         :rtype: dict[str, str]
         """
-        return {
-            "name": self.condition_name,
-            "result": f"{self}",
+        doc: dict[str, Any] = {
+            "result_type": f"{self}",
             "message": self.message,
         }
+        if self.metadata is not None:
+            doc["metadata"] = self.metadata.to_json()
+        return doc
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""

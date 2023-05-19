@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Specification Report",
+    "title": "Specification",
     "type": "object",
     "properties": {
         "schema_version": {
@@ -24,20 +24,24 @@
                 }
             },
             "additionalProperties": false
-        },
+        },        
         "properties": {
             "type": "array",
-            "description": "The set of properties that compose the specification.",
+            "description": "The collection of properties of which the specification is composed.",
             "items": {
                 "type": "object",
                 "properties": {
                     "name": {
                         "type": "string",
-                        "description": "The name of the property."
+                        "description": "The identifier for the property." 
+                    },
+                    "repr": {
+                        "type": "string",
+                        "description": "The representation required to reproduce the property."
                     },
                     "description": {
                         "type": "string",
-                        "description": "The description of the property."
+                        "description": "The property description."
                     },
                     "requirements": {
                         "type": "array",
@@ -45,48 +49,66 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "label": {
+                                "identifier": {
                                     "type": "string",
                                     "description": "The name of the requirement."
                                 },
-                                "measurement_type": {
-                                    "type": "string",
-                                    "description": "The type of the measurement."
-                                },                                
-                                "validator": {
-                                    "type": "string",
-                                    "description": "The validator method to use on a result from this measurement to validate it."
-                                },
-                                "threshold": {
-                                    "type": ["number","string","boolean","object","array", "null"],
-                                    "description": "Validation parameter."
-                                },
-                                "validation": {
+                                "condition": {
                                     "type": "object",
-                                    "description": "The validation result.",
+                                    "description": "The condition to validate this requirement.",
                                     "properties": {
                                         "name": {
                                             "type": "string",
-                                            "description": "The name of the validator."
+                                            "description": "A description of what the condition is validating.."
                                         },
-                                        "result": {
+                                        "arguments": {
+                                            "type": "array",
+                                            "description": "The arguments needed for the validation of the condition, usually thresholds.",
+                                            "items": {
+                                                "type": ["number","string","boolean","object","array", "null"]
+                                            }
+                                        },
+                                        "callback": {
+                                            "type": "string",
+                                            "description": "The dill-encoded thunk to call when validating a value for this condition."
+                                        }                                                                                                                        
+                                    }                                    
+                                },
+                                "result": {
+                                    "type": "object",
+                                    "description": "The validation result.",
+                                    "properties": {
+                                        "result_type": {
                                             "type": "string",
                                             "description": "The text describing the result of validation."
                                         },
                                         "message": {
                                             "type": "string",
                                             "description": "The text elaborating on the validation result."
-                                        }
+                                        },
+                                        "metadata": {
+                                            "type": "object",
+                                            "description": "Metadata about the evidence capture process.",
+                                            "properties": {
+                                                "identifier": {
+                                                    "type": "string",
+                                                    "description": "The identifier for the measurement process."
+                                                },
+                                                "measurement_type": {
+                                                    "type": "string",
+                                                    "description": "The name of the class used to generate the measurement value from which this result came."
+                                                }                                                                                   
+                                            }                            
+                                        }                                        
                                     }
                                 }                                
                             }
-                        }             
-                    }
+                        }
+                    }                    
                 }
             }
-             
         }
     },
     "additionalProperties": false,
-    "required": ["schema_version", "metadata", "properties"]
+    "required": ["schema_version"]
 }

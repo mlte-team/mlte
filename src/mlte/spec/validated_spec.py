@@ -4,7 +4,7 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 from mlte._global import global_state
 from mlte.api import read_validatedspec, write_validatedspec
@@ -20,12 +20,12 @@ class ValidatedSpec:
     ValidatedSpec represents a spec with validated results.
     """
 
-    def __init__(self, document: Dict[str, Any]):
+    def __init__(self, document: dict[str, Any]):
         """
         Initialize a ValidatedSpec instance.
 
         :param document: The data produced by the Spec
-        :type document: Dict[str, Any]]
+        :type document: dict[str, Any]]
         """
         self.document = document
         """The document produced by the Spec."""

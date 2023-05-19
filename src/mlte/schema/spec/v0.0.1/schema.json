@@ -49,10 +49,31 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "label": {
+                                "identifier": {
                                     "type": "string",
                                     "description": "The name of the requirement."
                                 },
+                                "condition": {
+                                    "type": "object",
+                                    "description": "The condition to validate this requirement.",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "A description of what the condition is validating.."
+                                        },
+                                        "arguments": {
+                                            "type": "array",
+                                            "description": "The arguments needed for the validation of the condition, usually thresholds.",
+                                            "items": {
+                                                "type": ["number","string","boolean","object","array", "null"]
+                                            }
+                                        },
+                                        "callback": {
+                                            "type": "string",
+                                            "description": "The dill-encoded thunk to call when validating a value for this condition."
+                                        }                                                                                                                        
+                                    }                                    
+                                },                                
                                 "measurement_type": {
                                     "type": "string",
                                     "description": "The type of the measurement."

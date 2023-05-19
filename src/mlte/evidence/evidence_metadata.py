@@ -11,8 +11,8 @@ from .identifier import Identifier
 class EvidenceMetadata:
     """A simple wrapper for evidence metadata."""
 
-    def __init__(self, typename: str, identifier: str):
-        self.typename = typename
+    def __init__(self, measurement_type: str, identifier: str):
+        self.measurement_type = measurement_type
         """The name of the measurement class type."""
 
         self.identifier = Identifier(identifier)
@@ -26,7 +26,7 @@ class EvidenceMetadata:
         """Serialize to JSON document."""
         return {
             "identifier": self.identifier.to_json(),
-            "typename": self.typename,
+            "measurement_type": self.measurement_type,
         }
 
     @staticmethod
@@ -36,17 +36,18 @@ class EvidenceMetadata:
             raise RuntimeError(
                 "Cannot deserialize EvidenceMetadata, missing key 'identifier'."
             )
-        if "typename" not in json:
+        if "measurement_type" not in json:
             raise RuntimeError(
-                "Cannot deserialize EvidenceMetadata, missing key 'typename'."
+                "Cannot deserialize EvidenceMetadata, missing key 'measurement_type'."
             )
         return EvidenceMetadata(
-            typename=json["typename"], identifier=json["identifier"]["name"]
+            measurement_type=json["measurement_type"],
+            identifier=json["identifier"],
         )
 
     def __str__(self) -> str:
         """Return a string representation of a EvidenceMetadata."""
-        return f"{self.typename}-{self.identifier}"
+        return f"{self.measurement_type}-{self.identifier}"
 
     def __eq__(self, other: object) -> bool:
         """Compare instances for equality."""
@@ -54,6 +55,6 @@ class EvidenceMetadata:
             return False
         reference: EvidenceMetadata = other
         return (
-            self.typename == reference.typename
+            self.measurement_type == reference.measurement_type
             and self.identifier == reference.identifier
         )

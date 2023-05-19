@@ -78,7 +78,7 @@ def test_cpu_nix_validate_success():
 
     # Data is accessible from validation result
     assert vr.metadata is not None
-    assert vr.metadata.typename, type(CPUStatistics).__name__
+    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(

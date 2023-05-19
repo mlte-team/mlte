@@ -82,7 +82,7 @@ def test_memory_nix_validate_success():
     assert bool(vr)
 
     assert vr.metadata is not None
-    assert vr.metadata.typename, type(MemoryStatistics).__name__
+    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(

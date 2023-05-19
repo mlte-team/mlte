@@ -9,18 +9,13 @@
         "metadata": {
             "type": "object",
             "properties": {
-                "identifier": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "description": "The name that identifies the identifier."
-                        }
-                    }
-                },
                 "measurement": {
                     "type": "object",
                     "properties": {
+                        "identifier": {
+                            "type": "string",
+                            "description": "The name that identifies the identifier."
+                        },                        
                         "typename": {
                             "type": "string",
                             "description": "The typename identifier for the producing measurement."

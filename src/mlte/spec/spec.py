@@ -309,7 +309,7 @@ class Spec:
         """
         document = requirement.to_json()
         if result is not None:
-            document["validation"] = result.to_json()
+            document["result"] = result.to_json()
         return document
 
     # -------------------------------------------------------------------------

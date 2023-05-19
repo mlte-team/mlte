@@ -53,11 +53,7 @@ class Condition:
         :return: The result of measurement validation
         :rtype: Result
         """
-        return (
-            self.callback(value)
-            ._from_condition(self)
-            ._with_evidence_metadata(value.metadata)
-        )
+        return self.callback(value)._with_evidence_metadata(value.metadata)
 
     def to_json(self) -> dict[str, Any]:
         """Returns this requirement as a dictionary."""

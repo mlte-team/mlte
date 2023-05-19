@@ -10,7 +10,7 @@ from typing import Type
 
 from mlte.value import Value
 from mlte.value.types import Opaque
-from mlte.evidence import EvidenceMetadata, Identifier
+from mlte.evidence import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -39,11 +39,6 @@ class Measurement(metaclass=abc.ABCMeta):
         """
         self.metadata = EvidenceMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
-
-    @property
-    def identifier(self) -> Identifier:
-        """Return the measurement identifier."""
-        return self.metadata.identifier
 
     @abc.abstractmethod
     @typing.no_type_check
