@@ -24,7 +24,7 @@ def test_empty_instance(tmp_path):
 def test_valid_instance(tmp_path):
     mlte.set_model("model", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
-   
+
     report = Report()
     report.metadata.project_name = "ProjectName"
     report.metadata.authors = ["Foo", "Bar"]
