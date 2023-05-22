@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import abc
 from typing import Optional, Any
+import sys
 
 from mlte.evidence import EvidenceMetadata
 
@@ -81,12 +82,40 @@ class Result(metaclass=abc.ABCMeta):
             doc["metadata"] = self.metadata.to_json()
         return doc
 
+    @classmethod
+    def from_json(cls, document: dict[str, Any]) -> Result:
+        """
+        Returns a result from a serialized JSON string.
+
+        :param json: The json document
+        :type json: dict[str, Any]
+
+        :return: The deserialized object.
+        :rtype: Result
+        """
+        if (
+            "result_type" not in document
+            or "message" not in document
+            or "metadata" not in document
+        ):
+            raise RuntimeError("Saved Result is malformed.")
+
+        result_type = document["result_type"]
+        results_module = sys.modules[__name__]
+        result_class = getattr(results_module, result_type)
+
+        result: Result = result_class(document["message"])
+        result = result._with_evidence_metadata(
+            EvidenceMetadata.from_json(document["metadata"])
+        )
+        return result
+
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
         assert self.metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
-        return self.metadata.identifier == other.value.identifier  # type: ignore
+        return self.metadata.identifier == other.metadata.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""

@@ -22,15 +22,29 @@ class ValidatedSpec:
     ValidatedSpec represents a spec with validated results.
     """
 
-    def __init__(self, document: dict[str, Any]):
+    def __init__(self, spec: Spec, results: dict[str, Result]):
         """
         Initialize a ValidatedSpec instance.
 
-        :param document: The data produced by the Spec
-        :type document: dict[str, Any]]
+        :param spec: The Spec
+        :type spec: Spec
+        :param results: The validation Results for the Spec
+        :type results: dict[str, Result]
         """
-        self.document = document
-        """The document produced by the Spec."""
+
+        self.spec = spec
+        """The spec that we validated."""
+
+        self.results = results
+        """The validation results for the spec."""
+
+        # Check that all requirements have results.
+        for _, requirement_list in self.spec.requirements.items():
+            for requirement in requirement_list:
+                if str(requirement.identifier) not in self.results:
+                    raise RuntimeError(
+                        f"Requirement '{requirement.identifier}' does not have a result."
+                    )
 
     def save(self):
         """Save ValidatedSpec instance to artifact store."""
@@ -40,7 +54,7 @@ class ValidatedSpec:
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
         write_validatedspec(
-            artifact_store_uri, model_identifier, model_version, self.document
+            artifact_store_uri, model_identifier, model_version, self.to_json()
         )
 
     @staticmethod
@@ -57,45 +71,46 @@ class ValidatedSpec:
         model_identifier, model_version = state.get_model()
         artifact_store_uri = state.get_artifact_store_uri()
 
-        return ValidatedSpec(
-            document=read_validatedspec(
-                artifact_store_uri, model_identifier, model_version
-            )
+        document = read_validatedspec(
+            artifact_store_uri, model_identifier, model_version
         )
+        return ValidatedSpec.from_json(document)
 
-    @classmethod
-    def generate_validatedspec(
-        cls, spec: Spec, results: dict[str, Result]
-    ) -> ValidatedSpec:
+    def to_json(self) -> dict[str, Any]:
         """
-        Generates a validated spec with the validation results.
+        Generates a JSON representation of the ValidatedSpec.
 
-        :param result: The Results to validate to the spec, ordered by id.
-        :type results: str, dict[str, Result]
-
-        :return: A ValidatedSpec associating the Spec with the specific Results.
-        :rtype: ValidatedSpec
+        :return: The serialized content
+        :rtype: dict[str, Any]
         """
-        if results is None or len(results) == 0:
-            raise RuntimeError("Can't generate validated spec without results.")
-
-        # Check that all requirements have results.
-        for _, requirement_list in spec.requirements.items():
-            for requirement in requirement_list:
-                if str(requirement.identifier) not in results:
-                    raise RuntimeError(
-                        f"Requirement '{requirement.identifier}' does not have a result."
-                    )
-
         # Generate the spec document, and add the result for each requirement.
         spec_document: dict[
             str, list[dict[str, list[dict[str, Any]]]]
-        ] = spec.to_json()
+        ] = self.spec.to_json()
         for property in spec_document["properties"]:
             for req in property["requirements"]:
-                req["result"] = results[req["identifier"]].to_json()
+                req["result"] = self.results[req["identifier"]].to_json()
 
-        return ValidatedSpec(spec_document)
+        return spec_document
+
+    @staticmethod
+    def from_json(json: dict[str, Any]) -> ValidatedSpec:
+        """
+        Deserialize ValidatedSpec content from JSON document.
+
+        :param json: The json document
+        :type json: dict[str, Any]
+
+        :return: The deserialized specification
+        :rtype: ValidatedSpec
+        """
+        spec = Spec.from_json(json)
+        results: dict[str, Result] = {}
+        for property in json["properties"]:
+            for req in property["requirements"]:
+                results[req["identifier"]] = Result.from_json(req["result"])
+
+        return ValidatedSpec(spec, results)
 
     def __eq__(self, other: object) -> bool:
         """Test ValidatedSpec instance for equality."""
@@ -120,7 +135,4 @@ def _equal(a: ValidatedSpec, b: ValidatedSpec) -> bool:
     :return: `True` if instances are equal, `False` otherwise
     :rtype: bool
     """
-    # TODO(Kyle): Implement this functionality when ValidatedSpec fleshed out
-    akeys = set(a.document.keys())
-    bkeys = set(b.document.keys())
-    return len(akeys) == len(bkeys) == len(akeys.intersection(bkeys))
+    return a.spec == b.spec and a.results == b.results

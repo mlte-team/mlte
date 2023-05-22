@@ -55,7 +55,7 @@ class SpecValidator:
         :rtype: ValidatedSpec
         """
         results = self._validate_results()
-        return ValidatedSpec.generate_validatedspec(self.spec, results)
+        return ValidatedSpec(self.spec, results)
 
     def _validate_results(self) -> dict[str, Result]:
         """

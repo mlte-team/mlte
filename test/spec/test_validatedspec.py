@@ -35,7 +35,7 @@ def test_save_load(tmp_path):
 
 
 def test_no_result():
-    # Spec does not have value for requirement.
+    # Spec does not have Result for requirement.
     spec = Spec(
         {
             StorageCost("rationale"): [
@@ -46,4 +46,4 @@ def test_no_result():
 
     results: dict[str, Result] = {}
     with pytest.raises(RuntimeError):
-        _ = ValidatedSpec.generate_validatedspec(spec, results)
+        _ = ValidatedSpec(spec, results)

@@ -149,7 +149,7 @@ class Spec:
         document = read_spec(
             artifact_store_uri, model_identifier, model_version
         )
-        return Spec._from_json(json=document)
+        return Spec.from_json(json=document)
 
     # -------------------------------------------------------------------------
     # JSON document generation.
@@ -170,7 +170,7 @@ class Spec:
         return document
 
     @staticmethod
-    def _from_json(json: dict[str, Any]) -> Spec:
+    def from_json(json: dict[str, Any]) -> Spec:
         """
         Deserialize Spec content from JSON document.
 
