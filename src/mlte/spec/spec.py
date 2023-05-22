@@ -5,10 +5,9 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from typing import Any, Union, Optional
+from typing import Any, Union
 
 from mlte.property import Property
-from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
@@ -127,7 +126,7 @@ class Spec:
 
         # Write spec to store
         write_spec(
-            artifact_store_uri, model_identifier, model_version, self._to_json()
+            artifact_store_uri, model_identifier, model_version, self.to_json()
         )
 
     @staticmethod
@@ -156,14 +155,19 @@ class Spec:
     # JSON document generation.
     # -------------------------------------------------------------------------
 
-    def _to_json(self) -> dict[str, Any]:
+    def to_json(self) -> dict[str, Any]:
         """
         Serialize Spec content to JSON-like dict document
 
         :return: The serialized content
         :rtype: dict[str, Any]
         """
-        return self.spec_document()
+        document = {
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
+            "metadata": self._metadata_document(),
+            "properties": self._properties_document(),
+        }
+        return document
 
     @staticmethod
     def _from_json(json: dict[str, Any]) -> Spec:
@@ -185,26 +189,6 @@ class Spec:
 
         return spec
 
-    def spec_document(
-        self,
-        results: Optional[dict[str, Result]] = None,
-    ) -> dict[str, Any]:
-        """
-        Generate the spec document.
-
-        :param result: The Results of validations, ordered by id (optional).
-        :type results: dict[str, Result]
-
-        :return: The spec document
-        :rtype: dict[str, Any]
-        """
-        document = {
-            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "metadata": self._metadata_document(),
-            "properties": self._properties_document(results),
-        }
-        return document
-
     def _metadata_document(self) -> dict[str, Any]:
         """
         Generate Spec metadata.
@@ -221,94 +205,33 @@ class Spec:
             "timestamp": int(time.time()),
         }
 
-    def _properties_document(
-        self,
-        results: Optional[dict[str, Result]] = None,
-    ) -> list[dict[str, Any]]:
+    def _properties_document(self) -> list[dict[str, Any]]:
         """
         Generates a document with info an all properties.
-
-        :param result: The Results of validations, ordered by id (optional).
-        :type results: dict[str, Result]
 
         :return: The properties document
         :rtype: dict[str, Any]
         """
         property_docs = [
-            self._property_document(
-                property,
-                results if results is not None else {},
-            )
-            for property in self.properties
+            self._property_document(property) for property in self.properties
         ]
         return property_docs
 
-    def _property_document(
-        self, property: Property, results: dict[str, Result]
-    ) -> dict[str, Any]:
+    def _property_document(self, property: Property) -> dict[str, Any]:
         """
         Generate a property document.
 
         :param property: The property of interest
         :type property: Property
-        :param result: The Results of validations, ordered by id.
-        :type results: dict[str, Result]
 
         :return: The property-level document
         :rtype: dict[str, Any]
         """
         document: dict[str, Any] = property._to_json()
-        document["requirements"] = self._requirements_document(
-            self.requirements[property.name], results
-        )
-        return document
-
-    def _requirements_document(
-        self,
-        requirements: list[Requirement],
-        results: dict[str, Result],
-    ) -> list[dict[str, Any]]:
-        """
-        Generate a requirements document.
-
-        :param requirements: A list of Requirements.
-        :type requirements: list[Requirement]
-        :param result: The optional Results of validations, ordered by requirement.
-        :type results: dict[str, Result]
-
-        :return: The requirements-level document
-        :rtype: list[dict[str, Any]]
-        """
-        document = [
-            self._requirement_document(
-                requirement,
-                results[str(requirement.identifier)]
-                if str(requirement.identifier) in results
-                else None,
-            )
-            for requirement in requirements
+        document["requirements"] = [
+            requirement.to_json()
+            for requirement in self.requirements[property.name]
         ]
-        return document
-
-    def _requirement_document(
-        self,
-        requirement: Requirement,
-        result: Optional[Result] = None,
-    ) -> dict[str, Any]:
-        """
-        Returns a document with information for a given requirement, optionally with validation result.
-
-        :param requirement: The requirement to turn into a document.
-        :type requirement: Requirement
-        :param result: The Result of validating the Requirement, if any.
-        :type result: Optional[Result]
-
-        :return: The document for the specific requirement.
-        :rtype: dict[str, Any]
-        """
-        document = requirement.to_json()
-        if result is not None:
-            document["result"] = result.to_json()
         return document
 
     # -------------------------------------------------------------------------
