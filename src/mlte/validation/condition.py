@@ -60,7 +60,7 @@ class Condition:
         Returns this requirement as a JSON dictionary.
 
         :return: The serialized JSON object.
-        :rtype: dict[str, Any]        
+        :rtype: dict[str, Any]
         """
         return {
             "name": self.name,
