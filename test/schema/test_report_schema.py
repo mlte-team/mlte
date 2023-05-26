@@ -6,17 +6,25 @@ import time
 import pytest
 from jsonschema import ValidationError
 
+import mlte
 from mlte.report import Report, Dataset, User, UseCase, Limitation
-from mlte.spec import ValidatedSpec
+from mlte.spec import ValidatedSpec, Spec
+from mlte.validation import Ignore
 from mlte._private.schema import validate_report_schema
 
 
-def test_empty_instance():
+def test_empty_instance(tmp_path):
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
     report = Report()
     validate_report_schema(report.to_json())
 
 
-def test_valid_instance():
+def test_valid_instance(tmp_path):
+    mlte.set_model("model", "0.0.1")
+    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+
     report = Report()
     report.metadata.project_name = "ProjectName"
     report.metadata.authors = ["Foo", "Bar"]
@@ -50,7 +58,7 @@ def test_valid_instance():
         Limitation("Limitation description 1."),
     ]
 
-    report.spec = ValidatedSpec({})
+    report.spec = ValidatedSpec(Spec({}), {"test": Ignore("ignore")})
 
     validate_report_schema(report.to_json())
 

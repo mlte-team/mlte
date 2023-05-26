@@ -95,21 +95,13 @@ def test_cpu_nix_validate_failure():
 
     # Data is accessible from validation result
     assert vr.metadata is not None
-    assert vr.metadata, type(CPUStatistics).__name__
+    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(
     is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_windows_evaluate():
-    with pytest.raises(RuntimeError):
-        _ = LocalProcessCPUUtilization("id")
-
-
-@pytest.mark.skipif(
-    is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
-)
-def test_cpu_windows_validate():
     with pytest.raises(RuntimeError):
         _ = LocalProcessCPUUtilization("id")
 
