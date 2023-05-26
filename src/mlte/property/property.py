@@ -51,7 +51,7 @@ class Property(metaclass=abc.ABCMeta):
         Save a Property instance to a JSON document.
 
         :return: The document
-        :rtype: eict[str, str]
+        :rtype: dict[str, str]
         """
         return {
             "name": self.name,
