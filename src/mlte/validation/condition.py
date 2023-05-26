@@ -56,14 +56,12 @@ class Condition:
         return self.callback(value)._with_evidence_metadata(value.metadata)
 
     def to_json(self) -> dict[str, Any]:
-        """Returns this requirement as a dictionary."""
-        """        try:
-            validator = getattr(value, self.condition)
-        except AttributeError:
-            raise RuntimeError(
-                f"Invalid validation method provided: '{self.condition}()' method not found for value of type {value.typename}"
-            )
-        condition: Condition = validator(self.threshold)"""
+        """
+        Returns this requirement as a JSON dictionary.
+
+        :return: The serialized JSON object.
+        :rtype: dict[str, Any]        
+        """
         return {
             "name": self.name,
             "arguments": self.arguments,
