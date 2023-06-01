@@ -5,6 +5,17 @@ Global package context.
 from mlte._global import global_state
 
 
+def set_namespace(namespace_identifier: str):
+    """
+    Set the global namespace identifier.
+
+    :param namespace_identifier: The identifier for the namespace
+    :type namespace_identifier: str
+    """
+    state = global_state()
+    state.set_namespace(namespace_identifier)
+
+
 def set_model(model_identifier: str, model_version: str):
     """
     Set the global model identifier and version.

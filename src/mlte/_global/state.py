@@ -16,18 +16,31 @@ class GlobalState:
         return self._instance
 
     def __init__(self):
-        # The identifier for the model in global context
+        self.namespace_identifier: str = ""
+        """The identifier for the namespace."""
+
         self.model_identifier: str = ""
-        # The version string for the model in global context
+        """The identifier for the model."""
+
         self.model_version: str = ""
-        # The URI for the artifact store in global context
+        """The model version string."""
+
         self.artifact_store_uri: str = ""
+        """The artifact store URI."""
+
+    def has_namespace(self) -> bool:
+        return self.namespace_identifier != ""
 
     def has_model(self) -> bool:
         return self.model_identifier != "" and self.model_version != ""
 
     def has_artifact_store_uri(self) -> bool:
         return self.artifact_store_uri != ""
+
+    def set_namespace(self, namespace_identifier: str):
+        if namespace_identifier == "":
+            raise RuntimeError("Namespace identifier cannot be empty.")
+        self.namespace_identifier = namespace_identifier
 
     def set_model(self, model_identifier: str, model_version: str):
         if model_identifier == "":
@@ -42,6 +55,10 @@ class GlobalState:
             raise RuntimeError("Artifact store URI cannot be empty.")
         self.artifact_store_uri = artifact_store_uri
 
+    def get_namespace(self) -> str:
+        assert self.has_namespace(), "Broken precondition."
+        return self.namespace_identifier
+
     def get_model(self) -> Tuple[str, str]:
         assert self.has_model(), "Broken precondition."
         return self.model_identifier, self.model_version
@@ -55,6 +72,10 @@ class GlobalState:
         Ensure that the global state contains
         information necessary to save/load artifacts.
         """
+        if not self.has_namespace():
+            raise RuntimeError(
+                "Set namespace prior to saving or loading artifacts."
+            )
         if not self.has_model():
             raise RuntimeError(
                 "Set model context prior to saving or loading artifacts."
