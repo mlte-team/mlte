@@ -110,6 +110,9 @@ class DataDescriptor(BaseModel):
     source: str
     """A description of the data source."""
 
+    classification: DataClassification
+    """A description of the data classification level."""
+
     access: str
     """A description of the manner in which this data is accessed."""
 
@@ -127,6 +130,16 @@ class DataDescriptor(BaseModel):
 
     identifiable_information: str
     """A description of personaly-identifiable information considerations for this dataset."""
+
+
+class DataClassification(Enum):
+    """An enumeration of data classification levels."""
+
+    UNCLASSIFIED = "unclassified"
+    CUI = "cui"
+    PII = "pii"
+    PHI = "phi"
+    OTHER = "other"
 
 
 class DataLabelDescriptor(BaseModel):
