@@ -6,9 +6,11 @@ from __future__ import annotations
 
 import abc
 import typing
+from typing import Type
 
 from mlte.value import Value
-from mlte.measurement_metadata import MeasurementMetadata, Identifier
+from mlte.value.types import Opaque
+from mlte.evidence import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -35,13 +37,8 @@ class Measurement(metaclass=abc.ABCMeta):
         :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = MeasurementMetadata(type(instance).__name__, identifier)
+        self.metadata = EvidenceMetadata(type(instance).__name__, identifier)
         """The metadata for the measurement instance."""
-
-    @property
-    def identifier(self) -> Identifier:
-        """Return the measurement identifier."""
-        return self.metadata.identifier
 
     @abc.abstractmethod
     @typing.no_type_check
@@ -59,6 +56,12 @@ class Measurement(metaclass=abc.ABCMeta):
         """
         # Evaluate the measurement
         return self.__call__(*args, **kwargs)
+
+    @classmethod
+    def value(cls) -> Type[Value]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        # Opaque is the default Value type.
+        return Opaque
 
     def __str__(self) -> str:
         """Return a string representation of a Measurement."""

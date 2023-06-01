@@ -5,16 +5,13 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from itertools import groupby
-from typing import Iterable, Any, Union, Optional
+from typing import Any, Union
 
 from mlte.property import Property
-from mlte.validation import Result
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte._global import global_state
 from mlte.api import read_spec, write_spec
-from .bound_spec import BoundSpec
-from .condition import Condition
+from .requirement import Requirement
 
 
 def _unique(collection: list[str]) -> bool:
@@ -30,20 +27,6 @@ def _unique(collection: list[str]) -> bool:
     return len(set(collection)) == len(collection)
 
 
-def _all_equal(iterable: Iterable[Any]) -> bool:
-    """
-    Determine if all elements of an iterable are equivalent.
-
-    :param iterable: The iterable
-    :type iterable: Iterable[Any]
-
-    :return: `True` if all elements are equal, `False` otherwise
-    :rtype: bool
-    """
-    g = groupby(iterable)
-    return next(g, True) and not next(g, False)  # type: ignore
-
-
 # -----------------------------------------------------------------------------
 # Spec
 # -----------------------------------------------------------------------------
@@ -55,23 +38,35 @@ class Spec:
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, properties: dict[Property, list[Condition]]):
+    def __init__(
+        self, requirements_by_property: dict[Property, list[Requirement]]
+    ):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec.
-        :type conditions: list[Property]
+        :type properties: list[Property]
         """
-        self.properties = [p for p in properties.keys()]
+        self.properties = [p for p in requirements_by_property.keys()]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        self.conditions: dict[str, list[Condition]] = {
-            property.name: properties[property] for property in self.properties
+        if not _unique(
+            [
+                str(requirement.identifier)
+                for _, req_list in requirements_by_property.items()
+                for requirement in req_list
+            ]
+        ):
+            raise RuntimeError("All requirement ids in Spec must be unique.")
+
+        self.requirements: dict[str, list[Requirement]] = {
+            property.name: requirements_by_property[property]
+            for property in self.properties
         }
-        """A dict to store conditions by property."""
+        """A dict to store requirements by property."""
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -90,15 +85,15 @@ class Spec:
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
 
-    def _add_condition(self, property_name: str, condition: Condition):
+    def _add_requirement(self, property_name: str, requirement: Requirement):
         """
-        Adds the given condition to the property.
+        Adds the given requirement to the property.
 
-        :param property_name: The name of the property we are adding the condition for.
+        :param property_name: The name of the property we are adding the requirement for.
         :type property_name: str
 
-        :param condition: The condition we want to add to this property.
-        :type condition: Condition
+        :param requirement: The requirement we want to add to this property.
+        :type requirement: Requirement
         """
         if not any(
             property.name == property_name for property in self.properties
@@ -106,16 +101,16 @@ class Spec:
             raise RuntimeError(
                 f"Property {property_name} is not part of this Specification."
             )
-        if property_name not in self.conditions:
-            self.conditions[property_name] = []
+        if property_name not in self.requirements:
+            self.requirements[property_name] = []
 
-        # Only add condition if it is not already there for this property.
+        # Only add requirement if it is not already there for this property.
         found = any(
-            curr_condition == condition
-            for curr_condition in self.conditions[property_name]
+            curr_requirement == requirement
+            for curr_requirement in self.requirements[property_name]
         )
         if not found:
-            self.conditions[property_name].append(condition)
+            self.requirements[property_name].append(requirement)
 
     # -------------------------------------------------------------------------
     # Save / Load
@@ -131,7 +126,7 @@ class Spec:
 
         # Write spec to store
         write_spec(
-            artifact_store_uri, model_identifier, model_version, self._to_json()
+            artifact_store_uri, model_identifier, model_version, self.to_json()
         )
 
     @staticmethod
@@ -154,23 +149,28 @@ class Spec:
         document = read_spec(
             artifact_store_uri, model_identifier, model_version
         )
-        return Spec._from_json(json=document)
+        return Spec.from_json(json=document)
 
     # -------------------------------------------------------------------------
     # JSON document generation.
     # -------------------------------------------------------------------------
 
-    def _to_json(self) -> dict[str, Any]:
+    def to_json(self) -> dict[str, Any]:
         """
         Serialize Spec content to JSON-like dict document
 
         :return: The serialized content
         :rtype: dict[str, Any]
         """
-        return self._spec_document()
+        document = {
+            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
+            "metadata": self._metadata_document(),
+            "properties": self._properties_document(),
+        }
+        return document
 
     @staticmethod
-    def _from_json(json: dict[str, Any]) -> Spec:
+    def from_json(json: dict[str, Any]) -> Spec:
         """
         Deserialize Spec content from JSON document.
 
@@ -182,32 +182,12 @@ class Spec:
         """
         spec = Spec({Property._from_json(d): [] for d in json["properties"]})
         for property_doc in json["properties"]:
-            for condition_doc in property_doc["conditions"]:
-                spec._add_condition(
-                    property_doc["name"], Condition.from_json(condition_doc)
+            for requirement_doc in property_doc["requirements"]:
+                spec._add_requirement(
+                    property_doc["name"], Requirement.from_json(requirement_doc)
                 )
 
         return spec
-
-    def _spec_document(
-        self,
-        results: Optional[dict[str, dict[str, Result]]] = None,
-    ) -> dict[str, Any]:
-        """
-        Generate the spec document.
-
-        :param result: The Results of validations, ordered by property and condition (optional).
-        :type results: dict[str, dict[str, Result]]
-
-        :return: The spec document
-        :rtype: dict[str, Any]
-        """
-        document = {
-            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "metadata": self._metadata_document(),
-            "properties": self._properties_document(results),
-        }
-        return document
 
     def _metadata_document(self) -> dict[str, Any]:
         """
@@ -225,127 +205,34 @@ class Spec:
             "timestamp": int(time.time()),
         }
 
-    def _properties_document(
-        self,
-        results: Optional[dict[str, dict[str, Result]]] = None,
-    ) -> list[dict[str, Any]]:
+    def _properties_document(self) -> list[dict[str, Any]]:
         """
         Generates a document with info an all properties.
-
-        :param result: The Results of validations, ordered by property and condition (optional).
-        :type results: dict[str, dict[str, Result]]
 
         :return: The properties document
         :rtype: dict[str, Any]
         """
-        if results is not None:
-            if any(
-                property.name not in results for property in self.properties
-            ):
-                raise RuntimeError(
-                    "There are properties that do not have associated validated results; can't generate document."
-                )
-
         property_docs = [
-            self._property_document(
-                property,
-                results[property.name] if results is not None else {},
-            )
-            for property in self.properties
+            self._property_document(property) for property in self.properties
         ]
         return property_docs
 
-    def _property_document(
-        self, property: Property, results: dict[str, Result]
-    ) -> dict[str, Any]:
+    def _property_document(self, property: Property) -> dict[str, Any]:
         """
         Generate a property document.
 
         :param property: The property of interest
         :type property: Property
-        :param result: The Results of validations, ordered by condition.
-        :type results: dict[str, Result]
 
         :return: The property-level document
         :rtype: dict[str, Any]
         """
         document: dict[str, Any] = property._to_json()
-        document["conditions"] = self._conditions_document(
-            self.conditions[property.name], results
-        )
-        return document
-
-    def _conditions_document(
-        self,
-        conditions: list[Condition],
-        results: dict[str, Result],
-    ) -> list[dict[str, Any]]:
-        """
-        Generate a conditions document.
-
-        :param conditions: A list of Conditions.
-        :type conditions: list[Condition]
-        :param result: The optional Results of validations, ordered by condition.
-        :type results: dict[str, Result]
-
-        :return: The conditions-level document
-        :rtype: list[dict[str, Any]]
-        """
-        conditions_by_measurement = []
-        for _, group in groupby(
-            conditions, key=lambda condition: condition.measurement_type
-        ):
-            conditions_by_measurement.append([condition for condition in group])
-
-        document = [
-            self._condition_document(
-                condition,
-                results[condition.label]
-                if condition.label in results
-                else None,
-            )
-            for condition in conditions
+        document["requirements"] = [
+            requirement.to_json()
+            for requirement in self.requirements[property.name]
         ]
         return document
-
-    def _condition_document(
-        self,
-        condition: Condition,
-        result: Optional[Result] = None,
-    ) -> dict[str, Any]:
-        """
-        Returns a document with information for a given condition, optionally with validation result.
-
-        :param condition: The condition to turn into a document.
-        :type condition: Condition
-        :param result: The Result of validating the Condition, if any.
-        :type result: Optional[Result]
-
-        :return: The document for the specific condition.
-        :rtype: dict[str, Any]
-        """
-        document = condition.to_json()
-        if result is not None:
-            document["validation"] = result.to_json()
-        return document
-
-    # -------------------------------------------------------------------------
-    # BoundSpec document generation.
-    # -------------------------------------------------------------------------
-
-    def generate_bound_spec(
-        self, results: dict[str, dict[str, Result]]
-    ) -> BoundSpec:
-        """
-        Generates a bound spec with the validation results.
-
-        :param result: The Results to bind to the spec, ordered by property and condition.
-        :type results: dict[str, dict[str, Result]]
-
-        :return: A BoundSpec associating the Spec with the specific Results.
-        :rtype: BoundSpec
-        """
-        return BoundSpec(self._spec_document(results))
 
     # -------------------------------------------------------------------------
     # Equality Testing

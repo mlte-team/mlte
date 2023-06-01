@@ -5,9 +5,10 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from typing import Optional
+from typing import Optional, Any
+import sys
 
-from mlte.measurement_metadata import MeasurementMetadata
+from mlte.evidence import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -39,51 +40,31 @@ class Result(metaclass=abc.ABCMeta):
         self.message = message
         """The message indicating the reason for status."""
 
-        self.validator_name = ""
-        """The name of the validator that produced the result."""
-
-        self.measurement_metadata: Optional[MeasurementMetadata] = None
+        self.metadata: Optional[EvidenceMetadata] = None
         """
         The information about the measurement from which this was obtained.
         """
 
-    def _with_measurement_metadata(
-        self, measurement_metadata: MeasurementMetadata
+    def _with_evidence_metadata(
+        self, evidence_metadata: EvidenceMetadata
     ) -> Result:
         """
-        Set the `measurement_metadata` field of the Result
-        to indicate the measurement metadata info from which
+        Set the `metadata` field of the Result
+        to indicate the evidence metadata info from which
         it was generated.
 
-        This hook allows us to embed the measurement metadata within
-        the Result so that we can use the measurement metadata
+        This hook allows us to embed the evidence metadata within
+        the Result so that we can use the metadata
         information later when it is used to generate a report.
 
-        :param measurement_metadata: The measurement metadata on which the
-        Validator that produced this instance was invoked
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The evidence metadata of the
+        Value from which was this instance was generated.
+        :type evidence_metadata: EvidenceMetadata
 
         :return: The Result instance (`self`)
         :rtype: Result
         """
-        self.measurement_metadata = measurement_metadata
-        return self
-
-    def _from_validator(self, validator) -> Result:
-        """
-        Set the `validator_name` field of the Result
-        to indicate the Validator instance from which it was generated.
-
-        This hook allows us to embed the name of the Validator into
-        the produced Result at the point it is produced.
-
-        :param validator: The Validator instance
-        :type validator: Validator
-
-        :return: The Result instance (`self`)
-        :rtype: Result
-        """
-        self.validator_name = validator.name
+        self.metadata = evidence_metadata
         return self
 
     def to_json(self) -> dict[str, str]:
@@ -93,18 +74,48 @@ class Result(metaclass=abc.ABCMeta):
         :return: A JSON-like dictionary with this object.
         :rtype: dict[str, str]
         """
-        return {
-            "name": self.validator_name,
-            "result": f"{self}",
+        doc: dict[str, Any] = {
+            "result_type": f"{self}",
             "message": self.message,
         }
+        if self.metadata is not None:
+            doc["metadata"] = self.metadata.to_json()
+        return doc
+
+    @classmethod
+    def from_json(cls, document: dict[str, Any]) -> Result:
+        """
+        Returns a result from a serialized JSON string.
+
+        :param json: The json document
+        :type json: dict[str, Any]
+
+        :return: The deserialized object.
+        :rtype: Result
+        """
+        if (
+            "result_type" not in document
+            or "message" not in document
+            or "metadata" not in document
+        ):
+            raise RuntimeError("Saved Result is malformed.")
+
+        result_type = document["result_type"]
+        results_module = sys.modules[__name__]
+        result_class = getattr(results_module, result_type)
+
+        result: Result = result_class(document["message"])
+        result = result._with_evidence_metadata(
+            EvidenceMetadata.from_json(document["metadata"])
+        )
+        return result
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
-        assert self.measurement_metadata is not None, "Broken precondition."
+        assert self.metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
-        return self.measurement_metadata.identifier == other.value.identifier  # type: ignore
+        return self.metadata.identifier == other.metadata.identifier  # type: ignore
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
@@ -118,8 +129,6 @@ class Success(Result):
         """
         Initialize a Success validation result instance.
 
-        :param validator_name: The name of the validator
-        :type validator_name: str
         :param message: Optional message
         :type message: str
         """
@@ -141,8 +150,6 @@ class Failure(Result):
         """
         Initialize a Failure validation result instance.
 
-        :param validator_name: The name of the validator
-        :type validator_name: str
         :param message: Optional message
         :type message: str
         """

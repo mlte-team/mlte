@@ -1,14 +1,13 @@
 """
 An Value instance for a scalar, real value.
 """
-
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 from ..value import Value
-from mlte.validation import Validator, Result, Success, Failure
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.validation import Condition, Success, Failure
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 class Real(Value):
@@ -17,47 +16,47 @@ class Real(Value):
     interface for a single real value.
     """
 
-    def __init__(self, measurement_metadata: MeasurementMetadata, value: float):
+    def __init__(self, evidence_metadata: EvidenceMetadata, value: float):
         """
         Initialize a Real instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param value: The real value
         :type value: float
         """
         assert isinstance(value, float), "Argument must be `float`."
 
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.value = value
         """The wrapped real value."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an Real to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"value": self.value}
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Real:
         """
         Deserialize an Real from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: Real
         """
-        return Real(measurement_metadata, json["value"])
+        return Real(evidence_metadata, json["value"])
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""
@@ -73,92 +72,100 @@ class Real(Value):
         """Comparison between Real values."""
         return not self.__eq__(other)
 
-    def less_than(self, value: float) -> Result:
+    @classmethod
+    def less_than(cls, value: float) -> Condition:
         """
         Determine if real is strictly less than `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "less_than",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
             )
-            if self.value < value
+            if real.value < value
             else Failure(
                 f"Real magnitude {real.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def less_or_equal_to(self, value: float) -> Result:
+    @classmethod
+    def less_or_equal_to(cls, value: float) -> Condition:
         """
         Determine if real is less than or equal to `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "less_or_equal_to",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"less than or equal to threshold {value}"
             )
-            if self.value <= value
+            if real.value <= value
             else Failure(
                 f"Real magnitude {real.value} exceeds threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def greater_than(self, value: float) -> Result:
+    @classmethod
+    def greater_than(cls, value: float) -> Condition:
         """
         Determine if real is strictly greater than `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "greater_than",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
             )
-            if self.value > value
+            if real.value > value
             else Failure(
                 f"Real magnitude {real.value} below threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def greater_or_equal_to(self, value: float) -> Result:
+    @classmethod
+    def greater_or_equal_to(cls, value: float) -> Condition:
         """
         Determine if real is greater than or equal to `value`.
 
         :param value: The threshold value
         :type value: float
 
-        :return: The result of validation
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "greater_or_equal_to",
+            [value],
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"greater than or equal to threshold {value}"
             )
-            if self.value >= value
+            if real.value >= value
             else Failure(
                 f"Real magnitude {real.value} below threshold {value}"
             ),
-        )(self)
-        return result
+        )
+        return condition

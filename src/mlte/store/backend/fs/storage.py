@@ -17,8 +17,8 @@ LATEST_VERSION = -1
 
 # The name of the file that contains serialized specs
 SPEC_FILENAME = "spec.json"
-# The name of the file that contains serialized boundspecs
-BOUNDSPEC_FILENAME = "boundspec.json"
+# The name of the file that contains serialized validatedspecs
+VALIDATEDSPEC_FILENAME = "validatedspec.json"
 
 # -----------------------------------------------------------------------------
 # Query Metadata
@@ -99,18 +99,18 @@ def spec_is_saved(model_version_path: Path) -> bool:
     return (model_version_path / SPEC_FILENAME).is_file()
 
 
-def boundspec_is_saved(model_version_path: Path) -> bool:
+def validatedspec_is_saved(model_version_path: Path) -> bool:
     """
-    Determine if a bound specification is saved to the store for model version.
+    Determine if a validated specification is saved to the store for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
 
-    :return: `True` if a bound specification is present, `False` otherwise
+    :return: `True` if a validated specification is present, `False` otherwise
     :rtype: bool
     """
     assert model_version_path.is_dir(), "Broken precondition."
-    return (model_version_path / BOUNDSPEC_FILENAME).is_file()
+    return (model_version_path / VALIDATEDSPEC_FILENAME).is_file()
 
 
 # -----------------------------------------------------------------------------
@@ -278,13 +278,13 @@ def _read_artifact(model_version_path: Path, filename: str) -> Dict[str, Any]:
     :type model_version_path: Path
     :param filename: The file name
     :type filename: str
-    :return: The binding data
+    :return: The artifact data
     :rtype: Dict[str, Any]
     """
-    binding_path = model_version_path / filename
-    assert binding_path.is_file(), "Broken invariant."
+    artifact_path = model_version_path / filename
+    assert artifact_path.is_file(), "Broken invariant."
 
-    with open(binding_path, "r") as f:
+    with open(artifact_path, "r") as f:
         artifact: Dict[str, Any] = json.load(f)
         return artifact
 
@@ -298,7 +298,7 @@ def _write_artifact(
     :type model_version_path: Path
     :param filename: The file name
     :type filename: str
-    :param data: The binding data
+    :param data: The artifact data
     :type data: Dict[str, Any]
     """
     full_path = model_version_path / filename
@@ -337,30 +337,30 @@ def write_spec(model_version_path: Path, data: Dict[str, Any]):
 
 
 # -----------------------------------------------------------------------------
-# Read / Write BoundSpec
+# Read / Write ValidatedSpec
 # -----------------------------------------------------------------------------
 
 
-def read_boundspec(model_version_path: Path) -> Dict[str, Any]:
+def read_validatedspec(model_version_path: Path) -> Dict[str, Any]:
     """
-    Read bound specification data for model version.
+    Read validated specification data for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
 
-    :return: The bound specification data
+    :return: The validated specification data
     :rtype: Dict[str, Any]
     """
-    return _read_artifact(model_version_path, BOUNDSPEC_FILENAME)
+    return _read_artifact(model_version_path, VALIDATEDSPEC_FILENAME)
 
 
-def write_boundspec(model_version_path: Path, data: Dict[str, Any]):
+def write_validatedspec(model_version_path: Path, data: Dict[str, Any]):
     """
-    Write bound specification data for model version.
+    Write validated specification data for model version.
 
     :param model_version_path: The path to the model version
     :type model_version_path: Path
     :param data: The specification data
     :type data: Dict[str, Any]
     """
-    _write_artifact(model_version_path, BOUNDSPEC_FILENAME, data)
+    _write_artifact(model_version_path, VALIDATEDSPEC_FILENAME, data)

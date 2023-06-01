@@ -4,6 +4,8 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
+from typing import Type
+
 from mlte.value import Value
 from .measurement import Measurement
 
@@ -34,3 +36,8 @@ class ExternalMeasurement(Measurement):
         """Ingest data without evaluating a function, to wrap it as the configured Value type. Currently works the same as evaluate()."""
         value: Value = self.value_type(self.metadata, *args, **kwargs)
         return value
+
+    @classmethod
+    def value(self) -> Type[Value]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        return self.value_type

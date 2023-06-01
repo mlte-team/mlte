@@ -6,15 +6,14 @@ from __future__ import annotations
 
 import time
 import subprocess
-from typing import Dict, Any
+from typing import Any, Type
 from subprocess import SubprocessError
 
 from ..process_measurement import ProcessMeasurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
-    Validator,
-    Result,
+    Condition,
     Success,
     Failure,
 )
@@ -34,7 +33,7 @@ class CPUStatistics(Value):
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        evidence_metadata: EvidenceMetadata,
         avg: float,
         min: float,
         max: float,
@@ -42,8 +41,8 @@ class CPUStatistics(Value):
         """
         Initialize a CPUStatistics instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param avg: The average utilization
         :type avg: float
         :param min: The minimum utilization
@@ -51,7 +50,7 @@ class CPUStatistics(Value):
         :param max: The maximum utilization
         :type max: float
         """
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.avg = avg
         """The average CPU utilization, as a proportion."""
@@ -62,32 +61,32 @@ class CPUStatistics(Value):
         self.max = max
         """The maximum CPU utilization, as a proportion."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an CPUStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: CPUStatistics
         """
         return CPUStatistics(
-            measurement_metadata,
+            evidence_metadata,
             avg=json["avg"],
             min=json["min"],
             max=json["max"],
@@ -101,18 +100,20 @@ class CPUStatistics(Value):
         s += f"Maximum: {self.max:.2f}%"
         return s
 
-    def max_utilization_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def max_utilization_less_than(cls, threshold: float) -> Condition:
         """
-        Construct and invoke a validator for maximum CPU utilization.
+        Construct and invoke a condition for maximum CPU utilization.
 
         :param threshold: The threshold value for maximum utilization
         :type threshold: float
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "max_utilization_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -124,21 +125,23 @@ class CPUStatistics(Value):
                     f"exceeds threshold {threshold:.2f}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def average_utilization_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def average_utilization_less_than(cls, threshold: float) -> Condition:
         """
-        Construct and invoke a validator for average CPU utilization.
+        Construct and invoke a condition for average CPU utilization.
 
         :param threshold: The threshold value for average utilization
         :type threshold: float
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "average_utilization_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -150,8 +153,8 @@ class CPUStatistics(Value):
                     "exceeds threshold {threshold:.2f}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
 
 # -----------------------------------------------------------------------------
@@ -172,7 +175,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         super().__init__(self, identifier)
         if is_windows():
             raise RuntimeError(
-                f"Measurement {self.identifier} is not supported on Windows."
+                f"Measurement {self.metadata.identifier} is not supported on Windows."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
@@ -185,7 +188,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         :type poll_interval: int
 
         :return: The collection of CPU usage statistics
-        :rtype: Dict
+        :rtype: dict
         """
         stats = []
         while True:
@@ -201,6 +204,11 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             min=min(stats),
             max=max(stats),
         )
+
+    @classmethod
+    def value(self) -> Type[CPUStatistics]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        return CPUStatistics
 
 
 # -----------------------------------------------------------------------------

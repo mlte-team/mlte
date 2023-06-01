@@ -6,7 +6,7 @@ import pytest
 
 import mlte
 from mlte.measurement import Measurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value.types import Opaque
 
 
@@ -39,7 +39,7 @@ def test_opaque():
 
 
 def test_opaque_equality():
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
 
     a = Opaque(m, {"foo": "bar"})
     b = Opaque(m, {"foo": "bar"})
@@ -62,7 +62,7 @@ def test_opaque_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     i = Opaque(m, {"foo": "bar"})
 
     # Save
@@ -75,7 +75,7 @@ def test_opaque_save_load(tmp_path):
 
 
 def test_opaque_serde():
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     o = Opaque(m, {"value": 1})
 
     serialized = o.serialize()

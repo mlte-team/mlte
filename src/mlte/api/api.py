@@ -92,11 +92,11 @@ def write_spec(
 
 
 # -----------------------------------------------------------------------------
-# BoundSpec
+# ValidatedSpec
 # -----------------------------------------------------------------------------
 
 
-def read_boundspec(
+def read_validatedspec(
     uri: str, model_identifier: str, model_version
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
@@ -104,12 +104,12 @@ def read_boundspec(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        return local.read_boundspec(uri, model_identifier, model_version)
+        return local.read_validatedspec(uri, model_identifier, model_version)
     else:
         assert False, "Unreachable."
 
 
-def write_boundspec(
+def write_validatedspec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ) -> int:
     """TODO(Kyle)"""
@@ -117,6 +117,8 @@ def write_boundspec(
     if uri_type == UriType.HTTP:
         raise NotImplementedError("Temporary.")
     elif uri_type == UriType.LOCAL:
-        return local.write_boundspec(uri, model_identifier, model_version, data)
+        return local.write_validatedspec(
+            uri, model_identifier, model_version, data
+        )
     else:
         assert False, "Unreachable."

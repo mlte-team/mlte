@@ -1,17 +1,17 @@
 """
 Indicates the outcome of measurement evaluation.
 """
-
 from __future__ import annotations
+
 import abc
 
-from typing import Dict, Any, Optional
+from typing import Any, Optional
 
 from mlte._global import global_state
 from mlte.api import read_value, write_value
 from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
 
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -38,30 +38,30 @@ class Value(metaclass=abc.ABCMeta):
             for method in ["serialize", "deserialize"]
         )
 
-    def __init__(self, instance, measurement_metadata: MeasurementMetadata):
+    def __init__(self, instance, evidence_metadata: EvidenceMetadata):
         """
         Initialize a Value instance.
 
         :param instance: The subclass instance
         :type instance: Value
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type measurement: EvidenceMetadata
         """
-        self.measurement_metadata = measurement_metadata
+        self.metadata = evidence_metadata
         """The info about the generating measurement."""
 
         self.typename = type(instance).__name__
         """The type of the value itself."""
 
     @abc.abstractmethod
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """TODO"""
         raise NotImplementedError("Cannot serialize abstract Value.")
 
     @staticmethod
     @abc.abstractmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> Any:
         """TODO"""
         raise NotImplementedError("Cannot deserialize abstract Value.")
@@ -84,7 +84,7 @@ class Value(metaclass=abc.ABCMeta):
             artifact_store_uri,
             model_identifier,
             model_version,
-            self.measurement_metadata.identifier.name,
+            self.metadata.identifier.name,
             {
                 "schema_version": VALUE_LATEST_SCHEMA_VERSION,
                 "metadata": self._serialize_metadata(),
@@ -128,14 +128,14 @@ class Value(metaclass=abc.ABCMeta):
 
         metadata = json["metadata"]
         value: Value = cls.deserialize(
-            MeasurementMetadata.from_json(metadata["measurement"]),
+            EvidenceMetadata.from_json(metadata["measurement"]),
             json["payload"],
         )
         return value
 
-    def _serialize_metadata(self) -> Dict[str, Any]:
+    def _serialize_metadata(self) -> dict[str, Any]:
         """Return the header for serialization."""
         return {
-            "measurement": self.measurement_metadata.to_json(),
+            "measurement": self.metadata.to_json(),
             "value": {"typename": self.typename},
         }

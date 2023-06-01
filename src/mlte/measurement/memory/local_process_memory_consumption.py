@@ -6,14 +6,13 @@ from __future__ import annotations
 
 import time
 import subprocess
-from typing import Dict, Any
+from typing import Any, Type
 
 from ..process_measurement import ProcessMeasurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value import Value
 from mlte.validation import (
-    Validator,
-    Result,
+    Condition,
     Success,
     Failure,
 )
@@ -34,7 +33,7 @@ class MemoryStatistics(Value):
 
     def __init__(
         self,
-        measurement_metadata: MeasurementMetadata,
+        evidence_metadata: EvidenceMetadata,
         avg: int,
         min: int,
         max: int,
@@ -42,8 +41,8 @@ class MemoryStatistics(Value):
         """
         Initialize a MemoryStatistics instance.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param avg: The average memory consumption
         :type avg: int
         :param min: The minimum memory consumption
@@ -51,7 +50,7 @@ class MemoryStatistics(Value):
         :param max: The maximum memory consumption
         :type max: int
         """
-        super().__init__(self, measurement_metadata)
+        super().__init__(self, evidence_metadata)
 
         self.avg = avg
         """The average memory consumption (KB)."""
@@ -62,32 +61,32 @@ class MemoryStatistics(Value):
         self.max = max
         """The maximum memory consumption (KB)."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an MemoryStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        measurement_metadata: MeasurementMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
     ) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
-        :param measurement_metadata: The generating measurement's metadata
-        :type measurement_metadata: MeasurementMetadata
+        :param evidence_metadata: The generating measurement's metadata
+        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
+        :type json: dict[str, Any]
 
         :return: The deserialized instance
         :rtype: MemoryStatistics
         """
         return MemoryStatistics(
-            measurement_metadata,
+            evidence_metadata,
             avg=json["avg"],
             min=json["min"],
             max=json["max"],
@@ -101,18 +100,20 @@ class MemoryStatistics(Value):
         s += f"Maximum: {self.max}"
         return s
 
-    def max_consumption_less_than(self, threshold: int) -> Result:
+    @classmethod
+    def max_consumption_less_than(cls, threshold: int) -> Condition:
         """
-        Construct and invoke a validator for maximum memory consumption.
+        Construct and invoke a condition for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption
         :type threshold: int
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "max_consumption_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
                 f"below threshold {threshold}"
@@ -124,21 +125,23 @@ class MemoryStatistics(Value):
                     f"exceeds threshold {threshold}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
-    def average_consumption_less_than(self, threshold: float) -> Result:
+    @classmethod
+    def average_consumption_less_than(cls, threshold: float) -> Condition:
         """
-        Construct and invoke a validator for average memory consumption.
+        Construct and invoke a condition for average memory consumption.
 
         :param threshold: The threshold value for average consumption
         :type threshold: int
 
-        :return: The validation result
-        :rtype: Result
+        :return: The Condition that can be used to validate a Value.
+        :rtype: Condition
         """
-        result: Result = Validator(
+        condition: Condition = Condition(
             "average_consumption_less_than",
+            [threshold],
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
                 f"below threshold {threshold}"
@@ -150,8 +153,8 @@ class MemoryStatistics(Value):
                     f"exceeds threshold {threshold}"
                 )
             ),
-        )(self)
-        return result
+        )
+        return condition
 
 
 # -----------------------------------------------------------------------------
@@ -172,7 +175,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         super().__init__(self, identifier)
         if is_windows() or is_macos():
             raise RuntimeError(
-                f"Measurement {self.identifier} is not supported on Windows or macOS."
+                f"Measurement {self.metadata.identifier} is not supported on Windows or macOS."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
@@ -201,6 +204,11 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             min=min(stats),
             max=max(stats),
         )
+
+    @classmethod
+    def value(self) -> Type[MemoryStatistics]:
+        """Returns the class type object for the Value produced by the Measurement."""
+        return MemoryStatistics
 
 
 # -----------------------------------------------------------------------------

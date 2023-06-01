@@ -14,7 +14,7 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.validation import Validator, Success, Failure
+from mlte.validation import Condition, Success, Failure
 
 from ...support.meta import path_to_support
 
@@ -33,7 +33,7 @@ def spin_for(seconds: int):
 
 @pytest.mark.skipif(
     is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
+    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
 def test_memory_nix_evaluate():
     start = time.time()
@@ -50,7 +50,7 @@ def test_memory_nix_evaluate():
 
 @pytest.mark.skipif(
     is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
+    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
 def test_memory_nix_evaluate_async():
     start = time.time()
@@ -68,7 +68,7 @@ def test_memory_nix_evaluate_async():
 
 @pytest.mark.skipif(
     is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
+    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
 def test_memory_nix_validate_success():
     p = spin_for(5)
@@ -78,16 +78,16 @@ def test_memory_nix_validate_success():
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Succeed", lambda _: Success())(stats)
+    vr = Condition("Succeed", [], lambda _: Success())(stats)
     assert bool(vr)
 
-    assert vr.measurement_metadata is not None
-    assert vr.measurement_metadata.typename, type(MemoryStatistics).__name__
+    assert vr.metadata is not None
+    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(
     is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or OSX.",
+    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
 def test_memory_nix_validate_failure():
     p = spin_for(5)
@@ -97,11 +97,11 @@ def test_memory_nix_validate_failure():
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Validator("Fail", lambda _: Failure())(stats)
+    vr = Condition("Fail", [], lambda _: Failure())(stats)
     assert not bool(vr)
 
-    assert vr.measurement_metadata is not None
-    assert vr.measurement_metadata.typename, type(MemoryStatistics).__name__
+    assert vr.metadata is not None
+    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
 @pytest.mark.skipif(
@@ -113,16 +113,8 @@ def test_memory_windows_evaluate():
 
 
 @pytest.mark.skipif(
-    is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
-)
-def test_memory_windows_validate():
-    with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption("id")
-
-
-@pytest.mark.skipif(
     is_windows() or is_macos(),
-    reason="LocalProcessCPUUtilization not supported on Windows or OSX.",
+    reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
 )
 def test_result_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")

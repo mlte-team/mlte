@@ -3,8 +3,8 @@ from .api import (
     write_value,
     read_spec,
     write_spec,
-    read_boundspec,
-    write_boundspec,
+    read_validatedspec,
+    write_validatedspec,
 )
 
 __all__ = [
@@ -12,6 +12,6 @@ __all__ = [
     "write_value",
     "read_spec",
     "write_spec",
-    "read_boundspec",
-    "write_boundspec",
+    "read_validatedspec",
+    "write_validatedspec",
 ]

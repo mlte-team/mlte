@@ -6,10 +6,9 @@ from __future__ import annotations
 import pytest
 
 import mlte
-from mlte.spec import Spec, Condition
+from mlte.spec import Spec, Requirement
 from mlte.property.costs import StorageCost
-from mlte.measurement import ExternalMeasurement
-from mlte.validation import Result
+from mlte.measurement.storage import LocalObjectSize
 
 
 def test_save(tmp_path):
@@ -19,7 +18,7 @@ def test_save(tmp_path):
     s = Spec(
         {
             StorageCost("rationale"): [
-                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
+                Requirement("test", LocalObjectSize.value().less_than(3))
             ]
         }
     )
@@ -37,31 +36,23 @@ def test_load_failure(tmp_path):
         _ = Spec.load()
 
 
-def test_unique_properties():
+def test_non_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec({StorageCost("rationale"): [], StorageCost("rationale2"): []})
 
 
-def test_add_condition():
-    spec = Spec({StorageCost("rationale"): []})
-    condition = Condition("test", ExternalMeasurement.__name__, "less_than", 3)
-    spec._add_condition("StorageCost", condition)
-
-    assert spec.conditions["StorageCost"][0] == Condition(
-        "test", ExternalMeasurement.__name__, "less_than", 3
-    )
-
-
-def test_no_result():
-    # Spec validator does not have value for condition.
-    spec = Spec(
-        {
-            StorageCost("rationale"): [
-                Condition("test", ExternalMeasurement.__name__, "less_than", 3)
-            ]
-        }
-    )
-
-    results: dict[str, dict[str, Result]] = {}
+def test_non_unique_requirement_ids():
+    requirement1 = Requirement("id1", LocalObjectSize.value().less_than(5))
+    requirement2 = Requirement("id1", LocalObjectSize.value().less_than(3))
     with pytest.raises(RuntimeError):
-        _ = spec.generate_bound_spec(results)
+        _ = Spec({StorageCost("rationale"): [requirement1, requirement2]})
+
+
+def test_add_requirement():
+    spec = Spec({StorageCost("rationale"): []})
+    requirement = Requirement("test", LocalObjectSize.value().less_than(3))
+    spec._add_requirement("StorageCost", requirement)
+
+    assert spec.requirements["StorageCost"][0] == Requirement(
+        "test", LocalObjectSize.value().less_than(3)
+    )

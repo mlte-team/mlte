@@ -73,19 +73,35 @@
                                             "description": "The dill-encoded thunk to call when validating a value for this condition."
                                         }                                                                                                                        
                                     }                                    
-                                },                                
-                                "measurement_type": {
-                                    "type": "string",
-                                    "description": "The type of the measurement."
-                                },                                
-                                "validator": {
-                                    "type": "string",
-                                    "description": "The validator method to use on a result from this measurement to validate it."
                                 },
-                                "threshold": {
-                                    "type": ["number","string","boolean","object","array", "null"],
-                                    "description": "Validation parameter."
-                                }
+                                "result": {
+                                    "type": "object",
+                                    "description": "The validation result.",
+                                    "properties": {
+                                        "result_type": {
+                                            "type": "string",
+                                            "description": "The text describing the result of validation."
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "The text elaborating on the validation result."
+                                        },
+                                        "metadata": {
+                                            "type": "object",
+                                            "description": "Metadata about the evidence capture process.",
+                                            "properties": {
+                                                "identifier": {
+                                                    "type": "string",
+                                                    "description": "The identifier for the measurement process."
+                                                },
+                                                "measurement_type": {
+                                                    "type": "string",
+                                                    "description": "The name of the class used to generate the measurement value from which this result came."
+                                                }                                                                                   
+                                            }                            
+                                        }                                        
+                                    }
+                                }                                
                             }
                         }
                     }                    

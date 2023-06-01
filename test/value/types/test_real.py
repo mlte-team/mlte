@@ -6,7 +6,7 @@ import pytest
 
 import mlte
 from mlte.measurement import Measurement
-from mlte.measurement_metadata.measurement_metadata import MeasurementMetadata
+from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value.types import Real
 
 
@@ -20,20 +20,20 @@ class DummyMeasurementReal(Measurement):
 
 def test_real_success():
     # Ensure instantiation succeeds for valid type
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     r = Real(m, 3.14)
     assert r.value == 3.14
 
 
 def test_real_fail():
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     with pytest.raises(AssertionError):
         _ = Real(m, 1)
 
 
 def test_real_serde():
     # Ensure serialization and deserialization are inverses
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     r = Real(m, 3.14)
 
     serialized = r.serialize()
@@ -45,7 +45,7 @@ def test_real_save_load(tmp_path):
     mlte.set_model("mymodel", "0.0.1")
     mlte.set_artifact_store_uri(f"local://{tmp_path}")
 
-    m = MeasurementMetadata("typename", "id")
+    m = EvidenceMetadata("typename", "id")
     i = Real(m, 3.14)
 
     # Save

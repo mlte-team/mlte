@@ -31,7 +31,7 @@ mlte.set_artifact_store_uri(f"local://{store_path}")
 
 ### Write the Specification
 ```python
-from mlte.spec import Spec, Condition
+from mlte.spec import Spec, Requirement
 
 from mlte.property.costs import (
     StorageCost,
@@ -47,15 +47,15 @@ from mlte.measurement import ExternalMeasurement
 
 spec = Spec({
     TaskEfficacy("Important to understand if the model is useful for this case"): 
-                    [Condition("accuracy", ExternalMeasurement.__name__, "greater_or_equal_to", 0.9),
-                     Condition("confusion matrix", ExternalMeasurement.__name__, "misclassification_count_less_than", 2),
-                     Condition("classes", ExternalMeasurement.__name__, "ignore", "Inspect the image.")],
+                    [Requirement("accuracy", Real.greater_or_equal_to(0.98)),
+                     Requirement("confusion matrix", ConfusionMatrix.misclassification_count_less_than(2)),
+                     Requirement("class distribution", Image.ignore("Inspect the image."))],
     StorageCost("Critical since model will be in an embedded decice"): 
-                    [Condition("size", LocalObjectSize.__name__, "less_than", 3000)],
+                    [Requirement("model size", LocalObjectSize.value().less_than(3000))],
     TrainingMemoryCost("Useful to evaluate resources needed"): 
-                    [Condition("mem", LocalProcessMemoryConsumption.__name__, "greater_or_equal_to", 0.9)],
+                    [Requirement("training memory", LocalProcessMemoryConsumption.value().average_consumption_less_than(0.9))],
     TrainingComputeCost("Useful to evaluate resources needed"): 
-                    [Condition("cpu", LocalProcessCPUUtilization.__name__, "max_utilization_less_than", 5.0)]
+                    [Requirement("training cpu", LocalProcessCPUUtilization.value().max_utilization_less_than(5.0))]
     })
 spec.save()
 ```

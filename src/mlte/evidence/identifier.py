@@ -3,7 +3,6 @@ Identifier class implementation.
 """
 
 from __future__ import annotations
-from typing import Dict, Any
 
 
 class Identifier:
@@ -23,18 +22,14 @@ class Identifier:
         """
         self.name = name
 
-    def to_json(self) -> Dict[str, Any]:
+    def to_json(self) -> str:
         """Serialize to JSON document."""
-        return {"name": self.name}
+        return self.name
 
     @staticmethod
-    def from_json(json: Dict[str, Any]) -> Identifier:
+    def from_json(json: str) -> Identifier:
         """Deserialize from JSON document."""
-        if "name" not in json:
-            raise RuntimeError(
-                "Cannot deserialize Identifier, missing key 'name'."
-            )
-        return Identifier(name=json["name"])
+        return Identifier(name=json)
 
     def __eq__(self, other: object) -> bool:
         """Compare two Identifier instances for equality."""

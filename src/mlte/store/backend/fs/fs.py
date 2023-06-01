@@ -30,7 +30,7 @@ root/
   model_identifier0/
     model_version0/
       spec.json                 <- ONLY present if Spec is saved
-      boundspec.json            <- ONLY present if BoundSpec is saved
+      validatedspec.json            <- ONLY present if ValidatedSpec is saved
       value_identifier0.json
 
 The data for an individual value is then stored within a JSON file.
@@ -150,7 +150,7 @@ class FilesystemSessionHandle(SessionHandle):
             m.name == model_identifier for m in available_models
         ):
             raise RuntimeError(
-                f"Model with identifier {model_identifier} does not exist."
+                f"Model with identifier '{model_identifier}' does not exist."
             )
 
         # Collect models
@@ -189,7 +189,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Failed to read value, value with identifier {value_identifier} not found."
+                f"Failed to read value, value with identifier '{value_identifier}' not found."
             )
 
         if (
@@ -266,7 +266,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
+                f"Cannot delete value version, value with identifier '{value_identifier}' does not exist."
             )
 
         available_versions = storage.available_value_versions(value_path)
@@ -298,7 +298,7 @@ class FilesystemSessionHandle(SessionHandle):
         value_path = (version_path / value_identifier).with_suffix(".json")
         if not value_path.exists():
             raise RuntimeError(
-                f"Cannot delete value version, value with identifier {value_identifier} does not exist."
+                f"Cannot delete value version, value with identifier '{value_identifier}' does not exist."
             )
 
         storage.delete_value(value_path)
@@ -378,7 +378,7 @@ class FilesystemSessionHandle(SessionHandle):
 
         return {"written": 1}
 
-    def read_boundspec(
+    def read_validatedspec(
         self, model_identifier: str, model_version: str
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
@@ -389,14 +389,14 @@ class FilesystemSessionHandle(SessionHandle):
         model_version_path = self.root / model_identifier / model_version
         assert model_version_path.is_dir(), "Broken invariant."
 
-        if not storage.boundspec_is_saved(model_version_path):
+        if not storage.validatedspec_is_saved(model_version_path):
             raise RuntimeError(
-                "Failed to read boundspec, no boundpsec is saved."
+                "Failed to read validatedspec, no validatedpsec is saved."
             )
 
-        return {"boundspec": storage.read_boundspec(model_version_path)}
+        return {"validatedspec": storage.read_validatedspec(model_version_path)}
 
-    def write_boundspec(
+    def write_validatedspec(
         self, model_identifier: str, model_version: str, data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """TODO(Kyle)"""
@@ -413,7 +413,7 @@ class FilesystemSessionHandle(SessionHandle):
             version_path.mkdir()
 
         model_version_path = self.root / model_identifier / model_version
-        storage.write_boundspec(model_version_path, data)
+        storage.write_validatedspec(model_version_path, data)
 
         return {"written": 1}
 
@@ -430,7 +430,7 @@ class FilesystemSessionHandle(SessionHandle):
         model_path = self.root / model_identifier
         if not model_path.exists():
             raise RuntimeError(
-                f"Model with identifier {model_identifier} not found."
+                f"Model with identifier '{model_identifier}' not found."
             )
 
         if model_version is None:

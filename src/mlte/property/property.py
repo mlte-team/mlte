@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import abc
 import importlib
-from typing import Dict, Type
+from typing import Type
 
 # The names of the properties submodules
 SUBMODULES = ["costs", "functionality"]
@@ -46,12 +46,12 @@ class Property(metaclass=abc.ABCMeta):
         self.rationale = rationale
         """The rationale for using the property."""
 
-    def _to_json(self) -> Dict[str, str]:
+    def _to_json(self) -> dict[str, str]:
         """
         Save a Property instance to a JSON document.
 
         :return: The document
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         return {
             "name": self.name,
@@ -61,12 +61,12 @@ class Property(metaclass=abc.ABCMeta):
         }
 
     @staticmethod
-    def _from_json(document: Dict[str, str]) -> Property:
+    def _from_json(document: dict[str, str]) -> Property:
         """
         Load a Property instance from a JSON document.
 
         :param document: The document for the saved property
-        :type document: Dict[str, str]
+        :type document: dict[str, str]
 
         :return: The loaded property
         :rtype: Property
@@ -87,7 +87,7 @@ def _get_class_name(property_repr: str) -> str:
     return property_repr[: property_repr.index("(")]
 
 
-def _load_from_document(document: Dict[str, str]) -> Property:
+def _load_from_document(document: dict[str, str]) -> Property:
     """
     Load a Property instance from its identifier.
 
