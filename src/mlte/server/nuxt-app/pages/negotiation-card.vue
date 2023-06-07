@@ -1,5 +1,31 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template v-slot:sidebar>
+      TEC Import
+      <hr/>
+      <div class="usa-form-group">
+        <label class="usa-label">
+          System Context
+        </label>
+        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('System Context')"/>
+
+        <label class="usa-label">
+          Raw Data
+        </label>
+        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Raw Data')"/>
+
+        <label class="usa-label">
+          Development Environment
+        </label>
+        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Development Environment')"/>
+
+        <label class="usa-label">
+          Production Environment
+        </label>
+        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Production Environment')"/>
+      </div>
+    </template>
+
     <UsaBreadcrumb :items="path"/>
 
     <h1 class="section-header">How to use Negotiation Card</h1>
@@ -115,7 +141,7 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.other_risks">
+    <UsaTextInput v-model="form.system.other_risks">
       <template v-slot:label>
         Other risks of producing incorrect results
       </template>
@@ -190,11 +216,11 @@
         </div>
 
         <div class="input-group" style="margin-top: 1em;">
-          <div v-for="(field, field_index) in data_item.schema">
-          <h3 class="no-margin-section-header">Data Schema {{ data_item_index + 1 }} - {{ field_index + 1 }}</h3>
+          <div v-for="(schema, schema_index) in data_item.schema">
+          <h3 class="no-margin-section-header">Data Schema {{ data_item_index + 1 }} - {{ schema_index + 1 }}</h3>
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.name">
+                <UsaTextInput v-model="schema.name">
                   <template v-slot:label>
                     Field Name
                   </template>
@@ -202,7 +228,7 @@
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.description">
+                <UsaTextInput v-model="schema.description">
                   <template v-slot:label>
                     Field Description
                   </template>
@@ -212,7 +238,7 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.type">
+                <UsaTextInput v-model="schema.type">
                   <template v-slot:label>
                     Field Type
                   </template>
@@ -220,7 +246,7 @@
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.expected_values">
+                <UsaTextInput v-model="schema.expected_values">
                   <template v-slot:label>
                     Expected Values
                   </template>
@@ -230,7 +256,7 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.missing_values">
+                <UsaTextInput v-model="schema.missing_values">
                   <template v-slot:label>
                     Missing Values
                   </template>
@@ -238,21 +264,21 @@
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.special_values">
+                <UsaTextInput v-model="schema.special_values">
                   <template v-slot:label>
                     Special Values
                   </template>
                 </UsaTextInput>
               </div>
             </div>
-            <DeleteButton @click="deleteField(data_item_index, field_index)" class="margin-button">
-              Delete field
+            <DeleteButton @click="deleteSchema(data_item_index, schema_index)" class="margin-button">
+              Delete schema
             </DeleteButton>
             <hr/>
           </div>
 
-          <AddButton @click="addField(data_item_index)" class="margin-button">
-            Add additional field
+          <AddButton @click="addSchema(data_item_index)" class="margin-button">
+            Add additional schema
           </AddButton>
         </div>
 
@@ -351,7 +377,7 @@
       </template>
     </UsaTextarea>
 
-    <UsaTextInput v-model="form.model.production.environment.output">
+    <UsaTextarea v-model="form.model.production.environment.output">
       <template v-slot:label>
         Output
         <InfoIcon>
@@ -359,7 +385,7 @@
           ingest model results.
         </InfoIcon>
       </template>
-    </UsaTextInput>
+    </UsaTextarea>
 
     <div class="input-group" style="margin-top: 1em;">
       <h3>Production Compute Resources</h3>
@@ -529,6 +555,109 @@
     console.log(useRoute().query.namespace)
   }
 
+  function descriptorUpload(descriptor_name){
+    if(event.target.files[0]){
+      var file = event.target.files[0]
+      const reader = new FileReader();
+      reader.onload = (res) => {
+        try{
+          var document = JSON.parse(res.target.result);
+        }
+        catch(err){
+          console.error("Invalid JSON")
+          return;
+        }
+        if(descriptor_name == "System Context"){
+          document.goals.forEach((goal, i) => {
+            addGoal();
+            var last_goal_index = form.value.system.goals.length - 1;
+
+            form.value.system.goals[last_goal_index].description = goal.goal;
+            form.value.system.goals[last_goal_index].metrics[0].description = goal.metric;
+            form.value.system.goals[last_goal_index].metrics[0].baseline = goal.baseline;
+          })
+          form.value.system.task = document.task;
+          form.value.system.problem_type = document.ml_problem_type.ml_problem;
+          form.value.system.usage_context = document.usage_context;
+          form.value.system.fp_risk = document.risks.risk_fp;
+          form.value.system.fn_risk = document.risks.risk_fn;
+          form.value.system.other_risks = document.risks.risk_other;
+        }
+        else if(descriptor_name == "Raw Data"){
+          addDataItem();
+          var last_data_index = form.value.data.length - 1;
+
+          var data_sources_str = "";
+          document.data_sources.forEach((source, i) => {
+            if(source.data_source == "Other"){
+              data_sources_str += source.other_source;
+            }
+            else{
+              data_sources_str += source.data_source;
+            }
+
+            if(i + 1 < document.data_sources.length){
+              data_sources_str += ", "
+            }
+          })
+          form.value.data[last_data_index].source = data_sources_str;
+
+          form.value.data[last_data_index].labels.splice(0, 1)
+          document.labels_distribution.forEach((label, i) => {
+            addLabel(last_data_index);
+            form.value.data[last_data_index].labels[i].description = label.label;
+            form.value.data[last_data_index].labels[i].percentage = label.percentage;
+          })
+
+          form.value.data[last_data_index].rights = document.data_rights;
+          form.value.data[last_data_index].policies = document.data_policies;
+
+          form.value.data[last_data_index].schema.splice(0, 1);
+          document.schema.forEach((schema, i) => {
+            addSchema(last_data_index);
+            form.value.data[last_data_index].schema[i].name = schema.field_name;
+            form.value.data[last_data_index].schema[i].description = schema.field_description;
+            form.value.data[last_data_index].schema[i].type = schema.field_type;
+            form.value.data[last_data_index].schema[i].expected_values = schema.expected_values;
+            form.value.data[last_data_index].schema[i].missing_values = schema.interpret_missing;
+            form.value.data[last_data_index].schema[i].special_values = schema.interpret_special;
+          })
+        }
+        else if(descriptor_name == "Development Environment"){
+          form.value.model.development.resources.gpus = document.computing_resources.gpu;
+          form.value.model.development.resources.cpus = document.computing_resources.cpu;
+          form.value.model.development.resources.memory = document.computing_resources.memory;
+          form.value.model.development.resources.storage = document.computing_resources.storage;
+
+          var output_string = "";
+          if(form.value.model.production.environment.output != ""){
+            output_string += "\n\n"
+          }
+          document.downstream_components.forEach((component, i) => {
+            output_string += "Component Name: " + component.component_name + "\n";
+            output_string += "ML Component: " + component.ml_component + "\n"
+            component.input_spec.forEach((spec, j) => {
+              output_string += spec.item_name + "\n"
+              output_string += spec.item_description + "\n"
+              output_string += spec.item_type + "\n"
+              output_string += spec.expected_values + "\n"
+            })
+            output_string += "\n"
+          })
+          output_string = output_string.substring(0, output_string.length - 2)
+          form.value.model.production.environment.output += output_string;
+        }
+        else if(descriptor_name == "Production Environment"){
+          form.value.model.production.resources.gpus = document.computing_resources.gpu;
+          form.value.model.production.resources.cpus = document.computing_resources.cpu;
+          form.value.model.production.resources.memory = document.computing_resources.memory;
+          form.value.model.production.resources.storage = document.computing_resources.storage;
+        }
+      }
+      reader.readAsText(file);
+    }
+  }
+
   function addGoal(){
     form.value.system.goals.push({"description": "", "metrics": [{"performance_metrics": "", "baseline": ""}]})
   }
@@ -595,7 +724,7 @@
     }
   }
 
-  function addField(data_item_index){
+  function addSchema(data_item_index){
     form.value.data[data_item_index].schema.push(
       {
         "name": "",
@@ -608,9 +737,15 @@
     )
   }
 
-  function deleteField(data_item_index, field_index){
+  function deleteSchema(data_item_index, field_index){
     if(confirm("Are you sure you want to delete this field?")){
       form.value.data[data_item_index].schema.splice(field_index, 1)
     }
   }
 </script>
+
+<style>
+.sidebar {
+  padding-top: 255px;
+}
+</style>

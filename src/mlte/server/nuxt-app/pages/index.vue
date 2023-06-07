@@ -254,4 +254,8 @@
   height: 11em;
   padding-left: .4em;
 }
+
+.sidebar {
+  padding-top: 115px;
+}
 </style>

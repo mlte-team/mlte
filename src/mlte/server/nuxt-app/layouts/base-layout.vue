@@ -1,8 +1,14 @@
 <template>
   <div>
     <div style="height: 16px; background-color: #f3ca3e;"/>
-    <header>
-      MLTE - Machine Learning Test and Evaluation
+    <header class="flex-container">
+      <div class="header-main">
+        MLTE
+      </div>
+      <div class="header-secondary">
+        Machine Learning <br/>
+        Test and Evaluation
+      </div>
     </header>
 
     <div class="flex-container">
@@ -35,9 +41,18 @@
   header {
     margin-bottom: 8px;
     padding: 25px;
-    font-size: 48px;
     color: white;
     background-color: #2d2f30;
+  }
+
+  .header-main {
+    font-size: 56px;
+    margin-right: 8px;
+  }
+
+  .header-secondary {
+    font-size: 24px;
+    padding-top: 5px;
   }
 
   .flex-container {
@@ -46,8 +61,7 @@
 
   .sidebar {
     width: 100%;
-    max-width: 25ch;
-    margin-top: 100px;
+    max-width: 30ch;
     margin-left: 40px;
   }
 
