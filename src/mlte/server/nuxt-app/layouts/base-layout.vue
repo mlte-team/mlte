@@ -27,10 +27,10 @@
       </p>
       <div class="footer-text-right">
         <a target="_blank" rel="noopener noreferrer" href="https://github.com/mlte-team">Github</a>
-        <a>Docs</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://mlte.readthedocs.io/en/latest/">Docs</a>
         <a>User Guide</a>
         <a>Keep in Touch</a>
-        <span>Version</span>
+        <span>v0.2</span>
       </div>
     </footer>
   </div>
@@ -83,18 +83,18 @@
   }
 
   .footer-text-left {
-    padding-left: 40px;
+    margin-left: 40px;
     float: left;
   }
 
   .footer-text-right {
-    padding-right: 40px;
+    margin-right: 40px;
     margin-top: 20px;
     float: right;
   }
 
   footer > div > a,
   footer > div > span {
-    padding-left: 30px;
+    margin-left: 30px;
   }
 </style>

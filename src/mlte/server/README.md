@@ -15,6 +15,7 @@ Development will require Node.js. Development was done using v18.14.2, the lates
 To begin running the development server, navigate to `/src/mlte/server/nuxt-app` and run:
 
 ```bash
+$ npm install
 $ npm run dev
 ```
 

@@ -59,8 +59,8 @@
               <template v-slot:label>
                 Description
                 <InfoIcon>
-                  For each goal, select a performance metric that captures the system's 
-                  ability to accomplish that goal; e.g., acceptance criteria for determining
+                  For each goal, select a performance metric that captures the system's <br/>
+                  ability to accomplish that goal; e.g., acceptance criteria for determining <br/>
                   that the model is performing correctly.
                 </InfoIcon>
               </template>
@@ -123,7 +123,7 @@
       <template v-slot:label>
         Usage Context
         <InfoIcon>
-          Who is intended to utilize the system/model; how the results of the model are 
+          Who is intended to utilize the system/model; how the results of the model are <br/>
           going to be used by end users or in the context of a larger system.
         </InfoIcon>
       </template>
@@ -371,7 +371,7 @@
       <template v-slot:label>
         Integration
         <InfoIcon>
-          Describe how the model will be integrated into the system; this likely 
+          Describe how the model will be integrated into the system; this likely <br/>
           includes descriptions of model deployment, application hosting, etc.
         </InfoIcon>
       </template>
@@ -747,5 +747,8 @@
 <style>
 .sidebar {
   padding-top: 255px;
+}
+
+.usa-tooltip__body {
 }
 </style>
