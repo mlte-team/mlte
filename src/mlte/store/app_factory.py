@@ -1,5 +1,5 @@
 """
-store/app_factory.py
+mlte/store/app_factory.py
 
 Web application factory.
 """

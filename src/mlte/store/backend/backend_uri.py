@@ -1,5 +1,5 @@
 """
-store/backend/backend_uri.py
+mlte/store/backend/backend_uri.py
 
 Definitions for backend URI types.
 """

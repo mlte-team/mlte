@@ -1,5 +1,5 @@
 """
-store/api/endpoints/metadata.py
+mlte/store/api/endpoints/metadata.py
 
 Metadata endpoints.
 """

@@ -1,4 +1,6 @@
 """
+mlte/_private/schema.py
+
 Internal utilities for schema management.
 
 Acknowledgements:

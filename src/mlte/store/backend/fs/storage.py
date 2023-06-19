@@ -1,5 +1,5 @@
 """
-store/backend/fs/storage.py
+mlte/store/backend/fs/storage.py
 
 Storage helpers for filesystem backend.
 """
