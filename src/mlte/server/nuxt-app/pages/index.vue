@@ -1,23 +1,25 @@
 <template>
   <NuxtLayout name="base-layout">
     <template v-slot:sidebar>
-      Namespaces
-      <hr/>
-      <div v-for="(namespace, index) in namespaces">
-        <SidebarItem
-          @select="selectNamespace(namespace)"  
-          @delete="deleteNamespace(namespace)"
-        >
-          {{ namespace }}
-        </SidebarItem>
+      <div style="padding-top: 115px;">
+        Namespaces
+        <hr/>
+        <div v-for="(namespace, index) in namespaces">
+          <SidebarItem
+            @select="selectNamespace(namespace)"  
+            @delete="deleteNamespace(namespace)"
+          >
+            {{ namespace }}
+          </SidebarItem>
+        </div>
+        
+        <AddButton v-if="!new_namespace_flag" @click="new_namespace_flag = true"/>
+        <UsaTextInput
+          v-if="new_namespace_flag"
+          v-model="new_namespace_input"
+          @keyup.enter="addNamespace(new_namespace_input)"
+        />
       </div>
-      
-      <AddButton v-if="!new_namespace_flag" @click="new_namespace_flag = true"/>
-      <UsaTextInput
-        v-if="new_namespace_flag"
-        v-model="new_namespace_input"
-        @keyup.enter="addNamespace(new_namespace_input)"
-      />
     </template>
 
     <UsaBreadcrumb :items="path"/>
@@ -61,6 +63,7 @@
             borderless
             class="table"
           />
+          <!-- TODO : This will have to be more info than the namespace. Probably model version -->
           <NuxtLink :to="{path: 'negotiation-card', query: {namespace: selected_namespace}}">
             <UsaButton class="primary-button" style="float: right;">
               Start new negotiation card
@@ -253,9 +256,5 @@
   overflow-y: auto;
   height: 11em;
   padding-left: .4em;
-}
-
-.sidebar {
-  padding-top: 115px;
 }
 </style>

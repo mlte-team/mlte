@@ -1,28 +1,30 @@
 <template>
   <NuxtLayout name="base-layout">
     <template v-slot:sidebar>
-      TEC Import
-      <hr/>
-      <div class="usa-form-group">
-        <label class="usa-label">
-          System Context
-        </label>
-        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('System Context')"/>
+      <div style="padding-top: 255px;">
+        TEC Import
+        <hr/>
+        <div class="usa-form-group">
+          <label class="usa-label">
+            System Context
+          </label>
+          <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('System Context')"/>
 
-        <label class="usa-label">
-          Raw Data
-        </label>
-        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Raw Data')"/>
+          <label class="usa-label">
+            Raw Data
+          </label>
+          <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Raw Data')"/>
 
-        <label class="usa-label">
-          Development Environment
-        </label>
-        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Development Environment')"/>
+          <label class="usa-label">
+            Development Environment
+          </label>
+          <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Development Environment')"/>
 
-        <label class="usa-label">
-          Production Environment
-        </label>
-        <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Production Environment')"/>
+          <label class="usa-label">
+            Production Environment
+          </label>
+          <input class="usa-file-input" type="file" accept=".json" @change="descriptorUpload('Production Environment')"/>
+        </div>
       </div>
     </template>
 
@@ -743,12 +745,3 @@
     }
   }
 </script>
-
-<style>
-.sidebar {
-  padding-top: 255px;
-}
-
-.usa-tooltip__body {
-}
-</style>
