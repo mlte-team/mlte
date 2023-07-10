@@ -9,7 +9,7 @@ from typing import Any, Union
 
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte._global import global_state
+from mlte.state import global_state
 from mlte.api import read_spec, write_spec
 from .requirement import Requirement
 
@@ -119,14 +119,14 @@ class Spec:
     def save(self):
         """Persist the specification to artifact store."""
         state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        state.assert_populated()
 
         # Write spec to store
         write_spec(
-            artifact_store_uri, model_identifier, model_version, self.to_json()
+            state.context.uri,
+            state.context.model,
+            state.context.version,
+            self.to_json(),
         )
 
     @staticmethod
@@ -141,13 +141,10 @@ class Spec:
         :rtype: Spec
         """
         state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        state.assert_populated()
 
         document = read_spec(
-            artifact_store_uri, model_identifier, model_version
+            state.context.uri, state.context.model, state.context.version
         )
         return Spec.from_json(json=document)
 
@@ -197,11 +194,10 @@ class Spec:
         :rtype: dict[str, Any]
         """
         state = global_state()
-        state.ensure_initialized()
-        model_identifier, model_version = state.get_model()
+        state.assert_populated()
         return {
-            "model_identifier": model_identifier,
-            "model_version": model_version,
+            "model_identifier": state.context.model,
+            "model_version": state.context.version,
             "timestamp": int(time.time()),
         }
 

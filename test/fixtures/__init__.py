@@ -1,3 +1,3 @@
-from .fixtures import default_context
+from .fixtures import default_session
 
-__all__ = ["default_context"]
+__all__ = ["default_session"]

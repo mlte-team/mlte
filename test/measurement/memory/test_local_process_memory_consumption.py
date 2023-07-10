@@ -15,7 +15,7 @@ from mlte.measurement.memory import (
 )
 from mlte.validation import Condition, Success, Failure
 
-from ...fixtures import default_context  # noqa
+from ...fixtures import default_session  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -116,7 +116,7 @@ def test_memory_windows_evaluate() -> None:
     is_windows() or is_macos(),
     reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
 )
-def test_result_save_load(default_context) -> None:  # noqa
+def test_result_save_load(default_session) -> None:  # noqa
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")

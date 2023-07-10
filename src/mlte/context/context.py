@@ -1,40 +1,64 @@
 """
-Global package context.
+mlte/context/context.py
+
+MLTE session context definition.
+
+The MLTE context defines the information necessary to
+utilize the MLTE package to generate, persist, and load
+MLTE evaluation artifacts.
 """
 
-from mlte._global import global_state
 
-
-def set_namespace(namespace_identifier: str):
+class Context:
     """
-    Set the global namespace identifier.
+    The MLTE context establishes the context for a MLTE evaluation session.
 
-    :param namespace_identifier: The identifier for the namespace
-    :type namespace_identifier: str
+    NOTE(Kyle): Previously, this module had an explicit dependency on global
+    library state. This made testing difficult in that we had to establish the
+    global MLTE context through the usual hooks (those that developers use in
+    their applications). I have since refactored this to ensure that the Context
+    is a standalone data structure that is then exported by the global state module.
     """
-    state = global_state()
-    state.set_namespace(namespace_identifier)
 
+    def __init__(self) -> None:
+        # NOTE(Kyle): Representing missing values as empty
+        # string makes this significantly easier to work with
+        # the type checker, although not as clean as I'd like.
 
-def set_model(model_identifier: str, model_version: str):
-    """
-    Set the global model identifier and version.
+        self.namespace = ""
+        """The context namespace."""
 
-    :param model_identifier: The identifier for the model
-    :type model_identifier: str
-    :param model_version: The version string for the model
-    :type model_version: str
-    """
-    state = global_state()
-    state.set_model(model_identifier, model_version)
+        self.model = ""
+        """The context model identifier."""
 
+        self.version = ""
+        """The context model version identifier."""
 
-def set_artifact_store_uri(artifact_store_uri: str):
-    """
-    Set the global artifact store URI.
+        self.uri = ""
+        """The context artifact store URI."""
 
-    :param artifact_store_uri: The URI for the artifact store
-    :type artifact_store_uri: str
-    """
-    state = global_state()
-    state.set_artifact_store_uri(artifact_store_uri)
+    def is_populated(self) -> bool:
+        """
+        Determine if the context is populated with required values.
+        :return: `True` if the context is populated, `False` otherwise
+        """
+        return (
+            self.namespace != ""
+            and self.model != ""
+            and self.version != ""
+            and self.uri != ""
+        )
+
+    def assert_populated(self):
+        """
+        Determine if the context is populated; raise if not.
+        :raises RuntimeError: If the context is not populated
+        """
+        if self.namespace == "":
+            raise RuntimeError("Must set MLTE context 'namespace'.")
+        if self.model == "":
+            raise RuntimeError("Must set MLTE context 'model'.")
+        if self.version == "":
+            raise RuntimeError("Must set MLTE context 'version'.")
+        if self.uri == "":
+            raise RuntimeError("Must set MLTE context 'uri'.")

@@ -7,10 +7,9 @@ import abc
 
 from typing import Any, Optional
 
-from mlte._global import global_state
 from mlte.api import read_value, write_value
 from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
-
+from mlte.state import global_state
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -74,16 +73,13 @@ class Value(metaclass=abc.ABCMeta):
         :type tag: str
         """
         state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        state.assert_populated()
 
         # Use API to save to artifact store
         write_value(
-            artifact_store_uri,
-            model_identifier,
-            model_version,
+            state.context.uri,
+            state.context.model,
+            state.context.version,
             self.metadata.identifier.name,
             {
                 "schema_version": VALUE_LATEST_SCHEMA_VERSION,
@@ -110,16 +106,13 @@ class Value(metaclass=abc.ABCMeta):
         :rtype: Value
         """
         state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        state.assert_populated()
 
         # Use API to load from artifact store
         json = read_value(
-            artifact_store_uri,
-            model_identifier,
-            model_version,
+            state.context.uri,
+            state.context.model,
+            state.context.version,
             identifier,
             version,
         )

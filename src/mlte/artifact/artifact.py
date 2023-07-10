@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
 
-from mlte._global import global_state
+from mlte.context import Context
 
 
 class Artifact(BaseModel):
@@ -27,18 +27,19 @@ class Artifact(BaseModel):
     meta: ArtifactMeta
     """The artifact metadata."""
 
-    def __init__(self, type: ArtifactType) -> None:
-        global_state().ensure_initialized()
-        model, version = global_state().get_model()
+    def __init__(self, context: Context, type: ArtifactType) -> None:
+        # Context data must be populated prior to artifact construction
+        context.assert_populated()
 
         self.meta = (
             ArtifactMeta.builder()
-            .with_namespace(global_state().get_namespace())
-            .with_model(model)
-            .with_version(version)
+            .with_namespace(context.namespace)
+            .with_model(context.model)
+            .with_version(context.version)
             .with_type(type)
             .build()
         )
+        """Metadata that remains consistent across all artifact types."""
 
 
 class ArtifactType(Enum):

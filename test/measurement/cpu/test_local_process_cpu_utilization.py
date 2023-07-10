@@ -13,7 +13,7 @@ from mlte._private.platform import is_windows, is_nix
 from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
 from mlte.validation import Condition, Success, Failure
 
-from ...fixtures import default_context  # noqa
+from ...fixtures import default_session  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -109,7 +109,7 @@ def test_cpu_windows_evaluate() -> None:
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_result_save_load(default_context) -> None:  # noqa
+def test_result_save_load(default_session) -> None:  # noqa
     p = spin_for(5)
 
     m = LocalProcessCPUUtilization("id")
