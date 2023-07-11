@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 from mlte.api import read_value, write_value
 from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
-from mlte.state import global_state
+from mlte.session import session_state
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -72,7 +72,7 @@ class Value(metaclass=abc.ABCMeta):
         :param tag: An optional tag to identify groups of results
         :type tag: str
         """
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         # Use API to save to artifact store
@@ -105,7 +105,7 @@ class Value(metaclass=abc.ABCMeta):
         :return: The loaded value
         :rtype: Value
         """
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         # Use API to load from artifact store

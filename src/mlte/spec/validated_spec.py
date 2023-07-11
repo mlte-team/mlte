@@ -8,7 +8,7 @@ from typing import Any
 
 from mlte.spec import Spec
 from mlte.validation import Result
-from mlte.state import global_state
+from mlte.session import session_state
 from mlte.api import read_validatedspec, write_validatedspec
 
 
@@ -48,7 +48,7 @@ class ValidatedSpec:
 
     def save(self):
         """Save ValidatedSpec instance to artifact store."""
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         write_validatedspec(
@@ -66,7 +66,7 @@ class ValidatedSpec:
         :return: The ValidatedSpec instance
         :rtype: ValidatedSpec
         """
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         document = read_validatedspec(

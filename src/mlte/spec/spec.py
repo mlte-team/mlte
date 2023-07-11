@@ -9,7 +9,7 @@ from typing import Any, Union
 
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte.state import global_state
+from mlte.session import session_state
 from mlte.api import read_spec, write_spec
 from .requirement import Requirement
 
@@ -118,7 +118,7 @@ class Spec:
 
     def save(self):
         """Persist the specification to artifact store."""
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         # Write spec to store
@@ -140,7 +140,7 @@ class Spec:
         :return: The loaded Spec
         :rtype: Spec
         """
-        state = global_state()
+        state = session_state()
         state.assert_populated()
 
         document = read_spec(
@@ -193,7 +193,7 @@ class Spec:
         :return: The metadata document
         :rtype: dict[str, Any]
         """
-        state = global_state()
+        state = session_state()
         state.assert_populated()
         return {
             "model_identifier": state.context.model,

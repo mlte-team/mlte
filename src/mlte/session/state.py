@@ -1,17 +1,17 @@
 """
-mlte/state/state.py
+mlte/session/state.py
 
-Global state management for the MLTE library.
+Session state management for the MLTE library.
 """
 
 from mlte.context import Context
 
 
-class GlobalState:
+class SessionState:
     """
-    The GlobalState data structure encapsulates package-wide state.
+    The SessionState data structure encapsulates package-wide state.
 
-    The primary function of the GlobalState data structure is to provide
+    The primary function of the SessionState data structure is to provide
     convenient access to the MLTE context for application developers.
     """
 
@@ -19,7 +19,7 @@ class GlobalState:
 
     def __new__(self):
         if self._instance is None:
-            self._instance = super(GlobalState, self).__new__(self)
+            self._instance = super(SessionState, self).__new__(self)
         return self._instance
 
     def __init__(self):
@@ -34,11 +34,11 @@ class GlobalState:
         self.context.assert_populated()
 
 
-# Singleton global state
-g_state = GlobalState()
+# Singleton session state
+g_state = SessionState()
 
 
-def global_state() -> GlobalState:
+def session_state() -> SessionState:
     """Return the package global state."""
     return g_state
 
