@@ -2,7 +2,7 @@
 Common functionality required for backend test support.
 """
 
-from typing import List, Any, Dict, Callable
+from typing import Any, Callable, Dict, List
 
 
 class TestDefinition:

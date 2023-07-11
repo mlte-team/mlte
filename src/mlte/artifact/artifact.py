@@ -6,14 +6,14 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
-from pydantic import BaseModel
+from typing import Any, Optional
 
 from mlte.context import Context
 
 
-class Artifact(BaseModel):
+class Artifact:
     """
     The MLTE artifact protocol implementation.
 
@@ -24,10 +24,9 @@ class Artifact(BaseModel):
     operations with them, namely persistence.
     """
 
-    meta: ArtifactMeta
-    """The artifact metadata."""
-
-    def __init__(self, context: Context, type: ArtifactType) -> None:
+    def __init__(
+        self, context: Context, type: ArtifactType, identifier: str
+    ) -> None:
         # Context data must be populated prior to artifact construction
         context.assert_populated()
 
@@ -41,6 +40,37 @@ class Artifact(BaseModel):
         )
         """Metadata that remains consistent across all artifact types."""
 
+        self.header = (
+            ArtifactHeader.builder().with_identifier(identifier).build()
+        )
+        """The common artifact header."""
+
+    def save(self) -> None:
+        """Save an artifact to the artifact store."""
+
+    @staticmethod
+    def load() -> Artifact:
+        """
+        Load an artifact from the artifact store.
+        """
+        return None
+
+    def to_json(self) -> dict[str, Any]:
+        """
+        Serialize an artifact to JSON-compatible document.
+        :return: The serialized artifact.
+        """
+        raise NotImplementedError("Cannot serialize abstract artifact.")
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> Artifact:
+        """
+        Deserialize an artifact from JSON-compatibel document.
+        :param document: The input document
+        :return: The deserialized artifact
+        """
+        raise NotImplementedError("Cannot deserialize abstract artifact.")
+
 
 class ArtifactType(Enum):
     """Enumerates all supported artifact types."""
@@ -49,7 +79,8 @@ class ArtifactType(Enum):
     """The negotiation card artifact type."""
 
 
-class ArtifactMeta(BaseModel):
+@dataclass
+class ArtifactMeta:
     """Common metadata for all MLTE artifacts."""
 
     namespace: str
@@ -143,4 +174,56 @@ class ArtifactMetaBuilder:
             model=self._model,
             version=self._version,
             type=self._type,
+        )
+
+
+@dataclass
+class ArtifactHeader:
+    """
+    A common header for all MLTE artifacts.
+
+    We distinguish between the artifact "metadata" and the
+    artifact "header" because the metadata merely encodes all
+    of the contextual information, whereas the header maintains
+    data that is still consistent across artifacts, but is not
+    derived from the MLTE context in which it is constructed.
+    """
+
+    identifier: str
+    """The unique identifier for the artifact."""
+
+    @staticmethod
+    def builder() -> ArtifactHeaderBuilder:
+        """
+        Get a builder for ArtifactHeader.
+        :return: The builder instance
+        """
+        return ArtifactHeaderBuilder()
+
+
+class ArtifactHeaderBuilder:
+    """A builder for artifact headers."""
+
+    def __init__(self) -> None:
+        self._identifier: Optional[str] = None
+        """The unique idenifier for the artifact."""
+
+    def with_identifier(self, identifier: str) -> ArtifactHeaderBuilder:
+        """
+        Attach the artifact identifier to artifact header.
+        :param model: The artifact identifier
+        :return: The builder
+        """
+        self._identifier = identifier
+        return self
+
+    def build(self) -> ArtifactHeader:
+        """
+        Finalize the builder.
+        :return: The artifact header instance
+        """
+        if self._identifier is None:
+            raise ValueError("ArtifactHeader must specify identifier.")
+        return ArtifactHeader(
+            identifier=self._identifier,
         )

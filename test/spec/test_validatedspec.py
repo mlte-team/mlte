@@ -6,12 +6,12 @@ from __future__ import annotations
 import pytest
 
 import mlte
-from mlte.spec import Spec, ValidatedSpec, Requirement, SpecValidator
-from mlte.property.costs import StorageCost
-from mlte.value.types import Integer
 from mlte.evidence import EvidenceMetadata
-from mlte.validation import Result
 from mlte.measurement.storage import LocalObjectSize
+from mlte.property.costs import StorageCost
+from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec
+from mlte.validation import Result
+from mlte.value.types import Integer
 
 
 def test_save_load(tmp_path):

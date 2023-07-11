@@ -3,10 +3,10 @@ Unit tests for Value schema.
 """
 
 import mlte
-from mlte.value.types import Integer, Real, Opaque
-from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte._private.schema import validate_value_schema
 from mlte.api import read_value
+from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.value.types import Integer, Opaque, Real
 
 
 def test_real(tmp_path):

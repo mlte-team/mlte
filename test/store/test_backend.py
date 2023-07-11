@@ -2,12 +2,13 @@
 Unit tests for backend implementation.
 """
 
-import pytest
 from typing import Any
 
-from mlte.store.backend import SessionHandle
-from .fixture.backend import fs_handle  # noqa
+import pytest
 
+from mlte.store.backend import SessionHandle
+
+from .fixture.backend import fs_handle  # noqa
 
 # -----------------------------------------------------------------------------
 # Test Definitions

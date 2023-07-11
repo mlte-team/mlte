@@ -4,14 +4,15 @@ Unit test for LocalProcessCPUUtilization measurement.
 
 
 import os
-import time
-import pytest
-import threading
 import subprocess
+import threading
+import time
 
-from mlte._private.platform import is_windows, is_nix
-from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
-from mlte.validation import Condition, Success, Failure
+import pytest
+
+from mlte._private.platform import is_nix, is_windows
+from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
+from mlte.validation import Condition, Failure, Success
 
 from ...fixtures import default_session  # noqa
 from ...support.meta import path_to_support

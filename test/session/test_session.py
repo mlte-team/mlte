@@ -6,10 +6,10 @@ Unit tests for global session management.
 
 from mlte.session import (
     session_state,
-    set_namespace,
     set_model,
-    set_version,
+    set_namespace,
     set_uri,
+    set_version,
 )
 
 

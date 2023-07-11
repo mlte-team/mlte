@@ -3,17 +3,18 @@ Unit test for LocalProcessMemoryConsumption measurement.
 """
 
 import os
-import time
-import pytest
-import threading
 import subprocess
+import threading
+import time
 
-from mlte._private.platform import is_windows, is_nix, is_macos
+import pytest
+
+from mlte._private.platform import is_macos, is_nix, is_windows
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.validation import Condition, Success, Failure
+from mlte.validation import Condition, Failure, Success
 
 from ...fixtures import default_session  # noqa
 from ...support.meta import path_to_support

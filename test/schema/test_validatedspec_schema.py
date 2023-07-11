@@ -4,12 +4,12 @@ Unit tests for ValidatedSpec schema.
 
 
 import mlte
-from mlte.spec import Spec, Requirement, SpecValidator
-from mlte.property.costs import StorageCost
-from mlte.value.types import Integer
-from mlte.evidence import EvidenceMetadata
-from mlte.api import read_validatedspec
 from mlte._private.schema import validate_validatedspec_schema
+from mlte.api import read_validatedspec
+from mlte.evidence import EvidenceMetadata
+from mlte.property.costs import StorageCost
+from mlte.spec import Requirement, Spec, SpecValidator
+from mlte.value.types import Integer
 
 
 def test_schema(tmp_path):

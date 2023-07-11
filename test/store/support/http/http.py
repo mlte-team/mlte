@@ -2,14 +2,14 @@
 Common functionality required for HTTP test support.
 """
 
-import sys
 import os
-from pathlib import Path
 import subprocess
+import sys
+from pathlib import Path
+from typing import Any, Callable, Dict, List
+
 import requests
 from requests.exceptions import ConnectionError
-
-from typing import List, Dict, Any, Callable
 
 # -----------------------------------------------------------------------------
 # Global Constants

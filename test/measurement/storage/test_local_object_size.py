@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Any
 
 from mlte.measurement.storage import LocalObjectSize
-from mlte.value.types import Integer
 from mlte.validation import Result
+from mlte.value.types import Integer
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction

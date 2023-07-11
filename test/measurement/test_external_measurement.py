@@ -3,9 +3,9 @@ Unit test for ExternalMeasurement.
 """
 import pytest
 
-from mlte.value.types import Integer
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.measurement import ExternalMeasurement
+from mlte.value.types import Integer
 
 
 def _dummy_calculation(x: int, y: int):

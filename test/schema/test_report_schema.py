@@ -3,14 +3,16 @@ Unit tests for report schema validation.
 """
 
 import time
+
 import pytest
 from jsonschema import ValidationError
 
-from ..fixtures import default_session  # noqa
-from mlte.report import Report, Dataset, User, UseCase, Limitation
-from mlte.spec import ValidatedSpec, Spec
-from mlte.validation import Ignore
 from mlte._private.schema import validate_report_schema
+from mlte.report import Dataset, Limitation, Report, UseCase, User
+from mlte.spec import Spec, ValidatedSpec
+from mlte.validation import Ignore
+
+from ..fixtures import default_session  # noqa
 
 
 def test_empty_instance(default_session) -> None:  # noqa

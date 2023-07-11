@@ -6,9 +6,9 @@ from __future__ import annotations
 import pytest
 
 import mlte
-from mlte.spec import Spec, Requirement
-from mlte.property.costs import StorageCost
 from mlte.measurement.storage import LocalObjectSize
+from mlte.property.costs import StorageCost
+from mlte.spec import Requirement, Spec
 
 
 def test_save(tmp_path):

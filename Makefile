@@ -8,13 +8,17 @@
 # TODO(Kyle): This currently introduces a circular-import
 # error; we need to dig into this to address the root cause
 # rather than continuing to shift imports around...
+#
+# NOTE(Kyle): I am trying to gradually add these in.
 
-# .PHONY: isort
-# isort:
-# 	isort src/
-# 	isort test/
-# 	isort testbed/
-# 	isort demo/*.py
+.PHONY: isort
+isort:	
+	isort src/mlte/artifact
+	isort src/mlte/negotiation
+	
+	isort test/
+	isort testbed/
+	isort demo/*.py
 
 # .PHONY: check-isort
 # check-isort:
@@ -60,7 +64,7 @@ check-typecheck:
 
 # All quality assurance
 .PHONY: qa
-qa: format lint typecheck
+qa: isort format lint typecheck
 
 # Check all QA tasks
 .PHONY: check

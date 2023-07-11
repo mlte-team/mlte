@@ -4,8 +4,9 @@ Unit tests for Image.
 
 from pathlib import Path
 
-import mlte
 import requests
+
+import mlte
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte.value.types import Image
 

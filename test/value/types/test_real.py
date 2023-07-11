@@ -5,8 +5,8 @@ Unit tests for Real.
 import pytest
 
 import mlte
-from mlte.measurement import Measurement
 from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.measurement import Measurement
 from mlte.value.types import Real
 
 

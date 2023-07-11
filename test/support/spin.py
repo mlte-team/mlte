@@ -2,9 +2,9 @@
 Dummy program to produce work.
 """
 
+import argparse
 import sys
 import time
-import argparse
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
