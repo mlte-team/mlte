@@ -15,6 +15,7 @@
 isort:	
 	isort src/mlte/artifact
 	isort src/mlte/negotiation
+	isort src/mlte/serde
 	
 	isort test/
 	isort testbed/
@@ -78,4 +79,4 @@ check: check-format check-lint check-typecheck
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py310 -- test/session
+	tox --develop -e py310 -- test/negotiation

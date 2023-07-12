@@ -174,7 +174,7 @@ class ModelSpecification(ReportAttribute):
     output: Optional[str] = None
     """A description of model outputs."""
 
-    data: List[Dataset] = field(default_factory=list)
+    data: list[Dataset] = field(default_factory=list)
     """A description of the data used to train the model."""
 
 
@@ -182,13 +182,13 @@ class ModelSpecification(ReportAttribute):
 class Considerations(ReportAttribute):
     """The `considerations` section of the report."""
 
-    users: List[User] = field(default_factory=list)
+    users: list[User] = field(default_factory=list)
     """A description of the intended users of the model."""
 
-    use_cases: List[UseCase] = field(default_factory=list)
+    use_cases: list[UseCase] = field(default_factory=list)
     """A description of the intended use cases for the model."""
 
-    limitations: List[Limitation] = field(default_factory=list)
+    limitations: list[Limitation] = field(default_factory=list)
     """A description of the technical limitations of the model."""
 
 

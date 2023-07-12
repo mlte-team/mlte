@@ -26,3 +26,8 @@ Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more detail
 
 - Today I played around with how to inject the MLTE context into artifacts without baking in a call to the global session state directly. Ultimately, I think this just comes down to two distinct but related constructor flows (e.g. a factory method). The trick is making it such that the default case, the one that users will see, is the ergonomic one that automatically pulls in the global session context. It would be easy if it were the other way around...
 - One thing I need to keep in mind is the particulars of how users will interact with certain artifacts. For instance, the negotiation card will primarily be authored in the web browser. The ergonomics of constructing one in Python may not matter.
+
+07/12/2023
+
+- Today I started the refactor to make the MLTE context not an embedded field of the artifacts themselves, but merely additional information that must be provided at the time an artifact is saved or loaded. This will greatly simplify the code, in the long run. I also started working on serialization and deserialization of negotiation cards in earnest such that we can finally implement an end-to-end test for the artifact protocol.
+- Tomorrow I want to finish serialization and deserialization for the negotiation card and perhaps (if time permits) write the JSON schema document for this artifact.

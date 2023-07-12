@@ -24,21 +24,8 @@ class Artifact:
     operations with them, namely persistence.
     """
 
-    def __init__(
-        self, context: Context, type: ArtifactType, identifier: str
-    ) -> None:
+    def __init__(self, identifier: str, type: ArtifactType) -> None:
         # Context data must be populated prior to artifact construction
-        context.assert_populated()
-
-        self.meta = (
-            ArtifactMeta.builder()
-            .with_namespace(context.namespace)
-            .with_model(context.model)
-            .with_version(context.version)
-            .with_type(type)
-            .build()
-        )
-        """Metadata that remains consistent across all artifact types."""
 
         self.header = (
             ArtifactHeader.builder().with_identifier(identifier).build()
@@ -46,7 +33,23 @@ class Artifact:
         """The common artifact header."""
 
     def save(self) -> None:
-        """Save an artifact to the artifact store."""
+        """
+        Save an artifact to the artifact store.
+
+
+        This default invocation utilizes the MLTE session
+        to retrieve the existing global context; it is equivalent to:
+
+            artifact.save_with(session().context)
+        """
+        pass
+
+    def save_with(context: Context) -> None:
+        """
+        Save an artifact with the specified context.
+        :param context: The context to utilize
+        """
+        context.assert_populated()
 
     @staticmethod
     def load() -> Artifact:
@@ -80,7 +83,7 @@ class ArtifactType(Enum):
 
 
 @dataclass
-class ArtifactMeta:
+class ArtifactContext:
     """Common metadata for all MLTE artifacts."""
 
     namespace: str
@@ -92,20 +95,17 @@ class ArtifactMeta:
     version: str
     """The identifier for the version with which the artifact is associated."""
 
-    type: ArtifactType
-    """The artifact type identifier."""
-
     @staticmethod
-    def builder() -> ArtifactMetaBuilder:
+    def builder() -> ArtifactContextBuilder:
         """
-        Get a builder for ArtifactMeta.
+        Get a builder for ArtifactContext.
         :return: The builder instance
         """
-        return ArtifactMetaBuilder()
+        return ArtifactContextBuilder()
 
 
-class ArtifactMetaBuilder:
-    """A builder for artifact metadata."""
+class ArtifactContextBuilder:
+    """A builder for artifact context metadata."""
 
     def __init__(self) -> None:
         self._namespace: Optional[str] = None
@@ -120,7 +120,7 @@ class ArtifactMetaBuilder:
         self._type: Optional[ArtifactType] = None
         """The artifact type identifier."""
 
-    def with_namespace(self, namespace: str) -> ArtifactMetaBuilder:
+    def with_namespace(self, namespace: str) -> ArtifactContextBuilder:
         """
         Attach a namespace to artifact metadata.
         :param namespace: The namespace string
@@ -129,7 +129,7 @@ class ArtifactMetaBuilder:
         self._namespace = namespace
         return self
 
-    def with_model(self, model: str) -> ArtifactMetaBuilder:
+    def with_model(self, model: str) -> ArtifactContextBuilder:
         """
         Attach a model identifier to artifact metadata.
         :param model: The model identifier
@@ -138,7 +138,7 @@ class ArtifactMetaBuilder:
         self._model = model
         return self
 
-    def with_version(self, version: str) -> ArtifactMetaBuilder:
+    def with_version(self, version: str) -> ArtifactContextBuilder:
         """
         Attach a model version identifier to artifact metadata.
         :param version: The version identifier
@@ -147,33 +147,21 @@ class ArtifactMetaBuilder:
         self._version = version
         return self
 
-    def with_type(self, type: ArtifactType) -> ArtifactMetaBuilder:
-        """
-        Attach an artifact type to artifact metadata.
-        :param type: The artifact type identifier
-        :return: The builder
-        """
-        self._type = type
-        return self
-
-    def build(self) -> ArtifactMeta:
+    def build(self) -> ArtifactContext:
         """
         Finalize the builder.
         :return: The artifact metadata instance
         """
         if self._namespace is None:
-            raise ValueError("ArtifactMeta must specify namespace.")
+            raise ValueError("ArtifactContext must specify namespace.")
         if self._model is None:
-            raise ValueError("ArtifactMeta must specify model.")
+            raise ValueError("ArtifactContext must specify model.")
         if self._version is None:
-            raise ValueError("ArtifactMeta must specify version.")
-        if self._type is None:
-            raise ValueError("ArtifactMeta must specify type.")
-        return ArtifactMeta(
+            raise ValueError("ArtifactContext must specify version.")
+        return ArtifactContext(
             namespace=self._namespace,
             model=self._model,
             version=self._version,
-            type=self._type,
         )
 
 
@@ -192,6 +180,9 @@ class ArtifactHeader:
     identifier: str
     """The unique identifier for the artifact."""
 
+    type: ArtifactType
+    """The type identifier for the artifact"""
+
     @staticmethod
     def builder() -> ArtifactHeaderBuilder:
         """
@@ -208,6 +199,9 @@ class ArtifactHeaderBuilder:
         self._identifier: Optional[str] = None
         """The unique idenifier for the artifact."""
 
+        self._type: Optional[ArtifactType] = None
+        """The type identifier for the artifact."""
+
     def with_identifier(self, identifier: str) -> ArtifactHeaderBuilder:
         """
         Attach the artifact identifier to artifact header.
@@ -217,6 +211,14 @@ class ArtifactHeaderBuilder:
         self._identifier = identifier
         return self
 
+    def with_type(self, type: ArtifactType) -> ArtifactHeaderBuilder:
+        """
+        Attach the artifact type identifier to artifact header.
+        :param model: The artifact type
+        :return: The builder
+        """
+        self._type = type
+
     def build(self) -> ArtifactHeader:
         """
         Finalize the builder.
@@ -224,6 +226,6 @@ class ArtifactHeaderBuilder:
         """
         if self._identifier is None:
             raise ValueError("ArtifactHeader must specify identifier.")
-        return ArtifactHeader(
-            identifier=self._identifier,
-        )
+        if self._type is None:
+            raise ValueError("ArtifactHeader must specify type.")
+        return ArtifactHeader(identifier=self._identifier, type=self._type)
