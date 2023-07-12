@@ -2,8 +2,8 @@
   <div>
     <div style="height: 16px; background-color: #f3ca3e;"/>
     <header class="flex-container">
-      <img src='@/assets/uswds/img/MLTE_Logo_Color.svg' alt=""
-          contain
+      <img src="~/assets/img/MLTE_Logo_Color.svg"
+          alt=""
           height="75px"
           width="75px">
       <img>
