@@ -3,14 +3,14 @@ import numpy as np
 from os import path
 
 
-def load_data(data_folder: str):
-    """Loads all garden data results and taxonomy categories."""
+def load_base_results(data_folder: str) -> pd.DataFrame:
     df_results = pd.read_csv(path.join(data_folder, 'FlowerModelv1_TestSetResults.csv'))
     df_results.drop(columns = ['Unnamed: 0'], inplace = True)
-    df_results.rename(columns = {'label':'Label'}, inplace = True)
-    df_results.head()
+    return df_results
 
-    #load the taxonomic data
+
+def load_taxonomy(data_folder: str) -> pd.DataFrame:
+    """Loads taxonomy info about the flowers and returns a dict with it."""
     df_labels = pd.read_csv(path.join(data_folder, 'OxfordFlowerLabels.csv'), header = 1)
     df_labels.drop(columns = ['Phylum', 'Class'], inplace = True)
     df_labels.rename(columns = {'Phylum.1':'Phylum'}, inplace = True)
@@ -30,71 +30,18 @@ def load_data(data_folder: str):
     df_info['Subfamily'].fillna('None',inplace = True)
     df_info['Genus'].fillna('None',inplace = True)
     df_info['Risk'].fillna('None',inplace = True)
-    df_info
 
+    df_info
     print(len(df_info), len(df_labels), len(df_dict))
 
-    #merge the info w the model results
+    return df_info
+
+
+def merge_taxonomy_with_results(df_results: pd.DataFrame, df_info: pd.DataFrame) -> pd.DataFrame:
+    """Merge results with taxonomy."""
+    df_results.rename(columns = {'label':'Label'}, inplace = True)
     df_all = df_results.merge(df_info, left_on = 'Label', right_on = 'Label')
     df_all
-    return df_info, df_all
+    return df_all    
 
 
-def split_data(df_info, df_all):
-    """Splits the data into 3 different populations to evaluate them."""
-    df_gardenpop = df_info.copy()
-    df_gardenpop['Population1'] = (np.around(np.random.dirichlet
-                            (np.ones(df_gardenpop.shape[0]),size=1)[0],
-                            decimals = 3) *1000).astype(int)
-    df_gardenpop['Population2'] = (np.around(np.random.dirichlet
-                            (np.ones(df_gardenpop.shape[0]),size=1)[0],
-                            decimals = 3) *1000).astype(int)
-    df_gardenpop['Population3'] = (np.around(np.random.dirichlet
-                            (np.ones(df_gardenpop.shape[0]),size=1)[0],
-                            decimals = 3) *1000).astype(int)
-    df_gardenpop
-
-    #build populations from test data set that match the garden compositions
-    from random import choices
-
-    #build 3 gardens with populations of 1000.
-    pop_names = ['Population1', 'Population2', 'Population3']
-    gardenpops = np.zeros( (3,1000), int)
-    gardenmems = np.zeros( (3,1000), int)
-
-    for j in range(1000):
-        for i in range(len(df_gardenpop)):
-            my_flower = df_gardenpop.iloc[i]['Common Name']
-        
-            for g in range(3):
-                n_choices = df_gardenpop.iloc[i][pop_names[g]]
-                my_choices = df_all[df_all['Common Name'] == my_flower]['model correct'].to_list()
-                my_selection = choices(my_choices, k=n_choices)
-            
-                gardenpops[g][j] += sum(my_selection)
-                gardenmems[g][j] += len(my_selection)
-
-    gardenpops
-
-    return gardenpops, gardenmems
-
-
-def calculate_model_performance_acc(gardenpops, gardenmems):
-    """Get accucray of models across the garden populations"""
-    gardenacc = np.zeros( (3,1000), float)
-    for i in range (1000):
-        for g in range(3):
-            gardenacc[g][i] = gardenpops[g][i]/gardenmems[g][i]
-    gardenacc
-
-    model_performance_acc = []
-    for g in range(3):
-        avg = round(np.average(gardenacc[g][:]),3)
-        std = round(np.std(gardenacc[g][:]),3)
-        min = round(np.amin(gardenacc[g][:]),3)
-        max = round(np.amax(gardenacc[g][:]),3)
-        model_performance_acc.append(round(avg,3))
-        
-        print("%1d %1.3f %1.3f %1.3f %1.3f" % (g, avg, std, min, max))
-
-    return model_performance_acc
