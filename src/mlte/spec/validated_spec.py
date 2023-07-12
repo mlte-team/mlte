@@ -8,7 +8,7 @@ from typing import Any
 
 from mlte.spec import Spec
 from mlte.validation import Result
-from mlte.session import session_state
+from mlte.session import session
 from mlte.api import read_validatedspec, write_validatedspec
 
 
@@ -48,13 +48,13 @@ class ValidatedSpec:
 
     def save(self):
         """Save ValidatedSpec instance to artifact store."""
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         write_validatedspec(
-            state.context.uri,
-            state.context.model,
-            state.context.version,
+            sesh.context.uri,
+            sesh.context.model,
+            sesh.context.version,
             self.to_json(),
         )
 
@@ -66,11 +66,11 @@ class ValidatedSpec:
         :return: The ValidatedSpec instance
         :rtype: ValidatedSpec
         """
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         document = read_validatedspec(
-            state.context.uri, state.context.model, state.context.version
+            sesh.context.uri, sesh.context.model, sesh.context.version
         )
         return ValidatedSpec.from_json(document)
 

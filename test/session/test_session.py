@@ -4,13 +4,7 @@ test/session/test_session.py
 Unit tests for global session management.
 """
 
-from mlte.session import (
-    session_state,
-    set_model,
-    set_namespace,
-    set_uri,
-    set_version,
-)
+from mlte.session import session, set_model, set_namespace, set_uri, set_version
 
 
 def test_session() -> None:
@@ -24,7 +18,7 @@ def test_session() -> None:
     set_version(version)
     set_uri(uri)
 
-    s = session_state()
+    s = session()
 
     assert s.context.namespace == namespace
     assert s.context.model == model

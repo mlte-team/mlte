@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from mlte.artifact import Artifact, ArtifactType
 from mlte.context import Context
-from mlte.session import session_state
+from mlte.session import session
 
 
 class NegotiationCard(Artifact):
@@ -55,7 +55,7 @@ class NegotiationCard(Artifact):
         :return The negotiation card instance
         """
         return NegotiationCard(
-            context=session_state().context,
+            context=session().context,
             identifier=identifier,
             system=system,
             data=data,

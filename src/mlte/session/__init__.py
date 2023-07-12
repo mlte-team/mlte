@@ -1,6 +1,6 @@
-from .state import (
-    session_state,
-    SessionState,
+from .session import (
+    session,
+    Session,
     set_namespace,
     set_model,
     set_version,
@@ -8,8 +8,8 @@ from .state import (
 )
 
 __all__ = [
-    "session_state",
-    "SessionState",
+    "session",
+    "Session",
     "set_namespace",
     "set_model",
     "set_version",

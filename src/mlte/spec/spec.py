@@ -9,7 +9,7 @@ from typing import Any, Union
 
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte.session import session_state
+from mlte.session import session
 from mlte.api import read_spec, write_spec
 from .requirement import Requirement
 
@@ -118,14 +118,14 @@ class Spec:
 
     def save(self):
         """Persist the specification to artifact store."""
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         # Write spec to store
         write_spec(
-            state.context.uri,
-            state.context.model,
-            state.context.version,
+            sesh.context.uri,
+            sesh.context.model,
+            sesh.context.version,
             self.to_json(),
         )
 
@@ -140,11 +140,11 @@ class Spec:
         :return: The loaded Spec
         :rtype: Spec
         """
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         document = read_spec(
-            state.context.uri, state.context.model, state.context.version
+            sesh.context.uri, sesh.context.model, sesh.context.version
         )
         return Spec.from_json(json=document)
 
@@ -193,11 +193,11 @@ class Spec:
         :return: The metadata document
         :rtype: dict[str, Any]
         """
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
         return {
-            "model_identifier": state.context.model,
-            "model_version": state.context.version,
+            "model_identifier": sesh.context.model,
+            "model_version": sesh.context.version,
             "timestamp": int(time.time()),
         }
 

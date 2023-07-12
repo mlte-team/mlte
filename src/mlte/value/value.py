@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 from mlte.api import read_value, write_value
 from mlte._private.schema import VALUE_LATEST_SCHEMA_VERSION
-from mlte.session import session_state
+from mlte.session import session
 from mlte.evidence.evidence_metadata import EvidenceMetadata
 
 
@@ -72,14 +72,14 @@ class Value(metaclass=abc.ABCMeta):
         :param tag: An optional tag to identify groups of results
         :type tag: str
         """
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         # Use API to save to artifact store
         write_value(
-            state.context.uri,
-            state.context.model,
-            state.context.version,
+            sesh.context.uri,
+            sesh.context.model,
+            sesh.context.version,
             self.metadata.identifier.name,
             {
                 "schema_version": VALUE_LATEST_SCHEMA_VERSION,
@@ -105,14 +105,14 @@ class Value(metaclass=abc.ABCMeta):
         :return: The loaded value
         :rtype: Value
         """
-        state = session_state()
-        state.assert_populated()
+        sesh = session()
+        sesh.assert_populated()
 
         # Use API to load from artifact store
         json = read_value(
-            state.context.uri,
-            state.context.model,
-            state.context.version,
+            sesh.context.uri,
+            sesh.context.model,
+            sesh.context.version,
             identifier,
             version,
         )
