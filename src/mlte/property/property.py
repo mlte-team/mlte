@@ -9,7 +9,7 @@ import importlib
 from typing import Type
 
 # The names of the properties submodules
-SUBMODULES = ["costs", "functionality"]
+SUBMODULES = ["costs", "functionality", "fairness"]
 
 
 def _has_callable(type, name) -> bool:
