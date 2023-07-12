@@ -112,14 +112,14 @@ def _load_from_document(document: dict[str, str]) -> Property:
     properties_module = importlib.import_module(
         properties_package_name, package="mlte"
     )
-    for subpackage_info in pkgutil.iter_modules(
+    for submodule_info in pkgutil.iter_modules(
         properties_module.__path__, properties_module.__name__ + "."
     ):
-        subpackage = importlib.import_module(
-            subpackage_info.name, package=properties_package_name
+        submodule = importlib.import_module(
+            submodule_info.name, package=properties_package_name
         )
         try:
-            class_: Type[Property] = getattr(subpackage, classname)
+            class_: Type[Property] = getattr(submodule, classname)
         except AttributeError:
             continue
 
