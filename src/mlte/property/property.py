@@ -6,10 +6,8 @@ from __future__ import annotations
 
 import abc
 import importlib
+import pkgutil
 from typing import Type
-
-# The names of the properties submodules
-SUBMODULES = ["costs", "functionality", "fairness"]
 
 
 def _has_callable(type, name) -> bool:
@@ -73,6 +71,10 @@ class Property(metaclass=abc.ABCMeta):
         """
         return _load_from_document(document)
 
+    def __repr__(self) -> str:
+        """Return the representation needed to reconstruct the object."""
+        return f"{self.name}()"
+
 
 def _get_class_name(property_repr: str) -> str:
     """
@@ -106,12 +108,18 @@ def _load_from_document(document: dict[str, str]) -> Property:
     classname = _get_class_name(property_repr)
 
     # Load the class type from the module
-    for submodule in SUBMODULES:
-        module = importlib.import_module(
-            f".{submodule}", package="mlte.property"
+    properties_package_name = "mlte.property"
+    properties_module = importlib.import_module(
+        properties_package_name, package="mlte"
+    )
+    for submodule_info in pkgutil.iter_modules(
+        properties_module.__path__, properties_module.__name__ + "."
+    ):
+        submodule = importlib.import_module(
+            submodule_info.name, package=properties_package_name
         )
         try:
-            class_: Type[Property] = getattr(module, classname)
+            class_: Type[Property] = getattr(submodule, classname)
         except AttributeError:
             continue
 
