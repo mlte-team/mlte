@@ -31,3 +31,8 @@ Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more detail
 
 - Today I started the refactor to make the MLTE context not an embedded field of the artifacts themselves, but merely additional information that must be provided at the time an artifact is saved or loaded. This will greatly simplify the code, in the long run. I also started working on serialization and deserialization of negotiation cards in earnest such that we can finally implement an end-to-end test for the artifact protocol.
 - Tomorrow I want to finish serialization and deserialization for the negotiation card and perhaps (if time permits) write the JSON schema document for this artifact.
+
+07/13/2023
+
+- Today I continued work on serialization for negotiation cards. I got through system and data objects, meaning that only model elements remain. I took an aside and figured out a way to do universal serialization / deserialization for enumerations, which is helpful.
+- Tomorrow I want to finish serde for negotiation cards and get the JSON schema document written.
