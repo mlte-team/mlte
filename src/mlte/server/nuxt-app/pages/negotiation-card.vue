@@ -552,6 +552,13 @@
   ])
 
 
+  function cancel(){
+    if(confirm("Are you sure you want to leave this page? All changes will be lost.")){
+      location.href = "/"
+    }
+  }
+
+
   function submit(){
     console.log(form.value)
     console.log(useRoute().query.namespace)

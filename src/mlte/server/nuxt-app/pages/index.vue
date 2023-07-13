@@ -49,8 +49,9 @@
       </div>
 
       <div>
+        <!-- Placeholder for when the search functionality is implemented
         <label class="usa-label" style="margin-top: 0px;">Search</label>
-        <UsaTextInput v-model="search_input" style="width: 100%;"/>
+        <UsaTextInput v-model="search_input" style="width: 100%;"/> -->
       </div>
     </div>
 

@@ -2,18 +2,21 @@
   <div>
     <div style="height: 16px; background-color: #f3ca3e;"/>
     <header class="flex-container">
-      <img src="~/assets/img/MLTE_Logo_Color.svg"
+      <a href="/" class="header-link">
+        <img src="~/assets/img/MLTE_Logo_Color.svg"
           alt=""
           height="75px"
-          width="75px">
-      <img>
-      <div class="header-main">
-        MLTE
-      </div>
-      <div class="header-secondary">
-        Machine Learning <br/>
-        Test and Evaluation
-      </div>
+          width="75px"
+        />
+
+        <div class="header-main">
+          MLTE
+        </div>
+        <div class="header-secondary">
+          Machine Learning <br/>
+          Test and Evaluation
+        </div>
+      </a>
     </header>
 
     <div class="flex-container">
@@ -44,20 +47,29 @@
 
 <style>
   header {
+    display: inline-block;
     margin-bottom: 8px;
     padding: 25px;
-    color: white;
     background-color: #2d2f30;
   }
 
   .header-main {
+    display:inline-block;
     font-size: 56px;
     margin-right: 8px;
+    vertical-align: top;
   }
 
   .header-secondary {
+    display:inline-block;
     font-size: 24px;
     padding-top: 5px;
+    vertical-align:top;
+  }
+
+  .header-link{
+    color: white;
+    text-decoration: none;
   }
 
   .flex-container {
