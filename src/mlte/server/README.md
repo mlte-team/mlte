@@ -16,6 +16,8 @@ To begin running the development server, navigate to `/src/mlte/server/nuxt-app`
 
 ```bash
 $ npm install
+$ npx gulp compile
+$ npx gulp init
 $ npm run dev
 ```
 
