@@ -11,7 +11,6 @@ from typing import Any, Optional
 
 from mlte.artifact import Artifact, ArtifactType
 from mlte.context import Context
-from mlte.serde.error import DeserializationError
 from mlte.serde.json import JsonableDataclass, JsonableEnum
 from mlte.session import session
 
@@ -383,76 +382,223 @@ class DataDescriptor(JsonableDataclass):
 # -----------------------------------------------------------------------------
 
 
-class ModelDescriptor:
-    """A descriptor for the model."""
-
-
-class ModelDevelopmentDescriptor:
-    """A descriptor for model development considerations."""
-
-    resources: ModelResourcesDescriptor
-    """A description of model development resource requirements."""
-
-
-class ModelProductionDescriptor:
-    """A descriptor for model production considerations."""
-
-    integration: str
-    """A description of the manner in which the model is integrated with the system."""
-
-    interface: ModelInterfaceDescriptor
-    """A description of the model interface."""
-
-    resources: ModelResourcesDescriptor
-    """A description of model production resource requirements."""
-
-
-class ModelResourcesDescriptor:
+@dataclass
+class ModelResourcesDescriptor(JsonableDataclass):
     """A descriptor for model resource requirements."""
 
-    cpu: str
+    cpu: Optional[str] = None
     """A description of model CPU requirements."""
 
-    gpu: str
+    gpu: Optional[str] = None
     """A description of model GPU requirements."""
 
-    memory: str
+    memory: Optional[str] = None
     """A description of model memory (RAM) requirements."""
 
-    storage: str
+    storage: Optional[str] = None
     """A description of model storage requirements."""
 
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelResourcesDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        print("ModelResourcesDescriptor")
+        print(document)
+        cpu = _optional_value("cpu", document)
+        gpu = _optional_value("gpu", document)
+        memory = _optional_value("memory", document)
+        storage = _optional_value("storage", document)
+        return ModelResourcesDescriptor(
+            cpu=cpu, gpu=gpu, memory=memory, storage=storage
+        )
 
-class ModelInterfaceDescriptor:
-    """A description of the model interface."""
 
-    input: ModelInputDescriptor
-    """The model input specification."""
-
-    output: ModelOutputDescriptor
-    """The model output specification."""
-
-
-class ModelInputDescriptor:
+@dataclass
+class ModelInputDescriptor(JsonableDataclass):
     """A description of the model input specification."""
 
-    description: str
+    description: Optional[str] = None
     """A textual description of the input specification."""
 
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelInputDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        description = _optional_value("description", document)
+        return ModelInputDescriptor(description=description)
 
-class ModelOutputDescriptor:
+
+@dataclass
+class ModelOutputDescriptor(JsonableDataclass):
     """A description of the model output specification."""
 
-    description: str
+    description: Optional[str] = None
     """A textual description of the output specification."""
 
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelOutputDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        description = _optional_value("description", document)
+        return ModelOutputDescriptor(description=description)
 
-def _assert_key(document: dict[str, Any], key: str):
+
+@dataclass
+class ModelInterfaceDescriptor(JsonableDataclass):
+    """A description of the model interface."""
+
+    input: ModelInputDescriptor = field(default_factory=ModelInputDescriptor)
+    """The model input specification."""
+
+    output: ModelOutputDescriptor = field(default_factory=ModelOutputDescriptor)
+    """The model output specification."""
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelInterfaceDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        input = (
+            ModelInputDescriptor.from_json(document["input"])
+            if "input" in document
+            else ModelInputDescriptor()
+        )
+        output = (
+            ModelOutputDescriptor.from_json(document["output"])
+            if "output" in document
+            else ModelOutputDescriptor()
+        )
+        return ModelInterfaceDescriptor(input=input, output=output)
+
+
+@dataclass
+class ModelDevelopmentDescriptor(JsonableDataclass):
+    """A descriptor for model development considerations."""
+
+    resources: ModelResourcesDescriptor = field(
+        default_factory=ModelResourcesDescriptor
+    )
+    """A description of model development resource requirements."""
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelDevelopmentDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        resources = (
+            ModelResourcesDescriptor.from_json(document["resources"])
+            if "resources" in document
+            else ModelResourcesDescriptor()
+        )
+        return ModelDevelopmentDescriptor(resources=resources)
+
+
+@dataclass
+class ModelProductionDescriptor(JsonableDataclass):
+    """A descriptor for model production considerations."""
+
+    integration: Optional[str] = None
+    """A description of the manner in which the model is integrated with the system."""
+
+    interface: ModelInterfaceDescriptor = field(
+        default_factory=ModelInterfaceDescriptor
+    )
+    """A description of the model interface."""
+
+    resources: ModelResourcesDescriptor = field(
+        default_factory=ModelResourcesDescriptor
+    )
+    """A description of model production resource requirements."""
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelProductionDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        print("ModelProductionDescriptor")
+        print(document)
+        integration = _optional_value("integration", document)
+        interface = (
+            ModelInterfaceDescriptor.from_json(document["interface"])
+            if "interface" in document
+            else ModelInterfaceDescriptor()
+        )
+        resources = (
+            ModelResourcesDescriptor.from_json(document["resources"])
+            if "resources" in document
+            else ModelResourcesDescriptor()
+        )
+        return ModelProductionDescriptor(
+            integration=integration, interface=interface, resources=resources
+        )
+
+
+@dataclass
+class ModelDescriptor(JsonableDataclass):
+    """A descriptor for the model."""
+
+    development: ModelDevelopmentDescriptor = field(
+        default_factory=ModelDevelopmentDescriptor
+    )
+    """A description of model development considerations."""
+
+    production: ModelProductionDescriptor = field(
+        default_factory=ModelProductionDescriptor
+    )
+    """A description of model production considerations."""
+
+    @staticmethod
+    def from_json(document: dict[str, Any]) -> ModelDescriptor:
+        """
+        Deserialize from JSON document.
+        :param document: The JSON document
+        :return: The deserialized instance
+        """
+        print("ModelDescriptor")
+        print(document)
+        development = (
+            ModelDevelopmentDescriptor.from_json(document["development"])
+            if "development" in document
+            else ModelDevelopmentDescriptor()
+        )
+        production = (
+            ModelProductionDescriptor.from_json(document["production"])
+            if "production" in document
+            else ModelProductionDescriptor()
+        )
+        return ModelDescriptor(development=development, production=production)
+
+
+# -----------------------------------------------------------------------------
+# Misc. Helpers
+# -----------------------------------------------------------------------------
+
+
+def _optional_value(key: str, document: dict[str, Any]) -> Optional[Any]:
     """
-    Assert that a key is present in a document; raise if not.
+    Extract an optional value from a document.
+    :param key: The key that identifies the value
     :param document: The input document
-    :param key: The key
-    :raises DeserializationError: If the key is missing from `document`
+    :return: The value if key is present, else `None`.
     """
-    if key not in document:
-        raise DeserializationError(key)
+    print(document)
+    if key in document:
+        print(f"Key {key} in document")
+    else:
+        print(f"Key {key} not in document")
+    return document[key] if key in document else None
