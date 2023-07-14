@@ -60,7 +60,7 @@ class JsonableEnum(Enum):
         return {"value": self.value}
 
     @classmethod
-    def from_json(cls, document: dict[str, Any]) -> JsonableEnum:
+    def from_json(cls, document: dict[str, Any]) -> Enum:
         """
         Parse enumeration from JSON document.
         :param document: The JSON document

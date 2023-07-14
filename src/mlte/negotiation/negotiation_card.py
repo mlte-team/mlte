@@ -10,9 +10,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from mlte.artifact import Artifact, ArtifactType
-from mlte.context import Context
 from mlte.serde.json import JsonableDataclass, JsonableEnum
-from mlte.session import session
 
 
 @dataclass
@@ -48,7 +46,7 @@ class NegotiationCard(Artifact):
         :param document: The input document
         :return: The deserialized negotiation card artifact
         """
-        pass
+        return NegotiationCard()
 
 
 # -----------------------------------------------------------------------------
