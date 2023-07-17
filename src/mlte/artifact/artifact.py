@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
-
-from mlte.context import Context
+from typing import Optional
 
 
 class Artifact:
@@ -31,48 +29,6 @@ class Artifact:
             ArtifactHeader.builder().with_identifier(identifier).build()
         )
         """The common artifact header."""
-
-    def save(self) -> None:
-        """
-        Save an artifact to the artifact store.
-
-
-        This default invocation utilizes the MLTE session
-        to retrieve the existing global context; it is equivalent to:
-
-            artifact.save_with(session().context)
-        """
-        pass
-
-    def save_with(context: Context) -> None:
-        """
-        Save an artifact with the specified context.
-        :param context: The context to utilize
-        """
-        context.assert_populated()
-
-    @staticmethod
-    def load() -> Artifact:
-        """
-        Load an artifact from the artifact store.
-        """
-        return None
-
-    def to_json(self) -> dict[str, Any]:
-        """
-        Serialize an artifact to JSON-compatible document.
-        :return: The serialized artifact.
-        """
-        raise NotImplementedError("Cannot serialize abstract artifact.")
-
-    @staticmethod
-    def from_json(document: dict[str, Any]) -> Artifact:
-        """
-        Deserialize an artifact from JSON-compatibel document.
-        :param document: The input document
-        :return: The deserialized artifact
-        """
-        raise NotImplementedError("Cannot deserialize abstract artifact.")
 
 
 class ArtifactType(Enum):
@@ -218,6 +174,7 @@ class ArtifactHeaderBuilder:
         :return: The builder
         """
         self._type = type
+        return self
 
     def build(self) -> ArtifactHeader:
         """

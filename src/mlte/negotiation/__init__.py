@@ -1,10 +1,4 @@
 from .negotiation_card import (
-    DataClassification,
-    DataDescriptor,
-    FieldDescriptor,
-    GoalDescriptor,
-    LabelDescriptor,
-    MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
     ModelInputDescriptor,
@@ -12,21 +6,9 @@ from .negotiation_card import (
     ModelOutputDescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
-    ProblemType,
-    RiskDescriptor,
-    SystemDescriptor,
 )
 
 __all__ = [
-    "ProblemType",
-    "MetricDescriptor",
-    "GoalDescriptor",
-    "RiskDescriptor",
-    "SystemDescriptor",
-    "DataClassification",
-    "LabelDescriptor",
-    "FieldDescriptor",
-    "DataDescriptor",
     "ModelResourcesDescriptor",
     "ModelInputDescriptor",
     "ModelOutputDescriptor",
