@@ -39,6 +39,20 @@ def test_metric_descriptor() -> None:
 
 def test_goal_descriptor() -> None:
     """A goal descriptor model can be serialized and deserialized."""
+    m = model.GoalDescriptor(
+        description="description",
+        metrics=[
+            model.MetricDescriptor(
+                description="description", baseline="baseline"
+            )
+        ],
+    )
+    expected = {
+        "description": "description",
+        "metrics": [{"description": "description", "baseline": "baseline"}],
+    }
+    assert deepequal(expected, m.to_json())
+
     objects = [
         model.GoalDescriptor(
             description="description",
@@ -165,4 +179,138 @@ def test_data_descriptor() -> None:
     for object in objects:
         s = object.to_json()
         d = model.DataDescriptor.from_json(s)
+        assert d == object
+
+
+# -----------------------------------------------------------------------------
+# Model Subcomponents
+# -----------------------------------------------------------------------------
+
+
+def test_model_resources_descriptor() -> None:
+    """A model resources descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelResourcesDescriptor(
+            cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+        ),
+        model.ModelResourcesDescriptor(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelResourcesDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_input_descriptor() -> None:
+    """A model input descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelInputDescriptor(description="description"),
+        model.ModelInputDescriptor(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelInputDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_output_descriptor() -> None:
+    """A model output descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelOutputDescriptor(description="description"),
+        model.ModelOutputDescriptor(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelOutputDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_interface_descriptor() -> None:
+    """A model interface descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelInterfaceDescriptor(
+            input=model.ModelInputDescriptor(description="description"),
+            output=model.ModelOutputDescriptor(description="description"),
+        ),
+        model.ModelInterfaceDescriptor(),
+    ]
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelInterfaceDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_development_descriptor() -> None:
+    """A model development descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelDevelopmentDescriptor(
+            resources=model.ModelResourcesDescriptor(
+                cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+            )
+        ),
+        model.ModelDevelopmentDescriptor(),
+    ]
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelDevelopmentDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_production_descriptor() -> None:
+    """A model production descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelProductionDescriptor(
+            integration="integration",
+            interface=model.ModelInterfaceDescriptor(
+                input=model.ModelInputDescriptor(description="description"),
+                output=model.ModelOutputDescriptor(description="description"),
+            ),
+            resources=model.ModelDevelopmentDescriptor(
+                resources=model.ModelResourcesDescriptor(
+                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                )
+            ),
+        ),
+        model.ModelProductionDescriptor(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelProductionDescriptor.from_json(s)
+        assert d == object
+
+
+def test_model_descriptor() -> None:
+    """A model descriptor model can be serialized and deserialized."""
+    objects = [
+        model.ModelDescriptor(
+            development=model.ModelDevelopmentDescriptor(
+                resources=model.ModelResourcesDescriptor(
+                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                )
+            ),
+            production=model.ModelProductionDescriptor(
+                integration="integration",
+                interface=model.ModelInterfaceDescriptor(
+                    input=model.ModelInputDescriptor(description="description"),
+                    output=model.ModelOutputDescriptor(
+                        description="description"
+                    ),
+                ),
+                resources=model.ModelDevelopmentDescriptor(
+                    resources=model.ModelResourcesDescriptor(
+                        cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                    )
+                ),
+            ),
+        ),
+        model.ModelDescriptor(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.ModelDescriptor.from_json(s)
         assert d == object
