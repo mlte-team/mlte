@@ -12,6 +12,7 @@ from .model import (
     ModelOutputDescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
+    NegotiationCardModel,
     ProblemType,
     RiskDescriptor,
     SystemDescriptor,
@@ -34,4 +35,5 @@ __all__ = [
     "ModelDevelopmentDescriptor",
     "ModelProductionDescriptor",
     "ModelDescriptor",
+    "NegotiationCardModel",
 ]

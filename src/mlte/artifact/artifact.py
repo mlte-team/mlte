@@ -10,6 +10,15 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
+from mlte.artifact.model import BaseModel
+
+
+class ArtifactType(Enum):
+    """Enumerates all supported artifact types."""
+
+    NEGOTIATION_CARD = "negotiation_card"
+    """The negotiation card artifact type."""
+
 
 class Artifact:
     """
@@ -30,94 +39,10 @@ class Artifact:
         )
         """The common artifact header."""
 
-
-class ArtifactType(Enum):
-    """Enumerates all supported artifact types."""
-
-    NEGOTIATION_CARD = "negotiation_card"
-    """The negotiation card artifact type."""
-
-
-@dataclass
-class ArtifactContext:
-    """Common metadata for all MLTE artifacts."""
-
-    namespace: str
-    """The namespace with which the artifact is associated."""
-
-    model: str
-    """The identifier for the model with which the artifact is associated."""
-
-    version: str
-    """The identifier for the version with which the artifact is associated."""
-
-    @staticmethod
-    def builder() -> ArtifactContextBuilder:
-        """
-        Get a builder for ArtifactContext.
-        :return: The builder instance
-        """
-        return ArtifactContextBuilder()
-
-
-class ArtifactContextBuilder:
-    """A builder for artifact context metadata."""
-
-    def __init__(self) -> None:
-        self._namespace: Optional[str] = None
-        """The namespace with which the artifact is associated."""
-
-        self._model: Optional[str] = None
-        """The identifier for the model with which the artifact is associated."""
-
-        self._version: Optional[str] = None
-        """The identifier for the version with which the artifact is associated."""
-
-        self._type: Optional[ArtifactType] = None
-        """The artifact type identifier."""
-
-    def with_namespace(self, namespace: str) -> ArtifactContextBuilder:
-        """
-        Attach a namespace to artifact metadata.
-        :param namespace: The namespace string
-        :return: The builder
-        """
-        self._namespace = namespace
-        return self
-
-    def with_model(self, model: str) -> ArtifactContextBuilder:
-        """
-        Attach a model identifier to artifact metadata.
-        :param model: The model identifier
-        :return: The builder
-        """
-        self._model = model
-        return self
-
-    def with_version(self, version: str) -> ArtifactContextBuilder:
-        """
-        Attach a model version identifier to artifact metadata.
-        :param version: The version identifier
-        :return: The builder
-        """
-        self._version = version
-        return self
-
-    def build(self) -> ArtifactContext:
-        """
-        Finalize the builder.
-        :return: The artifact metadata instance
-        """
-        if self._namespace is None:
-            raise ValueError("ArtifactContext must specify namespace.")
-        if self._model is None:
-            raise ValueError("ArtifactContext must specify model.")
-        if self._version is None:
-            raise ValueError("ArtifactContext must specify version.")
-        return ArtifactContext(
-            namespace=self._namespace,
-            model=self._model,
-            version=self._version,
+    def model(self) -> BaseModel:
+        """Return the corresponding model for an artifact."""
+        raise NotImplementedError(
+            "Artifact.model() not implemented for abstract Artifact."
         )
 
 

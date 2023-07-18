@@ -1,19 +1,3 @@
-from .negotiation_card import (
-    ModelDescriptor,
-    ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
-    ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
-    ModelProductionDescriptor,
-    ModelResourcesDescriptor,
-)
+from .negotiation_card import NegotiationCard
 
-__all__ = [
-    "ModelResourcesDescriptor",
-    "ModelInputDescriptor",
-    "ModelOutputDescriptor",
-    "ModelInterfaceDescriptor",
-    "ModelDevelopmentDescriptor",
-    "ModelProductionDescriptor",
-    "ModelDescriptor",
-]
+__all__ = ["NegotiationCard"]

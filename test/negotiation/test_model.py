@@ -10,9 +10,91 @@ from deepdiff import DeepDiff
 
 import mlte.negotiation.model as model
 
+# -----------------------------------------------------------------------------
+# NegotiationCardModel
+# -----------------------------------------------------------------------------
 
-def deepequal(a: dict[str, Any], b: dict[str, Any]) -> bool:
-    return len(DeepDiff(a, b)) == 0
+
+def test_negotiation_card() -> None:
+    """A negotiation card model can be serialized and deserialized."""
+    objects = [
+        model.NegotiationCardModel(
+            system=model.SystemDescriptor(
+                goals=[
+                    model.GoalDescriptor(
+                        description="description",
+                        metrics=[
+                            model.MetricDescriptor(
+                                description="description", baseline="baseline"
+                            )
+                        ],
+                    )
+                ],
+                problem_type=model.ProblemType.CLASSIFICATION,
+                task="task",
+                usage_context="usage_context",
+                risks=model.RiskDescriptor(fp="fp", fn="fn", other="other"),
+            ),
+            data=[
+                model.DataDescriptor(
+                    description="description",
+                    classification=model.DataClassification.UNCLASSIFIED,
+                    access="access",
+                    fields=[
+                        model.FieldDescriptor(
+                            name="name",
+                            description="description",
+                            type="type",
+                            expected_values="expected_values",
+                            missing_values="missing_values",
+                            special_values="special_values",
+                        )
+                    ],
+                    labels=[
+                        model.LabelDescriptor(
+                            description="description", percentage=95.0
+                        )
+                    ],
+                    policies="policies",
+                    rights="rights",
+                    source="source",
+                    identifiable_information="identifiable_information",
+                )
+            ],
+            model=model.ModelDescriptor(
+                development=model.ModelDevelopmentDescriptor(
+                    resources=model.ModelResourcesDescriptor(
+                        cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                    )
+                ),
+                production=model.ModelProductionDescriptor(
+                    integration="integration",
+                    interface=model.ModelInterfaceDescriptor(
+                        input=model.ModelInputDescriptor(
+                            description="description"
+                        ),
+                        output=model.ModelOutputDescriptor(
+                            description="description"
+                        ),
+                    ),
+                    resources=model.ModelDevelopmentDescriptor(
+                        resources=model.ModelResourcesDescriptor(
+                            cpu="cpu",
+                            gpu="gpu",
+                            memory="memory",
+                            storage="storage",
+                        )
+                    ),
+                ),
+            ),
+        ),
+        model.NegotiationCardModel(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.NegotiationCardModel.from_json(s)
+        assert d == object
 
 
 # -----------------------------------------------------------------------------
@@ -314,3 +396,12 @@ def test_model_descriptor() -> None:
         s = object.to_json()
         d = model.ModelDescriptor.from_json(s)
         assert d == object
+
+
+# -----------------------------------------------------------------------------
+# Test Helpers
+# -----------------------------------------------------------------------------
+
+
+def deepequal(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    return len(DeepDiff(a, b)) == 0

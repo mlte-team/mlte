@@ -11,6 +11,10 @@ from typing import Optional
 
 from mlte.artifact.model import BaseModel
 
+# -----------------------------------------------------------------------------
+# System Subcomponents
+# -----------------------------------------------------------------------------
+
 
 class ProblemType(Enum):
     """An enumeration over machine learning problem types."""
@@ -230,3 +234,21 @@ class ModelDescriptor(BaseModel):
 
     production: ModelProductionDescriptor = ModelProductionDescriptor()
     """A description of model production considerations."""
+
+
+# -----------------------------------------------------------------------------
+# NegotiationCardModel
+# -----------------------------------------------------------------------------
+
+
+class NegotiationCardModel(BaseModel):
+    """The model implementation for the NegotiationCard artifact."""
+
+    system: SystemDescriptor = SystemDescriptor()
+    """The descriptor for the system in which the model is integrated."""
+
+    data: list[DataDescriptor] = []
+    """A collection of descriptors for relevant data."""
+
+    model: ModelDescriptor = ModelDescriptor()
+    """The descriptor for the model."""
