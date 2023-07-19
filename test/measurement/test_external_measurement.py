@@ -29,8 +29,8 @@ def test_evaluate_external():
     expected_value = _dummy_calculation(x, y)
     expected_result = Integer(EvidenceMetadata("dummy", "test"), expected_value)
 
-    measurement = ExternalMeasurement("dummy", Integer)
-    result = measurement.evaluate(_dummy_calculation(x, y))
+    measurement = ExternalMeasurement("dummy", Integer, _dummy_calculation)
+    result = measurement.evaluate(x, y)
 
     assert isinstance(result, Integer)
     assert result == expected_result
@@ -50,3 +50,17 @@ def test_evaluate_ingest():
 def test_invalid_result_type():
     with pytest.raises(Exception):
         ExternalMeasurement("dummy", int)
+
+
+def test_invalid_function():
+    with pytest.raises(Exception):
+        ExternalMeasurement("dummy", Integer, "not_a_function")
+
+
+def test_evaluate_no_function():
+    x = 1
+    y = 2
+
+    measurement = ExternalMeasurement("dummy", Integer)
+    with pytest.raises(Exception):
+        measurement.evaluate(x, y)
