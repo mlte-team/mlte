@@ -63,16 +63,17 @@ def _attach_store(
         required=True,
         help="The URI for the backend store.",
     )
-    
+
 
 def _attach_server(
-    subparser,      
+    subparser,
 ):
     """Attach the server subparser to the base parser."""
     parser = subparser.add_parser(
         "server", help="Run an instance of the MLTE UI."
     )
     parser.set_defaults(func=ui.run_server)
+
 
 # -----------------------------------------------------------------------------
 # Entry Point
