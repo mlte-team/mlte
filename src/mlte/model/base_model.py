@@ -1,7 +1,7 @@
 """
-mlte/artifact/model/base_model.py
+mlte/model/base_model.py
 
-Base model implementation for artifacts.
+Base model implementation for all MLTE models.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import pydantic
 
 
 class BaseModel(pydantic.BaseModel):
-    """The base model for all artifact models."""
+    """The base model for all MLTE models."""
 
     def to_json(self) -> dict[str, Any]:
         """

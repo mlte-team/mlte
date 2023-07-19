@@ -7,5 +7,10 @@ Unit tests for negotiation card.
 from mlte.negotiation import NegotiationCard
 
 
-def test_all() -> None:
-    assert True
+def test_round_trip() -> None:
+    """Negotiation card can be converted to model and back."""
+
+    card = NegotiationCard("my-card")
+
+    model = card.to_model()
+    _ = NegotiationCard.from_model(model)

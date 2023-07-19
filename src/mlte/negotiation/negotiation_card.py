@@ -6,6 +6,9 @@ Negotiation card artifact implementation.
 
 from __future__ import annotations
 
+import typing
+from typing import Literal
+
 import mlte.negotiation.model as model
 from mlte.artifact import Artifact, ArtifactType
 
@@ -35,7 +38,10 @@ class NegotiationCard(Artifact):
         """Convert a negotation card artifact to its corresponding model."""
         return model.NegotiationCardModel(
             header=model.NegotiationCardHeaderModel(
-                identifier=self.identifier, type=self.type
+                identifier=self.identifier,
+                type=typing.cast(
+                    Literal[ArtifactType.NEGOTIATION_CARD], self.type
+                ),
             ),
             body=model.NegotiationCardBodyModel(
                 system=self.system, data=self.data, model=self.model
@@ -43,7 +49,7 @@ class NegotiationCard(Artifact):
         )
 
     @staticmethod
-    def from_model(model: model.NegotiationCardModel) -> NegotiationCard:
+    def from_model(model: model.NegotiationCardModel) -> NegotiationCard:  # type: ignore[override]
         """Convert a negotiation card model to its corresponding artifact."""
         return NegotiationCard(
             identifier=model.header.identifier,

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-import mlte.artifact.model as model
+from mlte.model import BaseModel
 
 
 class ArtifactType(Enum):
@@ -40,14 +40,14 @@ class Artifact:
         self.type = type
         """The identifier for the artifact type"""
 
-    def to_model(self) -> model.BaseModel:
+    def to_model(self) -> BaseModel:
         """Serialize an artifact to its corresponding model."""
         raise NotImplementedError(
             "Artifact.to_model() not implemented for abstract Artifact."
         )
 
     @staticmethod
-    def from_model(_: model.BaseModel) -> Artifact:
+    def from_model(_: BaseModel) -> Artifact:
         """Deserialize an artifact from its corresponding model."""
         raise NotImplementedError(
             "Artifact.from_model() not implemented for abstract Artifact."

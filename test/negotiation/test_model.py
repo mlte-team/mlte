@@ -31,10 +31,10 @@ def test_negotiation_card_header() -> None:
         assert d == object
 
     with pytest.raises(pydantic.ValidationError):
-        _ = model.NegotiationCardHeaderModel(identifier="identifier")
+        _ = model.NegotiationCardHeaderModel(identifier="identifier")  # type: ignore
 
     with pytest.raises(pydantic.ValidationError):
-        _ = model.NegotiationCardHeaderModel(type=ArtifactType.NEGOTIATION_CARD)
+        _ = model.NegotiationCardHeaderModel(type=ArtifactType.NEGOTIATION_CARD)  # type: ignore
 
 
 def test_negotiation_card_body() -> None:
@@ -99,13 +99,11 @@ def test_negotiation_card_body() -> None:
                             description="description"
                         ),
                     ),
-                    resources=model.ModelDevelopmentDescriptor(
-                        resources=model.ModelResourcesDescriptor(
-                            cpu="cpu",
-                            gpu="gpu",
-                            memory="memory",
-                            storage="storage",
-                        )
+                    resources=model.ModelResourcesDescriptor(
+                        cpu="cpu",
+                        gpu="gpu",
+                        memory="memory",
+                        storage="storage",
                     ),
                 ),
             ),
@@ -189,13 +187,11 @@ def test_negotiation_card() -> None:
                                 description="description"
                             ),
                         ),
-                        resources=model.ModelDevelopmentDescriptor(
-                            resources=model.ModelResourcesDescriptor(
-                                cpu="cpu",
-                                gpu="gpu",
-                                memory="memory",
-                                storage="storage",
-                            )
+                        resources=model.ModelResourcesDescriptor(
+                            cpu="cpu",
+                            gpu="gpu",
+                            memory="memory",
+                            storage="storage",
                         ),
                     ),
                 ),
@@ -462,10 +458,8 @@ def test_model_production_descriptor() -> None:
                 input=model.ModelInputDescriptor(description="description"),
                 output=model.ModelOutputDescriptor(description="description"),
             ),
-            resources=model.ModelDevelopmentDescriptor(
-                resources=model.ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                )
+            resources=model.ModelResourcesDescriptor(
+                cpu="cpu", gpu="gpu", memory="memory", storage="storage"
             ),
         ),
         model.ModelProductionDescriptor(),
@@ -494,10 +488,8 @@ def test_model_descriptor() -> None:
                         description="description"
                     ),
                 ),
-                resources=model.ModelDevelopmentDescriptor(
-                    resources=model.ModelResourcesDescriptor(
-                        cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                    )
+                resources=model.ModelResourcesDescriptor(
+                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
                 ),
             ),
         ),

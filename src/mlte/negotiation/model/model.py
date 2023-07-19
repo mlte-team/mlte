@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Literal, Optional
 
 from mlte.artifact import ArtifactType
-from mlte.artifact.model import BaseModel
+from mlte.model import BaseModel
 
 # -----------------------------------------------------------------------------
 # System Subcomponents
