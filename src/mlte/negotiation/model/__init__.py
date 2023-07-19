@@ -12,6 +12,8 @@ from .model import (
     ModelOutputDescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
+    NegotiationCardBodyModel,
+    NegotiationCardHeaderModel,
     NegotiationCardModel,
     ProblemType,
     RiskDescriptor,
@@ -36,4 +38,6 @@ __all__ = [
     "ModelProductionDescriptor",
     "ModelDescriptor",
     "NegotiationCardModel",
+    "NegotiationCardHeaderModel",
+    "NegotiationCardBodyModel",
 ]

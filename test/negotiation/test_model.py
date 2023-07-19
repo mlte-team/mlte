@@ -6,19 +6,41 @@ Unit tests for negotiation card model.
 
 from typing import Any
 
+import pydantic
+import pytest
 from deepdiff import DeepDiff
 
 import mlte.negotiation.model as model
+from mlte.artifact import ArtifactType
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
 # -----------------------------------------------------------------------------
 
 
-def test_negotiation_card() -> None:
-    """A negotiation card model can be serialized and deserialized."""
+def test_negotiation_card_header() -> None:
+    """A negotiation header body model can be serialized and deserialized."""
     objects = [
-        model.NegotiationCardModel(
+        model.NegotiationCardHeaderModel(
+            identifier="identifier", type=ArtifactType.NEGOTIATION_CARD
+        )
+    ]
+    for object in objects:
+        s = object.to_json()
+        d = model.NegotiationCardHeaderModel.from_json(s)
+        assert d == object
+
+    with pytest.raises(pydantic.ValidationError):
+        _ = model.NegotiationCardHeaderModel(identifier="identifier")
+
+    with pytest.raises(pydantic.ValidationError):
+        _ = model.NegotiationCardHeaderModel(type=ArtifactType.NEGOTIATION_CARD)
+
+
+def test_negotiation_card_body() -> None:
+    """A negotiation card body model can be serialized and deserialized."""
+    objects = [
+        model.NegotiationCardBodyModel(
             system=model.SystemDescriptor(
                 goals=[
                     model.GoalDescriptor(
@@ -88,7 +110,97 @@ def test_negotiation_card() -> None:
                 ),
             ),
         ),
-        model.NegotiationCardModel(),
+        model.NegotiationCardBodyModel(),
+    ]
+
+    for object in objects:
+        s = object.to_json()
+        d = model.NegotiationCardBodyModel.from_json(s)
+        assert d == object
+
+
+def test_negotiation_card() -> None:
+    """A negotiation card model can be serialized and deserialized."""
+    objects = [
+        model.NegotiationCardModel(
+            header=model.NegotiationCardHeaderModel(
+                identifier="identifier", type=ArtifactType.NEGOTIATION_CARD
+            ),
+            body=model.NegotiationCardBodyModel(
+                system=model.SystemDescriptor(
+                    goals=[
+                        model.GoalDescriptor(
+                            description="description",
+                            metrics=[
+                                model.MetricDescriptor(
+                                    description="description",
+                                    baseline="baseline",
+                                )
+                            ],
+                        )
+                    ],
+                    problem_type=model.ProblemType.CLASSIFICATION,
+                    task="task",
+                    usage_context="usage_context",
+                    risks=model.RiskDescriptor(fp="fp", fn="fn", other="other"),
+                ),
+                data=[
+                    model.DataDescriptor(
+                        description="description",
+                        classification=model.DataClassification.UNCLASSIFIED,
+                        access="access",
+                        fields=[
+                            model.FieldDescriptor(
+                                name="name",
+                                description="description",
+                                type="type",
+                                expected_values="expected_values",
+                                missing_values="missing_values",
+                                special_values="special_values",
+                            )
+                        ],
+                        labels=[
+                            model.LabelDescriptor(
+                                description="description", percentage=95.0
+                            )
+                        ],
+                        policies="policies",
+                        rights="rights",
+                        source="source",
+                        identifiable_information="identifiable_information",
+                    )
+                ],
+                model=model.ModelDescriptor(
+                    development=model.ModelDevelopmentDescriptor(
+                        resources=model.ModelResourcesDescriptor(
+                            cpu="cpu",
+                            gpu="gpu",
+                            memory="memory",
+                            storage="storage",
+                        )
+                    ),
+                    production=model.ModelProductionDescriptor(
+                        integration="integration",
+                        interface=model.ModelInterfaceDescriptor(
+                            input=model.ModelInputDescriptor(
+                                description="description"
+                            ),
+                            output=model.ModelOutputDescriptor(
+                                description="description"
+                            ),
+                        ),
+                        resources=model.ModelDevelopmentDescriptor(
+                            resources=model.ModelResourcesDescriptor(
+                                cpu="cpu",
+                                gpu="gpu",
+                                memory="memory",
+                                storage="storage",
+                            )
+                        ),
+                    ),
+                ),
+            ),
+        )
     ]
 
     for object in objects:

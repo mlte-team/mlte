@@ -79,4 +79,4 @@ check: check-format check-lint check-typecheck
 # NOTE: Only runs 3.8 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py310 -- test/negotiation/test_negotiation_card.py
+	tox --develop -e py310 -- test/negotiation/test_model.py
