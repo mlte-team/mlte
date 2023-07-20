@@ -21,7 +21,7 @@ class EvidenceMetadata:
         """The identifier for the measurement."""
 
         self.additional_info: Optional[str] = info
-        """Additional information to be stored with the metadata."""
+        """Additional unstructured information to be stored with the metadata."""
 
     def get_id(self) -> str:
         """Returns the id as a string."""
@@ -62,7 +62,10 @@ class EvidenceMetadata:
 
     def __str__(self) -> str:
         """Return a string representation of a EvidenceMetadata."""
-        return f"{self.measurement_type}-{self.identifier}"
+        representation = f"{self.measurement_type}-{self.identifier}"
+        if self.additional_info is not None:
+            representation += f"-{self.additional_info}"
+        return representation
 
     def __eq__(self, other: object) -> bool:
         """Compare instances for equality."""
@@ -72,4 +75,5 @@ class EvidenceMetadata:
         return (
             self.measurement_type == reference.measurement_type
             and self.identifier == reference.identifier
+            and self.additional_info == reference.additional_info
         )

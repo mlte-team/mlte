@@ -11,8 +11,8 @@ from mlte.value.types import Real
 from mlte.measurement import ExternalMeasurement
 
 # Evaluate performance
-accuracy_measurement = ExternalMeasurement("accuracy", Real)
-accuracy = accuracy_measurement.evaluate(accuracy_score(y_test, y_pred))
+accuracy_measurement = ExternalMeasurement("accuracy", Real, accuracy_score)
+accuracy = accuracy_measurement.evaluate(y_test, y_pred)
 
 # Inspect value
 print(accuracy)
@@ -35,8 +35,8 @@ from confusion_matrix import ConfusionMatrix
 from mlte.measurement import ExternalMeasurement
 
 # Generate value
-matrix_measurement = ExternalMeasurement("confusion matrix", ConfusionMatrix)
-matrix = matrix_measurement.evaluate(confusion_matrix(y_test, y_pred))
+matrix_measurement = ExternalMeasurement("confusion matrix", ConfusionMatrix, confusion_matrix)
+matrix = matrix_measurement.evaluate(y_test, y_pred)
 
 # Inspect
 print(matrix)

@@ -26,8 +26,8 @@ class ExternalMeasurement(Measurement):
         :type identifier: str
         :param value_type: The type of the Value this measurement will return.
         :type value_type: Type
-        :param value_type: The function to be used when evaluating.
-        :type value_type: Callable
+        :param function: The function to be used when evaluating.
+        :type function: Optional[Callable]
         """
         super().__init__(self, identifier)
 
@@ -43,10 +43,10 @@ class ExternalMeasurement(Measurement):
                     f"Function type provided is not a function: {function}"
                 )
             else:
+                # Store the function module+name as additional metadata info, for better traceability.
                 self.metadata.additional_info = (
                     f"function: {function.__module__}.{function.__name__}"
                 )
-
         self.function: Optional[Callable] = function  # type: ignore
 
     def __call__(self, *args, **kwargs) -> Value:
