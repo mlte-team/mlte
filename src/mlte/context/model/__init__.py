@@ -1,3 +1,3 @@
-from .model import NamespaceModel, ModelIdentifierModel, ModelVersionModel
+from .model import Namespace, Model, Version
 
-__all__ = ["NamespaceModel", "ModelIdentifierModel", "ModelVersionModel"]
+__all__ = ["Namespace", "Model", "Version"]
