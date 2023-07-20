@@ -37,10 +37,16 @@ class ExternalMeasurement(Measurement):
             )
         self.value_type: type = value_type
 
-        if function is not None and not callable(function):
-            raise Exception(
-                f"Function type provided is not a function: {function}"
-            )
+        if function is not None:
+            if not callable(function):
+                raise Exception(
+                    f"Function type provided is not a function: {function}"
+                )
+            else:
+                self.metadata.additional_info = (
+                    f"function: {function.__module__}.{function.__name__}"
+                )
+
         self.function: Optional[Callable] = function  # type: ignore
 
     def __call__(self, *args, **kwargs) -> Value:

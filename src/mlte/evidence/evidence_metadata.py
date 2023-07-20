@@ -3,7 +3,7 @@ EvidenceMetadata class definition.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from .identifier import Identifier
 
@@ -11,12 +11,17 @@ from .identifier import Identifier
 class EvidenceMetadata:
     """A simple wrapper for evidence metadata."""
 
-    def __init__(self, measurement_type: str, identifier: str):
+    def __init__(
+        self, measurement_type: str, identifier: str, info: Optional[str] = None
+    ):
         self.measurement_type = measurement_type
         """The name of the measurement class type."""
 
         self.identifier = Identifier(identifier)
         """The identifier for the measurement."""
+
+        self.additional_info: Optional[str] = info
+        """Additional information to be stored with the metadata."""
 
     def get_id(self) -> str:
         """Returns the id as a string."""
@@ -24,10 +29,13 @@ class EvidenceMetadata:
 
     def to_json(self) -> dict[str, Any]:
         """Serialize to JSON document."""
-        return {
+        doc = {
             "identifier": self.identifier.to_json(),
             "measurement_type": self.measurement_type,
         }
+        if self.additional_info is not None:
+            doc["additional_info"] = self.additional_info
+        return doc
 
     @staticmethod
     def from_json(json: dict[str, Any]) -> EvidenceMetadata:
@@ -40,10 +48,17 @@ class EvidenceMetadata:
             raise RuntimeError(
                 "Cannot deserialize EvidenceMetadata, missing key 'measurement_type'."
             )
-        return EvidenceMetadata(
+
+        additional_info: Optional[str] = None
+        if "additional_info" in json:
+            additional_info = json["additional_info"]
+
+        metadata = EvidenceMetadata(
             measurement_type=json["measurement_type"],
             identifier=json["identifier"],
+            info=additional_info,
         )
+        return metadata
 
     def __str__(self) -> str:
         """Return a string representation of a EvidenceMetadata."""

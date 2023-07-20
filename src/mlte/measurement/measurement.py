@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import abc
 import typing
-from typing import Type
+from typing import Type, Optional
 
 from mlte.value import Value
 from mlte.value.types import Opaque
@@ -28,7 +28,9 @@ class Measurement(metaclass=abc.ABCMeta):
         """Define the interface for all concrete measurements."""
         return all(_has_callable(subclass, method) for method in ["__call__"])
 
-    def __init__(self, instance: Measurement, identifier: str):
+    def __init__(
+        self, instance: Measurement, identifier: str, info: Optional[str] = None
+    ):
         """
         Initialize a new Measurement instance.
 
@@ -37,7 +39,9 @@ class Measurement(metaclass=abc.ABCMeta):
         :param identifier: A unique identifier for the instance
         :type identifier: str
         """
-        self.metadata = EvidenceMetadata(type(instance).__name__, identifier)
+        self.metadata = EvidenceMetadata(
+            type(instance).__name__, identifier, info
+        )
         """The metadata for the measurement instance."""
 
     @abc.abstractmethod
