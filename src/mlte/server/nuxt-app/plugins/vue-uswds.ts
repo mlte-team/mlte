@@ -1,5 +1,5 @@
-import VueUswds from 'vue-uswds';
+import VueUswds from "vue-uswds";
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.use(VueUswds)
-})
+  nuxtApp.vueApp.use(VueUswds);
+});

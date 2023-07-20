@@ -1,13 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    target: 'static',
+  target: "static",
 
-    css: [
-        '@/assets/css/styles.css',
-        '@/assets/uswds/css/styles.css'
-    ],
+  css: ["@/assets/css/styles.css", "@/assets/uswds/css/styles.css"],
 
-    routeRules: {
-        '/proxy/**': { proxy: 'http://localhost:8080/api/**'}
-    }
-})
+  routeRules: {
+    "/proxy/**": { proxy: "http://localhost:8080/api/**" },
+  },
+});
