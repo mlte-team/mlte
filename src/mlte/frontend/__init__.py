@@ -13,5 +13,5 @@ STATIC_DIR = (
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
 
 
-def run_server():
+def run_frontend():
     uvicorn.run(app)

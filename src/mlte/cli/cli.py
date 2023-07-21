@@ -8,7 +8,7 @@ import sys
 import argparse
 
 import mlte.store.main as server
-import mlte.server as ui
+import mlte.frontend as frontend
 from mlte.store.core.config import settings
 
 # CLI exit codes
@@ -32,7 +32,7 @@ def _prepare_parser():
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
     _attach_store(subparser)
-    _attach_server(subparser)
+    _attach_frontend(subparser)
 
     return base_parser
 
@@ -65,14 +65,14 @@ def _attach_store(
     )
 
 
-def _attach_server(
+def _attach_frontend(
     subparser,
 ):
-    """Attach the server subparser to the base parser."""
+    """Attach the frontend subparser to the base parser."""
     parser = subparser.add_parser(
-        "server", help="Run an instance of the MLTE UI."
+        "frontend", help="Run an instance of the MLTE Frontend."
     )
-    parser.set_defaults(func=ui.run_server)
+    parser.set_defaults(func=frontend.run_frontend)
 
 
 # -----------------------------------------------------------------------------

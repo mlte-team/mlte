@@ -1,9 +1,9 @@
-# mlte Server
+# Frontend
 
 A frontend for the mlte package. Provides a visual way to explore artifacts stores and create/edit negotiation cards.
 
 ## Getting Started
-To start the web server, run the command below. Then follow the link to view the homepage.
+To start the web frontend, run the command below. Then follow the link to view the homepage.
 
 ```bash
 $ mlte-ui
@@ -12,7 +12,7 @@ $ mlte-ui
 ## Development
 Development will require Node.js. Development was done using v18.14.2, the latest LTS version can be found here: https://nodejs.org/en
 
-To begin running the development server, navigate to `/src/mlte/server/nuxt-app` and run:
+To begin running the development frontend, navigate to `/src/mlte/frontend/nuxt-app` and run:
 
 ```bash
 $ npm install
