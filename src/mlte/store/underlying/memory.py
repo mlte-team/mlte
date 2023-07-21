@@ -5,6 +5,7 @@ Implementation of in-memory artifact store.
 """
 
 from contextlib import contextmanager
+from collections.abc import Generator
 
 from mlte.store.store import Store, StoreSession, StoreURI
 from mlte.context.model import Namespace, Model, Version
@@ -67,6 +68,10 @@ class InMemoryStoreSession(StoreSession):
         # NOTE(Kyle): Closing an in-memory session is a no-op.
         pass
 
+    # -------------------------------------------------------------------------
+    # Structural Elements
+    # -------------------------------------------------------------------------
+
     def create_namespace(self, namespace: Namespace) -> None:
         if namespace.identifier in self.storage:
             raise errors.ErrorAlreadyExists(f"Namespace {namespace.identifier}")
@@ -78,7 +83,9 @@ class InMemoryStoreSession(StoreSession):
     def read_namespace(self, namespace_id: str) -> list[Model]:
         if namespace_id not in self.storage:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
-        return [item.model for item in self.storage[namespace_id].models]
+        return [
+            item.model for item in self.storage[namespace_id].models.values()
+        ]
 
     def delete_namespace(self, namespace_id: str) -> None:
         if namespace_id not in self.storage:
@@ -103,7 +110,7 @@ class InMemoryStoreSession(StoreSession):
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
-        return namespace.models[model_id].model
+        return [v.version for v in namespace.models[model_id].versions.values()]
 
     def delete_model(self, namespace_id: str, model_id: str) -> None:
         if namespace_id not in self.storage:
@@ -152,12 +159,6 @@ class InMemoryStoreSession(StoreSession):
     def delete_version(
         self, namespace_id: str, model_id: str, version_id: str
     ) -> None:
-        """
-        Delete a MLTE model version.
-        :param namespace_id: The identifier for the namespace
-        :param model_id: The identifier for the model
-        :param version_id: The identifier for the model version
-        """
         if namespace_id not in self.storage:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
@@ -171,6 +172,81 @@ class InMemoryStoreSession(StoreSession):
 
         del model.versions[version_id]
 
+    # -------------------------------------------------------------------------
+    # Negotiation Card
+    # -------------------------------------------------------------------------
+
+    def create_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact: NegotiationCardModel,
+    ) -> None:
+        version = self._get_version_with_artifacts(
+            namespace_id, model_id, version_id
+        )
+
+        if artifact.header.identifier in version.negotiation_cards:
+            raise errors.ErrorAlreadyExists(
+                f"NegotiationCard '{artifact.header.identifier}'"
+            )
+        version.negotiation_cards[artifact.header.identifier] = artifact
+
+    def read_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_id: str,
+    ) -> NegotiationCardModel:
+        version = self._get_version_with_artifacts(
+            namespace_id, model_id, version_id
+        )
+
+        if artifact_id not in version.negotiation_cards:
+            raise errors.ErrorNotFound(f"NegotiationCard '{artifact_id}'")
+        return version.negotiation_cards[artifact_id]
+
+    def delete_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_id: str,
+    ) -> None:
+        version = self._get_version_with_artifacts(
+            namespace_id, model_id, version_id
+        )
+
+        if artifact_id not in version.negotiation_cards:
+            raise errors.ErrorNotFound(f"NegotiationCard '{artifact_id}'")
+        del version.negotiation_cards[artifact_id]
+
+    def _get_version_with_artifacts(
+        self, namespace_id: str, model_id: str, version_id: str
+    ) -> VersionWithArtifacts:
+        """
+        Get a version with artifacts from storage.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the version
+        :raises ErrorNotFound: If the required structural elements are not present
+        :return: The version with associated artifacts
+        """
+        if namespace_id not in self.storage:
+            raise errors.ErrorNotFound(f"Namespace {namespace_id}")
+
+        namespace = self.storage[namespace_id]
+        if model_id not in namespace.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+        model = namespace.models[model_id]
+        if version_id not in model.versions:
+            raise errors.ErrorNotFound(f"Version {version_id}")
+
+        return model.versions[version_id]
+
 
 class InMemoryStore(Store):
     """An in-memory implementation of the MLTE artifact store."""
@@ -182,7 +258,7 @@ class InMemoryStore(Store):
         """The underlying storage for the store."""
 
     @contextmanager
-    def session(self) -> InMemoryStoreSession:  # type: ignore[override]
+    def session(self) -> Generator[InMemoryStoreSession, None, None]:  # type: ignore[override]
         """
         Return a session handle for the store instance.
         :return: The session handle

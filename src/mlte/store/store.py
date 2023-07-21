@@ -7,12 +7,14 @@ MLTE artifact store interface implementation.
 from __future__ import annotations
 
 from enum import Enum
+from collections.abc import Generator
 
 from mlte.context.model import (
     Namespace,
     Model,
     Version,
 )
+from mlte.negotiation.model import NegotiationCardModel
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -185,6 +187,61 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
+    def create_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact: NegotiationCardModel,
+    ) -> None:
+        """
+        Create a negotiation card artifact.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param artifact: The negotiation card artifact
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+    def read_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_id: str,
+    ) -> NegotiationCardModel:
+        """
+        Read a negotiation card artifact.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param artifact_id: The artifact identifier
+        :return: The artifact
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+    def delete_negotiation_card(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_id: str,
+    ) -> None:
+        """
+        Delete a negotiation card artifact.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param artifact_id: The artifact identifier
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
 
 # -----------------------------------------------------------------------------
 # Store
@@ -208,7 +265,7 @@ class Store:
         self.uri = uri
         """The parsed artifact store URI."""
 
-    def session(self) -> StoreSession:
+    def session(self) -> Generator[StoreSession, None, None]:
         """
         Return a session handle for the store instance.
         :return: The session handle
