@@ -92,6 +92,9 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
         del self.storage[namespace_id]
 
+    def list_namespaces(self) -> list[str]:
+        return [namespace_id for namespace_id in self.storage.keys()]
+
     def create_model(self, namespace_id: str, model: Model) -> None:
         if namespace_id not in self.storage:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")

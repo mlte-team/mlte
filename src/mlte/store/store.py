@@ -116,6 +116,15 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
+    def list_namespaces(self) -> list[str]:
+        """
+        List all MLTE namespaces.
+        :return: A collection of identifiers for all MLTE namespaces
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
     def create_model(self, namespace_id: str, model: Model) -> None:
         """
         Create a MLTE model.

@@ -40,11 +40,19 @@ def test_namespace(store: InMemoryStore) -> None:
         _ = handle.read_namespace(namespace_id)
 
     with store.session() as handle:
+        ids = handle.list_namespaces()
+        assert len(ids) == 1
+
+    with store.session() as handle:
         handle.delete_namespace(namespace_id)
 
     with store.session() as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_namespace(namespace_id)
+
+    with store.session() as handle:
+        ids = handle.list_namespaces()
+        assert len(ids) == 0
 
 
 def test_model(store: InMemoryStore) -> None:
