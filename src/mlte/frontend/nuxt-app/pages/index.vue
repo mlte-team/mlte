@@ -119,7 +119,7 @@
   </NuxtLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const path = ref([
   {
     href: "/",
@@ -143,9 +143,9 @@ const modelOptions = ref([
   "model7",
   "model8",
 ]);
-const selectedModels = ref([]);
+const selectedModels = ref<string[]>([]);
 const versionOptions = ref(["v1", "v2", "v3", "v4", "v5", "v6", "v1.5"]);
-const selectedVersions = ref([]);
+const selectedVersions = ref<string[]>([]);
 // const searchInput = ref("");
 
 const cardSpecReportHeaders = ref([
@@ -189,43 +189,43 @@ const negotiationCards = ref([
   { id: "test1", descriptor: "test1", date: "test1" },
 ]);
 
-function selectNamespace(namespace) {
+function selectNamespace(namespace: string) {
   // TODO : Send request to backend to get new info
-  this.selectedNamespace = namespace;
+  selectedNamespace.value = namespace;
 }
 
-async function addNamespace(namespace) {
+async function addNamespace(namespace: string) {
   // TODO : Post this value to the backend so that it is validated.
   // TODO : Validate that submitted value isn't empty
-  this.namespaces.push(namespace);
-  this.newNamespaceFlag = false;
-  this.newNamespaceInput = "";
+  namespaces.value.push(namespace);
+  newNamespaceFlag.value = false;
+  newNamespaceInput.value = "";
   // const { data } = await useFetch("proxy/healthz");
   // this.namespaces.push(data)
 }
 
-function deleteNamespace(namespace) {
+function deleteNamespace(namespace: string) {
   // TODO : Post this value to the backend
-  this.namespaces.splice(this.namespaces.indexOf(namespace), 1);
+  namespaces.value.splice(namespaces.value.indexOf(namespace), 1);
 }
 
-function updateSelectedModels(model) {
+function updateSelectedModels(model: string) {
   // TODO : Post this to packend and get updated data
-  const index = this.selectedModels.indexOf(model);
+  const index = selectedModels.value.indexOf(model);
   if (index === -1) {
-    this.selectedModels.push(model);
+    selectedModels.value.push(model);
   } else {
-    this.selectedModels.splice(index, 1);
+    selectedModels.value.splice(index, 1);
   }
 }
 
-function updateSelectedVersions(version) {
-  // TODO : Post this to packend and get updated data
-  const index = this.selectedVersions.indexOf(version);
+function updateSelectedVersions(version: string) {
+  // TODO : Post this to backend and get updated data
+  const index = selectedVersions.value.indexOf(version);
   if (index === -1) {
-    this.selectedVersions.push(version);
+    selectedVersions.value.push(version);
   } else {
-    this.selectedVersions.splice(index, 1);
+    selectedVersions.value.splice(index, 1);
   }
 }
 </script>

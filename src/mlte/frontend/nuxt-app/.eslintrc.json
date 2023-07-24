@@ -16,14 +16,18 @@
     "plugin:vue/vue3-essential",
     "plugin:vue/recommended",
     "prettier",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "vue-eslint-parser",
   "parserOptions": {
+    "parser": "@typescript-eslint/parser",
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": [
-    "vue"
+    "vue",
+    "@typescript-eslint"
   ],
   "rules": {
     "vue/multi-word-component-names": [
@@ -36,5 +40,6 @@
     "assets/uswds/**",
     "dist/**",
     "node_modules/**"
-  ]
+  ],
+  "root": true
 }

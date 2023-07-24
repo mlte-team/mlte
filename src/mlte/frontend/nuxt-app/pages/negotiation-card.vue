@@ -10,7 +10,7 @@
             class="usa-file-input"
             type="file"
             accept=".json"
-            @change="descriptorUpload('System Context')"
+            @change="descriptorUpload($event, 'System Context')"
           />
 
           <label class="usa-label"> Raw Data </label>
@@ -18,7 +18,7 @@
             class="usa-file-input"
             type="file"
             accept=".json"
-            @change="descriptorUpload('Raw Data')"
+            @change="descriptorUpload($event, 'Raw Data')"
           />
 
           <label class="usa-label"> Development Environment </label>
@@ -26,7 +26,7 @@
             class="usa-file-input"
             type="file"
             accept=".json"
-            @change="descriptorUpload('Development Environment')"
+            @change="descriptorUpload($event, 'Development Environment')"
           />
 
           <label class="usa-label"> Production Environment </label>
@@ -34,7 +34,7 @@
             class="usa-file-input"
             type="file"
             accept=".json"
-            @change="descriptorUpload('Production Environment')"
+            @change="descriptorUpload($event, 'Production Environment')"
           />
         </div>
       </div>
@@ -57,7 +57,10 @@
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
-      <div v-for="(goal, goalIndex) in form.system.goals" :key="goal">
+      <div
+        v-for="(goal, goalIndex) in form.system.goals"
+        :key="goal.description"
+      >
         <h3>Goal {{ goalIndex + 1 }}</h3>
 
         <UsaTextInput v-model="goal.description">
@@ -65,7 +68,10 @@
         </UsaTextInput>
 
         <h3 class="no-margin-section-header">Metrics</h3>
-        <div v-for="(metric, metricIndex) in goal.metrics" :key="metric">
+        <div
+          v-for="(metric, metricIndex) in goal.metrics"
+          :key="metric.description"
+        >
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
               <template #label>
@@ -166,7 +172,10 @@
       data transportation.
     </p>
     <div class="input-group">
-      <div v-for="(data_item, dataItemIndex) in form.data" :key="data_item">
+      <div
+        v-for="(data_item, dataItemIndex) in form.data"
+        :key="data_item.description"
+      >
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="data_item.access">
           <template #label> Account Access / Account Availability </template>
@@ -194,7 +203,10 @@
         </UsaSelect>
 
         <div class="input-group" style="margin-top: 1em">
-          <div v-for="(label, labelIndex) in data_item.labels" :key="label">
+          <div
+            v-for="(label, labelIndex) in data_item.labels"
+            :key="label.description"
+          >
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
                 <template #label> Label Description </template>
@@ -219,7 +231,10 @@
         </div>
 
         <div class="input-group" style="margin-top: 1em">
-          <div v-for="(schema, schema_index) in data_item.schema" :key="schema">
+          <div
+            v-for="(schema, schema_index) in data_item.schema"
+            :key="schema.name"
+          >
             <h3 class="no-margin-section-header">
               Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
             </h3>
@@ -441,7 +456,7 @@
   </NuxtLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const path = ref([
   {
     href: "/",
@@ -570,24 +585,32 @@ function submit() {
   console.log(useRoute().query.namespace);
 }
 
-function descriptorUpload(descriptorName) {
-  if (event.target.files[0]) {
-    const file = event.target.files[0];
+function descriptorUpload(event: Event, descriptorName: string) {
+  const target = event.target as HTMLInputElement;
+  const file = target.files![0];
+  if (file !== null) {
     const reader = new FileReader();
-    reader.onload = (res) => {
+    reader.onload = (inputFile) => {
       try {
-        const document = JSON.parse(res.target.result);
+        const document = JSON.parse((inputFile.target!.result as string) ?? "");
         if (descriptorName === "System Context") {
-          document.goals.forEach((goal, i) => {
-            addGoal();
-            const lastGoalIndex = form.value.system.goals.length - 1;
+          document.goals.forEach(
+            (goal: {
+              id: string;
+              goal: string;
+              metric: string;
+              baseline: string;
+            }) => {
+              addGoal();
+              const lastGoalIndex = form.value.system.goals.length - 1;
 
-            form.value.system.goals[lastGoalIndex].description = goal.goal;
-            form.value.system.goals[lastGoalIndex].metrics[0].description =
-              goal.metric;
-            form.value.system.goals[lastGoalIndex].metrics[0].baseline =
-              goal.baseline;
-          });
+              form.value.system.goals[lastGoalIndex].description = goal.goal;
+              form.value.system.goals[lastGoalIndex].metrics[0].description =
+                goal.metric;
+              form.value.system.goals[lastGoalIndex].metrics[0].baseline =
+                goal.baseline;
+            },
+          );
           form.value.system.task = document.task;
           form.value.system.problem_type = document.ml_problem_type.ml_problem;
           form.value.system.usage_context = document.usage_context;
@@ -599,44 +622,64 @@ function descriptorUpload(descriptorName) {
           const lastDataIndex = form.value.data.length - 1;
 
           let dataSourcesStr = "";
-          document.data_sources.forEach((source, i) => {
-            if (source.data_source === "Other") {
-              dataSourcesStr += source.other_source;
-            } else {
-              dataSourcesStr += source.data_source;
-            }
+          document.data_sources.forEach(
+            (
+              source: { data_source: string; other_source: string },
+              i: number,
+            ) => {
+              if (source.data_source === "Other") {
+                dataSourcesStr += source.other_source;
+              } else {
+                dataSourcesStr += source.data_source;
+              }
 
-            if (i + 1 < document.data_sources.length) {
-              dataSourcesStr += ", ";
-            }
-          });
+              if (i + 1 < document.data_sources.length) {
+                dataSourcesStr += ", ";
+              }
+            },
+          );
           form.value.data[lastDataIndex].source = dataSourcesStr;
 
           form.value.data[lastDataIndex].labels.splice(0, 1);
-          document.labels_distribution.forEach((label, i) => {
-            addLabel(lastDataIndex);
-            form.value.data[lastDataIndex].labels[i].description = label.label;
-            form.value.data[lastDataIndex].labels[i].percentage =
-              label.percentage;
-          });
+          document.labels_distribution.forEach(
+            (label: { label: string; percentage: number }, i: number) => {
+              addLabel(lastDataIndex);
+              form.value.data[lastDataIndex].labels[i].description =
+                label.label;
+              form.value.data[lastDataIndex].labels[i].percentage =
+                label.percentage;
+            },
+          );
 
           form.value.data[lastDataIndex].rights = document.data_rights;
           form.value.data[lastDataIndex].policies = document.data_policies;
 
           form.value.data[lastDataIndex].schema.splice(0, 1);
-          document.schema.forEach((schema, i) => {
-            addSchema(lastDataIndex);
-            form.value.data[lastDataIndex].schema[i].name = schema.field_name;
-            form.value.data[lastDataIndex].schema[i].description =
-              schema.field_description;
-            form.value.data[lastDataIndex].schema[i].type = schema.field_type;
-            form.value.data[lastDataIndex].schema[i].expected_values =
-              schema.expected_values;
-            form.value.data[lastDataIndex].schema[i].missing_values =
-              schema.interpret_missing;
-            form.value.data[lastDataIndex].schema[i].special_values =
-              schema.interpret_special;
-          });
+          document.schema.forEach(
+            (
+              schema: {
+                field_name: string;
+                field_description: string;
+                field_type: string;
+                expected_values: string;
+                interpret_missing: string;
+                interpret_special: string;
+              },
+              i: number,
+            ) => {
+              addSchema(lastDataIndex);
+              form.value.data[lastDataIndex].schema[i].name = schema.field_name;
+              form.value.data[lastDataIndex].schema[i].description =
+                schema.field_description;
+              form.value.data[lastDataIndex].schema[i].type = schema.field_type;
+              form.value.data[lastDataIndex].schema[i].expected_values =
+                schema.expected_values;
+              form.value.data[lastDataIndex].schema[i].missing_values =
+                schema.interpret_missing;
+              form.value.data[lastDataIndex].schema[i].special_values =
+                schema.interpret_special;
+            },
+          );
         } else if (descriptorName === "Development Environment") {
           form.value.model.development.resources.gpus =
             document.computing_resources.gpu;
@@ -651,18 +694,38 @@ function descriptorUpload(descriptorName) {
           if (form.value.model.production.environment.output !== "") {
             outputString += "\n\n";
           }
-          document.downstream_components.forEach((component, i) => {
-            outputString +=
-              "Component Name: " + component.component_name + "\n";
-            outputString += "ML Component: " + component.ml_component + "\n";
-            component.input_spec.forEach((spec, j) => {
-              outputString += spec.item_name + "\n";
-              outputString += spec.item_description + "\n";
-              outputString += spec.item_type + "\n";
-              outputString += spec.expected_values + "\n";
-            });
-            outputString += "\n";
-          });
+          document.downstream_components.forEach(
+            (component: {
+              component_name: string;
+              input_spec: [
+                {
+                  item_name: string;
+                  item_description: string;
+                  item_type: string;
+                  expected_values: string;
+                },
+              ];
+              ml_component: boolean;
+            }) => {
+              outputString +=
+                "Component Name: " + component.component_name + "\n";
+              outputString += "ML Component: " + component.ml_component + "\n";
+              component.input_spec.forEach(
+                (spec: {
+                  item_name: string;
+                  item_description: string;
+                  item_type: string;
+                  expected_values: string;
+                }) => {
+                  outputString += spec.item_name + "\n";
+                  outputString += spec.item_description + "\n";
+                  outputString += spec.item_type + "\n";
+                  outputString += spec.expected_values + "\n";
+                },
+              );
+              outputString += "\n";
+            },
+          );
           outputString = outputString.substring(0, outputString.length - 2);
           form.value.model.production.environment.output += outputString;
         } else if (descriptorName === "Production Environment") {
@@ -686,24 +749,24 @@ function descriptorUpload(descriptorName) {
 function addGoal() {
   form.value.system.goals.push({
     description: "",
-    metrics: [{ performance_metrics: "", baseline: "" }],
+    metrics: [{ description: "", baseline: "" }],
   });
 }
 
-function deleteGoal(goalIndex) {
+function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
     form.value.system.goals.splice(goalIndex, 1);
   }
 }
 
-function addMetric(goalIndex) {
+function addMetric(goalIndex: number) {
   form.value.system.goals[goalIndex].metrics.push({
     description: "",
     baseline: "",
   });
 }
 
-function deleteMetric(goalIndex, metricIndex) {
+function deleteMetric(goalIndex: number, metricIndex: number) {
   if (confirm("Are you sure you want to delete this metric?")) {
     form.value.system.goals[goalIndex].metrics.splice(metricIndex, 1);
   }
@@ -737,26 +800,26 @@ function addDataItem() {
   });
 }
 
-function deleteDataItem(dataItemIndex) {
+function deleteDataItem(dataItemIndex: number) {
   if (confirm("Are you sure you want to delete this data item?")) {
     form.value.data.splice(dataItemIndex, 1);
   }
 }
 
-function addLabel(dataItemIndex) {
+function addLabel(dataItemIndex: number) {
   form.value.data[dataItemIndex].labels.push({
     description: "",
     percentage: 0,
   });
 }
 
-function deleteLabel(dataItemIndex, labelIndex) {
+function deleteLabel(dataItemIndex: number, labelIndex: number) {
   if (confirm("Are you sure you want to delete this label?")) {
     form.value.data[dataItemIndex].labels.splice(labelIndex, 1);
   }
 }
 
-function addSchema(dataItemIndex) {
+function addSchema(dataItemIndex: number) {
   form.value.data[dataItemIndex].schema.push({
     name: "",
     description: "",
@@ -767,7 +830,7 @@ function addSchema(dataItemIndex) {
   });
 }
 
-function deleteSchema(dataItemIndex, fieldIndex) {
+function deleteSchema(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
     form.value.data[dataItemIndex].schema.splice(fieldIndex, 1);
   }

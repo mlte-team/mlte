@@ -36,3 +36,10 @@ We format and lint all .vue, .js, and .ts files in this project with the [`ESLin
 ```bash
 $ npm run lint
 ```
+
+## Static Type Checking
+All typescript code takes advantage of static typing. This type checking can be done by running
+
+```bash
+$ npx vue-tsc
+```
