@@ -11,8 +11,11 @@ from collections.abc import Generator
 
 from mlte.context.model import (
     Namespace,
+    NamespaceCreate,
     Model,
+    ModelCreate,
     Version,
+    VersionCreate,
 )
 from mlte.negotiation.model import NegotiationCardModel
 
@@ -88,29 +91,31 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def create_namespace(self, namespace: Namespace) -> None:
+    def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
         """
         Create a MLTE namespace.
-        :param namespace: The namespace model
+        :param namespace: The namespace create model
+        :return: The created namespace
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def read_namespace(self, namespace_id: str) -> list[Model]:
+    def read_namespace(self, namespace_id: str) -> Namespace:
         """
         Read a MLTE namespace.
         :param namespace_id: The identifier for the namespace
-        :return: A collection of the models in the namespace
+        :return: The namespace model
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def delete_namespace(self, namespace_id: str) -> None:
+    def delete_namespace(self, namespace_id: str) -> Namespace:
         """
         Delete a MLTE namespace.
         :param namespace_id: The identifier for the namespace
+        :return: The deleted namespace
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
@@ -125,45 +130,48 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def create_model(self, namespace_id: str, model: Model) -> None:
+    def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
         """
         Create a MLTE model.
         :param namespace_id: The identifier for the namespace
-        :param model: The model model
+        :param model: The model create model
+        :return: The created model
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def read_model(self, namespace_id: str, model_id: str) -> list[Version]:
+    def read_model(self, namespace_id: str, model_id: str) -> Model:
         """
         Read a MLTE model.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
-        :return: A collection of the versions in the namespace
+        :return: The model model
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def delete_model(self, namespace_id: str, model_id: str) -> None:
+    def delete_model(self, namespace_id: str, model_id: str) -> Model:
         """
         Delete a MLTE model.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
+        :return: The deleted model
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
     def create_version(
-        self, namespace_id: str, model_id: str, version: Version
-    ) -> None:
+        self, namespace_id: str, model_id: str, version: VersionCreate
+    ) -> Version:
         """
         Create a MLTE model version.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
-        :param version: The version
+        :param version: The version create model
+        :return: The created version
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
@@ -177,20 +185,21 @@ class StoreSession:
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
+        :return: The version model
         """
-        # TODO(Kyle): What should this operation represent?
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
     def delete_version(
         self, namespace_id: str, model_id: str, version_id: str
-    ) -> None:
+    ) -> Version:
         """
         Delete a MLTE model version.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
+        :return: The deleted version
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."

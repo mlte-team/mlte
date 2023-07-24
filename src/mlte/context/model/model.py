@@ -7,11 +7,29 @@ Model implementation for MLTE context information.
 from mlte.model import BaseModel
 
 
-class Namespace(BaseModel):
-    """Model implementation for MLTE namespace."""
+class VersionCreate(BaseModel):
+    """The model that defines the data necessary to create a MLTE version."""
 
     identifier: str
-    """The name of the namespace."""
+    """The identifier for the version."""
+
+
+class Version(BaseModel):
+    """Model implementation for MLTE model version."""
+
+    identifier: str
+    """The identifier for the model version."""
+
+    # TODO(Kyle): In the future, we may implement new endpoints
+    # that allow one to GET /version to get all artifacts associated
+    # with a (namespace, model, version) triple
+
+
+class ModelCreate(BaseModel):
+    """The model that defines the data necessary to create a MLTE model."""
+
+    identifier: str
+    """The identifier for the model."""
 
 
 class Model(BaseModel):
@@ -20,9 +38,22 @@ class Model(BaseModel):
     identifier: str
     """The identifier for the model."""
 
+    versions: list[Version]
+    """A collection of the model versions."""
 
-class Version(BaseModel):
-    """Model implementation for MLTE model version."""
+
+class NamespaceCreate(BaseModel):
+    """The model that defines the data necessary to create a MLTE namespace."""
 
     identifier: str
-    """The identifier for the model version."""
+    """The identifier for the namespace."""
+
+
+class Namespace(BaseModel):
+    """Model implementation for MLTE namespace."""
+
+    identifier: str
+    """The name of the namespace."""
+
+    models: list[Model]
+    """"A collection of the namespace models."""

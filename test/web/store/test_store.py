@@ -38,6 +38,7 @@ def test_namespace(mem_client: TestClient) -> None:
     deserialized = Namespace.from_json(res.json())
     assert deserialized == ns
 
+
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------

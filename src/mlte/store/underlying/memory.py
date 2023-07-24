@@ -6,9 +6,17 @@ Implementation of in-memory artifact store.
 
 from contextlib import contextmanager
 from collections.abc import Generator
+from typing import Any, Iterable, Callable, Optional
 
 from mlte.store.store import Store, StoreSession, StoreURI
-from mlte.context.model import Namespace, Model, Version
+from mlte.context.model import (
+    Namespace,
+    Model,
+    Version,
+    NamespaceCreate,
+    ModelCreate,
+    VersionCreate,
+)
 from mlte.negotiation.model import NegotiationCardModel
 
 import mlte.store.error as errors
@@ -21,9 +29,9 @@ import mlte.store.error as errors
 class VersionWithArtifacts:
     """A structure that combines a version with the artifacts it contains."""
 
-    def __init__(self, *, version: Version) -> None:
-        self.version = version
-        """The version object."""
+    def __init__(self, *, identifier: str) -> None:
+        self.identifier = identifier
+        """The version identifier."""
 
         self.negotiation_cards: dict[str, NegotiationCardModel] = {}
         """The negotiation card models associated with the version."""
@@ -32,9 +40,9 @@ class VersionWithArtifacts:
 class ModelWithVersions:
     """A structure that combines a model with the versions it contains."""
 
-    def __init__(self, *, model: Model) -> None:
-        self.model = model
-        """The model object."""
+    def __init__(self, *, identifier: str) -> None:
+        self.identifier = identifier
+        """The model identifier."""
 
         self.versions: dict[str, VersionWithArtifacts] = {}
         """The collection of versions in the namespace."""
@@ -43,12 +51,19 @@ class ModelWithVersions:
 class NamespaceWithModels:
     """A structure that combines a namespace with the models it contains."""
 
-    def __init__(self, *, namespace: Namespace) -> None:
-        self.namespace = namespace
-        """The namespace object."""
+    def __init__(self, *, identifier: str) -> None:
+        self.identifier = identifier
+        """The namespace identifier."""
 
         self.models: dict[str, ModelWithVersions] = {}
         """The collection of models in the namespace."""
+
+
+class Storage:
+    """A simple storage wrapper for the in-memory store."""
+
+    def __init__(self) -> None:
+        self.namespaces: dict[str, NamespaceWithModels] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -59,7 +74,7 @@ class NamespaceWithModels:
 class InMemoryStoreSession(StoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
-    def __init__(self, *, storage: dict[str, NamespaceWithModels]) -> None:
+    def __init__(self, *, storage: Storage) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -72,66 +87,71 @@ class InMemoryStoreSession(StoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_namespace(self, namespace: Namespace) -> None:
-        if namespace.identifier in self.storage:
+    def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
+        if namespace.identifier in self.storage.namespaces:
             raise errors.ErrorAlreadyExists(f"Namespace {namespace.identifier}")
-
-        self.storage[namespace.identifier] = NamespaceWithModels(
-            namespace=namespace
+        self.storage.namespaces[namespace.identifier] = NamespaceWithModels(
+            identifier=namespace.identifier
         )
+        return Namespace(identifier=namespace.identifier, models=[])
 
-    def read_namespace(self, namespace_id: str) -> list[Model]:
-        if namespace_id not in self.storage:
+    def read_namespace(self, namespace_id: str) -> Namespace:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
-        return [
-            item.model for item in self.storage[namespace_id].models.values()
-        ]
+        return self._read_namespace(namespace_id)
 
-    def delete_namespace(self, namespace_id: str) -> None:
-        if namespace_id not in self.storage:
+    def delete_namespace(self, namespace_id: str) -> Namespace:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
-        del self.storage[namespace_id]
+
+        popped = self._read_namespace(namespace_id)
+        del self.storage.namespaces[namespace_id]
+        return popped
 
     def list_namespaces(self) -> list[str]:
-        return [namespace_id for namespace_id in self.storage.keys()]
+        return [ns_id for ns_id in self.storage.namespaces.keys()]
 
-    def create_model(self, namespace_id: str, model: Model) -> None:
-        if namespace_id not in self.storage:
+    def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model.identifier in namespace.models:
             raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
 
-        namespace.models[model.identifier] = ModelWithVersions(model=model)
+        namespace.models[model.identifier] = ModelWithVersions(
+            identifier=model.identifier
+        )
+        return Model(identifier=model.identifier, versions=[])
 
-    def read_model(self, namespace_id: str, model_id: str) -> list[Version]:
-        if namespace_id not in self.storage:
+    def read_model(self, namespace_id: str, model_id: str) -> Model:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
-
-        return [v.version for v in namespace.models[model_id].versions.values()]
+        return self._read_model(namespace_id, model_id)
 
     def delete_model(self, namespace_id: str, model_id: str) -> None:
-        if namespace_id not in self.storage:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
+        popped = self._read_model(namespace_id, model_id)
         del namespace.models[model_id]
+        return popped
 
     def create_version(
-        self, namespace_id: str, model_id: str, version: Version
-    ) -> None:
-        if namespace_id not in self.storage:
+        self, namespace_id: str, model_id: str, version: VersionCreate
+    ) -> Version:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -140,16 +160,17 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
 
         model.versions[version.identifier] = VersionWithArtifacts(
-            version=version
+            identifier=version.identifier
         )
+        return Version(identifier=version.identifier)
 
     def read_version(
         self, namespace_id: str, model_id: str, version_id: str
     ) -> Version:
-        if namespace_id not in self.storage:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -157,15 +178,15 @@ class InMemoryStoreSession(StoreSession):
         if version_id not in model.versions:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
-        return model.versions[version_id].version
+        return self._read_version(namespace_id, model_id, version_id)
 
     def delete_version(
         self, namespace_id: str, model_id: str, version_id: str
-    ) -> None:
-        if namespace_id not in self.storage:
+    ) -> Version:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -173,7 +194,70 @@ class InMemoryStoreSession(StoreSession):
         if version_id not in model.versions:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
+        popped = self._read_version(namespace_id, model_id, version_id)
         del model.versions[version_id]
+        return popped
+
+    def _read_namespace(self, namespace_id: str) -> Namespace:
+        """
+        Lazily construct a Namespace object on read.
+        :param namespace_id: The namespace identifer
+        :return: The Namespace object
+        """
+        assert namespace_id in self.storage.namespaces, "Broken precondition."
+        return Namespace(
+            identifier=namespace_id,
+            models=[
+                self._read_model(id)
+                for id in self.storage.namespaces[namespace_id].models.keys()
+            ],
+        )
+
+    def _read_model(self, namespace_id: str, model_id: str) -> Model:
+        """
+        Lazily construct a Model object on read.
+        :param namespace_id: The namespace identifier
+        :param model_id: The model identifier
+        :return: The model object
+        """
+        assert namespace_id in self.storage.namespaces, "Broken precondition."
+        assert (
+            model_id in self.storage.namespaces[namespace_id].models
+        ), "Broken precondition."
+        return Model(
+            identifier=model_id,
+            versions=[
+                self._read_version(id)
+                for id in self.storage.namespaces[namespace_id]
+                .models[model_id]
+                .versions.keys()
+            ],
+        )
+
+    def _read_version(
+        self, namespace_id: str, model_id: str, version_id: str
+    ) -> Version:
+        """
+        Lazily construct a Version object on read.
+        :param namespace_id: The namespace identifier
+        :param model_id: The model identifier
+        :param version_id: The version identifier
+        :return: The version object
+        """
+        assert namespace_id in self.storage.namespaces, "Broken precondition."
+        assert (
+            model_id in self.storage.namespaces[namespace_id].models
+        ), "Broken precondition."
+        assert (
+            version_id
+            in self.storage.namespaces[namespace_id].models[model_id].versions
+        ), "Broken precondition."
+        return Version(
+            identifier=self.storage.namespaces[namespace_id]
+            .models[model_id]
+            .versions[version_id]
+            .identifier
+        )
 
     # -------------------------------------------------------------------------
     # Negotiation Card
@@ -237,10 +321,10 @@ class InMemoryStoreSession(StoreSession):
         :raises ErrorNotFound: If the required structural elements are not present
         :return: The version with associated artifacts
         """
-        if namespace_id not in self.storage:
+        if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
-        namespace = self.storage[namespace_id]
+        namespace = self.storage.namespaces[namespace_id]
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -257,7 +341,7 @@ class InMemoryStore(Store):
     def __init__(self, uri: StoreURI) -> None:
         super().__init__(uri=uri)
 
-        self.storage: dict[str, NamespaceWithModels] = {}
+        self.storage = Storage()
         """The underlying storage for the store."""
 
     @contextmanager
@@ -271,3 +355,20 @@ class InMemoryStore(Store):
             yield session
         finally:
             session.close()
+
+
+def _find_if(
+    collection: Iterable[Any], f: Callable[[Any], bool]
+) -> tuple[int, Optional[Any]]:
+    """
+    Determine if an element is present in a collection.
+    :param collection: The collection
+    :param f: The predicate
+    :return:
+        If found: (index, value)
+        Else:     (-1, None)
+    """
+    for index, element in enumerate(collection):
+        if f(element):
+            return index, f
+    return -1, None

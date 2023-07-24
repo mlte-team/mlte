@@ -8,7 +8,7 @@ import pytest
 
 import mlte.store.error as errors
 from mlte.artifact import ArtifactType
-from mlte.context.model import Model, Namespace, Version
+from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.model import (
     NegotiationCardBodyModel,
     NegotiationCardHeaderModel,
@@ -34,7 +34,7 @@ def test_namespace(store: InMemoryStore) -> None:
     namespace_id = "namespace"
 
     with store.session() as handle:
-        handle.create_namespace(Namespace(identifier=namespace_id))
+        _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
 
     with store.session() as handle:
         _ = handle.read_namespace(namespace_id)
@@ -44,7 +44,7 @@ def test_namespace(store: InMemoryStore) -> None:
         assert len(ids) == 1
 
     with store.session() as handle:
-        handle.delete_namespace(namespace_id)
+        _ = handle.delete_namespace(namespace_id)
 
     with store.session() as handle:
         with pytest.raises(errors.ErrorNotFound):
@@ -61,10 +61,10 @@ def test_model(store: InMemoryStore) -> None:
     model_id = "model"
 
     with store.session() as handle:
-        handle.create_namespace(Namespace(identifier=namespace_id))
+        _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
 
     with store.session() as handle:
-        handle.create_model(namespace_id, Model(identifier=model_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
 
     with store.session() as handle:
         _ = handle.read_model(namespace_id, model_id)
@@ -84,12 +84,12 @@ def test_version(store: InMemoryStore) -> None:
     version_id = "version"
 
     with store.session() as handle:
-        handle.create_namespace(Namespace(identifier=namespace_id))
-        handle.create_model(namespace_id, Model(identifier=model_id))
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
 
     with store.session() as handle:
         handle.create_version(
-            namespace_id, model_id, Version(identifier=version_id)
+            namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
     with store.session() as handle:
@@ -111,10 +111,10 @@ def test_negotiation_card(store: InMemoryStore) -> None:
     version_id = "version"
 
     with store.session() as handle:
-        handle.create_namespace(Namespace(identifier=namespace_id))
-        handle.create_model(namespace_id, Model(identifier=model_id))
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
         handle.create_version(
-            namespace_id, model_id, Version(identifier=version_id)
+            namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
     card = NegotiationCardModel(
