@@ -288,3 +288,17 @@ class Store:
         :return: The session handle
         """
         raise NotImplementedError("Cannot get handle to abstract Store.")
+
+
+class ManagedSession:
+    """A simple context manager for store sessions."""
+
+    def __init__(self, session: StoreSession) -> None:
+        self.session = session
+        """The wrapped session."""
+
+    def __enter__(self) -> StoreSession:
+        return self.session
+
+    def __exit__(self, exc_type, exc_value, exc_tb) -> None:
+        self.session.close()
