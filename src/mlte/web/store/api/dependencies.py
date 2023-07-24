@@ -12,13 +12,21 @@ this in favor of slightly more brittle but eminently more workable
 solution that involves manual context management with a global state object.
 """
 
+from collections.abc import Generator
+from contextlib import contextmanager
+
 from mlte.store.store import StoreSession
 from mlte.web.store.state import state
 
 
-def session() -> StoreSession:
+@contextmanager
+def session() -> Generator[StoreSession, None, None]:
     """
     Get a handle to underlying store session.
     :return: The session handle
     """
-    return state.store.session()
+    session = state.store.session()
+    try:
+        yield session
+    finally:
+        session.close()

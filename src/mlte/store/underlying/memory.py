@@ -4,10 +4,6 @@ mlte/store/underlying/memory.py
 Implementation of in-memory artifact store.
 """
 
-from contextlib import contextmanager
-from collections.abc import Generator
-from typing import Any, Iterable, Callable, Optional
-
 from mlte.store.store import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
@@ -133,7 +129,7 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
         return self._read_model(namespace_id, model_id)
 
-    def delete_model(self, namespace_id: str, model_id: str) -> None:
+    def delete_model(self, namespace_id: str, model_id: str) -> Model:
         if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
@@ -208,7 +204,7 @@ class InMemoryStoreSession(StoreSession):
         return Namespace(
             identifier=namespace_id,
             models=[
-                self._read_model(id)
+                self._read_model(namespace_id, id)
                 for id in self.storage.namespaces[namespace_id].models.keys()
             ],
         )
@@ -227,7 +223,7 @@ class InMemoryStoreSession(StoreSession):
         return Model(
             identifier=model_id,
             versions=[
-                self._read_version(id)
+                self._read_version(namespace_id, model_id, id)
                 for id in self.storage.namespaces[namespace_id]
                 .models[model_id]
                 .versions.keys()
@@ -269,7 +265,7 @@ class InMemoryStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         artifact: NegotiationCardModel,
-    ) -> None:
+    ) -> NegotiationCardModel:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
@@ -279,6 +275,7 @@ class InMemoryStoreSession(StoreSession):
                 f"NegotiationCard '{artifact.header.identifier}'"
             )
         version.negotiation_cards[artifact.header.identifier] = artifact
+        return artifact
 
     def read_negotiation_card(
         self,
@@ -301,14 +298,16 @@ class InMemoryStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> None:
+    ) -> NegotiationCardModel:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
 
         if artifact_id not in version.negotiation_cards:
             raise errors.ErrorNotFound(f"NegotiationCard '{artifact_id}'")
+        artifact = version.negotiation_cards[artifact_id]
         del version.negotiation_cards[artifact_id]
+        return artifact
 
     def _get_version_with_artifacts(
         self, namespace_id: str, model_id: str, version_id: str
@@ -344,31 +343,9 @@ class InMemoryStore(Store):
         self.storage = Storage()
         """The underlying storage for the store."""
 
-    @contextmanager
-    def session(self) -> Generator[InMemoryStoreSession, None, None]:  # type: ignore[override]
+    def session(self) -> InMemoryStoreSession:  # type: ignore[override]
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        session = InMemoryStoreSession(storage=self.storage)
-        try:
-            yield session
-        finally:
-            session.close()
-
-
-def _find_if(
-    collection: Iterable[Any], f: Callable[[Any], bool]
-) -> tuple[int, Optional[Any]]:
-    """
-    Determine if an element is present in a collection.
-    :param collection: The collection
-    :param f: The predicate
-    :return:
-        If found: (index, value)
-        Else:     (-1, None)
-    """
-    for index, element in enumerate(collection):
-        if f(element):
-            return index, f
-    return -1, None
+        return InMemoryStoreSession(storage=self.storage)

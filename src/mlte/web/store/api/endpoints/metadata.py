@@ -7,7 +7,14 @@ Endpoints for artifact organization.
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
-from mlte.context.model import Model, Namespace, Version
+from mlte.context.model import (
+    Model,
+    ModelCreate,
+    Namespace,
+    NamespaceCreate,
+    Version,
+    VersionCreate,
+)
 from mlte.web.store.api import dependencies
 
 # The router exported by this submodule
@@ -21,13 +28,15 @@ CODE_ALREADY_EXISTS = 409
 
 
 @router.post("/namespace")
-def create_namespace(namespace: Namespace) -> None:
+def create_namespace(namespace: NamespaceCreate) -> Namespace:
     """
     Create a MLTE namespace.
+    :param namespace: The namespace create model
+    :return: The created namespace
     """
     with dependencies.session() as handle:
         try:
-            handle.create_namespace(namespace)
+            return handle.create_namespace(namespace)
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
@@ -38,16 +47,16 @@ def create_namespace(namespace: Namespace) -> None:
             )
 
 
-@router.get("/namespace/{id}")
-def read_namespace(*, id: str) -> list[Model]:
+@router.get("/namespace/{namespace_id}")
+def read_namespace(*, namespace_id: str) -> Namespace:
     """
     Read a MLTE namespace.
-    :param id: The namespace identifier
+    :param namespace_id: The namespace identifier
     :return: A collection of the models in the namespace
     """
     with dependencies.session() as handle:
         try:
-            models = handle.read_namespace(id)
+            return handle.read_namespace(namespace_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=CODE_NOT_FOUND, detail=f"{e} not found."
@@ -56,8 +65,6 @@ def read_namespace(*, id: str) -> list[Model]:
             raise HTTPException(
                 status_code=500, detail="Internal server error."
             )
-
-    return models
 
 
 @router.get("/namespace")
@@ -68,7 +75,7 @@ def list_namespaces() -> list[str]:
     """
     with dependencies.session() as handle:
         try:
-            ids = handle.list_namespaces()
+            return handle.list_namespaces()
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
@@ -77,18 +84,158 @@ def list_namespaces() -> list[str]:
             raise HTTPException(
                 status_code=500, detail="Internal server error."
             )
-    return ids
 
 
-@router.delete("/namespace/{id}")
-def delete_namespace(*, id: str) -> None:
+@router.delete("/namespace/{namespace_id}")
+def delete_namespace(*, namespace_id: str) -> Namespace:
     """
     Delete a MLTE namespace.
-    :param id: The namespace identifier
+    :param namespace_id: The namespace identifier
     """
     with dependencies.session() as handle:
         try:
-            handle.delete_namespace(id)
+            return handle.delete_namespace(namespace_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.post("/namespace/{namespace_id}/model")
+def create_model(*, namespace_id: str, model: ModelCreate) -> Model:
+    """
+    Create a MLTE model.
+    :param namespace_id: The namespace identifier
+    :param model: The model create model
+    :return: The created model
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.create_model(namespace_id, model)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except errors.ErrorAlreadyExists as e:
+            raise HTTPException(
+                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.get("/namespace/{namespace_id}/model/{model_id}")
+def read_model(*, namespace_id: str, model_id: str) -> Model:
+    """
+    Read a MLTE model.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :return: The read model
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.read_model(namespace_id, model_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.delete("/namespace/{namespace_id}/model/{model_id}")
+def delete_model(*, namespace_id: str, model_id: str) -> Model:
+    """
+    Delete a MLTE model.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :return: The deleted model
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.delete_model(namespace_id, model_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.post("/namespace/{namespace_id}/model/{model_id}/version")
+def create_version(
+    *, namespace_id: str, model_id: str, version: VersionCreate
+) -> Version:
+    """
+    Create a MLTE version.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :param version: The version create model
+    :return: The created version
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.create_version(namespace_id, model_id, version)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except errors.ErrorAlreadyExists as e:
+            raise HTTPException(
+                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.get("/namespace/{namespace_id}/model/{model_id}/version/{version_id}")
+def read_version(*, namespace_id: str, model_id: str, version_id) -> Version:
+    """
+    Read a MLTE version.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :param version_id: The version identifier
+    :return: The read version
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.read_version(namespace_id, model_id, version_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.delete(
+    "/namespace/{namespace_id}/model/{model_id}/version/{version_id}"
+)
+def delete_version(*, namespace_id: str, model_id: str, version_id) -> Version:
+    """
+    Delete a MLTE version.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :param version_id: The version identifier
+    :return: The deleted version
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.delete_version(namespace_id, model_id, version_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=CODE_NOT_FOUND, detail=f"{e} not found."

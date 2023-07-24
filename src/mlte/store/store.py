@@ -7,7 +7,6 @@ MLTE artifact store interface implementation.
 from __future__ import annotations
 
 from enum import Enum
-from collections.abc import Generator
 
 from mlte.context.model import (
     Namespace,
@@ -211,7 +210,7 @@ class StoreSession:
         model_id: str,
         version_id: str,
         artifact: NegotiationCardModel,
-    ) -> None:
+    ) -> NegotiationCardModel:
         """
         Create a negotiation card artifact.
         :param namespace_id: The identifier for the namespace
@@ -248,7 +247,7 @@ class StoreSession:
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> None:
+    ) -> NegotiationCardModel:
         """
         Delete a negotiation card artifact.
         :param namespace_id: The identifier for the namespace
@@ -283,7 +282,7 @@ class Store:
         self.uri = uri
         """The parsed artifact store URI."""
 
-    def session(self) -> Generator[StoreSession, None, None]:
+    def session(self) -> StoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
