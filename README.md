@@ -1,5 +1,7 @@
 ## `mlte`: Machine Learning Test and Evaluation
 
+<img src="https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg" alt="mlte_logo" width="150"/>
+
 `mlte` (pronounced "melt") is a toolkit for machine learning testing and evaluation.
 
 [![Tests](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml)

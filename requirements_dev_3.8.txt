@@ -210,6 +210,8 @@ virtualenv==20.19.0
     # via tox
 webencodings==0.5.1
     # via bleach
+werkzeug==2.2.3
+    # via flask
 zipp==3.13.0
     # via
     #   importlib-metadata

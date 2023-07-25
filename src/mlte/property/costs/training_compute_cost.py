@@ -30,7 +30,3 @@ class TrainingComputeCost(Property):
             ),
             rationale,
         )
-
-    def __repr__(self) -> str:
-        """Return the representation needed to reconstruct the object."""
-        return f"{self.name}()"

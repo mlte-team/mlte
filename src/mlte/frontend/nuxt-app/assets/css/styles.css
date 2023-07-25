@@ -1,0 +1,54 @@
+.section-header {
+    color: #d8ac16;
+}
+
+.no-margin-section-header {
+    margin-bottom: 0px;
+}
+
+.input-group {
+    border: 1px solid gray;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
+}
+
+.inline-input-left {
+    display: inline-block;
+    margin-right: 1em;
+    width: 29ch;
+}
+
+.inline-input-right {
+    display: inline-block;
+    width: 29ch;
+}
+
+.primary-button {   
+    background-color: #d8ac16 !important;
+    color: black !important;
+}
+
+.secondary-button {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px #d8ac16 !important;
+    color: black !important;
+}
+
+.inline-button {
+    display: inline-block;
+    padding-left: 1em;
+}
+
+.margin-button {
+    margin-top: 1em !important;
+    margin-right: 1em !important; 
+}
+
+.inline-icon {
+    vertical-align: middle;
+}
+
+hr {
+    margin-top: 1em;
+}
