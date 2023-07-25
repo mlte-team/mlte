@@ -51,7 +51,9 @@ class EvidenceMetadata:
                 "Cannot deserialize EvidenceMetadata, missing key 'measurement_type'."
             )
 
-        additional_info: Optional[str] = json["additional_info"] if "additional_info" in json else None
+        additional_info: Optional[str] = (
+            json["additional_info"] if "additional_info" in json else None
+        )
 
         metadata = EvidenceMetadata(
             measurement_type=json["measurement_type"],
