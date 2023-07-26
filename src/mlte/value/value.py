@@ -73,11 +73,10 @@ class Value(metaclass=abc.ABCMeta):
         :type tag: str
         """
         sesh = session()
-        sesh.assert_populated()
 
         # Use API to save to artifact store
         write_value(
-            sesh.context.uri,
+            sesh.store.uri.uri,
             sesh.context.model,
             sesh.context.version,
             self.metadata.identifier.name,
@@ -106,11 +105,10 @@ class Value(metaclass=abc.ABCMeta):
         :rtype: Value
         """
         sesh = session()
-        sesh.assert_populated()
 
         # Use API to load from artifact store
         json = read_value(
-            sesh.context.uri,
+            sesh.store.uri.uri,
             sesh.context.model,
             sesh.context.version,
             identifier,

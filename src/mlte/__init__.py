@@ -1,3 +1,3 @@
-from mlte.session import set_namespace, set_model, set_version, set_uri
+from mlte.session import set_context, set_store
 
-__all__ = ["set_namespace", "set_model", "set_version", "set_uri"]
+__all__ = ["set_context", "set_store"]

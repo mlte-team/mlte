@@ -1,17 +1,3 @@
-from .session import (
-    session,
-    Session,
-    set_namespace,
-    set_model,
-    set_version,
-    set_uri,
-)
+from .session import session, Session, set_context, set_store
 
-__all__ = [
-    "session",
-    "Session",
-    "set_namespace",
-    "set_model",
-    "set_version",
-    "set_uri",
-]
+__all__ = ["session", "Session", "set_context", "set_store"]

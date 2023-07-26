@@ -4,7 +4,11 @@ mlte/session/session.py
 Session state management for the MLTE library.
 """
 
+from typing import Optional
+
 from mlte.context import Context
+from mlte.store import Store
+from mlte.store.factory import create_store
 
 
 class Session:
@@ -23,15 +27,31 @@ class Session:
         return self._instance
 
     def __init__(self):
-        self.context = Context()
+        self._context: Optional[Context] = None
         """The MLTE context for the session."""
 
-    def assert_populated(self):
-        """
-        Determine if the global MLTE context is initialized. Raise if not.
-        :raises RuntimeError: If the global MLTE context instance is not initialized
-        """
-        self.context.assert_populated()
+        self._store: Optional[Store] = None
+        """The MLTE store instance for the session."""
+
+    @property
+    def context(self) -> Context:
+        if self._context is None:
+            raise RuntimeError("Must initialize MLTE context for session.")
+        return self._context
+
+    @property
+    def store(self) -> Store:
+        if self._store is None:
+            raise RuntimeError("Must initialize MLTE store for session.")
+        return self._store
+
+    def _set_context(self, context: Context) -> None:
+        """Set the session context."""
+        self._context = context
+
+    def _set_store(self, store: Store) -> None:
+        """Set the session store."""
+        self._store = store
 
 
 # Singleton session state
@@ -43,33 +63,21 @@ def session() -> Session:
     return g_session
 
 
-def set_namespace(namespace_identifier: str):
+def set_context(namespace_id: str, model_id: str, version_id: str):
     """
-    Set the global MLTE context namespace.
-    :param namespace_identifier: The namespace identifier
+    Set the global MLTE context.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :param version_id: The version identifier
     """
-    g_session.context.namespace = namespace_identifier
+    global g_session
+    g_session._set_context(Context(namespace_id, model_id, version_id))
 
 
-def set_model(model_identifier: str):
-    """
-    Set the global MLTE context model identifier.
-    :param model_identifier: The model identifier
-    """
-    g_session.context.model = model_identifier
-
-
-def set_version(version_identifier: str):
-    """
-    Set the global MLTE context model version identifier.
-    :param version_identifier: The model version identifier
-    """
-    g_session.context.version = version_identifier
-
-
-def set_uri(artifact_store_uri: str):
+def set_store(artifact_store_uri: str):
     """
     Set the global MLTE context artifact store URI.
     :param artifact_store_uri: The artifact store URI string
     """
-    g_session.context.uri = artifact_store_uri
+    global g_session
+    g_session._set_store(create_store(artifact_store_uri))

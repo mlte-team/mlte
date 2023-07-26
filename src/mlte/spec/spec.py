@@ -119,11 +119,10 @@ class Spec:
     def save(self):
         """Persist the specification to artifact store."""
         sesh = session()
-        sesh.assert_populated()
 
         # Write spec to store
         write_spec(
-            sesh.context.uri,
+            sesh.store.uri.uri,
             sesh.context.model,
             sesh.context.version,
             self.to_json(),
@@ -141,10 +140,9 @@ class Spec:
         :rtype: Spec
         """
         sesh = session()
-        sesh.assert_populated()
 
         document = read_spec(
-            sesh.context.uri, sesh.context.model, sesh.context.version
+            sesh.store.uri.uri, sesh.context.model, sesh.context.version
         )
         return Spec.from_json(json=document)
 
@@ -194,7 +192,6 @@ class Spec:
         :rtype: dict[str, Any]
         """
         sesh = session()
-        sesh.assert_populated()
         return {
             "model_identifier": sesh.context.model,
             "model_version": sesh.context.version,

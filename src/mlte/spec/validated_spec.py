@@ -49,10 +49,9 @@ class ValidatedSpec:
     def save(self):
         """Save ValidatedSpec instance to artifact store."""
         sesh = session()
-        sesh.assert_populated()
 
         write_validatedspec(
-            sesh.context.uri,
+            sesh.store.uri.uri,
             sesh.context.model,
             sesh.context.version,
             self.to_json(),
@@ -67,10 +66,9 @@ class ValidatedSpec:
         :rtype: ValidatedSpec
         """
         sesh = session()
-        sesh.assert_populated()
 
         document = read_validatedspec(
-            sesh.context.uri, sesh.context.model, sesh.context.version
+            sesh.store.uri.uri, sesh.context.model, sesh.context.version
         )
         return ValidatedSpec.from_json(document)
 
