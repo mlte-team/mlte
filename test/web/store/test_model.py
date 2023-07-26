@@ -12,7 +12,7 @@ from mlte.context.model import Model, ModelCreate, NamespaceCreate
 from .fixure.http import CLIENTS, mem_client  # noqa
 
 # -----------------------------------------------------------------------------
-# Tests: Namespace
+# Tests: Model
 # -----------------------------------------------------------------------------
 
 
