@@ -7,7 +7,7 @@ Test the HTTP interface for negotiation card operations.
 import pytest
 from fastapi.testclient import TestClient
 
-from mlte.artifact import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.model import (
     NegotiationCardBodyModel,

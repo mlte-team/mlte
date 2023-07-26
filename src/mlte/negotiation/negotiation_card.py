@@ -10,7 +10,8 @@ import typing
 from typing import Literal
 
 import mlte.negotiation.model as model
-from mlte.artifact import Artifact, ArtifactType
+from mlte.artifact.artifact import Artifact
+from mlte.artifact.type import ArtifactType
 
 
 class NegotiationCard(Artifact):

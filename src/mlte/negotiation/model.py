@@ -1,5 +1,5 @@
 """
-mlte/negotiation/model/model.py
+mlte/negotiation/model.py
 
 Model implementation for negotiation card artifact.
 """
@@ -9,7 +9,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal, Optional
 
-from mlte.artifact import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 
 # -----------------------------------------------------------------------------

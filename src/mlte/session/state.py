@@ -1,5 +1,5 @@
 """
-mlte/session/session.py
+mlte/session/state.py
 
 Session state management for the MLTE library.
 """
