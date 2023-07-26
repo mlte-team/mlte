@@ -1,5 +1,5 @@
 """
-test/store/test_version.py
+test/web/store/context/test_version.py
 
 Test the HTTP interface for version operations.
 """
@@ -14,7 +14,7 @@ from mlte.context.model import (
     VersionCreate,
 )
 
-from .fixure.http import CLIENTS, mem_client  # noqa
+from ..fixure.http import CLIENTS, mem_client  # noqa
 
 
 @pytest.mark.parametrize("client_fixture", CLIENTS)

@@ -1,5 +1,5 @@
 """
-test/store/test_model.py
+test/web/store/contex/test_model.py
 
 Test the HTTP interface for model operations.
 """
@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mlte.context.model import Model, ModelCreate, NamespaceCreate
 
-from .fixure.http import CLIENTS, mem_client  # noqa
+from ..fixure.http import CLIENTS, mem_client  # noqa
 
 # -----------------------------------------------------------------------------
 # Tests: Model

@@ -11,7 +11,7 @@ from enum import Enum
 from mlte.model import BaseModel
 
 
-class ArtifactType(Enum):
+class ArtifactType(str, Enum):
     """Enumerates all supported artifact types."""
 
     NEGOTIATION_CARD = "negotiation_card"

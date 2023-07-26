@@ -1,5 +1,5 @@
 """
-test/store/test_namespace.py
+test/web/store/context/test_namespace.py
 
 Test the HTTP interface for namespace operations.
 """
@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mlte.context.model import Namespace, NamespaceCreate
 
-from .fixure.http import CLIENTS, mem_client  # noqa
+from ..fixure.http import CLIENTS, mem_client  # noqa
 
 # -----------------------------------------------------------------------------
 # Tests: Namespace

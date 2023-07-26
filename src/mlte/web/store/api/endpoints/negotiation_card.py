@@ -80,7 +80,7 @@ def read_negotiation_card(
             )
 
 
-@router.delete("/{arfiact_id}")
+@router.delete("/{artifact_id}")
 def delete_negotation_card(
     namespace_id: str, model_id: str, version_id: str, artifact_id: str
 ) -> NegotiationCardModel:
