@@ -11,7 +11,7 @@ import pytest
 from deepdiff import DeepDiff
 
 import mlte.negotiation.model as model
-from mlte.artifact import ArtifactType
+from mlte.artifact.type import ArtifactType
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel

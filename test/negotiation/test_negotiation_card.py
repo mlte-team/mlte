@@ -4,7 +4,7 @@ test/negotiation/test_negotiation_card.py
 Unit tests for negotiation card.
 """
 
-from mlte.negotiation import NegotiationCard
+from mlte.negotiation.negotiation_card import NegotiationCard
 
 
 def test_round_trip() -> None:

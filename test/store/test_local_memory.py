@@ -7,7 +7,7 @@ Unit tests for the in-memory artifact store implementation.
 import pytest
 
 import mlte.store.error as errors
-from mlte.artifact import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.model import (
     NegotiationCardBodyModel,
