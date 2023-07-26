@@ -76,9 +76,9 @@ def list_namespaces() -> list[str]:
     with dependencies.session() as handle:
         try:
             return handle.list_namespaces()
-        except errors.ErrorAlreadyExists as e:
+        except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
@@ -151,6 +151,26 @@ def read_model(*, namespace_id: str, model_id: str) -> Model:
             )
 
 
+@router.get("/namespace/{namespace_id}/model")
+def list_models(namespace_id: str) -> list[str]:
+    """
+    List MLTE models in the provided namespace.
+    :param namespace_id: The namespace identifier
+    :return: A collection of model identifiers
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.list_models(namespace_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
 @router.delete("/namespace/{namespace_id}/model/{model_id}")
 def delete_model(*, namespace_id: str, model_id: str) -> Model:
     """
@@ -212,6 +232,27 @@ def read_version(*, namespace_id: str, model_id: str, version_id) -> Version:
     with dependencies.session() as handle:
         try:
             return handle.read_version(namespace_id, model_id, version_id)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=500, detail="Internal server error."
+            )
+
+
+@router.get("/namespace/{namespace_id}/model/{model_id}/version")
+def list_versions(namespace_id: str, model_id: str) -> list[str]:
+    """
+    List MLTE versions for the provided namespace and model.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :return: A collection of version identifiers
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.list_versions(namespace_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=CODE_NOT_FOUND, detail=f"{e} not found."

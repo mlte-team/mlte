@@ -110,20 +110,20 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def delete_namespace(self, namespace_id: str) -> Namespace:
+    def list_namespaces(self) -> list[str]:
         """
-        Delete a MLTE namespace.
-        :param namespace_id: The identifier for the namespace
-        :return: The deleted namespace
+        List all MLTE namespaces.
+        :return: A collection of identifiers for all MLTE namespaces
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def list_namespaces(self) -> list[str]:
+    def delete_namespace(self, namespace_id: str) -> Namespace:
         """
-        List all MLTE namespaces.
-        :return: A collection of identifiers for all MLTE namespaces
+        Delete a MLTE namespace.
+        :param namespace_id: The identifier for the namespace
+        :return: The deleted namespace
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
@@ -151,6 +151,16 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
+    def list_models(self, namespace_id: str) -> list[str]:
+        """
+        List all MLTE models in the given namespace.
+        :param namespace_id: The identifier for the namespace
+        :return: A collection of identifiers for all MLTE models
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
     def delete_model(self, namespace_id: str, model_id: str) -> Model:
         """
         Delete a MLTE model.
@@ -171,6 +181,17 @@ class StoreSession:
         :param model_id: The identifier for the model
         :param version: The version create model
         :return: The created version
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+        """
+        List all MLTE versions in the given namespace and model.
+        :param namespace_id: the identifier for the namespace
+        :param model_id: The identifier for the model
+        :return: A collection of identifiers for all MLTE versions
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."

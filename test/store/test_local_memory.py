@@ -70,6 +70,10 @@ def test_model(store: InMemoryStore) -> None:
         _ = handle.read_model(namespace_id, model_id)
 
     with ManagedSession(store.session()) as handle:
+        models = handle.list_models(namespace_id)
+        assert len(models) == 1
+
+    with ManagedSession(store.session()) as handle:
         handle.delete_model(namespace_id, model_id)
 
     with ManagedSession(store.session()) as handle:
@@ -94,6 +98,10 @@ def test_version(store: InMemoryStore) -> None:
 
     with ManagedSession(store.session()) as handle:
         _ = handle.read_version(namespace_id, model_id, version_id)
+
+    with ManagedSession(store.session()) as handle:
+        versions = handle.list_versions(namespace_id, model_id)
+        assert len(versions) == 1
 
     with ManagedSession(store.session()) as handle:
         handle.delete_version(namespace_id, model_id, version_id)

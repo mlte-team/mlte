@@ -96,6 +96,9 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
         return self._read_namespace(namespace_id)
 
+    def list_namespaces(self) -> list[str]:
+        return [ns_id for ns_id in self.storage.namespaces.keys()]
+
     def delete_namespace(self, namespace_id: str) -> Namespace:
         if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
@@ -103,9 +106,6 @@ class InMemoryStoreSession(StoreSession):
         popped = self._read_namespace(namespace_id)
         del self.storage.namespaces[namespace_id]
         return popped
-
-    def list_namespaces(self) -> list[str]:
-        return [ns_id for ns_id in self.storage.namespaces.keys()]
 
     def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
         if namespace_id not in self.storage.namespaces:
@@ -128,6 +128,13 @@ class InMemoryStoreSession(StoreSession):
         if model_id not in namespace.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
         return self._read_model(namespace_id, model_id)
+
+    def list_models(self, namespace_id: str) -> list[str]:
+        if namespace_id not in self.storage.namespaces:
+            raise errors.ErrorNotFound(f"Namespace {namespace_id}")
+
+        namespace = self.storage.namespaces[namespace_id]
+        return [model_id for model_id in namespace.models.keys()]
 
     def delete_model(self, namespace_id: str, model_id: str) -> Model:
         if namespace_id not in self.storage.namespaces:
@@ -175,6 +182,17 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Version {version_id}")
 
         return self._read_version(namespace_id, model_id, version_id)
+
+    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+        if namespace_id not in self.storage.namespaces:
+            raise errors.ErrorNotFound(f"Namespace {namespace_id}")
+
+        namespace = self.storage.namespaces[namespace_id]
+        if model_id not in namespace.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+        model = namespace.models[model_id]
+        return [version_id for version_id in model.versions.keys()]
 
     def delete_version(
         self, namespace_id: str, model_id: str, version_id: str
