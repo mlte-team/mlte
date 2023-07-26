@@ -133,7 +133,7 @@ def test_negotiation_card(store: InMemoryStore) -> None:
     )
 
     with ManagedSession(store.session()) as handle:
-        handle.create_negotiation_card(namespace_id, model_id, version_id, card)
+        handle.write_negotiation_card(namespace_id, model_id, version_id, card)
 
     with ManagedSession(store.session()) as handle:
         _ = handle.read_negotiation_card(

@@ -9,9 +9,13 @@ from __future__ import annotations
 import typing
 from typing import Literal
 
+import deepdiff
+
 import mlte.negotiation.model as model
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
+from mlte.store.store import ManagedSession, Store
 
 
 class NegotiationCard(Artifact):
@@ -57,4 +61,45 @@ class NegotiationCard(Artifact):
             system=model.body.system,
             data=model.body.data,
             model=model.body.model,
+        )
+
+    def save_with(self, context: Context, store: Store) -> None:
+        """
+        Save an artifact with the given context and store configuration.
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        """
+        with ManagedSession(store.session()) as handle:
+            handle.write_negotiation_card(
+                context.namespace,
+                context.model,
+                context.version,
+                self.to_model(),
+            )
+
+    @staticmethod
+    def load_with(identifier: str, context: Context, store: Store) -> Artifact:
+        """
+        Load an artifact with the given context and store configuration.
+        :param identifier: The identifier for the artifact
+        :param context: The context from which to load the artifact
+        :param store: The store from which to load the artifact
+        """
+        with ManagedSession(store.session()) as handle:
+            return NegotiationCard.from_model(
+                handle.read_negotiation_card(
+                    context.namespace,
+                    context.model,
+                    context.version,
+                    identifier,
+                )
+            )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, NegotiationCard):
+            return False
+        return (
+            self.system == other.system
+            and len(deepdiff.DeepDiff(self.data, other.data)) == 0
+            and self.model == other.model
         )

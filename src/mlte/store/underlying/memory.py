@@ -277,7 +277,7 @@ class InMemoryStoreSession(StoreSession):
     # Negotiation Card
     # -------------------------------------------------------------------------
 
-    def create_negotiation_card(
+    def write_negotiation_card(
         self,
         namespace_id: str,
         model_id: str,

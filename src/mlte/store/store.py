@@ -225,7 +225,7 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def create_negotiation_card(
+    def write_negotiation_card(
         self,
         namespace_id: str,
         model_id: str,
@@ -233,7 +233,7 @@ class StoreSession:
         artifact: NegotiationCardModel,
     ) -> NegotiationCardModel:
         """
-        Create a negotiation card artifact.
+        Write a negotiation card artifact.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version

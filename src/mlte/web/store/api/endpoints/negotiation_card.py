@@ -36,7 +36,7 @@ def write_negotiation_card(
     """
     with dependencies.session() as handle:
         try:
-            return handle.create_negotiation_card(
+            return handle.write_negotiation_card(
                 namespace_id, model_id, version_id, artifact
             )
         except errors.ErrorNotFound as e:
