@@ -37,7 +37,7 @@ def test_create(
 
     version = VersionCreate(identifier="0")
 
-    res = client.post("/api/namespace/0/model/0/version", data=version.json())
+    res = client.post("/api/namespace/0/model/0/version", json=version.dict())
     assert res.status_code == 200
     _ = Version(**res.json())
 
@@ -51,7 +51,7 @@ def test_read(
     create_namespace_and_model("0", "0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post("/api/namespace/0/model/0/version", data=version.json())
+    res = client.post("/api/namespace/0/model/0/version", json=version.dict())
     assert res.status_code == 200
 
     created = Version(**res.json())
@@ -71,7 +71,7 @@ def test_list(
     create_namespace_and_model("0", "0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post("/api/namespace/0/model/0/version", data=version.json())
+    res = client.post("/api/namespace/0/model/0/version", json=version.dict())
     assert res.status_code == 200
 
     res = client.get("/api/namespace/0/model/0/version")
@@ -88,7 +88,7 @@ def test_delete(
     create_namespace_and_model("0", "0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post("/api/namespace/0/model/0/version", data=version.json())
+    res = client.post("/api/namespace/0/model/0/version", json=version.dict())
     assert res.status_code == 200
 
     res = client.get("/api/namespace/0/model/0/version")
@@ -108,12 +108,12 @@ def create_namespace_and_model(
 ) -> None:
     """Create a namespace and model with the given identifiers."""
     res = client.post(
-        "/api/namespace", data=NamespaceCreate(identifier=namespace_id).json()
+        "/api/namespace", json=NamespaceCreate(identifier=namespace_id).dict()
     )
     assert res.status_code == 200
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model",
-        data=ModelCreate(identifier=model_id).json(),
+        json=ModelCreate(identifier=model_id).dict(),
     )
     assert res.status_code == 200

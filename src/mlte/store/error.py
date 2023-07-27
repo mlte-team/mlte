@@ -15,3 +15,9 @@ class ErrorNotFound(RuntimeError):
     """An error raised when the requested entity is not found."""
 
     pass
+
+
+class InternalError(RuntimeError):
+    """A logic error in our implementation."""
+
+    pass

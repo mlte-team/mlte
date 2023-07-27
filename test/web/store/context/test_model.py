@@ -36,7 +36,7 @@ def test_create(
 
     model = ModelCreate(identifier="model")
 
-    res = client.post("/api/namespace/0/model", data=model.json())
+    res = client.post("/api/namespace/0/model", json=model.dict())
     assert res.status_code == 200
     _ = Model(**res.json())
 
@@ -50,7 +50,7 @@ def test_read(
     create_namespace("0", client)
 
     model = ModelCreate(identifier="0")
-    res = client.post("/api/namespace/0/model", data=model.json())
+    res = client.post("/api/namespace/0/model", json=model.dict())
     assert res.status_code == 200
 
     created = Model(**res.json())
@@ -71,7 +71,7 @@ def test_list(
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/namespace/0/model", data=model.json())
+    res = client.post("/api/namespace/0/model", json=model.dict())
     assert res.status_code == 200
 
     res = client.get("/api/namespace/0/model")
@@ -89,7 +89,7 @@ def test_delete(
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/namespace/0/model", data=model.json())
+    res = client.post("/api/namespace/0/model", json=model.dict())
     assert res.status_code == 200
 
     res = client.get("/api/namespace/0/model")
@@ -107,6 +107,6 @@ def test_delete(
 def create_namespace(id: str, client: TestClient) -> None:
     """Create a namespace with the given identifier."""
     res = client.post(
-        "/api/namespace", data=NamespaceCreate(identifier=id).json()
+        "/api/namespace", json=NamespaceCreate(identifier=id).dict()
     )
     assert res.status_code == 200

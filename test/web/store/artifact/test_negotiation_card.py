@@ -46,7 +46,7 @@ def test_write(
     )
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        data=card.json(),
+        json=card.dict(),
     )
     assert res.status_code == 200
 
@@ -69,7 +69,7 @@ def test_read(
     )
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        data=card.json(),
+        json=card.dict(),
     )
     assert res.status_code == 200
 
@@ -101,7 +101,7 @@ def test_delete(
     )
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        data=card.json(),
+        json=card.dict(),
     )
     assert res.status_code == 200
 
@@ -127,18 +127,18 @@ def create_context(
 ) -> None:
     """Create context for artifacts.."""
     res = client.post(
-        "/api/namespace", data=NamespaceCreate(identifier=namespace_id).json()
+        "/api/namespace", json=NamespaceCreate(identifier=namespace_id).dict()
     )
     assert res.status_code == 200
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model",
-        data=ModelCreate(identifier=model_id).json(),
+        json=ModelCreate(identifier=model_id).dict(),
     )
     assert res.status_code == 200
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version",
-        data=VersionCreate(identifier=version_id).json(),
+        json=VersionCreate(identifier=version_id).dict(),
     )
     assert res.status_code == 200

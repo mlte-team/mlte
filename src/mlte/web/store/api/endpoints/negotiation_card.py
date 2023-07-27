@@ -6,14 +6,9 @@ API definition for negotiation card artifacts.
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
+import mlte.web.store.api.codes as codes
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.web.store.api import dependencies
-
-# "Not found"
-CODE_NOT_FOUND = 404
-
-# "Conflict"
-CODE_ALREADY_EXISTS = 409
 
 # The router exported by this submodule
 router = APIRouter()
@@ -41,15 +36,16 @@ def write_negotiation_card(
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
-                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -72,11 +68,12 @@ def read_negotiation_card(
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -99,9 +96,10 @@ def delete_negotation_card(
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )

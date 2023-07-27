@@ -7,6 +7,7 @@ Endpoints for artifact organization.
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
+import mlte.web.store.api.codes as codes
 from mlte.context.model import (
     Model,
     ModelCreate,
@@ -19,12 +20,6 @@ from mlte.web.store.api import dependencies
 
 # The router exported by this submodule
 router = APIRouter()
-
-# "Not found"
-CODE_NOT_FOUND = 404
-
-# "Conflict"
-CODE_ALREADY_EXISTS = 409
 
 
 @router.post("/namespace")
@@ -39,11 +34,12 @@ def create_namespace(namespace: NamespaceCreate) -> Namespace:
             return handle.create_namespace(namespace)
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
-                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -59,11 +55,12 @@ def read_namespace(*, namespace_id: str) -> Namespace:
             return handle.read_namespace(namespace_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -78,11 +75,12 @@ def list_namespaces() -> list[str]:
             return handle.list_namespaces()
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -97,11 +95,12 @@ def delete_namespace(*, namespace_id: str) -> Namespace:
             return handle.delete_namespace(namespace_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -118,15 +117,16 @@ def create_model(*, namespace_id: str, model: ModelCreate) -> Model:
             return handle.create_model(namespace_id, model)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
-                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -143,11 +143,12 @@ def read_model(*, namespace_id: str, model_id: str) -> Model:
             return handle.read_model(namespace_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -163,11 +164,12 @@ def list_models(namespace_id: str) -> list[str]:
             return handle.list_models(namespace_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -184,11 +186,12 @@ def delete_model(*, namespace_id: str, model_id: str) -> Model:
             return handle.delete_model(namespace_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -208,15 +211,16 @@ def create_version(
             return handle.create_version(namespace_id, model_id, version)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
-                status_code=CODE_ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -234,11 +238,12 @@ def read_version(*, namespace_id: str, model_id: str, version_id) -> Version:
             return handle.read_version(namespace_id, model_id, version_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -255,11 +260,12 @@ def list_versions(namespace_id: str, model_id: str) -> list[str]:
             return handle.list_versions(namespace_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
 
 
@@ -279,9 +285,10 @@ def delete_version(*, namespace_id: str, model_id: str, version_id) -> Version:
             return handle.delete_version(namespace_id, model_id, version_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
-                status_code=CODE_NOT_FOUND, detail=f"{e} not found."
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(
-                status_code=500, detail="Internal server error."
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
             )
