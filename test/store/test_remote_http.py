@@ -42,15 +42,15 @@ class TestclientCient(RemoteHttpStoreClient):
         self.client = client
         """The underlying client."""
 
-    def get(self, url: str, **kwargs) -> httpx.Response:
+    def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
         return self.client.get(url, **kwargs)
 
-    def post(
+    def post(  # type: ignore[override]
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> httpx.Response:
         return self.client.post(url, data=data, json=json, **kwargs)
 
-    def delete(self, url: str, **kwargs) -> httpx.Response:
+    def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
         return self.client.delete(url, **kwargs)
 
 
@@ -70,7 +70,8 @@ def store() -> RemoteHttpStore:
     # Return a remote store that is able to hit the app
     client = TestClient(app)
     store = RemoteHttpStore(
-        uri=StoreURI.from_string(str(client.base_url)), client=client
+        uri=StoreURI.from_string(str(client.base_url)),
+        client=TestclientCient(client),
     )
     return store
 
