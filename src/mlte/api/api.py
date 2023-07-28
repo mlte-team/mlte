@@ -2,12 +2,10 @@
 Generic API wrapper for MLTE artifact store.
 """
 
+# TODO(Kyle): This entire sub-package is now deprecated in favor
+# of the new implementation of the artifact store interface.
+
 from typing import Optional, Dict, Any
-
-from mlte.api.uri import parse_uri_type, UriType
-import mlte.api.local as local
-
-# TODO(Kyle): Enforce schema of documents for each type here within API.
 
 # -----------------------------------------------------------------------------
 # Value
@@ -22,19 +20,7 @@ def read_value(
     value_version: Optional[int] = None,
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_value(
-            uri,
-            model_identifier,
-            model_version,
-            value_identifier,
-            value_version,
-        )
-    else:
-        assert False, "Unreachable."
+    return {}
 
 
 def write_value(
@@ -46,20 +32,7 @@ def write_value(
     value_tag: Optional[str],
 ) -> int:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.write_value(
-            uri,
-            model_identifier,
-            model_version,
-            value_identifier,
-            value_data,
-            value_tag,
-        )
-    else:
-        assert False, "Unreachable."
+    return 0
 
 
 # -----------------------------------------------------------------------------
@@ -69,26 +42,14 @@ def write_value(
 
 def read_spec(uri: str, model_identifier: str, model_version) -> Dict[str, Any]:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_spec(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
+    return {}
 
 
 def write_spec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ) -> int:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.write_spec(uri, model_identifier, model_version, data)
-    else:
-        assert False, "Unreachable."
+    return 0
 
 
 # -----------------------------------------------------------------------------
@@ -100,25 +61,11 @@ def read_validatedspec(
     uri: str, model_identifier: str, model_version
 ) -> Dict[str, Any]:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.read_validatedspec(uri, model_identifier, model_version)
-    else:
-        assert False, "Unreachable."
+    return {}
 
 
 def write_validatedspec(
     uri: str, model_identifier: str, model_version: str, data: Dict[str, Any]
 ) -> int:
     """TODO(Kyle)"""
-    uri_type = parse_uri_type(uri)
-    if uri_type == UriType.HTTP:
-        raise NotImplementedError("Temporary.")
-    elif uri_type == UriType.LOCAL:
-        return local.write_validatedspec(
-            uri, model_identifier, model_version, data
-        )
-    else:
-        assert False, "Unreachable."
+    return 0

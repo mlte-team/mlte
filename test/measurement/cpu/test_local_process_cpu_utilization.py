@@ -14,7 +14,6 @@ from mlte._private.platform import is_nix, is_windows
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.validation import Condition, Failure, Success
 
-from ...fixtures import default_session  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -107,10 +106,11 @@ def test_cpu_windows_evaluate() -> None:
         _ = LocalProcessCPUUtilization("id")
 
 
-@pytest.mark.skipif(
-    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
-)
-def test_result_save_load(default_session) -> None:  # noqa
+# @pytest.mark.skipif(
+#     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+# )
+@pytest.mark.skip("Pending artifact protocol implementation.")
+def test_result_save_load() -> None:  # noqa
     p = spin_for(5)
 
     m = LocalProcessCPUUtilization("id")

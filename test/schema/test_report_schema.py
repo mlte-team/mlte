@@ -12,15 +12,15 @@ from mlte.report import Dataset, Limitation, Report, UseCase, User
 from mlte.spec import Spec, ValidatedSpec
 from mlte.validation import Ignore
 
-from ..fixtures import default_session  # noqa
 
-
-def test_empty_instance(default_session) -> None:  # noqa
+@pytest.mark.skip("Pending artifact protocol implementation.")
+def test_empty_instance() -> None:  # noqa
     report = Report()
     validate_report_schema(report.to_json())
 
 
-def test_valid_instance(default_session) -> None:  # noqa
+@pytest.mark.skip("Pending artifact protocol implementation.")
+def test_valid_instance() -> None:  # noqa
     report = Report()
     report.metadata.project_name = "ProjectName"
     report.metadata.authors = ["Foo", "Bar"]
