@@ -1,5 +1,5 @@
 """
-store/state/state.py
+mlte/store/state/state.py
 
 Globally-accessible application state.
 """

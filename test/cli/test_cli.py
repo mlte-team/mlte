@@ -1,4 +1,6 @@
 """
+test/cli/test_cli.py
+
 Unit tests for command line interface.
 """
 

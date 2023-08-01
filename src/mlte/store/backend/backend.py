@@ -1,5 +1,5 @@
 """
-store/backend/backend.py
+mlte/store/backend/backend.py
 
 Generic backend storage interface.
 """

@@ -1,5 +1,5 @@
 """
-store/frontend/main.py
+mlte/store/frontend/main.py
 
 Application entry point.
 """

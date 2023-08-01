@@ -1,4 +1,6 @@
 """
+mlte/_private/text.py
+
 Internal utilities for handling text.
 """
 

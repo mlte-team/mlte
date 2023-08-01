@@ -1,5 +1,5 @@
 """
-store/api/endpoints/health.py
+mlte/store/api/endpoints/health.py
 
 Generic health check endpoint.
 """

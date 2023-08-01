@@ -1,5 +1,5 @@
 """
-store/backend/fs/fs.py
+mlte/store/backend/fs/fs.py
 
 Implementation of the filesystem-based backend store.
 """

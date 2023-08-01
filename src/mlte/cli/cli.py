@@ -1,5 +1,5 @@
 """
-cli/cli.py
+mlte/cli/cli.py
 
 Top-level command line interface.
 """

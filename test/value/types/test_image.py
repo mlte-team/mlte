@@ -1,4 +1,6 @@
 """
+test/value/types/test_image.py
+
 Unit tests for Image.
 """
 
