@@ -7,15 +7,11 @@ Test the HTTP interface for negotiation card operations.
 import pytest
 from fastapi.testclient import TestClient
 
-from mlte.artifact.type import ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.negotiation.model import (
-    NegotiationCardBodyModel,
-    NegotiationCardHeaderModel,
-    NegotiationCardModel,
-)
+from mlte.negotiation.model import NegotiationCardModel
 
-from ..fixure.http import CLIENTS, mem_client  # noqa
+from .fixure.http import CLIENTS, mem_client  # noqa
 
 
 @pytest.mark.parametrize("client_fixture", CLIENTS)
@@ -38,15 +34,10 @@ def test_write(
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    card = NegotiationCardModel(
-        header=NegotiationCardHeaderModel(
-            identifier="card", type=ArtifactType.NEGOTIATION_CARD
-        ),
-        body=NegotiationCardBodyModel(),
-    )
+    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        json=card.dict(),
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        json=artifact.dict(),
     )
     assert res.status_code == 200
 
@@ -61,25 +52,20 @@ def test_read(
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    card = NegotiationCardModel(
-        header=NegotiationCardHeaderModel(
-            identifier="card", type=ArtifactType.NEGOTIATION_CARD
-        ),
-        body=NegotiationCardBodyModel(),
-    )
+    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        json=card.dict(),
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        json=artifact.dict(),
     )
     assert res.status_code == 200
 
-    created = NegotiationCardModel(**res.json())
+    created = ArtifactModel(**res.json())
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card/card"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
     )
     assert res.status_code == 200
-    read = NegotiationCardModel(**res.json())
+    read = ArtifactModel(**res.json())
     assert read == created
 
 
@@ -93,31 +79,25 @@ def test_delete(
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    card = NegotiationCardModel(
-        header=NegotiationCardHeaderModel(
-            identifier="card", type=ArtifactType.NEGOTIATION_CARD
-        ),
-        body=NegotiationCardBodyModel(),
-    )
+    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card",
-        json=card.dict(),
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        json=artifact.dict(),
     )
     assert res.status_code == 200
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card/card"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
     )
     assert res.status_code == 200
 
     res = client.delete(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card/card"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
     )
-    print(res.json())
     assert res.status_code == 200
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/negotiation-card/card"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
     )
     assert res.status_code == 404
 
@@ -142,3 +122,19 @@ def create_context(
         json=VersionCreate(identifier=version_id).dict(),
     )
     assert res.status_code == 200
+
+
+def minimal_model(
+    artifact_id: str, artifact_type: ArtifactType
+) -> ArtifactModel:
+    return ArtifactModel(
+        header=ArtifactHeaderModel(identifier=artifact_id, type=artifact_type),
+        body=minimal_body(artifact_type),
+    )
+
+
+def minimal_body(artifact_type: ArtifactType) -> NegotiationCardModel:
+    if artifact_type == ArtifactType.NEGOTIATION_CARD:
+        return NegotiationCardModel()
+    else:
+        assert False, "Unreachable."

@@ -13,7 +13,7 @@ from mlte.context.model import (
     ModelCreate,
     VersionCreate,
 )
-from mlte.negotiation.model import NegotiationCardModel
+from mlte.artifact.model import ArtifactModel
 
 import mlte.store.error as errors
 
@@ -29,8 +29,8 @@ class VersionWithArtifacts:
         self.identifier = identifier
         """The version identifier."""
 
-        self.negotiation_cards: dict[str, NegotiationCardModel] = {}
-        """The negotiation card models associated with the version."""
+        self.artifacts: dict[str, ArtifactModel] = {}
+        """The artifacts associated with the version."""
 
 
 class ModelWithVersions:
@@ -277,54 +277,54 @@ class InMemoryStoreSession(StoreSession):
     # Negotiation Card
     # -------------------------------------------------------------------------
 
-    def write_negotiation_card(
+    def write_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
-        artifact: NegotiationCardModel,
-    ) -> NegotiationCardModel:
+        artifact: ArtifactModel,
+    ) -> ArtifactModel:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
 
-        if artifact.header.identifier in version.negotiation_cards:
+        if artifact.header.identifier in version.artifacts:
             raise errors.ErrorAlreadyExists(
-                f"NegotiationCard '{artifact.header.identifier}'"
+                f"Artifact '{artifact.header.identifier}'"
             )
-        version.negotiation_cards[artifact.header.identifier] = artifact
+        version.artifacts[artifact.header.identifier] = artifact
         return artifact
 
-    def read_negotiation_card(
+    def read_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
+    ) -> ArtifactModel:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
 
-        if artifact_id not in version.negotiation_cards:
-            raise errors.ErrorNotFound(f"NegotiationCard '{artifact_id}'")
-        return version.negotiation_cards[artifact_id]
+        if artifact_id not in version.artifacts:
+            raise errors.ErrorNotFound(f"Artifact '{artifact_id}'")
+        return version.artifacts[artifact_id]
 
-    def delete_negotiation_card(
+    def delete_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
+    ) -> ArtifactModel:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
 
-        if artifact_id not in version.negotiation_cards:
-            raise errors.ErrorNotFound(f"NegotiationCard '{artifact_id}'")
-        artifact = version.negotiation_cards[artifact_id]
-        del version.negotiation_cards[artifact_id]
+        if artifact_id not in version.artifacts:
+            raise errors.ErrorNotFound(f"Artifact '{artifact_id}'")
+        artifact = version.artifacts[artifact_id]
+        del version.artifacts[artifact_id]
         return artifact
 
     def _get_version_with_artifacts(

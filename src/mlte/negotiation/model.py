@@ -7,9 +7,8 @@ Model implementation for negotiation card artifact.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal, Optional
+from typing import Optional
 
-from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 
 # -----------------------------------------------------------------------------
@@ -242,18 +241,8 @@ class ModelDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class NegotiationCardHeaderModel(BaseModel):
-    """The NegotiationCardHeaderModel contains the common metadata for all artifacts."""
-
-    identifier: str
-    """The unique identifier for the artifact."""
-
-    type: Literal[ArtifactType.NEGOTIATION_CARD]
-    """The type identfier for the artifact."""
-
-
-class NegotiationCardBodyModel(BaseModel):
-    """The NegotiationCardBodyModel contains the artifact-specific data for NegotiationCard."""
+class NegotiationCardModel(BaseModel):
+    """The model implementation for the NegotiationCard artifact."""
 
     system: SystemDescriptor = SystemDescriptor()
     """The descriptor for the system in which the model is integrated."""
@@ -263,13 +252,3 @@ class NegotiationCardBodyModel(BaseModel):
 
     model: ModelDescriptor = ModelDescriptor()
     """The descriptor for the model."""
-
-
-class NegotiationCardModel(BaseModel):
-    """The model implementation for the NegotiationCard artifact."""
-
-    header: NegotiationCardHeaderModel
-    """The model header."""
-
-    body: NegotiationCardBodyModel
-    """The model body."""

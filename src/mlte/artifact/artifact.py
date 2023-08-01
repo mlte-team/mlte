@@ -6,9 +6,8 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
-from mlte.artifact.type import ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactType
 from mlte.context import Context
-from mlte.model import BaseModel
 from mlte.session import session
 from mlte.store import Store
 
@@ -35,14 +34,14 @@ class Artifact:
         self.type = type
         """The identifier for the artifact type"""
 
-    def to_model(self) -> BaseModel:
+    def to_model(self) -> ArtifactModel:
         """Serialize an artifact to its corresponding model."""
         raise NotImplementedError(
             "Artifact.to_model() not implemented for abstract Artifact."
         )
 
     @staticmethod
-    def from_model(_: BaseModel) -> Artifact:
+    def from_model(_: ArtifactModel) -> Artifact:
         """Deserialize an artifact from its corresponding model."""
         raise NotImplementedError(
             "Artifact.from_model() not implemented for abstract Artifact."

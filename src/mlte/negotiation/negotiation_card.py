@@ -6,14 +6,11 @@ Negotiation card artifact implementation.
 
 from __future__ import annotations
 
-import typing
-from typing import Literal
-
 import deepdiff
 
 import mlte.negotiation.model as model
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.type import ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.context import Context
 from mlte.store.store import ManagedSession, Store
 
@@ -39,22 +36,20 @@ class NegotiationCard(Artifact):
         self.model = model
         """A descriptor for the model."""
 
-    def to_model(self) -> model.NegotiationCardModel:
+    def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
-        return model.NegotiationCardModel(
-            header=model.NegotiationCardHeaderModel(
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
                 identifier=self.identifier,
-                type=typing.cast(
-                    Literal[ArtifactType.NEGOTIATION_CARD], self.type
-                ),
+                type=self.type,
             ),
-            body=model.NegotiationCardBodyModel(
+            body=model.NegotiationCardModel(
                 system=self.system, data=self.data, model=self.model
             ),
         )
 
     @staticmethod
-    def from_model(model: model.NegotiationCardModel) -> NegotiationCard:  # type: ignore[override]
+    def from_model(model: ArtifactModel) -> NegotiationCard:  # type: ignore[override]
         """Convert a negotiation card model to its corresponding artifact."""
         return NegotiationCard(
             identifier=model.header.identifier,
@@ -70,7 +65,7 @@ class NegotiationCard(Artifact):
         :param store: The store in which to save the artifact
         """
         with ManagedSession(store.session()) as handle:
-            handle.write_negotiation_card(
+            handle.write_artifact(
                 context.namespace,
                 context.model,
                 context.version,
@@ -87,7 +82,7 @@ class NegotiationCard(Artifact):
         """
         with ManagedSession(store.session()) as handle:
             return NegotiationCard.from_model(
-                handle.read_negotiation_card(
+                handle.read_artifact(
                     context.namespace,
                     context.model,
                     context.version,

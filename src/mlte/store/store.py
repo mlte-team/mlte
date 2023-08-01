@@ -16,7 +16,7 @@ from mlte.context.model import (
     Version,
     VersionCreate,
 )
-from mlte.negotiation.model import NegotiationCardModel
+from mlte.artifact.model import ArtifactModel
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -89,6 +89,10 @@ class StoreSession:
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
+
+    # -------------------------------------------------------------------------
+    # Interface: Context
+    # -------------------------------------------------------------------------
 
     def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
         """
@@ -225,33 +229,37 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def write_negotiation_card(
+    # -------------------------------------------------------------------------
+    # Interface: Artifact
+    # -------------------------------------------------------------------------
+
+    def write_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
-        artifact: NegotiationCardModel,
-    ) -> NegotiationCardModel:
+        artifact: ArtifactModel,
+    ) -> ArtifactModel:
         """
-        Write a negotiation card artifact.
+        Write an artifact.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
-        :param artifact: The negotiation card artifact
+        :param artifact: The artifact
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def read_negotiation_card(
+    def read_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
+    ) -> ArtifactModel:
         """
-        Read a negotiation card artifact.
+        Read an artifact.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
@@ -262,19 +270,20 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def delete_negotiation_card(
+    def delete_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
+    ) -> ArtifactModel:
         """
-        Delete a negotiation card artifact.
+        Delete an artifact.
         :param namespace_id: The identifier for the namespace
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
         :param artifact_id: The artifact identifier
+        :return: The deleted artifact
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."

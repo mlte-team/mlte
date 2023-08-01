@@ -19,7 +19,7 @@ from mlte.context.model import (
     ModelCreate,
     VersionCreate,
 )
-from mlte.negotiation.model import NegotiationCardModel
+from mlte.artifact.model import ArtifactModel
 
 import mlte.store.error as errors
 
@@ -194,44 +194,44 @@ class RemoteHttpStoreSession(StoreSession):
     # Negotiation Card
     # -------------------------------------------------------------------------
 
-    def write_negotiation_card(
+    def write_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
-        artifact: NegotiationCardModel,
-    ) -> NegotiationCardModel:
-        url = f"{_url(self.url, namespace_id, model_id, version_id)}/negotiation-card"
+        artifact: ArtifactModel,
+    ) -> ArtifactModel:
+        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact"
         res = self.client.post(url, json=artifact.dict())
         raise_for_response(res)
 
-        return NegotiationCardModel(**res.json())
+        return ArtifactModel(**res.json())
 
-    def read_negotiation_card(
+    def read_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
-        url = f"{_url(self.url, namespace_id, model_id, version_id)}/negotiation-card/{artifact_id}"
+    ) -> ArtifactModel:
+        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/{artifact_id}"
         res = self.client.get(url)
         raise_for_response(res)
 
-        return NegotiationCardModel(**res.json())
+        return ArtifactModel(**res.json())
 
-    def delete_negotiation_card(
+    def delete_artifact(
         self,
         namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
-    ) -> NegotiationCardModel:
-        url = f"{_url(self.url, namespace_id, model_id, version_id)}/negotiation-card/{artifact_id}"
+    ) -> ArtifactModel:
+        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/{artifact_id}"
         res = self.client.delete(url)
         raise_for_response(res)
 
-        return NegotiationCardModel(**res.json())
+        return ArtifactModel(**res.json())
 
 
 def _url(base: str, namespace_id: str, model_id: str, version_id: str) -> str:

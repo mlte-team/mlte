@@ -6,7 +6,7 @@ Top-level API functionality.
 
 from fastapi import APIRouter
 
-from mlte.web.store.api.endpoints import health, metadata, negotiation_card
+from mlte.web.store.api.endpoints import artifact, health, metadata
 
 # The common URL prefix for all artifact routes
 _ARTIFACT_PREFIX = (
@@ -18,7 +18,7 @@ api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(metadata.router, tags=["metadata"])
 api_router.include_router(
-    negotiation_card.router,
-    prefix=f"{_ARTIFACT_PREFIX}/negotiation-card",
+    artifact.router,
+    prefix=f"{_ARTIFACT_PREFIX}/artifact",
     tags=["artifact"],
 )

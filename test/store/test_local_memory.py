@@ -7,13 +7,9 @@ Unit tests for the in-memory artifact store implementation.
 import pytest
 
 import mlte.store.error as errors
-from mlte.artifact.type import ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.negotiation.model import (
-    NegotiationCardBodyModel,
-    NegotiationCardHeaderModel,
-    NegotiationCardModel,
-)
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.store import ManagedSession, StoreURI
 from mlte.store.underlying.memory import InMemoryStore
 
@@ -125,28 +121,28 @@ def test_negotiation_card(store: InMemoryStore) -> None:
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    card = NegotiationCardModel(
-        header=NegotiationCardHeaderModel(
+    card = ArtifactModel(
+        header=ArtifactHeaderModel(
             identifier="id", type=ArtifactType.NEGOTIATION_CARD
         ),
-        body=NegotiationCardBodyModel(),
+        body=NegotiationCardModel(),
     )
 
     with ManagedSession(store.session()) as handle:
-        handle.write_negotiation_card(namespace_id, model_id, version_id, card)
+        handle.write_artifact(namespace_id, model_id, version_id, card)
 
     with ManagedSession(store.session()) as handle:
-        _ = handle.read_negotiation_card(
+        _ = handle.read_artifact(
             namespace_id, model_id, version_id, card.header.identifier
         )
 
     with ManagedSession(store.session()) as handle:
-        handle.delete_negotiation_card(
+        handle.delete_artifact(
             namespace_id, model_id, version_id, card.header.identifier
         )
 
     with ManagedSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
-            _ = handle.read_negotiation_card(
+            _ = handle.read_artifact(
                 namespace_id, model_id, version_id, card.header.identifier
             )

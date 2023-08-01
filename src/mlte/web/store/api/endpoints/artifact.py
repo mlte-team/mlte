@@ -1,13 +1,14 @@
 """
-mlte/store/api/endpoints/negotiation_card.py
+mlte/store/api/endpoints/artifact.py
 
-API definition for negotiation card artifacts.
+API definition for MLTE artifacts.
 """
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
 import mlte.web.store.api.codes as codes
-from mlte.negotiation.model import NegotiationCardModel
+from mlte.artifact.model import ArtifactModel
 from mlte.web.store.api import dependencies
 
 # The router exported by this submodule
@@ -15,14 +16,14 @@ router = APIRouter()
 
 
 @router.post("")
-def write_negotiation_card(
+def write_artifact(
     namespace_id: str,
     model_id: str,
     version_id: str,
-    artifact: NegotiationCardModel,
-) -> NegotiationCardModel:
+    artifact: ArtifactModel,
+) -> ArtifactModel:
     """
-    Write a negotiation card.
+    Write an artifact.
     :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
@@ -31,7 +32,7 @@ def write_negotiation_card(
     """
     with dependencies.session() as handle:
         try:
-            return handle.write_negotiation_card(
+            return handle.write_artifact(
                 namespace_id, model_id, version_id, artifact
             )
         except errors.ErrorNotFound as e:
@@ -50,9 +51,9 @@ def write_negotiation_card(
 
 
 @router.get("/{artifact_id}")
-def read_negotiation_card(
+def read_artifact(
     namespace_id: str, model_id: str, version_id: str, artifact_id: str
-) -> NegotiationCardModel:
+) -> ArtifactModel:
     """
     Read a negotiation card.
     :param namespace_id: The namespace identifier
@@ -63,7 +64,7 @@ def read_negotiation_card(
     """
     with dependencies.session() as handle:
         try:
-            return handle.read_negotiation_card(
+            return handle.read_artifact(
                 namespace_id, model_id, version_id, artifact_id
             )
         except errors.ErrorNotFound as e:
@@ -78,9 +79,9 @@ def read_negotiation_card(
 
 
 @router.delete("/{artifact_id}")
-def delete_negotation_card(
+def delete_artifact(
     namespace_id: str, model_id: str, version_id: str, artifact_id: str
-) -> NegotiationCardModel:
+) -> ArtifactModel:
     """
     Delete a negotiation card.
     :param namespace_id: The namespace identifier
@@ -91,7 +92,7 @@ def delete_negotation_card(
     """
     with dependencies.session() as handle:
         try:
-            return handle.delete_negotiation_card(
+            return handle.delete_artifact(
                 namespace_id, model_id, version_id, artifact_id
             )
         except errors.ErrorNotFound as e:
