@@ -1,5 +1,7 @@
 """
-Unit tests for command line interface.
+test/cli/test_cli.py
+
+Unit tests for the MLTE command line interface.
 """
 
 import os

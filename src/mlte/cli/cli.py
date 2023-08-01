@@ -8,6 +8,7 @@ import sys
 import argparse
 
 import mlte.web.store.main as server
+import mlte.frontend as frontend
 from mlte.web.store.core.config import settings
 
 # CLI exit codes
@@ -30,8 +31,8 @@ def _prepare_parser():
 
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
-    _attach_store(subparser)
-
+    for attach_to in [_attach_store, _attach_ui]:
+        attach_to(subparser)
     return base_parser
 
 
@@ -61,6 +62,16 @@ def _attach_store(
         required=True,
         help="The URI for the backend store.",
     )
+
+
+def _attach_ui(
+    subparser,
+):
+    """Attach the artifact store subparser to the base parser."""
+    parser: argparse.ArgumentParser = subparser.add_parser(
+        "ui", help="Run an instance of the MLTE user interface."
+    )
+    parser.set_defaults(func=frontend.run_frontend)
 
 
 # -----------------------------------------------------------------------------
