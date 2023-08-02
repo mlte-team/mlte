@@ -17,6 +17,7 @@ from mlte.context.model import (
     VersionCreate,
 )
 from mlte.artifact.model import ArtifactModel
+from mlte.store.query import ArtifactFilter, AllFilter
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -265,6 +266,25 @@ class StoreSession:
         :param version_id: The identifier for the model version
         :param artifact_id: The artifact identifier
         :return: The artifact
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+    def read_artifacts(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        filter: ArtifactFilter = AllFilter(),
+    ) -> list[ArtifactModel]:
+        """
+        Read a collection of artifacts, optionally filtered.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param filter: The artifact filter to apply
+        :return: A collection of artifacts that satisfy the filter
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."
