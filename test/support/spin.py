@@ -1,4 +1,6 @@
 """
+test/support/spin.py
+
 Dummy program to produce work.
 """
 
