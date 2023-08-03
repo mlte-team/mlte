@@ -4,17 +4,28 @@ mlte/store/query.py
 Query and filtering functionality for store operations.
 """
 
-import typing
+from typing import Union, Literal
 
+from mlte.model import BaseModel
 from enum import Enum
 from mlte.artifact.model import ArtifactModel, ArtifactType
+
+# A type alias
+Filter = Union[
+    "ArtifactIdentifierFilter",
+    "ArtifactTypeFilter",
+    "AndFilter",
+    "OrFilter",
+    "AllFilter",
+    "NoneFilter",
+]
 
 # -----------------------------------------------------------------------------
 # ArtifactFilter
 # -----------------------------------------------------------------------------
 
 
-class FilterType(Enum):
+class FilterType(str, Enum):
     """An enumeration over filter types."""
 
     IDENTIFIER = "identifier"
@@ -36,156 +47,90 @@ class FilterType(Enum):
     """The 'or' filter."""
 
 
-class ArtifactFilter:
-    """A general-purpose"""
-
-    def __init__(self, *, type: FilterType) -> None:
-        self.type = type
-        """The filter type identifier."""
-
-    def match(self, _: ArtifactModel) -> bool:
-        """
-        Determine if an artifact satisfies the filter.
-        :param artifact: The artifact against which the match is tested
-        :return: `True` if the filter is satisfied, `False` otherwise
-        """
-        raise NotImplementedError(
-            "match() not implemented for abstract ArtifactFilter."
-        )
-
-    def to_query_string(self) -> str:
-        """
-        Convert a filter to an HTTP query string.
-        :return: The query string
-        """
-        raise NotImplementedError(
-            "to_query_string() not implemented for abstract ArtifactFilter."
-        )
-
-
-class ArtifactIdentifierFilter(ArtifactFilter):
+class ArtifactIdentifierFilter(BaseModel):
     """A filter that matches an artifact identifier."""
 
-    def __init__(self, *, artifact_id: str) -> None:
-        super().__init__(type=FilterType.IDENTIFIER)
+    type: Literal[FilterType.IDENTIFIER]
+    """An identifier for the filter type."""
 
-        self.artifact_id = artifact_id
-        """The artifact identifier to match."""
+    artifact_id: str
+    """The artifact identifier to match."""
 
     def match(self, artifact: ArtifactModel) -> bool:
         return artifact.header.identifier == self.artifact_id
 
-    def to_query_string(self) -> str:
-        return f"artifact_id={self.artifact_id}"
 
-    def __str__(self) -> str:
-        return f"identifier={self.artifact_id}"
-
-
-class ArtifactTypeFilter(ArtifactFilter):
+class ArtifactTypeFilter(BaseModel):
     """A filter that matches an artifact type."""
 
-    def __init__(self, *, artifact_type: ArtifactType) -> None:
-        super().__init__(type=FilterType.TYPE)
+    type: Literal[FilterType.TYPE]
+    """An identifier for the filter type."""
 
-        self.artifact_type = artifact_type
-        """The artifact type to match."""
+    artifact_type: ArtifactType
+    """The artifact type to match."""
 
     def match(self, artifact: ArtifactModel) -> bool:
         return artifact.header.type == self.artifact_type
 
-    def to_query_string(self) -> str:
-        return f"artifact_type={self.artifact_type}"
 
-    def __str__(self) -> str:
-        return f"type={self.artifact_type}"
-
-
-class AndFilter(ArtifactFilter):
-    """A generic filter that implements a logical AND of filters."""
-
-    def __init__(self, *filters: ArtifactFilter) -> None:
-        super().__init__(type=FilterType.AND)
-
-        processed: list[ArtifactFilter] = []
-        for filter in filters:
-            if filter.type == FilterType.AND:
-                and_filter = typing.cast(AndFilter, filter)
-                processed.extend(and_filter.filters)  # type: ignore
-            else:
-                processed.append(filter)
-
-        self.filters = processed
-        """The filters of which the composition is composed."""
-
-    def match(self, artifact: ArtifactModel) -> bool:
-        return all(filter.match(artifact) for filter in self.filters)
-
-    def to_query_string(self) -> str:
-        return "&".join(filter.to_query_string() for filter in self.filters)
-
-    def __str__(self) -> str:
-        return " and ".join(f"{filter}" for filter in self.filters)
-
-
-class OrFilter(ArtifactFilter):
-    """A generic filter that implements a logical OR of filters."""
-
-    def __init__(self, *filters: ArtifactFilter) -> None:
-        super().__init__(type=FilterType.OR)
-
-        processed: list[ArtifactFilter] = []
-        for filter in filters:
-            if filter.type == FilterType.OR:
-                or_filter = typing.cast(OrFilter, filter)
-                processed.extend(or_filter.filters)  # type: ignore
-            else:
-                processed.append(filter)
-
-        self.filters = processed
-        """The filters of which the composition is composed."""
-
-    def match(self, artifact: ArtifactModel) -> bool:
-        return any(filter.match(artifact) for filter in self.filters)
-
-    def to_query_string(self) -> str:
-        raise NotImplementedError(
-            "to_query_string() not implemented for abstract OrFilter."
-        )
-
-    def __str__(self) -> str:
-        return " or ".join(f"{filter}" for filter in self.filters)
-
-
-class AllFilter(ArtifactFilter):
+class AllFilter(BaseModel):
     """A filter that matches all artifacts."""
 
-    def __init__(self) -> None:
-        super().__init__(type=FilterType.ALL)
+    type: Literal[FilterType.ALL]
+    """An identifier for the filter type."""
 
     def match(self, _: ArtifactModel) -> bool:
         return True
 
-    def to_query_string(self) -> str:
-        return ""
 
-    def __str__(self) -> str:
-        return "ALL"
-
-
-class NoneFilter(ArtifactFilter):
+class NoneFilter(BaseModel):
     """A filter that matches no artifacts."""
 
-    def __init__(self) -> None:
-        super().__init__(type=FilterType.NONE)
+    type: Literal[FilterType.NONE]
+    """An identifier for the filter type."""
 
     def match(self, _: ArtifactModel) -> bool:
         return False
 
-    def to_query_string(self) -> str:
-        raise NotImplementedError(
-            "to_query_string() not implemented for abstract NoneFilter."
-        )
 
-    def __str__(self) -> str:
-        return "NONE"
+class AndFilter(BaseModel):
+    """A generic filter that implements a logical AND of filters."""
+
+    type: Literal[FilterType.AND]
+    """An identifier for the filter type."""
+
+    filters: list[Filter]
+    """The filters of which the composition is composed."""
+
+    def match(self, artifact: ArtifactModel) -> bool:
+        return all(filter.match(artifact) for filter in self.filters)
+
+
+class OrFilter(BaseModel):
+    """A generic filter that implements a logical OR of filters."""
+
+    type: Literal[FilterType.OR]
+    """An identifier for the filter type."""
+
+    filters: list[Filter]
+    """The filters of which the composition is composed."""
+
+    def match(self, artifact: ArtifactModel) -> bool:
+        return any(filter.match(artifact) for filter in self.filters)
+
+
+class Query(BaseModel):
+    """A Query object represents a query over MLTE artifacts."""
+
+    filter: Filter
+    """The filter that is applied to implement the query."""
+
+    def __init__(
+        self, *, filter: Filter = AllFilter(type=FilterType.ALL)
+    ) -> None:
+        super().__init__(filter=filter)
+
+
+# Necessary for pydantic to resolve forward references
+AndFilter.update_forward_refs()
+OrFilter.update_forward_refs()

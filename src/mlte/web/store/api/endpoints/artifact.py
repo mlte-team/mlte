@@ -4,14 +4,12 @@ mlte/store/api/endpoints/artifact.py
 API definition for MLTE artifacts.
 """
 
-from typing import Optional
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
-import mlte.store.query as query
 import mlte.web.store.api.codes as codes
-from mlte.artifact.model import ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactModel
+from mlte.store.query import Query
 from mlte.web.store.api import dependencies
 
 # The router exported by this submodule
@@ -81,13 +79,12 @@ def read_artifact(
             )
 
 
-@router.get("")
-def read_artifacts(
-    namespace_id: str,
-    model_id: str,
-    version_id: str,
-    artifact_id: Optional[str] = None,
-    artifact_type: Optional[ArtifactType] = None,
+# TODO(Kyle): Implement a simple version of read artifacts.
+
+
+@router.post("/search")
+def search_artifacts(
+    namespace_id: str, model_id: str, version_id: str, query: Query
 ) -> list[ArtifactModel]:
     """
     Read a negotiation card.
@@ -98,11 +95,10 @@ def read_artifacts(
     :param artifact_type: The type identifier for the artifact
     :return: The read artifacts
     """
-    filter = _construct_filter(artifact_id, artifact_type)
     with dependencies.session() as handle:
         try:
             return handle.read_artifacts(
-                namespace_id, model_id, version_id, filter
+                namespace_id, model_id, version_id, query
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(
@@ -141,28 +137,3 @@ def delete_artifact(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
             )
-
-
-def _construct_filter(
-    artifact_id: Optional[str] = None,
-    artifact_type: Optional[ArtifactType] = None,
-) -> query.ArtifactFilter:
-    """
-    Construct a store filter for the given query parameters.
-    :param artifact_id: The artifact identifier
-    :param artifact_type: The artifact type
-    :return: The filter
-    """
-    if artifact_id is None and artifact_type is None:
-        return query.AllFilter()
-
-    filter: query.ArtifactFilter = query.AllFilter()
-    if artifact_id is not None:
-        filter = query.AndFilter(
-            filter, query.ArtifactIdentifierFilter(artifact_id=artifact_id)
-        )
-    if artifact_type is not None:
-        filter = query.AndFilter(
-            filter, query.ArtifactTypeFilter(artifact_type=artifact_type)
-        )
-    return filter

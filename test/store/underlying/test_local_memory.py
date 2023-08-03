@@ -107,8 +107,49 @@ def test_version(store: InMemoryStore) -> None:
             _ = handle.read_version(namespace_id, model_id, version_id)
 
 
+def test_search(store: InMemoryStore) -> None:
+    """An in-memory store supports queries."""
+
+    # TODO(Kyle): Make this parametric over artifact types.
+
+    namespace_id = "namespace"
+    model_id = "model"
+    version_id = "version"
+
+    with ManagedSession(store.session()) as handle:
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
+        handle.create_version(
+            namespace_id, model_id, VersionCreate(identifier=version_id)
+        )
+
+    card0 = ArtifactModel(
+        header=ArtifactHeaderModel(
+            identifier="id0", type=ArtifactType.NEGOTIATION_CARD
+        ),
+        body=NegotiationCardModel(),
+    )
+
+    card1 = ArtifactModel(
+        header=ArtifactHeaderModel(
+            identifier="id1", type=ArtifactType.NEGOTIATION_CARD
+        ),
+        body=NegotiationCardModel(),
+    )
+
+    with ManagedSession(store.session()) as handle:
+        for artifact in [card0, card1]:
+            handle.write_artifact(namespace_id, model_id, version_id, artifact)
+
+    with ManagedSession(store.session()) as handle:
+        artifacts = handle.read_artifacts(namespace_id, model_id, version_id)
+        assert len(artifacts) == 2
+
+
 def test_negotiation_card(store: InMemoryStore) -> None:
     """An in-memory store supports negotiation card operations."""
+
+    # TODO(Kyle): Make this parametric over artifact types.
 
     namespace_id = "namespace"
     model_id = "model"

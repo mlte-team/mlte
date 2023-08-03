@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.model import NegotiationCardModel
+from mlte.store.query import Query
 
 from .fixure.http import CLIENTS, mem_client  # noqa
 
@@ -66,6 +67,37 @@ def test_read(
     )
     assert res.status_code == 200
     read = ArtifactModel(**res.json())
+    assert read == created
+
+
+@pytest.mark.parametrize("client_fixture", CLIENTS)
+def test_search(
+    client_fixture: str, request: pytest.FixtureRequest
+) -> None:  # noqa
+    """Negotiation cards can be searched."""
+    client: TestClient = request.getfixturevalue(client_fixture)
+
+    namespace_id, model_id, version_id = "0", "0", "0"
+    create_context(namespace_id, model_id, version_id, client)
+
+    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
+    res = client.post(
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        json=artifact.dict(),
+    )
+    assert res.status_code == 200
+    created = ArtifactModel(**res.json())
+
+    res = client.post(
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/search",
+        json=Query().dict(),
+    )
+    assert res.status_code == 200
+
+    collection = res.json()
+    assert len(collection) == 1
+
+    read = ArtifactModel(**collection[0])
     assert read == created
 
 

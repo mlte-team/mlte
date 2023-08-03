@@ -14,7 +14,7 @@ from mlte.context.model import (
     VersionCreate,
 )
 from mlte.artifact.model import ArtifactModel
-from mlte.store.query import ArtifactFilter, AllFilter
+from mlte.store.query import Query
 
 import mlte.store.error as errors
 
@@ -316,7 +316,7 @@ class InMemoryStoreSession(StoreSession):
         namespace_id: str,
         model_id: str,
         version_id: str,
-        filter: ArtifactFilter = AllFilter(),
+        query: Query = Query(),
     ) -> list[ArtifactModel]:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
@@ -324,7 +324,7 @@ class InMemoryStoreSession(StoreSession):
         return [
             artifact
             for artifact in version.artifacts.values()
-            if filter.match(artifact)
+            if query.filter.match(artifact)
         ]
 
     def delete_artifact(

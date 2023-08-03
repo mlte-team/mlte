@@ -20,7 +20,7 @@ from mlte.context.model import (
     VersionCreate,
 )
 from mlte.artifact.model import ArtifactModel
-from mlte.store.query import ArtifactFilter, AllFilter
+from mlte.store.query import Query
 
 import mlte.store.error as errors
 
@@ -226,11 +226,11 @@ class RemoteHttpStoreSession(StoreSession):
         namespace_id: str,
         model_id: str,
         version_id: str,
-        filter: ArtifactFilter = AllFilter(),
+        query: Query = Query(),
     ) -> list[ArtifactModel]:
-        # TODO(Kyle): Convert a filter to a corresponding query string.
-        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact"
-        res = self.client.get(url)
+        # NOTE(Kyle): This operation always uses the "advanced search" functionality
+        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/search"
+        res = self.client.post(url, json=query.dict())
         raise_for_response(res)
 
         return [ArtifactModel(**object) for object in res.json()]
