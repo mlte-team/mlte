@@ -9,14 +9,14 @@ from fastapi.testclient import TestClient
 
 from mlte.context.model import Model, ModelCreate, NamespaceCreate
 
-from ..fixure.http import CLIENTS, mem_client  # noqa
+from ..fixure.http import clients, mem_client  # noqa
 
 # -----------------------------------------------------------------------------
 # Tests: Model
 # -----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture", clients())
 def test_init(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
@@ -26,7 +26,7 @@ def test_init(
     assert res.status_code == 200
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture", clients())
 def test_create(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
@@ -41,7 +41,7 @@ def test_create(
     _ = Model(**res.json())
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture", clients())
 def test_read(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
@@ -61,7 +61,7 @@ def test_read(
     assert read == created
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture", clients())
 def test_list(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
@@ -79,7 +79,7 @@ def test_list(
     assert len(res.json()) == 1
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture", clients())
 def test_delete(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa

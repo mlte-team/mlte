@@ -7,17 +7,19 @@ Test the HTTP interface for negotiation card operations.
 import pytest
 from fastapi.testclient import TestClient
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.query import Query
 
-from .fixure.http import CLIENTS, mem_client  # noqa
+from ...fixture.artifact import ArtifactFactory
+from .fixure.http import clients_and_types, mem_client  # noqa
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
 def test_init(
-    client_fixture: str, request: pytest.FixtureRequest
+    client_fixture: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """The server can initialize."""
     client: TestClient = request.getfixturevalue(client_fixture)
@@ -25,65 +27,71 @@ def test_init(
     assert res.status_code == 200
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
 def test_write(
-    client_fixture: str, request: pytest.FixtureRequest
+    client_fixture: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
 ) -> None:  # noqa
-    """Negotiation cards can be written."""
+    """Artifacts can be written."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
+    a = ArtifactFactory.make(artifact_type)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=artifact.dict(),
+        json=a.dict(),
     )
     assert res.status_code == 200
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
 def test_read(
-    client_fixture: str, request: pytest.FixtureRequest
+    client_fixture: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
 ) -> None:  # noqa
-    """Negotiation cards can be read."""
+    """Artifacts can be read."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
+    a = ArtifactFactory.make(artifact_type, id="id0")
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=artifact.dict(),
+        json=a.dict(),
     )
     assert res.status_code == 200
 
     created = ArtifactModel(**res.json())
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 200
     read = ArtifactModel(**res.json())
     assert read == created
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
 def test_search(
-    client_fixture: str, request: pytest.FixtureRequest
+    client_fixture: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
 ) -> None:  # noqa
-    """Negotiation cards can be searched."""
+    """Artifacts can be searched."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
+    a = ArtifactFactory.make(artifact_type)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=artifact.dict(),
+        json=a.dict(),
     )
     assert res.status_code == 200
     created = ArtifactModel(**res.json())
@@ -101,35 +109,37 @@ def test_search(
     assert read == created
 
 
-@pytest.mark.parametrize("client_fixture", CLIENTS)
+@pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
 def test_delete(
-    client_fixture: str, request: pytest.FixtureRequest
+    client_fixture: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
 ) -> None:  # noqa
-    """Negotiation cards can be deleted."""
+    """Artifacts can be deleted."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
     namespace_id, model_id, version_id = "0", "0", "0"
     create_context(namespace_id, model_id, version_id, client)
 
-    artifact = minimal_model("myartifact", ArtifactType.NEGOTIATION_CARD)
+    a = ArtifactFactory.make(artifact_type, "id0")
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=artifact.dict(),
+        json=a.dict(),
     )
     assert res.status_code == 200
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 200
 
     res = client.delete(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 200
 
     res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/myartifact"
+        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 404
 
@@ -154,19 +164,3 @@ def create_context(
         json=VersionCreate(identifier=version_id).dict(),
     )
     assert res.status_code == 200
-
-
-def minimal_model(
-    artifact_id: str, artifact_type: ArtifactType
-) -> ArtifactModel:
-    return ArtifactModel(
-        header=ArtifactHeaderModel(identifier=artifact_id, type=artifact_type),
-        body=minimal_body(artifact_type),
-    )
-
-
-def minimal_body(artifact_type: ArtifactType) -> NegotiationCardModel:
-    if artifact_type == ArtifactType.NEGOTIATION_CARD:
-        return NegotiationCardModel()
-    else:
-        assert False, "Unreachable."

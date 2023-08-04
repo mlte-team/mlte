@@ -79,4 +79,4 @@ check: check-format check-lint check-typecheck
 # NOTE: Only runs 3.10 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py310 -- test/store/test_query.py
+	tox --develop -e py310 -- test
