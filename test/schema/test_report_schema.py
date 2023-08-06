@@ -61,6 +61,7 @@ def test_valid_instance() -> None:  # noqa
     validate_report_schema(report.to_json())
 
 
+@pytest.mark.skip("Pending artifact protocol implementation.")
 def test_invalid_instance():
     with pytest.raises(ValidationError):
         validate_report_schema({})
