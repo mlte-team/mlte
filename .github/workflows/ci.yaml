@@ -82,3 +82,5 @@ jobs:
       run: make check-typecheck
     - name: Test with tox
       run: tox --develop -e py310
+    - name: Vet schemas
+      run: PYTHONPATH=src python tools/schema.py vet src/mlte

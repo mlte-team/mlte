@@ -20,6 +20,7 @@ isort:
 	isort test/
 	isort testbed/
 	isort demo/*.py
+	isort tools/
 
 # .PHONY: check-isort
 # check-isort:
@@ -35,6 +36,7 @@ format:
 	black test/
 	black testbed/
 	black demo/*.py
+	black tools/
 
 .PHONY: check-format 
 check-format:
@@ -42,12 +44,14 @@ check-format:
 	black --check test/
 	black --check testbed/
 	black --check demo/*.py
+	black --check tools/
 
 # Lint all source code
 .PHONY: lint
 lint:
 	flake8 --append-config .flake8 src/
 	flake8 --append-config .flake8 test/
+	flake8 --append-config .flake8 tools/
 
 .PHONY: check-lint
 check-lint: lint
@@ -57,11 +61,10 @@ check-lint: lint
 typecheck:
 	mypy src/
 	mypy test/
+	mypy tools/
 
 .PHONY: check-typecheck
-check-typecheck:
-	mypy src/
-	mypy test/
+check-typecheck: typecheck
 
 # All quality assurance
 .PHONY: qa
@@ -80,3 +83,15 @@ check: check-format check-lint check-typecheck
 .PHONY: test
 test:
 	tox --develop -e py310 -- test
+
+# -----------------------------------------------------------------------------
+# Schema Generation / Vetting
+# -----------------------------------------------------------------------------
+
+.PHONY: gen
+gen:
+	PYTHONPATH=src python tools/schema.py generate src/mlte --verbose
+
+.PHONY: vet
+vet:
+	PYTHONPATH=src python tools/schema.py vet src/mlte --verbose
