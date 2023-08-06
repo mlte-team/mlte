@@ -18,6 +18,7 @@ $ pip install mlte-python
 Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more details on getting started with `mlte`.
 
 ### Citing This Work
+
 If you're interested in learning more about this work, you can read our [paper](https://arxiv.org/abs/2303.01998). While not required, it is highly encouraged and greatly appreciated if you cite our paper when you use MLTE for academic research.
 
 ```
