@@ -137,7 +137,7 @@ def delete_artifact(
     namespace_id: str, model_id: str, version_id: str, artifact_id: str
 ) -> ArtifactModel:
     """
-    Delete a negotiation card.
+    Delete an artifact by identifier.
     :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
