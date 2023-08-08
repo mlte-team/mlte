@@ -226,6 +226,20 @@ class RemoteHttpStoreSession(StoreSession):
         namespace_id: str,
         model_id: str,
         version_id: str,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[ArtifactModel]:
+        url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact?limit={limit}&offset={offset}"
+        res = self.client.get(url)
+        raise_for_response(res)
+
+        return [ArtifactModel(**object) for object in res.json()]
+
+    def search_artifacts(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality

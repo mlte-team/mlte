@@ -4,6 +4,8 @@ mlte/store/underlying/memory.py
 Implementation of in-memory artifact store.
 """
 
+from collections import OrderedDict
+
 from mlte.store.store import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
@@ -30,7 +32,7 @@ class VersionWithArtifacts:
         self.identifier = identifier
         """The version identifier."""
 
-        self.artifacts: dict[str, ArtifactModel] = {}
+        self.artifacts: OrderedDict[str, ArtifactModel] = OrderedDict()
         """The artifacts associated with the version."""
 
 
@@ -312,6 +314,21 @@ class InMemoryStoreSession(StoreSession):
         return version.artifacts[artifact_id]
 
     def read_artifacts(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[ArtifactModel]:
+        version = self._get_version_with_artifacts(
+            namespace_id, model_id, version_id
+        )
+        return [artifact for artifact in version.artifacts.values()][
+            offset : offset + limit
+        ]
+
+    def search_artifacts(
         self,
         namespace_id: str,
         model_id: str,

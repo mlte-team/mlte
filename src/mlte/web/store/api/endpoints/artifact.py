@@ -56,7 +56,7 @@ def read_artifact(
     namespace_id: str, model_id: str, version_id: str, artifact_id: str
 ) -> ArtifactModel:
     """
-    Read a negotiation card.
+    Read an artifact by identifier.
     :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
@@ -79,7 +79,33 @@ def read_artifact(
             )
 
 
-# TODO(Kyle): Implement a simple version of read artifacts.
+@router.get("")
+def read_artifacts(
+    namespace_id: str,
+    model_id: str,
+    version_id: str,
+    limit: int = 100,
+    offset: int = 0,
+) -> list[ArtifactModel]:
+    """
+    Read artifacts with limit and offset.
+    :param namespace_id: The namespace identifier
+    :param model_id: The model identifier
+    :param version_id: The version identifier
+    :param limit: The limit on returned artifacts
+    :param offset: The offset on returned artifacts
+    :return: The read artifacts
+    """
+    with dependencies.session() as handle:
+        try:
+            return handle.read_artifacts(
+                namespace_id, model_id, version_id, limit, offset
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
 
 
 @router.post("/search")
@@ -87,22 +113,17 @@ def search_artifacts(
     namespace_id: str, model_id: str, version_id: str, query: Query
 ) -> list[ArtifactModel]:
     """
-    Read a negotiation card.
+    Search artifacts.
     :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
-    :param artifact_id: The identifier for the artifact
-    :param artifact_type: The type identifier for the artifact
+    :param query: The artifact query
     :return: The read artifacts
     """
     with dependencies.session() as handle:
         try:
-            return handle.read_artifacts(
+            return handle.search_artifacts(
                 namespace_id, model_id, version_id, query
-            )
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(

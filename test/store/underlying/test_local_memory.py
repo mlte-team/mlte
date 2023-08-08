@@ -142,7 +142,7 @@ def test_search(store: InMemoryStore) -> None:
             handle.write_artifact(namespace_id, model_id, version_id, artifact)
 
     with ManagedSession(store.session()) as handle:
-        artifacts = handle.read_artifacts(namespace_id, model_id, version_id)
+        artifacts = handle.search_artifacts(namespace_id, model_id, version_id)
         assert len(artifacts) == 2
 
 
@@ -176,6 +176,10 @@ def test_negotiation_card(store: InMemoryStore) -> None:
         _ = handle.read_artifact(
             namespace_id, model_id, version_id, card.header.identifier
         )
+
+    with ManagedSession(store.session()) as handle:
+        read = handle.read_artifacts(namespace_id, model_id, version_id)
+        assert len(read) == 1
 
     with ManagedSession(store.session()) as handle:
         handle.delete_artifact(

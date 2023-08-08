@@ -276,6 +276,27 @@ class StoreSession:
         namespace_id: str,
         model_id: str,
         version_id: str,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[ArtifactModel]:
+        """
+        Read artifacts withi limit and offset.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param limit: The limit on artifacts to read
+        :param offset: The offset on artifacts to read
+        :return: The read artifacts
+        """
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+    def search_artifacts(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         """
