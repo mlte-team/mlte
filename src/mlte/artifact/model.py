@@ -18,7 +18,7 @@ class ArtifactType(str, Enum):
 
 
 class ArtifactHeaderModel(BaseModel):
-    """The NegotiationCardHeaderModel contains the common metadata for all artifacts."""
+    """The ArtifactHeaderModel contains the common metadata for all artifacts."""
 
     identifier: str
     """The unique identifier for the artifact."""
