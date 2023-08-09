@@ -4,16 +4,15 @@ demo/train.py
 Simple model training script.
 """
 
-import sys
 import argparse
-from pathlib import Path
 import logging
 import pickle
+import sys
+from pathlib import Path
 from typing import Tuple
 
 import pandas as pd
 from sklearn import tree
-from typing import Tuple
 
 # Job exit codes
 EXIT_SUCCESS = 0

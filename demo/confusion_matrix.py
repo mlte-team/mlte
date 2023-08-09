@@ -9,14 +9,9 @@ from typing import Any
 
 import numpy as np
 
-from mlte.value import Value
 from mlte.evidence.evidence_metadata import EvidenceMetadata
-from mlte.validation import (
-    Condition,
-    Result,
-    Success,
-    Failure,
-)
+from mlte.validation import Condition, Failure, Result, Success
+from mlte.value import Value
 
 
 class ConfusionMatrix(Value):

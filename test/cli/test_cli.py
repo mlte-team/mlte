@@ -1,12 +1,12 @@
 """
 test/cli/test_cli.py
 
-Unit tests for command line interface.
+Unit tests for the MLTE command line interface.
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 

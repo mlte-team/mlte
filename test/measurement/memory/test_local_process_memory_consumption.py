@@ -5,18 +5,18 @@ Unit test for LocalProcessMemoryConsumption measurement.
 """
 
 import os
-import time
-import pytest
-import threading
 import subprocess
+import threading
+import time
 
-import mlte
-from mlte._private.platform import is_windows, is_nix, is_macos
+import pytest
+
+from mlte._private.platform import is_macos, is_nix, is_windows
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.validation import Condition, Success, Failure
+from mlte.validation import Condition, Failure, Success
 
 from ...support.meta import path_to_support
 
@@ -37,7 +37,7 @@ def spin_for(seconds: int):
     is_windows() or is_macos(),
     reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
-def test_memory_nix_evaluate():
+def test_memory_nix_evaluate() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -54,7 +54,7 @@ def test_memory_nix_evaluate():
     is_windows() or is_macos(),
     reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
-def test_memory_nix_evaluate_async():
+def test_memory_nix_evaluate_async() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -72,7 +72,7 @@ def test_memory_nix_evaluate_async():
     is_windows() or is_macos(),
     reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
-def test_memory_nix_validate_success():
+def test_memory_nix_validate_success() -> None:
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")
@@ -91,7 +91,7 @@ def test_memory_nix_validate_success():
     is_windows() or is_macos(),
     reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
 )
-def test_memory_nix_validate_failure():
+def test_memory_nix_validate_failure() -> None:
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")
@@ -109,19 +109,17 @@ def test_memory_nix_validate_failure():
 @pytest.mark.skipif(
     is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
 )
-def test_memory_windows_evaluate():
+def test_memory_windows_evaluate() -> None:
     with pytest.raises(RuntimeError):
         _ = LocalProcessMemoryConsumption("id")
 
 
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
-)
-def test_result_save_load(tmp_path):
-    mlte.set_model("mymodel", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
-
+# @pytest.mark.skipif(
+#     is_windows() or is_macos(),
+#     reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
+# )
+@pytest.mark.skip("Pending artifact protocol implementation.")
+def test_result_save_load(default_session) -> None:  # noqa
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")

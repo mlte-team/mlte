@@ -10,7 +10,7 @@ from typing import Any
 
 from mlte.spec import Spec
 from mlte.validation import Result
-from mlte._global import global_state
+from mlte.session import session
 from mlte.api import read_validatedspec, write_validatedspec
 
 
@@ -50,13 +50,13 @@ class ValidatedSpec:
 
     def save(self):
         """Save ValidatedSpec instance to artifact store."""
-        state = global_state()
-        state.ensure_initialized()
+        sesh = session()
 
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
         write_validatedspec(
-            artifact_store_uri, model_identifier, model_version, self.to_json()
+            sesh.store.uri.uri,
+            sesh.context.model,
+            sesh.context.version,
+            self.to_json(),
         )
 
     @staticmethod
@@ -67,14 +67,10 @@ class ValidatedSpec:
         :return: The ValidatedSpec instance
         :rtype: ValidatedSpec
         """
-        state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        sesh = session()
 
         document = read_validatedspec(
-            artifact_store_uri, model_identifier, model_version
+            sesh.store.uri.uri, sesh.context.model, sesh.context.version
         )
         return ValidatedSpec.from_json(document)
 

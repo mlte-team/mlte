@@ -1,31 +1,37 @@
 """
 mlte/context/context.py
 
-Global package context.
+MLTE session context definition.
+
+The MLTE context defines the information necessary to
+utilize the MLTE package to generate, persist, and load
+MLTE evaluation artifacts.
 """
 
-from mlte._global import global_state
 
-
-def set_model(model_identifier: str, model_version: str):
+class Context:
     """
-    Set the global model identifier and version.
+    The MLTE context establishes the context for a MLTE evaluation session.
 
-    :param model_identifier: The identifier for the model
-    :type model_identifier: str
-    :param model_version: The version string for the model
-    :type model_version: str
+    NOTE(Kyle): Previously, this module had an explicit dependency on global
+    library state. This made testing difficult in that we had to establish the
+    global MLTE context through the usual hooks (those that developers use in
+    their applications). I have since refactored this to ensure that the Context
+    is a standalone data structure that is then exported by the global state module.
     """
-    state = global_state()
-    state.set_model(model_identifier, model_version)
 
+    def __init__(
+        self, namespace_id: str, model_id: str, version_id: str
+    ) -> None:
+        # NOTE(Kyle): Representing missing values as empty
+        # string makes this significantly easier to work with
+        # the type checker, although not as clean as I'd like.
 
-def set_artifact_store_uri(artifact_store_uri: str):
-    """
-    Set the global artifact store URI.
+        self.namespace = namespace_id
+        """The context namespace."""
 
-    :param artifact_store_uri: The URI for the artifact store
-    :type artifact_store_uri: str
-    """
-    state = global_state()
-    state.set_artifact_store_uri(artifact_store_uri)
+        self.model = model_id
+        """The context model identifier."""
+
+        self.version = version_id
+        """The context model version identifier."""

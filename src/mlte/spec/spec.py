@@ -11,7 +11,7 @@ from typing import Any, Union
 
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte._global import global_state
+from mlte.session import session
 from mlte.api import read_spec, write_spec
 from .requirement import Requirement
 
@@ -120,15 +120,14 @@ class Spec:
 
     def save(self):
         """Persist the specification to artifact store."""
-        state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        sesh = session()
 
         # Write spec to store
         write_spec(
-            artifact_store_uri, model_identifier, model_version, self.to_json()
+            sesh.store.uri.uri,
+            sesh.context.model,
+            sesh.context.version,
+            self.to_json(),
         )
 
     @staticmethod
@@ -142,14 +141,10 @@ class Spec:
         :return: The loaded Spec
         :rtype: Spec
         """
-        state = global_state()
-        state.ensure_initialized()
-
-        model_identifier, model_version = state.get_model()
-        artifact_store_uri = state.get_artifact_store_uri()
+        sesh = session()
 
         document = read_spec(
-            artifact_store_uri, model_identifier, model_version
+            sesh.store.uri.uri, sesh.context.model, sesh.context.version
         )
         return Spec.from_json(json=document)
 
@@ -198,12 +193,10 @@ class Spec:
         :return: The metadata document
         :rtype: dict[str, Any]
         """
-        state = global_state()
-        state.ensure_initialized()
-        model_identifier, model_version = state.get_model()
+        sesh = session()
         return {
-            "model_identifier": model_identifier,
-            "model_version": model_version,
+            "model_identifier": sesh.context.model,
+            "model_version": sesh.context.version,
             "timestamp": int(time.time()),
         }
 
