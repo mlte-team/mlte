@@ -34,4 +34,10 @@ class ArtifactModel(BaseModel):
     """The artifact header."""
 
     body: NegotiationCardModel
-    """The artifact body."""
+    """
+    The artifact body.
+    NOTE(Kyle): This will ultimately be a union over artifact types.
+    Artifact polymorphism is achieved via this union. For now, only
+    this single type is represented because it is the only artifact
+    model that is currently implemented.
+    """
