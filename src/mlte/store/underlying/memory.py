@@ -277,7 +277,7 @@ class InMemoryStoreSession(StoreSession):
         )
 
     # -------------------------------------------------------------------------
-    # Negotiation Card
+    # Artifact
     # -------------------------------------------------------------------------
 
     def write_artifact(

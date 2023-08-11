@@ -192,7 +192,7 @@ class RemoteHttpStoreSession(StoreSession):
         return Version(**res.json())
 
     # -------------------------------------------------------------------------
-    # Negotiation Card
+    # Artifacts
     # -------------------------------------------------------------------------
 
     def write_artifact(
