@@ -1,94 +1,39 @@
 """
-test/store/test_local_memory.py
+test/store/test_underlying.py
 
-Unit tests for the in-memory artifact store implementation.
+Unit tests for the underlying artifact store implementations.
 """
 
-from typing import Any
-
-import httpx
 import pytest
-from fastapi.testclient import TestClient
 
 import mlte.store.error as errors
-import mlte.web.store.app_factory as app_factory
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.negotiation.model import NegotiationCardModel
-from mlte.store import ManagedSession, StoreURI
-from mlte.store.factory import create_store
-from mlte.store.underlying.http import (
-    ClientType,
-    RemoteHttpStore,
-    RemoteHttpStoreClient,
-)
-from mlte.web.store.api.api import api_router
-from mlte.web.store.core.config import settings
-from mlte.web.store.state import state
+from mlte.store import ManagedSession, Store, StoreURI
+from mlte.store.underlying.http import RemoteHttpStore
+from mlte.store.underlying.memory import InMemoryStore
 
-# -----------------------------------------------------------------------------
-# Client Configuration
-# -----------------------------------------------------------------------------
+from ..fixture.artifact import ArtifactFactory
+from .fixture import http_store, memory_store, stores, stores_and_types  # noqa
 
 
-class TestclientCient(RemoteHttpStoreClient):
-    def __init__(self, client: TestClient) -> None:
-        super().__init__(ClientType.TESTCLIENT)
-
-        self.client = client
-        """The underlying client."""
-
-    def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.get(url, **kwargs)
-
-    def post(  # type: ignore[override]
-        self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
-        return self.client.post(url, data=data, json=json, **kwargs)
-
-    def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.delete(url, **kwargs)
+def test_init_memory() -> None:
+    """An in-memory store can be initialized."""
+    _ = InMemoryStore(StoreURI.from_string("memory://"))
 
 
-@pytest.fixture(scope="function")
-def store() -> RemoteHttpStore:
-    """
-    Get a RemoteHttpStore configured with a test client.
-    :return: The configured store
-    """
-    # Configure the backing store
-    state.set_store(create_store("memory://"))
-
-    # Configure the application
-    app = app_factory.create()
-    app.include_router(api_router, prefix=settings.API_PREFIX)
-
-    # Return a remote store that is able to hit the app
-    client = TestClient(app)
-    store = RemoteHttpStore(
-        uri=StoreURI.from_string(str(client.base_url)),
-        client=TestclientCient(client),
-    )
-    return store
-
-
-# -----------------------------------------------------------------------------
-# Test Definitions
-# -----------------------------------------------------------------------------
-
-
-def test_init() -> None:
+def test_init_http() -> None:
     """A remote HTTP store can be initialized."""
     _ = RemoteHttpStore(StoreURI.from_string("http://localhost:8080"))
 
 
-def test_fixture(store: RemoteHttpStore) -> None:
-    """The fixture for remote HTTP store can be initialized."""
-    assert True
+@pytest.mark.parametrize("store_fixture_name", stores())
+def test_namespace(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """An artifact store supports namespace operations."""
+    store: Store = request.getfixturevalue(store_fixture_name)
 
-
-def test_namespace(store: RemoteHttpStore) -> None:
-    """An in-memory store supports namespace operations."""
     namespace_id = "namespace"
 
     with ManagedSession(store.session()) as handle:
@@ -113,8 +58,11 @@ def test_namespace(store: RemoteHttpStore) -> None:
         assert len(ids) == 0
 
 
-def test_model(store: RemoteHttpStore) -> None:
-    """An in-memory store supports model operations."""
+@pytest.mark.parametrize("store_fixture_name", stores())
+def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+    """An artifact store supports model operations."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
     namespace_id = "namespace"
     model_id = "model"
 
@@ -139,8 +87,13 @@ def test_model(store: RemoteHttpStore) -> None:
             handle.read_model(namespace_id, model_id)
 
 
-def test_version(store: RemoteHttpStore) -> None:
-    """An in-memory store supports model version operations."""
+@pytest.mark.parametrize("store_fixture_name", stores())
+def test_version(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """An artifact store supports model version operations."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
     namespace_id = "namespace"
     model_id = "model"
     version_id = "version"
@@ -169,8 +122,14 @@ def test_version(store: RemoteHttpStore) -> None:
             _ = handle.read_version(namespace_id, model_id, version_id)
 
 
-def test_negotiation_card(store: RemoteHttpStore) -> None:
-    """An in-memory store supports negotiation card operations."""
+@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+def test_search(
+    store_fixture_name: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
+) -> None:
+    """An artifact store store supports queries."""
+    store: Store = request.getfixturevalue(store_fixture_name)
 
     namespace_id = "namespace"
     model_id = "model"
@@ -183,28 +142,58 @@ def test_negotiation_card(store: RemoteHttpStore) -> None:
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    card = ArtifactModel(
-        header=ArtifactHeaderModel(
-            identifier="id", type=ArtifactType.NEGOTIATION_CARD
-        ),
-        body=NegotiationCardModel(),
-    )
+    a0 = ArtifactFactory.make(artifact_type, "id0")
+    a1 = ArtifactFactory.make(artifact_type, "id1")
 
     with ManagedSession(store.session()) as handle:
-        handle.write_artifact(namespace_id, model_id, version_id, card)
+        for artifact in [a0, a1]:
+            handle.write_artifact(namespace_id, model_id, version_id, artifact)
+
+    with ManagedSession(store.session()) as handle:
+        artifacts = handle.search_artifacts(namespace_id, model_id, version_id)
+        assert len(artifacts) == 2
+
+
+@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+def test_artifact(
+    store_fixture_name: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
+) -> None:
+    """An artifact store supports basic artifact operations."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
+    namespace_id = "namespace"
+    model_id = "model"
+    version_id = "version"
+    artifact_id = "myid"
+
+    with ManagedSession(store.session()) as handle:
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
+        handle.create_version(
+            namespace_id, model_id, VersionCreate(identifier=version_id)
+        )
+
+    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+
+    with ManagedSession(store.session()) as handle:
+        handle.write_artifact(namespace_id, model_id, version_id, artifact)
 
     with ManagedSession(store.session()) as handle:
         _ = handle.read_artifact(
-            namespace_id, model_id, version_id, card.header.identifier
+            namespace_id, model_id, version_id, artifact_id
         )
 
     with ManagedSession(store.session()) as handle:
-        handle.delete_artifact(
-            namespace_id, model_id, version_id, card.header.identifier
-        )
+        read = handle.read_artifacts(namespace_id, model_id, version_id)
+        assert len(read) == 1
+
+    with ManagedSession(store.session()) as handle:
+        handle.delete_artifact(namespace_id, model_id, version_id, artifact_id)
 
     with ManagedSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_artifact(
-                namespace_id, model_id, version_id, card.header.identifier
+                namespace_id, model_id, version_id, artifact_id
             )
