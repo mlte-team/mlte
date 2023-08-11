@@ -1,0 +1,22 @@
+site_name: MLTE
+theme:
+  name: "material"
+watch:
+  - ../src/mlte
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../src]
+          options:
+            docstring_style: sphinx
+  - gen-files:
+      scripts:
+        - tools/generate_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+nav:
+  - index.md
+  - API Reference: reference/ 
