@@ -27,24 +27,22 @@ def _parse_root_path(uristr: str) -> Path:
     """
     Parse the root path for the backend from the URI.
     :param uri: The URI
-    :type uri: BackendURI
+    :type uri: str
     :return: The parsed path
     :rtype: Path
     """
     assert uristr.startswith("fs://") or uristr.startswith(
         "local://"
     ), "Broken precondition."
-    return (
-        Path(uristr[len("fs://") :])
-        if uristr.startswith("fs://")
-        else Path(uristr[len("local://") :])
-    )
+    prefix = "fs://" if uristr.startswith("fs://") else "local://"
+    return Path(uristr[len(prefix) :])
 
 
-def rmtree(root: Path):
+def _rmtree(root: Path):
+    """Removes a folder and its contents."""
     for p in root.iterdir():
         if p.is_dir():
-            rmtree(p)
+            _rmtree(p)
         else:
             p.unlink()
     root.rmdir()
@@ -53,9 +51,6 @@ def rmtree(root: Path):
 class JsonFileStorage:
     """A simple JSON storage wrapper for the file system store."""
 
-    def __init__(self) -> None:
-        pass
-
     def create_folder(self, path: Path) -> None:
         Path.mkdir(path, parents=True)
 
@@ -63,7 +58,7 @@ class JsonFileStorage:
         return [x for x in path.iterdir() if x.is_dir()]
 
     def delete_folder(self, path: Path) -> None:
-        rmtree(path)
+        _rmtree(path)
 
     def list_json_files(self, path: Path) -> list[Path]:
         return [
@@ -93,11 +88,11 @@ class JsonFileStorage:
 class LocalFileSystemStoreSession(StoreSession):
     """A local file-system implementation of the MLTE artifact store."""
 
-    def __init__(self, uri: Path, storage: JsonFileStorage) -> None:
+    def __init__(self, uri: str, storage: JsonFileStorage) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
-        self.root = _parse_root_path(str(uri))
+        self.root = _parse_root_path(uri)
         """The remote artifact store URL."""
 
         if not self.root.exists():
@@ -123,7 +118,6 @@ class LocalFileSystemStoreSession(StoreSession):
 
     def read_namespace(self, namespace_id: str) -> Namespace:
         self._ensure_namespace_exists(namespace_id)
-
         return self._read_namespace(namespace_id)
 
     def list_namespaces(self) -> list[str]:
@@ -134,7 +128,6 @@ class LocalFileSystemStoreSession(StoreSession):
 
     def delete_namespace(self, namespace_id: str) -> Namespace:
         self._ensure_namespace_exists(namespace_id)
-
         namespace = self._read_namespace(namespace_id)
         self.storage.delete_folder(Path(self.root, namespace_id))
         return namespace
@@ -154,12 +147,10 @@ class LocalFileSystemStoreSession(StoreSession):
     def read_model(self, namespace_id: str, model_id: str) -> Model:
         self._ensure_namespace_exists(namespace_id)
         self._ensure_model_exists(namespace_id, model_id)
-
         return self._read_model(namespace_id, model_id)
 
     def list_models(self, namespace_id: str) -> list[str]:
         self._ensure_namespace_exists(namespace_id)
-
         return [
             str(model_folder)
             for model_folder in self.storage.list_folders(
@@ -223,10 +214,12 @@ class LocalFileSystemStoreSession(StoreSession):
         return version
 
     def _ensure_namespace_exists(self, namespace_id: str) -> None:
+        """Throws an ErrorNotFound if the given namespace does not exist."""
         if not Path(self.root, namespace_id).exists():
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
     def _ensure_model_exists(self, namespace_id: str, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given model in the given namespace does not exist."""
         if not Path(self.root, namespace_id, model_id).exists():
             raise errors.ErrorNotFound(
                 f"Model {model_id} in namespace {namespace_id}"
@@ -235,6 +228,7 @@ class LocalFileSystemStoreSession(StoreSession):
     def _ensure_version_exists(
         self, namespace_id: str, model_id: str, version_id: str
     ) -> None:
+        """Throws an ErrorNotFound if the given version of the given model in the given namespace does not exist."""
         if not Path(self.root, namespace_id, model_id, version_id).exists():
             raise errors.ErrorNotFound(
                 f"Version {version_id} in model {model_id} in namespace {namespace_id}"
@@ -388,6 +382,7 @@ class LocalFileSystemStoreSession(StoreSession):
     def _ensure_artifact_exists(
         self, artifact_id: str, artifacts: list[str]
     ) -> None:
+        """Throws an ErrorNotFound if the given artifact does not exist."""
         if artifact_id not in artifacts:
             raise errors.ErrorNotFound(f"Artifact {artifact_id}")
 
@@ -417,8 +412,7 @@ class LocalFileSystemStoreSession(StoreSession):
         self, namespace_id: str, model_id: str, version_id: str
     ) -> Path:
         """
-        Format a local FS path.
-        :param base: The base path
+        Format a local FS path to a version of a model of a namespace.
         :param namespace_id: The namespace identifier
         :param model_id: The model identifier
         :param version_id: The version identifier
@@ -433,6 +427,14 @@ class LocalFileSystemStoreSession(StoreSession):
         version_id: str,
         artifact_id: str,
     ):
+        """
+        Formats a local FS path to an artifact.
+        :param namespace_id: The namespace identifier
+        :param model_id: The model identifier
+        :param version_id: The version identifier
+        :param artifact_id: The artifact identifier
+        :return: The formatted path
+        """
         return Path(
             self._base_path(namespace_id, model_id, version_id),
             artifact_id + ".json",
@@ -453,6 +455,4 @@ class LocalFileSystemStore(Store):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return LocalFileSystemStoreSession(
-            Path(str(self.uri)), storage=self.storage
-        )
+        return LocalFileSystemStoreSession(self.uri.uri, storage=self.storage)
