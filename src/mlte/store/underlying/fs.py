@@ -72,7 +72,7 @@ class JsonFileStorage:
 
     def write_json_to_file(self, path: Path, data: dict[str, Any]) -> None:
         with path.open("w") as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=4)
 
     def delete_file(self, path: Path) -> None:
         if not path.exists():
