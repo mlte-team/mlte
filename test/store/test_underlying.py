@@ -15,13 +15,8 @@ from mlte.store.underlying.memory import InMemoryStore
 from mlte.store.underlying.fs import LocalFileSystemStore
 
 from ..fixture.artifact import ArtifactFactory
-from .fixture import (
-    http_store,
-    memory_store,
-    fs_store,
-    stores,
-    stores_and_types,
-)  # noqa
+from .fixture import http_store, memory_store, fs_store  # noqa
+from .fixture import stores, stores_and_types
 
 
 def test_init_memory() -> None:
