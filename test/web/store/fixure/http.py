@@ -10,7 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import mlte.web.store.app_factory as app_factory
-from mlte.artifact.model import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.store.factory import create_store
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
