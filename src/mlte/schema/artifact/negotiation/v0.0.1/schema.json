@@ -3,6 +3,13 @@
   "description": "The model implementation for the NegotiationCard artifact.",
   "type": "object",
   "properties": {
+    "artifact_type": {
+      "title": "Artifact Type",
+      "enum": [
+        "1"
+      ],
+      "type": "string"
+    },
     "system": {
       "title": "System",
       "default": {
@@ -66,6 +73,9 @@
       ]
     }
   },
+  "required": [
+    "artifact_type"
+  ],
   "definitions": {
     "MetricDescriptor": {
       "title": "MetricDescriptor",
