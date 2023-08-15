@@ -5,9 +5,11 @@ Implementation of local file system artifact store.
 """
 
 
-import json
 from typing import Any
 from pathlib import Path
+import json
+import shutil
+
 from mlte.store.store import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
@@ -23,6 +25,11 @@ from mlte.store.query import Query
 import mlte.store.error as errors
 
 
+# The prefix that indicates a local filesystem directory is used
+LOCAL_URI_PREFIX = "local://"
+FS_URI_PREFIX = "fs://"
+
+
 def _parse_root_path(uristr: str) -> Path:
     """
     Parse the root path for the backend from the URI.
@@ -31,21 +38,13 @@ def _parse_root_path(uristr: str) -> Path:
     :return: The parsed path
     :rtype: Path
     """
-    assert uristr.startswith("fs://") or uristr.startswith(
-        "local://"
+    assert uristr.startswith(FS_URI_PREFIX) or uristr.startswith(
+        LOCAL_URI_PREFIX
     ), "Broken precondition."
-    prefix = "fs://" if uristr.startswith("fs://") else "local://"
+    prefix = (
+        FS_URI_PREFIX if uristr.startswith(FS_URI_PREFIX) else LOCAL_URI_PREFIX
+    )
     return Path(uristr[len(prefix) :])
-
-
-def _rmtree(root: Path):
-    """Removes a folder and its contents."""
-    for p in root.iterdir():
-        if p.is_dir():
-            _rmtree(p)
-        else:
-            p.unlink()
-    root.rmdir()
 
 
 class JsonFileStorage:
@@ -58,7 +57,7 @@ class JsonFileStorage:
         return [x for x in path.iterdir() if x.is_dir()]
 
     def delete_folder(self, path: Path) -> None:
-        _rmtree(path)
+        shutil.rmtree(path)
 
     def list_json_files(self, path: Path) -> list[Path]:
         return [
