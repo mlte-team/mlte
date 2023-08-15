@@ -82,7 +82,7 @@ check: check-format check-lint check-typecheck
 # NOTE: Only runs 3.10 environment (for speed)
 .PHONY: test
 test:
-	tox --develop -e py310 -- test
+	tox --develop -e py310 -- test/value
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting

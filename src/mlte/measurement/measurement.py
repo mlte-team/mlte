@@ -10,8 +10,8 @@ import abc
 import typing
 from typing import Type, Optional
 
-from mlte.value import Value
-from mlte.value.types import Opaque
+from mlte.value.artifact import Value
+from mlte.value.types.opaque import Opaque
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.identifier import Identifier
 

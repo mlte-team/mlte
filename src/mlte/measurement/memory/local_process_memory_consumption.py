@@ -12,7 +12,7 @@ from typing import Any, Type
 
 from ..process_measurement import ProcessMeasurement
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.value import Value
+from mlte.value.artifact import Value
 from mlte.validation import (
     Condition,
     Success,

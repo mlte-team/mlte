@@ -11,7 +11,7 @@ import base64
 
 import dill
 
-from mlte.value import Value
+from mlte.value.artifact import Value
 from . import Result
 
 

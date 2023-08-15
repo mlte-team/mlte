@@ -10,7 +10,8 @@ import typing
 
 from mlte.value.artifact import Value
 from mlte.validation import Condition, Success, Failure
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel, ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
+from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.model import ValueModel, IntegerValueModel, ValueType
 
@@ -37,16 +38,22 @@ class Integer(Value):
         Convert an integer value artifact to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
+        print("integer.to_model()")
+        a = ArtifactModel(
             header=ArtifactHeaderModel(
                 identifier=self.identifier, type=self.type
             ),
             body=ValueModel(
-                type=ValueType.INTEGER,
+                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value=IntegerValueModel(integer=self.value),
+                value=IntegerValueModel(
+                    value_type=ValueType.INTEGER, integer=self.value
+                ),
             ),
         )
+        print("return")
+        print(a)
+        return a
 
     @staticmethod
     def from_model(model: ArtifactModel) -> Integer:  # type: ignore[override]
@@ -58,7 +65,9 @@ class Integer(Value):
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 
-        assert body.type == ValueType.INTEGER, "Broken Precondition."
+        assert (
+            body.value.value_type == ValueType.INTEGER
+        ), "Broken Precondition."
         value = typing.cast(IntegerValueModel, body.value)
 
         return Integer(

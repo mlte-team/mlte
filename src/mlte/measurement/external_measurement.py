@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Type, Callable, Optional
 import typing
 
-from mlte.value import Value
+from mlte.value.artifact import Value
 from .measurement import Measurement
 
 

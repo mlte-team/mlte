@@ -12,7 +12,7 @@ from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")

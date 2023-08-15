@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Any
 
 from mlte.validation import Result, Condition
-from mlte.value import Value
+from mlte.value.artifact import Value
 from mlte.evidence.identifier import Identifier
 
 # -----------------------------------------------------------------------------

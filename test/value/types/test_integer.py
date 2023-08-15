@@ -6,10 +6,14 @@ Unit tests for Integer.
 
 import pytest
 
+from mlte.context.context import Context
 from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import Measurement
-from mlte.value.types import Integer
+from mlte.store.store import Store
+from mlte.value.types.integer import Integer
+
+from ...fixture.store import store_with_context  # noqa
 
 
 class DummyMeasurementInteger(Measurement):
@@ -20,8 +24,8 @@ class DummyMeasurementInteger(Measurement):
         return Integer(self.metadata, 1)
 
 
-def test_integer_success():
-    # Ensure instantiation succeeds for valid type
+def test_success():
+    """Integer construction works for valid input type."""
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
@@ -29,8 +33,8 @@ def test_integer_success():
     assert i.value == 1
 
 
-def test_integer_fail():
-    # Ensure instantiation fails for invalid type
+def test_fail():
+    """Integer construction fails for invalid input type."""
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
@@ -38,36 +42,37 @@ def test_integer_fail():
         _ = Integer(m, 3.14)  # type: ignore
 
 
-def test_integer_serde():
-    # Ensure serialization and deserialization are inverses
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
-    )
-    i = Integer(m, 1)
+def test_measurement():
+    """Integer can be produced by measurement."""
 
-    serialized = i.serialize()
-    recovered = Integer.deserialize(m, serialized)
-    assert recovered == i
-
-
-@pytest.mark.skip("Disabled for artifact protocol development.")
-def test_integer_save_load(tmp_path):
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
-    )
-    i = Integer(m, 1)
-
-    # Save
-    i.save()
-
-    # Recover
-    r = Integer.load("id")
-
-    assert r == i
-
-
-def test_integer_e2e():
     m = DummyMeasurementInteger("identifier")
     i = m.evaluate()
     assert isinstance(i, Integer)
     assert i.value == 1
+
+
+def test_serde() -> None:
+    """Integer can be converted to model and back."""
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    i = Integer(m, 1)
+
+    model = i.to_model()
+    e = Integer.from_model(model)
+
+    assert e == i
+
+
+def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+    """Integer can be saved to and loaded from artifact store."""
+    store, ctx = store_with_context
+
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    i = Integer(m, 1)
+    i.save_with(ctx, store)
+
+    loaded = Integer.load_with("id.value", ctx, store)
+    assert loaded == i

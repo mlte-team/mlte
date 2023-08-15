@@ -6,7 +6,8 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
-from mlte.artifact.model import ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 from mlte.context import Context
 from mlte.session import session
 from mlte.store import ManagedSession, Store

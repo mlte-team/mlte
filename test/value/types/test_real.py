@@ -6,10 +6,14 @@ Unit tests for Real.
 
 import pytest
 
+from mlte.context.context import Context
 from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import Measurement
-from mlte.value.types import Real
+from mlte.store.store import Store
+from mlte.value.types.real import Real
+
+from ...fixture.store import store_with_context  # noqa
 
 
 class DummyMeasurementReal(Measurement):
@@ -20,8 +24,8 @@ class DummyMeasurementReal(Measurement):
         return Real(self.metadata, 3.14)
 
 
-def test_real_success():
-    # Ensure instantiation succeeds for valid type
+def test_success():
+    """Integer construction works for valid input."""
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
@@ -29,7 +33,8 @@ def test_real_success():
     assert r.value == 3.14
 
 
-def test_real_fail():
+def test_fail():
+    """Real construction fails for invalid input."""
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
@@ -37,34 +42,36 @@ def test_real_fail():
         _ = Real(m, 1)
 
 
-def test_real_serde():
-    # Ensure serialization and deserialization are inverses
+def test_measurement():
+    """Real can be produced by a measurement."""
+    m = DummyMeasurementReal("identifier")
+    r = m.evaluate()
+    assert isinstance(r, Real)
+    assert r.value == 3.14
+
+
+def test_serde() -> None:
+    """Real can be converted to model and back."""
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
     r = Real(m, 3.14)
 
-    serialized = r.serialize()
-    recovered = Real.deserialize(m, serialized)
-    assert recovered == r
+    model = r.to_model()
+    e = Real.from_model(model)
+
+    assert e == r
 
 
-@pytest.mark.skip("Disabled for artifact protocol development.")
-def test_real_save_load(tmp_path):
-    m = EvidenceMetadata("typename", "id")
+def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+    """Real can be saved to and loaded from artifact store."""
+    store, ctx = store_with_context
+
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     i = Real(m, 3.14)
+    i.save_with(ctx, store)
 
-    # Save
-    i.save()
-
-    # Recover
-    r = Real.load("id")
-
-    assert r == i
-
-
-def test_real_e2e():
-    m = DummyMeasurementReal("identifier")
-    r = m.evaluate()
-    assert isinstance(r, Real)
-    assert r.value == 3.14
+    loaded = Real.load_with("id.value", ctx, store)
+    assert loaded == i

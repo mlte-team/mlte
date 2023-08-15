@@ -11,7 +11,8 @@ import typing
 from mlte.value.artifact import Value
 from mlte.validation import Condition, Success, Failure
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel, ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
+from mlte.artifact.type import ArtifactType
 from mlte.value.model import ValueModel, ValueType, RealValueModel
 
 
@@ -43,9 +44,11 @@ class Real(Value):
                 identifier=self.identifier, type=self.type
             ),
             body=ValueModel(
-                type=ValueType.REAL,
+                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value=RealValueModel(integer=self.value),
+                value=RealValueModel(
+                    value_type=ValueType.REAL, real=self.value
+                ),
             ),
         )
 
@@ -59,7 +62,7 @@ class Real(Value):
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 
-        assert body.type == ValueType.REAL, "Broken Precondition."
+        assert body.value.value_type == ValueType.REAL, "Broken Precondition."
         value = typing.cast(RealValueModel, body.value)
 
         return Real(

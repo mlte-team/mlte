@@ -9,7 +9,7 @@ import pytest
 from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import ExternalMeasurement
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 def _dummy_calculation(x: int, y: int):
@@ -47,7 +47,12 @@ def test_evaluate_external():
 
 def test_evaluate_ingest():
     expected_value = 1000
-    expected_result = Integer(EvidenceMetadata("dummy", "test"), expected_value)
+    expected_result = Integer(
+        EvidenceMetadata(
+            measurement_type="dummy", identifier=Identifier(name="test")
+        ),
+        expected_value,
+    )
 
     measurement = ExternalMeasurement("dummy", Integer)
     result = measurement.ingest(expected_value)

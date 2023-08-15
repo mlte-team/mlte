@@ -14,7 +14,7 @@ from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec
 from mlte.validation import Result
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")

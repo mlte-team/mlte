@@ -8,7 +8,8 @@ from typing import Union, Literal
 
 from mlte.model import BaseModel
 from enum import Enum
-from mlte.artifact.model import ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 
 # A type alias
 Filter = Union[

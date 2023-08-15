@@ -12,7 +12,8 @@ import deepdiff
 
 from mlte.value.artifact import Value
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel, ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
+from mlte.artifact.type import ArtifactType
 from mlte.value.model import ValueModel, ValueType, OpaqueValueModel
 
 
@@ -42,9 +43,11 @@ class Opaque(Value):
                 identifier=self.identifier, type=self.type
             ),
             body=ValueModel(
-                type=ValueType.OPAQUE,
+                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value=OpaqueValueModel(data=self.data),
+                value=OpaqueValueModel(
+                    value_type=ValueType.OPAQUE, data=self.data
+                ),
             ),
         )
 
@@ -58,7 +61,7 @@ class Opaque(Value):
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 
-        assert body.type == ValueType.REAL, "Broken Precondition."
+        assert body.value.value_type == ValueType.OPAQUE, "Broken Precondition."
         value = typing.cast(OpaqueValueModel, body.value)
 
         return Opaque(

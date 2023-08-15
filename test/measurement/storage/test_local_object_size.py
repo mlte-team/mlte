@@ -10,7 +10,7 @@ from typing import Any
 
 from mlte.measurement.storage import LocalObjectSize
 from mlte.validation import Result
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction

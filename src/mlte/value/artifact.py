@@ -10,7 +10,8 @@ import abc
 
 from mlte.artifact.artifact import Artifact
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.artifact.model import ArtifactType, ArtifactModel
+from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 
 
 def _has_callable(type, name) -> bool:

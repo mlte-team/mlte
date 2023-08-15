@@ -14,7 +14,8 @@ import typing
 from mlte.value.artifact import Value
 from mlte.validation import Condition, Ignore
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.type import ArtifactType
 from mlte.value.model import ValueModel, ValueType, ImageValueModel
 
 
@@ -31,7 +32,7 @@ class Image(Value):
         """
         Initialize an Image instance.
         :param metadata: The generating measurement's metadata
-        :param path: The path to the image on disk
+        :param image: The path to the image (str, Path) or raw image data (bytes)
         """
         if isinstance(image, str):
             image = Path(image)
@@ -59,10 +60,11 @@ class Image(Value):
                 identifier=self.identifier, type=self.type
             ),
             body=ValueModel(
-                type=ValueType.OPAQUE,
+                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value=ImageValueModel(
-                    data=base64.encodebytes(self.image).decode("utf-8")
+                    value_type=ValueType.IMAGE,
+                    data=base64.encodebytes(self.image).decode("utf-8"),
                 ),
             ),
         )
@@ -77,7 +79,7 @@ class Image(Value):
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 
-        assert body.type == ValueType.REAL, "Broken Precondition."
+        assert body.value.value_type == ValueType.IMAGE, "Broken Precondition."
         value = typing.cast(ImageValueModel, body.value)
 
         return Image(

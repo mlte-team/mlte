@@ -10,7 +10,9 @@ from mlte._private.schema import validate_value_schema
 from mlte.api import read_value
 from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.value.types import Integer, Opaque, Real
+from mlte.value.types.integer import Integer
+from mlte.value.types.opaque import Opaque
+from mlte.value.types.real import Real
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")

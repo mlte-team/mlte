@@ -11,7 +11,7 @@ from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 def test_no_property():
@@ -50,7 +50,12 @@ def test_success():
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        1,
+    )
     specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()

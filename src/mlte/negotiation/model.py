@@ -7,8 +7,9 @@ Model implementation for negotiation card artifact.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
+from typing import Literal, Optional
 
+from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 
 # -----------------------------------------------------------------------------
@@ -243,6 +244,9 @@ class ModelDescriptor(BaseModel):
 
 class NegotiationCardModel(BaseModel):
     """The model implementation for the NegotiationCard artifact."""
+
+    artifact_type: Literal[ArtifactType.NEGOTIATION_CARD]
+    """Union discriminator."""
 
     system: SystemDescriptor = SystemDescriptor()
     """The descriptor for the system in which the model is integrated."""
