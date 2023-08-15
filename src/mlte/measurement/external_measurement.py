@@ -46,7 +46,7 @@ class ExternalMeasurement(Measurement):
                 )
             else:
                 # Store the function module+name as additional metadata info, for better traceability.
-                self.metadata.additional_info = (
+                self.metadata.info = (
                     f"function: {function.__module__}.{function.__name__}"
                 )
         self.function: Optional[Callable] = function  # type: ignore
