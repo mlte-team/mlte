@@ -43,7 +43,6 @@ from mlte.property.functionality import TaskEfficacy
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.cpu import LocalProcessCPUUtilization
 from mlte.measurement.memory import LocalProcessMemoryConsumption
-from mlte.measurement import ExternalMeasurement
 
 spec = Spec({
     TaskEfficacy("Important to understand if the model is useful for this case"): 
