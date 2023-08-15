@@ -6,8 +6,10 @@ Identifier class implementation.
 
 from __future__ import annotations
 
+from mlte.model.base_model import BaseModel
 
-class Identifier:
+
+class Identifier(BaseModel):
     """
     Identifier is a simple class that standardizes
     the manner in which Measurements, Values, and
@@ -15,23 +17,8 @@ class Identifier:
     their lifetimes.
     """
 
-    def __init__(self, name: str):
-        """
-        Initialize a new Identifier instance.
-
-        :param name: A unique name
-        :type name: str
-        """
-        self.name = name
-
-    def to_json(self) -> str:
-        """Serialize to JSON document."""
-        return self.name
-
-    @staticmethod
-    def from_json(json: str) -> Identifier:
-        """Deserialize from JSON document."""
-        return Identifier(name=json)
+    name: str
+    """The name of the object."""
 
     def __eq__(self, other: object) -> bool:
         """Compare two Identifier instances for equality."""

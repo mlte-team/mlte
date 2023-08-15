@@ -6,12 +6,19 @@ Negotiation card artifact implementation.
 
 from __future__ import annotations
 
+import typing
+
 import deepdiff
 
-import mlte.negotiation.model as model
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.context import Context
+from mlte.negotiation.model import (
+    DataDescriptor,
+    ModelDescriptor,
+    NegotiationCardModel,
+    SystemDescriptor,
+)
 from mlte.store.store import ManagedSession, Store
 
 
@@ -21,9 +28,9 @@ class NegotiationCard(Artifact):
     def __init__(
         self,
         identifier: str,
-        system: model.SystemDescriptor = model.SystemDescriptor(),
-        data: list[model.DataDescriptor] = [],
-        model: model.ModelDescriptor = model.ModelDescriptor(),
+        system: SystemDescriptor = SystemDescriptor(),
+        data: list[DataDescriptor] = [],
+        model: ModelDescriptor = ModelDescriptor(),
     ) -> None:
         super().__init__(identifier, ArtifactType.NEGOTIATION_CARD)
 
@@ -43,7 +50,7 @@ class NegotiationCard(Artifact):
                 identifier=self.identifier,
                 type=self.type,
             ),
-            body=model.NegotiationCardModel(
+            body=NegotiationCardModel(
                 system=self.system, data=self.data, model=self.model
             ),
         )
@@ -51,11 +58,15 @@ class NegotiationCard(Artifact):
     @staticmethod
     def from_model(model: ArtifactModel) -> NegotiationCard:  # type: ignore[override]
         """Convert a negotiation card model to its corresponding artifact."""
+        assert (
+            model.header.type == ArtifactType.NEGOTIATION_CARD
+        ), "Broken precondition."
+        body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,
-            system=model.body.system,
-            data=model.body.data,
-            model=model.body.model,
+            system=body.system,
+            data=body.data,
+            model=body.model,
         )
 
     def save_with(self, context: Context, store: Store) -> None:

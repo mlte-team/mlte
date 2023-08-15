@@ -1,62 +1,71 @@
 """
+mlte/value/types/real.py
+
 An Value instance for a scalar, real value.
 """
+
 from __future__ import annotations
 
-from typing import Any
+import typing
 
-from ..value import Value
+from mlte.value.artifact import Value
 from mlte.validation import Condition, Success, Failure
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel, ArtifactType
+from mlte.value.model import ValueModel, ValueType, RealValueModel
 
 
 class Real(Value):
     """
-    Real implements the Value
-    interface for a single real value.
+    Real implements the Value interface for a single real value.
     """
 
-    def __init__(self, evidence_metadata: EvidenceMetadata, value: float):
+    def __init__(self, metadata: EvidenceMetadata, value: float):
         """
         Initialize a Real instance.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
+        :param metadata: The generating measurement's metadata
         :param value: The real value
-        :type value: float
         """
         assert isinstance(value, float), "Argument must be `float`."
 
-        super().__init__(self, evidence_metadata)
+        super().__init__(self, metadata)
 
         self.value = value
         """The wrapped real value."""
 
-    def serialize(self) -> dict[str, Any]:
+    def to_model(self) -> ArtifactModel:
         """
-        Serialize an Real to a JSON object.
-
-        :return: The JSON object
-        :rtype: dict[str, Any]
+        Convert a real value artifact to its corresponding model.
+        :return: The artifact model
         """
-        return {"value": self.value}
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier, type=self.type
+            ),
+            body=ValueModel(
+                type=ValueType.REAL,
+                metadata=self.metadata,
+                value=RealValueModel(integer=self.value),
+            ),
+        )
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
-    ) -> Real:
+    def from_model(model: ArtifactModel) -> Real:  # type: ignore[override]
         """
-        Deserialize an Real from a JSON object.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
-        :param json: The JSON object
-        :type json: dict[str, Any]
-
-        :return: The deserialized instance
-        :rtype: Real
+        Convert a real value model to its corresponding artifact.
+        :param model: The model representation
+        :return: The real value
         """
-        return Real(evidence_metadata, json["value"])
+        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
+        body = typing.cast(ValueModel, model.body)
+
+        assert body.type == ValueType.REAL, "Broken Precondition."
+        value = typing.cast(RealValueModel, body.value)
+
+        return Real(
+            metadata=body.metadata,
+            value=value.real,
+        )
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""

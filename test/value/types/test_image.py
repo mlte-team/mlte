@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 import requests
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.types import Image
 
 # A cute image for testing purposes
@@ -27,12 +28,22 @@ def download_image(dst_dir: Path) -> Path:
 
 def test_from_str(tmp_path):
     local_path = str(download_image(tmp_path))
-    _ = Image(EvidenceMetadata("typename", "id"), local_path)
+    _ = Image(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        local_path,
+    )
 
 
 def test_from_path(tmp_path):
     local_path = download_image(tmp_path)
-    _ = Image(EvidenceMetadata("typename", "id"), local_path)
+    _ = Image(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        local_path,
+    )
 
 
 def test_from_bytes(tmp_path):
@@ -40,13 +51,23 @@ def test_from_bytes(tmp_path):
 
     with local_path.open("rb") as f:
         image = f.read()
-    _ = Image(EvidenceMetadata("typename", "id"), image)
+    _ = Image(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        image,
+    )
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_save_load(tmp_path):
     local_path = download_image(tmp_path)
-    img = Image(EvidenceMetadata("typename", "id"), local_path)
+    img = Image(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        local_path,
+    )
     img.save()
 
     r: Image = Image.load("id")  # type: ignore

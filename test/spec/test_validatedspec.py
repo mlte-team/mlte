@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import pytest
 
-from mlte.evidence import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec
@@ -24,7 +25,12 @@ def test_save_load(tmp_path):
     specValidator = SpecValidator(spec)
 
     # A dummy result
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        1,
+    )
     specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()

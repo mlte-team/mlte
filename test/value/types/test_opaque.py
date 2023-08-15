@@ -6,7 +6,8 @@ Unit tests for Opaque.
 
 import pytest
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import Measurement
 from mlte.value.types import Opaque
 
@@ -40,7 +41,9 @@ def test_opaque():
 
 
 def test_opaque_equality():
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
 
     a = Opaque(m, {"foo": "bar"})
     b = Opaque(m, {"foo": "bar"})
@@ -61,7 +64,9 @@ def test_opaque_equality():
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_opaque_save_load(tmp_path):
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     i = Opaque(m, {"foo": "bar"})
 
     # Save
@@ -74,7 +79,9 @@ def test_opaque_save_load(tmp_path):
 
 
 def test_opaque_serde():
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     o = Opaque(m, {"value": 1})
 
     serialized = o.serialize()

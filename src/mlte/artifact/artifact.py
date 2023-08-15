@@ -9,7 +9,7 @@ from __future__ import annotations
 from mlte.artifact.model import ArtifactModel, ArtifactType
 from mlte.context import Context
 from mlte.session import session
-from mlte.store import Store
+from mlte.store import ManagedSession, Store
 
 
 class Artifact:
@@ -62,9 +62,13 @@ class Artifact:
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
         """
-        raise NotImplementedError(
-            "Artifact.save_with() not implemented for abstract Artifact."
-        )
+        with ManagedSession(store.session()) as handle:
+            handle.write_artifact(
+                context.namespace,
+                context.model,
+                context.version,
+                self.to_model(),
+            )
 
     @classmethod
     def load(cls, identifier: str) -> Artifact:
@@ -77,14 +81,22 @@ class Artifact:
         """
         return cls.load_with(identifier, session().context, session().store)
 
-    @staticmethod
-    def load_with(identifier: str, context: Context, store: Store) -> Artifact:
+    @classmethod
+    def load_with(
+        cls, identifier: str, context: Context, store: Store
+    ) -> Artifact:
         """
         Load an artifact with the given context and store configuration.
         :param identifier: The identifier for the artifact
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """
-        raise NotImplementedError(
-            "Artifact.load_with() not implemented for abstract Artifact."
-        )
+        with ManagedSession(store.session()) as handle:
+            return cls.from_model(
+                handle.read_artifact(
+                    context.namespace,
+                    context.model,
+                    context.version,
+                    identifier,
+                )
+            )

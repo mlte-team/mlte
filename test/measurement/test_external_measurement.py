@@ -3,9 +3,11 @@ test/measurement/test_external_measurement.py
 
 Unit test for ExternalMeasurement.
 """
+
 import pytest
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import ExternalMeasurement
 from mlte.value.types import Integer
 
@@ -29,7 +31,12 @@ def test_evaluate_external():
     x = 1
     y = 2
     expected_value = _dummy_calculation(x, y)
-    expected_result = Integer(EvidenceMetadata("dummy", "test"), expected_value)
+    expected_result = Integer(
+        EvidenceMetadata(
+            measurement_type="dummy", identifier=Identifier(name="test")
+        ),
+        expected_value,
+    )
 
     measurement = ExternalMeasurement("dummy", Integer, _dummy_calculation)
     result = measurement.evaluate(x, y)

@@ -9,7 +9,7 @@ from typing import Any
 
 from mlte.validation import Result, Condition
 from mlte.value import Value
-from mlte.evidence import Identifier
+from mlte.evidence.identifier import Identifier
 
 # -----------------------------------------------------------------------------
 # Requirement
@@ -23,7 +23,7 @@ class Requirement:
 
     def __init__(self, identifier: str, condition: Condition) -> None:
         """Creates a Requirement."""
-        self.identifier = Identifier(identifier)
+        self.identifier = Identifier(name=identifier)
         self.condition = condition
 
     def to_json(self) -> dict[str, Any]:

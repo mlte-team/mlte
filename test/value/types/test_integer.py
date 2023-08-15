@@ -6,7 +6,8 @@ Unit tests for Integer.
 
 import pytest
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import Measurement
 from mlte.value.types import Integer
 
@@ -21,21 +22,27 @@ class DummyMeasurementInteger(Measurement):
 
 def test_integer_success():
     # Ensure instantiation succeeds for valid type
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     i = Integer(m, 1)
     assert i.value == 1
 
 
 def test_integer_fail():
     # Ensure instantiation fails for invalid type
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     with pytest.raises(AssertionError):
         _ = Integer(m, 3.14)  # type: ignore
 
 
 def test_integer_serde():
     # Ensure serialization and deserialization are inverses
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     i = Integer(m, 1)
 
     serialized = i.serialize()
@@ -45,7 +52,9 @@ def test_integer_serde():
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_integer_save_load(tmp_path):
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     i = Integer(m, 1)
 
     # Save

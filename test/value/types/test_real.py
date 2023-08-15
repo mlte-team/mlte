@@ -6,7 +6,8 @@ Unit tests for Real.
 
 import pytest
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement import Measurement
 from mlte.value.types import Real
 
@@ -21,20 +22,26 @@ class DummyMeasurementReal(Measurement):
 
 def test_real_success():
     # Ensure instantiation succeeds for valid type
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     r = Real(m, 3.14)
     assert r.value == 3.14
 
 
 def test_real_fail():
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     with pytest.raises(AssertionError):
         _ = Real(m, 1)
 
 
 def test_real_serde():
     # Ensure serialization and deserialization are inverses
-    m = EvidenceMetadata("typename", "id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     r = Real(m, 3.14)
 
     serialized = r.serialize()

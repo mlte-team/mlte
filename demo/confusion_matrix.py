@@ -3,13 +3,14 @@ demo/confusion_matrix.py
 
 Implementation of ConfusionMatrix value.
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 import numpy as np
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation import Condition, Failure, Result, Success
 from mlte.value import Value
 
