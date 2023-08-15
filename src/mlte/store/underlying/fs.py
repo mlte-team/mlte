@@ -54,14 +54,14 @@ class JsonFileStorage:
         Path.mkdir(path, parents=True)
 
     def list_folders(self, path: Path) -> list[Path]:
-        return [x for x in path.iterdir() if x.is_dir()]
+        return [x for x in sorted(path.iterdir()) if x.is_dir()]
 
     def delete_folder(self, path: Path) -> None:
         shutil.rmtree(path)
 
     def list_json_files(self, path: Path) -> list[Path]:
         return [
-            x for x in path.iterdir() if x.is_file() and x.suffix == ".json"
+            x for x in sorted(path.iterdir()) if x.is_file() and x.suffix == ".json"
         ]
 
     def read_json_file(self, path: Path) -> dict[str, Any]:
