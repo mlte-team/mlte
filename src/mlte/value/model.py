@@ -4,14 +4,14 @@ mlte/value/model.py
 Model implementation for MLTE value types.
 """
 
+from enum import Enum, auto
+from typing import Any, Literal, Union
+
 from pydantic import Field
 
-from enum import Enum, auto
-from typing import Union, Any, Literal
-
 from mlte.artifact.type import ArtifactType
-from mlte.model import BaseModel
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model import BaseModel
 
 
 class ValueType(str, Enum):

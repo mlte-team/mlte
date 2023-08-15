@@ -8,12 +8,12 @@ from __future__ import annotations
 
 import typing
 
-from mlte.value.artifact import Value
-from mlte.validation import Condition, Success, Failure
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.value.model import ValueModel, IntegerValueModel, ValueType
+from mlte.validation import Condition, Failure, Success
+from mlte.value.artifact import Value
+from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
 
 class Integer(Value):

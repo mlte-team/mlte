@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import typing
 from typing import Any
+
 import deepdiff
 
-from mlte.value.artifact import Value
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.value.model import ValueModel, ValueType, OpaqueValueModel
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.value.artifact import Value
+from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
 
 class Opaque(Value):

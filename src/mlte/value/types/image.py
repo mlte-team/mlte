@@ -6,17 +6,17 @@ A Value instance for image media.
 
 from __future__ import annotations
 
-from pathlib import Path
 import base64
-from typing import Union
 import typing
+from pathlib import Path
+from typing import Union
 
-from mlte.value.artifact import Value
-from mlte.validation import Condition, Ignore
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.value.model import ValueModel, ValueType, ImageValueModel
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.validation import Condition, Ignore
+from mlte.value.artifact import Value
+from mlte.value.model import ImageValueModel, ValueModel, ValueType
 
 
 class Image(Value):
