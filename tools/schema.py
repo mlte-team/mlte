@@ -67,7 +67,11 @@ CONFIGS = [
             path="mlte.negotiation.model", model="NegotiationCardModel"
         ),
         output_path="negotiation/v0.0.1",
-    )
+    ),
+    Config(
+        model=ModelImport(path="mlte.value.model", model="ValueModel"),
+        output_path="value/v0.0.1",
+    ),
 ]
 
 # -----------------------------------------------------------------------------

@@ -1,0 +1,174 @@
+{
+  "title": "ValueModel",
+  "description": "The model implementation for MLTE values.",
+  "type": "object",
+  "properties": {
+    "artifact_type": {
+      "title": "Artifact Type",
+      "enum": [
+        "2"
+      ],
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/definitions/EvidenceMetadata"
+    },
+    "value": {
+      "title": "Value",
+      "discriminator": {
+        "propertyName": "value_type",
+        "mapping": {
+          "1": "#/definitions/IntegerValueModel",
+          "2": "#/definitions/RealValueModel",
+          "3": "#/definitions/OpaqueValueModel",
+          "4": "#/definitions/ImageValueModel"
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/definitions/IntegerValueModel"
+        },
+        {
+          "$ref": "#/definitions/RealValueModel"
+        },
+        {
+          "$ref": "#/definitions/OpaqueValueModel"
+        },
+        {
+          "$ref": "#/definitions/ImageValueModel"
+        }
+      ]
+    }
+  },
+  "required": [
+    "artifact_type",
+    "metadata",
+    "value"
+  ],
+  "definitions": {
+    "Identifier": {
+      "title": "Identifier",
+      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "EvidenceMetadata": {
+      "title": "EvidenceMetadata",
+      "description": "A simple wrapper for evidence metadata.",
+      "type": "object",
+      "properties": {
+        "measurement_type": {
+          "title": "Measurement Type",
+          "type": "string"
+        },
+        "identifier": {
+          "$ref": "#/definitions/Identifier"
+        },
+        "info": {
+          "title": "Info",
+          "type": "string"
+        }
+      },
+      "required": [
+        "measurement_type",
+        "identifier"
+      ]
+    },
+    "IntegerValueModel": {
+      "title": "IntegerValueModel",
+      "description": "The model implementation for MLTE integer values.",
+      "type": "object",
+      "properties": {
+        "value_type": {
+          "title": "Value Type",
+          "enum": [
+            "1"
+          ],
+          "type": "string"
+        },
+        "integer": {
+          "title": "Integer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "value_type",
+        "integer"
+      ]
+    },
+    "RealValueModel": {
+      "title": "RealValueModel",
+      "description": "The model implementation for MLTE real values.",
+      "type": "object",
+      "properties": {
+        "value_type": {
+          "title": "Value Type",
+          "enum": [
+            "2"
+          ],
+          "type": "string"
+        },
+        "real": {
+          "title": "Real",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value_type",
+        "real"
+      ]
+    },
+    "OpaqueValueModel": {
+      "title": "OpaqueValueModel",
+      "description": "The model implementation for MLTE opaque values.",
+      "type": "object",
+      "properties": {
+        "value_type": {
+          "title": "Value Type",
+          "enum": [
+            "3"
+          ],
+          "type": "string"
+        },
+        "data": {
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "value_type",
+        "data"
+      ]
+    },
+    "ImageValueModel": {
+      "title": "ImageValueModel",
+      "description": "The model implementation for MLTE image values.",
+      "type": "object",
+      "properties": {
+        "value_type": {
+          "title": "Value Type",
+          "enum": [
+            "4"
+          ],
+          "type": "string"
+        },
+        "data": {
+          "title": "Data",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value_type",
+        "data"
+      ]
+    }
+  }
+}
