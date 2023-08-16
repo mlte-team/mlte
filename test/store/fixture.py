@@ -21,11 +21,12 @@ from mlte.store.underlying.http import (
     RemoteHttpStoreClient,
 )
 from mlte.store.underlying.memory import InMemoryStore
+from mlte.store.underlying.fs import LocalFileSystemStore
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state
 
-_STORE_FIXTURE_NAMES = ["http_store", "memory_store"]
+_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store"]
 
 
 class TestclientCient(RemoteHttpStoreClient):
@@ -73,6 +74,12 @@ def http_store() -> RemoteHttpStore:
 def memory_store() -> InMemoryStore:
     """A fixture for an in-memory store."""
     return InMemoryStore(StoreURI.from_string("memory://"))
+
+
+@pytest.fixture(scope="function")
+def fs_store(tmp_path) -> LocalFileSystemStore:
+    """A fixture for an local FS store."""
+    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
 
 
 def stores() -> Generator[str, None, None]:

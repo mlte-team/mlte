@@ -12,9 +12,11 @@ from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store import ManagedSession, Store, StoreURI
 from mlte.store.underlying.http import RemoteHttpStore
 from mlte.store.underlying.memory import InMemoryStore
+from mlte.store.underlying.fs import LocalFileSystemStore
 
 from ..fixture.artifact import ArtifactFactory
-from .fixture import http_store, memory_store, stores, stores_and_types  # noqa
+from .fixture import http_store, memory_store, fs_store  # noqa
+from .fixture import stores, stores_and_types
 
 
 def test_init_memory() -> None:
@@ -25,6 +27,11 @@ def test_init_memory() -> None:
 def test_init_http() -> None:
     """A remote HTTP store can be initialized."""
     _ = RemoteHttpStore(StoreURI.from_string("http://localhost:8080"))
+
+
+def test_init_fs(tmp_path) -> None:
+    """An local FS store can be initialized."""
+    _ = LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())

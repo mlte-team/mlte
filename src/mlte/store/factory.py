@@ -6,6 +6,7 @@ Top-level functions for artifact store creation.
 
 from mlte.store.underlying.memory import InMemoryStore
 from mlte.store.underlying.http import RemoteHttpStore
+from mlte.store.underlying.fs import LocalFileSystemStore
 from mlte.store.store import Store, StoreURI, StoreType
 
 
@@ -19,7 +20,7 @@ def create_store(uri: str) -> Store:
     if parsed_uri.type == StoreType.LOCAL_MEMORY:
         return InMemoryStore(parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
-        raise NotImplementedError("Not implemented.")
+        return LocalFileSystemStore(parsed_uri)
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return RemoteHttpStore(parsed_uri)
     assert False, "Unreachable."
