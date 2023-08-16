@@ -41,8 +41,8 @@ class Artifact:
             "Artifact.to_model() not implemented for abstract Artifact."
         )
 
-    @staticmethod
-    def from_model(_: ArtifactModel) -> Artifact:
+    @classmethod
+    def from_model(cls, _: ArtifactModel) -> Artifact:
         """Deserialize an artifact from its corresponding model."""
         raise NotImplementedError(
             "Artifact.from_model() not implemented for abstract Artifact."

@@ -57,8 +57,8 @@ class NegotiationCard(Artifact):
             ),
         )
 
-    @staticmethod
-    def from_model(model: ArtifactModel) -> NegotiationCard:  # type: ignore[override]
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> NegotiationCard:  # type: ignore[override]
         """Convert a negotiation card model to its corresponding artifact."""
         assert (
             model.header.type == ArtifactType.NEGOTIATION_CARD

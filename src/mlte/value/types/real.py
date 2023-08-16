@@ -52,8 +52,8 @@ class Real(Value):
             ),
         )
 
-    @staticmethod
-    def from_model(model: ArtifactModel) -> Real:  # type: ignore[override]
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Real:  # type: ignore[override]
         """
         Convert a real value model to its corresponding artifact.
         :param model: The model representation

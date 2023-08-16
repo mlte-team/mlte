@@ -43,7 +43,6 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         :param instance: The subclass instance
         :param metadata: Evidence metadata associated with the value
         """
-        # TODO(Kyle): How is this identifier constructed?
         identifier = f"{metadata.identifier}.value"
         super().__init__(identifier, ArtifactType.VALUE)
 
@@ -62,8 +61,8 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("Value.to_mode()")
 
-    @staticmethod
-    def from_model(model: ArtifactModel) -> Value:  # type: ignore[override]
+    @classmethod
+    def from_model(cls, _: ArtifactModel) -> Value:  # type: ignore[override]
         """
         Convert a value model to its corresponding artifact.
         NOTE: To cope with polymorphism, the Value artifact type

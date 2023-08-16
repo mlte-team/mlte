@@ -55,8 +55,8 @@ class Integer(Value):
         print(a)
         return a
 
-    @staticmethod
-    def from_model(model: ArtifactModel) -> Integer:  # type: ignore[override]
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Integer:  # type: ignore[override]
         """
         Convert an integer value model to its corresponding artifact.
         :param model: The model representation
