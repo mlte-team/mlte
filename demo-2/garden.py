@@ -38,10 +38,9 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
     return df_info
 
 
-def merge_taxonomy_with_results(df_results: pd.DataFrame, df_info: pd.DataFrame) -> pd.DataFrame:
+def merge_taxonomy_with_results(df_results: pd.DataFrame, df_info: pd.DataFrame, left_on:str="Label", right_on:str="Label") -> pd.DataFrame:
     """Merge results with taxonomy."""
-    df_results.rename(columns = {'label':'Label'}, inplace = True)
-    df_all = df_results.merge(df_info, left_on = 'Label', right_on = 'Label')
+    df_all = df_results.merge(df_info, left_on = left_on, right_on = right_on)
     df_all
     return df_all    
 
