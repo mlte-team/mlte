@@ -66,6 +66,11 @@
     <UsaAccordion multiselectable bordered>
       <UsaAccordionItem label="Negotiation Cards">
         <div class="scrollable-table-div">
+          <p>
+            A negotiation card is a document with a series of discussion points to be documented during a
+            negotiation between all project stakeholders at the project's outset. It is then used as a
+            reference throughout development and is updated at prescribed negotiation points.
+          </p>
           <UsaTable
             :headers="cardSpecReportHeaders"
             :rows="negotiationCards"
@@ -87,31 +92,53 @@
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Specifications">
+
         <div class="scrollable-table-div">
+          <p>
+            A specification (spec) defines the model requirements that must be satisfied to ensure
+            successful integration with the target system.
+          </p>
           <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
         </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Reports">
         <div class="scrollable-table-div">
+          <p>
+            A report is a human and machine-readable summary of all knowledge gained about a model
+            during the MLTE process.
+          </p>
           <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
         </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Findings">
         <div class="scrollable-table-div">
+          <p>
+            Findings are produced by combining a specification with its corresponding results; this artifact
+            communicates how well a model performed against all of its requirements.
+          </p>
           <UsaTable :headers="findingsHeaders" borderless class="table" />
         </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Results">
         <div class="scrollable-table-div">
+          <p>
+            Results encode whether or not the values generated during evidence collection pass their
+            corresponding validation threshold. They are produced by feeding values through the relevant
+            condition callbacks provided in the MLTE specification.
+          </p>
           <UsaTable :headers="resultsHeaders" borderless class="table" />
         </div>
       </UsaAccordionItem>
 
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
+          <p>
+            Values are the atomic unit of model evaluation in MLTE. A value is any artifact produced by a
+            MLTE measurement for the purposes of model evaluation.
+          </p>
           <UsaTable :headers="valuesHeaders" borderless class="table" />
         </div>
       </UsaAccordionItem>
