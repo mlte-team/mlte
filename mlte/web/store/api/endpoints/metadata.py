@@ -4,6 +4,8 @@ mlte/web/store/api/endpoints/metadata.py
 Endpoints for artifact organization.
 """
 
+from __future__ import annotations
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors

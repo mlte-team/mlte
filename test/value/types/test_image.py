@@ -4,6 +4,8 @@ test/value/types/test_image.py
 Unit tests for Image.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import requests
@@ -66,22 +68,6 @@ def test_from_bytes(tmp_path):
         ),
         image,
     )
-
-
-# def test_save_load(tmp_path):
-#     """Image can"""
-
-#     local_path = download_image(tmp_path)
-#     img = Image(
-#         EvidenceMetadata(
-#             measurement_type="typename", identifier=Identifier(name="id")
-#         ),
-#         local_path,
-#     )
-#     img.save()
-
-#     r: Image = Image.load("id")  # type: ignore
-#     assert r.image == r.image
 
 
 def test_save_load(

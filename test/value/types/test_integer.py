@@ -4,6 +4,8 @@ test/value/types/test_integer.py
 Unit tests for Integer.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from mlte.context.context import Context

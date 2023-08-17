@@ -4,6 +4,8 @@ test/web/store/fixture/http.py
 Fixtures for artifact store HTTP unit tests.
 """
 
+from __future__ import annotations
+
 from collections.abc import Generator
 
 import pytest

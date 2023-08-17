@@ -4,6 +4,7 @@ mlte/store/underlying/fs.py
 Implementation of local file system artifact store.
 """
 
+from __future__ import annotations
 
 from typing import Any
 from pathlib import Path

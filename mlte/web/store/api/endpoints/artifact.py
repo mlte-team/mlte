@@ -4,6 +4,8 @@ mlte/store/api/endpoints/artifact.py
 API definition for MLTE artifacts.
 """
 
+from __future__ import annotations
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors

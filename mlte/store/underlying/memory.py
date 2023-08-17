@@ -4,6 +4,8 @@ mlte/store/underlying/memory.py
 Implementation of in-memory artifact store.
 """
 
+from __future__ import annotations
+
 from collections import OrderedDict
 
 from mlte.store.store import Store, StoreSession, StoreURI

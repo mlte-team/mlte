@@ -4,6 +4,8 @@ mlte/context/model/model.py
 Model implementation for MLTE context information.
 """
 
+from __future__ import annotations
+
 from mlte.model import BaseModel
 
 

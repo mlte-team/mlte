@@ -4,6 +4,8 @@ test/negotiation/test_model.py
 Unit tests for negotiation card model.
 """
 
+from __future__ import annotations
+
 from typing import Any
 
 from deepdiff import DeepDiff

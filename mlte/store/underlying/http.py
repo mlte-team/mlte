@@ -4,6 +4,8 @@ mlte/store/underlying/http.py
 Implementation of remote HTTP artifact store.
 """
 
+from __future__ import annotations
+
 from enum import Enum
 
 import typing

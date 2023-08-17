@@ -38,8 +38,9 @@ pytest-cov = "^4.1.0"
 httpx = "^0.24.1"
 
 [tool.isort]
-profile = "black"
+profile="black"
 line_length = 80
+known_first_party=["mlte"]
 
 [tool.black]
 line-length = 80

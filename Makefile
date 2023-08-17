@@ -13,10 +13,10 @@
 
 .PHONY: isort
 isort:	
-	poetry run isort src/mlte/artifact
-	poetry run isort src/mlte/negotiation
-	poetry run isort src/mlte/value
-	poetry run isort src/mlte/web/
+	poetry run isort mlte/artifact
+	poetry run isort mlte/negotiation
+	poetry run isort mlte/value
+	poetry run isort mlte/web/
 	
 	poetry run isort test/
 	poetry run isort testbed/

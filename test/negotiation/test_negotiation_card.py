@@ -4,6 +4,8 @@ test/negotiation/test_negotiation_card.py
 Unit tests for negotiation card.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from mlte.context.context import Context

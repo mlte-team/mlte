@@ -4,6 +4,8 @@ test/store/fixture.py
 Fixtures for MLTE artifact store unit tests.
 """
 
+from __future__ import annotations
+
 from collections.abc import Generator
 from typing import Any
 

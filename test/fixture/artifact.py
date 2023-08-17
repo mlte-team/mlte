@@ -4,6 +4,8 @@ test/fixture/artifact.py
 Unit test support for artifact generation.
 """
 
+from __future__ import annotations
+
 import random
 import string
 from typing import Union

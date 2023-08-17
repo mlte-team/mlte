@@ -4,6 +4,8 @@ mlte/store/query.py
 Query and filtering functionality for store operations.
 """
 
+from __future__ import annotations
+
 from typing import Union, Literal
 
 from mlte.model import BaseModel

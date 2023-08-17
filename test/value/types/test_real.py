@@ -4,6 +4,8 @@ test/value/types/test_real.py
 Unit tests for Real.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from mlte.context.context import Context

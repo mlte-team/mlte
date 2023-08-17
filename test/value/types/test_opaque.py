@@ -4,6 +4,8 @@ test/value/types/test_opaque.py
 Unit tests for Opaque.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from mlte.context.context import Context

@@ -4,6 +4,8 @@ tools/schema.py
 A tool for generating and vetting MLTE artifact schemas.
 """
 
+from __future__ import annotations
+
 import argparse
 import importlib
 import json

@@ -4,6 +4,8 @@ test/fixture/store.py
 A simple fixture for an in-memory artifact store.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from mlte.context.context import Context

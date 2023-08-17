@@ -4,6 +4,8 @@ mlte/value/model.py
 Model implementation for MLTE value types.
 """
 
+from __future__ import annotations
+
 from enum import Enum, auto
 from typing import Any, Literal, Union
 
