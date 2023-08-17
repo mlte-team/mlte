@@ -123,13 +123,8 @@ class OrFilter(BaseModel):
 class Query(BaseModel):
     """A Query object represents a query over MLTE artifacts."""
 
-    filter: Filter
+    filter: Filter = AllFilter(type=FilterType.ALL)
     """The filter that is applied to implement the query."""
-
-    def __init__(
-        self, *, filter: Filter = AllFilter(type=FilterType.ALL)
-    ) -> None:
-        super().__init__(filter=filter)
 
 
 # Necessary for pydantic to resolve forward references

@@ -1,5 +1,7 @@
 jsonschema
-fastapi
+pydantic
+pydantic_settings
+fastapi>=0.100.0
 uvicorn
 httpx
 requests

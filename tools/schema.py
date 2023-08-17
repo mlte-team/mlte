@@ -54,7 +54,7 @@ class Config:
     def generate(self) -> dict[str, Any]:
         """Generate the schema for the configuration."""
         klass = self.model.resolve()
-        return klass.schema()
+        return klass.model_json_schema()
 
     def __str__(self) -> str:
         return f"{self.model.model} @ {self.output_path}"
