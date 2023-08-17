@@ -1,37 +1,681 @@
 {
-  "title": "NegotiationCardModel",
+  "$defs": {
+    "DataClassification": {
+      "description": "An enumeration of data classification levels.",
+      "enum": [
+        "unclassified",
+        "cui",
+        "pii",
+        "phi",
+        "other"
+      ],
+      "title": "DataClassification",
+      "type": "string"
+    },
+    "DataDescriptor": {
+      "description": "Describes a dataset used in model development.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DataClassification"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "access": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access"
+        },
+        "labels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LabelDescriptor"
+          },
+          "title": "Labels",
+          "type": "array"
+        },
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FieldDescriptor"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "rights": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rights"
+        },
+        "policies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policies"
+        },
+        "identifiable_information": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifiable Information"
+        }
+      },
+      "title": "DataDescriptor",
+      "type": "object"
+    },
+    "FieldDescriptor": {
+      "description": "Describes a dataset field.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "expected_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Values"
+        },
+        "missing_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Values"
+        },
+        "special_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Special Values"
+        }
+      },
+      "title": "FieldDescriptor",
+      "type": "object"
+    },
+    "GoalDescriptor": {
+      "description": "A description of a system goal.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "metrics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MetricDescriptor"
+          },
+          "title": "Metrics",
+          "type": "array"
+        }
+      },
+      "title": "GoalDescriptor",
+      "type": "object"
+    },
+    "LabelDescriptor": {
+      "description": "Describes a dataset label.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "percentage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Percentage"
+        }
+      },
+      "title": "LabelDescriptor",
+      "type": "object"
+    },
+    "MetricDescriptor": {
+      "description": "A description of a metric that supports a system goal.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "baseline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseline"
+        }
+      },
+      "title": "MetricDescriptor",
+      "type": "object"
+    },
+    "ModelDescriptor": {
+      "description": "A descriptor for the model.",
+      "properties": {
+        "development": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelDevelopmentDescriptor"
+            }
+          ],
+          "default": {
+            "resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            }
+          }
+        },
+        "production": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelProductionDescriptor"
+            }
+          ],
+          "default": {
+            "integration": null,
+            "interface": {
+              "input": {
+                "description": null
+              },
+              "output": {
+                "description": null
+              }
+            },
+            "resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            }
+          }
+        }
+      },
+      "title": "ModelDescriptor",
+      "type": "object"
+    },
+    "ModelDevelopmentDescriptor": {
+      "description": "A descriptor for model development considerations.",
+      "properties": {
+        "resources": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            }
+          ],
+          "default": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
+          }
+        }
+      },
+      "title": "ModelDevelopmentDescriptor",
+      "type": "object"
+    },
+    "ModelInputDescriptor": {
+      "description": "A description of the model input specification.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "title": "ModelInputDescriptor",
+      "type": "object"
+    },
+    "ModelInterfaceDescriptor": {
+      "description": "A description of the model interface.",
+      "properties": {
+        "input": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelInputDescriptor"
+            }
+          ],
+          "default": {
+            "description": null
+          }
+        },
+        "output": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelOutputDescriptor"
+            }
+          ],
+          "default": {
+            "description": null
+          }
+        }
+      },
+      "title": "ModelInterfaceDescriptor",
+      "type": "object"
+    },
+    "ModelOutputDescriptor": {
+      "description": "A description of the model output specification.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "title": "ModelOutputDescriptor",
+      "type": "object"
+    },
+    "ModelProductionDescriptor": {
+      "description": "A descriptor for model production considerations.",
+      "properties": {
+        "integration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Integration"
+        },
+        "interface": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelInterfaceDescriptor"
+            }
+          ],
+          "default": {
+            "input": {
+              "description": null
+            },
+            "output": {
+              "description": null
+            }
+          }
+        },
+        "resources": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            }
+          ],
+          "default": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
+          }
+        }
+      },
+      "title": "ModelProductionDescriptor",
+      "type": "object"
+    },
+    "ModelResourcesDescriptor": {
+      "description": "A descriptor for model resource requirements.",
+      "properties": {
+        "cpu": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cpu"
+        },
+        "gpu": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gpu"
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Storage"
+        }
+      },
+      "title": "ModelResourcesDescriptor",
+      "type": "object"
+    },
+    "ProblemType": {
+      "description": "An enumeration over machine learning problem types.",
+      "enum": [
+        "classification",
+        "clustering",
+        "trend",
+        "alert",
+        "forecasting",
+        "content_generation",
+        "benchmarking",
+        "goals",
+        "detection",
+        "other"
+      ],
+      "title": "ProblemType",
+      "type": "string"
+    },
+    "RiskDescriptor": {
+      "description": "A description of system-level risks.",
+      "properties": {
+        "fp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fp"
+        },
+        "fn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fn"
+        },
+        "other": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Other"
+        }
+      },
+      "title": "RiskDescriptor",
+      "type": "object"
+    },
+    "SystemDescriptor": {
+      "description": "A description of the system context.",
+      "properties": {
+        "goals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GoalDescriptor"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
+        "problem_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProblemType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "task": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task"
+        },
+        "usage_context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usage Context"
+        },
+        "risks": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RiskDescriptor"
+            }
+          ],
+          "default": {
+            "fn": null,
+            "fp": null,
+            "other": null
+          }
+        }
+      },
+      "title": "SystemDescriptor",
+      "type": "object"
+    }
+  },
   "description": "The model implementation for the NegotiationCard artifact.",
-  "type": "object",
   "properties": {
     "system": {
-      "title": "System",
+      "allOf": [
+        {
+          "$ref": "#/$defs/SystemDescriptor"
+        }
+      ],
       "default": {
         "goals": [],
         "problem_type": null,
-        "task": null,
-        "usage_context": null,
         "risks": {
-          "fp": null,
           "fn": null,
+          "fp": null,
           "other": null
-        }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SystemDescriptor"
-        }
-      ]
-    },
-    "data": {
-      "title": "Data",
-      "default": [],
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/DataDescriptor"
+        },
+        "task": null,
+        "usage_context": null
       }
     },
+    "data": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/DataDescriptor"
+      },
+      "title": "Data",
+      "type": "array"
+    },
     "model": {
-      "title": "Model",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ModelDescriptor"
+        }
+      ],
       "default": {
         "development": {
           "resources": {
@@ -58,413 +702,9 @@
             "storage": null
           }
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/ModelDescriptor"
-        }
-      ]
+      }
     }
   },
-  "definitions": {
-    "MetricDescriptor": {
-      "title": "MetricDescriptor",
-      "description": "A description of a metric that supports a system goal.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "baseline": {
-          "title": "Baseline",
-          "type": "string"
-        }
-      }
-    },
-    "GoalDescriptor": {
-      "title": "GoalDescriptor",
-      "description": "A description of a system goal.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "metrics": {
-          "title": "Metrics",
-          "default": [],
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MetricDescriptor"
-          }
-        }
-      }
-    },
-    "ProblemType": {
-      "title": "ProblemType",
-      "description": "An enumeration over machine learning problem types.",
-      "enum": [
-        "classification",
-        "clustering",
-        "trend",
-        "alert",
-        "forecasting",
-        "content_generation",
-        "benchmarking",
-        "goals",
-        "detection",
-        "other"
-      ]
-    },
-    "RiskDescriptor": {
-      "title": "RiskDescriptor",
-      "description": "A description of system-level risks.",
-      "type": "object",
-      "properties": {
-        "fp": {
-          "title": "Fp",
-          "type": "string"
-        },
-        "fn": {
-          "title": "Fn",
-          "type": "string"
-        },
-        "other": {
-          "title": "Other",
-          "type": "string"
-        }
-      }
-    },
-    "SystemDescriptor": {
-      "title": "SystemDescriptor",
-      "description": "A description of the system context.",
-      "type": "object",
-      "properties": {
-        "goals": {
-          "title": "Goals",
-          "default": [],
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GoalDescriptor"
-          }
-        },
-        "problem_type": {
-          "$ref": "#/definitions/ProblemType"
-        },
-        "task": {
-          "title": "Task",
-          "type": "string"
-        },
-        "usage_context": {
-          "title": "Usage Context",
-          "type": "string"
-        },
-        "risks": {
-          "title": "Risks",
-          "default": {
-            "fp": null,
-            "fn": null,
-            "other": null
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/RiskDescriptor"
-            }
-          ]
-        }
-      }
-    },
-    "DataClassification": {
-      "title": "DataClassification",
-      "description": "An enumeration of data classification levels.",
-      "enum": [
-        "unclassified",
-        "cui",
-        "pii",
-        "phi",
-        "other"
-      ]
-    },
-    "LabelDescriptor": {
-      "title": "LabelDescriptor",
-      "description": "Describes a dataset label.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "percentage": {
-          "title": "Percentage",
-          "type": "number"
-        }
-      }
-    },
-    "FieldDescriptor": {
-      "title": "FieldDescriptor",
-      "description": "Describes a dataset field.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "type": {
-          "title": "Type",
-          "type": "string"
-        },
-        "expected_values": {
-          "title": "Expected Values",
-          "type": "string"
-        },
-        "missing_values": {
-          "title": "Missing Values",
-          "type": "string"
-        },
-        "special_values": {
-          "title": "Special Values",
-          "type": "string"
-        }
-      }
-    },
-    "DataDescriptor": {
-      "title": "DataDescriptor",
-      "description": "Describes a dataset used in model development.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "source": {
-          "title": "Source",
-          "type": "string"
-        },
-        "classification": {
-          "$ref": "#/definitions/DataClassification"
-        },
-        "access": {
-          "title": "Access",
-          "type": "string"
-        },
-        "labels": {
-          "title": "Labels",
-          "default": [],
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/LabelDescriptor"
-          }
-        },
-        "fields": {
-          "title": "Fields",
-          "default": [],
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/FieldDescriptor"
-          }
-        },
-        "rights": {
-          "title": "Rights",
-          "type": "string"
-        },
-        "policies": {
-          "title": "Policies",
-          "type": "string"
-        },
-        "identifiable_information": {
-          "title": "Identifiable Information",
-          "type": "string"
-        }
-      }
-    },
-    "ModelResourcesDescriptor": {
-      "title": "ModelResourcesDescriptor",
-      "description": "A descriptor for model resource requirements.",
-      "type": "object",
-      "properties": {
-        "cpu": {
-          "title": "Cpu",
-          "type": "string"
-        },
-        "gpu": {
-          "title": "Gpu",
-          "type": "string"
-        },
-        "memory": {
-          "title": "Memory",
-          "type": "string"
-        },
-        "storage": {
-          "title": "Storage",
-          "type": "string"
-        }
-      }
-    },
-    "ModelDevelopmentDescriptor": {
-      "title": "ModelDevelopmentDescriptor",
-      "description": "A descriptor for model development considerations.",
-      "type": "object",
-      "properties": {
-        "resources": {
-          "title": "Resources",
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelResourcesDescriptor"
-            }
-          ]
-        }
-      }
-    },
-    "ModelInputDescriptor": {
-      "title": "ModelInputDescriptor",
-      "description": "A description of the model input specification.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        }
-      }
-    },
-    "ModelOutputDescriptor": {
-      "title": "ModelOutputDescriptor",
-      "description": "A description of the model output specification.",
-      "type": "object",
-      "properties": {
-        "description": {
-          "title": "Description",
-          "type": "string"
-        }
-      }
-    },
-    "ModelInterfaceDescriptor": {
-      "title": "ModelInterfaceDescriptor",
-      "description": "A description of the model interface.",
-      "type": "object",
-      "properties": {
-        "input": {
-          "title": "Input",
-          "default": {
-            "description": null
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelInputDescriptor"
-            }
-          ]
-        },
-        "output": {
-          "title": "Output",
-          "default": {
-            "description": null
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelOutputDescriptor"
-            }
-          ]
-        }
-      }
-    },
-    "ModelProductionDescriptor": {
-      "title": "ModelProductionDescriptor",
-      "description": "A descriptor for model production considerations.",
-      "type": "object",
-      "properties": {
-        "integration": {
-          "title": "Integration",
-          "type": "string"
-        },
-        "interface": {
-          "title": "Interface",
-          "default": {
-            "input": {
-              "description": null
-            },
-            "output": {
-              "description": null
-            }
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelInterfaceDescriptor"
-            }
-          ]
-        },
-        "resources": {
-          "title": "Resources",
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelResourcesDescriptor"
-            }
-          ]
-        }
-      }
-    },
-    "ModelDescriptor": {
-      "title": "ModelDescriptor",
-      "description": "A descriptor for the model.",
-      "type": "object",
-      "properties": {
-        "development": {
-          "title": "Development",
-          "default": {
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelDevelopmentDescriptor"
-            }
-          ]
-        },
-        "production": {
-          "title": "Production",
-          "default": {
-            "integration": null,
-            "interface": {
-              "input": {
-                "description": null
-              },
-              "output": {
-                "description": null
-              }
-            },
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
-          },
-          "allOf": [
-            {
-              "$ref": "#/definitions/ModelProductionDescriptor"
-            }
-          ]
-        }
-      }
-    }
-  }
+  "title": "NegotiationCardModel",
+  "type": "object"
 }
