@@ -21,6 +21,7 @@ from mlte.context.model import (
 )
 from mlte.artifact.model import ArtifactModel
 from mlte.store.query import Query
+import mlte.store.util as storeutil
 
 import mlte.store.error as errors
 
@@ -201,7 +202,19 @@ class RemoteHttpStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         artifact: ArtifactModel,
+        *,
+        parents: bool = False,
     ) -> ArtifactModel:
+        # NOTE(Kyle): I introduced this common method for creating
+        # organizational elements for an artifact. For most stores,
+        # this works fine. However, this method, which utilizes the
+        # top-level Store API to create the three elements, may suffer
+        # performance issues for stores with longer access times. In
+        # the future, we should look at the cost of this and potentially
+        # optimize this implementation to use alternative means.
+        if parents:
+            storeutil.create_parents(self, namespace_id, model_id, version_id)
+
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact"
         res = self.client.post(url, json=artifact.dict())
         raise_for_response(res)
