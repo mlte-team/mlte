@@ -91,8 +91,8 @@ test:
 
 .PHONY: gen
 gen:
-	PYTHONPATH=src python tools/schema.py generate src/mlte --verbose
+	poetry run python tools/schema.py generate src/mlte --verbose
 
 .PHONY: vet
 vet:
-	PYTHONPATH=src python tools/schema.py vet src/mlte --verbose
+	poetry run python tools/schema.py vet src/mlte --verbose
