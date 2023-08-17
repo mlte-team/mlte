@@ -7,7 +7,7 @@ Top-level functions for artifact store creation.
 from mlte.store.underlying.memory import InMemoryStore
 from mlte.store.underlying.http import RemoteHttpStore
 from mlte.store.underlying.fs import LocalFileSystemStore
-from mlte.store.store import Store, StoreURI, StoreType
+from mlte.store.base import Store, StoreURI, StoreType
 
 
 def create_store(uri: str) -> Store:

@@ -10,7 +10,7 @@ import typing
 from typing import Any
 import requests
 import mlte.web.store.api.codes as codes
-from mlte.store.store import Store, StoreSession, StoreURI
+from mlte.store.base import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
     Model,
@@ -21,6 +21,7 @@ from mlte.context.model import (
 )
 from mlte.artifact.model import ArtifactModel
 from mlte.store.query import Query
+from mlte.web.store.api.model import WriteArtifactRequest
 
 import mlte.store.error as errors
 
@@ -201,12 +202,19 @@ class RemoteHttpStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         artifact: ArtifactModel,
+        *,
+        parents: bool = False,
     ) -> ArtifactModel:
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact"
-        res = self.client.post(url, json=artifact.dict())
+        res = self.client.post(
+            url,
+            json=WriteArtifactRequest(
+                artifact=artifact, parents=parents
+            ).dict(),
+        )
         raise_for_response(res)
 
-        return ArtifactModel(**res.json())
+        return ArtifactModel(**(res.json()["artifact"]))
 
     def read_artifact(
         self,

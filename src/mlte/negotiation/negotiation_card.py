@@ -12,7 +12,7 @@ import mlte.negotiation.model as model
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.context import Context
-from mlte.store.store import ManagedSession, Store
+from mlte.store.base import ManagedSession, Store
 
 
 class NegotiationCard(Artifact):
@@ -58,11 +58,15 @@ class NegotiationCard(Artifact):
             model=model.body.model,
         )
 
-    def save_with(self, context: Context, store: Store) -> None:
+    def save_with(
+        self, context: Context, store: Store, *, parents: bool = False
+    ) -> None:
         """
         Save an artifact with the given context and store configuration.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
+        :param parents: Indicates whether organizational elements for the
+        artifact are created implicitly on write (default: False)
         """
         with ManagedSession(store.session()) as handle:
             handle.write_artifact(
@@ -70,6 +74,7 @@ class NegotiationCard(Artifact):
                 context.model,
                 context.version,
                 self.to_model(),
+                parents=parents,
             )
 
     @staticmethod

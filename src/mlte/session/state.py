@@ -7,7 +7,7 @@ Session state management for the MLTE library.
 from typing import Optional
 
 from mlte.context import Context
-from mlte.store import Store
+from mlte.store.base import Store
 from mlte.store.factory import create_store
 
 

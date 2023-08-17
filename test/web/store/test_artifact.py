@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from mlte.artifact.model import ArtifactModel, ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store.query import Query
+from mlte.web.store.api.model import WriteArtifactRequest
 
 from ...fixture.artifact import ArtifactFactory
 from .fixure.http import clients_and_types, mem_client  # noqa
@@ -40,9 +41,10 @@ def test_write(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
+    r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=a.dict(),
+        json=r.dict(),
     )
     assert res.status_code == 200
 
@@ -60,13 +62,14 @@ def test_read(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, id="id0")
+    r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=a.dict(),
+        json=r.dict(),
     )
     assert res.status_code == 200
-
-    created = ArtifactModel(**res.json())
+    artifact = res.json()["artifact"]
+    created = ArtifactModel(**artifact)
 
     res = client.get(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
@@ -89,12 +92,14 @@ def test_search(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
+    r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=a.dict(),
+        json=r.dict(),
     )
     assert res.status_code == 200
-    created = ArtifactModel(**res.json())
+    artifact = res.json()["artifact"]
+    created = ArtifactModel(**artifact)
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/search",
@@ -122,9 +127,10 @@ def test_delete(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, "id0")
+    r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=a.dict(),
+        json=r.dict(),
     )
     assert res.status_code == 200
 

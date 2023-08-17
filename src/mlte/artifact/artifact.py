@@ -9,7 +9,7 @@ from __future__ import annotations
 from mlte.artifact.model import ArtifactModel, ArtifactType
 from mlte.context import Context
 from mlte.session import session
-from mlte.store import Store
+from mlte.store.base import Store
 
 
 class Artifact:
@@ -47,20 +47,27 @@ class Artifact:
             "Artifact.from_model() not implemented for abstract Artifact."
         )
 
-    def save(self) -> None:
+    def save(self, *, parents: bool = False) -> None:
         """
         Save an artifact with parameters from the configured global session.
 
         This is equivalent to calling:
             artifact.save_with(session().context, session().store)
+
+        :param parents: Indicates whether organizational elements for the
+        artifact are created implicitly on write (default: False)
         """
         self.save_with(session().context, session().store)
 
-    def save_with(self, context: Context, store: Store) -> None:
+    def save_with(
+        self, context: Context, store: Store, *, parents: bool = False
+    ) -> None:
         """
         Save an artifact with the given context and store configuration.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
+        :param parents: Indicates whether organizational elements for the
+        artifact are created implicitly on write (default: False)
         """
         raise NotImplementedError(
             "Artifact.save_with() not implemented for abstract Artifact."

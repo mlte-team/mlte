@@ -6,11 +6,12 @@ Unit tests for negotiation card.
 
 import pytest
 
+import mlte.store.error as errors
 from mlte.context.context import Context
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.negotiation_card import NegotiationCard
+from mlte.store.base import ManagedSession, Store
 from mlte.store.factory import create_store
-from mlte.store.store import ManagedSession, Store
 
 # The namespace identifier for default context
 NAMESPACE_ID = "ns0"
@@ -20,6 +21,13 @@ MODEL_ID = "model0"
 
 # The version identifier for default context
 VERSION_ID = "v0"
+
+
+@pytest.fixture(scope="function")
+def store() -> Store:
+    """Create an in-memory artifact store."""
+    store = create_store("memory://")
+    return store
 
 
 @pytest.fixture(scope="function")
@@ -54,3 +62,20 @@ def test_save_load(store_with_context: tuple[Store, Context]) -> None:
 
     loaded = NegotiationCard.load_with("my-card", ctx, store)
     assert loaded == card
+
+
+def test_save_noparents(store: Store) -> None:
+    """Save fails when no parents are present."""
+    ctx = Context(NAMESPACE_ID, MODEL_ID, VERSION_ID)
+
+    card = NegotiationCard("my-card")
+    with pytest.raises(errors.ErrorNotFound):
+        card.save_with(ctx, store)
+
+
+def test_save_parents(store: Store) -> None:
+    """Save succeeds when parents are present."""
+    ctx = Context(NAMESPACE_ID, MODEL_ID, VERSION_ID)
+
+    card = NegotiationCard("my-card")
+    card.save_with(ctx, store, parents=True)
