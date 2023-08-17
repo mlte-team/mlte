@@ -10,7 +10,7 @@ import typing
 from typing import Any
 import requests
 import mlte.web.store.api.codes as codes
-from mlte.store.store import Store, StoreSession, StoreURI
+from mlte.store.base import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
     Model,

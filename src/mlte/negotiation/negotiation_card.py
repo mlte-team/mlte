@@ -12,7 +12,7 @@ import mlte.negotiation.model as model
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
 from mlte.context.context import Context
-from mlte.store.store import ManagedSession, Store
+from mlte.store.base import ManagedSession, Store
 
 
 class NegotiationCard(Artifact):

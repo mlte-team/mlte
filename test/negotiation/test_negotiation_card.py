@@ -9,8 +9,8 @@ import pytest
 from mlte.context.context import Context
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.negotiation.negotiation_card import NegotiationCard
+from mlte.store.base import ManagedSession, Store
 from mlte.store.factory import create_store
-from mlte.store.store import ManagedSession, Store
 
 # The namespace identifier for default context
 NAMESPACE_ID = "ns0"

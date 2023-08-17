@@ -9,7 +9,7 @@ import pytest
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store import ManagedSession, Store, StoreURI
+from mlte.store.base import ManagedSession, Store, StoreURI
 from mlte.store.underlying.fs import LocalFileSystemStore
 from mlte.store.underlying.http import RemoteHttpStore
 from mlte.store.underlying.memory import InMemoryStore

@@ -10,7 +10,7 @@ from pathlib import Path
 import json
 import shutil
 
-from mlte.store.store import Store, StoreSession, StoreURI
+from mlte.store.base import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
     Model,

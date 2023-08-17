@@ -6,7 +6,7 @@ Globally-accessible application state.
 
 from typing import Optional
 
-from mlte.store.store import Store
+from mlte.store.base import Store
 
 
 class State:

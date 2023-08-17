@@ -6,7 +6,7 @@ Implementation of in-memory artifact store.
 
 from collections import OrderedDict
 
-from mlte.store.store import Store, StoreSession, StoreURI
+from mlte.store.base import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
     Model,
