@@ -15,7 +15,6 @@ the link between the statically-typed MLTE value system and dynamic extensions.
 from __future__ import annotations
 
 import abc
-import typing
 from typing import Any
 
 from mlte.artifact.artifact import Artifact
@@ -103,9 +102,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         assert (
             model.body.artifact_type == ArtifactType.VALUE
         ), "Broken precondition."
-        body = typing.cast(ValueModel, model.body)
-
-        assert body.value.value_type == ValueType.OPAQUE, "Broken precondition."
-        value = typing.cast(OpaqueValueModel, body.value)
-
-        return cls.deserialize(body.metadata, value.data)
+        assert (
+            model.body.value.value_type == ValueType.OPAQUE
+        ), "Broken precondition."
+        return cls.deserialize(model.body.metadata, model.body.value.data)

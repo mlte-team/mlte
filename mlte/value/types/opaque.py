@@ -63,11 +63,9 @@ class Opaque(Value):
         body = typing.cast(ValueModel, model.body)
 
         assert body.value.value_type == ValueType.OPAQUE, "Broken Precondition."
-        value = typing.cast(OpaqueValueModel, body.value)
-
         return Opaque(
             metadata=body.metadata,
-            data=value.data,
+            data=body.value.data,
         )
 
     def __getitem__(self, key: str) -> Any:

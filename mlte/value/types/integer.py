@@ -68,11 +68,9 @@ class Integer(Value):
         assert (
             body.value.value_type == ValueType.INTEGER
         ), "Broken Precondition."
-        value = typing.cast(IntegerValueModel, body.value)
-
         return Integer(
             metadata=body.metadata,
-            value=value.integer,
+            value=body.value.integer,
         )
 
     def __eq__(self, other: object) -> bool:

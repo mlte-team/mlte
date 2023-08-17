@@ -1,55 +1,37 @@
 {
-  "title": "ValueModel",
-  "description": "The model implementation for MLTE values.",
-  "type": "object",
-  "properties": {
-    "artifact_type": {
-      "title": "Artifact Type",
-      "enum": [
-        "2"
-      ],
-      "type": "string"
-    },
-    "metadata": {
-      "$ref": "#/definitions/EvidenceMetadata"
-    },
-    "value": {
-      "title": "Value",
-      "discriminator": {
-        "propertyName": "value_type",
-        "mapping": {
-          "1": "#/definitions/IntegerValueModel",
-          "2": "#/definitions/RealValueModel",
-          "3": "#/definitions/OpaqueValueModel",
-          "4": "#/definitions/ImageValueModel"
+  "$defs": {
+    "EvidenceMetadata": {
+      "description": "A simple wrapper for evidence metadata.",
+      "properties": {
+        "measurement_type": {
+          "title": "Measurement Type",
+          "type": "string"
+        },
+        "identifier": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
         }
       },
-      "oneOf": [
-        {
-          "$ref": "#/definitions/IntegerValueModel"
-        },
-        {
-          "$ref": "#/definitions/RealValueModel"
-        },
-        {
-          "$ref": "#/definitions/OpaqueValueModel"
-        },
-        {
-          "$ref": "#/definitions/ImageValueModel"
-        }
-      ]
-    }
-  },
-  "required": [
-    "artifact_type",
-    "metadata",
-    "value"
-  ],
-  "definitions": {
+      "required": [
+        "measurement_type",
+        "identifier"
+      ],
+      "title": "EvidenceMetadata",
+      "type": "object"
+    },
     "Identifier": {
-      "title": "Identifier",
-      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
-      "type": "object",
+      "description": "\n    Identifier is a simple class that standardizes\n    the manner in which Measurements, Values, and\n    Results are uniquely identified throughout\n    their lifetimes.\n    ",
       "properties": {
         "name": {
           "title": "Name",
@@ -58,41 +40,35 @@
       },
       "required": [
         "name"
-      ]
+      ],
+      "title": "Identifier",
+      "type": "object"
     },
-    "EvidenceMetadata": {
-      "title": "EvidenceMetadata",
-      "description": "A simple wrapper for evidence metadata.",
-      "type": "object",
+    "ImageValueModel": {
+      "description": "The model implementation for MLTE image values.",
       "properties": {
-        "measurement_type": {
-          "title": "Measurement Type",
-          "type": "string"
+        "value_type": {
+          "const": "4",
+          "title": "Value Type"
         },
-        "identifier": {
-          "$ref": "#/definitions/Identifier"
-        },
-        "info": {
-          "title": "Info",
+        "data": {
+          "title": "Data",
           "type": "string"
         }
       },
       "required": [
-        "measurement_type",
-        "identifier"
-      ]
+        "value_type",
+        "data"
+      ],
+      "title": "ImageValueModel",
+      "type": "object"
     },
     "IntegerValueModel": {
-      "title": "IntegerValueModel",
       "description": "The model implementation for MLTE integer values.",
-      "type": "object",
       "properties": {
         "value_type": {
-          "title": "Value Type",
-          "enum": [
-            "1"
-          ],
-          "type": "string"
+          "const": "1",
+          "title": "Value Type"
         },
         "integer": {
           "title": "Integer",
@@ -102,41 +78,16 @@
       "required": [
         "value_type",
         "integer"
-      ]
-    },
-    "RealValueModel": {
-      "title": "RealValueModel",
-      "description": "The model implementation for MLTE real values.",
-      "type": "object",
-      "properties": {
-        "value_type": {
-          "title": "Value Type",
-          "enum": [
-            "2"
-          ],
-          "type": "string"
-        },
-        "real": {
-          "title": "Real",
-          "type": "number"
-        }
-      },
-      "required": [
-        "value_type",
-        "real"
-      ]
+      ],
+      "title": "IntegerValueModel",
+      "type": "object"
     },
     "OpaqueValueModel": {
-      "title": "OpaqueValueModel",
       "description": "The model implementation for MLTE opaque values.",
-      "type": "object",
       "properties": {
         "value_type": {
-          "title": "Value Type",
-          "enum": [
-            "3"
-          ],
-          "type": "string"
+          "const": "3",
+          "title": "Value Type"
         },
         "data": {
           "title": "Data",
@@ -146,29 +97,71 @@
       "required": [
         "value_type",
         "data"
-      ]
+      ],
+      "title": "OpaqueValueModel",
+      "type": "object"
     },
-    "ImageValueModel": {
-      "title": "ImageValueModel",
-      "description": "The model implementation for MLTE image values.",
-      "type": "object",
+    "RealValueModel": {
+      "description": "The model implementation for MLTE real values.",
       "properties": {
         "value_type": {
-          "title": "Value Type",
-          "enum": [
-            "4"
-          ],
-          "type": "string"
+          "const": "2",
+          "title": "Value Type"
         },
-        "data": {
-          "title": "Data",
-          "type": "string"
+        "real": {
+          "title": "Real",
+          "type": "number"
         }
       },
       "required": [
         "value_type",
-        "data"
-      ]
+        "real"
+      ],
+      "title": "RealValueModel",
+      "type": "object"
     }
-  }
+  },
+  "description": "The model implementation for MLTE values.",
+  "properties": {
+    "artifact_type": {
+      "const": "2",
+      "title": "Artifact Type"
+    },
+    "metadata": {
+      "$ref": "#/$defs/EvidenceMetadata"
+    },
+    "value": {
+      "discriminator": {
+        "mapping": {
+          "1": "#/$defs/IntegerValueModel",
+          "2": "#/$defs/RealValueModel",
+          "3": "#/$defs/OpaqueValueModel",
+          "4": "#/$defs/ImageValueModel"
+        },
+        "propertyName": "value_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IntegerValueModel"
+        },
+        {
+          "$ref": "#/$defs/RealValueModel"
+        },
+        {
+          "$ref": "#/$defs/OpaqueValueModel"
+        },
+        {
+          "$ref": "#/$defs/ImageValueModel"
+        }
+      ],
+      "title": "Value"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "metadata",
+    "value"
+  ],
+  "title": "ValueModel",
+  "type": "object"
 }

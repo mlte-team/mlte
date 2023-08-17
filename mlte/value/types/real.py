@@ -63,11 +63,9 @@ class Real(Value):
         body = typing.cast(ValueModel, model.body)
 
         assert body.value.value_type == ValueType.REAL, "Broken Precondition."
-        value = typing.cast(RealValueModel, body.value)
-
         return Real(
             metadata=body.metadata,
-            value=value.real,
+            value=body.value.real,
         )
 
     def __str__(self) -> str:
