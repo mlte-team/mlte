@@ -4,9 +4,9 @@ mlte/spec/model.py
 Model implementation for the Spec artifact.
 """
 
-from typing import Optional, List
+from typing import Optional, List, Literal, Any
 
-# from mlte.artifact.type import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 
 
@@ -33,7 +33,7 @@ class ConditionModel(BaseModel):
     name: Optional[str] = None
     """A decriptive name for the condition, usually the method name used to call it."""
 
-    arguments: List[str] = []
+    arguments: List[Any] = []
     """The arguments used when validating the condition."""
 
     callback: Optional[str] = None
@@ -62,7 +62,7 @@ class PropertyModel(BaseModel):
 class SpecModel(BaseModel):
     """The model implementation for the Spec artifact."""
 
-    # artifact_type: Literal[ArtifactType.SPEC]
+    artifact_type: Literal[ArtifactType.SPEC]
     """Union discriminator."""
 
     metadata: SpecMetadataModel
@@ -72,4 +72,4 @@ class SpecModel(BaseModel):
     """A list of properties for this spec."""
 
 
-SpecModel.update_forward_refs()
+SpecModel.model_rebuild()

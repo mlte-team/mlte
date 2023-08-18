@@ -19,3 +19,6 @@ class ArtifactType(str, Enum):
 
     VALUE = auto()
     """The value card artifact type."""
+
+    SPEC = auto()
+    """The specification artifact type."""
