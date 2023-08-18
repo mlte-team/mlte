@@ -1,13 +1,19 @@
 """
+mlte/value/types/integer.py
+
 A Value instance for a scalar, integral value.
 """
+
 from __future__ import annotations
 
-from typing import Any
+import typing
 
-from ..value import Value
-from mlte.validation import Condition, Success, Failure
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.validation import Condition, Failure, Success
+from mlte.value.artifact import Value
+from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
 
 class Integer(Value):
@@ -15,51 +21,57 @@ class Integer(Value):
     Integer implements the Value interface for a single integer value.
     """
 
-    def __init__(self, evidence_metadata: EvidenceMetadata, value: int):
+    def __init__(self, metadata: EvidenceMetadata, value: int):
         """
         Initialize an Integer instance.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
+        :param identifier: An identifier for the value
         :param value: The integer value
-        :type value: int
         """
         assert isinstance(value, int), "Argument must be `int`."
-
-        super().__init__(self, evidence_metadata)
+        super().__init__(self, metadata)
 
         self.value = value
         """The wrapped integer value."""
 
-    def serialize(self) -> dict[str, Any]:
+    def to_model(self) -> ArtifactModel:
         """
-        Serialize an Integer to a JSON object.
-
-        :return: The JSON object
-        :rtype: dict[str, Any]
+        Convert an integer value artifact to its corresponding model.
+        :return: The artifact model
         """
-        return {"value": self.value}
+        print("integer.to_model()")
+        a = ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier, type=self.type
+            ),
+            body=ValueModel(
+                artifact_type=ArtifactType.VALUE,
+                metadata=self.metadata,
+                value=IntegerValueModel(
+                    value_type=ValueType.INTEGER, integer=self.value
+                ),
+            ),
+        )
+        print("return")
+        print(a)
+        return a
 
-    @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
-    ) -> Integer:
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Integer:  # type: ignore[override]
         """
-        Deserialize an Integer from a JSON object.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
-        :param json: The JSON object
-        :type json: dict[str, Any]
-
-        :return: The deserialized instance
-        :rtype: Integer
+        Convert an integer value model to its corresponding artifact.
+        :param model: The model representation
+        :return: The integer value
         """
-        return Integer(evidence_metadata, json["value"])
+        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
+        body = typing.cast(ValueModel, model.body)
 
-    def __str__(self) -> str:
-        """Return a string representation of the Integer."""
-        return f"{self.value}"
+        assert (
+            body.value.value_type == ValueType.INTEGER
+        ), "Broken Precondition."
+        return Integer(
+            metadata=body.metadata,
+            value=body.value.integer,
+        )
 
     def __eq__(self, other: object) -> bool:
         """Comparison between Integer values."""
@@ -70,6 +82,10 @@ class Integer(Value):
     def __neq__(self, other: Integer) -> bool:
         """Comparison between Integer values."""
         return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        """Return a string representation of the Integer."""
+        return f"{self.value}"
 
     @classmethod
     def less_than(cls, value: int) -> Condition:

@@ -9,6 +9,7 @@ from typing import Any
 from deepdiff import DeepDiff
 
 import mlte.negotiation.model as model
+from mlte.artifact.type import ArtifactType
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
@@ -19,6 +20,7 @@ def test_negotiation_card_body() -> None:
     """A negotiation card model can be serialized and deserialized."""
     objects = [
         model.NegotiationCardModel(
+            artifact_type=ArtifactType.NEGOTIATION_CARD,
             system=model.SystemDescriptor(
                 goals=[
                     model.GoalDescriptor(
@@ -86,7 +88,7 @@ def test_negotiation_card_body() -> None:
                 ),
             ),
         ),
-        model.NegotiationCardModel(),
+        model.NegotiationCardModel(artifact_type=ArtifactType.NEGOTIATION_CARD),
     ]
 
     for object in objects:

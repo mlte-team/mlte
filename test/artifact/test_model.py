@@ -7,7 +7,8 @@ Unit tests for artifact models.
 import pydantic
 import pytest
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel
+from mlte.artifact.type import ArtifactType
 
 
 def test_negotiation_card_header() -> None:

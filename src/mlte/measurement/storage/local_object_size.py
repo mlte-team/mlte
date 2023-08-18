@@ -8,7 +8,7 @@ import os
 from typing import Type
 
 from mlte.measurement import Measurement
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 class LocalObjectSize(Measurement):

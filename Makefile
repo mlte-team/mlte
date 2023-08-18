@@ -15,6 +15,7 @@
 isort:	
 	isort src/mlte/artifact
 	isort src/mlte/negotiation
+	isort src/mlte/value
 	isort src/mlte/web/
 	
 	isort test/

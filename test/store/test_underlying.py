@@ -7,7 +7,7 @@ Unit tests for the underlying artifact store implementations.
 import pytest
 
 import mlte.store.error as errors
-from mlte.artifact.model import ArtifactType
+from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store.base import ManagedSession, Store, StoreURI
 from mlte.store.underlying.fs import LocalFileSystemStore

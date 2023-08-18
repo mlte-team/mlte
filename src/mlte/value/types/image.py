@@ -1,15 +1,22 @@
 """
+mlte/value/types/image.py
+
 A Value instance for image media.
 """
+
 from __future__ import annotations
 
-from pathlib import Path
 import base64
-from typing import Any, Union
+import typing
+from pathlib import Path
+from typing import Union
 
-from ..value import Value
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation import Condition, Ignore
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.value.artifact import Value
+from mlte.value.model import ImageValueModel, ValueModel, ValueType
 
 
 class Image(Value):
@@ -19,16 +26,13 @@ class Image(Value):
 
     def __init__(
         self,
-        evidence_metadata: EvidenceMetadata,
+        metadata: EvidenceMetadata,
         image: Union[str, Path, bytes],
     ):
         """
         Initialize an Image instance.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
-        :param path: The path to the image on disk
-        :type path: Union[str, Path]
+        :param metadata: The generating measurement's metadata
+        :param image: The path to the image (str, Path) or raw image data (bytes)
         """
         if isinstance(image, str):
             image = Path(image)
@@ -38,7 +42,7 @@ class Image(Value):
                 image = f.read()
         assert isinstance(image, bytes), "Broken invariant."
 
-        super().__init__(self, evidence_metadata)
+        super().__init__(self, metadata)
 
         # TODO(Kyle): Unsure if storing media inline is the
         # right way to go here (not scalable); reassess this.
@@ -46,45 +50,47 @@ class Image(Value):
         self.image: bytes = image
         """The data of the referenced image."""
 
-    def serialize(self) -> dict[str, Any]:
+    def to_model(self) -> ArtifactModel:
         """
-        Serialize an Image to a JSON object.
-
-        :return: The JSON object
-        :rtype: dict[str, Any]
+        Convert an image value artifact to its corresponding model.
+        :return: The artifact model
         """
-        return {"image": base64.encodebytes(self.image).decode("utf-8")}
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier, type=self.type
+            ),
+            body=ValueModel(
+                artifact_type=ArtifactType.VALUE,
+                metadata=self.metadata,
+                value=ImageValueModel(
+                    value_type=ValueType.IMAGE,
+                    data=base64.encodebytes(self.image).decode("utf-8"),
+                ),
+            ),
+        )
 
-    @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
-    ) -> Image:
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Image:  # type: ignore[override]
         """
-        Deserialize an Image from a JSON object.
-
-        :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
-        :param json: The JSON object
-        :type json: dict[str, Any]
-
-        :return: The deserialized instance
-        :rtype: Image
+        Convert an opaque value model to its corresponding artifact.
+        :param model: The model representation
+        :return: The real value
         """
+        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
+        body = typing.cast(ValueModel, model.body)
+
+        assert body.value.value_type == ValueType.IMAGE, "Broken Precondition."
         return Image(
-            evidence_metadata,
-            base64.decodebytes(json["image"].encode("utf-8")),
+            metadata=body.metadata,
+            image=base64.decodebytes(body.value.data.encode("utf-8")),
         )
 
     @classmethod
     def ignore(cls, reason: str) -> Condition:
         """
         Ignore an image value.
-
         :param reason: The reason for ignoring the image
-        :type reason: str
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition(
             "Ignore",

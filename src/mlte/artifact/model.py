@@ -4,17 +4,14 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
-from enum import Enum
+from typing import Union
 
+from pydantic import Field
+
+from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
-
-
-class ArtifactType(str, Enum):
-    """Enumerates all supported artifact types."""
-
-    NEGOTIATION_CARD = "negotiation_card"
-    """The negotiation card artifact type."""
+from mlte.value.model import ValueModel
 
 
 class ArtifactHeaderModel(BaseModel):
@@ -33,11 +30,7 @@ class ArtifactModel(BaseModel):
     header: ArtifactHeaderModel
     """The artifact header."""
 
-    body: NegotiationCardModel
-    """
-    The artifact body.
-    NOTE(Kyle): This will ultimately be a union over artifact types.
-    Artifact polymorphism is achieved via this union. For now, only
-    this single type is represented because it is the only artifact
-    model that is currently implemented.
-    """
+    body: Union[NegotiationCardModel, ValueModel] = Field(
+        ..., discriminator="artifact_type"
+    )
+    """The artifact body."""

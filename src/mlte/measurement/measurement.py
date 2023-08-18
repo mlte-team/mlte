@@ -10,9 +10,9 @@ import abc
 import typing
 from typing import Type, Optional
 
-from mlte.value import Value
-from mlte.value.types import Opaque
-from mlte.evidence import EvidenceMetadata
+from mlte.value.artifact import Value
+from mlte.value.types.opaque import Opaque
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 
 
 def _has_callable(type, name) -> bool:
@@ -42,7 +42,9 @@ class Measurement(metaclass=abc.ABCMeta):
         :type identifier: str
         """
         self.metadata = EvidenceMetadata(
-            type(instance).__name__, identifier, info
+            measurement_type=type(instance).__name__,
+            identifier=Identifier(name=identifier),
+            info=info,
         )
         """The metadata for the measurement instance."""
 

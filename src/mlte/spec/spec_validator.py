@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from mlte.validation import Result
 from .validated_spec import ValidatedSpec
-from mlte.value import Value
+from mlte.value.artifact import Value
 from mlte.spec import Spec
 
 

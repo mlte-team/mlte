@@ -10,7 +10,7 @@ import abc
 from typing import Optional, Any
 import sys
 
-from mlte.evidence import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata
 
 
 def _has_callable(type, name) -> bool:
@@ -108,7 +108,7 @@ class Result(metaclass=abc.ABCMeta):
 
         result: Result = result_class(document["message"])
         result = result._with_evidence_metadata(
-            EvidenceMetadata.from_json(document["metadata"])
+            EvidenceMetadata(**document["metadata"])
         )
         return result
 
