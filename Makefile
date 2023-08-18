@@ -91,8 +91,8 @@ test:
 
 .PHONY: gen
 gen:
-	poetry run python tools/schema.py generate src/mlte --verbose
+	poetry run python tools/schema.py generate mlte --verbose
 
 .PHONY: vet
 vet:
-	poetry run python tools/schema.py vet src/mlte --verbose
+	poetry run python tools/schema.py vet mlte --verbose
