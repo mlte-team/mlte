@@ -1,5 +1,5 @@
 """
-mlte/store/backend/store.py
+mlte/store/backend/base.py
 
 MLTE artifact store interface implementation.
 """
@@ -240,6 +240,8 @@ class StoreSession:
         model_id: str,
         version_id: str,
         artifact: ArtifactModel,
+        *,
+        parents: bool = False,
     ) -> ArtifactModel:
         """
         Write an artifact.
@@ -247,6 +249,8 @@ class StoreSession:
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
         :param artifact: The artifact
+        :param parents: Indicates whether organizational elements
+        for artifact should be implictly created (default: False)
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract StoreSession."

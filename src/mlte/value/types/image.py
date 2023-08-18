@@ -80,11 +80,9 @@ class Image(Value):
         body = typing.cast(ValueModel, model.body)
 
         assert body.value.value_type == ValueType.IMAGE, "Broken Precondition."
-        value = typing.cast(ImageValueModel, body.value)
-
         return Image(
             metadata=body.metadata,
-            image=base64.decodebytes(value.data.encode("utf-8")),
+            image=base64.decodebytes(body.value.data.encode("utf-8")),
         )
 
     @classmethod
