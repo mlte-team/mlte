@@ -11,7 +11,7 @@ tox
 black
 flake8
 isort
-mypy
+mypy==1.5.1
 types-requests
 twine
 bump2version
