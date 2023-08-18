@@ -7,13 +7,17 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
+import typing
 from typing import Any, Union, List, Dict
 
+from mlte.artifact.artifact import Artifact
+from mlte.artifact.type import ArtifactType
+from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
 from mlte.session import session
-from mlte.api import read_spec, write_spec
 from .requirement import Requirement
+from mlte.spec.model import SpecModel, SpecMetadataModel, PropertyModel
 
 
 def _unique(collection: List[str]) -> bool:
@@ -34,14 +38,14 @@ def _unique(collection: List[str]) -> bool:
 # -----------------------------------------------------------------------------
 
 
-class Spec:
+class Spec(Artifact):
     """
     The Spec class integrates properties, measurements,
     and the results of measurement evaluation and validation.
     """
 
     def __init__(
-        self, requirements_by_property: Dict[Property, List[Requirement]]
+        self, identifier: str, properties: Dict[Property, List[Requirement]]
     ):
         """
         Initialize a Spec instance.
@@ -49,7 +53,10 @@ class Spec:
         :param properties: The collection of properties that compose the spec.
         :type properties: List[Property]
         """
-        self.properties = [p for p in requirements_by_property.keys()]
+        identifier = "specification"
+        super().__init__(identifier, ArtifactType.SPEC)
+
+        self.properties = [p for p in properties.keys()]
         """The collection of properties that compose the Spec."""
 
         if not _unique([p.name for p in self.properties]):
@@ -58,15 +65,14 @@ class Spec:
         if not _unique(
             [
                 str(requirement.identifier)
-                for _, req_list in requirements_by_property.items()
+                for _, req_list in properties.items()
                 for requirement in req_list
             ]
         ):
             raise RuntimeError("All requirement ids in Spec must be unique.")
 
         self.requirements: Dict[str, List[Requirement]] = {
-            property.name: requirements_by_property[property]
-            for property in self.properties
+            property.name: properties[property] for property in self.properties
         }
         """A dict to store requirements by property."""
 
@@ -115,42 +121,36 @@ class Spec:
             self.requirements[property_name].append(requirement)
 
     # -------------------------------------------------------------------------
-    # Save / Load
+    # Serialization.
     # -------------------------------------------------------------------------
 
-    def save(self):
-        """Persist the specification to artifact store."""
-        sesh = session()
-
-        # Write spec to store
-        write_spec(
-            sesh.store.uri.uri,
-            sesh.context.model,
-            sesh.context.version,
-            self.to_json(),
+    def to_model(self) -> ArtifactModel:
+        """Convert a negotation card artifact to its corresponding model."""
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier,
+                type=self.type,
+            ),
+            body=SpecModel(
+                artifact_type=ArtifactType.SPEC,
+                metadata=SpecMetadataModel(**self._metadata_document()),
+                properties=[
+                    PropertyModel(**prop)
+                    for prop in self._properties_document()
+                ],
+            ),
         )
 
-    @staticmethod
-    def load() -> Spec:
-        """
-        Load a Spec instance from artifact store.
-
-        :param path: The path to the saved Spec
-        :type path: str
-
-        :return: The loaded Spec
-        :rtype: Spec
-        """
-        sesh = session()
-
-        document = read_spec(
-            sesh.store.uri.uri, sesh.context.model, sesh.context.version
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Spec:  # type: ignore[override]
+        """Convert a negotiation card model to its corresponding artifact."""
+        assert model.header.type == ArtifactType.SPEC, "Broken precondition."
+        body = typing.cast(SpecModel, model.body)
+        return Spec(
+            identifier=model.header.identifier,
+            metadata=body.metadata,
+            properties=body.properties,
         )
-        return Spec.from_json(json=document)
-
-    # -------------------------------------------------------------------------
-    # JSON document generation.
-    # -------------------------------------------------------------------------
 
     def to_json(self) -> Dict[str, Any]:
         """
@@ -195,8 +195,9 @@ class Spec:
         """
         sesh = session()
         return {
-            "model_identifier": sesh.context.model,
-            "model_version": sesh.context.version,
+            "namespace": sesh.context.namespace,
+            "model": sesh.context.model,
+            "version": sesh.context.version,
             "timestamp": int(time.time()),
         }
 
