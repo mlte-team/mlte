@@ -7,6 +7,7 @@ Implementation of in-memory artifact store.
 from __future__ import annotations
 
 from collections import OrderedDict
+from typing import List, Dict
 
 from mlte.store.store import Store, StoreSession, StoreURI
 from mlte.context.model import (
@@ -45,7 +46,7 @@ class ModelWithVersions:
         self.identifier = identifier
         """The model identifier."""
 
-        self.versions: dict[str, VersionWithArtifacts] = {}
+        self.versions: Dict[str, VersionWithArtifacts] = {}
         """The collection of versions in the namespace."""
 
 
@@ -56,7 +57,7 @@ class NamespaceWithModels:
         self.identifier = identifier
         """The namespace identifier."""
 
-        self.models: dict[str, ModelWithVersions] = {}
+        self.models: Dict[str, ModelWithVersions] = {}
         """The collection of models in the namespace."""
 
 
@@ -64,7 +65,7 @@ class Storage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
-        self.namespaces: dict[str, NamespaceWithModels] = {}
+        self.namespaces: Dict[str, NamespaceWithModels] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -101,7 +102,7 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
         return self._read_namespace(namespace_id)
 
-    def list_namespaces(self) -> list[str]:
+    def list_namespaces(self) -> List[str]:
         return [ns_id for ns_id in self.storage.namespaces.keys()]
 
     def delete_namespace(self, namespace_id: str) -> Namespace:
@@ -134,7 +135,7 @@ class InMemoryStoreSession(StoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
         return self._read_model(namespace_id, model_id)
 
-    def list_models(self, namespace_id: str) -> list[str]:
+    def list_models(self, namespace_id: str) -> List[str]:
         if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
@@ -188,7 +189,7 @@ class InMemoryStoreSession(StoreSession):
 
         return self._read_version(namespace_id, model_id, version_id)
 
-    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+    def list_versions(self, namespace_id: str, model_id: str) -> List[str]:
         if namespace_id not in self.storage.namespaces:
             raise errors.ErrorNotFound(f"Namespace {namespace_id}")
 
@@ -322,7 +323,7 @@ class InMemoryStoreSession(StoreSession):
         version_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )
@@ -336,7 +337,7 @@ class InMemoryStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         query: Query = Query(),
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )

@@ -5,7 +5,7 @@ Defines a requirement for a measurement to be approved, including the conditions
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict
 
 from mlte.validation import Result, Condition
 from mlte.value.artifact import Value
@@ -26,7 +26,7 @@ class Requirement:
         self.identifier = Identifier(name=identifier)
         self.condition = condition
 
-    def to_json(self) -> dict[str, Any]:
+    def to_json(self) -> Dict[str, Any]:
         """Returns this requirement as a dictionary."""
         return {
             "identifier": str(self.identifier),
@@ -34,12 +34,12 @@ class Requirement:
         }
 
     @staticmethod
-    def from_json(document: dict[str, Any]) -> Requirement:
+    def from_json(document: Dict[str, Any]) -> Requirement:
         """
         Deserialize a Requirement from a JSON-like dict document.
 
         :param json: The json document
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized requirement
         :rtype: Requirement

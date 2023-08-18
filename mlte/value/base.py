@@ -15,7 +15,7 @@ the link between the statically-typed MLTE value system and dynamic extensions.
 from __future__ import annotations
 
 import abc
-from typing import Any
+from typing import Any, Dict
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
@@ -55,7 +55,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         self.typename: str = type(instance).__name__
         """The type of the value itself."""
 
-    def serialize(self) -> dict[str, Any]:
+    def serialize(self) -> Dict[str, Any]:
         """
         Serialize the value to a JSON-compatible dictionary.
         :return: The dictionary representation
@@ -64,7 +64,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
 
     @classmethod
     def deserialize(
-        cls, metadata: EvidenceMetadata, data: dict[str, Any]
+        cls, metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> Value:
         """
         Deserialize a Value instance from serialized representation.

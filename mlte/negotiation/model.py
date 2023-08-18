@@ -7,7 +7,7 @@ Model implementation for negotiation card artifact.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
@@ -48,7 +48,7 @@ class GoalDescriptor(BaseModel):
     description: Optional[str] = None
     """A description of the goal."""
 
-    metrics: list[MetricDescriptor] = []
+    metrics: List[MetricDescriptor] = []
     """A collection of metrics related to the goal."""
 
 
@@ -68,7 +68,7 @@ class RiskDescriptor(BaseModel):
 class SystemDescriptor(BaseModel):
     """A description of the system context."""
 
-    goals: list[GoalDescriptor] = []
+    goals: List[GoalDescriptor] = []
     """A description of system goals."""
 
     problem_type: Optional[ProblemType] = None
@@ -146,10 +146,10 @@ class DataDescriptor(BaseModel):
     access: Optional[str] = None
     """A description of the manner in which this data is accessed."""
 
-    labels: list[LabelDescriptor] = []
+    labels: List[LabelDescriptor] = []
     """A description of the labels that appear in the dataset."""
 
-    fields: list[FieldDescriptor] = []
+    fields: List[FieldDescriptor] = []
     """A description of the dataset schema."""
 
     rights: Optional[str] = None
@@ -251,7 +251,7 @@ class NegotiationCardModel(BaseModel):
     system: SystemDescriptor = SystemDescriptor()
     """The descriptor for the system in which the model is integrated."""
 
-    data: list[DataDescriptor] = []
+    data: List[DataDescriptor] = []
     """A collection of descriptors for relevant data."""
 
     model: ModelDescriptor = ModelDescriptor()

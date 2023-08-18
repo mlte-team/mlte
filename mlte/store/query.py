@@ -6,7 +6,7 @@ Query and filtering functionality for store operations.
 
 from __future__ import annotations
 
-from typing import Union, Literal
+from typing import Union, Literal, List
 
 from mlte.model import BaseModel
 from enum import Enum
@@ -102,7 +102,7 @@ class AndFilter(BaseModel):
     type: Literal[FilterType.AND]
     """An identifier for the filter type."""
 
-    filters: list[Filter]
+    filters: List[Filter]
     """The filters of which the composition is composed."""
 
     def match(self, artifact: ArtifactModel) -> bool:
@@ -115,7 +115,7 @@ class OrFilter(BaseModel):
     type: Literal[FilterType.OR]
     """An identifier for the filter type."""
 
-    filters: list[Filter]
+    filters: List[Filter]
     """The filters of which the composition is composed."""
 
     def match(self, artifact: ArtifactModel) -> bool:

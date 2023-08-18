@@ -6,6 +6,8 @@ Class in charge of validating a Spec.
 
 from __future__ import annotations
 
+from typing import Dict
+
 from mlte.validation import Result
 from .validated_spec import ValidatedSpec
 from mlte.value.artifact import Value
@@ -33,7 +35,7 @@ class SpecValidator:
         self.spec = spec
         """The specification to be validated."""
 
-        self.values: dict[str, Value] = {}
+        self.values: Dict[str, Value] = {}
         """Where values will be gathered for validation."""
 
     def add_value(self, value: Value):
@@ -59,12 +61,12 @@ class SpecValidator:
         results = self._validate_results()
         return ValidatedSpec(self.spec, results)
 
-    def _validate_results(self) -> dict[str, Result]:
+    def _validate_results(self) -> Dict[str, Result]:
         """
         Validates a set of stored results.
 
         :return: A document indicating the Result for each identifier.
-        :rtype: dict[str, Result]
+        :rtype: Dict[str, Result]
         """
         # Check that all requirements have values to be validated.
         for _, requirement_list in self.spec.requirements.items():

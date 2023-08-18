@@ -7,6 +7,7 @@ Negotiation card artifact implementation.
 from __future__ import annotations
 
 import typing
+from typing import List
 
 import deepdiff
 
@@ -28,7 +29,7 @@ class NegotiationCard(Artifact):
         self,
         identifier: str,
         system: SystemDescriptor = SystemDescriptor(),
-        data: list[DataDescriptor] = [],
+        data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
     ) -> None:
         super().__init__(identifier, ArtifactType.NEGOTIATION_CARD)

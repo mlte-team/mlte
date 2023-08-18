@@ -6,6 +6,8 @@ API definition for MLTE artifacts.
 
 from __future__ import annotations
 
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
@@ -88,7 +90,7 @@ def read_artifacts(
     version_id: str,
     limit: int = 100,
     offset: int = 0,
-) -> list[ArtifactModel]:
+) -> List[ArtifactModel]:
     """
     Read artifacts with limit and offset.
     :param namespace_id: The namespace identifier
@@ -113,7 +115,7 @@ def read_artifacts(
 @router.post("/search")
 def search_artifacts(
     namespace_id: str, model_id: str, version_id: str, query: Query
-) -> list[ArtifactModel]:
+) -> List[ArtifactModel]:
     """
     Search artifacts.
     :param namespace_id: The namespace identifier

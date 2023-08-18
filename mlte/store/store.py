@@ -7,6 +7,7 @@ MLTE artifact store interface implementation.
 from __future__ import annotations
 
 from enum import Enum
+from typing import List
 
 from mlte.context.model import (
     Namespace,
@@ -115,7 +116,7 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def list_namespaces(self) -> list[str]:
+    def list_namespaces(self) -> List[str]:
         """
         List all MLTE namespaces.
         :return: A collection of identifiers for all MLTE namespaces
@@ -156,7 +157,7 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def list_models(self, namespace_id: str) -> list[str]:
+    def list_models(self, namespace_id: str) -> List[str]:
         """
         List all MLTE models in the given namespace.
         :param namespace_id: The identifier for the namespace
@@ -191,7 +192,7 @@ class StoreSession:
             "Cannot invoke method on abstract StoreSession."
         )
 
-    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+    def list_versions(self, namespace_id: str, model_id: str) -> List[str]:
         """
         List all MLTE versions in the given namespace and model.
         :param namespace_id: the identifier for the namespace
@@ -278,7 +279,7 @@ class StoreSession:
         version_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         """
         Read artifacts withi limit and offset.
         :param namespace_id: The identifier for the namespace
@@ -298,7 +299,7 @@ class StoreSession:
         model_id: str,
         version_id: str,
         query: Query = Query(),
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         """
         Read a collection of artifacts, optionally filtered.
         :param namespace_id: The identifier for the namespace

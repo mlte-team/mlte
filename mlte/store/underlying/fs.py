@@ -6,7 +6,7 @@ Implementation of local file system artifact store.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, List, Dict
 from pathlib import Path
 import json
 import shutil
@@ -54,25 +54,25 @@ class JsonFileStorage:
     def create_folder(self, path: Path) -> None:
         Path.mkdir(path, parents=True)
 
-    def list_folders(self, path: Path) -> list[Path]:
+    def list_folders(self, path: Path) -> List[Path]:
         return [x for x in sorted(path.iterdir()) if x.is_dir()]
 
     def delete_folder(self, path: Path) -> None:
         shutil.rmtree(path)
 
-    def list_json_files(self, path: Path) -> list[Path]:
+    def list_json_files(self, path: Path) -> List[Path]:
         return [
             x
             for x in sorted(path.iterdir())
             if x.is_file() and x.suffix == ".json"
         ]
 
-    def read_json_file(self, path: Path) -> dict[str, Any]:
+    def read_json_file(self, path: Path) -> Dict[str, Any]:
         with path.open("r") as f:
-            data: dict[str, Any] = json.load(f)
+            data: Dict[str, Any] = json.load(f)
         return data
 
-    def write_json_to_file(self, path: Path, data: dict[str, Any]) -> None:
+    def write_json_to_file(self, path: Path, data: Dict[str, Any]) -> None:
         with path.open("w") as f:
             json.dump(data, f, indent=4)
 
@@ -122,7 +122,7 @@ class LocalFileSystemStoreSession(StoreSession):
         self._ensure_namespace_exists(namespace_id)
         return self._read_namespace(namespace_id)
 
-    def list_namespaces(self) -> list[str]:
+    def list_namespaces(self) -> List[str]:
         return [
             str(ns_folder)
             for ns_folder in self.storage.list_folders(Path(self.root))
@@ -151,7 +151,7 @@ class LocalFileSystemStoreSession(StoreSession):
         self._ensure_model_exists(namespace_id, model_id)
         return self._read_model(namespace_id, model_id)
 
-    def list_models(self, namespace_id: str) -> list[str]:
+    def list_models(self, namespace_id: str) -> List[str]:
         self._ensure_namespace_exists(namespace_id)
         return [
             str(model_folder)
@@ -191,7 +191,7 @@ class LocalFileSystemStoreSession(StoreSession):
 
         return self._read_version(namespace_id, model_id, version_id)
 
-    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+    def list_versions(self, namespace_id: str, model_id: str) -> List[str]:
         self._ensure_namespace_exists(namespace_id)
         self._ensure_model_exists(namespace_id, model_id)
 
@@ -337,7 +337,7 @@ class LocalFileSystemStoreSession(StoreSession):
         version_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         artifacts = self._get_version_artifacts(
             namespace_id, model_id, version_id
         )
@@ -358,7 +358,7 @@ class LocalFileSystemStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         query: Query = Query(),
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         artifacts = self.read_artifacts(namespace_id, model_id, version_id)
         return [
             artifact for artifact in artifacts if query.filter.match(artifact)
@@ -382,7 +382,7 @@ class LocalFileSystemStoreSession(StoreSession):
         return artifact
 
     def _ensure_artifact_exists(
-        self, artifact_id: str, artifacts: list[str]
+        self, artifact_id: str, artifacts: List[str]
     ) -> None:
         """Throws an ErrorNotFound if the given artifact does not exist."""
         if artifact_id not in artifacts:
@@ -390,7 +390,7 @@ class LocalFileSystemStoreSession(StoreSession):
 
     def _get_version_artifacts(
         self, namespace_id: str, model_id: str, version_id: str
-    ) -> list[str]:
+    ) -> List[str]:
         """
         Get artifacts for a version from storage.
         :param namespace_id: The identifier for the namespace

@@ -7,7 +7,7 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from typing import Any, Union
+from typing import Any, Union, List, Dict
 
 from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
@@ -16,12 +16,12 @@ from mlte.api import read_spec, write_spec
 from .requirement import Requirement
 
 
-def _unique(collection: list[str]) -> bool:
+def _unique(collection: List[str]) -> bool:
     """
     Determine if all elements of a collection are unique.
 
     :param collection: The collection
-    :type collection: list[str]
+    :type collection: List[str]
 
     :return: `True` if all elements are unique, `False` otherwise
     :rtype: bool
@@ -41,13 +41,13 @@ class Spec:
     """
 
     def __init__(
-        self, requirements_by_property: dict[Property, list[Requirement]]
+        self, requirements_by_property: Dict[Property, List[Requirement]]
     ):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec.
-        :type properties: list[Property]
+        :type properties: List[Property]
         """
         self.properties = [p for p in requirements_by_property.keys()]
         """The collection of properties that compose the Spec."""
@@ -64,7 +64,7 @@ class Spec:
         ):
             raise RuntimeError("All requirement ids in Spec must be unique.")
 
-        self.requirements: dict[str, list[Requirement]] = {
+        self.requirements: Dict[str, List[Requirement]] = {
             property.name: requirements_by_property[property]
             for property in self.properties
         }
@@ -152,12 +152,12 @@ class Spec:
     # JSON document generation.
     # -------------------------------------------------------------------------
 
-    def to_json(self) -> dict[str, Any]:
+    def to_json(self) -> Dict[str, Any]:
         """
         Serialize Spec content to JSON-like dict document
 
         :return: The serialized content
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         document = {
             "schema_version": SPEC_LATEST_SCHEMA_VERSION,
@@ -167,12 +167,12 @@ class Spec:
         return document
 
     @staticmethod
-    def from_json(json: dict[str, Any]) -> Spec:
+    def from_json(json: Dict[str, Any]) -> Spec:
         """
         Deserialize Spec content from JSON document.
 
         :param json: The json document
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized specification
         :rtype: Spec
@@ -186,12 +186,12 @@ class Spec:
 
         return spec
 
-    def _metadata_document(self) -> dict[str, Any]:
+    def _metadata_document(self) -> Dict[str, Any]:
         """
         Generate Spec metadata.
 
         :return: The metadata document
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         sesh = session()
         return {
@@ -200,19 +200,19 @@ class Spec:
             "timestamp": int(time.time()),
         }
 
-    def _properties_document(self) -> list[dict[str, Any]]:
+    def _properties_document(self) -> List[Dict[str, Any]]:
         """
         Generates a document with info an all properties.
 
         :return: The properties document
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         property_docs = [
             self._property_document(property) for property in self.properties
         ]
         return property_docs
 
-    def _property_document(self, property: Property) -> dict[str, Any]:
+    def _property_document(self, property: Property) -> Dict[str, Any]:
         """
         Generate a property document.
 
@@ -220,9 +220,9 @@ class Spec:
         :type property: Property
 
         :return: The property-level document
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
-        document: dict[str, Any] = property._to_json()
+        document: Dict[str, Any] = property._to_json()
         document["requirements"] = [
             requirement.to_json()
             for requirement in self.requirements[property.name]

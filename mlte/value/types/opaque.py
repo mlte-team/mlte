@@ -7,7 +7,7 @@ An opaque evaluation value, without semantics.
 from __future__ import annotations
 
 import typing
-from typing import Any
+from typing import Any, Dict
 
 import deepdiff
 
@@ -23,7 +23,7 @@ class Opaque(Value):
     The 'default' Value instance for measurements that do not provide their own.
     """
 
-    def __init__(self, metadata: EvidenceMetadata, data: dict[str, Any]):
+    def __init__(self, metadata: EvidenceMetadata, data: Dict[str, Any]):
         """
         Initialize an Opaque instance.
         :param evidence_metadata: The generating measurement's metadata

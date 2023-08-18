@@ -7,7 +7,7 @@ Model implementation for MLTE value types.
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import Any, Literal, Union
+from typing import Any, Dict, Literal, Union
 
 from pydantic import Field
 
@@ -76,7 +76,7 @@ class OpaqueValueModel(BaseModel):
     value_type: Literal[ValueType.OPAQUE]
     """An identitifier for the value type."""
 
-    data: dict[str, Any]
+    data: Dict[str, Any]
     """Encapsulated, opaque data."""
 
 

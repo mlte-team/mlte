@@ -7,7 +7,7 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 import sys
 
 from mlte.evidence.metadata import EvidenceMetadata
@@ -69,14 +69,14 @@ class Result(metaclass=abc.ABCMeta):
         self.metadata = evidence_metadata
         return self
 
-    def to_json(self) -> dict[str, str]:
+    def to_json(self) -> Dict[str, str]:
         """
         Returns this object as a JSON dictionary.
 
         :return: A JSON-like dictionary with this object.
-        :rtype: dict[str, str]
+        :rtype: Dict[str, str]
         """
-        doc: dict[str, Any] = {
+        doc: Dict[str, Any] = {
             "result_type": f"{self}",
             "message": self.message,
         }
@@ -85,12 +85,12 @@ class Result(metaclass=abc.ABCMeta):
         return doc
 
     @classmethod
-    def from_json(cls, document: dict[str, Any]) -> Result:
+    def from_json(cls, document: Dict[str, Any]) -> Result:
         """
         Returns a result from a serialized JSON string.
 
         :param json: The json document
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized object.
         :rtype: Result

@@ -9,7 +9,7 @@ from __future__ import annotations
 from enum import Enum
 
 import typing
-from typing import Any
+from typing import Any, List
 import requests
 import mlte.web.store.api.codes as codes
 from mlte.store.store import Store, StoreSession, StoreURI
@@ -113,12 +113,12 @@ class RemoteHttpStoreSession(StoreSession):
 
         return Namespace(**res.json())
 
-    def list_namespaces(self) -> list[str]:
+    def list_namespaces(self) -> List[str]:
         url = f"{self.url}/api/namespace"
         res = self.client.get(url)
         raise_for_response(res)
 
-        return typing.cast(list[str], res.json())
+        return typing.cast(List[str], res.json())
 
     def delete_namespace(self, namespace_id: str) -> Namespace:
         url = f"{self.url}/api/namespace/{namespace_id}"
@@ -141,12 +141,12 @@ class RemoteHttpStoreSession(StoreSession):
 
         return Model(**res.json())
 
-    def list_models(self, namespace_id: str) -> list[str]:
+    def list_models(self, namespace_id: str) -> List[str]:
         url = f"{self.url}/api/namespace/{namespace_id}/model"
         res = self.client.get(url)
         raise_for_response(res)
 
-        return typing.cast(list[str], res.json())
+        return typing.cast(List[str], res.json())
 
     def delete_model(self, namespace_id: str, model_id: str) -> Model:
         url = f"{self.url}/api/namespace/{namespace_id}/model/{model_id}"
@@ -175,14 +175,14 @@ class RemoteHttpStoreSession(StoreSession):
 
         return Version(**res.json())
 
-    def list_versions(self, namespace_id: str, model_id: str) -> list[str]:
+    def list_versions(self, namespace_id: str, model_id: str) -> List[str]:
         url = (
             f"{self.url}/api/namespace/{namespace_id}/model/{model_id}/version"
         )
         res = self.client.get(url)
         raise_for_response(res)
 
-        return typing.cast(list[str], res.json())
+        return typing.cast(List[str], res.json())
 
     def delete_version(
         self, namespace_id: str, model_id: str, version_id: str
@@ -230,7 +230,7 @@ class RemoteHttpStoreSession(StoreSession):
         version_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact?limit={limit}&offset={offset}"
         res = self.client.get(url)
         raise_for_response(res)
@@ -243,7 +243,7 @@ class RemoteHttpStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         query: Query = Query(),
-    ) -> list[ArtifactModel]:
+    ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/search"
         res = self.client.post(url, json=query.dict())

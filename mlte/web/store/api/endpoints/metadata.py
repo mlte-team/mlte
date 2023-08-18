@@ -6,6 +6,8 @@ Endpoints for artifact organization.
 
 from __future__ import annotations
 
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.store.error as errors
@@ -67,7 +69,7 @@ def read_namespace(*, namespace_id: str) -> Namespace:
 
 
 @router.get("/namespace")
-def list_namespaces() -> list[str]:
+def list_namespaces() -> List[str]:
     """
     List MLTE namespaces.
     :return: A collection of namespace identifiers
@@ -155,7 +157,7 @@ def read_model(*, namespace_id: str, model_id: str) -> Model:
 
 
 @router.get("/namespace/{namespace_id}/model")
-def list_models(namespace_id: str) -> list[str]:
+def list_models(namespace_id: str) -> List[str]:
     """
     List MLTE models in the provided namespace.
     :param namespace_id: The namespace identifier
@@ -250,7 +252,7 @@ def read_version(*, namespace_id: str, model_id: str, version_id) -> Version:
 
 
 @router.get("/namespace/{namespace_id}/model/{model_id}/version")
-def list_versions(namespace_id: str, model_id: str) -> list[str]:
+def list_versions(namespace_id: str, model_id: str) -> List[str]:
     """
     List MLTE versions for the provided namespace and model.
     :param namespace_id: The namespace identifier

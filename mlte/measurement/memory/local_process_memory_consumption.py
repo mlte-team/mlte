@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 import subprocess
-from typing import Any, Type
+from typing import Any, Type, Dict
 
 from ..process_measurement import ProcessMeasurement
 from mlte.evidence.metadata import EvidenceMetadata
@@ -63,18 +63,18 @@ class MemoryStatistics(Value):
         self.max = max
         """The maximum memory consumption (KB)."""
 
-    def serialize(self) -> dict[str, Any]:
+    def serialize(self) -> Dict[str, Any]:
         """
         Serialize an MemoryStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
     ) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
@@ -82,7 +82,7 @@ class MemoryStatistics(Value):
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized instance
         :rtype: MemoryStatistics

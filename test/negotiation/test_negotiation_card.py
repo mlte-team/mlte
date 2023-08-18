@@ -6,6 +6,8 @@ Unit tests for negotiation card.
 
 from __future__ import annotations
 
+from typing import Tuple
+
 import pytest
 
 from mlte.context.context import Context
@@ -25,7 +27,7 @@ VERSION_ID = "v0"
 
 
 @pytest.fixture(scope="function")
-def store_with_context() -> tuple[Store, Context]:
+def store_with_context() -> Tuple[Store, Context]:
     """Create an in-memory artifact store with initial context."""
     store = create_store("memory://")
     with ManagedSession(store.session()) as handle:
@@ -47,7 +49,7 @@ def test_round_trip() -> None:
     _ = NegotiationCard.from_model(model)
 
 
-def test_save_load(store_with_context: tuple[Store, Context]) -> None:
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:
     """Negotiation card can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

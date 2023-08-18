@@ -4,8 +4,7 @@ mlte/context/model/model.py
 Model implementation for MLTE context information.
 """
 
-from __future__ import annotations
-
+from typing import List
 from mlte.model import BaseModel
 
 
@@ -40,7 +39,7 @@ class Model(BaseModel):
     identifier: str
     """The identifier for the model."""
 
-    versions: list[Version]
+    versions: List[Version]
     """A collection of the model versions."""
 
 
@@ -57,5 +56,5 @@ class Namespace(BaseModel):
     identifier: str
     """The name of the namespace."""
 
-    models: list[Model]
+    models: List[Model]
     """"A collection of the namespace models."""

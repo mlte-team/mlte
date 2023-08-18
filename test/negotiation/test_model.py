@@ -6,7 +6,7 @@ Unit tests for negotiation card model.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict
 
 from deepdiff import DeepDiff
 
@@ -401,5 +401,5 @@ def test_model_descriptor() -> None:
 # -----------------------------------------------------------------------------
 
 
-def deepequal(a: dict[str, Any], b: dict[str, Any]) -> bool:
+def deepequal(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
     return len(DeepDiff(a, b)) == 0

@@ -6,7 +6,7 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, List, Dict
 
 from mlte.spec import Spec
 from mlte.validation import Result
@@ -24,14 +24,14 @@ class ValidatedSpec:
     ValidatedSpec represents a spec with validated results.
     """
 
-    def __init__(self, spec: Spec, results: dict[str, Result]):
+    def __init__(self, spec: Spec, results: Dict[str, Result]):
         """
         Initialize a ValidatedSpec instance.
 
         :param spec: The Spec
         :type spec: Spec
         :param results: The validation Results for the Spec
-        :type results: dict[str, Result]
+        :type results: Dict[str, Result]
         """
 
         self.spec = spec
@@ -74,16 +74,16 @@ class ValidatedSpec:
         )
         return ValidatedSpec.from_json(document)
 
-    def to_json(self) -> dict[str, Any]:
+    def to_json(self) -> Dict[str, Any]:
         """
         Generates a JSON representation of the ValidatedSpec.
 
         :return: The serialized content
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         # Generate the spec document, and add the result for each requirement.
-        spec_document: dict[
-            str, list[dict[str, list[dict[str, Any]]]]
+        spec_document: Dict[
+            str, List[Dict[str, List[Dict[str, Any]]]]
         ] = self.spec.to_json()
         for property in spec_document["properties"]:
             for req in property["requirements"]:
@@ -92,18 +92,18 @@ class ValidatedSpec:
         return spec_document
 
     @staticmethod
-    def from_json(json: dict[str, Any]) -> ValidatedSpec:
+    def from_json(json: Dict[str, Any]) -> ValidatedSpec:
         """
         Deserialize ValidatedSpec content from JSON document.
 
         :param json: The json document
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized specification
         :rtype: ValidatedSpec
         """
         spec = Spec.from_json(json)
-        results: dict[str, Result] = {}
+        results: Dict[str, Result] = {}
         for property in json["properties"]:
             for req in property["requirements"]:
                 results[req["identifier"]] = Result.from_json(req["result"])

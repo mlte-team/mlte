@@ -12,8 +12,8 @@ this in favor of slightly more brittle but eminently more workable
 solution that involves manual context management with a global state object.
 """
 
-from collections.abc import Generator
 from contextlib import contextmanager
+from typing import Generator
 
 from mlte.store.store import StoreSession
 from mlte.web.store.state import state

@@ -7,6 +7,7 @@ Unit tests for Image.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Tuple
 
 import requests
 
@@ -71,7 +72,7 @@ def test_from_bytes(tmp_path):
 
 
 def test_save_load(
-    tmp_path, store_with_context: tuple[Store, Context]  # noqa
+    tmp_path, store_with_context: Tuple[Store, Context]  # noqa
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

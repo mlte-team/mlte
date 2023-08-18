@@ -6,8 +6,7 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
-from collections.abc import Generator
-from typing import Any
+from typing import Any, Generator, Tuple
 
 import httpx
 import pytest
@@ -93,7 +92,7 @@ def stores() -> Generator[str, None, None]:
         yield store_fixture_name
 
 
-def stores_and_types() -> Generator[tuple[str, ArtifactType], None, None]:
+def stores_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)

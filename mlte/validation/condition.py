@@ -3,10 +3,11 @@ mlte/validation/condition.py
 
 The interface for measurement validation.
 """
+
 from __future__ import annotations
 
 import typing
-from typing import Callable, Any
+from typing import Callable, Any, List, Dict
 import base64
 
 import dill
@@ -24,7 +25,7 @@ class Condition:
     def __init__(
         self,
         name: str,
-        arguments: list[Any],
+        arguments: List[Any],
         callback: Callable[[Value], Result],
     ):
         """
@@ -39,7 +40,7 @@ class Condition:
         self.name: str = name
         """The human-readable identifier for the name method."""
 
-        self.arguments: list[Any] = arguments
+        self.arguments: List[Any] = arguments
         """The arguments used when validating the condition."""
 
         self.callback: Callable[[Value], Result] = callback
@@ -57,12 +58,12 @@ class Condition:
         """
         return self.callback(value)._with_evidence_metadata(value.metadata)
 
-    def to_json(self) -> dict[str, Any]:
+    def to_json(self) -> Dict[str, Any]:
         """
         Returns this requirement as a JSON dictionary.
 
         :return: The serialized JSON object.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         return {
             "name": self.name,
@@ -73,12 +74,12 @@ class Condition:
         }
 
     @staticmethod
-    def from_json(document: dict[str, Any]) -> Condition:
+    def from_json(document: Dict[str, Any]) -> Condition:
         """
         Deserialize a Condition from a JSON-like dict document.
 
         :param json: The json document
-        :type json: dict[str, Any]
+        :type json: Dict[str, Any]
 
         :return: The deserialized Condition
         :rtype: Condition

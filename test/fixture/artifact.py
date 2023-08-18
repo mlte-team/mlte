@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import random
 import string
-from typing import Union
+from typing import List, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -48,7 +48,7 @@ class TypeUtil:
     """A static class for artifact type utilities."""
 
     @staticmethod
-    def all_others(type: ArtifactType) -> list[ArtifactType]:
+    def all_others(type: ArtifactType) -> List[ArtifactType]:
         """
         Return a collection of all artifact types that are not the given one.
         :param type: The excluded type
