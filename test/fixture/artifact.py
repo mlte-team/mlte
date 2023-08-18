@@ -12,8 +12,7 @@ from typing import List, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 

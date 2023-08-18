@@ -15,6 +15,7 @@ import mlte.web.store.api.codes as codes
 from mlte.artifact.model import ArtifactModel
 from mlte.store.query import Query
 from mlte.web.store.api import dependencies
+from mlte.web.store.api.model import WriteArtifactRequest, WriteArtifactResponse
 
 # The router exported by this submodule
 router = APIRouter()
@@ -25,21 +26,26 @@ def write_artifact(
     namespace_id: str,
     model_id: str,
     version_id: str,
-    artifact: ArtifactModel,
-) -> ArtifactModel:
+    request: WriteArtifactRequest,
+) -> WriteArtifactResponse:
     """
     Write an artifact.
     :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
-    :param model: The artifact model
+    :param request: The artifact write request
     :return: The created artifact
     """
     with dependencies.session() as handle:
         try:
-            return handle.write_artifact(
-                namespace_id, model_id, version_id, artifact
+            artifact = handle.write_artifact(
+                namespace_id,
+                model_id,
+                version_id,
+                request.artifact,
+                parents=request.parents,
             )
+            return WriteArtifactResponse(artifact=artifact)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

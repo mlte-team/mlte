@@ -7,8 +7,7 @@ from __future__ import annotations
 
 import pytest
 
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
 from mlte.value.types.integer import Integer

@@ -12,9 +12,8 @@ from typing import Tuple
 import requests
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.store.store import Store
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.store.base import Store
 from mlte.value.types.image import Image
 
 from ...fixture.store import store_with_context  # noqa

@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from typing import List, Dict
 
-from mlte.store.store import Store, StoreSession, StoreURI
+from mlte.store.base import Store, StoreSession, StoreURI
 from mlte.context.model import (
     Namespace,
     Model,
@@ -20,6 +20,7 @@ from mlte.context.model import (
 )
 from mlte.artifact.model import ArtifactModel
 from mlte.store.query import Query
+import mlte.store.util as storeutil
 
 import mlte.store.error as errors
 
@@ -289,7 +290,12 @@ class InMemoryStoreSession(StoreSession):
         model_id: str,
         version_id: str,
         artifact: ArtifactModel,
+        *,
+        parents: bool = False,
     ) -> ArtifactModel:
+        if parents:
+            storeutil.create_parents(self, namespace_id, model_id, version_id)
+
         version = self._get_version_with_artifacts(
             namespace_id, model_id, version_id
         )

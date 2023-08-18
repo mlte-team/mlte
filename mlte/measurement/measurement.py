@@ -12,8 +12,7 @@ from typing import Type, Optional
 
 from mlte.value.artifact import Value
 from mlte.value.types.opaque import Opaque
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 
 
 def _has_callable(type, name) -> bool:

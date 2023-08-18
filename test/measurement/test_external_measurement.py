@@ -6,8 +6,7 @@ Unit test for ExternalMeasurement.
 
 import pytest
 
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import ExternalMeasurement
 from mlte.value.types.integer import Integer
 

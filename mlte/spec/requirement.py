@@ -9,7 +9,7 @@ from typing import Any, Dict
 
 from mlte.validation import Result, Condition
 from mlte.value.artifact import Value
-from mlte.evidence.identifier import Identifier
+from mlte.evidence.metadata import Identifier
 
 # -----------------------------------------------------------------------------
 # Requirement

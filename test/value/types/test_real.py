@@ -11,10 +11,9 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import Measurement
-from mlte.store.store import Store
+from mlte.store.base import Store
 from mlte.value.types.real import Real
 
 from ...fixture.store import store_with_context  # noqa

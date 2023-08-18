@@ -9,9 +9,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.store.store import Store
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.store.base import Store
 from mlte.value.base import Value
 
 from ..fixture.store import store_with_context  # noqa

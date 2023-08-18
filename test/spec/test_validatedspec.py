@@ -10,8 +10,7 @@ from typing import Dict
 
 import pytest
 
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec

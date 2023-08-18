@@ -10,8 +10,8 @@ import sys
 import uvicorn
 
 import mlte.web.store.app_factory as app_factory
+from mlte.store.base import StoreType
 from mlte.store.factory import create_store
-from mlte.store.store import StoreType
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state
