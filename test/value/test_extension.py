@@ -6,7 +6,7 @@ Unit tests for extension of the MLTE value system.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict, List, Tuple
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
@@ -19,18 +19,18 @@ from ..fixture.store import store_with_context  # noqa
 class ConfusionMatrix(Value):
     """A sample extension value type."""
 
-    def __init__(self, metadata: EvidenceMetadata, matrix: list[list[int]]):
+    def __init__(self, metadata: EvidenceMetadata, matrix: List[List[int]]):
         super().__init__(self, metadata)
 
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
 
-    def serialize(self) -> dict[str, Any]:
+    def serialize(self) -> Dict[str, Any]:
         return {"matrix": self.matrix}
 
     @staticmethod
     def deserialize(
-        metadata: EvidenceMetadata, data: dict[str, Any]
+        metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> ConfusionMatrix:
         return ConfusionMatrix(metadata, data["matrix"])
 
@@ -66,7 +66,7 @@ def test_model() -> None:
     assert r == cm
 
 
-def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     """Confusion matrix can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

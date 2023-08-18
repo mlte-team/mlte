@@ -6,6 +6,8 @@ Unit tests for ValidatedSpec functionality.
 
 from __future__ import annotations
 
+from typing import Dict
+
 import pytest
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
@@ -49,6 +51,6 @@ def test_no_result():
         }
     )
 
-    results: dict[str, Result] = {}
+    results: Dict[str, Result] = {}
     with pytest.raises(RuntimeError):
         _ = ValidatedSpec(spec, results)

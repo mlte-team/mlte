@@ -4,6 +4,10 @@ test/value/types/test_opaque.py
 Unit tests for Opaque.
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 import pytest
 
 from mlte.context.context import Context
@@ -82,7 +86,7 @@ def test_serde() -> None:
     assert e == o
 
 
-def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     """Opaque can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

@@ -4,7 +4,10 @@ test/value/types/test_image.py
 Unit tests for Image.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Tuple
 
 import requests
 
@@ -67,24 +70,8 @@ def test_from_bytes(tmp_path):
     )
 
 
-# def test_save_load(tmp_path):
-#     """Image can"""
-
-#     local_path = download_image(tmp_path)
-#     img = Image(
-#         EvidenceMetadata(
-#             measurement_type="typename", identifier=Identifier(name="id")
-#         ),
-#         local_path,
-#     )
-#     img.save()
-
-#     r: Image = Image.load("id")  # type: ignore
-#     assert r.image == r.image
-
-
 def test_save_load(
-    tmp_path, store_with_context: tuple[Store, Context]  # noqa
+    tmp_path, store_with_context: Tuple[Store, Context]  # noqa
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

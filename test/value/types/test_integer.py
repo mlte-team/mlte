@@ -4,6 +4,10 @@ test/value/types/test_integer.py
 Unit tests for Integer.
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 import pytest
 
 from mlte.context.context import Context
@@ -63,7 +67,7 @@ def test_serde() -> None:
     assert e == i
 
 
-def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     """Integer can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

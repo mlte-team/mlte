@@ -6,7 +6,7 @@ Unit test for LocalObjectSize measurement.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 from mlte.measurement.storage import LocalObjectSize
 from mlte.validation import Result
@@ -34,7 +34,7 @@ def _create_file(path: Path, size: int):
     assert path.exists() and path.is_file()
 
 
-def _create_fs_hierarchy(root: Path, template: dict[str, Any]):
+def _create_fs_hierarchy(root: Path, template: Dict[str, Any]):
     """
     Construct a directory hierarchy described by `template`.
 
@@ -57,7 +57,7 @@ def _create_fs_hierarchy(root: Path, template: dict[str, Any]):
             _create_fs_hierarchy(local_prefix, value)
 
 
-def create_fs_hierarchy(root: Path, template: dict[str, Any]):
+def create_fs_hierarchy(root: Path, template: Dict[str, Any]):
     """
     Construct a directory hierarchy described by `template`.
 
@@ -76,7 +76,7 @@ def create_fs_hierarchy(root: Path, template: dict[str, Any]):
 # -----------------------------------------------------------------------------
 
 
-def _expected_hierarchy_size(template: dict[str, Any]) -> int:
+def _expected_hierarchy_size(template: Dict[str, Any]) -> int:
     """
     Compute the expected size of the hierarchy from `template`.
 
@@ -95,7 +95,7 @@ def _expected_hierarchy_size(template: dict[str, Any]) -> int:
     )
 
 
-def expected_hierarchy_size(template: dict[str, Any]) -> int:
+def expected_hierarchy_size(template: Dict[str, Any]) -> int:
     """
     Compute the expected size of the hierarchy from `template`.
 

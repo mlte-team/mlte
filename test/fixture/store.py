@@ -4,6 +4,10 @@ test/fixture/store.py
 A simple fixture for an in-memory artifact store.
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 import pytest
 
 from mlte.context.context import Context
@@ -22,7 +26,7 @@ FX_VERSION_ID = "v0"
 
 
 @pytest.fixture(scope="function")
-def store_with_context() -> tuple[Store, Context]:
+def store_with_context() -> Tuple[Store, Context]:
     """Create an in-memory artifact store with initial context."""
     store = create_store("memory://")
     with ManagedSession(store.session()) as handle:

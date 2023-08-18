@@ -4,6 +4,10 @@ test/value/types/test_real.py
 Unit tests for Real.
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 import pytest
 
 from mlte.context.context import Context
@@ -62,7 +66,7 @@ def test_serde() -> None:
     assert e == r
 
 
-def test_save_load(store_with_context: tuple[Store, Context]) -> None:  # noqa
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     """Real can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

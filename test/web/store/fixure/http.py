@@ -4,7 +4,9 @@ test/web/store/fixture/http.py
 Fixtures for artifact store HTTP unit tests.
 """
 
-from collections.abc import Generator
+from __future__ import annotations
+
+from typing import Generator, Tuple
 
 import pytest
 from fastapi.testclient import TestClient
@@ -53,7 +55,7 @@ def clients() -> Generator[str, None, None]:
         yield client
 
 
-def clients_and_types() -> Generator[tuple[str, ArtifactType], None, None]:
+def clients_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
     """
     Yield test clients and artifact types to produce all combinations.
     :return: (test client configured for backend, artifact type)
