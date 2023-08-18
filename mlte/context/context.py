@@ -8,7 +8,10 @@ utilize the MLTE package to generate, persist, and load
 MLTE evaluation artifacts.
 """
 
+from dataclasses import dataclass
 
+
+@dataclass
 class Context:
     """
     The MLTE context establishes the context for a MLTE evaluation session.
@@ -20,18 +23,11 @@ class Context:
     is a standalone data structure that is then exported by the global state module.
     """
 
-    def __init__(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> None:
-        # NOTE(Kyle): Representing missing values as empty
-        # string makes this significantly easier to work with
-        # the type checker, although not as clean as I'd like.
+    namespace: str
+    """The context namespace."""
 
-        self.namespace = namespace_id
-        """The context namespace."""
+    model: str
+    """The context model identifier."""
 
-        self.model = model_id
-        """The context model identifier."""
-
-        self.version = version_id
-        """The context model version identifier."""
+    version: str
+    """The context model version identifier."""
