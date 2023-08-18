@@ -4,11 +4,14 @@ test/negotiation/test_model.py
 Unit tests for negotiation card model.
 """
 
-from typing import Any
+from __future__ import annotations
+
+from typing import Any, Dict
 
 from deepdiff import DeepDiff
 
 import mlte.negotiation.model as model
+from mlte.artifact.type import ArtifactType
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
@@ -19,6 +22,7 @@ def test_negotiation_card_body() -> None:
     """A negotiation card model can be serialized and deserialized."""
     objects = [
         model.NegotiationCardModel(
+            artifact_type=ArtifactType.NEGOTIATION_CARD,
             system=model.SystemDescriptor(
                 goals=[
                     model.GoalDescriptor(
@@ -86,7 +90,7 @@ def test_negotiation_card_body() -> None:
                 ),
             ),
         ),
-        model.NegotiationCardModel(),
+        model.NegotiationCardModel(artifact_type=ArtifactType.NEGOTIATION_CARD),
     ]
 
     for object in objects:
@@ -397,5 +401,5 @@ def test_model_descriptor() -> None:
 # -----------------------------------------------------------------------------
 
 
-def deepequal(a: dict[str, Any], b: dict[str, Any]) -> bool:
+def deepequal(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
     return len(DeepDiff(a, b)) == 0

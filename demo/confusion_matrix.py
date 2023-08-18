@@ -3,13 +3,14 @@ demo/confusion_matrix.py
 
 Implementation of ConfusionMatrix value.
 """
+
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict
 
 import numpy as np
 
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation import Condition, Failure, Result, Success
 from mlte.value import Value
 
@@ -21,12 +22,12 @@ class ConfusionMatrix(Value):
         self.matrix: np.ndarray = matrix
         """Underlying matrix represented as numpy array."""
 
-    def serialize(self) -> dict[str, Any]:
+    def serialize(self) -> Dict[str, Any]:
         return {"matrix": [[int(val) for val in row] for row in self.matrix]}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json_: dict[str, Any]
+        evidence_metadata: EvidenceMetadata, json_: Dict[str, Any]
     ) -> ConfusionMatrix:
         return ConfusionMatrix(evidence_metadata, np.asarray(json_["matrix"]))
 

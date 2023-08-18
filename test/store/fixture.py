@@ -4,17 +4,19 @@ test/store/fixture.py
 Fixtures for MLTE artifact store unit tests.
 """
 
-from collections.abc import Generator
-from typing import Any
+from __future__ import annotations
+
+from typing import Any, Generator, Tuple
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
 
 import mlte.web.store.app_factory as app_factory
-from mlte.artifact.model import ArtifactType
-from mlte.store import StoreURI
+from mlte.artifact.type import ArtifactType
+from mlte.store.base import StoreURI
 from mlte.store.factory import create_store
+from mlte.store.underlying.fs import LocalFileSystemStore
 from mlte.store.underlying.http import (
     ClientType,
     RemoteHttpStore,
@@ -25,7 +27,7 @@ from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state
 
-_STORE_FIXTURE_NAMES = ["http_store", "memory_store"]
+_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store"]
 
 
 class TestclientCient(RemoteHttpStoreClient):
@@ -75,6 +77,12 @@ def memory_store() -> InMemoryStore:
     return InMemoryStore(StoreURI.from_string("memory://"))
 
 
+@pytest.fixture(scope="function")
+def fs_store(tmp_path) -> LocalFileSystemStore:
+    """A fixture for an local FS store."""
+    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
+
+
 def stores() -> Generator[str, None, None]:
     """
     Yield store fixture names.
@@ -84,7 +92,7 @@ def stores() -> Generator[str, None, None]:
         yield store_fixture_name
 
 
-def stores_and_types() -> Generator[tuple[str, ArtifactType], None, None]:
+def stores_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)

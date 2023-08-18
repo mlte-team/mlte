@@ -7,10 +7,10 @@ from __future__ import annotations
 
 import pytest
 
-from mlte.evidence import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 def test_no_property():
@@ -31,7 +31,12 @@ def test_no_requirement():
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(EvidenceMetadata("typename", "id2"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id2")
+        ),
+        1,
+    )
     specValidator.add_value(i)
 
     with pytest.raises(RuntimeError):
@@ -44,7 +49,12 @@ def test_success():
     )
     specValidator = SpecValidator(spec)
 
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        1,
+    )
     specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()
