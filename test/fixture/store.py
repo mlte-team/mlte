@@ -9,7 +9,7 @@ import pytest
 from mlte.context.context import Context
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store.factory import create_store
-from mlte.store.store import ManagedSession, Store
+from mlte.store.base import ManagedSession, Store
 
 # The namespace identifier for default context
 FX_NAMESPACE_ID = "ns0"

@@ -11,7 +11,7 @@ from typing import Any
 from mlte.context.context import Context
 from mlte.evidence.identifier import Identifier
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.store.store import Store
+from mlte.store.base import Store
 from mlte.value.base import Value
 
 from ..fixture.store import store_with_context  # noqa
