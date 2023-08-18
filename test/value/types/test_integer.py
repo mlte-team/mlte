@@ -7,8 +7,7 @@ Unit tests for Integer.
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import Measurement
 from mlte.store.base import Store
 from mlte.value.types.integer import Integer

@@ -8,8 +8,7 @@ import pytest
 
 from mlte._private.schema import validate_validatedspec_schema
 from mlte.api import read_validatedspec
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
 from mlte.value.types.integer import Integer

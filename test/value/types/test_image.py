@@ -9,8 +9,7 @@ from pathlib import Path
 import requests
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.base import Store
 from mlte.value.types.image import Image
 

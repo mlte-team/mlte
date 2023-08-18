@@ -9,8 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 from mlte.context.context import Context
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.base import Store
 from mlte.value.base import Value
 
