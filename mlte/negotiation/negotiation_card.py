@@ -14,14 +14,12 @@ import deepdiff
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.context import Context
 from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardModel,
     SystemDescriptor,
 )
-from mlte.store.base import ManagedSession, Store
 
 
 class NegotiationCard(Artifact):
@@ -73,43 +71,6 @@ class NegotiationCard(Artifact):
             data=body.data,
             model=body.model,
         )
-
-    def save_with(
-        self, context: Context, store: Store, *, parents: bool = False
-    ) -> None:
-        """
-        Save an artifact with the given context and store configuration.
-        :param context: The context in which to save the artifact
-        :param store: The store in which to save the artifact
-        :param parents: Indicates whether organizational elements for the
-        artifact are created implicitly on write (default: False)
-        """
-        with ManagedSession(store.session()) as handle:
-            handle.write_artifact(
-                context.namespace,
-                context.model,
-                context.version,
-                self.to_model(),
-                parents=parents,
-            )
-
-    @staticmethod
-    def load_with(identifier: str, context: Context, store: Store) -> Artifact:
-        """
-        Load an artifact with the given context and store configuration.
-        :param identifier: The identifier for the artifact
-        :param context: The context from which to load the artifact
-        :param store: The store from which to load the artifact
-        """
-        with ManagedSession(store.session()) as handle:
-            return NegotiationCard.from_model(
-                handle.read_artifact(
-                    context.namespace,
-                    context.model,
-                    context.version,
-                    identifier,
-                )
-            )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):
