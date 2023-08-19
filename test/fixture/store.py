@@ -26,6 +26,12 @@ FX_VERSION_ID = "v0"
 
 
 @pytest.fixture(scope="function")
+def store() -> Store:
+    """Create an in-memory artifact store."""
+    return create_store("memory://")
+
+
+@pytest.fixture(scope="function")
 def store_with_context() -> Tuple[Store, Context]:
     """Create an in-memory artifact store with initial context."""
     store = create_store("memory://")
