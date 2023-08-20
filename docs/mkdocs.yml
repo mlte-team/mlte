@@ -4,14 +4,14 @@ theme:
   palette:
     scheme: slate
 watch:
-  - ../src/mlte
+  - ../mlte
 plugins:
   - search
   - mkdocstrings:
       default_handler: python
       handlers:
         python:
-          paths: [../src]
+          paths: [../mlte]
           options:
             docstring_style: sphinx
   - gen-files:
