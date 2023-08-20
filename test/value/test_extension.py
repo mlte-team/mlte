@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
+import pytest
+
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.base import Store
@@ -38,6 +40,15 @@ class ConfusionMatrix(Value):
         if not isinstance(other, ConfusionMatrix):
             return False
         return self.matrix == other.matrix
+
+
+class BadInteger(Value):
+    """An extension value that does not implement the interface."""
+
+    def __init__(self, metadata: EvidenceMetadata, integer: int):
+        super().__init__(self, metadata)
+
+        self.integer = integer
 
 
 def test_serde() -> None:
@@ -79,3 +90,12 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
 
     loaded = ConfusionMatrix.load_with("id.value", ctx, store)
     assert loaded == cm
+
+
+def test_subclass_fail() -> None:
+    """A value type that fails to meet the interface cannot be instantiated."""
+    em = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    with pytest.raises(TypeError):
+        _ = BadInteger(em, 1)  # type: ignore

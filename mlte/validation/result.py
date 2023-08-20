@@ -11,12 +11,7 @@ from typing import Optional, Any, Dict
 import sys
 
 from mlte.evidence.metadata import EvidenceMetadata
-
-
-def _has_callable(type, name) -> bool:
-    """Determine if `type` has a callable attribute with the given name."""
-    return hasattr(type, name) and callable(getattr(type, name))
-
+import mlte._private.meta as meta
 
 # -----------------------------------------------------------------------------
 # Validation Results
@@ -29,10 +24,7 @@ class Result(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete Result."""
-        return all(
-            _has_callable(subclass, method)
-            for method in ["__bool__", "__str__"]
-        )
+        return meta.has_callables(subclass, "__bool__", "__str__")
 
     def __init__(self, message: str):
         """

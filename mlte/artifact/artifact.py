@@ -6,6 +6,9 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
+import abc
+
+import mlte._private.meta as meta
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
@@ -13,7 +16,7 @@ from mlte.session.state import session
 from mlte.store.base import ManagedSession, Store
 
 
-class Artifact:
+class Artifact(metaclass=abc.ABCMeta):
     """
     The MLTE artifact protocol implementation.
 
@@ -23,6 +26,10 @@ class Artifact:
     by a common protocol that allows us to perform common
     operations with them, namely persistence.
     """
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return meta.has_callables(subclass, "to_model", "from_model")
 
     def __init__(self, identifier: str, type: ArtifactType) -> None:
         self.identifier = identifier
@@ -35,6 +42,7 @@ class Artifact:
         self.type = type
         """The identifier for the artifact type"""
 
+    @abc.abstractmethod
     def to_model(self) -> ArtifactModel:
         """Serialize an artifact to its corresponding model."""
         raise NotImplementedError(
@@ -42,6 +50,7 @@ class Artifact:
         )
 
     @classmethod
+    @abc.abstractmethod
     def from_model(cls, _: ArtifactModel) -> Artifact:
         """Deserialize an artifact from its corresponding model."""
         raise NotImplementedError(

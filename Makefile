@@ -79,8 +79,7 @@ check: check-format check-lint check-typecheck
 # Unit Tests
 # -----------------------------------------------------------------------------
 
-# Run unit tests with tox
-# NOTE: Only runs 3.10 environment (for speed)
+# Run unit tests with pytest
 .PHONY: test
 test:
 	poetry run pytest test

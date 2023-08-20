@@ -17,16 +17,12 @@ from __future__ import annotations
 import abc
 from typing import Any, Dict
 
+import mlte._private.meta as meta
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
-
-
-def _has_callable(type, name) -> bool:
-    """Determine if `type` has a callable attribute with the given name."""
-    return hasattr(type, name) and callable(getattr(type, name))
 
 
 class Value(Artifact, metaclass=abc.ABCMeta):
@@ -35,10 +31,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all Value subclasses."""
-        return all(
-            _has_callable(subclass, method)
-            for method in ["serialize", "deserialize"]
-        )
+        return meta.has_callables(subclass, "serialize", "deserialize")
 
     def __init__(self, instance: Value, metadata: EvidenceMetadata) -> None:
         """
@@ -55,6 +48,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         self.typename: str = type(instance).__name__
         """The type of the value itself."""
 
+    @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
         """
         Serialize the value to a JSON-compatible dictionary.
@@ -63,6 +57,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         raise NotImplementedError("Value.serialize()")
 
     @classmethod
+    @abc.abstractmethod
     def deserialize(
         cls, metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> Value:
