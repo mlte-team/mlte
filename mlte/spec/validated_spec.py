@@ -40,12 +40,12 @@ class ValidatedSpec:
         self.results = results
         """The validation results for the spec."""
 
-        # Check that all requirements have results.
-        for _, requirement_list in self.spec.requirements.items():
-            for requirement in requirement_list:
-                if str(requirement.identifier) not in self.results:
+        # Check that all conditions have results.
+        for conditions in self.spec.properties.values():
+            for measurement_id in conditions.keys():
+                if measurement_id not in self.results:
                     raise RuntimeError(
-                        f"Requirement '{requirement.identifier}' does not have a result."
+                        f"Id '{measurement_id}' does not have a result."
                     )
 
     def save(self):

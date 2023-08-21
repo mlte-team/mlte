@@ -7,13 +7,14 @@ The interface for measurement validation.
 from __future__ import annotations
 
 import typing
-from typing import Callable, Any, List, Dict
+from typing import Callable, Any, List
 import base64
 
 import dill
 
 from mlte.value.artifact import Value
-from . import Result
+from mlte.validation.result import Result
+from mlte.spec.model import ConditionModel
 
 
 class Condition:
@@ -58,45 +59,36 @@ class Condition:
         """
         return self.callback(value)._with_evidence_metadata(value.metadata)
 
-    def to_json(self) -> Dict[str, Any]:
+    def to_model(self) -> ConditionModel:
         """
-        Returns this requirement as a JSON dictionary.
+        Returns this requirement as a model.
 
-        :return: The serialized JSON object.
-        :rtype: Dict[str, Any]
+        :return: The serialized model object.
+        :rtype: ConditionModel
         """
-        return {
-            "name": self.name,
-            "arguments": self.arguments,
-            "callback": base64.b64encode(dill.dumps(self.callback)).decode(
+        return ConditionModel(
+            name=self.name,
+            arguments=self.arguments,
+            callback=base64.b64encode(dill.dumps(self.callback)).decode(
                 "utf-8"
             ),
-        }
+        )
 
-    @staticmethod
-    def from_json(document: Dict[str, Any]) -> Condition:
+    @classmethod
+    def from_model(cls, model: ConditionModel) -> Condition:
         """
-        Deserialize a Condition from a JSON-like dict document.
+        Deserialize a Condition from a model.
 
-        :param json: The json document
-        :type json: Dict[str, Any]
+        :param model: The model.
+        :type model: ConditionModel
 
         :return: The deserialized Condition
         :rtype: Condition
         """
-        if (
-            "name" not in document
-            or "arguments" not in document
-            or "callback" not in document
-        ):
-            raise RuntimeError("Saved Condition is malformed.")
-
         condition: Condition = Condition(
-            document["name"],
-            document["arguments"],
-            dill.loads(
-                base64.b64decode(str(document["callback"]).encode("utf-8"))
-            ),
+            model.name,
+            model.arguments,
+            dill.loads(base64.b64decode(str(model.callback).encode("utf-8"))),
         )
         return condition
 
@@ -110,6 +102,7 @@ class Condition:
 
     def __eq__(self, other: object) -> bool:
         """Compare Condition instances for equality."""
+        # TODO: is just names enough? Should we compare args and callback?
         if not isinstance(other, Condition):
             return False
         reference: Condition = other

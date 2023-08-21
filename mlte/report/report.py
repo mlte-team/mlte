@@ -213,7 +213,7 @@ class Report(ReportAttribute):
     """Model considerations."""
 
     spec: ValidatedSpec = field(
-        default_factory=lambda: ValidatedSpec(Spec({}), {})
+        default_factory=lambda: ValidatedSpec(Spec("spec", {}), {})
     )
     """The model test spec report."""
 

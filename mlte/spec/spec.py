@@ -6,18 +6,16 @@ A collection of properties and their measurements.
 
 from __future__ import annotations
 
-import time
 import typing
-from typing import Any, Union, List, Dict
+from typing import Union, List, Dict
+import itertools
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
 from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
 from mlte.property import Property
-from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte.session import session
-from .requirement import Requirement
-from mlte.spec.model import SpecModel, SpecMetadataModel, PropertyModel
+from mlte.validation import Condition
+from mlte.spec.model import SpecModel, PropertyModel
 
 
 def _unique(collection: List[str]) -> bool:
@@ -45,36 +43,88 @@ class Spec(Artifact):
     """
 
     def __init__(
-        self, identifier: str, properties: Dict[Property, List[Requirement]]
+        self, identifier: str, properties: Dict[Property, Dict[str, Condition]]
     ):
         """
         Initialize a Spec instance.
 
-        :param properties: The collection of properties that compose the spec.
+        :param properties: The collection of properties that compose the spec, with their conditions keyed by measurement id.
         :type properties: List[Property]
         """
+        # TODO: good enough id?
         identifier = "specification"
         super().__init__(identifier, ArtifactType.SPEC)
 
-        self.properties = [p for p in properties.keys()]
+        self.properties = properties
         """The collection of properties that compose the Spec."""
 
-        if not _unique([p.name for p in self.properties]):
+        if not _unique([p.name for p in self.properties.keys()]):
             raise RuntimeError("All properties in Spec must be unique.")
 
         if not _unique(
-            [
-                str(requirement.identifier)
-                for _, req_list in properties.items()
-                for requirement in req_list
-            ]
+            list(
+                itertools.chain.from_iterable(
+                    [
+                        [measurement_id for measurement_id in conditions]
+                        for conditions in properties.values()
+                    ]
+                )
+            )
         ):
-            raise RuntimeError("All requirement ids in Spec must be unique.")
+            raise RuntimeError("All ids in Spec must be unique.")
 
-        self.requirements: Dict[str, List[Requirement]] = {
-            property.name: properties[property] for property in self.properties
+    # -------------------------------------------------------------------------
+    # Serialization.
+    # -------------------------------------------------------------------------
+
+    def to_model(self) -> ArtifactModel:
+        """Convert a negotation card artifact to its corresponding model."""
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier,
+                type=self.type,
+            ),
+            body=SpecModel(
+                artifact_type=ArtifactType.SPEC,
+                properties=[
+                    self._to_property_model(property)
+                    for property, _ in self.properties.items()
+                ],
+            ),
+        )
+
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Spec:  # type: ignore[override]
+        """Convert a negotiation card model to its corresponding artifact."""
+        assert model.header.type == ArtifactType.SPEC, "Broken precondition."
+        body = typing.cast(SpecModel, model.body)
+        return Spec(
+            identifier=model.header.identifier,
+            properties={
+                Property.from_model(property_model): {
+                    measurement_id: Condition.from_model(condition_model)
+                    for measurement_id, condition_model in property_model.conditions.items()
+                }
+                for property_model in body.properties
+            },
+        )
+
+    def _to_property_model(self, property: Property) -> PropertyModel:
+        """
+        Generate a property model.
+
+        :param property: The property of interest
+        :type property: Property
+
+        :return: The property model
+        :rtype: PropertyModel
+        """
+        property_model: PropertyModel = property.to_model()
+        property_model.conditions = {
+            measurement_id: condition.to_model()
+            for measurement_id, condition in self.properties[property].items()
         }
-        """A dict to store requirements by property."""
+        return property_model
 
     # -------------------------------------------------------------------------
     # Property Manipulation
@@ -92,141 +142,6 @@ class Spec(Artifact):
         """
         target_name = property if isinstance(property, str) else property.name
         return any(property.name == target_name for property in self.properties)
-
-    def _add_requirement(self, property_name: str, requirement: Requirement):
-        """
-        Adds the given requirement to the property.
-
-        :param property_name: The name of the property we are adding the requirement for.
-        :type property_name: str
-
-        :param requirement: The requirement we want to add to this property.
-        :type requirement: Requirement
-        """
-        if not any(
-            property.name == property_name for property in self.properties
-        ):
-            raise RuntimeError(
-                f"Property {property_name} is not part of this Specification."
-            )
-        if property_name not in self.requirements:
-            self.requirements[property_name] = []
-
-        # Only add requirement if it is not already there for this property.
-        found = any(
-            curr_requirement == requirement
-            for curr_requirement in self.requirements[property_name]
-        )
-        if not found:
-            self.requirements[property_name].append(requirement)
-
-    # -------------------------------------------------------------------------
-    # Serialization.
-    # -------------------------------------------------------------------------
-
-    def to_model(self) -> ArtifactModel:
-        """Convert a negotation card artifact to its corresponding model."""
-        return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier,
-                type=self.type,
-            ),
-            body=SpecModel(
-                artifact_type=ArtifactType.SPEC,
-                properties=[
-                    PropertyModel(**prop)
-                    for prop in self._properties_document()
-                ],
-            ),
-        )
-
-    @classmethod
-    def from_model(cls, model: ArtifactModel) -> Spec:  # type: ignore[override]
-        """Convert a negotiation card model to its corresponding artifact."""
-        assert model.header.type == ArtifactType.SPEC, "Broken precondition."
-        body = typing.cast(SpecModel, model.body)
-        return Spec(
-            identifier=model.header.identifier,
-            properties=body.properties,
-        )
-
-    def to_json(self) -> Dict[str, Any]:
-        """
-        Serialize Spec content to JSON-like dict document
-
-        :return: The serialized content
-        :rtype: Dict[str, Any]
-        """
-        document = {
-            "schema_version": SPEC_LATEST_SCHEMA_VERSION,
-            "metadata": self._metadata_document(),
-            "properties": self._properties_document(),
-        }
-        return document
-
-    @staticmethod
-    def from_json(json: Dict[str, Any]) -> Spec:
-        """
-        Deserialize Spec content from JSON document.
-
-        :param json: The json document
-        :type json: Dict[str, Any]
-
-        :return: The deserialized specification
-        :rtype: Spec
-        """
-        spec = Spec({Property._from_json(d): [] for d in json["properties"]})
-        for property_doc in json["properties"]:
-            for requirement_doc in property_doc["requirements"]:
-                spec._add_requirement(
-                    property_doc["name"], Requirement.from_json(requirement_doc)
-                )
-
-        return spec
-
-    def _metadata_document(self) -> Dict[str, Any]:
-        """
-        Generate Spec metadata.
-
-        :return: The metadata document
-        :rtype: Dict[str, Any]
-        """
-        sesh = session()
-        return {
-            "namespace": sesh.context.namespace,
-            "model": sesh.context.model,
-            "version": sesh.context.version,
-            "timestamp": int(time.time()),
-        }
-
-    def _properties_document(self) -> List[Dict[str, Any]]:
-        """
-        Generates a document with info an all properties.
-
-        :return: The properties document
-        :rtype: Dict[str, Any]
-        """
-        property_docs = [
-            self._property_document(property) for property in self.properties
-        ]
-        return property_docs
-
-    def _property_document(self, property: Property) -> Dict[str, Any]:
-        """
-        Generate a property document.
-
-        :param property: The property of interest
-        :type property: Property
-
-        :return: The property-level document
-        :rtype: Dict[str, Any]
-        """
-        document: Dict[str, Any] = property._to_json()
-        document["requirements"] = [
-            requirement.to_json()
-            for requirement in self.requirements[property.name]
-        ]
-        return document
 
     # -------------------------------------------------------------------------
     # Equality Testing
