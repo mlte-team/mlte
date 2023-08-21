@@ -37,7 +37,7 @@ class ConfusionMatrix(ValueBase):
         if not isinstance(other, ConfusionMatrix):
             return False
         return self.matrix == other.matrix
-    
+
     def __str__(self) -> str:
         return f"{self.matrix}"
 
@@ -66,5 +66,3 @@ class ConfusionMatrix(ValueBase):
             ),
         )
         return condition
-
-
