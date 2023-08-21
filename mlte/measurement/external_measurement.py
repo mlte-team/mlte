@@ -33,7 +33,7 @@ class ExternalMeasurement(Measurement):
         """
         super().__init__(self, identifier)
 
-        if not issubclass(Value, value_type):
+        if not issubclass(value_type, Value):
             raise Exception(
                 f"Value type provided is not a subtype of Value: {value_type}"
             )

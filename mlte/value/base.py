@@ -18,14 +18,14 @@ import abc
 from typing import Any, Dict
 
 import mlte._private.meta as meta
-from mlte.artifact.artifact import Artifact
+import mlte.value.artifact as artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
 
-class Value(Artifact, metaclass=abc.ABCMeta):
+class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
     """The base class for MLTE value extensions."""
 
     @classmethod
@@ -33,20 +33,13 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         """Define the interface for all Value subclasses."""
         return meta.has_callables(subclass, "serialize", "deserialize")
 
-    def __init__(self, instance: Value, metadata: EvidenceMetadata) -> None:
+    def __init__(self, instance: ValueBase, metadata: EvidenceMetadata) -> None:
         """
         Initialize a MLTE value.
         :param instance: The subclass instance
         :param metadata: Evidence metadata associated with the value
         """
-        identifier = f"{metadata.identifier}.value"
-        super().__init__(identifier, ArtifactType.VALUE)
-
-        self.metadata = metadata
-        """Evidence metadata associated with the value."""
-
-        self.typename: str = type(instance).__name__
-        """The type of the value itself."""
+        super().__init__(instance, metadata)
 
     @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
@@ -54,20 +47,20 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         Serialize the value to a JSON-compatible dictionary.
         :return: The dictionary representation
         """
-        raise NotImplementedError("Value.serialize()")
+        raise NotImplementedError("ValueBase.serialize()")
 
     @classmethod
     @abc.abstractmethod
     def deserialize(
         cls, metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> Value:
+    ) -> ValueBase:
         """
         Deserialize a Value instance from serialized representation.
         :param metadata: Evidence metadata associated with the value
         :param data: The serialized representation
         :return: The deserialized value
         """
-        raise NotImplementedError("Value.deserialize()")
+        raise NotImplementedError("ValueBase.deserialize()")
 
     def to_model(self) -> ArtifactModel:
         """
@@ -88,7 +81,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Value:  # noqa[override]
+    def from_model(cls, model: ArtifactModel) -> ValueBase:  # noqa[override]
         """
         Deserialize a value from its corresponding model.
         :param model: The artifact model
