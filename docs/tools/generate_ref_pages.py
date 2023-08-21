@@ -9,7 +9,7 @@ from pathlib import Path
 import mkdocs_gen_files
 
 # The root path to the MLTE package
-ROOT_PATH = "../src"
+ROOT_PATH = "../mlte"
 
 g_nav = mkdocs_gen_files.Nav()
 

@@ -4,8 +4,9 @@
 
 `mlte` (pronounced "melt") is a framework and infrastructure for machine learning evaluation.
 
+[![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Tests](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Documentation Status](https://readthedocs.org/projects/mlte/badge/?version=latest)](https://mlte.readthedocs.io/en/latest/?badge=latest)
 
 ### Getting Started
 
