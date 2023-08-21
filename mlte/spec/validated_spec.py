@@ -6,7 +6,8 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Any, List, Dict
+# from typying import List
+from typing import Any, Dict
 
 from mlte.spec import Spec
 from mlte.validation import Result
@@ -82,14 +83,15 @@ class ValidatedSpec:
         :rtype: Dict[str, Any]
         """
         # Generate the spec document, and add the result for each requirement.
-        spec_document: Dict[
-            str, List[Dict[str, List[Dict[str, Any]]]]
-        ] = self.spec.to_json()
-        for property in spec_document["properties"]:
-            for req in property["requirements"]:
-                req["result"] = self.results[req["identifier"]].to_json()
+        # spec_document: Dict[
+        #    str, List[Dict[str, List[Dict[str, Any]]]]
+        # ] = self.spec.to_json()
+        # for property in spec_document["properties"]:
+        #    for req in property["requirements"]:
+        #        req["result"] = self.results[req["identifier"]].to_json()
 
-        return spec_document
+        # return spec_document
+        return {}
 
     @staticmethod
     def from_json(json: Dict[str, Any]) -> ValidatedSpec:
@@ -102,13 +104,14 @@ class ValidatedSpec:
         :return: The deserialized specification
         :rtype: ValidatedSpec
         """
-        spec = Spec.from_json(json)
-        results: Dict[str, Result] = {}
-        for property in json["properties"]:
-            for req in property["requirements"]:
-                results[req["identifier"]] = Result.from_json(req["result"])
+        # spec = Spec.from_json(json)
+        # results: Dict[str, Result] = {}
+        # for property in json["properties"]:
+        #    for req in property["requirements"]:
+        #        results[req["identifier"]] = Result.from_json(req["result"])
 
-        return ValidatedSpec(spec, results)
+        # return ValidatedSpec(spec, results)
+        return ValidatedSpec(Spec("t", {}), {})
 
     def __eq__(self, other: object) -> bool:
         """Test ValidatedSpec instance for equality."""
