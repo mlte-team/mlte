@@ -133,7 +133,6 @@ class Spec(Artifact):
             ),
             body=SpecModel(
                 artifact_type=ArtifactType.SPEC,
-                metadata=SpecMetadataModel(**self._metadata_document()),
                 properties=[
                     PropertyModel(**prop)
                     for prop in self._properties_document()
@@ -148,7 +147,6 @@ class Spec(Artifact):
         body = typing.cast(SpecModel, model.body)
         return Spec(
             identifier=model.header.identifier,
-            metadata=body.metadata,
             properties=body.properties,
         )
 

@@ -10,23 +10,6 @@ from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 
 
-class SpecMetadataModel(BaseModel):
-    """Metadata related to the model."""
-
-    # TODO: do we want to keep this same metadata?
-    namespace: Optional[str] = None
-    """Namespace where this Spec is associated."""
-
-    model: Optional[str] = None
-    """The model associated to this spec."""
-
-    version: Optional[str] = None
-    """The version of the model."""
-
-    timestamp: Optional[int] = None
-    """Unix timestamp of when the creation of this spec."""
-
-
 class ConditionModel(BaseModel):
     """A description of a condition for a property."""
 
@@ -64,9 +47,6 @@ class SpecModel(BaseModel):
 
     artifact_type: Literal[ArtifactType.SPEC]
     """Union discriminator."""
-
-    metadata: SpecMetadataModel
-    """General metadata associated with the spec."""
 
     properties: List[PropertyModel] = []
     """A list of properties for this spec."""
