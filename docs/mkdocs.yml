@@ -1,0 +1,29 @@
+site_name: MLTE Documentation
+theme:
+  name: "material"
+  palette:
+    scheme: slate
+watch:
+  - ../src/mlte
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../src]
+          options:
+            docstring_style: sphinx
+  - gen-files:
+      scripts:
+        - tools/generate_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+nav:
+  - Home: 'index.md'
+  - 'How-to Guides':
+    - 'Getting Started': 'getting_started.md'
+    - 'Development': 'development.md'
+  - 'Tutorials':
+    - 'Testing a Model with MLTE': 'tutorial1.md'
+  - API Reference: reference/

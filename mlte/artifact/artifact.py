@@ -58,7 +58,7 @@ class Artifact:
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
-        self.save_with(session().context, session().store)
+        self.save_with(session().context, session().store, parents=parents)
 
     def save_with(
         self, context: Context, store: Store, *, parents: bool = False
@@ -76,6 +76,7 @@ class Artifact:
                 context.model,
                 context.version,
                 self.to_model(),
+                parents=parents,
             )
 
     @classmethod
