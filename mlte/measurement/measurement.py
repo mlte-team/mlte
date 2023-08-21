@@ -10,14 +10,10 @@ import abc
 import typing
 from typing import Type, Optional
 
+import mlte._private.meta as meta
 from mlte.value.artifact import Value
 from mlte.value.types.opaque import Opaque
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-
-
-def _has_callable(type, name) -> bool:
-    """Determine if `type` has a callable attribute with the given name."""
-    return hasattr(type, name) and callable(getattr(type, name))
 
 
 class Measurement(metaclass=abc.ABCMeta):
@@ -28,7 +24,7 @@ class Measurement(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete measurements."""
-        return all(_has_callable(subclass, method) for method in ["__call__"])
+        return meta.has_callables(subclass, "__call__")
 
     def __init__(
         self, instance: Measurement, identifier: str, info: Optional[str] = None
