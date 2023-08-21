@@ -14,11 +14,6 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 
 
-def _has_callable(type, name) -> bool:
-    """Determine if `type` has a callable attribute with the given name."""
-    return hasattr(type, name) and callable(getattr(type, name))
-
-
 class Value(Artifact, metaclass=abc.ABCMeta):
     """
     The Value class serves as the base class of all
@@ -28,14 +23,6 @@ class Value(Artifact, metaclass=abc.ABCMeta):
     encapsulates the functionality required to uniquely
     associate evaluation results with the originating measurement.
     """
-
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        """Define the interface for all Value subclasses."""
-        return all(
-            _has_callable(subclass, method)
-            for method in ["to_model", "from_model"]
-        )
 
     def __init__(self, instance: Value, metadata: EvidenceMetadata):
         """

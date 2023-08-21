@@ -10,11 +10,7 @@ import abc
 import importlib
 import pkgutil
 from typing import Type, Dict
-
-
-def _has_callable(type, name) -> bool:
-    """Determine if `type` has a callable attribute with the given name."""
-    return hasattr(type, name) and callable(getattr(type, name))
+import mlte._private.meta as meta
 
 
 class Property(metaclass=abc.ABCMeta):
@@ -23,10 +19,7 @@ class Property(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete properties."""
-        return all(
-            _has_callable(subclass, method)
-            for method in ["__init__", "__repr__"]
-        )
+        return meta.has_callables(subclass, "__init__", "__repr__")
 
     def __init__(self, name: str, description: str, rationale: str):
         """
