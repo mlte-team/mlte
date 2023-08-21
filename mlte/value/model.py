@@ -90,4 +90,4 @@ class ImageValueModel(BaseModel):
     """The image data as base64-encoded string."""
 
 
-ValueModel.update_forward_refs()
+ValueModel.model_rebuild()
