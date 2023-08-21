@@ -13,12 +13,12 @@ import pytest
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.base import Store
-from mlte.value.base import Value
+from mlte.value.base import ValueBase
 
 from ..fixture.store import store_with_context  # noqa
 
 
-class ConfusionMatrix(Value):
+class ConfusionMatrix(ValueBase):
     """A sample extension value type."""
 
     def __init__(self, metadata: EvidenceMetadata, matrix: List[List[int]]):
@@ -42,7 +42,7 @@ class ConfusionMatrix(Value):
         return self.matrix == other.matrix
 
 
-class BadInteger(Value):
+class BadInteger(ValueBase):
     """An extension value that does not implement the interface."""
 
     def __init__(self, metadata: EvidenceMetadata, integer: int):

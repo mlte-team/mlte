@@ -130,5 +130,5 @@ class Query(BaseModel):
 
 
 # Necessary for pydantic to resolve forward references
-AndFilter.update_forward_refs()
-OrFilter.update_forward_refs()
+AndFilter.model_rebuild()
+OrFilter.model_rebuild()
