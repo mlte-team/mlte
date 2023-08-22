@@ -4,11 +4,11 @@ mlte/_private/job.py
 Optional helpers that can be used to start external processes.
 """
 
+import subprocess
 import sys
 import threading
-import subprocess
-from typing import List
 from pathlib import Path
+from typing import List
 
 
 def _get_interpreter_path() -> Path:

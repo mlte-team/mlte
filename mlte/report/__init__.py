@@ -1,16 +1,15 @@
+from .render import render
 from .report import (
+    Considerations,
     Dataset,
-    User,
-    UseCase,
     Limitation,
     Metadata,
     ModelDetails,
     ModelSpecification,
-    Considerations,
     Report,
+    UseCase,
+    User,
 )
-
-from .render import render
 
 __all__ = [
     "Dataset",

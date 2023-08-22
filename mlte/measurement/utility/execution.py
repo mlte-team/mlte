@@ -5,7 +5,7 @@ Utilities for execution of measurements.
 """
 
 import concurrent.futures
-from typing import Callable, Any, List
+from typing import Any, Callable, List
 
 
 def concurrently(*callables: Callable[[], Any]) -> List[Any]:
