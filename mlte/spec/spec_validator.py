@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from typing import Dict
 
-from mlte.validation import Result
+from mlte.validation.result import Result
 from .validated_spec import ValidatedSpec
 from mlte.value.artifact import Value
-from mlte.spec import Spec
+from mlte.spec.spec import Spec
 
 
 # -----------------------------------------------------------------------------

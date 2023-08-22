@@ -11,7 +11,8 @@ import typing
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.validation import Condition, Failure, Success
+from mlte.validation.condition import Condition
+from mlte.validation.result import Success, Failure
 from mlte.value.artifact import Value
 from mlte.value.model import RealValueModel, ValueModel, ValueType
 

@@ -19,28 +19,22 @@ def test_spec_body() -> None:
     objects = [
         model.SpecModel(
             artifact_type=ArtifactType.SPEC,
-            metadata=model.SpecMetadataModel(
-                namespace="ns0", model="model0", version="0.0.1", timestamp=1000
-            ),
             properties=[
                 model.PropertyModel(
                     name="TaskEfficacy",
-                    repr="TaskEfficacy()",
                     description="Property for useful things.",
                     rationale="Because I say so",
-                    conditions=[
-                        model.ConditionModel(
+                    conditions={
+                        "accuracy": model.ConditionModel(
                             name="less_than",
                             arguments=[3.0],
                             callback="invalid^#*@&^ASD@#",
                         )
-                    ],
+                    },
                 )
             ],
         ),
-        model.SpecModel(
-            artifact_type=ArtifactType.SPEC, metadata=model.SpecMetadataModel()
-        ),
+        model.SpecModel(artifact_type=ArtifactType.SPEC),
     ]
 
     for object in objects:

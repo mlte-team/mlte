@@ -14,7 +14,7 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
 from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
 from mlte.property import Property
-from mlte.validation import Condition
+from mlte.validation.condition import Condition
 from mlte.spec.model import SpecModel, PropertyModel
 
 
@@ -51,8 +51,6 @@ class Spec(Artifact):
         :param properties: The collection of properties that compose the spec, with their conditions keyed by measurement id.
         :type properties: List[Property]
         """
-        # TODO: good enough id?
-        identifier = "specification"
         super().__init__(identifier, ArtifactType.SPEC)
 
         self.properties = properties

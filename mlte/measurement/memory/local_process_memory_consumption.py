@@ -13,11 +13,8 @@ from typing import Any, Type, Dict
 from ..process_measurement import ProcessMeasurement
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.artifact import Value
-from mlte.validation import (
-    Condition,
-    Success,
-    Failure,
-)
+from mlte.validation.condition import Condition
+from mlte.validation.result import Success, Failure
 from mlte._private.platform import is_windows, is_macos
 
 

@@ -9,14 +9,14 @@ import pytest
 from mlte._private.schema import validate_spec_schema
 from mlte.api import read_spec
 from mlte.property.costs import StorageCost
-from mlte.spec import Requirement, Spec
+from mlte.spec.spec import Spec
 from mlte.value.types.integer import Integer
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_instance_with_content(tmp_path):
     spec = Spec(
-        {StorageCost("test"): [Requirement("test", Integer.less_than(3))]}
+        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
     spec.save()
 
