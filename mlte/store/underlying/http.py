@@ -102,7 +102,7 @@ class RemoteHttpStoreSession(StoreSession):
 
     def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
         url = f"{self.url}/api/namespace"
-        res = self.client.post(url, json=namespace.dict())
+        res = self.client.post(url, json=namespace.model_dump())
         raise_for_response(res)
 
         return Namespace(**res.json())
@@ -130,7 +130,7 @@ class RemoteHttpStoreSession(StoreSession):
 
     def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
         url = f"{self.url}/api/namespace/{namespace_id}/model"
-        res = self.client.post(url, json=model.dict())
+        res = self.client.post(url, json=model.model_dump())
         raise_for_response(res)
 
         return Model(**res.json())
@@ -162,7 +162,7 @@ class RemoteHttpStoreSession(StoreSession):
         url = (
             f"{self.url}/api/namespace/{namespace_id}/model/{model_id}/version"
         )
-        res = self.client.post(url, json=version.dict())
+        res = self.client.post(url, json=version.model_dump())
         raise_for_response(res)
 
         return Version(**res.json())
@@ -212,7 +212,7 @@ class RemoteHttpStoreSession(StoreSession):
             url,
             json=WriteArtifactRequest(
                 artifact=artifact, parents=parents
-            ).dict(),
+            ).model_dump(),
         )
         raise_for_response(res)
 
@@ -254,7 +254,7 @@ class RemoteHttpStoreSession(StoreSession):
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/search"
-        res = self.client.post(url, json=query.dict())
+        res = self.client.post(url, json=query.model_dump())
         raise_for_response(res)
 
         return [ArtifactModel(**object) for object in res.json()]

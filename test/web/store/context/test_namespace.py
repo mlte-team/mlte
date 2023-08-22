@@ -35,7 +35,7 @@ def test_create(
 
     ns = NamespaceCreate(identifier="id")
 
-    res = client.post("/api/namespace", json=ns.dict())
+    res = client.post("/api/namespace", json=ns.model_dump())
     assert res.status_code == 200
     _ = Namespace(**res.json())
 
@@ -49,7 +49,7 @@ def test_read(
 
     ns = NamespaceCreate(identifier="id")
 
-    res = client.post("/api/namespace", json=ns.dict())
+    res = client.post("/api/namespace", json=ns.model_dump())
     assert res.status_code == 200
     created = Namespace(**res.json())
 
@@ -68,7 +68,7 @@ def test_list(
 
     ns = NamespaceCreate(identifier="id")
 
-    res = client.post("/api/namespace", json=ns.dict())
+    res = client.post("/api/namespace", json=ns.model_dump())
     assert res.status_code == 200
 
     res = client.get("/api/namespace")
@@ -85,7 +85,7 @@ def test_delete(
 
     ns = NamespaceCreate(identifier="id")
 
-    res = client.post("/api/namespace", json=ns.dict())
+    res = client.post("/api/namespace", json=ns.model_dump())
     assert res.status_code == 200
 
     res = client.get("/api/namespace")
