@@ -231,7 +231,7 @@ class Report(ReportAttribute):
             dict_factory=lambda properties: {k: v for k, v in properties if v},
         )
         # Manually serialize the spec-level document
-        document["spec"] = self.spec.to_json()
+        document["spec"] = ""  # TODO: Change to model. self.spec.to_json()
         # Manually insert the schema version
         document["schema_version"] = REPORT_LATEST_SCHEMA_VERSION
         return document

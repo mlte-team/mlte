@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import abc
 import sys
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import mlte._private.meta as meta
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.spec.model import ResultModel
 
 # -----------------------------------------------------------------------------
 # Validation Results
@@ -61,47 +62,35 @@ class Result(metaclass=abc.ABCMeta):
         self.metadata = evidence_metadata
         return self
 
-    def to_json(self) -> Dict[str, str]:
+    def to_model(self) -> ResultModel:
         """
-        Returns this object as a JSON dictionary.
+        Returns this object as a model
 
-        :return: A JSON-like dictionary with this object.
-        :rtype: Dict[str, str]
+        :return: The model.
+        :rtype: ResultModel
         """
-        doc: Dict[str, Any] = {
-            "result_type": f"{self}",
-            "message": self.message,
-        }
-        if self.metadata is not None:
-            doc["metadata"] = self.metadata.to_json()
-        return doc
+        return ResultModel(
+            type=f"{self}", message=self.message, metadata=self.metadata
+        )
 
     @classmethod
-    def from_json(cls, document: Dict[str, Any]) -> Result:
+    def from_model(cls, model: ResultModel) -> Result:
         """
-        Returns a result from a serialized JSON string.
+        Returns a result from a model.
 
-        :param json: The json document
-        :type json: Dict[str, Any]
+        :param json: The model
+        :type json: ResultModel
 
         :return: The deserialized object.
         :rtype: Result
         """
-        if (
-            "result_type" not in document
-            or "message" not in document
-            or "metadata" not in document
-        ):
-            raise RuntimeError("Saved Result is malformed.")
-
-        result_type = document["result_type"]
+        result_type = model.type
         results_module = sys.modules[__name__]
         result_class = getattr(results_module, result_type)
 
-        result: Result = result_class(document["message"])
-        result = result._with_evidence_metadata(
-            EvidenceMetadata(**document["metadata"])
-        )
+        result: Result = result_class(model.message)
+        if model.metadata is not None:
+            result = result._with_evidence_metadata(model.metadata)
         return result
 
     def __eq__(self, other: object) -> bool:

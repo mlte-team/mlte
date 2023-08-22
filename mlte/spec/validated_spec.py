@@ -6,10 +6,10 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Dict, cast
 
-from mlte.api import read_validatedspec, write_validatedspec
-from mlte.session import session
+from mlte.artifact.model import ArtifactModel
+from mlte.spec.model import SpecModel
 from mlte.spec.spec import Spec
 from mlte.validation.result import Result
 
@@ -47,69 +47,47 @@ class ValidatedSpec:
                         f"Id '{measurement_id}' does not have a result."
                     )
 
-    def save(self):
-        """Save ValidatedSpec instance to artifact store."""
-        sesh = session()
-
-        write_validatedspec(
-            sesh.store.uri.uri,
-            sesh.context.model,
-            sesh.context.version,
-            self.to_json(),
-        )
-
-    @staticmethod
-    def load() -> ValidatedSpec:
+    def to_model(self) -> ArtifactModel:
         """
-        Load ValidatedSpec instance from artifact store.
+        Generates a model representation of the ValidatedSpec.
 
-        :return: The ValidatedSpec instance
-        :rtype: ValidatedSpec
+        :return: The serialized model
+        :rtype: ArtifactModel
         """
-        sesh = session()
+        model = self.spec.to_model()
 
-        document = read_validatedspec(
-            sesh.store.uri.uri, sesh.context.model, sesh.context.version
-        )
-        return ValidatedSpec.from_json(document)
+        # Add results to main model.
+        spec_model: SpecModel = cast(SpecModel, model.body)
+        for property_model in spec_model.properties:
+            for measurement_id in property_model.conditions.keys():
+                result = self.results[measurement_id]
+                property_model.results[measurement_id] = result.to_model()
 
-    def to_json(self) -> Dict[str, Any]:
+        return model
+
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
         """
-        Generates a JSON representation of the ValidatedSpec.
+        Deserialize ValidatedSpec content from model.
 
-        :return: The serialized content
-        :rtype: Dict[str, Any]
-        """
-        # Generate the spec document, and add the result for each requirement.
-        # spec_document: Dict[
-        #    str, List[Dict[str, List[Dict[str, Any]]]]
-        # ] = self.spec.to_json()
-        # for property in spec_document["properties"]:
-        #    for req in property["requirements"]:
-        #        req["result"] = self.results[req["identifier"]].to_json()
-
-        # return spec_document
-        return {}
-
-    @staticmethod
-    def from_json(json: Dict[str, Any]) -> ValidatedSpec:
-        """
-        Deserialize ValidatedSpec content from JSON document.
-
-        :param json: The json document
-        :type json: Dict[str, Any]
+        :param model: The model
+        :type model: ArtifactModel
 
         :return: The deserialized specification
         :rtype: ValidatedSpec
         """
-        # spec = Spec.from_json(json)
-        # results: Dict[str, Result] = {}
-        # for property in json["properties"]:
-        #    for req in property["requirements"]:
-        #        results[req["identifier"]] = Result.from_json(req["result"])
+        spec = Spec.from_model(model)
 
-        # return ValidatedSpec(spec, results)
-        return ValidatedSpec(Spec("t", {}), {})
+        # Load results from full model.
+        results: Dict[str, Result] = {}
+        spec_model: SpecModel = cast(SpecModel, model.body)
+        for property_model in spec_model.properties:
+            for measurement_id in property_model.conditions.keys():
+                results[measurement_id] = Result.from_model(
+                    property_model.results[measurement_id]
+                )
+
+        return ValidatedSpec(spec, results)
 
     def __eq__(self, other: object) -> bool:
         """Test ValidatedSpec instance for equality."""
