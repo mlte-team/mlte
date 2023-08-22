@@ -212,7 +212,7 @@ class RemoteHttpStoreSession(StoreSession):
         res = self.client.post(
             url,
             json=WriteArtifactRequest(
-                artifact=artifact, parents=parents
+                artifact=artifact, force=force, parents=parents
             ).model_dump(),
         )
         raise_for_response(res)
