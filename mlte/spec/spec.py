@@ -69,7 +69,7 @@ class Spec(Artifact):
                 )
             )
         ):
-            raise RuntimeError("All ids in Spec must be unique.")
+            raise RuntimeError("All measurement ids in Spec must be unique.")
 
     # -------------------------------------------------------------------------
     # Serialization.
@@ -109,7 +109,7 @@ class Spec(Artifact):
 
     def _to_property_model(self, property: Property) -> PropertyModel:
         """
-        Generate a property model.
+        Generate a property model. This just uses Property.to_model, but adds the list of conditions.
 
         :param property: The property of interest
         :type property: Property
@@ -127,6 +127,27 @@ class Spec(Artifact):
     # -------------------------------------------------------------------------
     # Property Manipulation
     # -------------------------------------------------------------------------
+
+    def get_property(self, property_id: str) -> Property:
+        """
+        Returns a particular property with the given id.
+
+        :param property_id: The property itself, or its identifier
+        :type property_id: str
+
+        :return: The property object.
+        :rtype: Property
+        """
+        properties = [
+            prop for prop in self.properties if prop.name == property_id
+        ]
+        if len(properties) == 0:
+            raise RuntimeError(f"Property {property_id} was not found in list.")
+        if len(properties) > 1:
+            raise RuntimeError(
+                f"Multiple properties with same id were found: {property_id}"
+            )
+        return properties[0]
 
     def has_property(self, property: Union[Property, str]) -> bool:
         """
@@ -169,6 +190,11 @@ def _equal(a: Spec, b: Spec) -> bool:
     :return: `True` if `a` and `b` are equal, `False` otherwise
     :rtype: bool
     """
-    return all(b.has_property(p) for p in a.properties) and all(
+    same_props = all(b.has_property(p) for p in a.properties) and all(
         a.has_property(p) for p in b.properties
     )
+    same_conditions = all(
+        a.properties[prop] == b.properties[b.get_property(prop.name)]
+        for prop in a.properties
+    )
+    return same_props and same_conditions
