@@ -308,7 +308,7 @@ class LocalFileSystemStoreSession(StoreSession):
             self._artifact_path(
                 namespace_id, model_id, version_id, artifact.header.identifier
             ),
-            artifact.dict(),
+            artifact.model_dump(),
         )
         return artifact
 

@@ -23,7 +23,7 @@ from ..fixture.artifact import ArtifactFactory, TypeUtil
 def test_all() -> None:
     """The all filter can be serialized and deserialized."""
     f = AllFilter(type=FilterType.ALL)
-    assert AllFilter(**f.dict()) == f
+    assert AllFilter(**f.model_dump()) == f
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
@@ -36,7 +36,7 @@ def test_all_match(artifact_type: ArtifactType) -> None:
 def test_none() -> None:
     """The all filter cna be serialized and deserialized."""
     f = NoneFilter(type=FilterType.NONE)
-    assert NoneFilter(**f.dict()) == f
+    assert NoneFilter(**f.model_dump()) == f
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
@@ -49,7 +49,7 @@ def test_none_match(artifact_type: ArtifactType) -> None:
 def test_identifier() -> None:
     """The identifier filter can be serialized and deserialized."""
     f = ArtifactIdentifierFilter(type=FilterType.IDENTIFIER, artifact_id="id0")
-    assert ArtifactIdentifierFilter(**f.dict()) == f
+    assert ArtifactIdentifierFilter(**f.model_dump()) == f
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
@@ -70,7 +70,7 @@ def test_type() -> None:
     f = ArtifactTypeFilter(
         type=FilterType.TYPE, artifact_type=ArtifactType.NEGOTIATION_CARD
     )
-    assert ArtifactTypeFilter(**f.dict()) == f
+    assert ArtifactTypeFilter(**f.model_dump()) == f
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
@@ -97,7 +97,7 @@ def test_and() -> None:
             NoneFilter(type=FilterType.NONE),
         ],
     )
-    assert AndFilter(**f.dict()) == f
+    assert AndFilter(**f.model_dump()) == f
 
 
 @pytest.mark.skip("Implement.")
@@ -119,7 +119,7 @@ def test_or() -> None:
             ),
         ],
     )
-    assert OrFilter(**f.dict()) == f
+    assert OrFilter(**f.model_dump()) == f
 
 
 @pytest.mark.skip("Implement.")

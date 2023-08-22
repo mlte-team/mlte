@@ -45,7 +45,7 @@ def test_write(
     r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=r.dict(),
+        json=r.model_dump(),
     )
     assert res.status_code == 200
 
@@ -66,7 +66,7 @@ def test_read(
     r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=r.dict(),
+        json=r.model_dump(),
     )
     assert res.status_code == 200
     artifact = res.json()["artifact"]
@@ -96,7 +96,7 @@ def test_search(
     r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=r.dict(),
+        json=r.model_dump(),
     )
     assert res.status_code == 200
     artifact = res.json()["artifact"]
@@ -104,7 +104,7 @@ def test_search(
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/search",
-        json=Query().dict(),
+        json=Query().model_dump(),
     )
     assert res.status_code == 200
 
@@ -131,7 +131,7 @@ def test_delete(
     r = WriteArtifactRequest(artifact=a, parents=False)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
-        json=r.dict(),
+        json=r.model_dump(),
     )
     assert res.status_code == 200
 
@@ -156,18 +156,19 @@ def create_context(
 ) -> None:
     """Create context for artifacts.."""
     res = client.post(
-        "/api/namespace", json=NamespaceCreate(identifier=namespace_id).dict()
+        "/api/namespace",
+        json=NamespaceCreate(identifier=namespace_id).model_dump(),
     )
     assert res.status_code == 200
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model",
-        json=ModelCreate(identifier=model_id).dict(),
+        json=ModelCreate(identifier=model_id).model_dump(),
     )
     assert res.status_code == 200
 
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version",
-        json=VersionCreate(identifier=version_id).dict(),
+        json=VersionCreate(identifier=version_id).model_dump(),
     )
     assert res.status_code == 200
