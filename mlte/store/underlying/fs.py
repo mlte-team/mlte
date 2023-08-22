@@ -121,8 +121,8 @@ class LocalFileSystemStoreSession(StoreSession):
 
     def list_namespaces(self) -> List[str]:
         return [
-            str(ns_folder)
-            for ns_folder in self.storage.list_folders(Path(self.root))
+            str(ns_path.relative_to(self.root))
+            for ns_path in self.storage.list_folders(Path(self.root))
         ]
 
     def delete_namespace(self, namespace_id: str) -> Namespace:
@@ -150,11 +150,11 @@ class LocalFileSystemStoreSession(StoreSession):
 
     def list_models(self, namespace_id: str) -> List[str]:
         self._ensure_namespace_exists(namespace_id)
+
+        namespace_path = Path(self.root, namespace_id)
         return [
-            str(model_folder)
-            for model_folder in self.storage.list_folders(
-                Path(self.root, namespace_id)
-            )
+            str(model_path.relative_to(namespace_path))
+            for model_path in self.storage.list_folders(namespace_path)
         ]
 
     def delete_model(self, namespace_id: str, model_id: str) -> Model:
@@ -192,11 +192,10 @@ class LocalFileSystemStoreSession(StoreSession):
         self._ensure_namespace_exists(namespace_id)
         self._ensure_model_exists(namespace_id, model_id)
 
+        model_path = Path(self.root, namespace_id, model_id)
         return [
-            str(version_folder)
-            for version_folder in self.storage.list_folders(
-                Path(self.root, namespace_id, model_id)
-            )
+            str(version_path.relative_to(model_path))
+            for version_path in self.storage.list_folders(model_path)
         ]
 
     def delete_version(
