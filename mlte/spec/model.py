@@ -4,7 +4,7 @@ mlte/spec/model.py
 Model implementation for the Spec artifact.
 """
 
-from typing import Optional, List, Literal, Any, Dict
+from typing import Any, Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel

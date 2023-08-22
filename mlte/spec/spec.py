@@ -6,16 +6,16 @@ A collection of properties and their measurements.
 
 from __future__ import annotations
 
-import typing
-from typing import Union, List, Dict
 import itertools
+import typing
+from typing import Dict, List, Union
 
 from mlte.artifact.artifact import Artifact
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.artifact.model import ArtifactModel, ArtifactHeaderModel
 from mlte.property import Property
+from mlte.spec.model import PropertyModel, SpecModel
 from mlte.validation.condition import Condition
-from mlte.spec.model import SpecModel, PropertyModel
 
 
 def _unique(collection: List[str]) -> bool:

@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import base64
 import typing
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, List
 
 import dill
 
+from mlte.spec.model import ConditionModel
 from mlte.validation.result import Result
 from mlte.value.artifact import Value
-from mlte.validation.result import Result
-from mlte.spec.model import ConditionModel
 
 
 class Condition:

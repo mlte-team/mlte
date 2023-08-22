@@ -6,15 +6,17 @@ Unit tests for Spec functionality.
 
 from __future__ import annotations
 
-import pytest
 from typing import Tuple
 
+import pytest
+
 from mlte.context.context import Context
-from mlte.store.base import Store
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.property.functionality import TaskEfficacy
 from mlte.spec.spec import Spec
+from mlte.store.base import Store
+
 from ..fixture.store import store_with_context  # noqa
 
 

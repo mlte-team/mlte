@@ -14,8 +14,8 @@ from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 from mlte.spec.model import SpecModel
+from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
 
 def _random_id(length: int = 5) -> str:

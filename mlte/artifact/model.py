@@ -11,8 +11,8 @@ from pydantic import Field
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.value.model import ValueModel
 from mlte.spec.model import SpecModel
+from mlte.value.model import ValueModel
 
 
 class ArtifactHeaderModel(BaseModel):
