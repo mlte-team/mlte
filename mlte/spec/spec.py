@@ -17,6 +17,8 @@ from mlte.property import Property
 from mlte.spec.condition import Condition
 from mlte.spec.model import PropertyModel, SpecModel
 
+DEFAULT_SPEC_ID = "spec"
+
 
 def _unique(collection: List[str]) -> bool:
     """
@@ -50,7 +52,7 @@ class Spec(Artifact):
         :type properties: List[Property]
         """
         # Standard identifier. Good enough?
-        identifier = "spec"
+        identifier = DEFAULT_SPEC_ID
         super().__init__(identifier, ArtifactType.SPEC)
 
         self.properties = properties
@@ -122,6 +124,11 @@ class Spec(Artifact):
             for measurement_id, condition in self.properties[property].items()
         }
         return property_model
+
+    @classmethod
+    def load(cls, identifier: str = DEFAULT_SPEC_ID) -> Artifact:
+        """Extending base one to use default id."""
+        return cls.load(identifier)
 
     # -------------------------------------------------------------------------
     # Property Manipulation

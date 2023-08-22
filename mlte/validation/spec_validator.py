@@ -6,7 +6,7 @@ Class in charge of validating a Spec.
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List
 
 from mlte.spec.spec import Spec
 from mlte.validation.result import Result
@@ -36,6 +36,11 @@ class SpecValidator:
 
         self.values: Dict[str, Value] = {}
         """Where values will be gathered for validation."""
+
+    def add_values(self, values: List[Value]):
+        """Adds multiple values."""
+        for value in values:
+            self.add_value(value)
 
     def add_value(self, value: Value):
         """
