@@ -4,7 +4,7 @@ mlte/measurement/utility/collection.py
 Utilities related to measurement collection.
 """
 
-from typing import Union, Any, Iterable, List
+from typing import Any, Iterable, List, Union
 
 
 def flatten(*collections: Union[Any, Iterable[Any]]) -> List[Any]:

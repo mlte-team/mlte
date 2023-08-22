@@ -6,26 +6,26 @@ Implementation of remote HTTP artifact store.
 
 from __future__ import annotations
 
-from enum import Enum
-
 import typing
+from enum import Enum
 from typing import Any, List
+
 import requests
-import mlte.web.store.api.codes as codes
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.context.model import (
-    Namespace,
-    Model,
-    Version,
-    NamespaceCreate,
-    ModelCreate,
-    VersionCreate,
-)
-from mlte.artifact.model import ArtifactModel
-from mlte.store.query import Query
-from mlte.web.store.api.model import WriteArtifactRequest
 
 import mlte.store.error as errors
+import mlte.web.store.api.codes as codes
+from mlte.artifact.model import ArtifactModel
+from mlte.context.model import (
+    Model,
+    ModelCreate,
+    Namespace,
+    NamespaceCreate,
+    Version,
+    VersionCreate,
+)
+from mlte.store.base import Store, StoreSession, StoreURI
+from mlte.store.query import Query
+from mlte.web.store.api.model import WriteArtifactRequest
 
 # -----------------------------------------------------------------------------
 # Client Configuration
@@ -102,7 +102,7 @@ class RemoteHttpStoreSession(StoreSession):
 
     def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
         url = f"{self.url}/api/namespace"
-        res = self.client.post(url, json=namespace.dict())
+        res = self.client.post(url, json=namespace.model_dump())
         raise_for_response(res)
 
         return Namespace(**res.json())
@@ -130,7 +130,7 @@ class RemoteHttpStoreSession(StoreSession):
 
     def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
         url = f"{self.url}/api/namespace/{namespace_id}/model"
-        res = self.client.post(url, json=model.dict())
+        res = self.client.post(url, json=model.model_dump())
         raise_for_response(res)
 
         return Model(**res.json())
@@ -162,7 +162,7 @@ class RemoteHttpStoreSession(StoreSession):
         url = (
             f"{self.url}/api/namespace/{namespace_id}/model/{model_id}/version"
         )
-        res = self.client.post(url, json=version.dict())
+        res = self.client.post(url, json=version.model_dump())
         raise_for_response(res)
 
         return Version(**res.json())
@@ -212,8 +212,8 @@ class RemoteHttpStoreSession(StoreSession):
         res = self.client.post(
             url,
             json=WriteArtifactRequest(
-                artifact=artifact, force=force, parents=parents
-            ).dict(),
+                artifact=artifact, parents=parents
+            ).model_dump(),
         )
         raise_for_response(res)
 
@@ -255,7 +255,7 @@ class RemoteHttpStoreSession(StoreSession):
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact/search"
-        res = self.client.post(url, json=query.dict())
+        res = self.client.post(url, json=query.model_dump())
         raise_for_response(res)
 
         return [ArtifactModel(**object) for object in res.json()]

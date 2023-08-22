@@ -7,22 +7,21 @@ Implementation of in-memory artifact store.
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import List, Dict
-
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.context.model import (
-    Namespace,
-    Model,
-    Version,
-    NamespaceCreate,
-    ModelCreate,
-    VersionCreate,
-)
-from mlte.artifact.model import ArtifactModel
-from mlte.store.query import Query
-import mlte.store.util as storeutil
+from typing import Dict, List
 
 import mlte.store.error as errors
+import mlte.store.util as storeutil
+from mlte.artifact.model import ArtifactModel
+from mlte.context.model import (
+    Model,
+    ModelCreate,
+    Namespace,
+    NamespaceCreate,
+    Version,
+    VersionCreate,
+)
+from mlte.store.base import Store, StoreSession, StoreURI
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # Data Structures

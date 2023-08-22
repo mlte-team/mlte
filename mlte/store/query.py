@@ -6,12 +6,12 @@ Query and filtering functionality for store operations.
 
 from __future__ import annotations
 
-from typing import Union, Literal, List
-
-from mlte.model import BaseModel
 from enum import Enum
+from typing import List, Literal, Union
+
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.model import BaseModel
 
 # A type alias
 Filter = Union[

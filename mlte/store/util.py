@@ -5,8 +5,8 @@ Common utilities for store implementations.
 """
 
 import mlte.store.error as errors
+from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store.base import StoreSession
-from mlte.context.model import NamespaceCreate, ModelCreate, VersionCreate
 
 
 def create_parents(

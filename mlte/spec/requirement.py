@@ -7,9 +7,10 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from mlte.validation import Result, Condition
-from mlte.value.artifact import Value
 from mlte.evidence.metadata import Identifier
+from mlte.validation.condition import Condition
+from mlte.validation.result import Result
+from mlte.value.artifact import Value
 
 # -----------------------------------------------------------------------------
 # Requirement

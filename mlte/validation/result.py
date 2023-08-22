@@ -7,11 +7,11 @@ The result of measurement validation.
 from __future__ import annotations
 
 import abc
-from typing import Optional, Any, Dict
 import sys
+from typing import Any, Dict, Optional
 
-from mlte.evidence.metadata import EvidenceMetadata
 import mlte._private.meta as meta
+from mlte.evidence.metadata import EvidenceMetadata
 
 # -----------------------------------------------------------------------------
 # Validation Results
