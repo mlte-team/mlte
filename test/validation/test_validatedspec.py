@@ -26,9 +26,7 @@ from ..fixture.store import store_with_context  # noqa
 def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     store, ctx = store_with_context
 
-    spec = Spec(
-        "spec", {StorageCost("rationale"): {"id": Integer.less_than(3)}}
-    )
+    spec = Spec({StorageCost("rationale"): {"id": Integer.less_than(3)}})
     specValidator = SpecValidator(spec)
 
     # A dummy result
@@ -49,9 +47,7 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
 
 def test_no_result():
     # Spec does not have Result for condition.
-    spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
-    )
+    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
 
     results: Dict[str, Result] = {}
     with pytest.raises(RuntimeError):

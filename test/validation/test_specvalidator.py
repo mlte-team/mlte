@@ -16,9 +16,7 @@ from mlte.value.types.integer import Integer
 
 def test_no_property():
     # Spec validator does not have value for property.
-    spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
-    )
+    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
     specValidator = SpecValidator(spec)
 
     with pytest.raises(RuntimeError):
@@ -27,9 +25,7 @@ def test_no_property():
 
 def test_no_requirement():
     # Spec validator does not have value for condition.
-    spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
-    )
+    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
     specValidator = SpecValidator(spec)
 
     i = Integer(
@@ -45,9 +41,7 @@ def test_no_requirement():
 
 
 def test_success():
-    spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
-    )
+    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
     specValidator = SpecValidator(spec)
 
     i = Integer(

@@ -24,7 +24,6 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     store, ctx = store_with_context
 
     s = Spec(
-        "spec",
         {
             StorageCost("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
@@ -46,7 +45,6 @@ def test_load_failure(store_with_context: Tuple[Store, Context]):  # noqa
 def test_non_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec(
-            "spec",
             {StorageCost("rationale"): {}, StorageCost("rationale2"): {}},
         )
 
@@ -54,7 +52,6 @@ def test_non_unique_properties():
 def test_non_unique_requirement_ids():
     with pytest.raises(RuntimeError):
         _ = Spec(
-            "spec",
             {
                 StorageCost("rationale"): {
                     "id1": LocalObjectSize.value().less_than(5)

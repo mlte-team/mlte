@@ -42,15 +42,15 @@ class Spec(Artifact):
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(
-        self, identifier: str, properties: Dict[Property, Dict[str, Condition]]
-    ):
+    def __init__(self, properties: Dict[Property, Dict[str, Condition]]):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec, with their conditions keyed by measurement id.
         :type properties: List[Property]
         """
+        # Standard identifier. Good enough?
+        identifier = "spec"
         super().__init__(identifier, ArtifactType.SPEC)
 
         self.properties = properties
@@ -97,7 +97,6 @@ class Spec(Artifact):
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
         body = typing.cast(SpecModel, model.body)
         return Spec(
-            identifier=model.header.identifier,
             properties={
                 Property.from_model(property_model): {
                     measurement_id: Condition.from_model(condition_model)
