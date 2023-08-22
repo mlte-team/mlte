@@ -267,3 +267,52 @@ def test_artifact_parents(
     with ManagedSession(store.session()) as handle:
         read = handle.read_artifacts(namespace_id, model_id, version_id)
         assert len(read) == 1
+
+
+@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+def test_artifact_overwrite(
+    store_fixture_name: str,
+    artifact_type: ArtifactType,
+    request: pytest.FixtureRequest,
+) -> None:
+    """An artifact cam be overwritten with the `force` option."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
+    namespace_id = "namespace"
+    model_id = "model"
+    version_id = "version"
+    artifact_id = "myid"
+
+    with ManagedSession(store.session()) as handle:
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
+        handle.create_version(
+            namespace_id, model_id, VersionCreate(identifier=version_id)
+        )
+
+    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+
+    # The initial write succeeds
+    with ManagedSession(store.session()) as handle:
+        _ = handle.write_artifact(
+            namespace_id,
+            model_id,
+            version_id,
+            artifact,
+        )
+
+    # Another attempt to write fails
+    with ManagedSession(store.session()) as handle:
+        with pytest.raises(errors.ErrorAlreadyExists):
+            _ = handle.write_artifact(
+                namespace_id,
+                model_id,
+                version_id,
+                artifact,
+            )
+
+    # Attempt to write with `force` succeeds
+    with ManagedSession(store.session()) as handle:
+        _ = handle.write_artifact(
+            namespace_id, model_id, version_id, artifact, force=True
+        )
