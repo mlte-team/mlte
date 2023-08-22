@@ -19,7 +19,10 @@ class WriteArtifactRequest(BaseModel):
     artifact: ArtifactModel
     """The model for the artifact to write."""
 
-    parents: bool
+    force: bool = False
+    """Indicates that existing artifacts may be overwritten."""
+
+    parents: bool = False
     """Indicates whether organizational elements should be created."""
 
 

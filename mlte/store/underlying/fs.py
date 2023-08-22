@@ -291,6 +291,7 @@ class LocalFileSystemStoreSession(StoreSession):
         version_id: str,
         artifact: ArtifactModel,
         *,
+        force: bool = False,
         parents: bool = False,
     ) -> ArtifactModel:
         if parents:
@@ -299,7 +300,7 @@ class LocalFileSystemStoreSession(StoreSession):
         artifacts = self._get_version_artifacts(
             namespace_id, model_id, version_id
         )
-        if artifact.header.identifier in artifacts:
+        if artifact.header.identifier in artifacts and not force:
             raise errors.ErrorAlreadyExists(
                 f"Artifact '{artifact.header.identifier}'"
             )

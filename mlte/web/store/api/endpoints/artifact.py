@@ -43,6 +43,7 @@ def write_artifact(
                 model_id,
                 version_id,
                 request.artifact,
+                force=request.force,
                 parents=request.parents,
             )
             return WriteArtifactResponse(artifact=artifact)

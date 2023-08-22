@@ -205,13 +205,14 @@ class RemoteHttpStoreSession(StoreSession):
         version_id: str,
         artifact: ArtifactModel,
         *,
+        force: bool = False,
         parents: bool = False,
     ) -> ArtifactModel:
         url = f"{_url(self.url, namespace_id, model_id, version_id)}/artifact"
         res = self.client.post(
             url,
             json=WriteArtifactRequest(
-                artifact=artifact, parents=parents
+                artifact=artifact, force=force, parents=parents
             ).model_dump(),
         )
         raise_for_response(res)

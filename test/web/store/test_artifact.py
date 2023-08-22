@@ -42,7 +42,7 @@ def test_write(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
-    r = WriteArtifactRequest(artifact=a, parents=False)
+    r = WriteArtifactRequest(artifact=a)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
@@ -63,7 +63,7 @@ def test_read(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, id="id0")
-    r = WriteArtifactRequest(artifact=a, parents=False)
+    r = WriteArtifactRequest(artifact=a)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
@@ -93,7 +93,7 @@ def test_search(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
-    r = WriteArtifactRequest(artifact=a, parents=False)
+    r = WriteArtifactRequest(artifact=a)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
@@ -128,7 +128,7 @@ def test_delete(
     create_context(namespace_id, model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, "id0")
-    r = WriteArtifactRequest(artifact=a, parents=False)
+    r = WriteArtifactRequest(artifact=a)
     res = client.post(
         f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),

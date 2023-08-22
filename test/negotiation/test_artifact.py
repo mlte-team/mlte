@@ -83,3 +83,19 @@ def test_save_parents(store: Store) -> None:
 
     card = NegotiationCard("my-card")
     card.save_with(ctx, store, parents=True)
+
+
+def test_save_overwrite(store_with_context: Tuple[Store, Context]) -> None:
+    """Save succeeds when old artifact is overwritten."""
+    store, ctx = store_with_context
+
+    # Initial write succeeds
+    card = NegotiationCard("my-card")
+    card.save_with(ctx, store)
+
+    # Write without `force` fails
+    with pytest.raises(errors.ErrorAlreadyExists):
+        card.save_with(ctx, store)
+
+    # Force write succeeds
+    card.save_with(ctx, store, force=True)
