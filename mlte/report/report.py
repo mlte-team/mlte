@@ -13,11 +13,11 @@ Acknowledgements:
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import typing
-import dataclasses
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Any, Union
+from typing import Any, Dict, List, Optional, Union
 
 from .html import _connected, _generate_html
 from mlte.spec.spec import Spec
@@ -25,6 +25,9 @@ from mlte.spec.validated_spec import ValidatedSpec
 
 from .._private.text import cleantext
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
+from .._private.text import cleantext
+from ..spec import Spec, ValidatedSpec
+from .html import _connected, _generate_html
 
 
 @dataclass

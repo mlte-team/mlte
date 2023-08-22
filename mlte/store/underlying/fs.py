@@ -4,26 +4,24 @@ mlte/store/underlying/fs.py
 Implementation of local file system artifact store.
 """
 
-from typing import Any, List, Dict
-from pathlib import Path
 import json
 import shutil
-
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.context.model import (
-    Namespace,
-    Model,
-    Version,
-    NamespaceCreate,
-    ModelCreate,
-    VersionCreate,
-)
-from mlte.artifact.model import ArtifactModel
-from mlte.store.query import Query
-import mlte.store.util as storeutil
+from pathlib import Path
+from typing import Any, Dict, List
 
 import mlte.store.error as errors
-
+import mlte.store.util as storeutil
+from mlte.artifact.model import ArtifactModel
+from mlte.context.model import (
+    Model,
+    ModelCreate,
+    Namespace,
+    NamespaceCreate,
+    Version,
+    VersionCreate,
+)
+from mlte.store.base import Store, StoreSession, StoreURI
+from mlte.store.query import Query
 
 # The prefix that indicates a local filesystem directory is used
 LOCAL_URI_PREFIX = "local://"
@@ -310,7 +308,7 @@ class LocalFileSystemStoreSession(StoreSession):
             self._artifact_path(
                 namespace_id, model_id, version_id, artifact.header.identifier
             ),
-            artifact.dict(),
+            artifact.model_dump(),
         )
         return artifact
 

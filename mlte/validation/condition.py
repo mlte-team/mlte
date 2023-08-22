@@ -6,12 +6,13 @@ The interface for measurement validation.
 
 from __future__ import annotations
 
-import typing
-from typing import Callable, Any, List
 import base64
+import typing
+from typing import Any, Callable, Dict, List
 
 import dill
 
+from mlte.validation.result import Result
 from mlte.value.artifact import Value
 from mlte.validation.result import Result
 from mlte.spec.model import ConditionModel

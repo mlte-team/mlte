@@ -10,9 +10,10 @@ import threading
 import time
 from typing import List, Optional
 
-from .measurement import Measurement
-from mlte.value.artifact import Value
 from mlte._private import job
+from mlte.value.artifact import Value
+
+from .measurement import Measurement
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement

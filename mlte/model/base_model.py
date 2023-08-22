@@ -19,7 +19,7 @@ class BaseModel(pydantic.BaseModel):
         Serialize the model.
         :return: The JSON representation of the model
         """
-        return self.dict()
+        return self.model_dump()
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> BaseModel:

@@ -6,17 +6,18 @@ CPU utilization measurement for local training processes.
 
 from __future__ import annotations
 
-import time
 import subprocess
-from typing import Any, Type, Dict
+import time
 from subprocess import SubprocessError
+from typing import Any, Dict, Type
+
+from mlte._private.platform import is_windows
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.validation.condition import Condition
+from mlte.validation.result import Failure, Success
+from mlte.value.artifact import Value
 
 from ..process_measurement import ProcessMeasurement
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.value.artifact import Value
-from mlte.validation.condition import Condition
-from mlte.validation.result import Success, Failure
-from mlte._private.platform import is_windows
 
 # -----------------------------------------------------------------------------
 # CPUStatistics

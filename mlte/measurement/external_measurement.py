@@ -6,10 +6,11 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
-from typing import Type, Callable, Optional
 import typing
+from typing import Callable, Optional, Type
 
 from mlte.value.artifact import Value
+
 from .measurement import Measurement
 
 

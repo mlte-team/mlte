@@ -6,14 +6,12 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-# from typying import List
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-from mlte.spec.spec import Spec
-from mlte.validation.result import Result
-from mlte.session import session
 from mlte.api import read_validatedspec, write_validatedspec
-
+from mlte.session import session
+from mlte.spec import Spec
+from mlte.validation.result import Result
 
 # -----------------------------------------------------------------------------
 # ValidatedSpec

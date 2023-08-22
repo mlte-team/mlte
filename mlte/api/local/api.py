@@ -4,7 +4,7 @@ mlte/api/local/api.py
 Value persistence API for local filesystem.
 """
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 # The prefix that indicates a local filesystem directory is used
 LOCAL_URI_PREFIX = "local://"

@@ -7,10 +7,10 @@ Utilities for report rendering.
 import os
 import tempfile
 import webbrowser
-from typing import Union, Optional
+from typing import Optional, Union
 
-from .report import Report
 from .html import _connected
+from .report import Report
 
 
 def render(target: Union[Report, str]):

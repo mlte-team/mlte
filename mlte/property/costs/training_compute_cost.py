@@ -4,8 +4,8 @@ mlte/property/costs/training_compute_cost.py
 TrainingComputeCost property definition.
 """
 
-from ..property import Property
 from ..._private.text import cleantext
+from ..property import Property
 
 
 class TrainingComputeCost(Property):
