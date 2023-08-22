@@ -7,12 +7,13 @@ A collection of properties and their measurements.
 from __future__ import annotations
 
 import time
-from typing import Any, Union, List, Dict
+from typing import Any, Dict, List, Union
 
-from mlte.property import Property
 from mlte._private.schema import SPEC_LATEST_SCHEMA_VERSION
-from mlte.session import session
 from mlte.api import read_spec, write_spec
+from mlte.property import Property
+from mlte.session import session
+
 from .requirement import Requirement
 
 

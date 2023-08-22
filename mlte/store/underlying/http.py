@@ -6,26 +6,26 @@ Implementation of remote HTTP artifact store.
 
 from __future__ import annotations
 
-from enum import Enum
-
 import typing
+from enum import Enum
 from typing import Any, List
+
 import requests
-import mlte.web.store.api.codes as codes
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.context.model import (
-    Namespace,
-    Model,
-    Version,
-    NamespaceCreate,
-    ModelCreate,
-    VersionCreate,
-)
-from mlte.artifact.model import ArtifactModel
-from mlte.store.query import Query
-from mlte.web.store.api.model import WriteArtifactRequest
 
 import mlte.store.error as errors
+import mlte.web.store.api.codes as codes
+from mlte.artifact.model import ArtifactModel
+from mlte.context.model import (
+    Model,
+    ModelCreate,
+    Namespace,
+    NamespaceCreate,
+    Version,
+    VersionCreate,
+)
+from mlte.store.base import Store, StoreSession, StoreURI
+from mlte.store.query import Query
+from mlte.web.store.api.model import WriteArtifactRequest
 
 # -----------------------------------------------------------------------------
 # Client Configuration

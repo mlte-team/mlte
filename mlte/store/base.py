@@ -9,15 +9,15 @@ from __future__ import annotations
 from enum import Enum
 from typing import List
 
+from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
-    Namespace,
-    NamespaceCreate,
     Model,
     ModelCreate,
+    Namespace,
+    NamespaceCreate,
     Version,
     VersionCreate,
 )
-from mlte.artifact.model import ArtifactModel
 from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------

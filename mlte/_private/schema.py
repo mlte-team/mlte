@@ -11,11 +11,12 @@ Acknowledgements:
     https://github.com/tensorflow/model-card-toolkit
 """
 
-import os
 import json
+import os
 import pkgutil
-import jsonschema
 from typing import Any, Dict, Optional
+
+import jsonschema
 
 # The identifier for the latest schema for Value
 VALUE_LATEST_SCHEMA_VERSION = "0.0.1"

@@ -8,12 +8,12 @@ from __future__ import annotations
 
 import abc
 import typing
-from typing import Type, Optional
+from typing import Optional, Type
 
 import mlte._private.meta as meta
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.value.artifact import Value
 from mlte.value.types.opaque import Opaque
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 
 
 class Measurement(metaclass=abc.ABCMeta):

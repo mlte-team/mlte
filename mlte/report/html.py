@@ -7,8 +7,8 @@ Utilities for HTML report generation.
 import json
 import socket
 import tempfile
+from typing import Any, Dict
 from urllib import request
-from typing import Dict, Any
 
 # The endpoint for resolving endpoints for report generation
 RESOLUTION_ENDPOINT = "https://raw.githubusercontent.com/mlte-team/mlte/master/assets/endpoints.txt"  # noqa

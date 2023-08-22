@@ -7,7 +7,7 @@ Generic API wrapper for MLTE artifact store.
 # TODO(Kyle): This entire sub-package is now deprecated in favor
 # of the new implementation of the artifact store interface.
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 # -----------------------------------------------------------------------------
 # Value
