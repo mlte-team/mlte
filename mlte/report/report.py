@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
 from mlte.spec.spec import Spec
-from mlte.spec.validated_spec import ValidatedSpec
+from mlte.validation.validated_spec import ValidatedSpec
 
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 from .._private.text import cleantext

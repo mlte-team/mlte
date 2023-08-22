@@ -11,7 +11,7 @@ from mlte.api import read_validatedspec
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec.spec import Spec
-from mlte.spec.spec_validator import SpecValidator
+from mlte.validation.spec_validator import SpecValidator
 from mlte.value.types.integer import Integer
 
 

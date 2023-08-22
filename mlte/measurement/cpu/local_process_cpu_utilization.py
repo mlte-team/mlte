@@ -13,7 +13,7 @@ from typing import Any, Dict, Type
 
 from mlte._private.platform import is_windows
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.validation.condition import Condition
+from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
 from mlte.value.artifact import Value
 

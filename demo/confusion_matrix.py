@@ -11,7 +11,7 @@ from typing import Any, Dict, List
 import numpy as np
 
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.validation.condition import Condition
+from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
 from mlte.value.base import ValueBase
 

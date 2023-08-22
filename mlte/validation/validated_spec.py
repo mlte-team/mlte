@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Dict, cast
 
+from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.spec.model import SpecModel
 from mlte.spec.spec import Spec
@@ -18,7 +19,7 @@ from mlte.validation.result import Result
 # -----------------------------------------------------------------------------
 
 
-class ValidatedSpec:
+class ValidatedSpec(Artifact):
     """
     ValidatedSpec represents a spec with validated results.
     """
@@ -55,6 +56,7 @@ class ValidatedSpec:
         :rtype: ArtifactModel
         """
         model = self.spec.to_model()
+        model.header.identifier = f"{model.header.identifier}.validated"
 
         # Add results to main model.
         spec_model: SpecModel = cast(SpecModel, model.body)

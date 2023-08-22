@@ -6,23 +6,28 @@ Unit tests for ValidatedSpec functionality.
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, Tuple
 
 import pytest
 
+from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec.spec import Spec
-from mlte.spec.spec_validator import SpecValidator
-from mlte.spec.validated_spec import ValidatedSpec
+from mlte.store.base import Store
 from mlte.validation.result import Result
+from mlte.validation.spec_validator import SpecValidator
+from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 
+from ..fixture.store import store_with_context  # noqa
 
-@pytest.mark.skip("Disabled for artifact protocol development.")
-def test_save_load(tmp_path):
+
+def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
+    store, ctx = store_with_context
+
     spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        "spec", {StorageCost("rationale"): {"id": Integer.less_than(3)}}
     )
     specValidator = SpecValidator(spec)
 
@@ -36,14 +41,14 @@ def test_save_load(tmp_path):
     specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()
-    validatedSpec.save()
+    validatedSpec.save_with(ctx, store)
 
-    r = ValidatedSpec.load()
+    r = ValidatedSpec.load_with("spec.validated", ctx, store)
     assert r == validatedSpec
 
 
 def test_no_result():
-    # Spec does not have Result for requirement.
+    # Spec does not have Result for condition.
     spec = Spec(
         "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )

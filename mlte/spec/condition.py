@@ -61,7 +61,7 @@ class Condition:
 
     def to_model(self) -> ConditionModel:
         """
-        Returns this requirement as a model.
+        Returns this condition as a model.
 
         :return: The serialized model object.
         :rtype: ConditionModel

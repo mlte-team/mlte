@@ -14,8 +14,8 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.property import Property
+from mlte.spec.condition import Condition
 from mlte.spec.model import PropertyModel, SpecModel
-from mlte.validation.condition import Condition
 
 
 def _unique(collection: List[str]) -> bool:
