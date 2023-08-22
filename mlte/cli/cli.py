@@ -4,11 +4,11 @@ mlte/cli/cli.py
 Top-level command line interface.
 """
 
-import sys
 import argparse
+import sys
 
-import mlte.web.store.main as server
 import mlte.frontend as frontend
+import mlte.web.store.main as server
 from mlte.web.store.core.config import settings
 
 # CLI exit codes

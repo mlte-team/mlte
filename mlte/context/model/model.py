@@ -5,6 +5,7 @@ Model implementation for MLTE context information.
 """
 
 from typing import List
+
 from mlte.model import BaseModel
 
 

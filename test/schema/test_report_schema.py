@@ -12,7 +12,7 @@ from jsonschema import ValidationError
 from mlte._private.schema import validate_report_schema
 from mlte.report import Dataset, Limitation, Report, UseCase, User
 from mlte.spec import Spec, ValidatedSpec
-from mlte.validation import Ignore
+from mlte.validation.result import Ignore
 
 
 @pytest.mark.skip("Pending artifact protocol implementation.")

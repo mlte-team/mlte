@@ -16,7 +16,8 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.validation import Condition, Failure, Success
+from mlte.validation.condition import Condition
+from mlte.validation.result import Failure, Success
 
 from ...support.meta import path_to_support
 

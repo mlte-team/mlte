@@ -1,10 +1,10 @@
 from .model import (
+    Model,
+    ModelCreate,
     Namespace,
     NamespaceCreate,
-    ModelCreate,
-    VersionCreate,
-    Model,
     Version,
+    VersionCreate,
 )
 
 __all__ = [

@@ -13,22 +13,19 @@
 
 .PHONY: isort
 isort:	
-	poetry run isort mlte/artifact
-	poetry run isort mlte/negotiation
-	poetry run isort mlte/value
-	poetry run isort mlte/web/
-	
+	poetry run isort mlte/
 	poetry run isort test/
 	poetry run isort testbed/
 	poetry run isort demo/*.py
 	poetry run isort tools/
 
-# .PHONY: check-isort
-# check-isort:
-# 	isort --check src/
-# 	isort --check test/
-# 	isort --check testbed/
-# 	isort --check demo/*.py
+.PHONY: check-isort
+check-isort:
+	poetry run isort --check mlte/
+	poetry run isort --check test/
+	poetry run isort --check testbed/
+	poetry run isort --check demo/*.py
+	poetry run isort --check tools/
 
 # Format all source code
 .PHONY: format
@@ -73,7 +70,7 @@ qa: isort format lint typecheck
 
 # Check all QA tasks
 .PHONY: check
-check: check-format check-lint check-typecheck
+check: check-isort check-format check-lint check-typecheck
 
 # -----------------------------------------------------------------------------
 # Unit Tests

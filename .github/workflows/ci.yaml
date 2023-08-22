@@ -22,6 +22,8 @@ jobs:
       run: curl -sSL https://install.python-poetry.org | python -
     - name: Install dependencies
       run: poetry install
+    - name: Sort imports with isort
+      run: make check-isort
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
@@ -50,6 +52,8 @@ jobs:
       run: curl -sSL https://install.python-poetry.org | python -
     - name: Install dependencies
       run: poetry install
+    - name: Sort imports with isort
+      run: make check-isort
     - name: Format with black
       run: make check-format
     - name: Lint with flake8
@@ -78,6 +82,8 @@ jobs:
       run: curl -sSL https://install.python-poetry.org | python -
     - name: Install dependencies
       run: poetry install
+    - name: Sort imports with isort
+      run: make check-isort
     - name: Format with black
       run: make check-format
     - name: Lint with flake8

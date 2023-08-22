@@ -14,7 +14,8 @@ import pytest
 
 from mlte._private.platform import is_nix, is_windows
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
-from mlte.validation import Condition, Failure, Success
+from mlte.validation.condition import Condition
+from mlte.validation.result import Failure, Success
 
 from ...support.meta import path_to_support
 

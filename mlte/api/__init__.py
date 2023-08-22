@@ -1,10 +1,10 @@
 from mlte.api.api import (
-    read_value,
-    write_value,
     read_spec,
+    read_validatedspec,
+    read_value,
     write_spec,
     write_validatedspec,
-    read_validatedspec,
+    write_value,
 )
 
 __all__ = [

@@ -9,7 +9,8 @@ from __future__ import annotations
 import abc
 import importlib
 import pkgutil
-from typing import Type, Dict
+from typing import Dict, Type
+
 import mlte._private.meta as meta
 
 

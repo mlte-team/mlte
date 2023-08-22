@@ -14,7 +14,7 @@ from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec
-from mlte.validation import Result
+from mlte.validation.result import Result
 from mlte.value.types.integer import Integer
 
 
