@@ -1,10 +1,13 @@
 from pydantic import BaseModel
 
+
 class Value:
     pass
 
+
 class Integer(Value):
     pass
+
 
 class ValueModel(BaseModel):
     identifier: str
@@ -16,8 +19,10 @@ class ValueModel(BaseModel):
     body: Union[IntegerModel, FloatModel]
     """"""
 
+
 class IntegerModel(ValueModel):
     pass
+
 
 class OpaqueModel:
     dict[str, Any]

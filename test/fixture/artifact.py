@@ -55,7 +55,7 @@ def _make_body(type: ArtifactType) -> NegotiationCardModel:
     Make the body of the artifact for a given type.
     :param type: The artifact type
     :return: The artifact body model
-    """            
+    """
     if type == ArtifactType.NEGOTIATION_CARD:
         return _make_negotiation_card()
     assert False, "Unreachable."

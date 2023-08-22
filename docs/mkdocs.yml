@@ -3,6 +3,8 @@ theme:
   name: "material"
   palette:
     scheme: slate
+  logo: https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg
+  #favicon: mlte_favicon.ico
 watch:
   - ../src/mlte
 plugins:
@@ -25,5 +27,9 @@ nav:
     - 'Getting Started': 'getting_started.md'
     - 'Development': 'development.md'
   - 'Tutorials':
-    - 'Testing a Model with MLTE': 'tutorial1.md'
-  - API Reference: reference/
+    - 'Testing a Model with MLTE': 'tutorial0.md'
+  - 'References':
+    - 'MLTE Framework': 'mlte_framework.md'
+    - API Reference: reference/
+  - 'Explanations':
+    - 'MLTE Process Resources': 'explanation1.md'
