@@ -57,25 +57,34 @@ class Artifact(metaclass=abc.ABCMeta):
             "Artifact.from_model() not implemented for abstract Artifact."
         )
 
-    def save(self, *, parents: bool = False) -> None:
+    def save(self, *, force: bool = False, parents: bool = False) -> None:
         """
         Save an artifact with parameters from the configured global session.
 
         This is equivalent to calling:
             artifact.save_with(session().context, session().store)
 
+        :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
-        self.save_with(session().context, session().store, parents=parents)
+        self.save_with(
+            session().context, session().store, force=force, parents=parents
+        )
 
     def save_with(
-        self, context: Context, store: Store, *, parents: bool = False
+        self,
+        context: Context,
+        store: Store,
+        *,
+        force: bool = False,
+        parents: bool = False,
     ) -> None:
         """
         Save an artifact with the given context and store configuration.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
+        :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
@@ -85,6 +94,7 @@ class Artifact(metaclass=abc.ABCMeta):
                 context.model,
                 context.version,
                 self.to_model(),
+                force=force,
                 parents=parents,
             )
 

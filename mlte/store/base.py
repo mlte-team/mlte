@@ -242,6 +242,7 @@ class StoreSession:
         version_id: str,
         artifact: ArtifactModel,
         *,
+        force: bool = False,
         parents: bool = False,
     ) -> ArtifactModel:
         """
@@ -250,6 +251,7 @@ class StoreSession:
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
         :param artifact: The artifact
+        :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
         for artifact should be implictly created (default: False)
         """
