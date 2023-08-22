@@ -1,5 +1,6 @@
 # Python virtual environments
 env/
+.venv/
 env-dev/
 env-test/
 
@@ -15,6 +16,7 @@ mlte.egg-info
 .coverage
 .coverage.*
 *.coverage
+.pytest_cache/
 
 # sphinx artifacts
 build/

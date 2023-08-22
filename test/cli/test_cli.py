@@ -18,7 +18,7 @@ def python() -> Path:
 def script() -> Path:
     """Return the path to the CLI script."""
     path = Path(os.path.dirname(__file__))
-    path = path.parent.parent / "src" / "mlte" / "cli" / "cli.py"
+    path = path.parent.parent / "mlte" / "cli" / "cli.py"
     return path.resolve()
 
 

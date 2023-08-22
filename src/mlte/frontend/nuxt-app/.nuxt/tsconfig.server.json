@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "paths": {
+      "#imports": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/.nuxt/types/nitro-imports"
+      ],
+      "#paths": [
+        "/Users/krmaffey/node_modules/nuxt/dist/core/runtime/nitro/paths"
+      ],
+      "~": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app"
+      ],
+      "~/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/*"
+      ],
+      "@": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app"
+      ],
+      "@/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/*"
+      ],
+      "~~": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app"
+      ],
+      "~~/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/*"
+      ],
+      "@@": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app"
+      ],
+      "@@/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/*"
+      ],
+      "assets": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/assets"
+      ],
+      "assets/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/assets/*"
+      ],
+      "public": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/public"
+      ],
+      "public/*": [
+        "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/public/*"
+      ]
+    }
+  },
+  "include": [
+    "/Users/krmaffey/dev/mlte/src/mlte/frontend/nuxt-app/.nuxt/types/nitro-nuxt.d.ts",
+    "./types/nitro.d.ts",
+    "../**/*",
+    "../server/**/*"
+  ]
+}

@@ -4,6 +4,8 @@ tools/schema.py
 A tool for generating and vetting MLTE artifact schemas.
 """
 
+from __future__ import annotations
+
 import argparse
 import importlib
 import json
@@ -11,7 +13,7 @@ import logging
 import sys
 import typing
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 import deepdiff
 from pydantic import BaseModel
@@ -51,10 +53,10 @@ class Config:
         self.output_path = OUTPUT_BASE / output_path / "schema.json"
         """The path to which the model is dumped."""
 
-    def generate(self) -> dict[str, Any]:
+    def generate(self) -> Dict[str, Any]:
         """Generate the schema for the configuration."""
         klass = self.model.resolve()
-        return klass.schema()
+        return klass.model_json_schema()
 
     def __str__(self) -> str:
         return f"{self.model.model} @ {self.output_path}"
@@ -67,7 +69,11 @@ CONFIGS = [
             path="mlte.negotiation.model", model="NegotiationCardModel"
         ),
         output_path="negotiation/v0.0.1",
-    )
+    ),
+    Config(
+        model=ModelImport(path="mlte.value.model", model="ValueModel"),
+        output_path="value/v0.0.1",
+    ),
 ]
 
 # -----------------------------------------------------------------------------

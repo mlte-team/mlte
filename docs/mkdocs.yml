@@ -4,16 +4,16 @@ theme:
   palette:
     scheme: slate
   logo: https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg
-  #favicon: mlte_favicon.ico
+  favicon: https://github.com/mlte-team/mlte/blob/bd60529ddb892b99c7f8c69a9644643858232cd5/assets/mlte_favicon.png
 watch:
-  - ../src/mlte
+  - ../mlte
 plugins:
   - search
   - mkdocstrings:
       default_handler: python
       handlers:
         python:
-          paths: [../src]
+          paths: [../mlte]
           options:
             docstring_style: sphinx
   - gen-files:
@@ -30,6 +30,7 @@ nav:
     - 'Testing a Model with MLTE': 'tutorial0.md'
   - 'References':
     - 'MLTE Framework': 'mlte_framework.md'
+    - 'MLTE Properties': 'properties.md'
     - API Reference: reference/
   - 'Explanations':
-    - 'MLTE Process Resources': 'explanation1.md'
+    - 'MLTE Process Resources': 'mlte_process_resources.md'

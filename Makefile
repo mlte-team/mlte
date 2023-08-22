@@ -13,14 +13,15 @@
 
 .PHONY: isort
 isort:	
-	isort src/mlte/artifact
-	isort src/mlte/negotiation
-	isort src/mlte/web/
+	poetry run isort mlte/artifact
+	poetry run isort mlte/negotiation
+	poetry run isort mlte/value
+	poetry run isort mlte/web/
 	
-	isort test/
-	isort testbed/
-	isort demo/*.py
-	isort tools/
+	poetry run isort test/
+	poetry run isort testbed/
+	poetry run isort demo/*.py
+	poetry run isort tools/
 
 # .PHONY: check-isort
 # check-isort:
@@ -32,26 +33,26 @@ isort:
 # Format all source code
 .PHONY: format
 format:
-	black src/
-	black test/
-	black testbed/
-	black demo/*.py
-	black tools/
+	poetry run black mlte/
+	poetry run black test/
+	poetry run black testbed/
+	poetry run black demo/*.py
+	poetry run black tools/
 
 .PHONY: check-format 
 check-format:
-	black --check src/
-	black --check test/
-	black --check testbed/
-	black --check demo/*.py
-	black --check tools/
+	poetry run black --check mlte/
+	poetry run black --check test/
+	poetry run black --check testbed/
+	poetry run black --check demo/*.py
+	poetry run black --check tools/
 
 # Lint all source code
 .PHONY: lint
 lint:
-	flake8 --append-config .flake8 src/
-	flake8 --append-config .flake8 test/
-	flake8 --append-config .flake8 tools/
+	poetry run flake8 mlte/
+	poetry run flake8 test/
+	poetry run flake8 tools/
 
 .PHONY: check-lint
 check-lint: lint
@@ -59,9 +60,9 @@ check-lint: lint
 # Typecheck all source code
 .PHONY: typecheck
 typecheck:
-	mypy src/
-	mypy test/
-	mypy tools/
+	poetry run mypy mlte/
+	poetry run mypy test/
+	poetry run mypy tools/
 
 .PHONY: check-typecheck
 check-typecheck: typecheck
@@ -78,11 +79,10 @@ check: check-format check-lint check-typecheck
 # Unit Tests
 # -----------------------------------------------------------------------------
 
-# Run unit tests with tox
-# NOTE: Only runs 3.10 environment (for speed)
+# Run unit tests with pytest
 .PHONY: test
 test:
-	tox --develop -e py310 -- test
+	poetry run pytest test
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
@@ -90,8 +90,8 @@ test:
 
 .PHONY: gen
 gen:
-	PYTHONPATH=src python tools/schema.py generate src/mlte --verbose
+	poetry run python tools/schema.py generate mlte --verbose
 
 .PHONY: vet
 vet:
-	PYTHONPATH=src python tools/schema.py vet src/mlte --verbose
+	poetry run python tools/schema.py vet mlte --verbose

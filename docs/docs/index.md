@@ -13,7 +13,7 @@ Welcome to the MLTE Documentation!
 - If you have no time for papers but want a more deliberate introduction to MLTE, check out the [Tutorials](tutorial0.md) section.
 
 ## More Information
-- Version: 0.2.0
+- Version: 0.1.6 [Version 0.2.0 coming soon!]
 - Contact Email: mlte dot team dot info at gmail dot com
 
 #### Check out MLTE on [GitHub](https://github.com/mlte-team/mlte)!

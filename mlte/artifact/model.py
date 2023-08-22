@@ -1,0 +1,36 @@
+"""
+mlte/artifact/model.py
+
+Model implementation for MLTE artifacts.
+"""
+
+from typing import Union
+
+from pydantic import Field
+
+from mlte.artifact.type import ArtifactType
+from mlte.model import BaseModel
+from mlte.negotiation.model import NegotiationCardModel
+from mlte.value.model import ValueModel
+
+
+class ArtifactHeaderModel(BaseModel):
+    """The ArtifactHeaderModel contains the common metadata for all artifacts."""
+
+    identifier: str
+    """The unique identifier for the artifact."""
+
+    type: ArtifactType
+    """The type identfier for the artifact."""
+
+
+class ArtifactModel(BaseModel):
+    """The base model for all MLTE artifacts."""
+
+    header: ArtifactHeaderModel
+    """The artifact header."""
+
+    body: Union[NegotiationCardModel, ValueModel] = Field(
+        ..., discriminator="artifact_type"
+    )
+    """The artifact body."""

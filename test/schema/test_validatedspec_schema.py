@@ -8,10 +8,10 @@ import pytest
 
 from mlte._private.schema import validate_validatedspec_schema
 from mlte.api import read_validatedspec
-from mlte.evidence import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
@@ -20,7 +20,12 @@ def test_schema(tmp_path):
         {StorageCost("rationale"): [Requirement("id", Integer.less_than(3))]}
     )
     specValidator = SpecValidator(spec)
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        1,
+    )
     specValidator.add_value(i)
     validatedSpec = specValidator.validate()
     validatedSpec.save()

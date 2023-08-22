@@ -6,14 +6,16 @@ Unit tests for ValidatedSpec functionality.
 
 from __future__ import annotations
 
+from typing import Dict
+
 import pytest
 
-from mlte.evidence import EvidenceMetadata
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
 from mlte.spec import Requirement, Spec, SpecValidator, ValidatedSpec
 from mlte.validation import Result
-from mlte.value.types import Integer
+from mlte.value.types.integer import Integer
 
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
@@ -24,7 +26,12 @@ def test_save_load(tmp_path):
     specValidator = SpecValidator(spec)
 
     # A dummy result
-    i = Integer(EvidenceMetadata("typename", "id"), 1)
+    i = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        1,
+    )
     specValidator.add_value(i)
 
     validatedSpec = specValidator.validate()
@@ -44,6 +51,6 @@ def test_no_result():
         }
     )
 
-    results: dict[str, Result] = {}
+    results: Dict[str, Result] = {}
     with pytest.raises(RuntimeError):
         _ = ValidatedSpec(spec, results)

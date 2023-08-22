@@ -1,7 +1,5 @@
 # Machine Learning Test and Evaluation (MLTE) Framework
 
-![Diagram](https://github.com/mlte-team/mlte-framework/blob/9e1b11cd424e3c5f8c03837251813b5b7e4afff5/MLTE_Dark_Diagram.png)
-
 ## ➀ Negotiate Model Quality Requirements (IMT Negotiation)
 Before development begins, the model development team and project stakeholders (including software engineers and system experts) negotiate model goals and suitable evaluation metrics. In MLTE, requirements definition directly informs how a model is evaluated. To guide this negotiation, MLTE provides a Negotiation Card, which can be accessed and persisted via the MLTE UI. After this negotiation, development ensues in accordance with the agreed-upon considerations.
 

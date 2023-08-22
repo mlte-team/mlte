@@ -4,11 +4,17 @@ test/fixture/artifact.py
 Unit test support for artifact generation.
 """
 
+from __future__ import annotations
+
 import random
 import string
+from typing import Generator, List, Union
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel, ArtifactType
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.model import NegotiationCardModel
+from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
 
 def _random_id(length: int = 5) -> str:
@@ -18,6 +24,12 @@ def _random_id(length: int = 5) -> str:
     :return: The identifier
     """
     return "".join(random.choices(string.ascii_lowercase, k=length))
+
+
+def artifact_types() -> Generator[ArtifactType, None, None]:
+    """A generator over artifact types."""
+    for type in ArtifactType:
+        yield type
 
 
 class ArtifactFactory:
@@ -33,7 +45,7 @@ class ArtifactFactory:
         """
         return ArtifactModel(
             header=ArtifactHeaderModel(identifier=id, type=type),
-            body=_make_body(type),
+            body=_make_body(type, id),
         )
 
 
@@ -41,7 +53,7 @@ class TypeUtil:
     """A static class for artifact type utilities."""
 
     @staticmethod
-    def all_others(type: ArtifactType) -> list[ArtifactType]:
+    def all_others(type: ArtifactType) -> List[ArtifactType]:
         """
         Return a collection of all artifact types that are not the given one.
         :param type: The excluded type
@@ -50,14 +62,19 @@ class TypeUtil:
         return [t for t in ArtifactType if t != type]
 
 
-def _make_body(type: ArtifactType) -> NegotiationCardModel:
+def _make_body(
+    type: ArtifactType, id: str
+) -> Union[NegotiationCardModel, ValueModel]:
     """
     Make the body of the artifact for a given type.
     :param type: The artifact type
+    :param id: The identifier for the artifact
     :return: The artifact body model
     """
     if type == ArtifactType.NEGOTIATION_CARD:
         return _make_negotiation_card()
+    if type == ArtifactType.VALUE:
+        return _make_value(id)
     assert False, "Unreachable."
 
 
@@ -66,4 +83,19 @@ def _make_negotiation_card() -> NegotiationCardModel:
     Make a minimal negotiation card.
     :return: The artifact
     """
-    return NegotiationCardModel()
+    return NegotiationCardModel(artifact_type=ArtifactType.NEGOTIATION_CARD)
+
+
+def _make_value(id: str) -> ValueModel:
+    """
+    Make a minimal value.
+    :return: The artifact
+    """
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name=id)
+    )
+    return ValueModel(
+        artifact_type=ArtifactType.VALUE,
+        metadata=m,
+        value=IntegerValueModel(value_type=ValueType.INTEGER, integer=1),
+    )
