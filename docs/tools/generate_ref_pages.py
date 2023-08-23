@@ -5,15 +5,20 @@ A script to generate a reference page for the MLTE documentation.
 """
 
 from pathlib import Path
+import subprocess
 
 import mkdocs_gen_files
 
-# The root path to the MLTE package
-ROOT_PATH = "../mlte"
-
 g_nav = mkdocs_gen_files.Nav()
 
-for path in sorted(Path(ROOT_PATH).rglob("*.py")):
+def _respository_root() -> Path:
+    command = ["git", "rev-parse", "--show-toplevel"]
+    stdout = subprocess.check_output(command)
+    return Path(stdout.decode("utf-8").strip('\n'))
+
+package_root = _respository_root() / "mlte"
+
+for path in sorted(Path(package_root).rglob("*.py")):
     if str(path).endswith("__init__.py"):
         continue
     if str(path).endswith("_version.py"):
@@ -21,8 +26,8 @@ for path in sorted(Path(ROOT_PATH).rglob("*.py")):
     if "_private" in str(path):
         continue
 
-    module_path = path.relative_to(ROOT_PATH).with_suffix("")
-    doc_path = path.relative_to(ROOT_PATH).with_suffix(".md")
+    module_path = path.relative_to(package_root).with_suffix("")
+    doc_path = path.relative_to(package_root).with_suffix(".md")
     full_doc_path = Path("reference", doc_path)
 
     g_nav[module_path.parts] = doc_path
