@@ -14,6 +14,7 @@ from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.model import NegotiationCardModel
+from mlte.spec.model import SpecModel
 from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
 
@@ -64,7 +65,7 @@ class TypeUtil:
 
 def _make_body(
     type: ArtifactType, id: str
-) -> Union[NegotiationCardModel, ValueModel]:
+) -> Union[NegotiationCardModel, ValueModel, SpecModel]:
     """
     Make the body of the artifact for a given type.
     :param type: The artifact type
@@ -75,7 +76,10 @@ def _make_body(
         return _make_negotiation_card()
     if type == ArtifactType.VALUE:
         return _make_value(id)
-    assert False, "Unreachable."
+    if type == ArtifactType.SPEC:
+        return _make_spec()
+
+    assert False, f"Unkown artifact type provided when creating body: {type}."
 
 
 def _make_negotiation_card() -> NegotiationCardModel:
@@ -99,3 +103,11 @@ def _make_value(id: str) -> ValueModel:
         metadata=m,
         value=IntegerValueModel(value_type=ValueType.INTEGER, integer=1),
     )
+
+
+def _make_spec() -> SpecModel:
+    """
+    Make a minimal spec.
+    :return: The artifact
+    """
+    return SpecModel(artifact_type=ArtifactType.SPEC)

@@ -6,11 +6,11 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from mlte.api import read_validatedspec, write_validatedspec
 from mlte.session import session
-from mlte.spec import Spec
+from mlte.spec.spec import Spec
 from mlte.validation.result import Result
 
 # -----------------------------------------------------------------------------
@@ -39,12 +39,12 @@ class ValidatedSpec:
         self.results = results
         """The validation results for the spec."""
 
-        # Check that all requirements have results.
-        for _, requirement_list in self.spec.requirements.items():
-            for requirement in requirement_list:
-                if str(requirement.identifier) not in self.results:
+        # Check that all conditions have results.
+        for conditions in self.spec.properties.values():
+            for measurement_id in conditions.keys():
+                if measurement_id not in self.results:
                     raise RuntimeError(
-                        f"Requirement '{requirement.identifier}' does not have a result."
+                        f"Id '{measurement_id}' does not have a result."
                     )
 
     def save(self):
@@ -81,14 +81,15 @@ class ValidatedSpec:
         :rtype: Dict[str, Any]
         """
         # Generate the spec document, and add the result for each requirement.
-        spec_document: Dict[
-            str, List[Dict[str, List[Dict[str, Any]]]]
-        ] = self.spec.to_json()
-        for property in spec_document["properties"]:
-            for req in property["requirements"]:
-                req["result"] = self.results[req["identifier"]].to_json()
+        # spec_document: Dict[
+        #    str, List[Dict[str, List[Dict[str, Any]]]]
+        # ] = self.spec.to_json()
+        # for property in spec_document["properties"]:
+        #    for req in property["requirements"]:
+        #        req["result"] = self.results[req["identifier"]].to_json()
 
-        return spec_document
+        # return spec_document
+        return {}
 
     @staticmethod
     def from_json(json: Dict[str, Any]) -> ValidatedSpec:
@@ -101,13 +102,14 @@ class ValidatedSpec:
         :return: The deserialized specification
         :rtype: ValidatedSpec
         """
-        spec = Spec.from_json(json)
-        results: Dict[str, Result] = {}
-        for property in json["properties"]:
-            for req in property["requirements"]:
-                results[req["identifier"]] = Result.from_json(req["result"])
+        # spec = Spec.from_json(json)
+        # results: Dict[str, Result] = {}
+        # for property in json["properties"]:
+        #    for req in property["requirements"]:
+        #        results[req["identifier"]] = Result.from_json(req["result"])
 
-        return ValidatedSpec(spec, results)
+        # return ValidatedSpec(spec, results)
+        return ValidatedSpec(Spec("t", {}), {})
 
     def __eq__(self, other: object) -> bool:
         """Test ValidatedSpec instance for equality."""

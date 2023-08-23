@@ -11,6 +11,7 @@ from pydantic import Field
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
+from mlte.spec.model import SpecModel
 from mlte.value.model import ValueModel
 
 
@@ -30,7 +31,7 @@ class ArtifactModel(BaseModel):
     header: ArtifactHeaderModel
     """The artifact header."""
 
-    body: Union[NegotiationCardModel, ValueModel] = Field(
+    body: Union[NegotiationCardModel, ValueModel, SpecModel] = Field(
         ..., discriminator="artifact_type"
     )
     """The artifact body."""

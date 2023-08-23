@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Dict
 
-from mlte.spec import Spec
+from mlte.spec.spec import Spec
 from mlte.validation.result import Result
 from mlte.value.artifact import Value
 
@@ -68,19 +68,17 @@ class SpecValidator:
         :return: A document indicating the Result for each identifier.
         :rtype: Dict[str, Result]
         """
-        # Check that all requirements have values to be validated.
-        for _, requirement_list in self.spec.requirements.items():
-            for requirement in requirement_list:
-                if str(requirement.identifier) not in self.values:
+        # Check that all conditions have values to be validated.
+        for conditions in self.spec.properties.values():
+            for measurement_id in conditions.keys():
+                if measurement_id not in self.values:
                     raise RuntimeError(
-                        f"Requirement '{requirement.identifier}' does not have a value that can be validated."
+                        f"Id '{measurement_id}' does not have a value that can be validated."
                     )
 
         # Validate and aggregate the results.
         results = {}
-        for _, requirement_list in self.spec.requirements.items():
-            for requirement in requirement_list:
-                results[str(requirement.identifier)] = requirement.validate(
-                    self.values[str(requirement.identifier)]
-                )
+        for conditions in self.spec.properties.values():
+            for measurement_id, condition in conditions.items():
+                results[measurement_id] = condition(self.values[measurement_id])
         return results

@@ -9,9 +9,10 @@ from __future__ import annotations
 import abc
 import importlib
 import pkgutil
-from typing import Dict, Type
+from typing import Type
 
 import mlte._private.meta as meta
+from mlte.spec.model import PropertyModel
 
 
 class Property(metaclass=abc.ABCMeta):
@@ -20,7 +21,7 @@ class Property(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all concrete properties."""
-        return meta.has_callables(subclass, "__init__", "__repr__")
+        return meta.has_callables(subclass, "__init__")
 
     def __init__(self, name: str, description: str, rationale: str):
         """
@@ -35,91 +36,60 @@ class Property(metaclass=abc.ABCMeta):
         """
         self.name: str = name
         """The name of the property."""
-        self.description = description
+
+        self.description: str = description
         """The description of the property."""
-        self.rationale = rationale
+
+        self.rationale: str = rationale
         """The rationale for using the property."""
 
-    def _to_json(self) -> Dict[str, str]:
+    def to_model(self) -> PropertyModel:
         """
-        Save a Property instance to a JSON document.
+        Return a Property as a model.
 
-        :return: The document
-        :rtype: Dict[str, str]
+        :return: The property as its model.
+        :rtype: PropertyModel
         """
-        return {
-            "name": self.name,
-            "repr": repr(self),
-            "description": self.description,
-            "rationale": self.rationale,
-        }
+        return PropertyModel(
+            name=self.name,
+            description=self.description,
+            rationale=self.rationale,
+        )
 
-    @staticmethod
-    def _from_json(document: Dict[str, str]) -> Property:
+    @classmethod
+    def from_model(cls, model: PropertyModel) -> Property:
         """
-        Load a Property instance from a JSON document.
+        Load a Property instance from a model.
 
-        :param document: The document for the saved property
-        :type document: Dict[str, str]
+        :param model: The model with the Property info.
+        :type model: PropertyModel
 
         :return: The loaded property
         :rtype: Property
         """
-        return _load_from_document(document)
+        if model.name == "":
+            raise RuntimeError(
+                "Property is malformed, it does not have a valid name."
+            )
+        classname = model.name
 
-    def __repr__(self) -> str:
-        """Return the representation needed to reconstruct the object."""
-        return f"{self.name}()"
-
-
-def _get_class_name(property_repr: str) -> str:
-    """
-    Extract the class name from the property representation.
-
-    :param property_repr: The representation
-    :type property_repr: str
-
-    :return: The class name
-    :rtype: str
-    """
-    return property_repr[: property_repr.index("(")]
-
-
-def _load_from_document(document: Dict[str, str]) -> Property:
-    """
-    Load a Property instance from its identifier.
-
-    :param name: The name of the property
-    :type name: str
-
-    :return: The loaded property
-    :rtype: Property
-    """
-    if "name" not in document or "repr" not in document:
-        raise RuntimeError("Saved property is malformed.")
-    property_repr = document["repr"]
-    rationale = document["rationale"]
-
-    # Extract the classname from the call
-    classname = _get_class_name(property_repr)
-
-    # Load the class type from the module
-    properties_package_name = "mlte.property"
-    properties_module = importlib.import_module(
-        properties_package_name, package="mlte"
-    )
-    for submodule_info in pkgutil.iter_modules(
-        properties_module.__path__, properties_module.__name__ + "."
-    ):
-        submodule = importlib.import_module(
-            submodule_info.name, package=properties_package_name
+        # Load the class type from the module
+        properties_package_name = "mlte.property"
+        properties_module = importlib.import_module(
+            properties_package_name, package="mlte"
         )
-        try:
-            class_: Type[Property] = getattr(submodule, classname)
-        except AttributeError:
-            continue
+        for submodule_info in pkgutil.iter_modules(
+            properties_module.__path__, properties_module.__name__ + "."
+        ):
+            submodule = importlib.import_module(
+                submodule_info.name, package=properties_package_name
+            )
+            try:
+                class_: Type[Property] = getattr(submodule, classname)
+            except AttributeError:
+                continue
 
-        # Instantiate the property
-        return class_(rationale)  # type: ignore
+            # Instantiate the property
+            return class_(model.rationale)  # type: ignore
 
-    raise RuntimeError(f"Property {document['name']} not found")
+        raise RuntimeError(f"Property {model.name} not found")

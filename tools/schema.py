@@ -74,6 +74,10 @@ CONFIGS = [
         model=ModelImport(path="mlte.value.model", model="ValueModel"),
         output_path="value/v0.0.1",
     ),
+    Config(
+        model=ModelImport(path="mlte.spec.model", model="SpecModel"),
+        output_path="spec/v0.0.1",
+    ),
 ]
 
 # -----------------------------------------------------------------------------
