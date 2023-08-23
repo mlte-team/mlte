@@ -1,14 +1,18 @@
 # MLTE Process Resources
+
 MLTE was created based on existing techniques and cutting-edge research for machine learning. This section gives some explanations of why the team made the choices we did for the MLTE framework and infrastructure.
 
 
 ## Baseline and Performance Metric Selection
+
 ### Information on Baseline Selection
+
 * Some datasets and methods already have an accepted baseline that can be used (for instance, [PASCAL VOC](http://host.robots.ox.ac.uk/pascal/VOC/pubs/everingham10.pdf) is an object category recognition and detection benchmark).
 * Classify everything as the majority (as described by Chapter 7.2 of [Hvitfeldt & Silge 2021](https://smltar.com/mlclassification.html#classnull)).
 * If the model implements a task that is currently performed manually, conduct a test in which humans perform the task and use the human performance as the baseline.
   
 ### Information on Performance Metric Selection
+
 The choice of metric depends on the exact nature of the system being created; following are some examples to consider from commonly used disciplines of ML.  
 
 * Classification:
@@ -21,12 +25,15 @@ The choice of metric depends on the exact nature of the system being created; fo
 
 
 ## Resources on Machine Learning Pipelines and Processes
+
 ### ML Training Best Practices
+
 * Ensuring that representative training and test data is available or provided for the problem at hand, and handling the data appropriately based on any associated permissions or authorities that are required.
 * Splitting the data correctly for training, validation, and testing.
 * Appropriately selecting a model type and then fine-tuning it. 
   
 ### [Ch 2 End-to-End Machine Learning](https://learning.oreilly.com/library/view/hands-on-machine-learning/9781098125967/ch02.html) from [Hands-On Machine Learning](https://learning.oreilly.com/library/view/hands-on-machine-learning/9781098125967/) by [Aurélien Géron](https://github.com/ageron)
+
 1. Look at the big picture.
 2. Get the data.
 3. Explore and visualize the data to gain insights.
@@ -37,11 +44,13 @@ The choice of metric depends on the exact nature of the system being created; fo
 8. Launch, monitor, and maintain your system.
 
 ### [A Course in Machine Learning](http://ciml.info) by [Hal Daumé III](http://hal3.name/)
+
 - Feature engineering, tuning hyperparameters, debugging techniques: [Ch 5 Practical Issues](http://ciml.info/dl/v0_99/ciml-v0_99-ch05.pdf)
 - Neural networks: [Ch 10 Neural Networks](http://ciml.info/dl/v0_99/ciml-v0_99-ch10.pdf)
 - Gradient descent, feature hashing: [Ch 14 Efficient Learning](http://ciml.info/dl/v0_99/ciml-v0_99-ch14.pdf)
 
 ### [Introduction to Machine Learning with Python](https://www.oreilly.com/library/view/introduction-to-machine/9781449369880/) by [Andreas C. Müller](https://amueller.github.io) and Sarah Guido
+
 1. Ask if machine learning can solve the problem at hand.
 2. Find and obtain relevant data for the problem.
 3. Examine and understand the data.
@@ -57,6 +66,7 @@ The choice of metric depends on the exact nature of the system being created; fo
   
 
 ## Generating Multiple Test Sets
+
 If it is possible for multiple holdout test sets to be generated, using different ones for each evaluation in IMT and SDMT will produce the best results. 
 
 However, it is often not possible for practitioners to generate , and there is research to support that substantial overfitting does not occur even if a single test set is used multiple times ([Roelofs et al. 2019](https://proceedings.neurips.cc/paper/2019/file/ee39e503b6bedf0c98c388b7e8589aca-Paper.pdf)). 
@@ -65,6 +75,7 @@ To differentiate between evaluations, we recommend ensuring good version control
     
 
 ## Model Property Definition
+
 Research on model property definition.
 
 - [Model Quality: Defining Correctness and Fit](https://ckaestne.medium.com/model-quality-defining-correctness-and-fit-a8361b857df)
@@ -76,6 +87,7 @@ Research on model property definition.
   
 
 ## Requirements Selection
+
 Research on requirements selection.
 
 - [Requirements Engineering for Machine Learning](https://arxiv.org/pdf/1908.04674.pdf)

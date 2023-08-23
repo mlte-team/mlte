@@ -1,4 +1,5 @@
 # Properties
+
 *Properties* are characteristics of the trained model, the procedure used to train it (including training data), or its ability to perform inference.
 
 ## MLTE Properties
