@@ -6,8 +6,8 @@ Configuration management for FastAPI application.
 
 from __future__ import annotations
 
-from pydantic import validator
-from pydantic_settings import BaseSettings
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # An enumeration of supported log levels
 _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
@@ -29,7 +29,8 @@ class Settings(BaseSettings):
     APP_PORT: str = "8080"
     """The port to which the server binds."""
 
-    @validator("APP_PORT", pre=True)
+    @field_validator("APP_PORT", mode="before")
+    @classmethod
     def validate_app_port(cls, v: str) -> str:
         try:
             int(v)
@@ -45,14 +46,14 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""
 
-    @validator("LOG_LEVEL", pre=True)
+    @field_validator("LOG_LEVEL", mode="before")
+    @classmethod
     def validate_log_level(cls, v: str) -> str:
         if v not in _LOG_LEVELS:
             raise ValueError(f"Unsupported log level: {v}.")
         return v
 
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 # The exported settings object

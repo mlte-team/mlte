@@ -71,6 +71,24 @@ def test_namespace(
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
+def test_namespace_list(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """Namespaces can be listed."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
+    namespace_id = "ns0"
+
+    with ManagedSession(store.session()) as handle:
+        _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+
+    with ManagedSession(store.session()) as handle:
+        namespaces = handle.list_namespaces()
+        assert len(namespaces) == 1
+        assert namespaces[0] == "ns0"
+
+
+@pytest.mark.parametrize("store_fixture_name", stores())
 def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     """An artifact store supports model operations."""
     store: Store = request.getfixturevalue(store_fixture_name)
@@ -97,6 +115,26 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     with ManagedSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             handle.read_model(namespace_id, model_id)
+
+
+@pytest.mark.parametrize("store_fixture_name", stores())
+def test_model_list(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """Models can be listed."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
+    namespace_id = "ns0"
+    model_id = "model0"
+
+    with ManagedSession(store.session()) as handle:
+        _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        _ = handle.create_model(namespace_id, ModelCreate(identifier=model_id))
+
+    with ManagedSession(store.session()) as handle:
+        models = handle.list_models(namespace_id)
+        assert len(models) == 1
+        assert models[0] == "model0"
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
@@ -132,6 +170,30 @@ def test_version(
     with ManagedSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_version(namespace_id, model_id, version_id)
+
+
+@pytest.mark.parametrize("store_fixture_name", stores())
+def test_version_list(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """Versions can be listed."""
+    store: Store = request.getfixturevalue(store_fixture_name)
+
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
+
+    with ManagedSession(store.session()) as handle:
+        handle.create_namespace(NamespaceCreate(identifier=namespace_id))
+        handle.create_model(namespace_id, ModelCreate(identifier=model_id))
+        handle.create_version(
+            namespace_id, model_id, VersionCreate(identifier=version_id)
+        )
+
+    with ManagedSession(store.session()) as handle:
+        versions = handle.list_versions(namespace_id, model_id)
+        assert len(versions) == 1
+        assert versions[0] == "version0"
 
 
 @pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
