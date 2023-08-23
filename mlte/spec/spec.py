@@ -6,7 +6,6 @@ A collection of properties and their measurements.
 
 from __future__ import annotations
 
-import itertools
 import typing
 from typing import Dict, List, Union
 
@@ -60,18 +59,6 @@ class Spec(Artifact):
 
         if not _unique([p.name for p in self.properties.keys()]):
             raise RuntimeError("All properties in Spec must be unique.")
-
-        if not _unique(
-            list(
-                itertools.chain.from_iterable(
-                    [
-                        [measurement_id for measurement_id in conditions]
-                        for conditions in properties.values()
-                    ]
-                )
-            )
-        ):
-            raise RuntimeError("All measurement ids in Spec must be unique.")
 
     # -------------------------------------------------------------------------
     # Serialization.

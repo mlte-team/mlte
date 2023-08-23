@@ -45,10 +45,19 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     assert r == validatedSpec
 
 
+def test_no_result_and_no_property():
+    # Spec does not have Result for condition, not even a property.
+    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
+
+    results: Dict[str, Dict[str, Result]] = {}
+    with pytest.raises(RuntimeError):
+        _ = ValidatedSpec(spec, results)
+
+
 def test_no_result():
     # Spec does not have Result for condition.
     spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
 
-    results: Dict[str, Result] = {}
+    results: Dict[str, Dict[str, Result]] = {"StorageCost": {}}
     with pytest.raises(RuntimeError):
         _ = ValidatedSpec(spec, results)

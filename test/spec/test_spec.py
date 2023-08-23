@@ -13,7 +13,6 @@ import pytest
 from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
-from mlte.property.functionality import TaskEfficacy
 from mlte.spec.spec import Spec
 from mlte.store.base import Store
 
@@ -46,18 +45,4 @@ def test_non_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec(
             {StorageCost("rationale"): {}, StorageCost("rationale2"): {}},
-        )
-
-
-def test_non_unique_requirement_ids():
-    with pytest.raises(RuntimeError):
-        _ = Spec(
-            {
-                StorageCost("rationale"): {
-                    "id1": LocalObjectSize.value().less_than(5)
-                },
-                TaskEfficacy("rationale"): {
-                    "id1": LocalObjectSize.value().less_than(3),
-                },
-            },
         )
