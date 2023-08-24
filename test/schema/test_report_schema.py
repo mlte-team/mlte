@@ -57,7 +57,7 @@ def test_valid_instance() -> None:  # noqa
         Limitation("Limitation description 1."),
     ]
 
-    report.spec = ValidatedSpec(Spec({}), {"prop": {"test": Ignore("ignore")}})
+    report.spec = ValidatedSpec(results={"prop": {"test": Ignore("ignore")}})
 
     validate_report_schema(report.to_json())
 
