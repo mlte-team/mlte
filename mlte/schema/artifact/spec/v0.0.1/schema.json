@@ -25,50 +25,6 @@
       "title": "ConditionModel",
       "type": "object"
     },
-    "EvidenceMetadata": {
-      "description": "A simple wrapper for evidence metadata.",
-      "properties": {
-        "measurement_type": {
-          "title": "Measurement Type",
-          "type": "string"
-        },
-        "identifier": {
-          "$ref": "#/$defs/Identifier"
-        },
-        "info": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Info"
-        }
-      },
-      "required": [
-        "measurement_type",
-        "identifier"
-      ],
-      "title": "EvidenceMetadata",
-      "type": "object"
-    },
-    "Identifier": {
-      "description": "\n    Identifier is a simple class that standardizes\n    the manner in which Measurements, Values, and\n    Results are uniquely identified throughout\n    their lifetimes.\n    ",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "Identifier",
-      "type": "object"
-    },
     "PropertyModel": {
       "description": "A description of a property.",
       "properties": {
@@ -107,50 +63,12 @@
           "default": {},
           "title": "Conditions",
           "type": "object"
-        },
-        "results": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ResultModel"
-          },
-          "default": {},
-          "title": "Results",
-          "type": "object"
         }
       },
       "required": [
         "name"
       ],
       "title": "PropertyModel",
-      "type": "object"
-    },
-    "ResultModel": {
-      "description": "A description of a Result.",
-      "properties": {
-        "type": {
-          "title": "Type",
-          "type": "string"
-        },
-        "message": {
-          "title": "Message",
-          "type": "string"
-        },
-        "metadata": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/EvidenceMetadata"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "required": [
-        "type",
-        "message",
-        "metadata"
-      ],
-      "title": "ResultModel",
       "type": "object"
     }
   },
