@@ -21,13 +21,15 @@ from mlte.negotiation.model import (
     SystemDescriptor,
 )
 
+DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
+
 
 class NegotiationCard(Artifact):
     """The negotiation card contains information produced at MLTE negotiation points."""
 
     def __init__(
         self,
-        identifier: str,
+        identifier: str = DEFAULT_NEGOTIATION_CARD_ID,
         system: SystemDescriptor = SystemDescriptor(),
         data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
@@ -71,6 +73,11 @@ class NegotiationCard(Artifact):
             data=body.data,
             model=body.model,
         )
+
+    @classmethod
+    def get_default_id(cls) -> str:
+        """Overriden"""
+        return DEFAULT_NEGOTIATION_CARD_ID
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):

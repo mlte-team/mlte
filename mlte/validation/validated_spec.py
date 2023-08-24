@@ -6,13 +6,24 @@ ValidatedSpec class implementation.
 
 from __future__ import annotations
 
-from typing import Dict, cast
+import typing
+from typing import Dict
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.property.property import Property
+from mlte.spec.condition import Condition
 from mlte.spec.model import SpecModel
 from mlte.spec.spec import Spec
+from mlte.validation.model import (
+    PropertyAndResultsModel,
+    ResultModel,
+    ValidatedSpecModel,
+)
 from mlte.validation.result import Result
+
+DEFAULT_VALIDATED_SPEC_ID = "default.validated_spec"
 
 # -----------------------------------------------------------------------------
 # ValidatedSpec
@@ -24,13 +35,19 @@ class ValidatedSpec(Artifact):
     ValidatedSpec represents a spec with validated results.
     """
 
-    def __init__(self, spec: Spec, results: Dict[str, Dict[str, Result]]):
+    def __init__(
+        self,
+        identifier: str = DEFAULT_VALIDATED_SPEC_ID,
+        spec: Spec = Spec(),
+        results: Dict[str, Dict[str, Result]] = {},
+    ):
         """
         Initialize a ValidatedSpec instance.
 
         :param spec: The Spec
         :param results: The validation Results for the Spec
         """
+        super().__init__(identifier, ArtifactType.VALIDATED_SPEC)
 
         self.spec = spec
         """The spec that we validated."""
@@ -56,16 +73,35 @@ class ValidatedSpec(Artifact):
         :return: The serialized model
         """
         model = self.spec.to_model()
-        model.header.identifier = f"{model.header.identifier}.validated"
+        spec_model: SpecModel = typing.cast(SpecModel, model.body)
 
-        # Add results to main model.
-        spec_model: SpecModel = cast(SpecModel, model.body)
+        # Convert results to model.
+        res_model: Dict[str, Dict[str, ResultModel]] = {}
         for property_model in spec_model.properties:
-            for measurement_id in property_model.conditions.keys():
-                result = self.results[property_model.name][measurement_id]
-                property_model.results[measurement_id] = result.to_model()
+            res_model[property_model.name] = {}
+            for measure_id in property_model.conditions.keys():
+                result = self.results[property_model.name][measure_id]
+                res_model[property_model.name][measure_id] = result.to_model()
 
-        return model
+        return ArtifactModel(
+            header=ArtifactHeaderModel(
+                identifier=self.identifier,
+                type=self.type,
+            ),
+            body=ValidatedSpecModel(
+                artifact_type=ArtifactType.VALIDATED_SPEC,
+                properties=[
+                    PropertyAndResultsModel(
+                        name=property_model.name,
+                        description=property_model.description,
+                        rationale=property_model.rationale,
+                        conditions=property_model.conditions,
+                        results=res_model[property_model.name],
+                    )
+                    for property_model in spec_model.properties
+                ],
+            ),
+        )
 
     @classmethod
     def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
@@ -75,19 +111,36 @@ class ValidatedSpec(Artifact):
         :param model: The model
         :return: The deserialized specification
         """
-        spec = Spec.from_model(model)
+        assert (
+            model.header.type == ArtifactType.VALIDATED_SPEC
+        ), "Broken precondition."
+        body = typing.cast(ValidatedSpecModel, model.body)
 
-        # Load results from full model.
+        # Load properties and results from model into internal representations.
+        spec_properties: Dict[Property, Dict[str, Condition]] = {}
         results: Dict[str, Dict[str, Result]] = {}
-        spec_model: SpecModel = cast(SpecModel, model.body)
-        for property_model in spec_model.properties:
-            results[property_model.name] = {}
-            for measurement_id in property_model.conditions.keys():
-                results[property_model.name][
-                    measurement_id
-                ] = Result.from_model(property_model.results[measurement_id])
+        for prop_model in body.properties:
+            curr_prop = Property.from_model(prop_model)
+            spec_properties[curr_prop] = {}
+            results[prop_model.name] = {}
+            for measure_id, condition in prop_model.conditions.items():
+                spec_properties[curr_prop][measure_id] = Condition.from_model(
+                    condition
+                )
+                results[prop_model.name][measure_id] = Result.from_model(
+                    prop_model.results[measure_id]
+                )
 
-        return ValidatedSpec(spec, results)
+        # Build the spec and ValidatedSpec
+        spec = Spec(identifier=body.spec_identifier, properties=spec_properties)
+        return ValidatedSpec(
+            identifier=model.header.identifier, spec=spec, results=results
+        )
+
+    @classmethod
+    def get_default_id(cls) -> str:
+        """Overriden"""
+        return DEFAULT_VALIDATED_SPEC_ID
 
     def __eq__(self, other: object) -> bool:
         """Test ValidatedSpec instance for equality."""

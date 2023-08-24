@@ -22,3 +22,6 @@ class ArtifactType(str, Enum):
 
     SPEC = auto()
     """The specification artifact type."""
+
+    VALIDATED_SPEC = auto()
+    """The validated specification artifact type."""

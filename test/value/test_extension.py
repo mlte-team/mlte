@@ -88,7 +88,7 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
 
     cm.save_with(ctx, store)
 
-    loaded = ConfusionMatrix.load_with("id.value", ctx, store)
+    loaded = ConfusionMatrix.load_with("id.value", context=ctx, store=store)
     assert loaded == cm
 
 

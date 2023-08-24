@@ -65,7 +65,7 @@ class SpecValidator:
         :return: The validated specification
         """
         results = self._validate_results()
-        return ValidatedSpec(self.spec, results)
+        return ValidatedSpec(spec=self.spec, results=results)
 
     def _validate_results(self) -> Dict[str, Dict[str, Result]]:
         """

@@ -7,6 +7,7 @@ Artifact protocol implementation.
 from __future__ import annotations
 
 import abc
+from typing import Optional
 
 import mlte._private.meta as meta
 from mlte.artifact.model import ArtifactModel
@@ -99,7 +100,12 @@ class Artifact(metaclass=abc.ABCMeta):
             )
 
     @classmethod
-    def load(cls, identifier: str) -> Artifact:
+    def get_default_id(cls) -> str:
+        """To be overriden by derived classes."""
+        return "default"
+
+    @classmethod
+    def load(cls, identifier: Optional[str] = None) -> Artifact:
         """
         Load an artifact from the configured global session.
         :param identifier: The identifier for the artifact
@@ -107,11 +113,13 @@ class Artifact(metaclass=abc.ABCMeta):
         This is equivalent to calling:
             Artifact.load_with(session().context, session().store)
         """
-        return cls.load_with(identifier, session().context, session().store)
+        return cls.load_with(
+            identifier, context=session().context, store=session().store
+        )
 
     @classmethod
     def load_with(
-        cls, identifier: str, context: Context, store: Store
+        cls, identifier: Optional[str] = None, *, context: Context, store: Store
     ) -> Artifact:
         """
         Load an artifact with the given context and store configuration.
@@ -119,6 +127,9 @@ class Artifact(metaclass=abc.ABCMeta):
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """
+        if identifier is None:
+            identifier = cls.get_default_id()
+
         with ManagedSession(store.session()) as handle:
             return cls.from_model(
                 handle.read_artifact(

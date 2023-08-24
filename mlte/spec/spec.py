@@ -16,7 +16,7 @@ from mlte.property import Property
 from mlte.spec.condition import Condition
 from mlte.spec.model import PropertyModel, SpecModel
 
-DEFAULT_SPEC_ID = "spec"
+DEFAULT_SPEC_ID = "default.spec"
 
 
 def _unique(collection: List[str]) -> bool:
@@ -43,15 +43,17 @@ class Spec(Artifact):
     and the results of measurement evaluation and validation.
     """
 
-    def __init__(self, properties: Dict[Property, Dict[str, Condition]]):
+    def __init__(
+        self,
+        identifier: str = DEFAULT_SPEC_ID,
+        properties: Dict[Property, Dict[str, Condition]] = {},
+    ):
         """
         Initialize a Spec instance.
 
         :param properties: The collection of properties that compose the spec, with their conditions keyed by measurement id.
         :type properties: List[Property]
         """
-        # Standard identifier. Good enough?
-        identifier = DEFAULT_SPEC_ID
         super().__init__(identifier, ArtifactType.SPEC)
 
         self.properties = properties
@@ -86,6 +88,7 @@ class Spec(Artifact):
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
         body = typing.cast(SpecModel, model.body)
         return Spec(
+            identifier=model.header.identifier,
             properties={
                 Property.from_model(property_model): {
                     measurement_id: Condition.from_model(condition_model)
@@ -113,9 +116,9 @@ class Spec(Artifact):
         return property_model
 
     @classmethod
-    def load(cls, identifier: str = DEFAULT_SPEC_ID) -> Artifact:
-        """Extending base one to use default id."""
-        return cls.load(identifier)
+    def get_default_id(cls) -> str:
+        """Overriden"""
+        return DEFAULT_SPEC_ID
 
     # -------------------------------------------------------------------------
     # Property Manipulation

@@ -19,7 +19,6 @@ import typing
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
-from mlte.spec.spec import Spec
 from mlte.validation.validated_spec import ValidatedSpec
 
 from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
@@ -213,9 +212,7 @@ class Report(ReportAttribute):
     considerations: Considerations = field(default_factory=Considerations)
     """Model considerations."""
 
-    spec: ValidatedSpec = field(
-        default_factory=lambda: ValidatedSpec(Spec({}), {})
-    )
+    spec: ValidatedSpec = field(default_factory=lambda: ValidatedSpec())
     """The model test spec report."""
 
     def _finalize(self) -> Dict[str, Any]:

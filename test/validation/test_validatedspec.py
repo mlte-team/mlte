@@ -1,5 +1,5 @@
 """
-test/spec/test_validatedspec.py
+test/validation/test_validatedspec.py
 
 Unit tests for ValidatedSpec functionality.
 """
@@ -26,7 +26,9 @@ from ..fixture.store import store_with_context  # noqa
 def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     store, ctx = store_with_context
 
-    spec = Spec({StorageCost("rationale"): {"id": Integer.less_than(3)}})
+    spec = Spec(
+        properties={StorageCost("rationale"): {"id": Integer.less_than(3)}}
+    )
     specValidator = SpecValidator(spec)
 
     # A dummy result
@@ -41,23 +43,27 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     validatedSpec = specValidator.validate()
     validatedSpec.save_with(ctx, store)
 
-    r = ValidatedSpec.load_with("spec.validated", ctx, store)
+    r = ValidatedSpec.load_with(context=ctx, store=store)
     assert r == validatedSpec
 
 
 def test_no_result_and_no_property():
     # Spec does not have Result for condition, not even a property.
-    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
+    spec = Spec(
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+    )
 
     results: Dict[str, Dict[str, Result]] = {}
     with pytest.raises(RuntimeError):
-        _ = ValidatedSpec(spec, results)
+        _ = ValidatedSpec(spec=spec, results=results)
 
 
 def test_no_result():
     # Spec does not have Result for condition.
-    spec = Spec({StorageCost("rationale"): {"test": Integer.less_than(3)}})
+    spec = Spec(
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+    )
 
     results: Dict[str, Dict[str, Result]] = {"StorageCost": {}}
     with pytest.raises(RuntimeError):
-        _ = ValidatedSpec(spec, results)
+        _ = ValidatedSpec(spec=spec, results=results)
