@@ -11,7 +11,6 @@ from jsonschema import ValidationError
 
 from mlte._private.schema import validate_report_schema
 from mlte.report import Dataset, Limitation, Report, UseCase, User
-from mlte.spec.spec import Spec
 from mlte.validation.result import Ignore
 from mlte.validation.validated_spec import ValidatedSpec
 

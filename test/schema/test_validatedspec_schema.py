@@ -17,7 +17,9 @@ from mlte.value.types.integer import Integer
 
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_schema(tmp_path):
-    spec = Spec(properties={StorageCost("rationale"): {"test": Integer.less_than(3)}})
+    spec = Spec(
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+    )
     specValidator = SpecValidator(spec)
     i = Integer(
         EvidenceMetadata(
