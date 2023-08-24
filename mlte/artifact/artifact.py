@@ -11,7 +11,7 @@ import time
 from typing import Optional
 
 import mlte._private.meta as meta
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.session.state import session
@@ -43,6 +43,9 @@ class Artifact(metaclass=abc.ABCMeta):
 
         self.type = type
         """The identifier for the artifact type"""
+
+        self.timestamp = -1
+        """The Unix timestamp of when the artifact was saved to a store."""
 
     @abc.abstractmethod
     def to_model(self) -> ArtifactModel:
@@ -142,3 +145,9 @@ class Artifact(metaclass=abc.ABCMeta):
                     identifier,
                 )
             )
+
+    def build_artifact_header(self) -> ArtifactHeaderModel:
+        """Generates the common header model for artifacts."""
+        return ArtifactHeaderModel(
+            identifier=self.identifier, type=self.type, timestamp=self.timestamp
+        )

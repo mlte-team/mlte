@@ -10,7 +10,7 @@ import typing
 from typing import Dict
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.property.property import Property
 from mlte.spec.condition import Condition
@@ -84,10 +84,7 @@ class ValidatedSpec(Artifact):
                 res_model[property_model.name][measure_id] = result.to_model()
 
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier,
-                type=self.type,
-            ),
+            header=self.build_artifact_header(),
             body=ValidatedSpecModel(
                 artifact_type=ArtifactType.VALIDATED_SPEC,
                 properties=[

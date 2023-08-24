@@ -10,7 +10,7 @@ import typing
 from typing import Dict, List, Union
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.property import Property
 from mlte.spec.condition import Condition
@@ -69,10 +69,7 @@ class Spec(Artifact):
     def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier,
-                type=self.type,
-            ),
+            header=self.build_artifact_header(),
             body=SpecModel(
                 artifact_type=ArtifactType.SPEC,
                 properties=[
