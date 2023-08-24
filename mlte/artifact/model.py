@@ -4,7 +4,7 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
-from typing import Union
+from typing import Optional, Union
 
 from pydantic import Field
 
@@ -24,6 +24,9 @@ class ArtifactHeaderModel(BaseModel):
 
     type: ArtifactType
     """The type identfier for the artifact."""
+
+    timestamp: Optional[int] = -1
+    """The timestamp of creation of this artifact, as Unix time."""
 
 
 class ArtifactModel(BaseModel):

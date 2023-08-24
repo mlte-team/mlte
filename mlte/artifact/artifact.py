@@ -7,6 +7,7 @@ Artifact protocol implementation.
 from __future__ import annotations
 
 import abc
+import time
 from typing import Optional
 
 import mlte._private.meta as meta
@@ -89,12 +90,14 @@ class Artifact(metaclass=abc.ABCMeta):
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
+        artifact_model = self.to_model()
+        artifact_model.header.timestamp = int(time.time())
         with ManagedSession(store.session()) as handle:
             handle.write_artifact(
                 context.namespace,
                 context.model,
                 context.version,
-                self.to_model(),
+                artifact_model,
                 force=force,
                 parents=parents,
             )
