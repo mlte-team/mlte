@@ -85,4 +85,4 @@ def test_save_load(
     i.save_with(ctx, store)
 
     # NOTE(Kyle): No equality test implemented.
-    _ = Image.load_with("id.value", ctx, store)
+    _ = Image.load_with("id.value", context=ctx, store=store)

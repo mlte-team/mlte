@@ -13,7 +13,6 @@ import pytest
 from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs import StorageCost
-from mlte.property.functionality import TaskEfficacy
 from mlte.spec.spec import Spec
 from mlte.store.base import Store
 
@@ -24,8 +23,8 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     store, ctx = store_with_context
 
     s = Spec(
-        "spec",
-        {
+        identifier="spec",
+        properties={
             StorageCost("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
             }
@@ -33,34 +32,37 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     )
     s.save_with(ctx, store)
 
-    loaded = Spec.load_with("spec", ctx, store)
+    loaded = Spec.load_with("spec", context=ctx, store=store)
+    assert s == loaded
+
+
+def test_save_load_default(store_with_context: Tuple[Store, Context]):  # noqa
+    store, ctx = store_with_context
+
+    s = Spec(
+        properties={
+            StorageCost("rationale"): {
+                "test": LocalObjectSize.value().less_than(3)
+            }
+        },
+    )
+    s.save_with(ctx, store)
+
+    loaded = Spec.load_with(context=ctx, store=store)
     assert s == loaded
 
 
 def test_load_failure(store_with_context: Tuple[Store, Context]):  # noqa
     store, ctx = store_with_context
     with pytest.raises(RuntimeError):
-        _ = Spec.load_with("spec", ctx, store)
+        _ = Spec.load_with("spec", context=ctx, store=store)
 
 
 def test_non_unique_properties():
     with pytest.raises(RuntimeError):
         _ = Spec(
-            "spec",
-            {StorageCost("rationale"): {}, StorageCost("rationale2"): {}},
-        )
-
-
-def test_non_unique_requirement_ids():
-    with pytest.raises(RuntimeError):
-        _ = Spec(
-            "spec",
-            {
-                StorageCost("rationale"): {
-                    "id1": LocalObjectSize.value().less_than(5)
-                },
-                TaskEfficacy("rationale"): {
-                    "id1": LocalObjectSize.value().less_than(3),
-                },
+            properties={
+                StorageCost("rationale"): {},
+                StorageCost("rationale2"): {},
             },
         )

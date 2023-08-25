@@ -16,7 +16,7 @@ from mlte.value.types.integer import Integer
 @pytest.mark.skip("Disabled for artifact protocol development.")
 def test_instance_with_content(tmp_path):
     spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
     spec.save()
 

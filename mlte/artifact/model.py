@@ -4,7 +4,7 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
-from typing import Union
+from typing import Optional, Union
 
 from pydantic import Field
 
@@ -12,6 +12,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.spec.model import SpecModel
+from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import ValueModel
 
 
@@ -24,6 +25,9 @@ class ArtifactHeaderModel(BaseModel):
     type: ArtifactType
     """The type identfier for the artifact."""
 
+    timestamp: Optional[int] = -1
+    """The timestamp of creation of this artifact, as Unix time."""
+
 
 class ArtifactModel(BaseModel):
     """The base model for all MLTE artifacts."""
@@ -31,7 +35,7 @@ class ArtifactModel(BaseModel):
     header: ArtifactHeaderModel
     """The artifact header."""
 
-    body: Union[NegotiationCardModel, ValueModel, SpecModel] = Field(
-        ..., discriminator="artifact_type"
-    )
+    body: Union[
+        NegotiationCardModel, ValueModel, SpecModel, ValidatedSpecModel
+    ] = Field(..., discriminator="artifact_type")
     """The artifact body."""

@@ -6,13 +6,12 @@ Class in charge of validating a Spec.
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List
 
 from mlte.spec.spec import Spec
 from mlte.validation.result import Result
+from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.artifact import Value
-
-from .validated_spec import ValidatedSpec
 
 # -----------------------------------------------------------------------------
 # SpecValidator
@@ -38,12 +37,20 @@ class SpecValidator:
         self.values: Dict[str, Value] = {}
         """Where values will be gathered for validation."""
 
+    def add_values(self, values: List[Value]):
+        """
+        Adds multiple values.
+
+        :param values: The list of values to add to the internal list.
+        """
+        for value in values:
+            self.add_value(value)
+
     def add_value(self, value: Value):
         """
         Adds a value associated to a property and measurements.
 
-        :param value: The value to add to the list
-        :type value: Value
+        :param value: The value to add to the internal list.
         """
         if value.metadata.get_id() in self.values:
             raise RuntimeError(
@@ -56,17 +63,15 @@ class SpecValidator:
         Validates the internal properties given its requirements and the stored values, and generates a ValidatedSpec from it.
 
         :return: The validated specification
-        :rtype: ValidatedSpec
         """
         results = self._validate_results()
-        return ValidatedSpec(self.spec, results)
+        return ValidatedSpec(spec=self.spec, results=results)
 
-    def _validate_results(self) -> Dict[str, Result]:
+    def _validate_results(self) -> Dict[str, Dict[str, Result]]:
         """
-        Validates a set of stored results.
+        Validates a set of stored Values, and generates Results.
 
-        :return: A document indicating the Result for each identifier.
-        :rtype: Dict[str, Result]
+        :return: A dictionary having results for each id, separated by property id.
         """
         # Check that all conditions have values to be validated.
         for conditions in self.spec.properties.values():
@@ -77,8 +82,11 @@ class SpecValidator:
                     )
 
         # Validate and aggregate the results.
-        results = {}
-        for conditions in self.spec.properties.values():
+        results: Dict[str, Dict[str, Result]] = {}
+        for property, conditions in self.spec.properties.items():
+            results[property.name] = {}
             for measurement_id, condition in conditions.items():
-                results[measurement_id] = condition(self.values[measurement_id])
+                results[property.name][measurement_id] = condition(
+                    self.values[measurement_id]
+                )
         return results

@@ -1,5 +1,5 @@
 """
-test/spec/test_specvalidator.py
+test/validation/test_specvalidator.py
 
 Unit tests for SpecValidator functionality.
 """
@@ -10,14 +10,14 @@ import pytest
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec.spec import Spec
-from mlte.spec.spec_validator import SpecValidator
+from mlte.validation.spec_validator import SpecValidator
 from mlte.value.types.integer import Integer
 
 
 def test_no_property():
     # Spec validator does not have value for property.
     spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
     specValidator = SpecValidator(spec)
 
@@ -26,9 +26,9 @@ def test_no_property():
 
 
 def test_no_requirement():
-    # Spec validator does not have value for requirement.
+    # Spec validator does not have value for condition.
     spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
     specValidator = SpecValidator(spec)
 
@@ -46,7 +46,7 @@ def test_no_requirement():
 
 def test_success():
     spec = Spec(
-        "spec", {StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
     specValidator = SpecValidator(spec)
 

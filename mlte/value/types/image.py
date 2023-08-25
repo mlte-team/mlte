@@ -11,10 +11,10 @@ import typing
 from pathlib import Path
 from typing import Union
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.validation.condition import Condition
+from mlte.spec.condition import Condition
 from mlte.validation.result import Ignore
 from mlte.value.artifact import Value
 from mlte.value.model import ImageValueModel, ValueModel, ValueType
@@ -57,9 +57,7 @@ class Image(Value):
         :return: The artifact model
         """
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier, type=self.type
-            ),
+            header=self.build_artifact_header(),
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,

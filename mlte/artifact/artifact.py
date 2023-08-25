@@ -7,9 +7,11 @@ Artifact protocol implementation.
 from __future__ import annotations
 
 import abc
+import time
+from typing import Optional
 
 import mlte._private.meta as meta
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.session.state import session
@@ -41,6 +43,9 @@ class Artifact(metaclass=abc.ABCMeta):
 
         self.type = type
         """The identifier for the artifact type"""
+
+        self.timestamp = -1
+        """The Unix timestamp of when the artifact was saved to a store."""
 
     @abc.abstractmethod
     def to_model(self) -> ArtifactModel:
@@ -88,18 +93,25 @@ class Artifact(metaclass=abc.ABCMeta):
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
+        artifact_model = self.to_model()
+        artifact_model.header.timestamp = int(time.time())
         with ManagedSession(store.session()) as handle:
             handle.write_artifact(
                 context.namespace,
                 context.model,
                 context.version,
-                self.to_model(),
+                artifact_model,
                 force=force,
                 parents=parents,
             )
 
     @classmethod
-    def load(cls, identifier: str) -> Artifact:
+    def get_default_id(cls) -> str:
+        """To be overriden by derived classes."""
+        return "default"
+
+    @classmethod
+    def load(cls, identifier: Optional[str] = None) -> Artifact:
         """
         Load an artifact from the configured global session.
         :param identifier: The identifier for the artifact
@@ -107,11 +119,13 @@ class Artifact(metaclass=abc.ABCMeta):
         This is equivalent to calling:
             Artifact.load_with(session().context, session().store)
         """
-        return cls.load_with(identifier, session().context, session().store)
+        return cls.load_with(
+            identifier, context=session().context, store=session().store
+        )
 
     @classmethod
     def load_with(
-        cls, identifier: str, context: Context, store: Store
+        cls, identifier: Optional[str] = None, *, context: Context, store: Store
     ) -> Artifact:
         """
         Load an artifact with the given context and store configuration.
@@ -119,6 +133,9 @@ class Artifact(metaclass=abc.ABCMeta):
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """
+        if identifier is None:
+            identifier = cls.get_default_id()
+
         with ManagedSession(store.session()) as handle:
             return cls.from_model(
                 handle.read_artifact(
@@ -128,3 +145,9 @@ class Artifact(metaclass=abc.ABCMeta):
                     identifier,
                 )
             )
+
+    def build_artifact_header(self) -> ArtifactHeaderModel:
+        """Generates the common header model for artifacts."""
+        return ArtifactHeaderModel(
+            identifier=self.identifier, type=self.type, timestamp=self.timestamp
+        )

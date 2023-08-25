@@ -19,7 +19,7 @@ from typing import Any, Dict
 
 import mlte._private.meta as meta
 import mlte.value.artifact as artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
@@ -68,9 +68,7 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         :return: The artifact model
         """
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier, type=self.type
-            ),
+            header=self.build_artifact_header(),
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,

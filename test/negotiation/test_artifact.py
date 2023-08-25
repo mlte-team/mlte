@@ -64,7 +64,7 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:
     card = NegotiationCard("my-card")
     card.save_with(ctx, store)
 
-    loaded = NegotiationCard.load_with("my-card", ctx, store)
+    loaded = NegotiationCard.load_with("my-card", context=ctx, store=store)
     assert loaded == card
 
 

@@ -36,7 +36,7 @@ class PropertyModel(BaseModel):
     """The rationale for this property being important in this situation."""
 
     conditions: Dict[str, ConditionModel] = {}
-    """A dictionary of conditions, keyed by identifier, to be validated for this property."""
+    """A dictionary of conditions, keyed by measurement id, to be validated for this property."""
 
 
 class SpecModel(BaseModel):

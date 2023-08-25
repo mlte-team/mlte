@@ -76,5 +76,5 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     i = Real(m, 3.14)
     i.save_with(ctx, store)
 
-    loaded = Real.load_with("id.value", ctx, store)
+    loaded = Real.load_with("id.value", context=ctx, store=store)
     assert loaded == i

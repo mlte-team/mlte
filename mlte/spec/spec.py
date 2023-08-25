@@ -6,16 +6,17 @@ A collection of properties and their measurements.
 
 from __future__ import annotations
 
-import itertools
 import typing
 from typing import Dict, List, Union
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.property import Property
+from mlte.spec.condition import Condition
 from mlte.spec.model import PropertyModel, SpecModel
-from mlte.validation.condition import Condition
+
+DEFAULT_SPEC_ID = "default.spec"
 
 
 def _unique(collection: List[str]) -> bool:
@@ -43,7 +44,9 @@ class Spec(Artifact):
     """
 
     def __init__(
-        self, identifier: str, properties: Dict[Property, Dict[str, Condition]]
+        self,
+        identifier: str = DEFAULT_SPEC_ID,
+        properties: Dict[Property, Dict[str, Condition]] = {},
     ):
         """
         Initialize a Spec instance.
@@ -59,18 +62,6 @@ class Spec(Artifact):
         if not _unique([p.name for p in self.properties.keys()]):
             raise RuntimeError("All properties in Spec must be unique.")
 
-        if not _unique(
-            list(
-                itertools.chain.from_iterable(
-                    [
-                        [measurement_id for measurement_id in conditions]
-                        for conditions in properties.values()
-                    ]
-                )
-            )
-        ):
-            raise RuntimeError("All measurement ids in Spec must be unique.")
-
     # -------------------------------------------------------------------------
     # Serialization.
     # -------------------------------------------------------------------------
@@ -78,10 +69,7 @@ class Spec(Artifact):
     def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier,
-                type=self.type,
-            ),
+            header=self.build_artifact_header(),
             body=SpecModel(
                 artifact_type=ArtifactType.SPEC,
                 properties=[
@@ -123,6 +111,11 @@ class Spec(Artifact):
             for measurement_id, condition in self.properties[property].items()
         }
         return property_model
+
+    @classmethod
+    def get_default_id(cls) -> str:
+        """Overriden"""
+        return DEFAULT_SPEC_ID
 
     # -------------------------------------------------------------------------
     # Property Manipulation

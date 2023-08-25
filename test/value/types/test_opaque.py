@@ -96,5 +96,5 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     o = Opaque(m, {"foo": "bar"})
     o.save_with(ctx, store)
 
-    loaded = Opaque.load_with("id.value", ctx, store)
+    loaded = Opaque.load_with("id.value", context=ctx, store=store)
     assert loaded == o

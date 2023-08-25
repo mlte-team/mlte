@@ -12,7 +12,7 @@ from typing import List
 import deepdiff
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.negotiation.model import (
     DataDescriptor,
@@ -21,13 +21,15 @@ from mlte.negotiation.model import (
     SystemDescriptor,
 )
 
+DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
+
 
 class NegotiationCard(Artifact):
     """The negotiation card contains information produced at MLTE negotiation points."""
 
     def __init__(
         self,
-        identifier: str,
+        identifier: str = DEFAULT_NEGOTIATION_CARD_ID,
         system: SystemDescriptor = SystemDescriptor(),
         data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
@@ -46,10 +48,7 @@ class NegotiationCard(Artifact):
     def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=self.identifier,
-                type=self.type,
-            ),
+            header=self.build_artifact_header(),
             body=NegotiationCardModel(
                 artifact_type=ArtifactType.NEGOTIATION_CARD,
                 system=self.system,
@@ -71,6 +70,11 @@ class NegotiationCard(Artifact):
             data=body.data,
             model=body.model,
         )
+
+    @classmethod
+    def get_default_id(cls) -> str:
+        """Overriden"""
+        return DEFAULT_NEGOTIATION_CARD_ID
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):
