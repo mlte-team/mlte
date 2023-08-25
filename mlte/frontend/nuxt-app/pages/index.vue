@@ -31,13 +31,14 @@
       <div class="split-div">
         <b>Model(s)</b>
         <div class="scrollable-div">
-          <UsaCheckbox
-            v-for="model in modelOptions"
-            :key="model"
-            @update:modelValue="updateSelectedModels(model)"
-          >
-            {{ model }}
-          </UsaCheckbox>
+          <div v-for="model in modelOptions">
+            <ScrollableListItem
+              @update="updateSelectedModels(model)"
+              @delete="deleteModel(model)"
+            >
+              {{ model }}
+            </ScrollableListItem>
+          </div>
         </div>
         <br />
       </div>
@@ -45,13 +46,14 @@
       <div class="split-div">
         <b>Version(s)</b>
         <div class="scrollable-div">
-          <UsaCheckbox
-            v-for="version in versionOptions"
-            :key="version"
-            @update:modelValue="updateSelectedVersions(version)"
-          >
-            {{ version }}
-          </UsaCheckbox>
+          <div v-for="option in versionOptions">
+            <ScrollableListItem
+              @update="updateSelectedVersions(option.version)"
+              @delete="deleteVersion(option.version)"
+            >
+              {{ option.model }} - {{ option.version }}
+            </ScrollableListItem>
+          </div>
         </div>
         <br />
       </div>
@@ -158,24 +160,14 @@ const path = ref([
   },
 ]);
 
-const namespaces = ref(["Default", "TEST 1", "Super longg purposes"]);
-
+var { data: namespaces } = await useFetch("api/namespace", { method: "GET" });
 const selectedNamespace = ref("Default");
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
 
-const modelOptions = ref([
-  "model1",
-  "model2",
-  "model3",
-  "model4",
-  "model5",
-  "model6",
-  "model7",
-  "model8",
-]);
+const modelOptions = ref<string[]>([]);
 const selectedModels = ref<string[]>([]);
-const versionOptions = ref(["v1", "v2", "v3", "v4", "v5", "v6", "v1.5"]);
+const versionOptions = ref<{model: string, version: string}[]>([]);
 const selectedVersions = ref<string[]>([]);
 // const searchInput = ref("");
 
@@ -206,48 +198,107 @@ const valuesHeaders = ref([
   { id: "date", label: "Date", sortable: true },
 ]);
 
-const negotiationCards = ref([
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-  { id: "test1", descriptor: "test1", date: "test1" },
-]);
+const negotiationCards = ref([]);
 
-function selectNamespace(namespace: string) {
-  // TODO : Send request to backend to get new info
+async function selectNamespace(namespace: string) {
   selectedNamespace.value = namespace;
+  const { data } = await useFetch<string[] | null>("api/namespace/" + namespace + "/model", { method: "GET" });
+  modelOptions.value = data.value !== null ? data.value : [];
+  versionOptions.value = []
 }
 
 async function addNamespace(namespace: string) {
-  // TODO : Post this value to the backend so that it is validated.
-  // TODO : Validate that submitted value isn't empty
-  namespaces.value.push(namespace);
-  newNamespaceFlag.value = false;
-  newNamespaceInput.value = "";
-  // const { data } = await useFetch("proxy/healthz");
-  // this.namespaces.push(data)
+  if(namespace != ""){
+    await useFetch("api/namespace", {
+      method: "POST",
+      body: { 
+        identifier: namespace,
+      }
+    });
+    // TODO : Error handling
+
+    const { data } = useFetch("api/namespace", { method: "GET" })
+    namespaces = data;
+    newNamespaceFlag.value = false;
+    newNamespaceInput.value = "";
+  }
 }
 
-function deleteNamespace(namespace: string) {
+async function deleteNamespace(namespace: string) {
+  // TODO : Add confirm
+
   // TODO : Post this value to the backend
-  namespaces.value.splice(namespaces.value.indexOf(namespace), 1);
+  // namespaces.value.splice(namespaces.value.indexOf(namespace), 1);
+
+  // await useFetch("/api/namespace/" + namespace, {
+  //   method: 'DELETE',
+  // }).then(() => console.log('request happened ig'));
+  // TODO : Error handling
+
+  // const { data, error } = await useFetch("http://localhost:8080/api/namespace/" + namespace, {
+  //   method: 'DELETE',
+  // });
+  const { data, error } = await useFetch("api/namespace/" + namespace, {
+    method: 'DELETE',
+  });
+  console.log(data);
+  console.log(error);
+
+
+  // const response = await fetch('https://testapi.jasonwatmore.com/products/1', { method: 'DELETE' });
+  // const data = await response.json();  
+
+  // const response = await fetch('/test/', { method: 'DELETE' });
+  // const data = await response.json();
+
+  // await fetch('/api/namespace/test', { method: 'DELETE' });
 }
 
-function updateSelectedModels(model: string) {
-  // TODO : Post this to packend and get updated data
+async function deleteModel(model: string){
+  // TODO : Add confirm
+  const { data, error } = await useFetch("api/namespace/" + selectedNamespace.value + "/model/" + model, {
+    method: 'DELETE',
+  });
+  console.log(data);
+  console.log(error);
+  // TODO : Error handling
+
+  console.log("model deleted xd");
+  console.log(model)
+}
+
+async function deleteVersion(version: string){
+  // TODO : Add confirm
+  // const { data, error } = await useFetch("api/namespace/" + selectedNamespace.value + "/model/" + model, {
+  //   method: 'DELETE',
+  // });
+  // console.log(data);
+  // console.log(error);
+  // TODO : Error handling
+
+  console.log("version deleted xd");
+  console.log(version)
+}
+
+async function updateSelectedModels(model: string) {
   const index = selectedModels.value.indexOf(model);
   if (index === -1) {
     selectedModels.value.push(model);
+    const { data: versions } = await useFetch<string[]>("api/namespace/" + selectedNamespace.value + "/model/" + model + "/version");
+    if(versions.value){
+      versions.value.forEach(version => {
+        versionOptions.value.push({'model': model, 'version': version})
+      })
+    }
   } else {
+    versionOptions.value = versionOptions.value.filter(function (version: string) {
+      return version.substring(0, model.length) != model
+    })
+
     selectedModels.value.splice(index, 1);
   }
+
+  versionOptions.value.sort();
 }
 
 function updateSelectedVersions(version: string) {
