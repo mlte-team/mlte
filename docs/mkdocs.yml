@@ -4,7 +4,7 @@ theme:
   palette:
     scheme: slate
   logo: https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg
-  favicon: https://github.com/mlte-team/mlte/blob/bd60529ddb892b99c7f8c69a9644643858232cd5/assets/mlte_favicon.png
+  favicon: img/favicon.ico
 watch:
   - ../mlte
 plugins:
