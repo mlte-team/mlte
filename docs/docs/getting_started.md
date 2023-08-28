@@ -44,6 +44,14 @@ from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
 ```
 
+## Running the User Interface
+
+To run the user interface (UI), run the following in your command line:
+```
+$ mlte-ui
+```
+Once you run it, follow the link to view the MLTE UI homepage. For more information on how to use the UI, see our how-to guide on [using MLTE](using_mlte.md).
+
 ## Next Steps
 
-Once you're set up, head over to the next how-to guide to start working through the MLTE process [content coming soon!].
+Once you're set up, we recommend referencing our how-to guide on [using MLTE](using_mlte.md). You can also look at the full [MLTE framework](mlte_framework.md) or check out our [development](development.md) guide if you're interested in contributing.

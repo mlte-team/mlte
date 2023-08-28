@@ -25,6 +25,7 @@ nav:
   - Home: 'index.md'
   - 'How-to Guides':
     - 'Getting Started': 'getting_started.md'
+    - 'Using MLTE': 'using_mlte.md'
     - 'Development': 'development.md'
   - 'Tutorials':
     - 'Testing a Model with MLTE': 'tutorial0.md'
