@@ -6,6 +6,8 @@ Configuration management for FastAPI application.
 
 from __future__ import annotations
 
+from typing import List
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -52,6 +54,9 @@ class Settings(BaseSettings):
         if v not in _LOG_LEVELS:
             raise ValueError(f"Unsupported log level: {v}.")
         return v
+
+    ALLOWED_ORIGINS: List[str] = []
+    """A list of allowed CORS origins."""
 
     model_config = SettingsConfigDict(case_sensitive=True)
 

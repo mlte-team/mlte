@@ -6,8 +6,10 @@ Entry point for MLTE artifact store server.
 
 import logging
 import sys
+from typing import List
 
 import uvicorn
+from pydantic.networks import HttpUrl
 
 import mlte.web.store.app_factory as app_factory
 from mlte.store.base import StoreType
@@ -21,16 +23,30 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 
-def run(host: str, port: int, backend_uri: str) -> int:
+def _parse_origins(allowed_origins: List[str]) -> List[HttpUrl]:
+    """
+    Validate allowed origins.
+    :param allowed_origins: The collection of allowed origins, as strings
+    :raises ValidationError: If validation fails
+    :return: The parsed allowed origins
+    """
+
+    return [HttpUrl(url) for url in allowed_origins]
+
+
+def run(
+    host: str, port: int, backend_uri: str, allowed_origins: List[str]
+) -> int:
     """
     Run the artifact store application.
     :param host: The application host
     :param port: The application port
     :param backend_uri: The backend URI string
+    :param allowed_origins: A list of allowed CORS origins
     :return: Return code
     """
     # The global FastAPI application
-    app = app_factory.create()
+    app = app_factory.create(allowed_origins=_parse_origins(allowed_origins))
 
     # Initialize the backing store instance
     store = create_store(backend_uri)
@@ -51,7 +67,12 @@ def run(host: str, port: int, backend_uri: str) -> int:
 def main() -> int:
     # TODO(Kyle): use log level.
     logging.basicConfig(level=logging.INFO)
-    return run(settings.APP_HOST, int(settings.APP_PORT), settings.BACKEND_URI)
+    return run(
+        settings.APP_HOST,
+        int(settings.APP_PORT),
+        settings.BACKEND_URI,
+        settings.ALLOWED_ORIGINS,
+    )
 
 
 if __name__ == "__main__":

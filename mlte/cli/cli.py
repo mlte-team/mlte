@@ -59,8 +59,14 @@ def _attach_store(
     parser.add_argument(
         "--backend-uri",
         type=str,
-        required=True,
-        help="The URI for the backend store.",
+        default=settings.BACKEND_URI,
+        help=f"The URI for the backend store (default: {settings.BACKEND_URI}).",
+    )
+    parser.add_argument(
+        "--allowed-origins",
+        nargs="*",
+        default=settings.ALLOWED_ORIGINS,
+        help=f"A list of allowed CORS origins (default: {settings.ALLOWED_ORIGINS})",
     )
 
 
