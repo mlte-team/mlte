@@ -9,6 +9,7 @@ import sys
 from typing import List
 
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic.networks import HttpUrl
 
 import mlte.web.store.app_factory as app_factory
@@ -23,14 +24,13 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 
-def _parse_origins(allowed_origins: List[str]) -> List[HttpUrl]:
+def _validate_origins(allowed_origins: List[str]) -> List[HttpUrl]:
     """
     Validate allowed origins.
     :param allowed_origins: The collection of allowed origins, as strings
     :raises ValidationError: If validation fails
     :return: The parsed allowed origins
     """
-
     return [HttpUrl(url) for url in allowed_origins]
 
 
@@ -45,8 +45,23 @@ def run(
     :param allowed_origins: A list of allowed CORS origins
     :return: Return code
     """
+    _ = _validate_origins(allowed_origins)
+
     # The global FastAPI application
-    app = app_factory.create(allowed_origins=_parse_origins(allowed_origins))
+    app = app_factory.create()
+
+    # Inject routes
+    app.include_router(api_router, prefix=settings.API_PREFIX)
+
+    # Attach middleware
+    # NOTE(Kyle): It is imporant middleware is applied AFTER routes are injected
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allowed_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     # Initialize the backing store instance
     store = create_store(backend_uri)
@@ -55,9 +70,6 @@ def run(
             "Cannot run artifact store server with remote HTTP backend."
         )
     state.set_store(store)
-
-    # Inject routes
-    app.include_router(api_router, prefix=settings.API_PREFIX)
 
     # Run the server
     uvicorn.run(app, host=host, port=port)

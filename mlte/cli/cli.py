@@ -6,6 +6,7 @@ Top-level command line interface.
 
 import argparse
 import sys
+import traceback
 
 import mlte.frontend as frontend
 import mlte.web.store.main as server
@@ -96,6 +97,9 @@ def run():
     except KeyError:
         parser.print_help()
         return EXIT_SUCCESS
+    except Exception:
+        traceback.print_exc()
+        return EXIT_FAILURE
 
 
 if __name__ == "__main__":
