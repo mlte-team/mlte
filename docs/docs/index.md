@@ -19,5 +19,17 @@ Welcome to the MLTE Documentation!
 
 - Version: 0.1.6 [Version 0.2.0 coming soon!]
 - Contact Email: mlte dot team dot info at gmail dot com
+- Citation: While not required, it is highly encouraged and greatly appreciated if you cite our paper when you use MLTE for academic research.
 
-#### Check out MLTE on [GitHub](https://github.com/mlte-team/mlte)!
+```
+@article{maffey2023mlteing,
+  title={MLTEing Models: Negotiating, Evaluating, and Documenting 
+  Model and System Qualities},
+  author={Maffey, Katherine R and Dotterrer, Kyle and Niemann, Jennifer 
+  and Cruickshank, Iain and Lewis, Grace A and K{\"a}stner, Christian},
+  journal={arXiv preprint arXiv:2303.01998},
+  year={2023}
+}
+```
+
+## Check out MLTE on [GitHub](https://github.com/mlte-team/mlte)!
