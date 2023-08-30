@@ -6,6 +6,7 @@ Top-level command line interface.
 
 import argparse
 import sys
+import traceback
 
 import mlte.frontend as frontend
 import mlte.web.store.main as server
@@ -59,8 +60,14 @@ def _attach_store(
     parser.add_argument(
         "--backend-uri",
         type=str,
-        required=True,
-        help="The URI for the backend store.",
+        default=settings.BACKEND_URI,
+        help=f"The URI for the backend store (default: {settings.BACKEND_URI}).",
+    )
+    parser.add_argument(
+        "--allowed-origins",
+        nargs="*",
+        default=settings.ALLOWED_ORIGINS,
+        help=f"A list of allowed CORS origins (default: {settings.ALLOWED_ORIGINS})",
     )
 
 
@@ -90,6 +97,9 @@ def run():
     except KeyError:
         parser.print_help()
         return EXIT_SUCCESS
+    except Exception:
+        traceback.print_exc()
+        return EXIT_FAILURE
 
 
 if __name__ == "__main__":
