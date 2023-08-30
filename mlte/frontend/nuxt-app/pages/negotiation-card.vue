@@ -48,7 +48,7 @@
       the IMT negotiation point, using the answers to inform initial model
       development. At the SDMT negotiation point, answers should be
       modified/updated according to the results of IMT. As the
-      <a href="/TODO">Specification</a> is created, teams should refer to this
+      Specification is created, teams should refer to this
       negotiation card to ensure they capture all relevant critical aspects of
       the model and system.
     </p>

@@ -5,8 +5,9 @@ export default defineNuxtConfig({
   },
   ssr: false,
   css: ["@/assets/css/styles.css", "@/assets/uswds/css/styles.css"],
-
-  routeRules: {
-    "/api/**": { proxy: "http://localhost:8080/api/**" },
-  },
+  nitro: {
+    routeRules: {
+      "/api/**": { proxy: "http://localhost:8080/api/**" },
+    },
+  }
 });
