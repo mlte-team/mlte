@@ -1,6 +1,7 @@
 <template>
   <UsaCheckbox
-    @update:modelValue="$emit('update')"
+    :modelValue="props.selected"
+    @update:modelValue="$emit('update');"
   >
     <slot/>
     <UsaButton variant="unstyled" style="float: right; margin-right: 10px;" @click="$emit('delete')">
@@ -8,3 +9,12 @@
     </UsaButton>
   </UsaCheckbox>
 </template>
+
+<script setup>
+var props = defineProps({
+  selected: {
+    type: Boolean,
+    required: true
+  }
+})
+</script>
