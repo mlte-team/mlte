@@ -1,6 +1,6 @@
 # Machine Learning Test and Evaluation (MLTE) Framework
 
-![MLTE Diagram](https://github.com/mlte-team/mlte/blob/500a80c9dd15310e1f37b127a289472533200c24/assets/MLTE_Diagram_Dark.png)
+![MLTE Diagram](img/MLTE_Diagram_Dark.png)
 
 ## ➀ Negotiate Model Quality Requirements (IMT Negotiation)
 
@@ -40,3 +40,7 @@ Model developers and software engineers evaluate the specification defined durin
 ## ➄ Communicate ML Evaluation Results
 
 Teams use the MLTE automated report functionality to encapsulate all knowledge gained about the model and the system as a consequence of the evaluation process. This facilitates the team's ability to communicate results from the evidence collected against previously-agreed-upon requirements. 
+
+## More Information
+
+To read more about the MLTE framework, check out our <a href="https://arxiv.org/abs/2303.01998" target="_blank">paper</a>!

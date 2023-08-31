@@ -12,7 +12,7 @@ Welcome to the MLTE Documentation!
 ## Getting Started with MLTE
 
 - If you're ready to jump right in, we recommend you head over to the [Getting Started](getting_started.md) section.
-- If you're new to MLTE and want a primer before you dive in, we welcome you to read our [paper](https://arxiv.org/abs/2303.01998) (don't worry, it's only 5 pages).
+- If you're new to MLTE and want a primer before you dive in, we welcome you to read our <a href="https://arxiv.org/abs/2303.01998" target="_blank">paper</a> (don't worry, it's only 5 pages).
 - If you have no time for papers but want a more deliberate introduction to MLTE, check out the [Tutorials](tutorial0.md) section.
 
 ## More Information
@@ -32,4 +32,4 @@ Welcome to the MLTE Documentation!
 }
 ```
 
-## Check out MLTE on [GitHub](https://github.com/mlte-team/mlte)!
+## Check out MLTE on <a href="https://github.com/mlte-team/mlte" target="_blank">GitHub</a>!

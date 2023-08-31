@@ -456,3 +456,7 @@ report.to_html(REPORTS_DIR / "report.html", local=True)
 ```
 
 If the model performs as desired, teams can consider the evaluation complete. However, it is very common that teams will need to iterate through [IMT](#2-internal-model-testing-imt) and [SDMT](#4-system-dependent-model-testing-sdmt) several times before they are satisfied with the results and ready to communicate with stakeholders.
+
+## More Information
+
+If this guide makes you want to learn more about MLTE, check out our <a href="https://arxiv.org/abs/2303.01998" target="_blank">paper</a>!

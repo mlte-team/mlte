@@ -18,7 +18,7 @@ or
 ```bash
 $ conda install mlte-python
 ```
-If you are new to Python and haven't installed it, we recommend starting with [Python for Beginners](https://www.python.org/about/gettingstarted/).
+If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
 ## Subpackages
 
