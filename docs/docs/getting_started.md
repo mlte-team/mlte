@@ -1,10 +1,13 @@
 # Getting Started
+
 Or, how to set up the MLTE infrastructure.
 
 ## Introduction
+
 MLTE is a framework (a process to follow) and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the MLTE [framework](mlte_framework.md).
 
 ## Installation
+
 If you already have Python installed you can install *MLTE* with
 
 ```bash
@@ -18,6 +21,7 @@ $ conda install mlte-python
 If you are new to Python and haven't installed it, we recommend starting with [Python for Beginners](https://www.python.org/about/gettingstarted/).
 
 ## Subpackages
+
 MLTE contains the following subpackages:
 
 - **Properties**: Properties are any attribute of the trained model, the procedure used to train it (including training data), or its ability to perform inference. A property is ‘abstract’ in the sense that there may be many ways in which it might be assessed. Developers will consider priorities, tradeoffs, and weaknesses of their model in the context of the system and prioritize properties for testing.  
@@ -30,6 +34,7 @@ MLTE contains the following subpackages:
 
 
 ## Import
+
 *MLTE* can be imported like any Python pacakge using the standard conventions.
 
 ```python
@@ -39,5 +44,14 @@ from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
 ```
 
+## Running the User Interface
+
+To run the user interface (UI), run the following in your command line:
+```
+$ mlte-ui
+```
+Once you run it, follow the link to view the MLTE UI homepage. For more information on how to use the UI, see our how-to guide on [using MLTE](using_mlte.md).
+
 ## Next Steps
-Once you're set up, head over to the next how-to guide to start working through the MLTE process [content coming soon!].
+
+Once you're set up, we recommend referencing our how-to guide on [using MLTE](using_mlte.md). You can also look at the full [MLTE framework](mlte_framework.md) or check out our [development](development.md) guide if you're interested in contributing.
