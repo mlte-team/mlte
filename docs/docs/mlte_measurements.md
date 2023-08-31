@@ -7,4 +7,4 @@
 - local_object_size
     - Measure the size of a locally-stored object.
 
-For more information on MLTE measurements, see the [measurement](reference/measurement/measurement.md) section of the API Reference.
+For more information on `MLTE` measurements, see the [measurement](reference/measurement/measurement.md) section of the API Reference.

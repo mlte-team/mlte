@@ -1,6 +1,6 @@
 # MLTE Process Resources
 
-MLTE was created based on existing techniques and cutting-edge research for machine learning. This section gives some explanations of why the team made the choices we did for the MLTE framework and infrastructure.
+`MLTE` was created based on existing techniques and cutting-edge research for machine learning. This section gives some explanations of why the team made the choices we did for the `MLTE` framework and infrastructure.
 
 
 ## Baseline and Performance Metric Selection
@@ -70,7 +70,7 @@ If it is possible for multiple holdout test sets to be generated, using differen
 
 However, it is often not possible for practitioners to generate , and there is research to support that substantial overfitting does not occur even if a single test set is used multiple times (<a href="https://proceedings.neurips.cc/paper/2019/file/ee39e503b6bedf0c98c388b7e8589aca-Paper.pdf" target="_blank">Roelofs et al. 2019</a>). 
 
-To differentiate between evaluations, we recommend ensuring good version control for models as they are the unit by which MLTE tracks evaluations.
+To differentiate between evaluations, we recommend ensuring good version control for models as they are the unit by which `MLTE` tracks evaluations.
     
 
 ## Model Property Definition

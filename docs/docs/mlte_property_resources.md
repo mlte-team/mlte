@@ -1,6 +1,6 @@
 # MLTE Property Resources
 
-*Properties* are characteristics of the trained model, the procedure used to train it (including training data), or its ability to perform inference. This section gives more detail and background on each property within MLTE. The properties are organized into three categories: 
+*Properties* are characteristics of the trained model, the procedure used to train it (including training data), or its ability to perform inference. This section gives more detail and background on each property within `MLTE`. The properties are organized into three categories: 
 
 - Functionality
 - Robustness

@@ -1,6 +1,6 @@
 # Testing a Model with MLTE
 
-In this tutorial, you will conduct a preliminary test of an example model using a MLTE process called Internal Model Testing. After doing this evaluation, you will use the interface to look at the artifacts you've created.
+In this tutorial, you will conduct a preliminary test of an example model using a `MLTE` process called Internal Model Testing. After doing this evaluation, you will use the interface to look at the artifacts you've created.
 
 ## MLTE Overview
 
@@ -10,17 +10,17 @@ In this tutorial, you will conduct a preliminary test of an example model using 
 
 This step of the [`MLTE` process](mlte_framework.md) ensues after initial model development has been completed and a model is ready for a first round of testing against the chosen baseline using a chosen performance metric. For this tutorial, we will use a basic image classifier to demonstrate how this process works in `MLTE`, and use a basic accuracy measurement and threshold (rather than expect you to go through the requirements definition process). The steps of IMT are as follows:
 
-- Initialize the MLTE context.
+- Initialize the `MLTE` context.
 - Define a preliminary specification.
 - Collect evidence.
 - Validate results.
 - Examine findings.
 
-To get started, you'll need a Jupyter Notebook running, and you'll need to have MLTE installed. To do so, see the [Getting Started](getting_started.md) section of this documentation.
+To get started, you'll need a Jupyter Notebook running, and you'll need to have `MLTE` installed. To do so, see the [Getting Started](getting_started.md) section of this documentation.
 
 ## Initialize the MLTE Context
 
-Before starting the test, we have to set up the MLTE context. MLTE contains a global context that manages the currently active session, and intializing it tells MLTE how to store all of the artifacts that it produces. This is important because the artifacts are a key way that MLTE verifies an evaluation has been completed properly.
+Before starting the test, we have to set up the `MLTE` context. `MLTE` contains a global context that manages the currently active session, and intializing it tells `MLTE` how to store all of the artifacts that it produces. This is important because the artifacts are a key way that `MLTE` verifies an evaluation has been completed properly.
 
 ```python
 import os
@@ -51,7 +51,7 @@ spec.save(parents=True, force=True)
 
 ## Collect Evidence
 
-After building the `Spec`, MLTE allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin MLTE type. Note that this example does not include data and model training code, but those can be found in the full MLTE <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
 
 ```python
 from sklearn.metrics import accuracy_score
@@ -94,7 +94,7 @@ validated_spec.save()
 
 ## Examine Findings
 
-To communicate results and examine findings, MLTE produces a report. Once the report is built, it can be accessed through the MLTE user interface.
+To communicate results and examine findings, `MLTE` produces a report. Once the report is built, it can be accessed through the `MLTE` user interface.
 
 ```python
 import time
@@ -154,10 +154,10 @@ report.spec = validated_spec
 report.to_html(REPORTS_DIR / "report.html", local=True)
 ```
 
-After building the report, you can run the MLTE user interface (UI) by running the following in your command line:
+After building the report, you can run the `MLTE` user interface (UI) by running the following in your command line:
 ```
 $ mlte-ui
 ```
-Once you run it, follow the link to view the MLTE UI homepage. In the UI, you'll see a section titled Reports. When you expand the section, you'll see all the reports you've generated under your defined context. You can click on the report and it will render in a new tab.
+Once you run it, follow the link to view the `MLTE` UI homepage. In the UI, you'll see a section titled Reports. When you expand the section, you'll see all the reports you've generated under your defined context. You can click on the report and it will render in a new tab.
 
-Congrats on finishing the tutorial! If you're interested in continuing to learn more about MLTE, you can look at our other tutorials [coming soon!], or head over to our guide on [using `MLTE`](using_mlte.md).
+Congrats on finishing the tutorial! If you're interested in continuing to learn more about `MLTE`, you can look at our other tutorials [coming soon!], or head over to our guide on [using `MLTE`](using_mlte.md).
