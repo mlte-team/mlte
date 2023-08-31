@@ -8,7 +8,8 @@
     "defineNuxtConfig": true,
     "defineNuxtPlugin": true,
     "useRoute": true,
-    "ref": true
+    "ref": true,
+    "useFetch": true
   },
   "extends": [
     "standard",

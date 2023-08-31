@@ -31,9 +31,9 @@
       <div class="split-div">
         <b>Model(s)</b>
         <div class="scrollable-div">
-          <div v-for="entry in modelOptions">
+          <div v-for="entry in modelOptions" :key="entry.model">
             <ScrollableListItem
-              :selected = entry.selected
+              :selected="entry.selected"
               @update="updateSelectedModels(entry)"
               @delete="deleteModel(entry)"
             >
@@ -47,7 +47,7 @@
       <div class="split-div">
         <b>Version(s)</b>
         <div class="scrollable-div">
-          <div v-for="entry in versionOptions">
+          <div v-for="entry in versionOptions" :key="entry.version">
             <ScrollableListItem
               :selected="entry.selected"
               @update="updateSelectedVersions(entry)"
@@ -162,16 +162,21 @@ const path = ref([
   },
 ]);
 
-var { data: namespaceOptions } = await useFetch<string[]>("http://localhost:8080/api/namespace", { method: "GET" });
-const selectedNamespace = ref("")
-if(namespaceOptions.value !== null && namespaceOptions.value.length > 0){
-  selectNamespace(namespaceOptions.value[0])
+const { data: namespaceOptions } = await useFetch<string[]>(
+  "http://localhost:8080/api/namespace",
+  { method: "GET" },
+);
+const selectedNamespace = ref("");
+if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
+  selectNamespace(namespaceOptions.value[0]);
 }
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
 
-const modelOptions = ref<{model: string, selected: Boolean}[]>([]);
-const versionOptions = ref<{model: string, version: string, selected: Boolean}[]>([]);
+const modelOptions = ref<{ model: string; selected: boolean }[]>([]);
+const versionOptions = ref<
+  { model: string; version: string; selected: boolean }[]
+>([]);
 // const searchInput = ref("");
 
 const cardSpecReportHeaders = ref([
@@ -204,18 +209,20 @@ const valuesHeaders = ref([
 const negotiationCards = ref([]);
 
 async function selectNamespace(namespace: string) {
-  await useFetch<string[]>("http://localhost:8080/api/namespace/" + namespace + "/model", { method: "GET" })
-  .then(response => {
-    if(response.data.value !== null){
-      if(selectedNamespace.value !== namespace){
+  await useFetch<string[]>(
+    "http://localhost:8080/api/namespace/" + namespace + "/model",
+    { method: "GET" },
+  ).then((response) => {
+    if (response.data.value !== null) {
+      if (selectedNamespace.value !== namespace) {
         selectedNamespace.value = namespace;
         modelOptions.value = [];
         versionOptions.value = [];
       }
 
-      response.data.value.forEach(modelName => {
-        if(!modelOptions.value.some(item => item.model === modelName)){
-          modelOptions.value.push({model: modelName, selected: false})
+      response.data.value.forEach((modelName) => {
+        if (!modelOptions.value.some((item) => item.model === modelName)) {
+          modelOptions.value.push({ model: modelName, selected: false });
         }
       });
 
@@ -225,15 +232,18 @@ async function selectNamespace(namespace: string) {
 }
 
 async function addNamespace(namespace: string) {
-  if(namespace != ""){
+  if (namespace !== "") {
     await useFetch("http://localhost:8080/api/namespace", {
       method: "POST",
-      body: { 
+      body: {
         identifier: namespace,
       },
     });
 
-    const { data } = await useFetch<string[]>("http://localhost:8080/api/namespace", { method: "GET" })
+    const { data } = await useFetch<string[]>(
+      "http://localhost:8080/api/namespace",
+      { method: "GET" },
+    );
     namespaceOptions.value = data.value !== null ? data.value : [];
     newNamespaceFlag.value = false;
     newNamespaceInput.value = "";
@@ -241,53 +251,75 @@ async function addNamespace(namespace: string) {
 }
 
 async function deleteNamespace(namespace: string) {
-  if(confirm("Are you sure you want to delete the namespace: " + namespace + "?")){
+  if (
+    confirm("Are you sure you want to delete the namespace: " + namespace + "?")
+  ) {
     await useFetch("http://localhost:8080/api/namespace/" + namespace, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
-    const { data } = await useFetch<string[]>("http://localhost:8080/api/namespace", { method: "GET" })
+    const { data } = await useFetch<string[]>(
+      "http://localhost:8080/api/namespace",
+      { method: "GET" },
+    );
     namespaceOptions.value = data.value !== null ? data.value : [];
   }
 
   // Reselecting the top listed namespace if the one that was selected is the one that is being deleted
-  if(selectedNamespace.value === namespace){
-    selectedNamespace.value = namespaceOptions.value !== null ? namespaceOptions.value[0] : "";
-    if(selectedNamespace.value !== ""){
+  if (selectedNamespace.value === namespace) {
+    selectedNamespace.value =
+      namespaceOptions.value !== null ? namespaceOptions.value[0] : "";
+    if (selectedNamespace.value !== "") {
       selectNamespace(selectedNamespace.value);
     }
   }
 }
 
-async function updateSelectedModels(entry: {model: string, selected: Boolean}) {
+async function updateSelectedModels(entry: {
+  model: string;
+  selected: boolean;
+}) {
   // TODO : Ideally this would be handled with the prop of the component
   entry.selected = !entry.selected;
 
-  if(entry.selected){
-    const { data: versions } = await useFetch<string[]>("http://localhost:8080/api/namespace/" + selectedNamespace.value + "/model/" + entry.model + "/version");
-    if(versions.value){
-      versions.value.forEach(version => {
-        versionOptions.value.push({'model': entry.model, 'version': version, 'selected': false})
-      })
+  if (entry.selected) {
+    const { data: versions } = await useFetch<string[]>(
+      "http://localhost:8080/api/namespace/" +
+        selectedNamespace.value +
+        "/model/" +
+        entry.model +
+        "/version",
+    );
+    if (versions.value) {
+      versions.value.forEach((version) => {
+        versionOptions.value.push({
+          model: entry.model,
+          version,
+          selected: false,
+        });
+      });
     }
   } else {
-    versionOptions.value = versionOptions.value.filter(function (versionItem: {model: string, version: string}) {
-      return versionItem.model != entry.model;
-    })
+    versionOptions.value = versionOptions.value.filter(function (versionItem: {
+      model: string;
+      version: string;
+    }) {
+      return versionItem.model !== entry.model;
+    });
   }
 
-  versionOptions.value.sort(function (a: {model: string, version: string}, b: {model: string, version: string}) {
-    if(a.model < b.model){
+  versionOptions.value.sort(function (
+    a: { model: string; version: string },
+    b: { model: string; version: string },
+  ) {
+    if (a.model < b.model) {
       return -1;
-    }
-    else if(a.model > b.model){
+    } else if (a.model > b.model) {
       return 1;
-    }
-    else if(a.model === b.model){
-      if(a.version < b.version){
+    } else if (a.model === b.model) {
+      if (a.version < b.version) {
         return -1;
-      }
-      else{
+      } else {
         return 1;
       }
     }
@@ -295,11 +327,19 @@ async function updateSelectedModels(entry: {model: string, selected: Boolean}) {
   });
 }
 
-async function deleteModel(entry: {model: string, selected: Boolean}){
-  if(confirm("Are you sure you want to delete the model: " + entry.model + "?")){
-    await useFetch("http://localhost:8080/api/namespace/" + selectedNamespace.value + "/model/" + entry.model, {
-      method: 'DELETE',
-    }).then(() => {
+async function deleteModel(entry: { model: string; selected: boolean }) {
+  if (
+    confirm("Are you sure you want to delete the model: " + entry.model + "?")
+  ) {
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+        selectedNamespace.value +
+        "/model/" +
+        entry.model,
+      {
+        method: "DELETE",
+      },
+    ).then(() => {
       const index = modelOptions.value.indexOf(entry);
       modelOptions.value.splice(index, 1);
       updateSelectedModels(entry);
@@ -307,18 +347,42 @@ async function deleteModel(entry: {model: string, selected: Boolean}){
   }
 }
 
-function updateSelectedVersions(entry: {model: string, version: string, selected: Boolean}) {  
+function updateSelectedVersions(entry: {
+  model: string;
+  version: string;
+  selected: boolean;
+}) {
   // TODO : Ideally this would be handled with the prop of the component
   entry.selected = !entry.selected;
 
   // TODO : Post this to backend and get updated data
 }
 
-async function deleteVersion(entry: {model: string, version: string, selected: Boolean}){
-  if(confirm("Are you sure you want to delete the version: " + entry.model + " - " + entry.version + "?")){
-    await useFetch("http://localhost:8080/api/namespace/" + selectedNamespace.value + "/model/" + entry.model + "/version/" + entry.version, {
-      method: 'DELETE',
-    }).then(() => {
+async function deleteVersion(entry: {
+  model: string;
+  version: string;
+  selected: boolean;
+}) {
+  if (
+    confirm(
+      "Are you sure you want to delete the version: " +
+        entry.model +
+        " - " +
+        entry.version +
+        "?",
+    )
+  ) {
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+        selectedNamespace.value +
+        "/model/" +
+        entry.model +
+        "/version/" +
+        entry.version,
+      {
+        method: "DELETE",
+      },
+    ).then(() => {
       const index = versionOptions.value.indexOf(entry);
       versionOptions.value.splice(index, 1);
     });
