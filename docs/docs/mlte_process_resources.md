@@ -20,9 +20,8 @@ The choice of metric depends on the exact nature of the system being created; fo
     * Precision Recall Curves and Area Under the Precision Recall Curve (<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.PrecisionRecallDisplay.html#sklearn.metrics.PrecisionRecallDisplay" target="_blank">AUPRC</a>): Used when there are class imbalances.
 * Object Detection:
     * Average Precision (<a href="https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html?highlight=precision%20recall" target="_blank">AP</a>) is the weighted mean of precisions achieved at each recall threshold.
-    * <a href="https://arxiv.org/abs/2112.02814" target="_blank">mAP50</a>: Used when detecting multiple classes. The precision accumulated over different levels of recall under the intersection over union (IOU) threshold of 0.50. 
-    * <a href="https://arxiv.org/abs/2112.02814" target="_blank">mAP</a>: Extension of mAP50 that is averaged over ten IOU thresholds.
-
+    * <a href="https://arxiv.org/abs/2112.02814" target="_blank">mAP50</a>: Used when detecting multiple classes. mAP50 is the precision accumulated over different levels of recall under the intersection over union (IOU) threshold of 0.50 (commonly used on the PASCAL VOC benchmark).
+    * <a href="https://arxiv.org/abs/2112.02814" target="_blank">mAP</a>: Extension of mAP50 that is averaged over ten IOU thresholds {0.5 : 0.05 : 0.95}, and is commonly used on the Microsoft Common Objects in Context (MS COCO) <a href="https://arxiv.org/pdf/1405.0312v3.pdf" target="_blank">benchmark</a>.
 
 ## Resources on Machine Learning Pipelines and Processes
 
