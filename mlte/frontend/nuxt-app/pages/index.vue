@@ -18,6 +18,7 @@
           v-if="newNamespaceFlag"
           v-model="newNamespaceInput"
           @keyup.enter="addNamespace(newNamespaceInput)"
+          @keyup.escape="newNamespaceFlag = false"
         />
       </div>
     </template>
@@ -209,44 +210,69 @@ const valuesHeaders = ref([
 const negotiationCards = ref([]);
 
 async function selectNamespace(namespace: string) {
-  await useFetch<string[]>(
+  await useFetch(
     "http://localhost:8080/api/namespace/" + namespace + "/model",
-    { method: "GET" },
-  ).then((response) => {
-    if (response.data.value !== null) {
-      if (selectedNamespace.value !== namespace) {
-        selectedNamespace.value = namespace;
-        modelOptions.value = [];
-        versionOptions.value = [];
-      }
-
-      response.data.value.forEach((modelName) => {
-        if (!modelOptions.value.some((item) => item.model === modelName)) {
-          modelOptions.value.push({ model: modelName, selected: false });
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (selectedNamespace.value !== namespace) {
+          selectedNamespace.value = namespace;
+          modelOptions.value = [];
+          versionOptions.value = [];
         }
-      });
 
-      modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
-    }
-  });
+        response._data.forEach((modelName: string) => {
+          if (!modelOptions.value.some((item) => item.model === modelName)) {
+            modelOptions.value.push({ model: modelName, selected: false });
+          }
+        });
+
+        modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
 }
 
 async function addNamespace(namespace: string) {
   if (namespace !== "") {
-    await useFetch("http://localhost:8080/api/namespace", {
+    const { error } = await useFetch("http://localhost:8080/api/namespace", {
+      retry: 0,
       method: "POST",
       body: {
         identifier: namespace,
       },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
     });
 
-    const { data } = await useFetch<string[]>(
-      "http://localhost:8080/api/namespace",
-      { method: "GET" },
-    );
-    namespaceOptions.value = data.value !== null ? data.value : [];
-    newNamespaceFlag.value = false;
-    newNamespaceInput.value = "";
+    if (error.value === null) {
+      await useFetch("http://localhost:8080/api/namespace", {
+        method: "GET",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          namespaceOptions.value =
+            response._data !== null ? response._data : [];
+          newNamespaceFlag.value = false;
+          newNamespaceInput.value = "";
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      });
+    }
   }
 }
 
@@ -254,15 +280,36 @@ async function deleteNamespace(namespace: string) {
   if (
     confirm("Are you sure you want to delete the namespace: " + namespace + "?")
   ) {
-    await useFetch("http://localhost:8080/api/namespace/" + namespace, {
-      method: "DELETE",
-    });
-
-    const { data } = await useFetch<string[]>(
-      "http://localhost:8080/api/namespace",
-      { method: "GET" },
+    const { error } = await useFetch(
+      "http://localhost:8080/api/namespace/" + namespace,
+      {
+        retry: 0,
+        method: "DELETE",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      },
     );
-    namespaceOptions.value = data.value !== null ? data.value : [];
+
+    if (error.value === null) {
+      await useFetch("http://localhost:8080/api/namespace", {
+        retry: 0,
+        method: "GET",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          namespaceOptions.value =
+            response._data !== null ? response._data : [];
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      });
+    }
   }
 
   // Reselecting the top listed namespace if the one that was selected is the one that is being deleted
@@ -283,22 +330,34 @@ async function updateSelectedModels(entry: {
   entry.selected = !entry.selected;
 
   if (entry.selected) {
-    const { data: versions } = await useFetch<string[]>(
+    await useFetch(
       "http://localhost:8080/api/namespace/" +
         selectedNamespace.value +
         "/model/" +
         entry.model +
         "/version",
+      {
+        retry: 0,
+        method: "GET",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          if (response._data) {
+            response._data.forEach((version: string) => {
+              versionOptions.value.push({
+                model: entry.model,
+                version,
+                selected: false,
+              });
+            });
+          }
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      },
     );
-    if (versions.value) {
-      versions.value.forEach((version) => {
-        versionOptions.value.push({
-          model: entry.model,
-          version,
-          selected: false,
-        });
-      });
-    }
   } else {
     versionOptions.value = versionOptions.value.filter(function (versionItem: {
       model: string;
@@ -337,13 +396,21 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
         "/model/" +
         entry.model,
       {
+        retry: 0,
         method: "DELETE",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          const index = modelOptions.value.indexOf(entry);
+          modelOptions.value.splice(index, 1);
+          updateSelectedModels(entry);
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
       },
-    ).then(() => {
-      const index = modelOptions.value.indexOf(entry);
-      modelOptions.value.splice(index, 1);
-      updateSelectedModels(entry);
-    });
+    );
   }
 }
 
@@ -380,13 +447,33 @@ async function deleteVersion(entry: {
         "/version/" +
         entry.version,
       {
+        retry: 0,
         method: "DELETE",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          const index = versionOptions.value.indexOf(entry);
+          versionOptions.value.splice(index, 1);
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
       },
-    ).then(() => {
-      const index = versionOptions.value.indexOf(entry);
-      versionOptions.value.splice(index, 1);
-    });
+    );
   }
+}
+
+function requestErrorAlert() {
+  alert(
+    "Error encountered while communicating with API. Ensure store is running and allowed-origins is configured correctly.",
+  );
+}
+
+function responseErrorAlert() {
+  alert(
+    "Error encountered in response from API. Check browser and store console for more information.",
+  );
 }
 </script>
 
