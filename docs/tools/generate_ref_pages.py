@@ -11,12 +11,12 @@ import mkdocs_gen_files
 
 g_nav = mkdocs_gen_files.Nav()
 
-def _respository_root() -> Path:
+def _repository_root() -> Path:
     command = ["git", "rev-parse", "--show-toplevel"]
     stdout = subprocess.check_output(command)
     return Path(stdout.decode("utf-8").strip('\n'))
 
-package_root = _respository_root() / "mlte"
+package_root = _repository_root() / "mlte"
 
 for path in sorted(Path(package_root).rglob("*.py")):
     if str(path).endswith("__init__.py"):

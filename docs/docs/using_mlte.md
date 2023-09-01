@@ -1,21 +1,21 @@
 # Using MLTE
 
-Now that you've [set up MLTE](getting_started.md), you're ready to use it. We at the MLTE Team believe that effective evaluation starts at the inception of a project, so that's where MLTE starts. 
+Now that you've [set up `MLTE`](getting_started.md), you're ready to use it. We at the `MLTE` Team believe that effective evaluation starts at the inception of a project, so that's where `MLTE` starts. 
 
 ## 1. Negotiate Model Quality Requirements
 
 Step 1 is a negotiation - a discussion about requirements - amongst stakeholders, software engineers, data scientists, and anyone else involved in the project. 
 
-- Determine who is facilitating the negotiation and ensure they have reviewed the instructions and content for the negotiation card, which can be found in the MLTE user interface. (If they have not yet set up MLTE, send them to our [Getting Started](getting_started.md) page.)
+- Determine who is facilitating the negotiation and ensure they have reviewed the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. (If they have not yet set up `MLTE`, send them to our [Getting Started](getting_started.md) page.)
     - The most important portion of the negotiation is determining the system goals and their corresponding performance metrics and baseline. This ensures you will be able to evaluate if your model is adding value. 
 - The negotiation is meant to be a collaborative discussion where all involved parties can agree on project requirements and can discuss some of the technical details that are important.
 - Once the negotiation is complete and the negotiation card is filled in, development can begin. The negotiation card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
 
 ## 2. Internal Model Testing (IMT)
 
-Step 2 ensues after initial model development has been completed and the team has a model that is ready for a first round of testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in MLTE follows this process:
+Step 2 ensues after initial model development has been completed and the team has a model that is ready for a first round of testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in `MLTE` follows this process:
 
-- Initialize the MLTE context.
+- Initialize the `MLTE` context.
 - Define a preliminary specification.
 - Collect evidence.
 - Validate results.
@@ -23,7 +23,7 @@ Step 2 ensues after initial model development has been completed and the team ha
 
 ### IMT: Initialize the MLTE Context
 
-MLTE contains a global context that manages the currently active session. Initializing the context tells MLTE how to store all of the artifacts that it produces.
+`MLTE` contains a global context that manages the currently active session. Initializing the context tells `MLTE` how to store all of the artifacts that it produces.
 
 ```python
 import os
@@ -56,7 +56,7 @@ spec.save(parents=True, force=True)
 
 ### IMT: Collect Evidence
 
-After building the `Spec`, MLTE allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin MLTE type (Real). Note that this example does not include data and model training code, but those can be found in the full MLTE <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
 
 ```python
 from sklearn.metrics import accuracy_score
@@ -103,7 +103,7 @@ validated_spec.save()
 
 ### IMT: Examine Findings
 
-To communicate results and examine findings, MLTE produces a report. While IMT is intended to be an initial and preliminary evaluation, the report is an artifact that will aid in the second [negotiation point](#3-negotiate-model-requirements-beyond-task-efficacy). You can import content from your negotiation card using the MLTE UI, and the fields can be customized as needed.
+To communicate results and examine findings, `MLTE` produces a report. While IMT is intended to be an initial and preliminary evaluation, the report is an artifact that will aid in the second [negotiation point](#3-negotiate-model-requirements-beyond-task-efficacy). You can import content from your negotiation card using the `MLTE` UI, and the fields can be customized as needed.
 
 ```python
 import time
@@ -173,15 +173,15 @@ After completing IMT, development teams should have a sense of how their model p
 
 - The emphasis of this negotiation is to review the discussion in [step 1](#1-negotiate-model-quality-requirements) and update it based on the intial evaluation that was performed in [step 2](#2-internal-model-testing-imt).
 - It is also important to ensure that the development team has all the information they need to build out a `Specification` (`Spec`) after this negotiation.
-- To conduct the negotiation, ensure the facilitator has the negotiation card for the project and that they are comfortable with the MLTE user interface.
+- To conduct the negotiation, ensure the facilitator has the negotiation card for the project and that they are comfortable with the `MLTE` user interface.
 
 Once the negotiation is complete and the contents of the negotiation card have been updated, the development team will conduct a comprehensive round of testing as part of System Dependent Model Testing, step 4.
 
 ## 4. System Dependent Model Testing (SDMT)
 
-SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated negotiation card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. To do so, MLTE uses the following process:
+SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated negotiation card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. To do so, `MLTE` uses the following process:
 
-- Initialize the MLTE context.
+- Initialize the `MLTE` context.
 - Define a preliminary specification.
 - Collect evidence.
 - Validate results.
@@ -189,7 +189,7 @@ SDMT ensures that a model will function as intended when it is part of a larger 
 
 ### SDMT: Initialize the MLTE Context
 
-Similar to IMT, you begin by initializing the context to tell MLTE how to store all of the artifacts it produces.
+Similar to IMT, you begin by initializing the context to tell `MLTE` how to store all of the artifacts it produces.
 
 ```python
 import os
@@ -206,8 +206,8 @@ set_store(f"local://{store_path}")
 
 A `Spec` represents the requirements and corresponding thresholds (or validators) the completed model must meet in order to be acceptable for use in the system into which it will be integrated.
 
-- Teams design a specification by selecting and prioritizing the model requirements that are important to their project from the list of MLTE [*properties*](properties.md). 
-- To validate that a requirement for a property is met by an ML model and system, MLTE uses *measurements*, which correspond to properties. Selecting measurements that correspond to properties is part of `Spec` definition.
+- Teams design a specification by selecting and prioritizing the model requirements that are important to their project from the list of `MLTE` [*properties*](properties.md). 
+- To validate that a requirement for a property is met by an ML model and system, `MLTE` uses *measurements*, which correspond to properties. Selecting measurements that correspond to properties is part of `Spec` definition.
 
 ```python
 from mlte.spec.spec import Spec
@@ -244,7 +244,7 @@ spec.save(parents=True, force=True)
 
 ### SDMT: Collect Evidence
 
-After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full MLTE <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
 
 #### Evidence: MLTE Measurements
 
@@ -290,7 +290,7 @@ cpu_stats.save()
 
 #### Evidence: External Measurements
 
-Given the existence of many libraries that offer easy evaluation of machine learning models, MLTE is built to be able to integrate results from any external library. In this example, we simply wrap the output from accuracy_score with a builtin MLTE type (Real) to integrate it with our collection of evidence.
+Given the existence of many libraries that offer easy evaluation of machine learning models, `MLTE` is built to be able to integrate results from any external library. In this example, we simply wrap the output from accuracy_score with a builtin `MLTE` type (Real) to integrate it with our collection of evidence.
  
 ```python
 from sklearn.metrics import accuracy_score
@@ -311,7 +311,7 @@ accuracy.save(parents=True)
 
 #### Evidence: Custom Types for External Measurements
 
-MLTE also allows users to define custom types to cope with the output of a third-party library that is not supported by a MLTE builtin.
+`MLTE` also allows users to define custom types to cope with the output of a third-party library that is not supported by a `MLTE` builtin.
 
 ```python
 from sklearn.metrics import confusion_matrix
@@ -331,7 +331,7 @@ matrix.save(parents=True)
 
 #### Evidence: Alternative Media in Measurements
 
-In addition to typical evaluation outputs, MLTE also allows for integration of other forms of media in the evidence collection process.
+In addition to typical evaluation outputs, `MLTE` also allows for integration of other forms of media in the evidence collection process.
 
 ```python
 import matplotlib.pyplot as plt
@@ -357,7 +357,7 @@ img.save()
 
 ### SDMT: Validate Results
 
-After collecting evidence, MLTE requires the validation of that evidence. To do so, we create a `SpecValidator` and add all the `Value`s we have collected. That allows us to validate our `Spec` and generate a `ValidatedSpec` which has the validation results.
+After collecting evidence, `MLTE` requires the validation of that evidence. To do so, we create a `SpecValidator` and add all the `Value`s we have collected. That allows us to validate our `Spec` and generate a `ValidatedSpec` which has the validation results.
 
 ```python
 from mlte.spec import Spec, SpecValidator
@@ -393,7 +393,7 @@ After validating results, development teams need to communicate the results of t
 
 ## 5. Communicate ML Evaluation Results
 
-To communicate results and examine findings, MLTE produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the negotiation card using the MLTE UI, and the fields can be customized as needed. Similar to the process during IMT, we start by defining the descriptive portions of the report.
+To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the negotiation card using the `MLTE` UI, and the fields can be customized as needed. Similar to the process during IMT, we start by defining the descriptive portions of the report.
 
 ```python
 import time
@@ -456,3 +456,7 @@ report.to_html(REPORTS_DIR / "report.html", local=True)
 ```
 
 If the model performs as desired, teams can consider the evaluation complete. However, it is very common that teams will need to iterate through [IMT](#2-internal-model-testing-imt) and [SDMT](#4-system-dependent-model-testing-sdmt) several times before they are satisfied with the results and ready to communicate with stakeholders.
+
+## More Information
+
+If this guide makes you want to learn more about `MLTE`, check out our <a href="https://arxiv.org/abs/2303.01998" target="_blank">paper</a>!
