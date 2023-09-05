@@ -1,15 +1,20 @@
+import { isA } from 'ts-type-checked';
 
 /// Tests
-const artifact = parseArtifact('{"body": 1}');
-printArtifact(artifact)
+const artifact: Artifact = parseArtifact('{"body": 1}');
+console.log(artifact);
 
 function parseArtifact(jsonString: string) : Artifact {
-    return JSON.parse(jsonString) as Artifact
+    const jsonObj: object = JSON.parse(jsonString);
+    if (isA<Artifact>(jsonObj)) {
+        console.log("it is an artifact");
+        return jsonObj as Artifact;
+    } else {
+        console.log("it is NOT an artifact");
+        throw new Error("Not an artifact!");
+    }
 }
 
-function printArtifact(data: Artifact) {
-    console.log(data.body)
-}
 
 //////////////////////////////////////
 // Basic Artifact models.
@@ -17,7 +22,7 @@ function printArtifact(data: Artifact) {
 
 interface Artifact {
     header: ArtifactHeader;
-    body: any;
+    body: Value | Spec | ValidatedSpec;
 }
 
 interface ArtifactHeader {
@@ -41,6 +46,7 @@ interface Value {
     artifact_type: ArtifactType.VALUE;
     metadata: EvidenceMetadata;
     value: any;
+    value_type: ValueType;
 }
 
 interface EvidenceMetadata {
