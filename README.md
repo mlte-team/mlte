@@ -8,8 +8,6 @@
 [![Tests](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml)
 [![Documentation Status](https://readthedocs.org/projects/mlte/badge/?version=latest)](https://mlte.readthedocs.io/en/latest/?badge=latest)
 
-This is a test message.
-
 ### Getting Started
 
 `mlte` is available on [PyPI](https://pypi.org/project/mlte-python/). Install the latest version with:
