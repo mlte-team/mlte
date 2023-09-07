@@ -8,39 +8,31 @@ import * as validatedSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schem
 import * as valueSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
 
 
-export function isValidNegotiation(artifactJsonString: string) : boolean {
-    return isValidArtifact(artifactJsonString, negotiationSchemaData);
+export function isValidNegotiation(artifact: object) : boolean {
+    return isValidArtifact(artifact, negotiationSchemaData);
 }
 
-export function isValidSpec(artifactJsonString: string) : boolean {
-    return isValidArtifact(artifactJsonString, specSchemaData);
+export function isValidSpec(artifact: object) : boolean {
+    return isValidArtifact(artifact, specSchemaData);
 }
 
-export function isValidValidatedSpec(artifactJsonString: string) : boolean {
-    return isValidArtifact(artifactJsonString, validatedSchemaData);
+export function isValidValidatedSpec(artifact: object) : boolean {
+    return isValidArtifact(artifact, validatedSchemaData);
 }
 
-export function isValidValue(artifactJsonString: string) : boolean {
-    return isValidArtifact(artifactJsonString, valueSchemaData);
+export function isValidValue(artifact: object) : boolean {
+    return isValidArtifact(artifact, valueSchemaData);
 }
 
 // Validates if a given JSON string is a valid JSON artifact for the provided schema.
-function isValidArtifact(artifactJsonString: string, schema: object) : boolean {
-    let artifactObject = {};
-    try {
-        artifactObject = JSON.parse(artifactJsonString);
-    } catch(e) {
-        console.log("INVALID!!! String: " + artifactJsonString + " is not a valid JSON object.");
-        return false;
-    }
-
-    if(!("body" in artifactObject)) {
+function isValidArtifact(artifact: object, schema: object) : boolean {
+    if(!("body" in artifact)) {
         console.log("INVALID!!! Object has no body section.")
         return false;
     }
 
     let v = new Validator();
-    let validation = v.validate(artifactObject.body, schema);
+    let validation = v.validate(artifact.body, schema);
     if(validation.errors.length == 0) {
         console.log("VALID!!!")
         return true;
