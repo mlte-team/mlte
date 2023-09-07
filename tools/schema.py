@@ -28,6 +28,7 @@ OUTPUT_BASE = Path("schema/artifact")
 # Path to frontend assets.
 FRONTEND_PATH = Path("frontend/nuxt-app/assets")
 
+
 class ModelImport:
     """A ModelImport describes the module and classname for a MLTE model."""
 
