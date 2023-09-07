@@ -10,10 +10,14 @@ from mlte.web.store.core.config import settings
 
 
 def create() -> FastAPI:
-    """Create an instance of the application."""
-    return FastAPI(
+    """
+    Create an instance of the application.
+    :return: The app
+    """
+    app = FastAPI(
         title="MLTE Artifact Store",
         docs_url=f"{settings.API_PREFIX}/docs",
         redoc_url=f"{settings.API_PREFIX}/redoc",
         openapi_url=f"{settings.API_PREFIX}/openapi.json",
     )
+    return app

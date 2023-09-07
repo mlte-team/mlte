@@ -1,6 +1,6 @@
 # Development
 
-This document describes some of the development practices used within `mlte`.
+This document describes some of the development practices used within `MLTE`.
 
 ## Quickstart
 
@@ -14,11 +14,11 @@ $ pip install -r requirements_dev_3.8.txt
 
 We only maintain a single `requirements.txt` file for each minor release of Python; that is, the patch version is not included in the name of the `requirements.txt` to reflect the fact that dependencies should remain stable across all patches within a minor version. See [Development Dependencies](#development-dependencies) for further information.
 
-Now you are ready to start working on `mlte`!
+Now you are ready to start working on `MLTE`!
 
 ## Source Formatting
 
-We format all Python code in this project with the [`black`](https://github.com/psf/black) source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
+We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
 
 ```bash
 $ make format
@@ -35,7 +35,7 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 
 ## Source Linting
 
-We lint all Python code in this project with the [`flake8`](https://flake8.pycqa.org/en/latest/) source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
+We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
 ```bash
 $ make lint
@@ -52,7 +52,7 @@ Code that does not satisfy the linter will be rejected from pull requests.
 
 ## Static Type Checking
 
-We run static type-checking with [`mypy`](http://mypy-lang.org/). Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
+We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
 
 ```bash
 $ make typecheck
@@ -69,7 +69,7 @@ Code that does not satisfy static type-checking will be rejected from pull reque
 
 ## Unit Tests
 
-We unit test the `mlte` library with the [`pytest`](https://docs.pytest.org/en/7.0.x/contents.html) package and [`tox`](https://tox.wiki/en/latest/). The former is a test-runner for Python while the latter is a tool for environment isolation and automation. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
+We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package and <a href="https://tox.wiki/en/latest/" target="_blank">`tox`</a>. The former is a test-runner for Python while the latter is a tool for environment isolation and automation. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
 ```bash
 $ make test
@@ -85,11 +85,11 @@ Unit tests failures result in build failures in CI.
 
 ## Continuous Integration
 
-We utilize [Github Actions](https://docs.github.com/en/actions) for continuous integration.
+We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub Actions</a> for continuous integration.
 
 ## Documentation
 
-We build documentation with [`sphinx`](https://www.sphinx-doc.org/en/master/) and host documentation on [ReadTheDocs](https://readthedocs.org/).
+We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>.
 
 We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
 
@@ -103,12 +103,12 @@ $ pip install -r requirements.txt
 Now you can build the documentation with:
 
 ```bash
-$ make html
+$ mkdocs serve
 ```
 
 ## Versioning
 
-We follow semantic versioning when versioning the `mlte` package. We use [`bump2version`](https://github.com/c4urself/bump2version) to consistently update versions across the project. A configuration file is provided in `.bumpversion.cfg` at the root of the project.
+We follow semantic versioning when versioning the `MLTE` package. We use <a href="https://github.com/c4urself/bump2version" target="_blank">`bump2version`</a> to consistently update versions across the project. A configuration file is provided in `.bumpversion.cfg` at the root of the project.
 
 Bumping the version for a new release can be accomplished with:
 
@@ -120,7 +120,7 @@ where `patch` may be replaced with `minor` or `major` as appropriate for the rel
 
 ## Publishing
 
-We publish the `mlte` package on [PyPi](https://pypi.org/). The current procedure we follow for publication is described below.
+We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. The current procedure we follow for publication is described below.
 
 Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
@@ -143,7 +143,7 @@ $ cd dist/
 $ tar tzf mlte-0.0.0.tar.gz
 ```
 
-Upload the package to [`TestPyPi`](https://test.pypi.org/) to verify that the package appears as expected:
+Upload the package to <a href="https://test.pypi.org/" target="_blank">`TestPyPi`</a> to verify that the package appears as expected:
 
 ```bash
 $ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
@@ -157,7 +157,7 @@ $ twine upload dist/*
 
 ### Docker Integration
 
-We package the `mlte` artifact store as a Docker container image. To build the image from the source repository, run:
+We package the `MLTE` artifact store as a Docker container image. To build the image from the source repository, run:
 
 ```bash
 # From the repository root
@@ -170,7 +170,7 @@ Run the container with:
 docker run --rm -p 8080:8080 mlte-store
 ```
 
-This binds the artifact store to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The artifact store implementation writes data to `/mnt/store` within the container. We can utilize a [bind mount](https://docs.docker.com/storage/bind-mounts/) to extend the life of this data beyond the life of the container:
+This binds the artifact store to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The artifact store implementation writes data to `/mnt/store` within the container. We can utilize a <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">bind mount</a> to extend the life of this data beyond the life of the container:
 
 ```bash
 docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
@@ -178,13 +178,13 @@ docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
 
 ## Development Dependencies
 
-We maintain a distinct set of Python dependencies for each minor version of Python that `mlte` supports. Currently, MLTE supports the following Python versions:
+We maintain a distinct set of Python dependencies for each minor version of Python that `MLTE` supports. Currently, `MLTE` supports the following Python versions:
 
 - `3.8`
 - `3.9`
 - `3.10`
 
-[`pyenv`](https://github.com/pyenv/pyenv) can be used to manage multiple Python versions locally. Repeat the following procedure for each desired version. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `mlte`.
+<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. Repeat the following procedure for each desired version. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
 
 **Establishing Depdencies for a Particular Python Version**
 
@@ -202,7 +202,7 @@ python --version
 Python 3.8.16
 ```
 
-With the proper version activated, create a virtual environment for requirements generation, and install [`pip-tools`](https://github.com/jazzband/pip-tools):
+With the proper version activated, create a virtual environment for requirements generation, and install <a href="https://github.com/jazzband/pip-tools" target="_blank">`pip-tools`</a>:
 
 ```bash
 python -m venv env
