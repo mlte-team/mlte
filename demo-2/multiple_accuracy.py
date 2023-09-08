@@ -7,16 +7,16 @@ from typing import Any
 
 import numpy as np
 
-from mlte.value import Value
-from mlte.evidence.evidence_metadata import EvidenceMetadata
-from mlte.validation import (
-    Condition,
+from mlte.value.base import ValueBase
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.spec.condition import Condition
+from mlte.validation.result import (
     Success,
     Failure,
 )
 
 
-class MultipleAccuracy(Value):
+class MultipleAccuracy(ValueBase):
     def __init__(self, evidence_metadata: EvidenceMetadata, multiple_accuracy: np.ndarray):
         super().__init__(self, evidence_metadata)
 

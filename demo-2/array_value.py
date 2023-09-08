@@ -7,13 +7,13 @@ from typing import Any
 
 import numpy as np
 
-from mlte.value import Value
-from mlte.value.types import Real
-from mlte.evidence.identifier import Identifier
-from mlte.evidence.evidence_metadata import EvidenceMetadata
+from mlte.value.base import ValueBase
+from mlte.value.types.real import Real
+from mlte.evidence.metadata import Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 
 
-class Array(Value):
+class Array(ValueBase):
     def __init__(self, evidence_metadata: EvidenceMetadata, array: np.ndarray):
         super().__init__(self, evidence_metadata)
 
