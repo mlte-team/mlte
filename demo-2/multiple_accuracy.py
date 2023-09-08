@@ -23,7 +23,7 @@ class MultipleAccuracy(Array):
             )
             if sum(g >= threshold for g in value.array) == len(value.array)
             else Failure(
-                f"One or more accuracies are below threshold {threshold}"
+                f"One or more accuracies are below threshold {threshold}: {value.array}"
             ),
         )
         return condition

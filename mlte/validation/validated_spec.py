@@ -138,7 +138,7 @@ class ValidatedSpec(Artifact):
         for property, details in self.results.items():
             print(f"Property: {property}")
             for id, result in details.items():
-                print(f"Measurement: {id}, result: {result}, details: {result.message}")
+                print(f" > Measurement: {id}, result: {result}, details: {result.message}")
 
 
     @classmethod
