@@ -7,10 +7,9 @@ from typing import Any
 
 import numpy as np
 
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.value.base import ValueBase
 from mlte.value.types.real import Real
-from mlte.evidence.metadata import Identifier
-from mlte.evidence.metadata import EvidenceMetadata
 
 
 class Array(ValueBase):
@@ -32,13 +31,15 @@ class Array(ValueBase):
     def __str__(self) -> str:
         return str(self.array)
 
-    def get_as_real(self, position: int, identifier: str="") -> Real:
+    def get_as_real(self, position: int, identifier: str = "") -> Real:
         if position >= len(self.array):
-            raise RuntimeError(f"Position {position} is not in array of size {len(self.array)}")
+            raise RuntimeError(
+                f"Position {position} is not in array of size {len(self.array)}"
+            )
         return_value = Real(self.metadata, float(self.array[position]))
 
         # Assign new id if provided.
         if identifier != "":
-            return_value.metadata.identifier = Identifier(identifier)
+            return_value.metadata.identifier = Identifier(name=identifier)
 
         return return_value

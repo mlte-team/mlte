@@ -7,17 +7,16 @@ from typing import Any
 
 import numpy as np
 
-from mlte.value.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import (
-    Success,
-    Failure,
-)
+from mlte.validation.result import Failure, Success
+from mlte.value.base import ValueBase
 
 
 class MultipleAccuracy(ValueBase):
-    def __init__(self, evidence_metadata: EvidenceMetadata, multiple_accuracy: np.ndarray):
+    def __init__(
+        self, evidence_metadata: EvidenceMetadata, multiple_accuracy: np.ndarray
+    ):
         super().__init__(self, evidence_metadata)
 
         self.multiple_accuracy: np.ndarray = multiple_accuracy
@@ -30,7 +29,9 @@ class MultipleAccuracy(ValueBase):
     def deserialize(
         evidence_metadata: EvidenceMetadata, json_: dict[str, Any]
     ) -> MultipleAccuracy:
-        return MultipleAccuracy(evidence_metadata, np.asarray(json_["multiple_accuracy"]))
+        return MultipleAccuracy(
+            evidence_metadata, np.asarray(json_["multiple_accuracy"])
+        )
 
     def __str__(self) -> str:
         return str(self.multiple_accuracy)
@@ -51,5 +52,7 @@ class MultipleAccuracy(ValueBase):
         return condition
 
     def calculate_all_accuracies_passed(self, threshold: float):
-        """Calculates if the accuracy for multiple populations is fair by checking if all of them are over the given threshold. """
-        return sum(g >= threshold for g in self.multiple_accuracy ) == len(self.multiple_accuracy)
+        """Calculates if the accuracy for multiple populations is fair by checking if all of them are over the given threshold."""
+        return sum(g >= threshold for g in self.multiple_accuracy) == len(
+            self.multiple_accuracy
+        )

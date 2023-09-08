@@ -3,17 +3,15 @@ Implementation of RankSums value.
 """
 from __future__ import annotations
 
+from array_value import Array
 
 from mlte.spec.condition import Condition
-from array_value import Array
-from mlte.validation.result import (
-    Success,
-    Failure,
-)
+from mlte.validation.result import Failure, Success
 
 
 class RankSums(Array):
     """A RankSums array is an array with the results of the ranksums function (stat on first pos, p-value on second)."""
+
     @classmethod
     def p_value_greater_or_equal_to(cls, threshold: float) -> Condition:
         condition: Condition = Condition(
