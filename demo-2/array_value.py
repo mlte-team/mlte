@@ -31,15 +31,16 @@ class Array(ValueBase):
     def __str__(self) -> str:
         return str(self.array)
 
-    def get_as_real(self, position: int, identifier: str = "") -> Real:
+    def get_as_real(self, position: int) -> Real:
+        """Return a value from the given position, as a Real value type."""
         if position >= len(self.array):
             raise RuntimeError(
                 f"Position {position} is not in array of size {len(self.array)}"
             )
         return_value = Real(self.metadata, float(self.array[position]))
 
-        # Assign new id if provided.
-        if identifier != "":
-            return_value.metadata.identifier = Identifier(name=identifier)
-
+        # Add suffix to id based on position.
+        return_value.metadata.identifier = Identifier(
+            name=f"{return_value.metadata.identifier}.{position}"
+        )
         return return_value
