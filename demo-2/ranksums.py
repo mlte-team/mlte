@@ -17,12 +17,12 @@ class RankSums(Array):
         condition: Condition = Condition(
             "p_value_greater_or_equal_to",
             [threshold],
-            lambda cm: Success(
-                f"P-Value {cm.array[1]} is greater or equal to {threshold}"
+            lambda value: Success(
+                f"P-Value {value.array[1]} is greater or equal to {threshold}"
             )
-            if cm.array[1] >= threshold
+            if value.array[1] >= threshold
             else Failure(
-                f"P-Value {cm.array[1]} is less than threshold {threshold}"
+                f"P-Value {value.array[1]} is less than threshold {threshold}"
             ),
         )
         return condition
