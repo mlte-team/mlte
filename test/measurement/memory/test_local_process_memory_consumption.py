@@ -135,7 +135,7 @@ def test_result_save_load(
     stats = MemoryStatistics(m, 50, 10, 800)
     stats.save_with(ctx, store)
 
-    r: MemoryStatistics = MemoryStatistics.load_with("id.value", context=ctx, stpre=store)  # type: ignore
+    r: MemoryStatistics = MemoryStatistics.load_with("id.value", context=ctx, store=store)  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
