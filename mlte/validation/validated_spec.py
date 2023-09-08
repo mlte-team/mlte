@@ -133,6 +133,13 @@ class ValidatedSpec(Artifact):
         return ValidatedSpec(
             identifier=model.header.identifier, spec=spec, results=results
         )
+    
+    def print_results(self):
+        for property, details in self.results.items():
+            print(f"Property: {property}")
+            for id, result in details.items():
+                print(f"Measurement: {id}, result: {result}, details: {result.message}")
+
 
     @classmethod
     def get_default_id(cls) -> str:
