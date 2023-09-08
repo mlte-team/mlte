@@ -6,9 +6,10 @@ Implementation of ConfusionMatrix value.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import numpy as np
+import pandas as pd
 
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
@@ -26,13 +27,15 @@ class ConfusionMatrix(ValueBase):
         """Underlying matrix represented as two-dimensional array."""
 
     def serialize(self) -> Dict[str, Any]:
-        return {"matrix": self.matrix}
+        return {"matrix": pd.DataFrame(self.matrix).to_json()}
 
     @staticmethod
     def deserialize(
         metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> ConfusionMatrix:
-        return ConfusionMatrix(metadata, data["matrix"])
+        return ConfusionMatrix(
+            metadata, pd.read_json(data["matrix"]).to_numpy()
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ConfusionMatrix):
