@@ -2,8 +2,8 @@
 Fairness property definition.
 """
 
-from mlte.property import Property
 from mlte._private.text import cleantext
+from mlte.property import Property
 
 
 class Fairness(Property):
