@@ -1,10 +1,12 @@
 """
-Unit tests for command line interface.
+test/cli/test_cli.py
+
+Unit tests for the MLTE command line interface.
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -16,7 +18,7 @@ def python() -> Path:
 def script() -> Path:
     """Return the path to the CLI script."""
     path = Path(os.path.dirname(__file__))
-    path = path.parent.parent / "src" / "mlte" / "cli" / "cli.py"
+    path = path.parent.parent / "mlte" / "cli" / "cli.py"
     return path.resolve()
 
 

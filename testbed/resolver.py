@@ -1,4 +1,6 @@
 """
+testbed/resolver.py
+
 Resolve the path to the `mlte` package.
 """
 

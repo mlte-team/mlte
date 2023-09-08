@@ -1,58 +1,68 @@
 """
+test/spec/test_spec.py
+
 Unit tests for Spec functionality.
 """
+
 from __future__ import annotations
+
+from typing import Tuple
 
 import pytest
 
-import mlte
-from mlte.spec import Spec, Requirement
-from mlte.property.costs import StorageCost
+from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
+from mlte.property.costs import StorageCost
+from mlte.spec.spec import Spec
+from mlte.store.base import Store
+
+from ..fixture.store import store_with_context  # noqa
 
 
-def test_save(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
+    store, ctx = store_with_context
 
     s = Spec(
-        {
-            StorageCost("rationale"): [
-                Requirement("test", LocalObjectSize.value().less_than(3))
-            ]
-        }
+        identifier="spec",
+        properties={
+            StorageCost("rationale"): {
+                "test": LocalObjectSize.value().less_than(3)
+            }
+        },
     )
-    s.save()
+    s.save_with(ctx, store)
 
-    r = Spec.load()
-    assert s == r
+    loaded = Spec.load_with("spec", context=ctx, store=store)
+    assert s == loaded
 
 
-def test_load_failure(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+def test_save_load_default(store_with_context: Tuple[Store, Context]):  # noqa
+    store, ctx = store_with_context
 
+    s = Spec(
+        properties={
+            StorageCost("rationale"): {
+                "test": LocalObjectSize.value().less_than(3)
+            }
+        },
+    )
+    s.save_with(ctx, store)
+
+    loaded = Spec.load_with(context=ctx, store=store)
+    assert s == loaded
+
+
+def test_load_failure(store_with_context: Tuple[Store, Context]):  # noqa
+    store, ctx = store_with_context
     with pytest.raises(RuntimeError):
-        _ = Spec.load()
+        _ = Spec.load_with("spec", context=ctx, store=store)
 
 
 def test_non_unique_properties():
     with pytest.raises(RuntimeError):
-        _ = Spec({StorageCost("rationale"): [], StorageCost("rationale2"): []})
-
-
-def test_non_unique_requirement_ids():
-    requirement1 = Requirement("id1", LocalObjectSize.value().less_than(5))
-    requirement2 = Requirement("id1", LocalObjectSize.value().less_than(3))
-    with pytest.raises(RuntimeError):
-        _ = Spec({StorageCost("rationale"): [requirement1, requirement2]})
-
-
-def test_add_requirement():
-    spec = Spec({StorageCost("rationale"): []})
-    requirement = Requirement("test", LocalObjectSize.value().less_than(3))
-    spec._add_requirement("StorageCost", requirement)
-
-    assert spec.requirements["StorageCost"][0] == Requirement(
-        "test", LocalObjectSize.value().less_than(3)
-    )
+        _ = Spec(
+            properties={
+                StorageCost("rationale"): {},
+                StorageCost("rationale2"): {},
+            },
+        )

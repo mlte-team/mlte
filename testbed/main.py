@@ -1,17 +1,20 @@
 """
+testbed/main.py
+
 A simple program for testing functionality during development.
 """
 
 import os
 import sys
+
 from resolver import package_root
 
 sys.path.append(package_root())
 
 import mlte
-from mlte.measurement.storage import LocalObjectSize
-from mlte.value.types import Integer
 import mlte.api as api
+from mlte.measurement.storage import LocalObjectSize
+from mlte.value.types.integer import Integer
 
 # Script exit codes
 EXIT_SUCCESS = 0

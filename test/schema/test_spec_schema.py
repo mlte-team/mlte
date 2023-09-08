@@ -1,23 +1,22 @@
 """
+test/schema/test_spec_schema.py
+
 Unit tests for Spec schema.
 """
 
-import mlte
-from mlte.spec import Spec, Requirement
-from mlte.value.types import Integer
-from mlte.property.costs import StorageCost
+
 from mlte._private.schema import validate_spec_schema
-from mlte.api import read_spec
+from mlte.property.costs import StorageCost
+from mlte.spec.spec import Spec
+from mlte.value.types.integer import Integer
+
+from ..fixture.store import store_with_context  # noqa
 
 
-def test_instance_with_content(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
-
+def test_instance_with_content():
     spec = Spec(
-        {StorageCost("test"): [Requirement("test", Integer.less_than(3))]}
+        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
-    spec.save()
 
-    doc = read_spec(f"local://{tmp_path}", "model", "0.0.1")
-    validate_spec_schema(doc)
+    doc = spec.to_model().to_json()
+    validate_spec_schema(doc["body"])

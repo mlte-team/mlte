@@ -1,13 +1,22 @@
 """
+test/value/types/test_opaque.py
+
 Unit tests for Opaque.
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 import pytest
 
-import mlte
+from mlte.context.context import Context
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import Measurement
-from mlte.evidence.evidence_metadata import EvidenceMetadata
-from mlte.value.types import Opaque
+from mlte.store.base import Store
+from mlte.value.types.opaque import Opaque
+
+from ...fixture.store import store_with_context  # noqa
 
 
 class DummyMeasurementOpaque(Measurement):
@@ -18,7 +27,9 @@ class DummyMeasurementOpaque(Measurement):
         return Opaque(self.metadata, {"value": 1})
 
 
-def test_opaque():
+def test_measurement():
+    """Opaque can be produced by a measurement."""
+
     m = DummyMeasurementOpaque("identifier")
     t = m.evaluate()
     assert isinstance(t, Opaque)
@@ -38,8 +49,12 @@ def test_opaque():
         t["value"] = 2  # type: ignore
 
 
-def test_opaque_equality():
-    m = EvidenceMetadata("typename", "id")
+def test_equality():
+    """Opaque instances can be compared for equality."""
+
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
 
     a = Opaque(m, {"foo": "bar"})
     b = Opaque(m, {"foo": "bar"})
@@ -58,28 +73,28 @@ def test_opaque_equality():
     assert a != b
 
 
-def test_opaque_save_load(tmp_path):
-    mlte.set_model("mymodel", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
-
-    m = EvidenceMetadata("typename", "id")
-    i = Opaque(m, {"foo": "bar"})
-
-    # Save
-    i.save()
-
-    # Recover
-    r = Opaque.load("id")
-
-    assert r == i
-
-
-def test_opaque_serde():
-    m = EvidenceMetadata("typename", "id")
+def test_serde() -> None:
+    """Opaque can be converted to model and back."""
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
     o = Opaque(m, {"value": 1})
 
-    serialized = o.serialize()
-    recovered = Opaque.deserialize(m, serialized)
+    model = o.to_model()
+    e = Opaque.from_model(model)
 
-    assert "value" in recovered.data
-    assert recovered["value"] == o["value"]
+    assert e == o
+
+
+def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
+    """Opaque can be saved to and loaded from artifact store."""
+    store, ctx = store_with_context
+
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    o = Opaque(m, {"foo": "bar"})
+    o.save_with(ctx, store)
+
+    loaded = Opaque.load_with("id.value", context=ctx, store=store)
+    assert loaded == o

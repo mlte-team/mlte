@@ -1,42 +1,47 @@
 """
+test/schema/test_value_schema.py
+
 Unit tests for Value schema.
 """
 
-import mlte
-from mlte.value.types import Integer, Real, Opaque
-from mlte.evidence.evidence_metadata import EvidenceMetadata
 from mlte._private.schema import validate_value_schema
-from mlte.api import read_value
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.value.types.integer import Integer
+from mlte.value.types.opaque import Opaque
+from mlte.value.types.real import Real
 
 
-def test_real(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+def test_real():
+    r = Real(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        3.14,
+    )
 
-    r = Real(EvidenceMetadata("typename", "id"), 3.14)
-    r.save()
-
-    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_value_schema(d)
-
-
-def test_integer(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
-
-    r = Integer(EvidenceMetadata("typename", "id"), 3)
-    r.save()
-
-    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_value_schema(d)
+    doc = r.to_model().to_json()
+    validate_value_schema(doc["body"])
 
 
-def test_opaque(tmp_path):
-    mlte.set_model("model", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+def test_integer():
+    r = Integer(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        3,
+    )
 
-    r = Opaque(EvidenceMetadata("typename", "id"), {"foo": "bar"})
-    r.save()
+    doc = r.to_model().to_json()
+    validate_value_schema(doc["body"])
 
-    d = read_value(f"local://{tmp_path}", "model", "0.0.1", "id")
-    validate_value_schema(d)
+
+def test_opaque():
+    r = Opaque(
+        EvidenceMetadata(
+            measurement_type="typename", identifier=Identifier(name="id")
+        ),
+        {"foo": "bar"},
+    )
+
+    doc = r.to_model().to_json()
+    validate_value_schema(doc["body"])

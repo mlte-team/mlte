@@ -1,19 +1,27 @@
 """
+test/measurement/cpu/test_local_process_cpu_utilization.py
+
 Unit test for LocalProcessCPUUtilization measurement.
 """
 
 
 import os
-import time
-import pytest
-import threading
 import subprocess
+import threading
+import time
+from typing import Tuple
 
-import mlte
-from mlte._private.platform import is_windows, is_nix
-from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
-from mlte.validation import Condition, Success, Failure
+import pytest
 
+from mlte._private.platform import is_nix, is_windows
+from mlte.context.context import Context
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
+from mlte.spec.condition import Condition
+from mlte.store.base import Store
+from mlte.validation.result import Failure, Success
+
+from ...fixture.store import store_with_context  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -32,7 +40,7 @@ def spin_for(seconds: int):
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_nix_evaluate():
+def test_cpu_nix_evaluate() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -49,7 +57,7 @@ def test_cpu_nix_evaluate():
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_nix_evaluate_async():
+def test_cpu_nix_evaluate_async() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -67,7 +75,7 @@ def test_cpu_nix_evaluate_async():
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_nix_validate_success():
+def test_cpu_nix_validate_success() -> None:
     p = spin_for(5)
     m = LocalProcessCPUUtilization("id")
 
@@ -84,7 +92,7 @@ def test_cpu_nix_validate_success():
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_nix_validate_failure():
+def test_cpu_nix_validate_failure() -> None:
     p = spin_for(5)
     m = LocalProcessCPUUtilization("id")
 
@@ -101,7 +109,7 @@ def test_cpu_nix_validate_failure():
 @pytest.mark.skipif(
     is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_cpu_windows_evaluate():
+def test_cpu_windows_evaluate() -> None:
     with pytest.raises(RuntimeError):
         _ = LocalProcessCPUUtilization("id")
 
@@ -109,18 +117,18 @@ def test_cpu_windows_evaluate():
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
-def test_result_save_load(tmp_path):
-    mlte.set_model("mymodel", "0.0.1")
-    mlte.set_artifact_store_uri(f"local://{tmp_path}")
+def test_result_save_load(
+    store_with_context: Tuple[Store, Context]  # noqa
+) -> None:
+    store, ctx = store_with_context
 
-    p = spin_for(5)
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    stats = CPUStatistics(m, 0.5, 0.1, 0.8)
+    stats.save_with(ctx, store)
 
-    m = LocalProcessCPUUtilization("id")
-
-    stats: CPUStatistics = m.evaluate(p.pid)
-    stats.save()
-
-    r: CPUStatistics = CPUStatistics.load("id")  # type: ignore
+    r: CPUStatistics = CPUStatistics.load_with("id.value", context=ctx, store=store)  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

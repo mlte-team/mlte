@@ -1,0 +1,39 @@
+site_name: MLTE Documentation
+theme:
+  name: "material"
+  palette:
+    scheme: slate
+  logo: https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg
+  favicon: img/favicon.ico
+watch:
+  - ../mlte
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../mlte]
+          options:
+            docstring_style: sphinx
+  - gen-files:
+      scripts:
+        - tools/generate_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+nav:
+  - Home: 'index.md'
+  - 'How-to Guides':
+    - 'Getting Started': 'getting_started.md'
+    - 'Using MLTE': 'using_mlte.md'
+    - 'Development': 'development.md'
+  - 'Tutorials':
+    - 'Testing a Model with MLTE': 'tutorial0.md'
+  - 'References':
+    - 'MLTE Framework': 'mlte_framework.md'
+    - 'MLTE Properties': 'properties.md'
+    - 'MLTE Measurements': 'mlte_measurements.md'
+    - API Reference: reference/
+  - 'Explanations':
+    - 'MLTE Process Resources': 'mlte_process_resources.md'
+    - 'MLTE Property Resources': 'mlte_property_resources.md'
