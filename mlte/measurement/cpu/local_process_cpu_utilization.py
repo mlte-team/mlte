@@ -15,7 +15,7 @@ from mlte._private.platform import is_windows
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
-from mlte.value.artifact import Value
+from mlte.value.base import ValueBase
 
 from ..process_measurement import ProcessMeasurement
 
@@ -24,7 +24,7 @@ from ..process_measurement import ProcessMeasurement
 # -----------------------------------------------------------------------------
 
 
-class CPUStatistics(Value):
+class CPUStatistics(ValueBase):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
@@ -42,13 +42,9 @@ class CPUStatistics(Value):
         Initialize a CPUStatistics instance.
 
         :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
         :param avg: The average utilization
-        :type avg: float
         :param min: The minimum utilization
-        :type min: float
         :param max: The maximum utilization
-        :type max: float
         """
         super().__init__(self, evidence_metadata)
 
@@ -66,30 +62,26 @@ class CPUStatistics(Value):
         Serialize an CPUStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
 
         :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
 
         :return: The deserialized instance
-        :rtype: CPUStatistics
         """
         return CPUStatistics(
             evidence_metadata,
-            avg=json["avg"],
-            min=json["min"],
-            max=json["max"],
+            avg=data["avg"],
+            min=data["min"],
+            max=data["max"],
         )
 
     def __str__(self) -> str:
@@ -106,10 +98,8 @@ class CPUStatistics(Value):
         Construct and invoke a condition for maximum CPU utilization.
 
         :param threshold: The threshold value for maximum utilization
-        :type threshold: float
 
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition(
             "max_utilization_less_than",
@@ -134,10 +124,8 @@ class CPUStatistics(Value):
         Construct and invoke a condition for average CPU utilization.
 
         :param threshold: The threshold value for average utilization
-        :type threshold: float
 
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition(
             "average_utilization_less_than",
@@ -170,7 +158,6 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         Initialize a new LocalProcessCPUUtilization measurement.
 
         :param identifier: A unique identifier for the measurement
-        :type identifier: str
         """
         super().__init__(self, identifier)
         if is_windows():
@@ -183,12 +170,9 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         Monitor the CPU utilization of process at `pid` until exit.
 
         :param pid: The process identifier
-        :type pid: int
         :param poll_interval: The poll interval in seconds
-        :type poll_interval: int
 
         :return: The collection of CPU usage statistics
-        :rtype: dict
         """
         stats = []
         while True:
@@ -221,10 +205,8 @@ def _get_cpu_usage(pid: int) -> float:
     Get the current CPU usage for the process with `pid`.
 
     :param pid: The identifier of the process
-    :type pid: int
 
     :return: The current CPU utilization as percentage
-    :rtype: float
     """
     try:
         stdout = subprocess.check_output(

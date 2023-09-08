@@ -39,7 +39,6 @@ class Integer(Value):
         Convert an integer value artifact to its corresponding model.
         :return: The artifact model
         """
-        print("integer.to_model()")
         a = ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
@@ -50,8 +49,6 @@ class Integer(Value):
                 ),
             ),
         )
-        print("return")
-        print(a)
         return a
 
     @classmethod

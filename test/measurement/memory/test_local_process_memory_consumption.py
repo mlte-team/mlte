@@ -8,17 +8,22 @@ import os
 import subprocess
 import threading
 import time
+from typing import Tuple
 
 import pytest
 
 from mlte._private.platform import is_macos, is_nix, is_windows
+from mlte.context.context import Context
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
 from mlte.spec.condition import Condition
+from mlte.store.base import Store
 from mlte.validation.result import Failure, Success
 
+from ...fixture.store import store_with_context  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -115,20 +120,22 @@ def test_memory_windows_evaluate() -> None:
         _ = LocalProcessMemoryConsumption("id")
 
 
-# @pytest.mark.skipif(
-#     is_windows() or is_macos(),
-#     reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
-# )
-@pytest.mark.skip("Pending artifact protocol implementation.")
-def test_result_save_load(default_session) -> None:  # noqa
-    p = spin_for(5)
+@pytest.mark.skipif(
+    is_windows() or is_macos(),
+    reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
+)
+def test_result_save_load(
+    store_with_context: Tuple[Store, Context]  # noqa
+) -> None:
+    store, ctx = store_with_context
 
-    m = LocalProcessMemoryConsumption("identifier")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    stats = MemoryStatistics(m, 50, 10, 800)
+    stats.save_with(ctx, store)
 
-    stats: MemoryStatistics = m.evaluate(p.pid)
-    stats.save()
-
-    r: MemoryStatistics = MemoryStatistics.load("identifier")  # type: ignore
+    r: MemoryStatistics = MemoryStatistics.load_with("id.value", context=ctx, stpre=store)  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

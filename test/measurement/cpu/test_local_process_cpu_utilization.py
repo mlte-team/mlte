@@ -9,14 +9,19 @@ import os
 import subprocess
 import threading
 import time
+from typing import Tuple
 
 import pytest
 
 from mlte._private.platform import is_nix, is_windows
+from mlte.context.context import Context
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
+from mlte.store.base import Store
 from mlte.validation.result import Failure, Success
 
+from ...fixture.store import store_with_context  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -109,19 +114,21 @@ def test_cpu_windows_evaluate() -> None:
         _ = LocalProcessCPUUtilization("id")
 
 
-# @pytest.mark.skipif(
-#     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
-# )
-@pytest.mark.skip("Pending artifact protocol implementation.")
-def test_result_save_load() -> None:  # noqa
-    p = spin_for(5)
+@pytest.mark.skipif(
+    is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
+)
+def test_result_save_load(
+    store_with_context: Tuple[Store, Context]  # noqa
+) -> None:
+    store, ctx = store_with_context
 
-    m = LocalProcessCPUUtilization("id")
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+    stats = CPUStatistics(m, 0.5, 0.1, 0.8)
+    stats.save_with(ctx, store)
 
-    stats: CPUStatistics = m.evaluate(p.pid)
-    stats.save()
-
-    r: CPUStatistics = CPUStatistics.load("id")  # type: ignore
+    r: CPUStatistics = CPUStatistics.load_with("id.value", context=ctx, store=store)  # type: ignore
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max

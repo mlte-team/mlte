@@ -14,7 +14,7 @@ from mlte._private.platform import is_macos, is_windows
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
-from mlte.value.artifact import Value
+from mlte.value.base import ValueBase
 
 from ..process_measurement import ProcessMeasurement
 
@@ -23,7 +23,7 @@ from ..process_measurement import ProcessMeasurement
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(Value):
+class MemoryStatistics(ValueBase):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
@@ -65,30 +65,26 @@ class MemoryStatistics(Value):
         Serialize an MemoryStatistics to a JSON object.
 
         :return: The JSON object
-        :rtype: Dict[str, Any]
         """
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
     def deserialize(
-        evidence_metadata: EvidenceMetadata, json: Dict[str, Any]
+        evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
         :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
         :param json: The JSON object
-        :type json: Dict[str, Any]
 
         :return: The deserialized instance
-        :rtype: MemoryStatistics
         """
         return MemoryStatistics(
             evidence_metadata,
-            avg=json["avg"],
-            min=json["min"],
-            max=json["max"],
+            avg=data["avg"],
+            min=data["min"],
+            max=data["max"],
         )
 
     def __str__(self) -> str:
