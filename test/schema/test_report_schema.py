@@ -9,16 +9,17 @@ import time
 import pytest
 from jsonschema import ValidationError
 
-from mlte._private.schema import validate_report_schema
 from mlte.report import Dataset, Limitation, Report, UseCase, User
 from mlte.validation.result import Ignore
 from mlte.validation.validated_spec import ValidatedSpec
+
+from . import util as util
 
 
 @pytest.mark.skip("Pending artifact protocol implementation.")
 def test_empty_instance() -> None:  # noqa
     report = Report()
-    validate_report_schema(report.to_json())
+    util.validate_report_schema(report.to_json())
 
 
 @pytest.mark.skip("Pending artifact protocol implementation.")
@@ -58,10 +59,10 @@ def test_valid_instance() -> None:  # noqa
 
     report.spec = ValidatedSpec(results={"prop": {"test": Ignore("ignore")}})
 
-    validate_report_schema(report.to_json())
+    util.validate_report_schema(report.to_json())
 
 
 @pytest.mark.skip("Pending artifact protocol implementation.")
 def test_invalid_instance():
     with pytest.raises(ValidationError):
-        validate_report_schema({})
+        util.validate_report_schema({})

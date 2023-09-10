@@ -4,11 +4,12 @@ test/schema/test_value_schema.py
 Unit tests for Value schema.
 """
 
-from mlte._private.schema import validate_value_schema
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.value.types.integer import Integer
 from mlte.value.types.opaque import Opaque
 from mlte.value.types.real import Real
+
+from . import util as util
 
 
 def test_real():
@@ -20,7 +21,7 @@ def test_real():
     )
 
     doc = r.to_model().to_json()
-    validate_value_schema(doc["body"])
+    util.validate_value_schema(doc["body"])
 
 
 def test_integer():
@@ -32,7 +33,7 @@ def test_integer():
     )
 
     doc = r.to_model().to_json()
-    validate_value_schema(doc["body"])
+    util.validate_value_schema(doc["body"])
 
 
 def test_opaque():
@@ -44,4 +45,4 @@ def test_opaque():
     )
 
     doc = r.to_model().to_json()
-    validate_value_schema(doc["body"])
+    util.validate_value_schema(doc["body"])
