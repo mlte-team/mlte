@@ -7,6 +7,7 @@ Artifact implementation for MLTE report.
 from __future__ import annotations
 
 import typing
+from copy import deepcopy
 from typing import List
 
 from deepdiff import DeepDiff
@@ -15,6 +16,7 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.model.shared import DataDescriptor, RiskDescriptor
+from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.model import (
     CommentDescriptor,
     IntendedUseDescriptor,
@@ -94,6 +96,34 @@ class Report(Artifact):
             data=body.data,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
+        )
+
+    def populate_from(self, artifact: NegotiationCard) -> Report:
+        """
+        Populate the contents of a report from a negotiation card.
+        :param artifact: The artifact to populate from
+        :return: The new report artifact with fields populated
+        """
+        summary = deepcopy(self.summary)
+        summary.problem_type = artifact.system.problem_type
+        summary.task = artifact.system.task
+
+        performance = deepcopy(self.performance)
+        performance.goals = artifact.system.goals
+
+        intended_use = deepcopy(self.intended_use)
+        intended_use.usage_context = artifact.system.usage_context
+        intended_use.production_requirements = artifact.model.production
+
+        return Report(
+            identifier=self.identifier,
+            summary=summary,
+            performance=performance,
+            intended_use=intended_use,
+            risks=deepcopy(artifact.system.risks),
+            data=deepcopy(artifact.data),
+            comments=deepcopy(self.comments),
+            quantitative_analysis=deepcopy(self.quantitative_analysis),
         )
 
     @classmethod
