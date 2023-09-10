@@ -84,6 +84,10 @@ CONFIGS = [
         ),
         output_path="validated/v0.0.1",
     ),
+    Config(
+        model=ModelImport(path="mlte.report.model", model="ReportModel"),
+        output_path="report/v0.0.1",
+    ),
 ]
 
 # -----------------------------------------------------------------------------

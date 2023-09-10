@@ -1,0 +1,107 @@
+"""
+mlte/report/artifact.py
+
+Artifact implementation for MLTE report.
+"""
+
+from __future__ import annotations
+
+import typing
+from typing import List
+
+from deepdiff import DeepDiff
+
+from mlte.artifact.artifact import Artifact
+from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.model.shared import DataDescriptor, RiskDescriptor
+from mlte.report.model import (
+    CommentDescriptor,
+    IntendedUseDescriptor,
+    PerformanceDesciptor,
+    QuantitiveAnalysisDescriptor,
+    ReportModel,
+    SummaryDescriptor,
+)
+
+DEFAULT_REPORT_ID = "default.report"
+
+
+class Report(Artifact):
+    """The report artifact contains the results of MLTE model evaluation."""
+
+    def __init__(
+        self,
+        identifier: str = DEFAULT_REPORT_ID,
+        summary: SummaryDescriptor = SummaryDescriptor(),
+        performance: PerformanceDesciptor = PerformanceDesciptor(),
+        intended_use: IntendedUseDescriptor = IntendedUseDescriptor(),
+        risks: RiskDescriptor = RiskDescriptor(),
+        data: List[DataDescriptor] = [],
+        comments: List[CommentDescriptor] = [],
+        quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
+    ) -> None:
+        super().__init__(identifier, ArtifactType.REPORT)
+
+        self.summary = summary
+        """A summary of the evaluation."""
+
+        self.performance = performance
+        """A summary of model performance evaluation."""
+
+        self.intended_use = intended_use
+        """The intended use of the model under evaluation."""
+
+        self.risks = risks
+        """A description of the risks for the model."""
+
+        self.data = data
+        """A description of the data used during model evaluation."""
+
+        self.comments = comments
+        """A collection of comments for the report."""
+
+        self.quantitative_analysis = quantitative_analysis
+        """The quantitative analysis for the evaluation."""
+
+    def to_model(self) -> ArtifactModel:
+        """Convert a report artifact to its corresponding model."""
+        return ArtifactModel(
+            header=self.build_artifact_header(),
+            body=ReportModel(
+                artifact_type=ArtifactType.REPORT,
+                summary=self.summary,
+                performance=self.performance,
+                intended_use=self.intended_use,
+                risks=self.risks,
+                data=self.data,
+                comments=self.comments,
+                quantitative_analysis=self.quantitative_analysis,
+            ),
+        )
+
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Report:  # type: ignore[override]
+        """Convert a report model to its corresponding artifact."""
+        assert model.header.type == ArtifactType.REPORT, "Broken precondition."
+        body = typing.cast(ReportModel, model.body)
+        return Report(
+            identifier=model.header.identifier,
+            summary=body.summary,
+            performance=body.performance,
+            intended_use=body.intended_use,
+            risks=body.risks,
+            data=body.data,
+            comments=body.comments,
+            quantitative_analysis=body.quantitative_analysis,
+        )
+
+    @classmethod
+    def get_default_id(cls) -> str:
+        """Get the default identifier for the artifact."""
+        return DEFAULT_REPORT_ID
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Report):
+            return False
+        return len(DeepDiff(self, other)) == 0

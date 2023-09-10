@@ -4,7 +4,7 @@ test/artifact/test_artifact.py
 Unit tests for MLTE artifact protocol implementation.
 """
 
-from mlte.negotiation.negotiation_card import NegotiationCard
+from mlte.negotiation.artifact import NegotiationCard
 from mlte.session.state import set_context, set_store
 
 from ..fixture.store import FX_MODEL_ID, FX_NAMESPACE_ID, FX_VERSION_ID

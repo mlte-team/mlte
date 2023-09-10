@@ -1,7 +1,7 @@
 """
-mlte/negotiation/negotiation_card.py
+mlte/negotiation/artifact.py
 
-Negotiation card artifact implementation.
+Artifact implementation for negotiation card.
 """
 
 from __future__ import annotations
@@ -9,17 +9,13 @@ from __future__ import annotations
 import typing
 from typing import List
 
-import deepdiff
+from deepdiff import DeepDiff
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.negotiation.model import (
-    DataDescriptor,
-    ModelDescriptor,
-    NegotiationCardModel,
-    SystemDescriptor,
-)
+from mlte.model.shared import DataDescriptor, ModelDescriptor
+from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
 
@@ -79,8 +75,4 @@ class NegotiationCard(Artifact):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):
             return False
-        return (
-            self.system == other.system
-            and len(deepdiff.DeepDiff(self.data, other.data)) == 0
-            and self.model == other.model
-        )
+        return len(DeepDiff(self, other)) == 0
