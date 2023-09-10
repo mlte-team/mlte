@@ -146,7 +146,7 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
     """
     # Construct the path to the schema file
     path = os.path.join(
-        "schema", subdirectory, f"v{version}", _SCHEMA_FILE_NAME
+        "schema", "artifact", subdirectory, f"v{version}", _SCHEMA_FILE_NAME
     )
     # Locate the artifact, load, and return it
     data = pkgutil.get_data("mlte", path)
@@ -209,7 +209,7 @@ def _find_validatedspec_schema(version: Optional[str] = None) -> Dict[str, Any]:
         version = VALIDATEDSPEC_LATEST_SCHEMA_VERSION
     if version not in _VALIDATEDSPEC_SCHEMA_VERSIONS:
         raise ValueError(f"Invalid spec schema version {version} specified.")
-    return _find_schema(version, "validatedspec")
+    return _find_schema(version, "validated")
 
 
 def _find_report_schema(version: Optional[str] = None):
