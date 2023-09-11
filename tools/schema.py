@@ -25,6 +25,9 @@ EXIT_FAILURE = 1
 # The base path for artifact generation
 OUTPUT_BASE = Path("schema/artifact")
 
+# Path to frontend assets.
+FRONTEND_PATH = Path("frontend/nuxt-app/assets")
+
 
 class ModelImport:
     """A ModelImport describes the module and classname for a MLTE model."""
@@ -193,6 +196,9 @@ def generate(mlte_path: Path) -> None:
     logging.info(f"generate({mlte_path})")
     for config in CONFIGS:
         generate_one(config, mlte_path)
+
+        # Also generate in frontend path.
+        generate_one(config, mlte_path / FRONTEND_PATH)
 
 
 # -----------------------------------------------------------------------------
