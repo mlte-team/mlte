@@ -1,5 +1,5 @@
 """
-Implementation of MultipleAccuracy value.
+Implementation of Array value.
 """
 from __future__ import annotations
 

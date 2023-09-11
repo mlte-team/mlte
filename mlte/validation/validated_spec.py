@@ -134,13 +134,18 @@ class ValidatedSpec(Artifact):
             identifier=model.header.identifier, spec=spec, results=results
         )
 
-    def print_results(self):
+    def print_results(self, type: str = "all"):
+        """Prints the validated results per property, can be filtered by result type."""
+        if type not in ["all", "Success", "Failure", "Ignore"]:
+            raise RuntimeError(f"Invalid type: {type}")
+        
         for property, details in self.results.items():
             print(f"Property: {property}")
             for id, result in details.items():
-                print(
-                    f" > Measurement: {id}, result: {result}, details: {result.message}"
-                )
+                if type == "all" or type == str(result):
+                    print(
+                        f" > Measurement: {id}, result: {result}, details: {result.message}"
+                    )
 
     @classmethod
     def get_default_id(cls) -> str:
