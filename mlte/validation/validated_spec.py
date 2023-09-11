@@ -138,7 +138,7 @@ class ValidatedSpec(Artifact):
         """Prints the validated results per property, can be filtered by result type."""
         if type not in ["all", "Success", "Failure", "Ignore"]:
             raise RuntimeError(f"Invalid type: {type}")
-        
+
         for property, details in self.results.items():
             print(f"Property: {property}")
             for id, result in details.items():
