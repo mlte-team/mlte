@@ -47,18 +47,27 @@ class MultipleRanksums(Array):
             "all_p_values_greater_or_equal_than",
             [threshold],
             lambda value: Success(
-                f"All p-values are equal to or over threshold {threshold}"
+                f"All p-values are equal to or over threshold {value.get_total_p_value_threshold(threshold)}"
             )
-            if len(
-                [
-                    ranksum
-                    for ranksum in value.array
-                    if ranksum[next(iter(ranksum))][1] < threshold / value.num_pops
-                ]
-            )
-            == 0
+            if len(value.get_low_p_values(threshold)) == 0
             else Failure(
-                f"One or more p-values are below threshold {threshold/ value.num_pops}: {value.array}"
+                f"One or more p-values are below threshold {value.get_total_p_value_threshold(threshold)}: {value.get_low_p_values(threshold)}"
             ),
         )
         return condition
+
+    def get_total_p_value_threshold(self, threshold: float) -> float:
+        return threshold / self.num_pops
+
+    def get_low_p_values(self, threshold: float):
+        """Generates a dict of all cases that didn't go over the threshold."""
+        low_cases = {}
+
+        ranksum: dict[str, list]
+        for ranksum in self.array:
+            id = next(iter(ranksum))
+            pval = ranksum[id][1]
+            if pval < self.get_total_p_value_threshold(threshold=threshold):
+                low_cases[id] = pval
+
+        return low_cases
