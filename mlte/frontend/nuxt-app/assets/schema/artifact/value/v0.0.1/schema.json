@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "EvidenceMetadata": {
+      "description": "A simple wrapper for evidence metadata.",
+      "properties": {
+        "measurement_type": {
+          "title": "Measurement Type",
+          "type": "string"
+        },
+        "identifier": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        }
+      },
+      "required": [
+        "measurement_type",
+        "identifier"
+      ],
+      "title": "EvidenceMetadata",
+      "type": "object"
+    },
+    "Identifier": {
+      "description": "\n    Identifier is a simple class that standardizes\n    the manner in which Measurements, Values, and\n    Results are uniquely identified throughout\n    their lifetimes.\n    ",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Identifier",
+      "type": "object"
+    },
+    "ImageValueModel": {
+      "description": "The model implementation for MLTE image values.",
+      "properties": {
+        "value_type": {
+          "const": "4",
+          "title": "Value Type"
+        },
+        "data": {
+          "title": "Data",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value_type",
+        "data"
+      ],
+      "title": "ImageValueModel",
+      "type": "object"
+    },
+    "IntegerValueModel": {
+      "description": "The model implementation for MLTE integer values.",
+      "properties": {
+        "value_type": {
+          "const": "1",
+          "title": "Value Type"
+        },
+        "integer": {
+          "title": "Integer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "value_type",
+        "integer"
+      ],
+      "title": "IntegerValueModel",
+      "type": "object"
+    },
+    "OpaqueValueModel": {
+      "description": "The model implementation for MLTE opaque values.",
+      "properties": {
+        "value_type": {
+          "const": "3",
+          "title": "Value Type"
+        },
+        "data": {
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "value_type",
+        "data"
+      ],
+      "title": "OpaqueValueModel",
+      "type": "object"
+    },
+    "RealValueModel": {
+      "description": "The model implementation for MLTE real values.",
+      "properties": {
+        "value_type": {
+          "const": "2",
+          "title": "Value Type"
+        },
+        "real": {
+          "title": "Real",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value_type",
+        "real"
+      ],
+      "title": "RealValueModel",
+      "type": "object"
+    }
+  },
+  "description": "The model implementation for MLTE values.",
+  "properties": {
+    "artifact_type": {
+      "const": "2",
+      "title": "Artifact Type"
+    },
+    "metadata": {
+      "$ref": "#/$defs/EvidenceMetadata"
+    },
+    "value": {
+      "discriminator": {
+        "mapping": {
+          "1": "#/$defs/IntegerValueModel",
+          "2": "#/$defs/RealValueModel",
+          "3": "#/$defs/OpaqueValueModel",
+          "4": "#/$defs/ImageValueModel"
+        },
+        "propertyName": "value_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IntegerValueModel"
+        },
+        {
+          "$ref": "#/$defs/RealValueModel"
+        },
+        {
+          "$ref": "#/$defs/OpaqueValueModel"
+        },
+        {
+          "$ref": "#/$defs/ImageValueModel"
+        }
+      ],
+      "title": "Value"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "metadata",
+    "value"
+  ],
+  "title": "ValueModel",
+  "type": "object"
+}

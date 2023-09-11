@@ -9,3 +9,4 @@ dist
 .DS_Store
 assets/uswds
 sass/uswds
+package-lock.json
