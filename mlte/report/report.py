@@ -21,7 +21,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from mlte.validation.validated_spec import ValidatedSpec
 
-from .._private.schema import REPORT_LATEST_SCHEMA_VERSION
 from .._private.text import cleantext
 from .html import _connected, _generate_html
 
@@ -230,7 +229,7 @@ class Report(ReportAttribute):
         # Manually serialize the spec-level document
         document["spec"] = ""  # TODO: Change to model. self.spec.to_json()
         # Manually insert the schema version
-        document["schema_version"] = REPORT_LATEST_SCHEMA_VERSION
+        document["schema_version"] = "0.0.1"
         return document
 
     @typing.no_type_check

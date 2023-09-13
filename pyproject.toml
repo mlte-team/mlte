@@ -23,7 +23,6 @@ requests = "^2.31.0"
 uvicorn = "^0.23.2"
 deepdiff = "^6.3.1"
 dill = "^0.3.7"
-jsonschema = "^4.19.0"
 
 [tool.poetry.group.qa.dependencies]
 isort = "^5.12.0"
@@ -36,6 +35,7 @@ types-requests = "^2.31.0.2"
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 httpx = "^0.24.1"
+jsonschema = "^4.19.0"
 
 [tool.isort]
 profile="black"
