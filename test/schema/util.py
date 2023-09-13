@@ -1,14 +1,5 @@
 """
-mlte/_private/schema.py
-
-Internal utilities for schema management.
-
-Acknowledgements:
-    The design of schema versioning in this project,
-    and the implementation of schema file resolution
-    in this file is adapted from the work by the
-    TensorFlow team in the Model Card Toolkit:
-    https://github.com/tensorflow/model-card-toolkit
+test/schema/util.py
 """
 
 import json
@@ -49,11 +40,10 @@ def validate_value_schema(
 ):
     """
     Validate the schema of a Value document.
-
     :param document: The document instance
-    :type document: Dict[str, Any]
     :param version: The identifier for the schema version
-    :type version: Optional[str]
+    :raises ValueError: If an invalid schema is specified
+    :raises ValidationError: If the instance fails validation
     """
     version = (
         version or document.get("schema_version") or VALUE_LATEST_SCHEMA_VERSION
@@ -66,12 +56,8 @@ def validate_spec_schema(
 ):
     """
     Validate the schema of a Spec document.
-
     :param document: The document instance
-    :type document: Dict[str, Any]
     :param version: The identifier for the schema version
-    :type version: Optional[str]
-
     :raises ValueError: If an invalid schema is specified
     :raises ValidationError: If the instance fails validation
     """
@@ -88,10 +74,7 @@ def validate_validatedspec_schema(
     Validate the schema of a ValidatedSpec document.
 
     :param document: The document instance
-    :type document: Dict[str, Any]
     :param version: The identifier for the schema version
-    :type version: Optional[str]
-
     :raises ValueError: If an invalid schema is specified
     :raises ValidationError: If the instance fails validation
     """
@@ -108,12 +91,8 @@ def validate_report_schema(
 ):
     """
     Validate the schema of a spec output document.
-
     :param document: The document instance
-    :type document: Dict[str, Any]
     :param version: The identifier for the schema version
-    :type version: Optional[str]
-
     :raises ValueError: If an invalid schema is specified
     :raises RuntimeError: If the instance fails validation
     """

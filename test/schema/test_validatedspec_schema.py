@@ -5,12 +5,13 @@ Unit tests for ValidatedSpec schema.
 """
 
 
-from mlte._private.schema import validate_validatedspec_schema
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs import StorageCost
 from mlte.spec.spec import Spec
 from mlte.validation.spec_validator import SpecValidator
 from mlte.value.types.integer import Integer
+
+from . import util as util
 
 
 def test_schema():
@@ -28,4 +29,4 @@ def test_schema():
     validatedSpec = specValidator.validate()
 
     doc = validatedSpec.to_model().to_json()
-    validate_validatedspec_schema(doc["body"])
+    util.validate_validatedspec_schema(doc["body"])
