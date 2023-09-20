@@ -6,6 +6,7 @@ import * as negotiationSchemaData from '~/assets/schema/artifact/spec/v0.0.1/sch
 import * as specSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
 import * as validatedSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
 import * as valueSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
+import * as reportSchemaData from '~/assets/schema/artifact/report/v0.0.1/schema.json';
 
 
 export function isValidNegotiation(artifact: object) : boolean {
@@ -22,6 +23,10 @@ export function isValidValidatedSpec(artifact: object) : boolean {
 
 export function isValidValue(artifact: object) : boolean {
     return isValidArtifact(artifact, valueSchemaData);
+}
+
+export function isValidReport(artifact: object) : boolean {
+    return isValidArtifact(artifact, reportSchemaData);
 }
 
 // Validates if a given JSON string is a valid JSON artifact for the provided schema.
