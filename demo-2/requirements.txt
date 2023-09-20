@@ -4,3 +4,4 @@ pandas-stubs==1.5.3.230321
 scikit-learn==1.2.1
 ipykernel==6.21.2
 notebook==6.5.3
+tensorflow==2.14.0rc1
