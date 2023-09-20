@@ -14,6 +14,7 @@ from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.model import NegotiationCardModel
+from mlte.report.model import ReportModel
 from mlte.spec.model import SpecModel
 from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import IntegerValueModel, ValueModel, ValueType
@@ -66,7 +67,9 @@ class TypeUtil:
 
 def _make_body(
     type: ArtifactType, id: str
-) -> Union[NegotiationCardModel, ValueModel, SpecModel, ValidatedSpecModel]:
+) -> Union[
+    NegotiationCardModel, ValueModel, SpecModel, ValidatedSpecModel, ReportModel
+]:
     """
     Make the body of the artifact for a given type.
     :param type: The artifact type
@@ -81,6 +84,8 @@ def _make_body(
         return _make_spec()
     if type == ArtifactType.VALIDATED_SPEC:
         return _make_validated_spec()
+    if type == ArtifactType.REPORT:
+        return _make_report()
 
     assert False, f"Unkown artifact type provided when creating body: {type}."
 
@@ -122,3 +127,11 @@ def _make_validated_spec() -> ValidatedSpecModel:
     :return: The artifact
     """
     return ValidatedSpecModel(artifact_type=ArtifactType.VALIDATED_SPEC)
+
+
+def _make_report() -> ReportModel:
+    """
+    Make a minimal report.
+    :return: The artifact
+    """
+    return ReportModel(artifact_type=ArtifactType.REPORT)

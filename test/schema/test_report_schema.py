@@ -4,65 +4,110 @@ test/schema/test_report_schema.py
 Unit tests for report schema validation.
 """
 
-import time
-
 import pytest
 from jsonschema import ValidationError
 
-from mlte.report import Dataset, Limitation, Report, UseCase, User
-from mlte.validation.result import Ignore
-from mlte.validation.validated_spec import ValidatedSpec
+from mlte.model.shared import (
+    DataClassification,
+    DataDescriptor,
+    FieldDescriptor,
+    GoalDescriptor,
+    LabelDescriptor,
+    MetricDescriptor,
+    ModelInputDescriptor,
+    ModelInterfaceDescriptor,
+    ModelOutputDescriptor,
+    ModelProductionDescriptor,
+    ModelResourcesDescriptor,
+    ProblemType,
+    RiskDescriptor,
+)
+from mlte.report.artifact import Report
+from mlte.report.model import (
+    CommentDescriptor,
+    IntendedUseDescriptor,
+    PerformanceDesciptor,
+    QuantitiveAnalysisDescriptor,
+    SummaryDescriptor,
+)
 
 from . import util as util
 
 
-@pytest.mark.skip("Pending artifact protocol implementation.")
-def test_empty_instance() -> None:  # noqa
+def test_empty_instance() -> None:
+    """An empty instance validates successfully."""
     report = Report()
-    util.validate_report_schema(report.to_json())
+
+    doc = report.to_model().to_json()
+    util.validate_report_schema(doc["body"])
 
 
-@pytest.mark.skip("Pending artifact protocol implementation.")
-def test_valid_instance() -> None:  # noqa
-    report = Report()
-    report.metadata.project_name = "ProjectName"
-    report.metadata.authors = ["Foo", "Bar"]
-    report.metadata.source_url = "https://github.com/mlte-team"
-    report.metadata.artifact_url = "https://github.com/mlte-team"
-    report.metadata.timestamp = f"{int(time.time())}"
+def test_valid_instance() -> None:
+    """A complete instance validates successfully."""
+    report = Report(
+        "my-report",
+        summary=SummaryDescriptor(
+            problem_type=ProblemType.CLASSIFICATION, task="task"
+        ),
+        performance=PerformanceDesciptor(
+            goals=[
+                GoalDescriptor(
+                    description="description",
+                    metrics=[
+                        MetricDescriptor(
+                            description="description", baseline="baseline"
+                        )
+                    ],
+                )
+            ]
+        ),
+        intended_use=IntendedUseDescriptor(
+            usage_context="context",
+            production_requirements=ModelProductionDescriptor(
+                integration="integration",
+                interface=ModelInterfaceDescriptor(
+                    input=ModelInputDescriptor(description="description"),
+                    output=ModelOutputDescriptor(description="output"),
+                ),
+                resources=ModelResourcesDescriptor(
+                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                ),
+            ),
+        ),
+        risks=RiskDescriptor(fp="fp", fn="fn", other="other"),
+        data=[
+            DataDescriptor(
+                description="description",
+                classification=DataClassification.UNCLASSIFIED,
+                access="access",
+                fields=[
+                    FieldDescriptor(
+                        name="name",
+                        description="description",
+                        type="type",
+                        expected_values="expected_values",
+                        missing_values="missing_values",
+                        special_values="special_values",
+                    )
+                ],
+                labels=[
+                    LabelDescriptor(description="description", percentage=95.0)
+                ],
+                policies="policies",
+                rights="rights",
+                source="source",
+                identifiable_information="identifiable_information",
+            )
+        ],
+        comments=[CommentDescriptor(content="content")],
+        quantitative_analysis=QuantitiveAnalysisDescriptor(content="content"),
+    )
+    doc = report.to_model().to_json()
+    util.validate_report_schema(doc["body"])
 
-    report.model_details.name = "ModelName"
-    report.model_details.overview = "Model overview."
-    report.model_details.documentation = "Model documentation."
 
-    report.model_specification.domain = "ModelDomain"
-    report.model_specification.architecture = "ModelArchitecture"
-    report.model_specification.input = "ModelInput"
-    report.model_specification.output = "ModelOutput"
-    report.model_specification.data = [
-        Dataset("Dataset0", "https://github.com/mlte-team", "Description"),
-        Dataset("Dataset1", "https://github.com/mlte-team", "Description."),
-    ]
-
-    report.considerations.users = [
-        User("User description 0."),
-        User("User description 1."),
-    ]
-    report.considerations.use_cases = [
-        UseCase("Use case description 0."),
-        UseCase("Use case description 1."),
-    ]
-    report.considerations.limitations = [
-        Limitation("Limitation description 0."),
-        Limitation("Limitation description 1."),
-    ]
-
-    report.spec = ValidatedSpec(results={"prop": {"test": Ignore("ignore")}})
-
-    util.validate_report_schema(report.to_json())
-
-
-@pytest.mark.skip("Pending artifact protocol implementation.")
 def test_invalid_instance():
+    """An invalid instances fails validation."""
+
     with pytest.raises(ValidationError):
         util.validate_report_schema({})
