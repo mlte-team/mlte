@@ -14,7 +14,7 @@ from mlte.model.base_model import BaseModel
 # -----------------------------------------------------------------------------
 
 
-class ProblemType(Enum):
+class ProblemType(str, Enum):
     """An enumeration over machine learning problem types."""
 
     CLASSIFICATION = "classification"
@@ -152,7 +152,7 @@ class ModelDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class DataClassification(Enum):
+class DataClassification(str, Enum):
     """An enumeration of data classification levels."""
 
     UNCLASSIFIED = "unclassified"
