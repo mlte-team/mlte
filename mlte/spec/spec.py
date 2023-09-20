@@ -112,8 +112,8 @@ class Spec(Artifact):
         }
         return property_model
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """Overriden"""
         return DEFAULT_SPEC_ID
 

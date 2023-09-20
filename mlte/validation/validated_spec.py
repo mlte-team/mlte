@@ -134,8 +134,8 @@ class ValidatedSpec(Artifact):
             identifier=model.header.identifier, spec=spec, results=results
         )
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """Overriden"""
         return DEFAULT_VALIDATED_SPEC_ID
 

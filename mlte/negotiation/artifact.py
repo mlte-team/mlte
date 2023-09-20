@@ -67,8 +67,8 @@ class NegotiationCard(Artifact):
             model=body.model,
         )
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """Overriden"""
         return DEFAULT_NEGOTIATION_CARD_ID
 
