@@ -8,7 +8,7 @@ from mlte.property import Property
 
 class Interpretability(Property):
     """
-    The Interpretability property 
+    The Interpretability property
     """
 
     def __init__(self, rationale: str):
@@ -17,7 +17,7 @@ class Interpretability(Property):
             self.__class__.__name__,
             cleantext(
                 """
-                The Interpretability property 
+                The Interpretability property.
                 """
             ),
             rationale,
