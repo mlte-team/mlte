@@ -12,7 +12,7 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.property.costs import StorageCost
+from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.base import Store
 from mlte.validation.result import Result

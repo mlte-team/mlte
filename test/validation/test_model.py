@@ -26,6 +26,7 @@ def test_validated_spec_body() -> None:
                     name="TaskEfficacy",
                     description="Property for useful things.",
                     rationale="Because I say so",
+                    module="mlte.properties.functionality.task_efficacy",
                     conditions={
                         "accuracy": ConditionModel(
                             name="less_than",

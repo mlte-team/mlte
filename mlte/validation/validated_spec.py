@@ -93,6 +93,7 @@ class ValidatedSpec(Artifact):
                         description=property_model.description,
                         rationale=property_model.rationale,
                         conditions=property_model.conditions,
+                        module=property_model.module,
                         results=res_model[property_model.name],
                     )
                     for property_model in spec_model.properties

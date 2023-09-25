@@ -8,7 +8,7 @@ from __future__ import annotations
 import pytest
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.property.costs import StorageCost
+from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.validation.spec_validator import SpecValidator
 from mlte.value.types.integer import Integer
