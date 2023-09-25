@@ -4,8 +4,8 @@ mlte/property/costs/training_memory_cost.py
 TrainingMemoryCost property definition.
 """
 
-from ..._private.text import cleantext
-from ..property import Property
+from mlte._private.text import cleantext
+from mlte.property.property import Property
 
 
 class TrainingMemoryCost(Property):
@@ -31,4 +31,5 @@ class TrainingMemoryCost(Property):
                 """
             ),
             rationale,
+            __name__,
         )

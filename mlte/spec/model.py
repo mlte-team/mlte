@@ -38,6 +38,9 @@ class PropertyModel(BaseModel):
     conditions: Dict[str, ConditionModel] = {}
     """A dictionary of conditions, keyed by measurement id, to be validated for this property."""
 
+    module: str
+    """The full package and module path of the Property class."""
+
 
 class SpecModel(BaseModel):
     """The model implementation for the Spec artifact."""

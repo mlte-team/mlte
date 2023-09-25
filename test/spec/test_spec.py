@@ -6,13 +6,14 @@ Unit tests for Spec functionality.
 
 from __future__ import annotations
 
+from test.spec.extended_property import ExtendedProperty
 from typing import Tuple
 
 import pytest
 
 from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
-from mlte.property.costs import StorageCost
+from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.base import Store
 
@@ -66,3 +67,21 @@ def test_non_unique_properties():
                 StorageCost("rationale2"): {},
             },
         )
+
+
+def test_save_load_extended_property(
+    store_with_context: Tuple[Store, Context]  # noqa
+):
+    store, ctx = store_with_context
+
+    s = Spec(
+        properties={
+            ExtendedProperty("rationale"): {
+                "test": LocalObjectSize.value().less_than(3)
+            }
+        },
+    )
+    s.save_with(ctx, store)
+
+    loaded = Spec.load_with(context=ctx, store=store)
+    assert s == loaded

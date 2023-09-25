@@ -4,12 +4,10 @@ test/property/test_properties.py
 Unit tests for model properties.
 """
 
-from mlte.property.costs import (
-    StorageCost,
-    TrainingComputeCost,
-    TrainingMemoryCost,
-)
-from mlte.property.functionality import TaskEfficacy
+from mlte.property.costs.storage_cost import StorageCost
+from mlte.property.costs.training_compute_cost import TrainingComputeCost
+from mlte.property.costs.training_memory_cost import TrainingMemoryCost
+from mlte.property.functionality.task_efficacy import TaskEfficacy
 
 
 def test_storage_cost():
