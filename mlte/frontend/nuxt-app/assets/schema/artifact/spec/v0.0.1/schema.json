@@ -63,10 +63,15 @@
           "default": {},
           "title": "Conditions",
           "type": "object"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
         }
       },
       "required": [
-        "name"
+        "name",
+        "module"
       ],
       "title": "PropertyModel",
       "type": "object"

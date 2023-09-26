@@ -108,6 +108,10 @@
           "title": "Conditions",
           "type": "object"
         },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
         "results": {
           "additionalProperties": {
             "$ref": "#/$defs/ResultModel"
@@ -118,7 +122,8 @@
         }
       },
       "required": [
-        "name"
+        "name",
+        "module"
       ],
       "title": "PropertyAndResultsModel",
       "type": "object"
