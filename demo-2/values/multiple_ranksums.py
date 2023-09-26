@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-from array_value import Array
+from values.array_value import Array
 
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition

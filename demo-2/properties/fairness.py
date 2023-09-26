@@ -3,7 +3,7 @@ Fairness property definition.
 """
 
 from mlte._private.text import cleantext
-from mlte.property import Property
+from mlte.property.property import Property
 
 
 class Fairness(Property):
@@ -22,4 +22,5 @@ class Fairness(Property):
                 """
             ),
             rationale,
+            __name__
         )

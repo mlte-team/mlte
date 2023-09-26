@@ -3,7 +3,7 @@ Robustness property definition.
 """
 
 from mlte._private.text import cleantext
-from mlte.property import Property
+from mlte.property.property import Property
 
 
 class Robustness(Property):
@@ -24,4 +24,5 @@ class Robustness(Property):
                 """
             ),
             rationale,
+            __name__
         )

@@ -4,8 +4,8 @@ mlte/property/costs/predicting_compute_cost.py
 PredictingComputeCost property definition.
 """
 
-from ..._private.text import cleantext
-from ..property import Property
+from mlte._private.text import cleantext
+from mlte.property.property import Property
 
 
 class PredictingComputeCost(Property):
@@ -31,4 +31,5 @@ class PredictingComputeCost(Property):
                 """
             ),
             rationale,
+            __name__
         )

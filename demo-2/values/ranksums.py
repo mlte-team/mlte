@@ -3,7 +3,7 @@ Implementation of RankSums value.
 """
 from __future__ import annotations
 
-from array_value import Array
+from values.array_value import Array
 
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success

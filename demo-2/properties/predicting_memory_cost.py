@@ -4,8 +4,8 @@ mlte/property/costs/predicting_memory_cost.py
 PredictingMemoryCost property definition.
 """
 
-from ..._private.text import cleantext
-from ..property import Property
+from mlte._private.text import cleantext
+from mlte.property.property import Property
 
 
 class PredictingMemoryCost(Property):
@@ -31,4 +31,5 @@ class PredictingMemoryCost(Property):
                 """
             ),
             rationale,
+            __name__
         )
