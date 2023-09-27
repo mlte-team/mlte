@@ -115,6 +115,16 @@
             gained about a model during the MLTE process.
           </p>
           <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
+          <NuxtLink
+            :to="{
+              path: 'report',
+              query: { namespace: selectedNamespace },
+            }"
+          >
+            <UsaButton class="primary-button" style="float: right">
+              Start new report
+            </UsaButton>
+          </NuxtLink>
         </div>
       </UsaAccordionItem>
 
