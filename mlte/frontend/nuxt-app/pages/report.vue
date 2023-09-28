@@ -10,12 +10,19 @@
       <template #label>
         Summary of the model being evaluated.
       </template>
+          <!-- Note that when I type in this text box, 
+            it clicks out of the area every time I type a letter.
+          The same thing happens in the negotiation card
+          in a few of the text boxes, so we need to fix that. -->
     </UsaTextarea>
 
+    <!-- Kept the goals section consistent from what Alex had.
+    Probably need to rewrite once we figure out how to pull 
+    sections from the negotiation card.-->
     <h3>Goals of the System</h3>
       <p>Goals or objectives that the model helps to satisfy.</p>
       <div
-        v-for="(goal, goalIndex) in form.system.goals"
+        v-for="(goal, goalIndex) in form.goals"
         :key="goal.description"
       >
         <h3>Goal {{ goalIndex + 1 }}</h3>
@@ -26,9 +33,11 @@
 
       </div>
       <AddButton class="margin-button" @click="addGoal()"> Add goal </AddButton>
-      <!--<DeleteButton @click="deleteGoal(goalIndex)">
+      <!-- For some reason I cannot get this button to work properly
+        <DeleteButton @click="deleteGoal(goalIndex)">
           Delete goal
-        </DeleteButton> -->
+        </DeleteButton> 
+      -->
     <h3>MLTE Evaluation</h3>
       <p>THIS IS A PLACEHOLDER
         <br />
@@ -94,10 +103,16 @@
         <br />
         <br />
       </p>
-
-        <div style="text-align: center; margin-top: 1em">
-      <UsaButton class="primary-button" @click="submit()"> EXPORT </UsaButton>
+    
+    <!--Added in the submit and cancel buttons and functions from the n card.
+    It doesn't seem to me that the submit button is working, but I don't know 
+    how to test it appropriately. -->
+    <div style="text-align: right; margin-top: 1em">
+      <UsaButton class="primary-button" @click="submit()"> Export </UsaButton>
+      <UsaButton class="secondary-button" @click="cancel()"> Cancel </UsaButton>
+      <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
+
   </NuxtLayout>
 </template>
 
@@ -113,9 +128,11 @@ const path = ref([
   },
 ]);
 
+// Rewrote the form so that every item is at the top level;
+// not sure that is exactly what we want but I figured it is a starting point.
 const form = ref({
-  system: {
-    goals: [
+  model_summary: "",
+  goals: [
       {
         description: "",
         metrics: [
@@ -126,95 +143,15 @@ const form = ref({
         ],
       },
     ],
-    problem_type: "",
-    task: "",
-    usage_context: "",
-    fp_risk: "",
-    fn_risk: "",
-    other_risks: "",
-  },
-  data: [
-    {
-      access: "",
-      description: "",
-      source: "",
-      classification: "",
-      labels: [
-        {
-          description: "",
-          percentage: 0,
-        },
-      ],
-      schema: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-          missing_values: "",
-          special_values: "",
-        },
-      ],
-      rights: "",
-      policies: "",
-      identifiable_information: "",
-    },
-  ],
-  model: {
-    development: {
-      resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
-      },
-    },
-    production: {
-      environment: {
-        integration: "",
-        output: "",
-      },
-      resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
-      },
-    },
-  },
+    mlte_evaluation: "",
+    intended_use: "",
+    risks: "",
+    data: "",
+    caveats: "",
+    analysis: "",
 });
 
-const problemTypeOptions = [
-  { value: "Classification", text: "Classification" },
-  { value: "Clustering", text: "Clustering" },
-  { value: "Content Generation", text: "Content Generation" },
-  { value: "Detection", text: "Detection" },
-  { value: "Trend", text: "Trend" },
-  { value: "Alert", text: "Alert" },
-  { value: "Forecasting", text: "Forecasting" },
-  { value: "Summarization", text: "Summarization" },
-  { value: "Benchmarking", text: "Benchmarking" },
-  { value: "Goals", text: "Goals" },
-  { value: "Other", text: "Other" },
-];
-
-const classificationOptions = [
-  { value: "Unclassified", text: "Unclassified" },
-  {
-    value: "Controlled Unclassified Information (CUI)",
-    text: "Controlled Unclassified Information (CUI)",
-  },
-  {
-    value: "Personally Identifiable Information (PII)",
-    text: "Personally Identifiable Information (PII)",
-  },
-  {
-    value: "Protected Health Information (PHI)",
-    text: "Protected Health Information (PHI)",
-  },
-  { value: "Other", text: "Other" },
-];
-
+// did not change this function
 function cancel() {
   if (
     confirm(
@@ -225,11 +162,21 @@ function cancel() {
   }
 }
 
+// did not change this function
 function submit() {
   console.log(form.value);
   console.log(useRoute().query.namespace);
 }
 
+// TODO: figure out how to actually have this function do something!!
+// right now it is just a copy of submit()
+function exporting() {
+  console.log(form.value);
+  console.log(useRoute().query.namespace);
+}
+
+// rewrote this function to work for the new form, but am not really
+// sure how it works so have not called it anywhere...
 function descriptorUpload(event: Event, descriptorName: string) {
   const target = event.target as HTMLInputElement;
   const file = target.files![0];
@@ -238,8 +185,8 @@ function descriptorUpload(event: Event, descriptorName: string) {
     reader.onload = (inputFile) => {
       try {
         const document = JSON.parse((inputFile.target!.result as string) ?? "");
-        if (descriptorName === "System Context") {
-          document.goals.forEach(
+        form.value.model_summary = document.model_summary;
+        document.goals.forEach(
             (goal: {
               id: string;
               goal: string;
@@ -247,98 +194,26 @@ function descriptorUpload(event: Event, descriptorName: string) {
               baseline: string;
             }) => {
               addGoal();
-              const lastGoalIndex = form.value.system.goals.length - 1;
+              const lastGoalIndex = form.value.goals.length - 1;
 
-              form.value.system.goals[lastGoalIndex].description = goal.goal;
-              form.value.system.goals[lastGoalIndex].metrics[0].description =
+              form.value.goals[lastGoalIndex].description = goal.goal;
+              form.value.goals[lastGoalIndex].metrics[0].description =
                 goal.metric;
-              form.value.system.goals[lastGoalIndex].metrics[0].baseline =
+              form.value.goals[lastGoalIndex].metrics[0].baseline =
                 goal.baseline;
             },
           );
-          form.value.system.task = document.task;
-          form.value.system.problem_type = document.ml_problem_type.ml_problem;
-          form.value.system.usage_context = document.usage_context;
-          form.value.system.fp_risk = document.risks.risk_fp;
-          form.value.system.fn_risk = document.risks.risk_fn;
-          form.value.system.other_risks = document.risks.risk_other;
-        } else if (descriptorName === "Raw Data") {
-          addDataItem();
-          const lastDataIndex = form.value.data.length - 1;
-
-          let dataSourcesStr = "";
-          document.data_sources.forEach(
-            (
-              source: { data_source: string; other_source: string },
-              i: number,
-            ) => {
-              if (source.data_source === "Other") {
-                dataSourcesStr += source.other_source;
-              } else {
-                dataSourcesStr += source.data_source;
-              }
-
-              if (i + 1 < document.data_sources.length) {
-                dataSourcesStr += ", ";
-              }
-            },
-          );
-          form.value.data[lastDataIndex].source = dataSourcesStr;
-
-          form.value.data[lastDataIndex].labels.splice(0, 1);
-          document.labels_distribution.forEach(
-            (label: { label: string; percentage: number }, i: number) => {
-              addLabel(lastDataIndex);
-              form.value.data[lastDataIndex].labels[i].description =
-                label.label;
-              form.value.data[lastDataIndex].labels[i].percentage =
-                label.percentage;
-            },
-          );
-
-          form.value.data[lastDataIndex].rights = document.data_rights;
-          form.value.data[lastDataIndex].policies = document.data_policies;
-
-          form.value.data[lastDataIndex].schema.splice(0, 1);
-          document.schema.forEach(
-            (
-              schema: {
-                field_name: string;
-                field_description: string;
-                field_type: string;
-                expected_values: string;
-                interpret_missing: string;
-                interpret_special: string;
-              },
-              i: number,
-            ) => {
-              addSchema(lastDataIndex);
-              form.value.data[lastDataIndex].schema[i].name = schema.field_name;
-              form.value.data[lastDataIndex].schema[i].description =
-                schema.field_description;
-              form.value.data[lastDataIndex].schema[i].type = schema.field_type;
-              form.value.data[lastDataIndex].schema[i].expected_values =
-                schema.expected_values;
-              form.value.data[lastDataIndex].schema[i].missing_values =
-                schema.interpret_missing;
-              form.value.data[lastDataIndex].schema[i].special_values =
-                schema.interpret_special;
-            },
-          );
-        } else if (descriptorName === "Development Environment") {
-          form.value.model.development.resources.gpus =
-            document.computing_resources.gpu;
-          form.value.model.development.resources.cpus =
-            document.computing_resources.cpu;
-          form.value.model.development.resources.memory =
-            document.computing_resources.memory;
-          form.value.model.development.resources.storage =
-            document.computing_resources.storage;
+          form.value.mlte_evaluation = document.mlte_evaluation;
+          form.value.intended_use = document.intended_use;
+          form.value.risks = document.risks;
+          form.value.data = document.data;
+          form.value.caveats = document.caveats;
+          form.value.analysis = document.analysis;
 
           let outputString = "";
-          if (form.value.model.production.environment.output !== "") {
-            outputString += "\n\n";
-          }
+          // if (form.value.model.production.environment.output !== "") {
+          //   outputString += "\n\n";
+          // }
           document.downstream_components.forEach(
             (component: {
               component_name: string;
@@ -372,17 +247,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.environment.output += outputString;
-        } else if (descriptorName === "Production Environment") {
-          form.value.model.production.resources.gpus =
-            document.computing_resources.gpu;
-          form.value.model.production.resources.cpus =
-            document.computing_resources.cpu;
-          form.value.model.production.resources.memory =
-            document.computing_resources.memory;
-          form.value.model.production.resources.storage =
-            document.computing_resources.storage;
-        }
+          // form.value.model.production.environment.output += outputString;
       } catch (err) {
         console.error("Invalid JSON or error in parsing file.");
       }
@@ -392,7 +257,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
 }
 
 function addGoal() {
-  form.value.system.goals.push({
+  form.value.goals.push({
     description: "",
     metrics: [{ description: "", baseline: "" }],
   });
@@ -400,12 +265,12 @@ function addGoal() {
 
 function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
-    form.value.system.goals.splice(goalIndex, 1);
+    form.value.goals.splice(goalIndex, 1);
   }
 }
 
 function addMetric(goalIndex: number) {
-  form.value.system.goals[goalIndex].metrics.push({
+  form.value.goals[goalIndex].metrics.push({
     description: "",
     baseline: "",
   });
@@ -413,71 +278,8 @@ function addMetric(goalIndex: number) {
 
 function deleteMetric(goalIndex: number, metricIndex: number) {
   if (confirm("Are you sure you want to delete this metric?")) {
-    form.value.system.goals[goalIndex].metrics.splice(metricIndex, 1);
+    form.value.goals[goalIndex].metrics.splice(metricIndex, 1);
   }
 }
 
-function addDataItem() {
-  form.value.data.push({
-    access: "",
-    description: "",
-    source: "",
-    classification: "",
-    labels: [
-      {
-        description: "",
-        percentage: 0,
-      },
-    ],
-    schema: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-        missing_values: "",
-        special_values: "",
-      },
-    ],
-    rights: "",
-    policies: "",
-    identifiable_information: "",
-  });
-}
-
-function deleteDataItem(dataItemIndex: number) {
-  if (confirm("Are you sure you want to delete this data item?")) {
-    form.value.data.splice(dataItemIndex, 1);
-  }
-}
-
-function addLabel(dataItemIndex: number) {
-  form.value.data[dataItemIndex].labels.push({
-    description: "",
-    percentage: 0,
-  });
-}
-
-function deleteLabel(dataItemIndex: number, labelIndex: number) {
-  if (confirm("Are you sure you want to delete this label?")) {
-    form.value.data[dataItemIndex].labels.splice(labelIndex, 1);
-  }
-}
-
-function addSchema(dataItemIndex: number) {
-  form.value.data[dataItemIndex].schema.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-    missing_values: "",
-    special_values: "",
-  });
-}
-
-function deleteSchema(dataItemIndex: number, fieldIndex: number) {
-  if (confirm("Are you sure you want to delete this field?")) {
-    form.value.data[dataItemIndex].schema.splice(fieldIndex, 1);
-  }
-}
 </script> 
