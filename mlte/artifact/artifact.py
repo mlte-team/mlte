@@ -105,8 +105,8 @@ class Artifact(metaclass=abc.ABCMeta):
                 parents=parents,
             )
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """To be overriden by derived classes."""
         return "default"
 

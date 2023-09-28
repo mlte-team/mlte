@@ -100,7 +100,7 @@ class MemoryStatistics(ValueBase):
         """
         Construct and invoke a condition for maximum memory consumption.
 
-        :param threshold: The threshold value for maximum consumption
+        :param threshold: The threshold value for maximum consumption, in KB
         :type threshold: int
 
         :return: The Condition that can be used to validate a Value.

@@ -126,8 +126,8 @@ class Report(Artifact):
             quantitative_analysis=deepcopy(self.quantitative_analysis),
         )
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """Get the default identifier for the artifact."""
         return DEFAULT_REPORT_ID
 

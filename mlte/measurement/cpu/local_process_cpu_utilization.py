@@ -97,7 +97,7 @@ class CPUStatistics(ValueBase):
         """
         Construct and invoke a condition for maximum CPU utilization.
 
-        :param threshold: The threshold value for maximum utilization
+        :param threshold: The threshold value for maximum utilization, as percentage
 
         :return: The Condition that can be used to validate a Value.
         """
@@ -123,7 +123,7 @@ class CPUStatistics(ValueBase):
         """
         Construct and invoke a condition for average CPU utilization.
 
-        :param threshold: The threshold value for average utilization
+        :param threshold: The threshold value for average utilization, as percentage
 
         :return: The Condition that can be used to validate a Value.
         """
