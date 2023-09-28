@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import abc
 import importlib
-import pkgutil
 from typing import Type
 
 import mlte._private.meta as meta
@@ -23,16 +22,15 @@ class Property(metaclass=abc.ABCMeta):
         """Define the interface for all concrete properties."""
         return meta.has_callables(subclass, "__init__")
 
-    def __init__(self, name: str, description: str, rationale: str):
+    def __init__(
+        self, name: str, description: str, rationale: str, module: str
+    ):
         """
         Initialize a Property instance.
 
         :param name: The name of the property
-        :type name: str
         :param description: The description of the property
-        :type description: str
         :param rationale: The rationale for using the property
-        :type rationale: str
         """
         self.name: str = name
         """The name of the property."""
@@ -43,17 +41,20 @@ class Property(metaclass=abc.ABCMeta):
         self.rationale: str = rationale
         """The rationale for using the property."""
 
+        self.module: str = module
+        """The name of the module the property is defined in."""
+
     def to_model(self) -> PropertyModel:
         """
         Return a Property as a model.
 
         :return: The property as its model.
-        :rtype: PropertyModel
         """
         return PropertyModel(
             name=self.name,
             description=self.description,
             rationale=self.rationale,
+            module=self.module,
         )
 
     @classmethod
@@ -62,10 +63,8 @@ class Property(metaclass=abc.ABCMeta):
         Load a Property instance from a model.
 
         :param model: The model with the Property info.
-        :type model: PropertyModel
 
         :return: The loaded property
-        :rtype: Property
         """
         if model.name == "":
             raise RuntimeError(
@@ -74,22 +73,17 @@ class Property(metaclass=abc.ABCMeta):
         classname = model.name
 
         # Load the class type from the module
-        properties_package_name = "mlte.property"
-        properties_module = importlib.import_module(
-            properties_package_name, package="mlte"
-        )
-        for submodule_info in pkgutil.iter_modules(
-            properties_module.__path__, properties_module.__name__ + "."
-        ):
-            submodule = importlib.import_module(
-                submodule_info.name, package=properties_package_name
+        module_path = model.module
+        try:
+            properties_module = importlib.import_module(module_path)
+        except Exception:
+            raise RuntimeError(f"Module {module_path} not found")
+        try:
+            class_: Type[Property] = getattr(properties_module, classname)
+        except AttributeError:
+            raise RuntimeError(
+                f"Property {model.name} in module {module_path} not found"
             )
-            try:
-                class_: Type[Property] = getattr(submodule, classname)
-            except AttributeError:
-                continue
 
-            # Instantiate the property
-            return class_(model.rationale)  # type: ignore
-
-        raise RuntimeError(f"Property {model.name} not found")
+        # Instantiate the property
+        return class_(model.rationale)  # type: ignore

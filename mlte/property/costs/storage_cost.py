@@ -4,8 +4,8 @@ mlte/property/costs/storage_cost.py
 StorageCost property definition.
 """
 
-from ..._private.text import cleantext
-from ..property import Property
+from mlte._private.text import cleantext
+from mlte.property.property import Property
 
 
 class StorageCost(Property):
@@ -26,4 +26,5 @@ class StorageCost(Property):
                 """
             ),
             rationale,
+            __name__,
         )

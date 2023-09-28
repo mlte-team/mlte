@@ -5,7 +5,7 @@ TaskEfficacy property definition.
 """
 
 from mlte._private.text import cleantext
-from mlte.property import Property
+from mlte.property.property import Property
 
 
 class TaskEfficacy(Property):
@@ -28,4 +28,5 @@ class TaskEfficacy(Property):
                 """
             ),
             rationale,
+            __name__,
         )
