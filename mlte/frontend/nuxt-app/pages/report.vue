@@ -16,8 +16,8 @@
           in a few of the text boxes, so we need to fix that. -->
     </UsaTextarea>
 
-    <!-- Kept the goals section consistent from what Alex had.
-    Probably need to rewrite once we figure out how to pull 
+    <!-- Kept the goals section consistent with the negotiation card.
+    Probably need to rewrite once we figure out how we want to pull 
     sections from the negotiation card.-->
     <h3>Goals of the System</h3>
       <p>Goals or objectives that the model helps to satisfy.</p>
@@ -33,11 +33,7 @@
 
       </div>
       <AddButton class="margin-button" @click="addGoal()"> Add goal </AddButton>
-      <!-- For some reason I cannot get this button to work properly
-        <DeleteButton @click="deleteGoal(goalIndex)">
-          Delete goal
-        </DeleteButton> 
-      -->
+
     <h3>MLTE Evaluation</h3>
       <p>THIS IS A PLACEHOLDER
         <br />
@@ -104,7 +100,7 @@
         <br />
       </p>
     
-    <!--Added in the submit and cancel buttons and functions from the n card.
+    <!--Added in the submit and cancel buttons and functions from the negotiation card.
     It doesn't seem to me that the submit button is working, but I don't know 
     how to test it appropriately. -->
     <div style="text-align: right; margin-top: 1em">
@@ -168,7 +164,7 @@ function submit() {
   console.log(useRoute().query.namespace);
 }
 
-// TODO: figure out how to actually have this function do something!!
+// TODO: make this function actually export the report,
 // right now it is just a copy of submit()
 function exporting() {
   console.log(form.value);
@@ -211,9 +207,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.analysis = document.analysis;
 
           let outputString = "";
-          // if (form.value.model.production.environment.output !== "") {
-          //   outputString += "\n\n";
-          // }
+
           document.downstream_components.forEach(
             (component: {
               component_name: string;
@@ -247,7 +241,6 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           outputString = outputString.substring(0, outputString.length - 2);
-          // form.value.model.production.environment.output += outputString;
       } catch (err) {
         console.error("Invalid JSON or error in parsing file.");
       }
@@ -261,25 +254,6 @@ function addGoal() {
     description: "",
     metrics: [{ description: "", baseline: "" }],
   });
-}
-
-function deleteGoal(goalIndex: number) {
-  if (confirm("Are you sure you want to delete this goal?")) {
-    form.value.goals.splice(goalIndex, 1);
-  }
-}
-
-function addMetric(goalIndex: number) {
-  form.value.goals[goalIndex].metrics.push({
-    description: "",
-    baseline: "",
-  });
-}
-
-function deleteMetric(goalIndex: number, metricIndex: number) {
-  if (confirm("Are you sure you want to delete this metric?")) {
-    form.value.goals[goalIndex].metrics.splice(metricIndex, 1);
-  }
 }
 
 </script> 
