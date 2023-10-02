@@ -148,8 +148,8 @@ class ValidatedSpec(Artifact):
                         f" > Measurement: {id}, result: {result}, details: {result.message}"
                     )
 
-    @classmethod
-    def get_default_id(cls) -> str:
+    @staticmethod
+    def get_default_id() -> str:
         """Overriden"""
         return DEFAULT_VALIDATED_SPEC_ID
 
