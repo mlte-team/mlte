@@ -4,7 +4,6 @@ mlte/property/costs/training_compute_cost.py
 TrainingComputeCost property definition.
 """
 
-from mlte._private.text import cleantext
 from mlte.property.property import Property
 
 
@@ -19,17 +18,14 @@ class TrainingComputeCost(Property):
         Initialize a TrainingComputeCost instance.
         """
         super().__init__(
-            self.__class__.__name__,
-            cleantext(
-                """
+            instance=self,
+            description="""
                 The TrainingComputeCost property assesses the
                 computational requirements of model training.
                 This might be measured in terms of CPU utilization
                 for training processes that run locally, or the cost
                 of compute resources required for training processes
                 that run on on-demand cloud infrastructure.
-                """
-            ),
-            rationale,
-            __name__,
+                """,
+            rationale=rationale,
         )
