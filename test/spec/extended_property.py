@@ -1,5 +1,5 @@
 """
-test/spec/test_model.py
+test/spec/extended_property.py
 
 ExtendedProperty definition, for testing purposes.
 """
