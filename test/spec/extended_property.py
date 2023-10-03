@@ -4,7 +4,7 @@ test/spec/test_model.py
 ExtendedProperty definition, for testing purposes.
 """
 
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class ExtendedProperty(Property):
