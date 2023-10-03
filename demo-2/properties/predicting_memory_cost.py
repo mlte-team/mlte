@@ -1,11 +1,8 @@
 """
-mlte/property/costs/predicting_memory_cost.py
-
 PredictingMemoryCost property definition.
 """
 
-from mlte._private.text import cleantext
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class PredictingMemoryCost(Property):
@@ -19,17 +16,14 @@ class PredictingMemoryCost(Property):
         Initialize a PredictingMemoryCost instance.
         """
         super().__init__(
-            self.__class__.__name__,
-            cleantext(
-                """
+            instance=self,
+            description="""
                 The PredictingMemoryCost property assesses the
                 memory requirements of model predicting. This might
                 be measured by the memory requirements of property
                 processes that run locally, or the cost of memory
                 resources required for property processes that run
                 on on-demand cloud infrastructure.
-                """
-            ),
-            rationale,
-            __name__
+                """,
+            rationale=rationale,
         )

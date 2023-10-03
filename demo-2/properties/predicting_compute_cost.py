@@ -1,11 +1,8 @@
 """
-mlte/property/costs/predicting_compute_cost.py
-
 PredictingComputeCost property definition.
 """
 
-from mlte._private.text import cleantext
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class PredictingComputeCost(Property):
@@ -19,17 +16,14 @@ class PredictingComputeCost(Property):
         Initialize a PredictingComputeCost instance.
         """
         super().__init__(
-            self.__class__.__name__,
-            cleantext(
-                """
+            instance=self,
+            description="""
                 The PredictingComputeCost property assesses the
                 computational requirements of model predicting.
                 This might be measured in terms of CPU utilization
                 for property processes that run locally, or the cost
                 of compute resources required for property processes
                 that run on on-demand cloud infrastructure.
-                """
-            ),
-            rationale,
-            __name__
+                """,
+            rationale=rationale,
         )
