@@ -4,7 +4,7 @@ mlte/property/functionality/task_efficacy.py
 TaskEfficacy property definition.
 """
 
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class TaskEfficacy(Property):

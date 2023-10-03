@@ -4,7 +4,7 @@ mlte/property/costs/training_compute_cost.py
 TrainingComputeCost property definition.
 """
 
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class TrainingComputeCost(Property):

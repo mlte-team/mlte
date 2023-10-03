@@ -1,5 +1,5 @@
 """
-mlte/property/property.py
+mlte/property/base.py
 
 The superclass for all model properties.
 """
@@ -27,7 +27,7 @@ class Property(metaclass=abc.ABCMeta):
         """
         Initialize a Property instance.
 
-        :param instance: The derived Property we are creating from.
+        :param instance: The derived Property we are constructing from.
         :param description: The description of the property
         :param rationale: The rationale for using the property
         """
