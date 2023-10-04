@@ -98,38 +98,53 @@
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Specifications">
-        <div class="scrollable-table-div">
-          <p>
-            A specification (spec) defines the model requirements that must be
-            satisfied to ensure successful integration with the target system.
-          </p>
-          <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
-        </div>
-      </UsaAccordionItem>
-
       <UsaAccordionItem label="Reports">
         <div class="scrollable-table-div">
           <p>
             A report is a human and machine-readable summary of all knowledge
             gained about a model during the MLTE process.
           </p>
-          <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
+          <UsaTable
+            :headers="cardSpecReportHeaders"
+            :rows="reports"
+            borderless
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Findings">
+      <UsaAccordionItem label="Specifications">
         <div class="scrollable-table-div">
           <p>
-            Findings are produced by combining a specification with its
+            A specification (spec) defines the model requirements that must be
+            satisfied to ensure successful integration with the target system.
+          </p>
+          <UsaTable
+            :headers="cardSpecReportHeaders"
+            :rows="specifications"
+            borderless 
+            class="table"
+          />
+        </div>
+      </UsaAccordionItem>
+
+      <UsaAccordionItem label="Validated Specification">
+        <div class="scrollable-table-div">
+          <p>
+            Validated Specification are produced by combining a specification with its
             corresponding results; this artifact communicates how well a model
             performed against all of its requirements.
           </p>
-          <UsaTable :headers="findingsHeaders" borderless class="table" />
+          <UsaTable
+            :headers="validatedSpecHeaders"
+            :rows="validatedSpecs"
+            borderless
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Results">
+      <!-- <UsaAccordionItem label="Results">
         <div class="scrollable-table-div">
           <p>
             Results encode whether or not the values generated during evidence
@@ -139,7 +154,7 @@
           </p>
           <UsaTable :headers="resultsHeaders" borderless class="table" />
         </div>
-      </UsaAccordionItem>
+      </UsaAccordionItem> -->
 
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
@@ -148,7 +163,12 @@
             any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
-          <UsaTable :headers="valuesHeaders" borderless class="table" />
+          <UsaTable
+            :headers="valuesHeaders"
+            :rows="values"
+            borderless
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
     </UsaAccordion>
@@ -182,32 +202,43 @@ const versionOptions = ref<
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "descriptor", label: "Descriptor", sortable: true },
-  { id: "date", label: "Date", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const findingsHeaders = ref([
+const validatedSpecHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "date", label: "Date", sortable: true },
-  { id: "spec", label: "Spec", sortable: true },
+  { id: "specid", label: "SpecID", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const resultsHeaders = ref([
-  { id: "id", label: "ID", sortable: true },
-  { id: "value", label: "value", sortable: true },
-  { id: "condition", label: "Condition", sortable: true },
-  { id: "outcome", label: "Outcome", sortable: true },
-  { id: "Date", label: "Date", sortable: true },
-]);
+// const resultsHeaders = ref([
+//   { id: "id", label: "ID", sortable: true },
+//   { id: "value", label: "value", sortable: true },
+//   { id: "condition", label: "Condition", sortable: true },
+//   { id: "outcome", label: "Outcome", sortable: true },
+//   { id: "Date", label: "Date", sortable: true },
+// ]);
 
 const valuesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "measurement", label: "Measurement", sortable: true },
   { id: "type", label: "Type", sortable: true },
-  { id: "date", label: "Date", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
 const negotiationCards = ref([]);
+const specifications = ref<
+  { id: string; timestamp: string, model: string, version: string }[]
+>([]);
+const reports = ref<
+  { id: string; timestamp: string; model: string; version: string }[]
+>([]);
+const validatedSpecs = ref<
+  { id: string; specid: string; timestamp: string, model: string, version: string }[]
+>([]);
+const values = ref<
+  { id: string; measurement: string; type: string; timestamp: string, model: string, version: string }[]
+>([]);
 
 async function selectNamespace(namespace: string) {
   await useFetch(
@@ -414,7 +445,7 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
   }
 }
 
-function updateSelectedVersions(entry: {
+async function updateSelectedVersions(entry: {
   model: string;
   version: string;
   selected: boolean;
@@ -423,6 +454,35 @@ function updateSelectedVersions(entry: {
   entry.selected = !entry.selected;
 
   // TODO : Post this to backend and get updated data
+  if (entry.selected) {
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+        selectedNamespace.value +
+        "/model/" +
+        entry.model +
+        "/version/" +
+        entry.version +
+        "/artifact",
+      {
+        retry: 0,
+        method: "GET",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          if (response._data) {
+            addSelectedArtifacts(entry.model, entry.version, response._data);
+          }
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      },
+    );
+  }
+  else{
+    clearDeselectedArtifacts(entry.model, entry.version);
+  }
 }
 
 async function deleteVersion(entry: {
@@ -474,6 +534,70 @@ function responseErrorAlert() {
   alert(
     "Error encountered in response from API. Check browser and store console for more information.",
   );
+}
+
+function addSelectedArtifacts(model: string, version: string, artifactList){
+  console.log(artifactList)
+  artifactList.forEach(artifact => {
+    // value
+    if(artifact.header.type == "2") {
+      if(isValidValue(artifact)){
+        values.value.push(
+          {
+            id: artifact.header.identifier.slice(0, -6),
+            measurement: artifact.body.metadata.measurement_type,
+            type: artifact.body.value.value_type,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      } 
+    }
+    // spec
+    else if(artifact.header.type == "3"){
+      if(isValidSpec(artifact)){
+        specifications.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+    // validated spec
+    else if(artifact.header.type == "4"){
+      if(isValidValidatedSpec(artifact)){
+        validatedSpecs.value.push(
+          {
+            id: artifact.header.identifier,
+            specid: artifact.body.spec_identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+  });
+}
+
+function clearDeselectedArtifacts(model: string, version: string){
+  // TODO : negotiationCards.value = 
+  // TODO : reports.value = 
+  specifications.value = specifications.value.filter(function (spec) {
+    return spec.model !== model || spec.version !== version;
+  });
+
+  validatedSpecs.value = validatedSpecs.value.filter(function (validatedSpec) {
+    return validatedSpec.model !== model || validatedSpec.version !== version;
+  });
+
+  values.value = values.value.filter(function (value) {
+    return value.model !== model || value.version !== version;
+  });
 }
 </script>
 
