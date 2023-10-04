@@ -226,7 +226,9 @@ const valuesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const negotiationCards = ref([]);
+const negotiationCards = ref<
+  { id: string; timestamp: string; model: string; version: string }[]
+>([]);
 const specifications = ref<
   { id: string; timestamp: string, model: string, version: string }[]
 >([]);
@@ -537,25 +539,35 @@ function responseErrorAlert() {
 }
 
 function addSelectedArtifacts(model: string, version: string, artifactList){
-  console.log(artifactList)
   artifactList.forEach(artifact => {
-    // value
-    if(artifact.header.type == "2") {
-      if(isValidValue(artifact)){
-        values.value.push(
-          {
-            id: artifact.header.identifier.slice(0, -6),
-            measurement: artifact.body.metadata.measurement_type,
-            type: artifact.body.value.value_type,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
-      } 
-    }
+    // negotiation card
+    // if(artifact.header.type == "negotiation"){
+    //   if(isValidNegotiation(artifact)){
+    //     negotiationCards.value.push(
+    //       {
+    //         id: artifact.header.identifier,
+    //         timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+    //         model: model,
+    //         version: version
+    //       }
+    //     )
+    //   }
+    // }
+    // report
+    // else if(artifact.header.type == "report"){
+    //   if(isValidReport(artifact)){
+    //     reports.value.push(
+    //       {
+    //         id: artifact.header.identifier,
+    //         timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+    //         model: model,
+    //         version: version
+    //       }
+    //     )
+    //   }
+    // }
     // spec
-    else if(artifact.header.type == "3"){
+    if(artifact.header.type == "3"){
       if(isValidSpec(artifact)){
         specifications.value.push(
           {
@@ -580,6 +592,21 @@ function addSelectedArtifacts(model: string, version: string, artifactList){
           }
         )
       }
+    }
+    // value
+    if(artifact.header.type == "2") {
+      if(isValidValue(artifact)){
+        values.value.push(
+          {
+            id: artifact.header.identifier.slice(0, -6),
+            measurement: artifact.body.metadata.measurement_type,
+            type: artifact.body.value.value_type,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      } 
     }
   });
 }
