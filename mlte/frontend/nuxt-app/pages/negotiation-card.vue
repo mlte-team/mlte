@@ -42,7 +42,7 @@
 
     <UsaBreadcrumb :items="path" />
 
-    <h1 class="section-header">How to use Negotiation Card</h1>
+    <h1 class="section-header">How to use the Negotiation Card</h1>
     <p>
       Teams should work through as many of the following items as they can at
       the IMT negotiation point, using the answers to inform initial model

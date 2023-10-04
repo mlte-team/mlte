@@ -110,6 +110,16 @@
             borderless
             class="table"
           />
+          <NuxtLink
+            :to="{
+              path: 'report',
+              query: { namespace: selectedNamespace },
+            }"
+          >
+            <UsaButton class="primary-button" style="float: right">
+              Start new report
+            </UsaButton>
+          </NuxtLink>
         </div>
       </UsaAccordionItem>
 
