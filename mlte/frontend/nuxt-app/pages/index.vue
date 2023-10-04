@@ -78,12 +78,39 @@
             throughout development and is updated at prescribed negotiation
             points.
           </p>
-          <UsaTable
+          <!-- <UsaTable
             :headers="cardSpecReportHeaders"
             :rows="negotiationCards"
             borderless
             class="table"
-          />
+          /> -->
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="card in negotiationCards">
+                <th scope="row">{{ card.id }}</th>
+                <td>{{ card.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: 'negotiation-car',
+                      query: { namespace: selectedNamespace, model: card.model, version: card.version },
+                    }"
+                  >
+                    <UsaButton class="primary-button">
+                      Edit
+                    </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <!-- TODO : This will have to be more info than the namespace. Probably model version -->
           <NuxtLink
             :to="{
@@ -104,12 +131,39 @@
             A report is a human and machine-readable summary of all knowledge
             gained about a model during the MLTE process.
           </p>
-          <UsaTable
+          <!-- <UsaTable
             :headers="cardSpecReportHeaders"
             :rows="reports"
             borderless
             class="table"
-          />
+          /> -->
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="report in reports">
+                <th scope="row">{{ report.id }}</th>
+                <td>{{ report.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: 'report',
+                      query: { namespace: selectedNamespace, model: report.model, version: report.version },
+                    }"
+                  >
+                    <UsaButton class="primary-button">
+                      Edit
+                    </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <NuxtLink
             :to="{
               path: 'report',
@@ -465,7 +519,6 @@ async function updateSelectedVersions(entry: {
   // TODO : Ideally this would be handled with the prop of the component
   entry.selected = !entry.selected;
 
-  // TODO : Post this to backend and get updated data
   if (entry.selected) {
     await useFetch(
       "http://localhost:8080/api/namespace/" +
@@ -622,8 +675,14 @@ function addSelectedArtifacts(model: string, version: string, artifactList){
 }
 
 function clearDeselectedArtifacts(model: string, version: string){
-  // TODO : negotiationCards.value = 
-  // TODO : reports.value = 
+  negotiationCards.value = specifications.value.filter(function (card) {
+    return card.model !== model || card.version !== version;
+  });
+
+  reports.value = specifications.value.filter(function (report) {
+    return report.model !== model || report.version !== version;
+  });
+
   specifications.value = specifications.value.filter(function (spec) {
     return spec.model !== model || spec.version !== version;
   });
@@ -641,7 +700,7 @@ function clearDeselectedArtifacts(model: string, version: string){
 <style>
 .scrollable-table-div {
   overflow-y: auto;
-  height: 14em;
+  height: 18em;
 }
 
 .table {
