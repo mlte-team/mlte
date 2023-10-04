@@ -12,7 +12,7 @@ from typing import Dict, List, Union
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.property.property import Property
+from mlte.property.base import Property
 from mlte.spec.condition import Condition
 from mlte.spec.model import PropertyModel, SpecModel
 

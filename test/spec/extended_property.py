@@ -1,11 +1,10 @@
 """
-test/spec/test_model.py
+test/spec/extended_property.py
 
 ExtendedProperty definition, for testing purposes.
 """
 
-from mlte._private.text import cleantext
-from mlte.property.property import Property
+from mlte.property.base import Property
 
 
 class ExtendedProperty(Property):
@@ -16,12 +15,9 @@ class ExtendedProperty(Property):
     def __init__(self, rationale: str):
         """Initialize a ExtendedProperty instance."""
         super().__init__(
-            self.__class__.__name__,
-            cleantext(
-                """
+            instance=self,
+            description="""
                 The ExtendedProperty property is just for testing purposes.
-                """
-            ),
-            rationale,
-            __name__,
+                """,
+            rationale=rationale,
         )

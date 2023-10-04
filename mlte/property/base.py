@@ -1,5 +1,5 @@
 """
-mlte/property/property.py
+mlte/property/base.py
 
 The superclass for all model properties.
 """
@@ -11,6 +11,7 @@ import importlib
 from typing import Type
 
 import mlte._private.meta as meta
+from mlte._private.text import cleantext
 from mlte.spec.model import PropertyModel
 
 
@@ -22,26 +23,24 @@ class Property(metaclass=abc.ABCMeta):
         """Define the interface for all concrete properties."""
         return meta.has_callables(subclass, "__init__")
 
-    def __init__(
-        self, name: str, description: str, rationale: str, module: str
-    ):
+    def __init__(self, instance: Property, description: str, rationale: str):
         """
         Initialize a Property instance.
 
-        :param name: The name of the property
+        :param instance: The derived Property we are constructing from.
         :param description: The description of the property
         :param rationale: The rationale for using the property
         """
-        self.name: str = name
+        self.name: str = instance.__class__.__name__
         """The name of the property."""
 
-        self.description: str = description
+        self.description: str = cleantext(description)
         """The description of the property."""
 
         self.rationale: str = rationale
         """The rationale for using the property."""
 
-        self.module: str = module
+        self.module: str = instance.__module__
         """The name of the module the property is defined in."""
 
     def to_model(self) -> PropertyModel:
