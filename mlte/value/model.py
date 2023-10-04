@@ -6,7 +6,7 @@ Model implementation for MLTE value types.
 
 from __future__ import annotations
 
-from enum import Enum, auto
+from enum import Enum
 from typing import Any, Dict, Literal, Union
 
 from pydantic import Field
@@ -19,16 +19,16 @@ from mlte.model import BaseModel
 class ValueType(str, Enum):
     """An enumeration over supported value types."""
 
-    INTEGER = auto()
+    INTEGER = "integer"
     """An integral type."""
 
-    REAL = auto()
+    REAL = "real"
     """A real type."""
 
-    OPAQUE = auto()
+    OPAQUE = "opaque"
     """An opaque type."""
 
-    IMAGE = auto()
+    IMAGE = "image"
     """An image media type."""
 
 

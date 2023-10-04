@@ -80,7 +80,7 @@
   "description": "The model implementation for the Spec artifact.",
   "properties": {
     "artifact_type": {
-      "const": "3",
+      "const": "spec",
       "title": "Artifact Type"
     },
     "properties": {
