@@ -341,6 +341,12 @@ async function selectNamespace(namespace: string) {
         });
 
         modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
+
+        negotiationCards.value = [];
+        reports.value = [];
+        specifications.value = [];
+        validatedSpecs.value = [];
+        values.value = [];
       },
       onResponseError() {
         responseErrorAlert();
@@ -396,6 +402,13 @@ async function deleteNamespace(namespace: string) {
         method: "DELETE",
         onRequestError() {
           requestErrorAlert();
+        },
+        onResponse({ response }){
+          negotiationCards.value = [];
+          reports.value = [];
+          specifications.value = [];
+          validatedSpecs.value = [];
+          values.value = [];
         },
         onResponseError() {
           responseErrorAlert();
@@ -474,6 +487,7 @@ async function updateSelectedModels(entry: {
     }) {
       return versionItem.model !== entry.model;
     });
+    clearDeselectedArtifacts(entry.model, "");
   }
 
   versionOptions.value.sort(function (
@@ -514,6 +528,11 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
           const index = modelOptions.value.indexOf(entry);
           modelOptions.value.splice(index, 1);
           updateSelectedModels(entry);
+          negotiationCards.value = [];
+          reports.value = [];
+          specifications.value = [];
+          validatedSpecs.value = [];
+          values.value = [];
         },
         onResponseError() {
           responseErrorAlert();
@@ -616,6 +635,7 @@ async function deleteVersion(entry: {
         onResponse() {
           const index = versionOptions.value.indexOf(entry);
           versionOptions.value.splice(index, 1);
+          clearDeselectedArtifacts(entry.model, entry.version);
         },
         onResponseError() {
           responseErrorAlert();
@@ -700,24 +720,52 @@ function addSelectedArtifacts(model: string, version: string, artifactList: any)
 }
 
 function clearDeselectedArtifacts(model: string, version: string){
+  // Passing a version causes both model and version to be checked before filtering items
+  // If an empty string is passed as the version, all artifacts under the model will be filtered out
+
   negotiationCards.value = specifications.value.filter(function (card) {
-    return card.model !== model || card.version !== version;
+    if(version === ""){
+      return card.model !== model;
+    }
+    else{
+      return card.model !== model || card.version !== version;
+    }
   });
 
   reports.value = specifications.value.filter(function (report) {
-    return report.model !== model || report.version !== version;
+    if(version === ""){
+      return report.model !== model;
+    }
+    else{
+      return report.model !== model || report.version !== version;
+    }
   });
 
   specifications.value = specifications.value.filter(function (spec) {
-    return spec.model !== model || spec.version !== version;
+    if(version === ""){
+      return spec.model !== model
+    }
+    else{
+      return spec.model !== model || spec.version !== version;
+    }
   });
 
   validatedSpecs.value = validatedSpecs.value.filter(function (validatedSpec) {
-    return validatedSpec.model !== model || validatedSpec.version !== version;
+    if(version === ""){
+      return validatedSpec.model !== model
+    }
+    else{
+      return validatedSpec.model !== model || validatedSpec.version !== version;
+    }
   });
 
   values.value = values.value.filter(function (value) {
-    return value.model !== model || value.version !== version;
+    if(version === ""){
+      return value.model !== model
+    }
+    else{
+      return value.model !== model || value.version !== version;
+    }
   });
 }
 </script>
