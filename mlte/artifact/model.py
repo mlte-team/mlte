@@ -29,6 +29,9 @@ class ArtifactHeaderModel(BaseModel):
     timestamp: Optional[int] = -1
     """The timestamp of creation of this artifact, as Unix time."""
 
+    class Config:
+        use_enum_values = True
+
 
 class ArtifactModel(BaseModel):
     """The base model for all MLTE artifacts."""
