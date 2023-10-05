@@ -87,6 +87,7 @@ class ValidatedSpec(Artifact):
             header=self.build_artifact_header(),
             body=ValidatedSpecModel(
                 artifact_type=ArtifactType.VALIDATED_SPEC,
+                spec_identifier=self.spec.identifier,
                 properties=[
                     PropertyAndResultsModel(
                         name=property_model.name,
@@ -172,4 +173,8 @@ def _equal(a: ValidatedSpec, b: ValidatedSpec) -> bool:
     :param b: Input instance
     :return: `True` if instances are equal, `False` otherwise
     """
-    return a.spec == b.spec and a.results == b.results
+    return (
+        a.identifier == b.identifier
+        and a.spec == b.spec
+        and a.results == b.results
+    )
