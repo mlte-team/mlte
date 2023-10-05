@@ -10,7 +10,8 @@ import subprocess
 import time
 from typing import Any, Dict, Type
 
-from mlte._private.platform import is_macos, is_windows
+import psutil
+
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
@@ -168,10 +169,6 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         :type identifier: str
         """
         super().__init__(self, identifier)
-        if is_windows() or is_macos():
-            raise RuntimeError(
-                f"Measurement {self.metadata.identifier} is not supported on Windows or macOS."
-            )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
@@ -187,7 +184,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         """
         stats = []
         while True:
-            kb = _get_memory_usage(pid)
+            kb = _get_memory_usage_psutil(pid)
             if kb == 0:
                 break
             stats.append(kb)
@@ -211,7 +208,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
 # -----------------------------------------------------------------------------
 
 
-def _get_memory_usage(pid: int) -> int:
+def _get_memory_usage_pmap(pid: int) -> int:
     """
     Get the current memory usage for the process with `pid`.
 
@@ -245,3 +242,19 @@ def _get_memory_usage(pid: int) -> int:
         raise RuntimeError(
             f"External program needed to get memory usage was not found: {e}"
         )
+
+
+def _get_memory_usage_psutil(pid: int) -> int:
+    """
+    Get the current memory usage for the process with `pid`.
+
+    :param pid: The identifier of the process
+
+    :return: The current memory usage in KB
+    """
+    try:
+        curr_proc = psutil.Process(pid)
+        mem_in_kb = curr_proc.memory_info().rss / 1024
+        return int(mem_in_kb)
+    except psutil.NoSuchProcess:
+        return 0
