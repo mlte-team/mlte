@@ -99,7 +99,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'negotiation-car',
+                      path: 'negotiation-card',
                       query: { namespace: selectedNamespace, model: card.model, version: card.version },
                     }"
                   >
@@ -111,14 +111,17 @@
               </tr>
             </tbody>
           </table>
-          <!-- TODO : This will have to be more info than the namespace. Probably model version -->
+          <!-- TODO : Adjust this once a mode/version selector is implemented -->
+          <p v-if="selectedVersion == ''" style="float: left; color: red;">
+            Select a model version in order to start a new negotiation card
+          </p>
           <NuxtLink
             :to="{
               path: 'negotiation-card',
-              query: { namespace: selectedNamespace },
+              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
             }"
           >
-            <UsaButton class="primary-button" style="float: right">
+            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
               Start new negotiation card
             </UsaButton>
           </NuxtLink>
@@ -164,13 +167,17 @@
               </tr>
             </tbody>
           </table>
+          <!-- TODO : Adjust this once a mode/version selector is implemented -->
+          <p v-if="selectedVersion == ''" style="float: left; color: red;">
+            Select a model version in order to start a new report
+          </p>
           <NuxtLink
             :to="{
               path: 'report',
-              query: { namespace: selectedNamespace },
+              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
             }"
           >
-            <UsaButton class="primary-button" style="float: right">
+            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
               Start new report
             </UsaButton>
           </NuxtLink>
@@ -252,6 +259,11 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   { method: "GET" },
 );
 const selectedNamespace = ref("");
+// TODO : Remove these once a mode/version selector is implemented
+const selectedModel = ref("");
+const selectedVersion = ref("");
+// -- end block to be removed
+
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
   selectNamespace(namespaceOptions.value[0]);
 }
@@ -520,6 +532,25 @@ async function updateSelectedVersions(entry: {
   entry.selected = !entry.selected;
 
   if (entry.selected) {
+    // TODO : Remove this block once a mode/version selector is implemented
+    // Block handles updating artifacts when a second version is selected.
+    // This implementation makes only one selectable at a time.
+    // When removed, also update start new negotiation card and start new report button,
+    // remove the global selectedModel and selectedVersion values, and adjust the else
+    // block after this if
+    versionOptions.value.forEach((version) => {
+      negotiationCards.value = [];
+      reports.value = [];
+      specifications.value = [];
+      validatedSpecs.value = [];
+      values.value = [];
+      version.selected = false;
+    })
+    entry.selected = true;
+    selectedModel.value = entry.model;
+    selectedVersion.value = entry.version;
+    // -- end block to be removed
+
     await useFetch(
       "http://localhost:8080/api/namespace/" +
         selectedNamespace.value +
@@ -547,6 +578,11 @@ async function updateSelectedVersions(entry: {
   }
   else{
     clearDeselectedArtifacts(entry.model, entry.version);
+
+    // TODO : Remove this block once a mode/version selector is implemented
+    selectedModel.value = "";
+    selectedVersion.value = "";
+    // -- end block to be removed
   }
 }
 
