@@ -569,19 +569,86 @@ const classificationOptions = [
   { value: "Other", text: "Other" },
 ];
 
-function cancel() {
-  if (
-    confirm(
-      "Are you sure you want to leave this page? All changes will be lost.",
-    )
-  ) {
-    location.href = "/";
-  }
+if(useRoute().query.reportId !== null){
+  loadSavedCard();
 }
 
-function submit() {
-  console.log(form.value);
-  console.log(useRoute().query.namespace);
+async function submit() {
+  // This is how the namespace, model and version are available to grab from the url parameters
+  // url should look something like this, linking from the homepage:
+  // http://localhost:3000/negotiation-card?namespace=ns&model=IrisClassifier&version=0.0.1
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+
+  // Construct the object to be submitted to the backend here
+  let requestBody = ""; // ...
+
+  await useFetch(
+    "http://localhost:8080/api/namespace" +
+    namespace +
+    "/model/" +
+    model +
+    "/version/" +
+    version +
+    "/artifact",
+    {
+      retry: 0,
+      method: "POST",
+      body: {
+        requestBody // TODO : Add anything needed that isn't in the requestBody object
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }){
+        // TODO : If anything needs to happen after the artifact is successfully saved, do it here
+        // For example, redirect back to the homepage.
+        // Can check any data that is contained within response,
+        console.log(response);
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    }
+  )
+}
+
+async function loadSavedCard(){
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+  const artifactId = useRoute().query.artifactId;
+
+  await useFetch(
+    "http://localhost:8080/api/namespace" +
+    namespace +
+    "/model/" +
+    model +
+    "/version/" +
+    version +
+    "/artifact/" +
+    artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }){
+        // TODO : Handle loading the data from the request into the page
+        // This could be abstracted to another method if desired
+
+        // Can check the data contained in the response,
+        console.log(response);
+        // It will look similar to the descriptorUpload function so for example,
+        // form.value.system.ml_task = response._data.ml_task
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    }
+  )
 }
 
 function descriptorUpload(event: Event, descriptorName: string) {
@@ -742,6 +809,16 @@ function descriptorUpload(event: Event, descriptorName: string) {
       }
     };
     reader.readAsText(file);
+  }
+}
+
+function cancel() {
+  if (
+    confirm(
+      "Are you sure you want to leave this page? All changes will be lost.",
+    )
+  ) {
+    location.href = "/";
   }
 }
 

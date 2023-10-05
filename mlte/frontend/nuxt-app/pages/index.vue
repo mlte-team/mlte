@@ -100,7 +100,7 @@
                   <NuxtLink
                     :to="{
                       path: 'negotiation-card',
-                      query: { namespace: selectedNamespace, model: card.model, version: card.version },
+                      query: { namespace: selectedNamespace, model: card.model, version: card.version, artifactId: card.id },
                     }"
                   >
                     <UsaButton class="primary-button">
@@ -156,7 +156,7 @@
                   <NuxtLink
                     :to="{
                       path: 'report',
-                      query: { namespace: selectedNamespace, model: report.model, version: report.version },
+                      query: { namespace: selectedNamespace, model: report.model, version: report.version, arfifactId: report.id },
                     }"
                   >
                     <UsaButton class="primary-button">
@@ -625,20 +625,9 @@ async function deleteVersion(entry: {
   }
 }
 
-function requestErrorAlert() {
-  alert(
-    "Error encountered while communicating with API. Ensure store is running and allowed-origins is configured correctly.",
-  );
-}
-
-function responseErrorAlert() {
-  alert(
-    "Error encountered in response from API. Check browser and store console for more information.",
-  );
-}
-
-function addSelectedArtifacts(model: string, version: string, artifactList){
-  artifactList.forEach(artifact => {
+// TODO : Do better typing on the artifactList and artifact
+function addSelectedArtifacts(model: string, version: string, artifactList: any){
+  artifactList.forEach((artifact: any) => {
     // negotiation card
     // if(artifact.header.type == "negotiation"){
     //   if(isValidNegotiation(artifact)){
