@@ -69,7 +69,6 @@ class ValidatedSpec(Artifact):
     def to_model(self) -> ArtifactModel:
         """
         Generates a model representation of the ValidatedSpec.
-
         :return: The serialized model
         """
         model = self.spec.to_model()
@@ -106,7 +105,6 @@ class ValidatedSpec(Artifact):
     def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
         """
         Deserialize ValidatedSpec content from model.
-
         :param model: The model
         :return: The deserialized specification
         """
@@ -114,6 +112,21 @@ class ValidatedSpec(Artifact):
             model.header.type == ArtifactType.VALIDATED_SPEC
         ), "Broken precondition."
         body = typing.cast(ValidatedSpecModel, model.body)
+
+        return ValidatedSpec.from_model_body(model.header.identifier, body)
+
+    @staticmethod
+    def from_model_body(
+        identifier: str, body: ValidatedSpecModel
+    ) -> ValidatedSpec:
+        """
+        Deserialize ValidatedSpec from model body.
+        :param identifier: The identifier for the artifact
+        :param body: The validated spec model body
+        :return: The deserialized validated specification
+        """
+        # TODO(Kyle): This is a temporary hack until we
+        # determine how to handle recursive artifacts.
 
         # Load properties and results from model into internal representations.
         spec_properties: Dict[Property, Dict[str, Condition]] = {}
@@ -132,9 +145,7 @@ class ValidatedSpec(Artifact):
 
         # Build the spec and ValidatedSpec
         spec = Spec(identifier=body.spec_identifier, properties=spec_properties)
-        return ValidatedSpec(
-            identifier=model.header.identifier, spec=spec, results=results
-        )
+        return ValidatedSpec(identifier=identifier, spec=spec, results=results)
 
     def print_results(self, type: str = "all"):
         """Prints the validated results per property, can be filtered by result type."""

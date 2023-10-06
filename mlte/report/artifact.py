@@ -25,6 +25,8 @@ from mlte.report.model import (
     ReportModel,
     SummaryDescriptor,
 )
+from mlte.validation.model import ValidatedSpecModel
+from mlte.validation.validated_spec import ValidatedSpec
 
 DEFAULT_REPORT_ID = "default.report"
 
@@ -42,6 +44,8 @@ class Report(Artifact):
         data: List[DataDescriptor] = [],
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
+        validated_spec: ValidatedSpec = ValidatedSpec(),
+        hello: str = "",
     ) -> None:
         super().__init__(identifier, ArtifactType.REPORT)
 
@@ -66,8 +70,15 @@ class Report(Artifact):
         self.quantitative_analysis = quantitative_analysis
         """The quantitative analysis for the evaluation."""
 
+        self.validated_spec = validated_spec
+        """The validated specification."""
+
     def to_model(self) -> ArtifactModel:
         """Convert a report artifact to its corresponding model."""
+        # TODO(Kyle): This is a hack until we find a better way to support recursive artifacts.
+        validated_spec_model = typing.cast(
+            ValidatedSpecModel, self.validated_spec.to_model().body
+        )
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ReportModel(
@@ -79,6 +90,8 @@ class Report(Artifact):
                 data=self.data,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
+                validated_spec_id=self.validated_spec.identifier,
+                validated_spec_body=validated_spec_model,
             ),
         )
 
@@ -96,6 +109,9 @@ class Report(Artifact):
             data=body.data,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
+            validated_spec=ValidatedSpec.from_model_body(
+                body.validated_spec_id, body.validated_spec_body
+            ),
         )
 
     def populate_from(self, artifact: NegotiationCard) -> Report:

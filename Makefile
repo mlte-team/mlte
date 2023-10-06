@@ -4,13 +4,6 @@
 # QA
 # -----------------------------------------------------------------------------
 
-# Sort imports
-# TODO(Kyle): This currently introduces a circular-import
-# error; we need to dig into this to address the root cause
-# rather than continuing to shift imports around...
-#
-# NOTE(Kyle): I am trying to gradually add these in.
-
 .PHONY: isort
 isort:	
 	poetry run isort mlte/

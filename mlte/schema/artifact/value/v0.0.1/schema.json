@@ -31,7 +31,7 @@
       "type": "object"
     },
     "Identifier": {
-      "description": "\n    Identifier is a simple class that standardizes\n    the manner in which Measurements, Values, and\n    Results are uniquely identified throughout\n    their lifetimes.\n    ",
+      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
       "properties": {
         "name": {
           "title": "Name",
