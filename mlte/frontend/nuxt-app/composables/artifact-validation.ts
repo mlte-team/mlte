@@ -39,7 +39,7 @@ function isValidArtifact(artifact: object, schema: object) : boolean {
     let v = new Validator();
     let validation = v.validate(artifact.body, schema);
     if(validation.errors.length == 0) {
-        // console.log("VALID!!!")
+        console.log("VALID!!!")
         return true;
     } else {
         console.log("INVALID!!!")

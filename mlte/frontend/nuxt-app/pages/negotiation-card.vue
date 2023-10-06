@@ -52,13 +52,23 @@
       capture all relevant critical aspects of the model and system.
     </p>
 
+    <UsaTextInput v-if="useRoute().query.artifactId === undefined" v-model="userInputArifactId">
+      <template #label>
+        Artifact ID
+        <InfoIcon>
+          The Artifact ID this negotiation card <br />
+          will be saved under upon submission.
+        </InfoIcon>
+      </template>
+    </UsaTextInput>
+
     <h2 class="section-header">System Requirements</h2>
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
       <div
         v-for="(goal, goalIndex) in form.system.goals"
-        :key="goal.description"
+        :key="goalIndex"
       >
         <h3>Goal {{ goalIndex + 1 }}</h3>
 
@@ -69,7 +79,7 @@
         <h3 class="no-margin-section-header">Metrics</h3>
         <div
           v-for="(metric, metricIndex) in goal.metrics"
-          :key="metric.description"
+          :key="metricIndex"
         >
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
@@ -173,7 +183,7 @@
     <div class="input-group">
       <div
         v-for="(data_item, dataItemIndex) in form.data"
-        :key="data_item.description"
+        :key="dataItemIndex"
       >
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="data_item.access">
@@ -204,7 +214,7 @@
         <div class="input-group" style="margin-top: 1em">
           <div
             v-for="(label, labelIndex) in data_item.labels"
-            :key="label.description"
+            :key="labelIndex"
           >
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
@@ -232,7 +242,7 @@
         <div class="input-group" style="margin-top: 1em">
           <div
             v-for="(schema, schema_index) in data_item.schema"
-            :key="schema.name"
+            :key="schema_index"
           >
             <h3 class="no-margin-section-header">
               Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
@@ -338,8 +348,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.model.development.resources.gpus"
-            type="number"
+            v-model="form.model.development.resources.gpu"
           >
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
@@ -347,8 +356,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.model.development.resources.cpus"
-            type="number"
+            v-model="form.model.development.resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
@@ -359,20 +367,16 @@
         <div class="inline-input-left">
           <UsaTextInput
             v-model="form.model.development.resources.memory"
-            type="number"
           >
             <template #label> Memory </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
           <UsaTextInput
             v-model="form.model.development.resources.storage"
-            type="number"
           >
             <template #label> Storage </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
       </div>
@@ -393,7 +397,7 @@
       <template #label>
         Input
         <InfoIcon>
-          TODO
+          Describe the input data type and format needed for the model to conduct inference.
         </InfoIcon>
       </template>
     </UsaTextarea>
@@ -417,8 +421,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.model.production.resources.gpus"
-            type="number"
+            v-model="form.model.production.resources.gpu"
           >
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
@@ -426,8 +429,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.model.production.resources.cpus"
-            type="number"
+            v-model="form.model.production.resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
@@ -438,20 +440,16 @@
         <div class="inline-input-left">
           <UsaTextInput
             v-model="form.model.production.resources.memory"
-            type="number"
           >
             <template #label> Memory </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
           <UsaTextInput
             v-model="form.model.production.resources.storage"
-            type="number"
           >
             <template #label> Storage </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
       </div>
@@ -475,6 +473,8 @@ const path = ref([
     text: "Negotiation Card",
   },
 ]);
+
+const userInputArifactId = ref("");
 
 const form = ref({
   system: {
@@ -528,10 +528,10 @@ const form = ref({
   model: {
     development: {
       resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
       },
     },
     production: {
@@ -545,10 +545,10 @@ const form = ref({
         },
       },
       resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
       },
     },
   },
@@ -609,21 +609,23 @@ if(useRoute().query.artifactId !== undefined){
       onResponse({ response }){
         console.log(response._data);
 
-        form.value.system = response._data.body.system;
-        form.value.data = response._data.body.data;
-        form.value.model = response._data.body.model;
+        if(isValidNegotiation(response._data)){
+          form.value.system = response._data.body.system;
+          form.value.data = response._data.body.data;
+          form.value.model = response._data.body.model;
 
-        let problemType = response._data.body.system.problem_type;
-        if(problemTypeOptions.find(x => x.value == problemType)?.value !== undefined){
-          form.value.system.problem_type = problemTypeOptions.find(x => x.value == problemType)?.value;
-        }
-
-        response._data.data.forEach((item) => {
-          let classification = item.classification;
-          if(classificationOptions.find(x => x.value == classification)?.value !== undefined){
-            item.classification = classificationOptions.find(x => x.value == classification)?.value;
+          let problemType = response._data.body.system.problem_type;
+          if(problemTypeOptions.find(x => x.value == problemType)?.value !== undefined){
+            form.value.system.problem_type = problemTypeOptions.find(x => x.value == problemType)?.value;
           }
-        })
+
+          response._data.data.forEach((item) => {
+            let classification = item.classification;
+            if(classificationOptions.find(x => x.value == classification)?.value !== undefined){
+              item.classification = classificationOptions.find(x => x.value == classification)?.value;
+            }
+          })
+        }
       },
       onResponseError() {
         responseErrorAlert();
@@ -633,44 +635,66 @@ if(useRoute().query.artifactId !== undefined){
 }
 
 async function submit() {
-  // This is how the namespace, model and version are available to grab from the url parameters
-  // url should look something like this, linking from the homepage:
-  // http://localhost:3000/negotiation-card?namespace=ns&model=IrisClassifier&version=0.0.1
   const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
-  // Construct the object to be submitted to the backend here
-  let requestBody = ""; // ...
+  let identifier = "";
+  if(useRoute().query.artifactId === undefined){
+    identifier = userInputArifactId.value;
+  }
+  else{
+    identifier = useRoute().query.artifactId?.toString();
+  }
 
-  await useFetch(
-    "http://localhost:8080/api/namespace" +
-    namespace +
-    "/model/" +
-    model +
-    "/version/" +
-    version +
-    "/artifact",
-    {
-      retry: 0,
-      method: "POST",
+  // Construct the object to be submitted to the backend here
+  let artifact = {
+      header: {
+        identifier: identifier,
+        type: "negotiation_card",
+        timestamp: Date.now()
+      },
       body: {
-        requestBody // TODO : Add anything needed that isn't in the requestBody object
+        artifact_type: "negotiation_card",
+        system: form.value.system,
+        data: form.value.data,
+        model: form.value.model,
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }){
-        // TODO : If anything needs to happen after the artifact is successfully saved, do it here
-        // For example, redirect back to the homepage.
-        // Can check any data that is contained within response,
-        console.log(response);
-      },
-      onResponseError() {
-        responseErrorAlert();
+  }
+
+  if(isValidNegotiation(artifact)){
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact",
+      {
+        retry: 0,
+        method: "POST",
+        body: {
+          artifact: artifact,
+          // TODO Find out what these values should be
+          force: false,
+          parents: false
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }){
+          // TODO : If anything needs to happen after the artifact is successfully saved, do it here
+          // For example, redirect back to the homepage.
+          // Can check any data that is contained within response,
+          console.log(response);
+        },
+        onResponseError() {
+          responseErrorAlert();
+        }
       }
-    }
-  )
+    )
+  }
 }
 
 function descriptorUpload(event: Event, descriptorName: string) {
@@ -769,9 +793,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.model.development.resources.gpus =
+          form.value.model.development.resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.development.resources.cpus =
+          form.value.model.development.resources.cpu =
             document.computing_resources.cpu;
           form.value.model.development.resources.memory =
             document.computing_resources.memory;
@@ -817,9 +841,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
           outputString = outputString.substring(0, outputString.length - 2);
           form.value.model.production.interface.output.description += outputString;
         } else if (descriptorName === "Production Environment") {
-          form.value.model.production.resources.gpus =
+          form.value.model.production.resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.production.resources.cpus =
+          form.value.model.production.resources.cpu =
             document.computing_resources.cpu;
           form.value.model.production.resources.memory =
             document.computing_resources.memory;
