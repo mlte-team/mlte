@@ -12,4 +12,4 @@ def package_root() -> str:
     path = os.path.dirname(os.path.abspath(__file__))
     while os.path.basename(os.path.abspath(path)) != "testbed":
         path = os.path.join(path, "..")
-    return os.path.abspath(os.path.join(path, "..", "src/"))
+    return os.path.abspath(os.path.join(path, "..", "mlte/"))

@@ -12,7 +12,7 @@ from typing import Dict
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.property.property import Property
+from mlte.property.base import Property
 from mlte.spec.condition import Condition
 from mlte.spec.model import SpecModel
 from mlte.spec.spec import Spec
@@ -69,7 +69,6 @@ class ValidatedSpec(Artifact):
     def to_model(self) -> ArtifactModel:
         """
         Generates a model representation of the ValidatedSpec.
-
         :return: The serialized model
         """
         model = self.spec.to_model()
@@ -87,6 +86,7 @@ class ValidatedSpec(Artifact):
             header=self.build_artifact_header(),
             body=ValidatedSpecModel(
                 artifact_type=ArtifactType.VALIDATED_SPEC,
+                spec_identifier=self.spec.identifier,
                 properties=[
                     PropertyAndResultsModel(
                         name=property_model.name,
@@ -105,7 +105,6 @@ class ValidatedSpec(Artifact):
     def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
         """
         Deserialize ValidatedSpec content from model.
-
         :param model: The model
         :return: The deserialized specification
         """
@@ -113,6 +112,21 @@ class ValidatedSpec(Artifact):
             model.header.type == ArtifactType.VALIDATED_SPEC
         ), "Broken precondition."
         body = typing.cast(ValidatedSpecModel, model.body)
+
+        return ValidatedSpec.from_model_body(model.header.identifier, body)
+
+    @staticmethod
+    def from_model_body(
+        identifier: str, body: ValidatedSpecModel
+    ) -> ValidatedSpec:
+        """
+        Deserialize ValidatedSpec from model body.
+        :param identifier: The identifier for the artifact
+        :param body: The validated spec model body
+        :return: The deserialized validated specification
+        """
+        # TODO(Kyle): This is a temporary hack until we
+        # determine how to handle recursive artifacts.
 
         # Load properties and results from model into internal representations.
         spec_properties: Dict[Property, Dict[str, Condition]] = {}
@@ -131,9 +145,7 @@ class ValidatedSpec(Artifact):
 
         # Build the spec and ValidatedSpec
         spec = Spec(identifier=body.spec_identifier, properties=spec_properties)
-        return ValidatedSpec(
-            identifier=model.header.identifier, spec=spec, results=results
-        )
+        return ValidatedSpec(identifier=identifier, spec=spec, results=results)
 
     def print_results(self, type: str = "all"):
         """Prints the validated results per property, can be filtered by result type."""
@@ -172,4 +184,8 @@ def _equal(a: ValidatedSpec, b: ValidatedSpec) -> bool:
     :param b: Input instance
     :return: `True` if instances are equal, `False` otherwise
     """
-    return a.spec == b.spec and a.results == b.results
+    return (
+        a.identifier == b.identifier
+        and a.spec == b.spec
+        and a.results == b.results
+    )

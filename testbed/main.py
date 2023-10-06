@@ -11,10 +11,8 @@ from resolver import package_root
 
 sys.path.append(package_root())
 
-import mlte
-import mlte.api as api
-from mlte.measurement.storage import LocalObjectSize
-from mlte.value.types.integer import Integer
+from mlte.report.artifact import Report
+from mlte.session import set_context, set_store
 
 # Script exit codes
 EXIT_SUCCESS = 0
@@ -22,19 +20,14 @@ EXIT_FAILURE = 1
 
 
 def main() -> int:
-    here = os.path.abspath(os.getcwd())
-    here = os.path.join(here, "deleteme")
-    uri = f"local://{here}"
+    store_path = os.path.join(os.getcwd(), "store")
+    os.makedirs(store_path, exist_ok=True)
 
-    mlte.set_model("FakeModel", "0.0.1")
-    mlte.set_artifact_store_uri(uri)
+    set_context("ns", "IrisClassifier", "0.0.1")
+    set_store(f"local://{store_path}")
 
-    m = LocalObjectSize("file size")
-    r: Integer = m.evaluate(os.path.abspath(__file__))
-    r.save()
-
-    result = api.read_value(uri, "FakeModel", "0.0.1", "file size")
-    print(result)
+    report = Report()
+    report.save(force=True, parents=True)
 
     return EXIT_SUCCESS
 

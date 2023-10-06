@@ -10,9 +10,6 @@ import threading
 import time
 from typing import Tuple
 
-import pytest
-
-from mlte._private.platform import is_macos, is_nix, is_windows
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.memory import (
@@ -39,11 +36,7 @@ def spin_for(seconds: int):
     return prog
 
 
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
-)
-def test_memory_nix_evaluate() -> None:
+def test_memory_evaluate() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -56,11 +49,7 @@ def test_memory_nix_evaluate() -> None:
     assert int(time.time() - start) >= SPIN_DURATION
 
 
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
-)
-def test_memory_nix_evaluate_async() -> None:
+def test_memory_evaluate_async() -> None:
     start = time.time()
 
     p = spin_for(5)
@@ -74,11 +63,7 @@ def test_memory_nix_evaluate_async() -> None:
     assert int(time.time() - start) >= SPIN_DURATION
 
 
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
-)
-def test_memory_nix_validate_success() -> None:
+def test_memory_validate_success() -> None:
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")
@@ -93,11 +78,7 @@ def test_memory_nix_validate_success() -> None:
     assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="ProcessLocalCPUUtilization not supported on Windows or macOS.",
-)
-def test_memory_nix_validate_failure() -> None:
+def test_memory_validate_failure() -> None:
     p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")
@@ -112,18 +93,6 @@ def test_memory_nix_validate_failure() -> None:
     assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
 
 
-@pytest.mark.skipif(
-    is_nix(), reason="ProcessLocalCPUUtilization not supported on Windows."
-)
-def test_memory_windows_evaluate() -> None:
-    with pytest.raises(RuntimeError):
-        _ = LocalProcessMemoryConsumption("id")
-
-
-@pytest.mark.skipif(
-    is_windows() or is_macos(),
-    reason="LocalProcessCPUUtilization not supported on Windows or macOS.",
-)
 def test_result_save_load(
     store_with_context: Tuple[Store, Context]  # noqa
 ) -> None:

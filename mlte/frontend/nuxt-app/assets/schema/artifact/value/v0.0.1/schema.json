@@ -31,7 +31,7 @@
       "type": "object"
     },
     "Identifier": {
-      "description": "\n    Identifier is a simple class that standardizes\n    the manner in which Measurements, Values, and\n    Results are uniquely identified throughout\n    their lifetimes.\n    ",
+      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
       "properties": {
         "name": {
           "title": "Name",
@@ -48,7 +48,7 @@
       "description": "The model implementation for MLTE image values.",
       "properties": {
         "value_type": {
-          "const": "4",
+          "const": "image",
           "title": "Value Type"
         },
         "data": {
@@ -67,7 +67,7 @@
       "description": "The model implementation for MLTE integer values.",
       "properties": {
         "value_type": {
-          "const": "1",
+          "const": "integer",
           "title": "Value Type"
         },
         "integer": {
@@ -86,7 +86,7 @@
       "description": "The model implementation for MLTE opaque values.",
       "properties": {
         "value_type": {
-          "const": "3",
+          "const": "opaque",
           "title": "Value Type"
         },
         "data": {
@@ -105,7 +105,7 @@
       "description": "The model implementation for MLTE real values.",
       "properties": {
         "value_type": {
-          "const": "2",
+          "const": "real",
           "title": "Value Type"
         },
         "real": {
@@ -124,7 +124,7 @@
   "description": "The model implementation for MLTE values.",
   "properties": {
     "artifact_type": {
-      "const": "2",
+      "const": "value",
       "title": "Artifact Type"
     },
     "metadata": {
@@ -133,10 +133,10 @@
     "value": {
       "discriminator": {
         "mapping": {
-          "1": "#/$defs/IntegerValueModel",
-          "2": "#/$defs/RealValueModel",
-          "3": "#/$defs/OpaqueValueModel",
-          "4": "#/$defs/ImageValueModel"
+          "image": "#/$defs/ImageValueModel",
+          "integer": "#/$defs/IntegerValueModel",
+          "opaque": "#/$defs/OpaqueValueModel",
+          "real": "#/$defs/RealValueModel"
         },
         "propertyName": "value_type"
       },
