@@ -190,4 +190,4 @@ def _equal(a: Spec, b: Spec) -> bool:
         a.properties[prop] == b.properties[b.get_property(prop.name)]
         for prop in a.properties
     )
-    return same_props and same_conditions
+    return a.identifier == b.identifier and same_props and same_conditions

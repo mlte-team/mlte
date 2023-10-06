@@ -650,7 +650,7 @@
   "description": "The model implementation for the MLTE report artifact.",
   "properties": {
     "artifact_type": {
-      "const": "5",
+      "const": "report",
       "title": "Artifact Type"
     },
     "summary": {

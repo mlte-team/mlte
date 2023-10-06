@@ -162,7 +162,7 @@
   "description": "The model implementation for the ValidatedSpec artifact.",
   "properties": {
     "artifact_type": {
-      "const": "4",
+      "const": "validated_spec",
       "title": "Artifact Type"
     },
     "spec_identifier": {
