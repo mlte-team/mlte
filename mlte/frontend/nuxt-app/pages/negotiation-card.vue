@@ -489,7 +489,7 @@ const form = ref({
         ],
       },
     ],
-    problem_type: "",
+    problem_type: "classification",
     task: "",
     usage_context: "",
     risks: {
@@ -503,7 +503,7 @@ const form = ref({
       access: "",
       description: "",
       source: "",
-      classification: "",
+      classification: "unclassified",
       labels: [
         {
           description: "",
@@ -899,7 +899,7 @@ function addDataItem() {
     access: "",
     description: "",
     source: "",
-    classification: "",
+    classification: "unclassified",
     labels: [
       {
         description: "",
