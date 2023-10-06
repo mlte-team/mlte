@@ -649,33 +649,33 @@ async function deleteVersion(entry: {
 function addSelectedArtifacts(model: string, version: string, artifactList: any){
   artifactList.forEach((artifact: any) => {
     // negotiation card
-    // if(artifact.header.type == "negotiation"){
-    //   if(isValidNegotiation(artifact)){
-    //     negotiationCards.value.push(
-    //       {
-    //         id: artifact.header.identifier,
-    //         timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-    //         model: model,
-    //         version: version
-    //       }
-    //     )
-    //   }
-    // }
+    if(artifact.header.type == "negotiation_card"){
+      if(isValidNegotiation(artifact)){
+        negotiationCards.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
     // report
-    // else if(artifact.header.type == "report"){
-    //   if(isValidReport(artifact)){
-    //     reports.value.push(
-    //       {
-    //         id: artifact.header.identifier,
-    //         timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-    //         model: model,
-    //         version: version
-    //       }
-    //     )
-    //   }
-    // }
+    else if(artifact.header.type == "report"){
+      if(isValidReport(artifact)){
+        reports.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
     // spec
-    if(artifact.header.type == "3"){
+    else if(artifact.header.type == "spec"){
       if(isValidSpec(artifact)){
         specifications.value.push(
           {
@@ -688,7 +688,7 @@ function addSelectedArtifacts(model: string, version: string, artifactList: any)
       }
     }
     // validated spec
-    else if(artifact.header.type == "4"){
+    else if(artifact.header.type == "validated_spec"){
       if(isValidValidatedSpec(artifact)){
         validatedSpecs.value.push(
           {
@@ -702,7 +702,7 @@ function addSelectedArtifacts(model: string, version: string, artifactList: any)
       }
     }
     // value
-    if(artifact.header.type == "2") {
+    if(artifact.header.type == "value") {
       if(isValidValue(artifact)){
         values.value.push(
           {
