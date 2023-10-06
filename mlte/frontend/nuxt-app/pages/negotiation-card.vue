@@ -151,15 +151,15 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.fp_risk">
+    <UsaTextInput v-model="form.system.risks.fp">
       <template #label> False Positive Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.fn_risk">
+    <UsaTextInput v-model="form.system.risks.fn">
       <template #label> False Negative Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.other_risks">
+    <UsaTextInput v-model="form.system.risks.other">
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
@@ -378,7 +378,7 @@
       </div>
     </div>
 
-    <UsaTextarea v-model="form.model.production.environment.integration">
+    <UsaTextarea v-model="form.model.production.integration">
       <template #label>
         Integration
         <InfoIcon>
@@ -389,7 +389,16 @@
       </template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="form.model.production.environment.output">
+    <UsaTextarea v-model="form.model.production.interface.input.description">
+      <template #label>
+        Input
+        <InfoIcon>
+          TODO
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
+    <UsaTextarea v-model="form.model.production.interface.output.description">
       <template #label>
         Output
         <InfoIcon>
@@ -483,9 +492,11 @@ const form = ref({
     problem_type: "",
     task: "",
     usage_context: "",
-    fp_risk: "",
-    fn_risk: "",
-    other_risks: "",
+    risks: {
+      fp: "",
+      fn: "",
+      other: "",
+    }
   },
   data: [
     {
@@ -524,9 +535,14 @@ const form = ref({
       },
     },
     production: {
-      environment: {
-        integration: "",
-        output: "",
+      integration: "",
+      interface: {
+        input: {
+          description: "",
+        },
+        output: {
+          description: "",
+        },
       },
       resources: {
         gpus: 0,
@@ -539,38 +555,81 @@ const form = ref({
 });
 
 const problemTypeOptions = [
-  { value: "Classification", text: "Classification" },
-  { value: "Clustering", text: "Clustering" },
-  { value: "Content Generation", text: "Content Generation" },
-  { value: "Detection", text: "Detection" },
-  { value: "Trend", text: "Trend" },
-  { value: "Alert", text: "Alert" },
-  { value: "Forecasting", text: "Forecasting" },
-  { value: "Summarization", text: "Summarization" },
-  { value: "Benchmarking", text: "Benchmarking" },
-  { value: "Goals", text: "Goals" },
-  { value: "Other", text: "Other" },
+  { value: "classification", text: "Classification" },
+  { value: "clustering", text: "Clustering" },
+  { value: "content_generation", text: "Content Generation" },
+  { value: "detection", text: "Detection" },
+  { value: "trend", text: "Trend" },
+  { value: "alert", text: "Alert" },
+  { value: "forecasting", text: "Forecasting" },
+  // { value: "Summarization", text: "Summarization" },
+  { value: "benchmarking", text: "Benchmarking" },
+  { value: "goals", text: "Goals" },
+  { value: "other", text: "Other" },
 ];
 
 const classificationOptions = [
-  { value: "Unclassified", text: "Unclassified" },
+  { value: "unclassified", text: "Unclassified" },
   {
-    value: "Controlled Unclassified Information (CUI)",
+    value: "cui",
     text: "Controlled Unclassified Information (CUI)",
   },
   {
-    value: "Personally Identifiable Information (PII)",
+    value: "pii",
     text: "Personally Identifiable Information (PII)",
   },
   {
-    value: "Protected Health Information (PHI)",
+    value: "phi",
     text: "Protected Health Information (PHI)",
   },
-  { value: "Other", text: "Other" },
+  { value: "other", text: "Other" },
 ];
 
-if(useRoute().query.reportId !== null){
-  loadSavedCard();
+if(useRoute().query.artifactId !== undefined){
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+  const artifactId = useRoute().query.artifactId;
+
+  await useFetch(
+    "http://localhost:8080/api/namespace/" +
+    namespace +
+    "/model/" +
+    model +
+    "/version/" +
+    version +
+    "/artifact/" +
+    artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }){
+        console.log(response._data);
+
+        form.value.system = response._data.body.system;
+        form.value.data = response._data.body.data;
+        form.value.model = response._data.body.model;
+
+        let problemType = response._data.body.system.problem_type;
+        if(problemTypeOptions.find(x => x.value == problemType)?.value !== undefined){
+          form.value.system.problem_type = problemTypeOptions.find(x => x.value == problemType)?.value;
+        }
+
+        response._data.data.forEach((item) => {
+          let classification = item.classification;
+          if(classificationOptions.find(x => x.value == classification)?.value !== undefined){
+            item.classification = classificationOptions.find(x => x.value == classification)?.value;
+          }
+        })
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    }
+  )
 }
 
 async function submit() {
@@ -614,43 +673,6 @@ async function submit() {
   )
 }
 
-async function loadSavedCard(){
-  const namespace = useRoute().query.namespace;
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-  const artifactId = useRoute().query.artifactId;
-
-  await useFetch(
-    "http://localhost:8080/api/namespace" +
-    namespace +
-    "/model/" +
-    model +
-    "/version/" +
-    version +
-    "/artifact/" +
-    artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }){
-        // TODO : Handle loading the data from the request into the page
-        // This could be abstracted to another method if desired
-
-        // Can check the data contained in the response,
-        console.log(response);
-        // It will look similar to the descriptorUpload function so for example,
-        // form.value.system.ml_task = response._data.ml_task
-      },
-      onResponseError() {
-        responseErrorAlert();
-      }
-    }
-  )
-}
-
 function descriptorUpload(event: Event, descriptorName: string) {
   const target = event.target as HTMLInputElement;
   const file = target.files![0];
@@ -680,9 +702,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.system.task = document.task;
           form.value.system.problem_type = document.ml_problem_type.ml_problem;
           form.value.system.usage_context = document.usage_context;
-          form.value.system.fp_risk = document.risks.risk_fp;
-          form.value.system.fn_risk = document.risks.risk_fn;
-          form.value.system.other_risks = document.risks.risk_other;
+          form.value.system.risks.fp = document.risks.risk_fp;
+          form.value.system.risks.fn = document.risks.risk_fn;
+          form.value.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
           addDataItem();
           const lastDataIndex = form.value.data.length - 1;
@@ -757,7 +779,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.storage;
 
           let outputString = "";
-          if (form.value.model.production.environment.output !== "") {
+          if (form.value.model.production.interface.output.description !== "") {
             outputString += "\n\n";
           }
           document.downstream_components.forEach(
@@ -793,7 +815,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.environment.output += outputString;
+          form.value.model.production.interface.output.description += outputString;
         } else if (descriptorName === "Production Environment") {
           form.value.model.production.resources.gpus =
             document.computing_resources.gpu;
