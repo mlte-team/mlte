@@ -15,7 +15,6 @@ from mlte.model.shared import (
     ProblemType,
     RiskDescriptor,
 )
-from mlte.validation.model import ValidatedSpecModel
 
 
 class SummaryDescriptor(BaseModel):
@@ -95,10 +94,5 @@ class ReportModel(BaseModel):
     )
     """Quantitative analysis included in the report."""
 
-    validated_spec_id: str = ""
+    validated_spec_id: Optional[str] = None
     """The identifier for the validated specification."""
-
-    validated_spec_body: ValidatedSpecModel = ValidatedSpecModel(
-        artifact_type=ArtifactType.VALIDATED_SPEC
-    )
-    """The validated specification model body."""

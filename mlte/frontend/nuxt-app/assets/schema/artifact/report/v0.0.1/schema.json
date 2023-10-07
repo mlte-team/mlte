@@ -14,31 +14,6 @@
       "title": "CommentDescriptor",
       "type": "object"
     },
-    "ConditionModel": {
-      "description": "A description of a condition for a property.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "arguments": {
-          "default": [],
-          "items": {},
-          "title": "Arguments",
-          "type": "array"
-        },
-        "callback": {
-          "title": "Callback",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name",
-        "callback"
-      ],
-      "title": "ConditionModel",
-      "type": "object"
-    },
     "DataClassification": {
       "description": "An enumeration of data classification levels.",
       "enum": [
@@ -157,36 +132,6 @@
       "title": "DataDescriptor",
       "type": "object"
     },
-    "EvidenceMetadata": {
-      "description": "A simple wrapper for evidence metadata.",
-      "properties": {
-        "measurement_type": {
-          "title": "Measurement Type",
-          "type": "string"
-        },
-        "identifier": {
-          "$ref": "#/$defs/Identifier"
-        },
-        "info": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Info"
-        }
-      },
-      "required": [
-        "measurement_type",
-        "identifier"
-      ],
-      "title": "EvidenceMetadata",
-      "type": "object"
-    },
     "FieldDescriptor": {
       "description": "Describes a dataset field.",
       "properties": {
@@ -291,20 +236,6 @@
         }
       },
       "title": "GoalDescriptor",
-      "type": "object"
-    },
-    "Identifier": {
-      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "Identifier",
       "type": "object"
     },
     "IntendedUseDescriptor": {
@@ -623,65 +554,6 @@
       "title": "ProblemType",
       "type": "string"
     },
-    "PropertyAndResultsModel": {
-      "description": "A description of a property, along with results.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
-        },
-        "rationale": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Rationale"
-        },
-        "conditions": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ConditionModel"
-          },
-          "default": {},
-          "title": "Conditions",
-          "type": "object"
-        },
-        "module": {
-          "title": "Module",
-          "type": "string"
-        },
-        "results": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ResultModel"
-          },
-          "default": {},
-          "title": "Results",
-          "type": "object"
-        }
-      },
-      "required": [
-        "name",
-        "module"
-      ],
-      "title": "PropertyAndResultsModel",
-      "type": "object"
-    },
     "QuantitiveAnalysisDescriptor": {
       "description": "The model implementation for report quantitative analysis.",
       "properties": {
@@ -699,36 +571,6 @@
         }
       },
       "title": "QuantitiveAnalysisDescriptor",
-      "type": "object"
-    },
-    "ResultModel": {
-      "description": "A description of a Result.",
-      "properties": {
-        "type": {
-          "title": "Type",
-          "type": "string"
-        },
-        "message": {
-          "title": "Message",
-          "type": "string"
-        },
-        "metadata": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/EvidenceMetadata"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "required": [
-        "type",
-        "message",
-        "metadata"
-      ],
-      "title": "ResultModel",
       "type": "object"
     },
     "RiskDescriptor": {
@@ -802,33 +644,6 @@
         }
       },
       "title": "SummaryDescriptor",
-      "type": "object"
-    },
-    "ValidatedSpecModel": {
-      "description": "The model implementation for the ValidatedSpec artifact.",
-      "properties": {
-        "artifact_type": {
-          "const": "validated_spec",
-          "title": "Artifact Type"
-        },
-        "spec_identifier": {
-          "default": "",
-          "title": "Spec Identifier",
-          "type": "string"
-        },
-        "properties": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/PropertyAndResultsModel"
-          },
-          "default": [],
-          "title": "Properties"
-        }
-      },
-      "required": [
-        "artifact_type"
-      ],
-      "title": "ValidatedSpecModel",
       "type": "object"
     }
   },
@@ -926,21 +741,16 @@
       }
     },
     "validated_spec_id": {
-      "default": "",
-      "title": "Validated Spec Id",
-      "type": "string"
-    },
-    "validated_spec_body": {
-      "allOf": [
+      "anyOf": [
         {
-          "$ref": "#/$defs/ValidatedSpecModel"
+          "type": "string"
+        },
+        {
+          "type": "null"
         }
       ],
-      "default": {
-        "artifact_type": "validated_spec",
-        "properties": [],
-        "spec_identifier": ""
-      }
+      "default": null,
+      "title": "Validated Spec Id"
     }
   },
   "required": [
