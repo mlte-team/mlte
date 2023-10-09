@@ -62,6 +62,26 @@ class Artifact(metaclass=abc.ABCMeta):
             "Artifact.from_model() not implemented for abstract Artifact."
         )
 
+    def pre_save_hook(self, context: Context, store: Store) -> None:
+        """
+        A method that artifact subclasses can override to enforce pre-save invariants.
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        # Default implementation is a no-op
+        pass
+
+    def post_load_hook(self, context: Context, store: Store) -> None:
+        """
+        A method that artifact subclasses may override to enforce post-load invariants.
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        # Default implementation is a no-op
+        pass
+
     def save(self, *, force: bool = False, parents: bool = False) -> None:
         """
         Save an artifact with parameters from the configured global session.
@@ -93,6 +113,8 @@ class Artifact(metaclass=abc.ABCMeta):
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
         """
+        self.pre_save_hook(context, store)
+
         artifact_model = self.to_model()
         artifact_model.header.timestamp = int(time.time())
         with ManagedSession(store.session()) as handle:
@@ -104,11 +126,6 @@ class Artifact(metaclass=abc.ABCMeta):
                 force=force,
                 parents=parents,
             )
-
-    @staticmethod
-    def get_default_id() -> str:
-        """To be overriden by derived classes."""
-        return "default"
 
     @classmethod
     def load(cls, identifier: Optional[str] = None) -> Artifact:
@@ -137,7 +154,7 @@ class Artifact(metaclass=abc.ABCMeta):
             identifier = cls.get_default_id()
 
         with ManagedSession(store.session()) as handle:
-            return cls.from_model(
+            artifact = cls.from_model(
                 handle.read_artifact(
                     context.namespace,
                     context.model,
@@ -145,6 +162,14 @@ class Artifact(metaclass=abc.ABCMeta):
                     identifier,
                 )
             )
+
+        artifact.post_load_hook(context, store)
+        return artifact
+
+    @staticmethod
+    def get_default_id() -> str:
+        """To be overriden by derived classes."""
+        return "default"
 
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""

@@ -8,13 +8,15 @@ from __future__ import annotations
 
 import typing
 from copy import deepcopy
-from typing import List
+from typing import List, Optional
 
 from deepdiff import DeepDiff
 
+import mlte.store.error as errors
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
 from mlte.model.shared import DataDescriptor, RiskDescriptor
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.model import (
@@ -25,6 +27,7 @@ from mlte.report.model import (
     ReportModel,
     SummaryDescriptor,
 )
+from mlte.store.base import ManagedSession, Store
 
 DEFAULT_REPORT_ID = "default.report"
 
@@ -42,6 +45,7 @@ class Report(Artifact):
         data: List[DataDescriptor] = [],
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
+        validated_spec_id: Optional[str] = None,
     ) -> None:
         super().__init__(identifier, ArtifactType.REPORT)
 
@@ -66,6 +70,9 @@ class Report(Artifact):
         self.quantitative_analysis = quantitative_analysis
         """The quantitative analysis for the evaluation."""
 
+        self.validated_spec_id = validated_spec_id
+        """The identifier for the associated validated specification."""
+
     def to_model(self) -> ArtifactModel:
         """Convert a report artifact to its corresponding model."""
         return ArtifactModel(
@@ -79,8 +86,46 @@ class Report(Artifact):
                 data=self.data,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
+                validated_spec_id=self.validated_spec_id,
             ),
         )
+
+    def pre_save_hook(self, context: Context, store: Store) -> None:
+        """
+        Override Artifact.pre_save_hook().
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        if self.validated_spec_id is None:
+            return
+
+        with ManagedSession(store.session()) as handle:
+            try:
+                artifact = handle.read_artifact(
+                    context.namespace,
+                    context.model,
+                    context.version,
+                    self.validated_spec_id,
+                )
+            except errors.ErrorNotFound:
+                raise RuntimeError(
+                    f"Validated specification with identifier {self.validated_spec_id} not found."
+                )
+
+        if not artifact.header.type == ArtifactType.VALIDATED_SPEC:
+            raise RuntimeError(
+                f"Validated specification with identifier {self.validated_spec_id} not found."
+            )
+
+    def post_load_hook(self, context: Context, store: Store) -> None:
+        """
+        Override Artifact.post_load_hook().
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        super().post_load_hook(context, store)
 
     @classmethod
     def from_model(cls, model: ArtifactModel) -> Report:  # type: ignore[override]
@@ -96,6 +141,7 @@ class Report(Artifact):
             data=body.data,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
+            validated_spec_id=body.validated_spec_id,
         )
 
     def populate_from(self, artifact: NegotiationCard) -> Report:

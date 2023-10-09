@@ -93,3 +93,6 @@ class ReportModel(BaseModel):
         QuantitiveAnalysisDescriptor()
     )
     """Quantitative analysis included in the report."""
+
+    validated_spec_id: Optional[str] = None
+    """The identifier for the validated specification."""
