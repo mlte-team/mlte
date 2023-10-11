@@ -38,10 +38,6 @@ pytest-cov = "^4.1.0"
 httpx = "^0.24.1"
 jsonschema = "^4.19.0"
 
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.25.2"
-
 [tool.isort]
 profile="black"
 line_length = 80

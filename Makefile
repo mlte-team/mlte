@@ -27,6 +27,7 @@ format:
 	poetry run black test/
 	poetry run black testbed/
 	poetry run black demo/*.py
+	poetry run black demo/*.ipynb
 	poetry run black tools/
 
 .PHONY: check-format 
@@ -35,6 +36,7 @@ check-format:
 	poetry run black --check test/
 	poetry run black --check testbed/
 	poetry run black --check demo/*.py
+	poetry run black --check demo/*.ipynb
 	poetry run black --check tools/
 
 # Lint all source code
