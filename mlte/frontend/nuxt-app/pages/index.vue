@@ -78,21 +78,107 @@
             throughout development and is updated at prescribed negotiation
             points.
           </p>
-          <UsaTable
+          <!-- <UsaTable
             :headers="cardSpecReportHeaders"
             :rows="negotiationCards"
             borderless
             class="table"
-          />
-          <!-- TODO : This will have to be more info than the namespace. Probably model version -->
+          /> -->
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="card in negotiationCards">
+                <th scope="row">{{ card.id }}</th>
+                <td>{{ card.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: 'negotiation-card',
+                      query: { namespace: selectedNamespace, model: card.model, version: card.version, artifactId: card.id },
+                    }"
+                  >
+                    <UsaButton class="primary-button">
+                      Edit
+                    </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- TODO : Adjust this once a mode/version selector is implemented -->
+          <p v-if="selectedVersion == ''" style="float: left; color: red;">
+            Select a model version in order to start a new negotiation card
+          </p>
           <NuxtLink
             :to="{
               path: 'negotiation-card',
-              query: { namespace: selectedNamespace },
+              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
             }"
           >
-            <UsaButton class="primary-button" style="float: right">
+            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
               Start new negotiation card
+            </UsaButton>
+          </NuxtLink>
+        </div>
+      </UsaAccordionItem>
+
+      <UsaAccordionItem label="Reports">
+        <div class="scrollable-table-div">
+          <p>
+            A report is a human and machine-readable summary of all knowledge
+            gained about a model during the MLTE process.
+          </p>
+          <!-- <UsaTable
+            :headers="cardSpecReportHeaders"
+            :rows="reports"
+            borderless
+            class="table"
+          /> -->
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="report in reports">
+                <th scope="row">{{ report.id }}</th>
+                <td>{{ report.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: 'report',
+                      query: { namespace: selectedNamespace, model: report.model, version: report.version, arfifactId: report.id },
+                    }"
+                  >
+                    <UsaButton class="primary-button">
+                      Edit
+                    </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- TODO : Adjust this once a mode/version selector is implemented -->
+          <p v-if="selectedVersion == ''" style="float: left; color: red;">
+            Select a model version in order to start a new report
+          </p>
+          <NuxtLink
+            :to="{
+              path: 'report',
+              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
+            }"
+          >
+            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
+              Start new report
             </UsaButton>
           </NuxtLink>
         </div>
@@ -104,32 +190,32 @@
             A specification (spec) defines the model requirements that must be
             satisfied to ensure successful integration with the target system.
           </p>
-          <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
+          <UsaTable
+            :headers="cardSpecReportHeaders"
+            :rows="specifications"
+            borderless 
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Reports">
+      <UsaAccordionItem label="Validated Specification">
         <div class="scrollable-table-div">
           <p>
-            A report is a human and machine-readable summary of all knowledge
-            gained about a model during the MLTE process.
-          </p>
-          <UsaTable :headers="cardSpecReportHeaders" borderless class="table" />
-        </div>
-      </UsaAccordionItem>
-
-      <UsaAccordionItem label="Findings">
-        <div class="scrollable-table-div">
-          <p>
-            Findings are produced by combining a specification with its
+            Validated Specification are produced by combining a specification with its
             corresponding results; this artifact communicates how well a model
             performed against all of its requirements.
           </p>
-          <UsaTable :headers="findingsHeaders" borderless class="table" />
+          <UsaTable
+            :headers="validatedSpecHeaders"
+            :rows="validatedSpecs"
+            borderless
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Results">
+      <!-- <UsaAccordionItem label="Results">
         <div class="scrollable-table-div">
           <p>
             Results encode whether or not the values generated during evidence
@@ -139,7 +225,7 @@
           </p>
           <UsaTable :headers="resultsHeaders" borderless class="table" />
         </div>
-      </UsaAccordionItem>
+      </UsaAccordionItem> -->
 
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
@@ -148,7 +234,12 @@
             any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
-          <UsaTable :headers="valuesHeaders" borderless class="table" />
+          <UsaTable
+            :headers="valuesHeaders"
+            :rows="values"
+            borderless
+            class="table"
+          />
         </div>
       </UsaAccordionItem>
     </UsaAccordion>
@@ -168,6 +259,11 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   { method: "GET" },
 );
 const selectedNamespace = ref("");
+// TODO : Remove these once a mode/version selector is implemented
+const selectedModel = ref("");
+const selectedVersion = ref("");
+// -- end block to be removed
+
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
   selectNamespace(namespaceOptions.value[0]);
 }
@@ -182,32 +278,45 @@ const versionOptions = ref<
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "descriptor", label: "Descriptor", sortable: true },
-  { id: "date", label: "Date", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const findingsHeaders = ref([
+const validatedSpecHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "date", label: "Date", sortable: true },
-  { id: "spec", label: "Spec", sortable: true },
+  { id: "specid", label: "SpecID", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const resultsHeaders = ref([
-  { id: "id", label: "ID", sortable: true },
-  { id: "value", label: "value", sortable: true },
-  { id: "condition", label: "Condition", sortable: true },
-  { id: "outcome", label: "Outcome", sortable: true },
-  { id: "Date", label: "Date", sortable: true },
-]);
+// const resultsHeaders = ref([
+//   { id: "id", label: "ID", sortable: true },
+//   { id: "value", label: "value", sortable: true },
+//   { id: "condition", label: "Condition", sortable: true },
+//   { id: "outcome", label: "Outcome", sortable: true },
+//   { id: "Date", label: "Date", sortable: true },
+// ]);
 
 const valuesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "measurement", label: "Measurement", sortable: true },
   { id: "type", label: "Type", sortable: true },
-  { id: "date", label: "Date", sortable: true },
+  { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const negotiationCards = ref([]);
+const negotiationCards = ref<
+  { id: string; timestamp: string; model: string; version: string }[]
+>([]);
+const specifications = ref<
+  { id: string; timestamp: string, model: string, version: string }[]
+>([]);
+const reports = ref<
+  { id: string; timestamp: string; model: string; version: string }[]
+>([]);
+const validatedSpecs = ref<
+  { id: string; specid: string; timestamp: string, model: string, version: string }[]
+>([]);
+const values = ref<
+  { id: string; measurement: string; type: string; timestamp: string, model: string, version: string }[]
+>([]);
 
 async function selectNamespace(namespace: string) {
   await useFetch(
@@ -232,6 +341,12 @@ async function selectNamespace(namespace: string) {
         });
 
         modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
+
+        negotiationCards.value = [];
+        reports.value = [];
+        specifications.value = [];
+        validatedSpecs.value = [];
+        values.value = [];
       },
       onResponseError() {
         responseErrorAlert();
@@ -287,6 +402,13 @@ async function deleteNamespace(namespace: string) {
         method: "DELETE",
         onRequestError() {
           requestErrorAlert();
+        },
+        onResponse({ response }){
+          negotiationCards.value = [];
+          reports.value = [];
+          specifications.value = [];
+          validatedSpecs.value = [];
+          values.value = [];
         },
         onResponseError() {
           responseErrorAlert();
@@ -365,6 +487,7 @@ async function updateSelectedModels(entry: {
     }) {
       return versionItem.model !== entry.model;
     });
+    clearDeselectedArtifacts(entry.model, "");
   }
 
   versionOptions.value.sort(function (
@@ -405,6 +528,11 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
           const index = modelOptions.value.indexOf(entry);
           modelOptions.value.splice(index, 1);
           updateSelectedModels(entry);
+          negotiationCards.value = [];
+          reports.value = [];
+          specifications.value = [];
+          validatedSpecs.value = [];
+          values.value = [];
         },
         onResponseError() {
           responseErrorAlert();
@@ -414,7 +542,7 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
   }
 }
 
-function updateSelectedVersions(entry: {
+async function updateSelectedVersions(entry: {
   model: string;
   version: string;
   selected: boolean;
@@ -422,7 +550,59 @@ function updateSelectedVersions(entry: {
   // TODO : Ideally this would be handled with the prop of the component
   entry.selected = !entry.selected;
 
-  // TODO : Post this to backend and get updated data
+  if (entry.selected) {
+    // TODO : Remove this block once a mode/version selector is implemented
+    // Block handles updating artifacts when a second version is selected.
+    // This implementation makes only one selectable at a time.
+    // When removed, also update start new negotiation card and start new report button,
+    // remove the global selectedModel and selectedVersion values, and adjust the else
+    // block after this if
+    versionOptions.value.forEach((version) => {
+      negotiationCards.value = [];
+      reports.value = [];
+      specifications.value = [];
+      validatedSpecs.value = [];
+      values.value = [];
+      version.selected = false;
+    })
+    entry.selected = true;
+    selectedModel.value = entry.model;
+    selectedVersion.value = entry.version;
+    // -- end block to be removed
+
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+        selectedNamespace.value +
+        "/model/" +
+        entry.model +
+        "/version/" +
+        entry.version +
+        "/artifact",
+      {
+        retry: 0,
+        method: "GET",
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          if (response._data) {
+            addSelectedArtifacts(entry.model, entry.version, response._data);
+          }
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      },
+    );
+  }
+  else{
+    clearDeselectedArtifacts(entry.model, entry.version);
+
+    // TODO : Remove this block once a mode/version selector is implemented
+    selectedModel.value = "";
+    selectedVersion.value = "";
+    // -- end block to be removed
+  }
 }
 
 async function deleteVersion(entry: {
@@ -455,6 +635,7 @@ async function deleteVersion(entry: {
         onResponse() {
           const index = versionOptions.value.indexOf(entry);
           versionOptions.value.splice(index, 1);
+          clearDeselectedArtifacts(entry.model, entry.version);
         },
         onResponseError() {
           responseErrorAlert();
@@ -464,23 +645,135 @@ async function deleteVersion(entry: {
   }
 }
 
-function requestErrorAlert() {
-  alert(
-    "Error encountered while communicating with API. Ensure store is running and allowed-origins is configured correctly.",
-  );
+// TODO : Do better typing on the artifactList and artifact
+function addSelectedArtifacts(model: string, version: string, artifactList: any){
+  artifactList.forEach((artifact: any) => {
+    // negotiation card
+    if(artifact.header.type == "negotiation_card"){
+      if(isValidNegotiation(artifact)){
+        negotiationCards.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+    // report
+    else if(artifact.header.type == "report"){
+      if(isValidReport(artifact)){
+        reports.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+    // spec
+    else if(artifact.header.type == "spec"){
+      if(isValidSpec(artifact)){
+        specifications.value.push(
+          {
+            id: artifact.header.identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+    // validated spec
+    else if(artifact.header.type == "validated_spec"){
+      if(isValidValidatedSpec(artifact)){
+        validatedSpecs.value.push(
+          {
+            id: artifact.header.identifier,
+            specid: artifact.body.spec_identifier,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      }
+    }
+    // value
+    if(artifact.header.type == "value") {
+      if(isValidValue(artifact)){
+        values.value.push(
+          {
+            id: artifact.header.identifier.slice(0, -6),
+            measurement: artifact.body.metadata.measurement_type,
+            type: artifact.body.value.value_type,
+            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+            model: model,
+            version: version
+          }
+        )
+      } 
+    }
+  });
 }
 
-function responseErrorAlert() {
-  alert(
-    "Error encountered in response from API. Check browser and store console for more information.",
-  );
+function clearDeselectedArtifacts(model: string, version: string){
+  // Passing a version causes both model and version to be checked before filtering items
+  // If an empty string is passed as the version, all artifacts under the model will be filtered out
+
+  negotiationCards.value = specifications.value.filter(function (card) {
+    if(version === ""){
+      return card.model !== model;
+    }
+    else{
+      return card.model !== model || card.version !== version;
+    }
+  });
+
+  reports.value = specifications.value.filter(function (report) {
+    if(version === ""){
+      return report.model !== model;
+    }
+    else{
+      return report.model !== model || report.version !== version;
+    }
+  });
+
+  specifications.value = specifications.value.filter(function (spec) {
+    if(version === ""){
+      return spec.model !== model
+    }
+    else{
+      return spec.model !== model || spec.version !== version;
+    }
+  });
+
+  validatedSpecs.value = validatedSpecs.value.filter(function (validatedSpec) {
+    if(version === ""){
+      return validatedSpec.model !== model
+    }
+    else{
+      return validatedSpec.model !== model || validatedSpec.version !== version;
+    }
+  });
+
+  values.value = values.value.filter(function (value) {
+    if(version === ""){
+      return value.model !== model
+    }
+    else{
+      return value.model !== model || value.version !== version;
+    }
+  });
 }
 </script>
 
 <style>
 .scrollable-table-div {
   overflow-y: auto;
-  height: 14em;
+  height: 18em;
 }
 
 .table {

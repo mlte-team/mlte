@@ -42,7 +42,7 @@
 
     <UsaBreadcrumb :items="path" />
 
-    <h1 class="section-header">How to use Negotiation Card</h1>
+    <h1 class="section-header">How to use the Negotiation Card</h1>
     <p>
       Teams should work through as many of the following items as they can at
       the IMT negotiation point, using the answers to inform initial model
@@ -52,13 +52,23 @@
       capture all relevant critical aspects of the model and system.
     </p>
 
+    <UsaTextInput v-if="useRoute().query.artifactId === undefined" v-model="userInputArifactId">
+      <template #label>
+        Artifact ID
+        <InfoIcon>
+          The Artifact ID this negotiation card <br />
+          will be saved under upon submission.
+        </InfoIcon>
+      </template>
+    </UsaTextInput>
+
     <h2 class="section-header">System Requirements</h2>
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
       <div
         v-for="(goal, goalIndex) in form.system.goals"
-        :key="goal.description"
+        :key="goalIndex"
       >
         <h3>Goal {{ goalIndex + 1 }}</h3>
 
@@ -69,7 +79,7 @@
         <h3 class="no-margin-section-header">Metrics</h3>
         <div
           v-for="(metric, metricIndex) in goal.metrics"
-          :key="metric.description"
+          :key="metricIndex"
         >
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
@@ -151,15 +161,15 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.fp_risk">
+    <UsaTextInput v-model="form.system.risks.fp">
       <template #label> False Positive Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.fn_risk">
+    <UsaTextInput v-model="form.system.risks.fn">
       <template #label> False Negative Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.other_risks">
+    <UsaTextInput v-model="form.system.risks.other">
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
@@ -173,7 +183,7 @@
     <div class="input-group">
       <div
         v-for="(data_item, dataItemIndex) in form.data"
-        :key="data_item.description"
+        :key="dataItemIndex"
       >
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="data_item.access">
@@ -204,7 +214,7 @@
         <div class="input-group" style="margin-top: 1em">
           <div
             v-for="(label, labelIndex) in data_item.labels"
-            :key="label.description"
+            :key="labelIndex"
           >
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
@@ -232,7 +242,7 @@
         <div class="input-group" style="margin-top: 1em">
           <div
             v-for="(schema, schema_index) in data_item.schema"
-            :key="schema.name"
+            :key="schema_index"
           >
             <h3 class="no-margin-section-header">
               Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
@@ -338,8 +348,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.model.development.resources.gpus"
-            type="number"
+            v-model="form.model.development.resources.gpu"
           >
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
@@ -347,8 +356,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.model.development.resources.cpus"
-            type="number"
+            v-model="form.model.development.resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
@@ -359,26 +367,22 @@
         <div class="inline-input-left">
           <UsaTextInput
             v-model="form.model.development.resources.memory"
-            type="number"
           >
             <template #label> Memory </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
           <UsaTextInput
             v-model="form.model.development.resources.storage"
-            type="number"
           >
             <template #label> Storage </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
       </div>
     </div>
 
-    <UsaTextarea v-model="form.model.production.environment.integration">
+    <UsaTextarea v-model="form.model.production.integration">
       <template #label>
         Integration
         <InfoIcon>
@@ -389,7 +393,16 @@
       </template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="form.model.production.environment.output">
+    <UsaTextarea v-model="form.model.production.interface.input.description">
+      <template #label>
+        Input
+        <InfoIcon>
+          Describe the input data type and format needed for the model to conduct inference.
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
+    <UsaTextarea v-model="form.model.production.interface.output.description">
       <template #label>
         Output
         <InfoIcon>
@@ -408,8 +421,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.model.production.resources.gpus"
-            type="number"
+            v-model="form.model.production.resources.gpu"
           >
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
@@ -417,8 +429,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.model.production.resources.cpus"
-            type="number"
+            v-model="form.model.production.resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
@@ -429,20 +440,16 @@
         <div class="inline-input-left">
           <UsaTextInput
             v-model="form.model.production.resources.memory"
-            type="number"
           >
             <template #label> Memory </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
           <UsaTextInput
             v-model="form.model.production.resources.storage"
-            type="number"
           >
             <template #label> Storage </template>
-            <template #input-suffix> GB </template>
           </UsaTextInput>
         </div>
       </div>
@@ -467,6 +474,8 @@ const path = ref([
   },
 ]);
 
+const userInputArifactId = ref("");
+
 const form = ref({
   system: {
     goals: [
@@ -480,19 +489,21 @@ const form = ref({
         ],
       },
     ],
-    problem_type: "",
+    problem_type: "classification",
     task: "",
     usage_context: "",
-    fp_risk: "",
-    fn_risk: "",
-    other_risks: "",
+    risks: {
+      fp: "",
+      fn: "",
+      other: "",
+    }
   },
   data: [
     {
       access: "",
       description: "",
       source: "",
-      classification: "",
+      classification: "unclassified",
       labels: [
         {
           description: "",
@@ -517,71 +528,173 @@ const form = ref({
   model: {
     development: {
       resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
       },
     },
     production: {
-      environment: {
-        integration: "",
-        output: "",
+      integration: "",
+      interface: {
+        input: {
+          description: "",
+        },
+        output: {
+          description: "",
+        },
       },
       resources: {
-        gpus: 0,
-        cpus: 0,
-        memory: 0,
-        storage: 0,
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
       },
     },
   },
 });
 
 const problemTypeOptions = [
-  { value: "Classification", text: "Classification" },
-  { value: "Clustering", text: "Clustering" },
-  { value: "Content Generation", text: "Content Generation" },
-  { value: "Detection", text: "Detection" },
-  { value: "Trend", text: "Trend" },
-  { value: "Alert", text: "Alert" },
-  { value: "Forecasting", text: "Forecasting" },
-  { value: "Summarization", text: "Summarization" },
-  { value: "Benchmarking", text: "Benchmarking" },
-  { value: "Goals", text: "Goals" },
-  { value: "Other", text: "Other" },
+  { value: "classification", text: "Classification" },
+  { value: "clustering", text: "Clustering" },
+  { value: "content_generation", text: "Content Generation" },
+  { value: "detection", text: "Detection" },
+  { value: "trend", text: "Trend" },
+  { value: "alert", text: "Alert" },
+  { value: "forecasting", text: "Forecasting" },
+  // { value: "Summarization", text: "Summarization" },
+  { value: "benchmarking", text: "Benchmarking" },
+  { value: "goals", text: "Goals" },
+  { value: "other", text: "Other" },
 ];
 
 const classificationOptions = [
-  { value: "Unclassified", text: "Unclassified" },
+  { value: "unclassified", text: "Unclassified" },
   {
-    value: "Controlled Unclassified Information (CUI)",
+    value: "cui",
     text: "Controlled Unclassified Information (CUI)",
   },
   {
-    value: "Personally Identifiable Information (PII)",
+    value: "pii",
     text: "Personally Identifiable Information (PII)",
   },
   {
-    value: "Protected Health Information (PHI)",
+    value: "phi",
     text: "Protected Health Information (PHI)",
   },
-  { value: "Other", text: "Other" },
+  { value: "other", text: "Other" },
 ];
 
-function cancel() {
-  if (
-    confirm(
-      "Are you sure you want to leave this page? All changes will be lost.",
-    )
-  ) {
-    location.href = "/";
-  }
+if(useRoute().query.artifactId !== undefined){
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+  const artifactId = useRoute().query.artifactId;
+
+  await useFetch(
+    "http://localhost:8080/api/namespace/" +
+    namespace +
+    "/model/" +
+    model +
+    "/version/" +
+    version +
+    "/artifact/" +
+    artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }){
+        console.log(response._data);
+
+        if(isValidNegotiation(response._data)){
+          form.value.system = response._data.body.system;
+          form.value.data = response._data.body.data;
+          form.value.model = response._data.body.model;
+
+          let problemType = response._data.body.system.problem_type;
+          if(problemTypeOptions.find(x => x.value == problemType)?.value !== undefined){
+            form.value.system.problem_type = problemTypeOptions.find(x => x.value == problemType)?.value;
+          }
+
+          response._data.data.forEach((item) => {
+            let classification = item.classification;
+            if(classificationOptions.find(x => x.value == classification)?.value !== undefined){
+              item.classification = classificationOptions.find(x => x.value == classification)?.value;
+            }
+          })
+        }
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    }
+  )
 }
 
-function submit() {
-  console.log(form.value);
-  console.log(useRoute().query.namespace);
+async function submit() {
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+
+  let identifier = "";
+  if(useRoute().query.artifactId === undefined){
+    identifier = userInputArifactId.value;
+  }
+  else{
+    identifier = useRoute().query.artifactId?.toString();
+  }
+
+  // Construct the object to be submitted to the backend here
+  let artifact = {
+      header: {
+        identifier: identifier,
+        type: "negotiation_card",
+        timestamp: Date.now()
+      },
+      body: {
+        artifact_type: "negotiation_card",
+        system: form.value.system,
+        data: form.value.data,
+        model: form.value.model,
+      },
+  }
+
+  if(isValidNegotiation(artifact)){
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact",
+      {
+        retry: 0,
+        method: "POST",
+        body: {
+          artifact: artifact,
+          // TODO Find out what these values should be
+          force: false,
+          parents: false
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }){
+          // TODO : If anything needs to happen after the artifact is successfully saved, do it here
+          // For example, redirect back to the homepage.
+          // Can check any data that is contained within response,
+          console.log(response);
+        },
+        onResponseError() {
+          responseErrorAlert();
+        }
+      }
+    )
+  }
 }
 
 function descriptorUpload(event: Event, descriptorName: string) {
@@ -613,9 +726,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.system.task = document.task;
           form.value.system.problem_type = document.ml_problem_type.ml_problem;
           form.value.system.usage_context = document.usage_context;
-          form.value.system.fp_risk = document.risks.risk_fp;
-          form.value.system.fn_risk = document.risks.risk_fn;
-          form.value.system.other_risks = document.risks.risk_other;
+          form.value.system.risks.fp = document.risks.risk_fp;
+          form.value.system.risks.fn = document.risks.risk_fn;
+          form.value.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
           addDataItem();
           const lastDataIndex = form.value.data.length - 1;
@@ -680,9 +793,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.model.development.resources.gpus =
+          form.value.model.development.resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.development.resources.cpus =
+          form.value.model.development.resources.cpu =
             document.computing_resources.cpu;
           form.value.model.development.resources.memory =
             document.computing_resources.memory;
@@ -690,7 +803,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.storage;
 
           let outputString = "";
-          if (form.value.model.production.environment.output !== "") {
+          if (form.value.model.production.interface.output.description !== "") {
             outputString += "\n\n";
           }
           document.downstream_components.forEach(
@@ -726,11 +839,11 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.environment.output += outputString;
+          form.value.model.production.interface.output.description += outputString;
         } else if (descriptorName === "Production Environment") {
-          form.value.model.production.resources.gpus =
+          form.value.model.production.resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.production.resources.cpus =
+          form.value.model.production.resources.cpu =
             document.computing_resources.cpu;
           form.value.model.production.resources.memory =
             document.computing_resources.memory;
@@ -742,6 +855,16 @@ function descriptorUpload(event: Event, descriptorName: string) {
       }
     };
     reader.readAsText(file);
+  }
+}
+
+function cancel() {
+  if (
+    confirm(
+      "Are you sure you want to leave this page? All changes will be lost.",
+    )
+  ) {
+    location.href = "/";
   }
 }
 
@@ -776,7 +899,7 @@ function addDataItem() {
     access: "",
     description: "",
     source: "",
-    classification: "",
+    classification: "unclassified",
     labels: [
       {
         description: "",

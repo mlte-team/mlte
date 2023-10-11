@@ -2,10 +2,10 @@
 
 import { Validator } from 'jsonschema';
 
-import * as negotiationSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
+import * as negotiationSchemaData from '~/assets/schema/artifact/negotiation/v0.0.1/schema.json';
 import * as specSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
-import * as validatedSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
-import * as valueSchemaData from '~/assets/schema/artifact/spec/v0.0.1/schema.json';
+import * as validatedSchemaData from '~/assets/schema/artifact/validated/v0.0.1/schema.json';
+import * as valueSchemaData from '~/assets/schema/artifact/value/v0.0.1/schema.json';
 import * as reportSchemaData from '~/assets/schema/artifact/report/v0.0.1/schema.json';
 
 
