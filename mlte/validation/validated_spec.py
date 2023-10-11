@@ -69,7 +69,6 @@ class ValidatedSpec(Artifact):
     def to_model(self) -> ArtifactModel:
         """
         Generates a model representation of the ValidatedSpec.
-
         :return: The serialized model
         """
         model = self.spec.to_model()
@@ -106,7 +105,6 @@ class ValidatedSpec(Artifact):
     def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
         """
         Deserialize ValidatedSpec content from model.
-
         :param model: The model
         :return: The deserialized specification
         """

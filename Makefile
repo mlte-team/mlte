@@ -4,13 +4,6 @@
 # QA
 # -----------------------------------------------------------------------------
 
-# Sort imports
-# TODO(Kyle): This currently introduces a circular-import
-# error; we need to dig into this to address the root cause
-# rather than continuing to shift imports around...
-#
-# NOTE(Kyle): I am trying to gradually add these in.
-
 .PHONY: isort
 isort:	
 	poetry run isort mlte/
@@ -34,6 +27,7 @@ format:
 	poetry run black test/
 	poetry run black testbed/
 	poetry run black demo/*.py
+	poetry run black demo/*.ipynb
 	poetry run black tools/
 
 .PHONY: check-format 
@@ -42,6 +36,7 @@ check-format:
 	poetry run black --check test/
 	poetry run black --check testbed/
 	poetry run black --check demo/*.py
+	poetry run black --check demo/*.ipynb
 	poetry run black --check tools/
 
 # Lint all source code

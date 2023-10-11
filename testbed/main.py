@@ -11,7 +11,7 @@ from resolver import package_root
 
 sys.path.append(package_root())
 
-from mlte.negotiation.artifact import NegotiationCard
+from mlte.report.artifact import Report
 from mlte.session import set_context, set_store
 
 # Script exit codes
@@ -26,8 +26,8 @@ def main() -> int:
     set_context("ns", "IrisClassifier", "0.0.1")
     set_store(f"local://{store_path}")
 
-    card = NegotiationCard()
-    card.save(force=True, parents=True)
+    report = Report()
+    report.save(force=True, parents=True)
 
     return EXIT_SUCCESS
 
