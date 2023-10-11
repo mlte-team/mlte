@@ -118,7 +118,7 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
         88: "sword_lily",
         89: "thorn_apple",
         90: "tiger_lily",
-        91: "tithonia_(incorrectly_labeled_as_orange_dahlia)",
+        91: "orange_dahlia",
         92: "toad_lily",
         93: "tree_mallow",
         94: "tree_poppy",
