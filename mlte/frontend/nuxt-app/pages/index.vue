@@ -29,20 +29,14 @@
     <hr />
 
     <div style="display: flex">
+      
       <div class="split-div">
-        <b>Model(s)</b>
-        <div class="scrollable-div">
-          <div v-for="entry in modelOptions" :key="entry.model">
-            <ScrollableListItem
-              :selected="entry.selected"
-              @update="updateSelectedModels(entry)"
-              @delete="deleteModel(entry)"
-            >
-              {{ entry.model }}
-            </ScrollableListItem>
-          </div>
-        </div>
-        <br />
+        <b>New Model(s)</b>
+        <UsaSelect 
+          :options=modelOptions
+          @update:modelValue=myUpdateSelectedModels({})
+        />
+      <br />
       </div>
 
       <div class="split-div">
@@ -66,7 +60,7 @@
         <label class="usa-label" style="margin-top: 0px;">Search</label>
         <UsaTextInput v-model="searchInput" style="width: 100%;"/> -->
       </div>
-    </div>
+    </div> 
 
     <UsaAccordion multiselectable bordered>
       <UsaAccordionItem label="Negotiation Cards">
@@ -270,11 +264,11 @@ if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
 
-const modelOptions = ref<{ model: string; selected: boolean }[]>([]);
+const modelOptions = ref<{ value: int; text: string }[]>([])
 const versionOptions = ref<
   { model: string; version: string; selected: boolean }[]
 >([]);
-// const searchInput = ref("");
+
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -286,14 +280,6 @@ const validatedSpecHeaders = ref([
   { id: "specid", label: "SpecID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
-
-// const resultsHeaders = ref([
-//   { id: "id", label: "ID", sortable: true },
-//   { id: "value", label: "value", sortable: true },
-//   { id: "condition", label: "Condition", sortable: true },
-//   { id: "outcome", label: "Outcome", sortable: true },
-//   { id: "Date", label: "Date", sortable: true },
-// ]);
 
 const valuesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -334,13 +320,13 @@ async function selectNamespace(namespace: string) {
           versionOptions.value = [];
         }
 
-        response._data.forEach((modelName: string) => {
+        response._data.forEach((modelName: string, index: int) => {
           if (!modelOptions.value.some((item) => item.model === modelName)) {
-            modelOptions.value.push({ model: modelName, selected: false });
+            modelOptions.value.push({ value: index, text: modelName });
           }
         });
 
-        modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
+        modelOptions.value.sort((a, b) => a.text.localeCompare(b.text));
 
         negotiationCards.value = [];
         reports.value = [];
@@ -509,6 +495,11 @@ async function updateSelectedModels(entry: {
   });
 }
 
+async function myUpdateSelectedModels(event) {
+  console.log(event)
+}
+
+/*
 async function deleteModel(entry: { model: string; selected: boolean }) {
   if (
     confirm("Are you sure you want to delete the model: " + entry.model + "?")
@@ -541,6 +532,7 @@ async function deleteModel(entry: { model: string; selected: boolean }) {
     );
   }
 }
+*/
 
 async function updateSelectedVersions(entry: {
   model: string;
