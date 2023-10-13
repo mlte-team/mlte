@@ -150,7 +150,7 @@
                         namespace: selectedNamespace,
                         model: report.model,
                         version: report.version,
-                        arfifactId: report.id,
+                        artifactId: report.id,
                       },
                     }"
                   >
@@ -167,7 +167,7 @@
                         namespace: selectedNamespace,
                         model: report.model,
                         version: report.version,
-                        arfifactId: report.id,
+                        artifactId: report.id,
                       },
                     }"
                   >
