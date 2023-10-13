@@ -1,4 +1,4 @@
-export function requestErrorAlert(){
+export function requestErrorAlert() {
   alert(
     "Error encountered while communicating with API. Ensure store is running and allowed-origins is configured correctly.",
   );

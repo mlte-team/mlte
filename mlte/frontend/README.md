@@ -62,21 +62,3 @@ All typescript code takes advantage of static typing. This type checking can be 
 ```bash
 $ npx vue-tsc
 ```
-
-```
-    <div class="split-div">
-    <b>Model(s)</b>
-    <div class="scrollable-div">
-        <div v-for="entry in modelOptions" :key="entry.model">
-        <ScrollableListItem
-            :selected="entry.selected"
-            @update="updateSelectedModels(entry)"
-            @delete="deleteModel(entry)"
-        >
-            {{ entry.model }}
-        </ScrollableListItem>
-        </div>
-    </div>
-    <br />
-    </div>
-```

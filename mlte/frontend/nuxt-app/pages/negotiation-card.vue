@@ -52,7 +52,10 @@
       capture all relevant critical aspects of the model and system.
     </p>
 
-    <UsaTextInput v-if="useRoute().query.artifactId === undefined" v-model="userInputArifactId">
+    <UsaTextInput
+      v-if="useRoute().query.artifactId === undefined"
+      v-model="userInputArifactId"
+    >
       <template #label>
         Artifact ID
         <InfoIcon>
@@ -66,10 +69,7 @@
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
-      <div
-        v-for="(goal, goalIndex) in form.system.goals"
-        :key="goalIndex"
-      >
+      <div v-for="(goal, goalIndex) in form.system.goals" :key="goalIndex">
         <h3>Goal {{ goalIndex + 1 }}</h3>
 
         <UsaTextInput v-model="goal.description">
@@ -77,10 +77,7 @@
         </UsaTextInput>
 
         <h3 class="no-margin-section-header">Metrics</h3>
-        <div
-          v-for="(metric, metricIndex) in goal.metrics"
-          :key="metricIndex"
-        >
+        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
               <template #label>
@@ -181,10 +178,7 @@
       data transportation.
     </p>
     <div class="input-group">
-      <div
-        v-for="(data_item, dataItemIndex) in form.data"
-        :key="dataItemIndex"
-      >
+      <div v-for="(data_item, dataItemIndex) in form.data" :key="dataItemIndex">
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="data_item.access">
           <template #label> Account Access / Account Availability </template>
@@ -347,17 +341,13 @@
       </p>
       <div>
         <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.model.development.resources.gpu"
-          >
+          <UsaTextInput v-model="form.model.development.resources.gpu">
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.model.development.resources.cpu"
-          >
+          <UsaTextInput v-model="form.model.development.resources.cpu">
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
@@ -365,17 +355,13 @@
 
       <div>
         <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.model.development.resources.memory"
-          >
+          <UsaTextInput v-model="form.model.development.resources.memory">
             <template #label> Memory </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.model.development.resources.storage"
-          >
+          <UsaTextInput v-model="form.model.development.resources.storage">
             <template #label> Storage </template>
           </UsaTextInput>
         </div>
@@ -397,7 +383,8 @@
       <template #label>
         Input
         <InfoIcon>
-          Describe the input data type and format needed for the model to conduct inference.
+          Describe the input data type and format needed for the model to
+          conduct inference.
         </InfoIcon>
       </template>
     </UsaTextarea>
@@ -420,17 +407,13 @@
       </p>
       <div>
         <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.model.production.resources.gpu"
-          >
+          <UsaTextInput v-model="form.model.production.resources.gpu">
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.model.production.resources.cpu"
-          >
+          <UsaTextInput v-model="form.model.production.resources.cpu">
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
@@ -438,17 +421,13 @@
 
       <div>
         <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.model.production.resources.memory"
-          >
+          <UsaTextInput v-model="form.model.production.resources.memory">
             <template #label> Memory </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.model.production.resources.storage"
-          >
+          <UsaTextInput v-model="form.model.production.resources.storage">
             <template #label> Storage </template>
           </UsaTextInput>
         </div>
@@ -463,13 +442,20 @@
 </template>
 
 <script setup lang="ts">
+import {
+  requestErrorAlert,
+  responseErrorAlert,
+} from "../composables/error-handling";
+
+import { isValidNegotiation } from "../composables/artifact-validation.ts";
+
 const path = ref([
   {
     href: "/",
     text: "Artifact Store",
   },
   {
-    href: "/negotiation-store",
+    href: "/here",
     text: "Negotiation Card",
   },
 ]);
@@ -496,7 +482,7 @@ const form = ref({
       fp: "",
       fn: "",
       other: "",
-    }
+    },
   },
   data: [
     {
@@ -585,7 +571,7 @@ const classificationOptions = [
   { value: "other", text: "Other" },
 ];
 
-if(useRoute().query.artifactId !== undefined){
+if (useRoute().query.artifactId !== undefined) {
   const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
@@ -593,45 +579,53 @@ if(useRoute().query.artifactId !== undefined){
 
   await useFetch(
     "http://localhost:8080/api/namespace/" +
-    namespace +
-    "/model/" +
-    model +
-    "/version/" +
-    version +
-    "/artifact/" +
-    artifactId,
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      artifactId,
     {
       retry: 0,
       method: "GET",
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }){
-        console.log(response._data);
-
-        if(isValidNegotiation(response._data)){
+      onResponse({ response }) {
+        if (isValidNegotiation(response._data)) {
           form.value.system = response._data.body.system;
           form.value.data = response._data.body.data;
           form.value.model = response._data.body.model;
 
-          let problemType = response._data.body.system.problem_type;
-          if(problemTypeOptions.find(x => x.value == problemType)?.value !== undefined){
-            form.value.system.problem_type = problemTypeOptions.find(x => x.value == problemType)?.value;
+          const problemType = response._data.body.system.problem_type;
+          if (
+            problemTypeOptions.find((x) => x.value === problemType)?.value !==
+            undefined
+          ) {
+            form.value.system.problem_type = problemTypeOptions.find(
+              (x) => x.value === problemType,
+            )?.value;
           }
 
           response._data.data.forEach((item) => {
-            let classification = item.classification;
-            if(classificationOptions.find(x => x.value == classification)?.value !== undefined){
-              item.classification = classificationOptions.find(x => x.value == classification)?.value;
+            const classification = item.classification;
+            if (
+              classificationOptions.find((x) => x.value === classification)
+                ?.value !== undefined
+            ) {
+              item.classification = classificationOptions.find(
+                (x) => x.value === classification,
+              )?.value;
             }
-          })
+          });
         }
       },
       onResponseError() {
         responseErrorAlert();
-      }
-    }
-  )
+      },
+    },
+  );
 }
 
 async function submit() {
@@ -640,50 +634,49 @@ async function submit() {
   const version = useRoute().query.version;
 
   let identifier = "";
-  if(useRoute().query.artifactId === undefined){
+  if (useRoute().query.artifactId === undefined) {
     identifier = userInputArifactId.value;
-  }
-  else{
+  } else {
     identifier = useRoute().query.artifactId?.toString();
   }
 
   // Construct the object to be submitted to the backend here
-  let artifact = {
-      header: {
-        identifier: identifier,
-        type: "negotiation_card",
-        timestamp: Date.now()
-      },
-      body: {
-        artifact_type: "negotiation_card",
-        system: form.value.system,
-        data: form.value.data,
-        model: form.value.model,
-      },
-  }
+  const artifact = {
+    header: {
+      identifier,
+      type: "negotiation_card",
+      timestamp: Date.now(),
+    },
+    body: {
+      artifact_type: "negotiation_card",
+      system: form.value.system,
+      data: form.value.data,
+      model: form.value.model,
+    },
+  };
 
-  if(isValidNegotiation(artifact)){
+  if (isValidNegotiation(artifact)) {
     await useFetch(
       "http://localhost:8080/api/namespace/" +
-      namespace +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact",
+        namespace +
+        "/model/" +
+        model +
+        "/version/" +
+        version +
+        "/artifact",
       {
         retry: 0,
         method: "POST",
         body: {
-          artifact: artifact,
+          artifact,
           // TODO Find out what these values should be
           force: false,
-          parents: false
+          parents: false,
         },
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse({ response }){
+        onResponse({ response }) {
           // TODO : If anything needs to happen after the artifact is successfully saved, do it here
           // For example, redirect back to the homepage.
           // Can check any data that is contained within response,
@@ -691,9 +684,9 @@ async function submit() {
         },
         onResponseError() {
           responseErrorAlert();
-        }
-      }
-    )
+        },
+      },
+    );
   }
 }
 
@@ -839,7 +832,8 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.interface.output.description += outputString;
+          form.value.model.production.interface.output.description +=
+            outputString;
         } else if (descriptorName === "Production Environment") {
           form.value.model.production.resources.gpu =
             document.computing_resources.gpu;
