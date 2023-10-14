@@ -47,7 +47,26 @@
     </div>
 
     <h3>MLTE Evaluation</h3>
-    <p>TODO</p>
+    <table class="table usa-table usa-table--borderless">
+      <thead>
+        <tr>
+          <th data-sortable scope="col" role="columnheader">Status</th>
+          <th data-sortable scope="col" role="columnheader">Property</th>
+          <th data-sortable scope="col" role="columnheader">Measurement</th>
+          <th data-sortable scope="col" role="columnheader">Evidence ID</th>
+          <th data-sortable scope="col" role="columnheader">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="finding in form.findings" :key="finding.evidence_id">
+          <td>{{ finding.status }}</td>
+          <td>{{ finding.property }}</td>
+          <td>{{ finding.measurement }}</td>
+          <td>{{ finding.evidence_id }}</td>
+          <td>{{ finding.message }}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <h2>Intended Use</h2>
     <p>A description of how the model is intended to be used.</p>
@@ -242,8 +261,7 @@
     <p>Free-form comments from model developers and system integrators.</p>
 
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
-      <UsaTextInput v-model="comment.content">
-      </UsaTextInput>
+      <UsaTextInput v-model="comment.content"> </UsaTextInput>
     </div>
 
     <h3>Quantitative Analysis</h3>
@@ -253,7 +271,9 @@
     It doesn't seem to me that the submit button is working, but I don't know 
     how to test it appropriately. -->
     <div style="text-align: center; margin-top: 1em">
-      <UsaButton class="primary-button" @click="exportReport()"> Export </UsaButton>
+      <UsaButton class="primary-button" @click="exportReport()">
+        Export
+      </UsaButton>
     </div>
   </NuxtLayout>
 </template>
@@ -286,7 +306,7 @@ const form = ref({
   },
   performance: {
     goals: [],
-    mlte_evaluation: "",
+    findings: [],
   },
   intended_use: {
     context: "",
@@ -339,7 +359,7 @@ if (useRoute().query.artifactId !== undefined) {
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }) {
+      async onResponse({ response }) {
         form.value.summary.problem_type = capitalizeWord(
           response._data.body.summary.problem_type,
         );
@@ -363,12 +383,86 @@ if (useRoute().query.artifactId !== undefined) {
         form.value.data = response._data.body.data;
 
         form.value.comments = response._data.body.comments;
+
+        if (
+          response._data.body.validated_spec_id !== undefined &&
+          response._data.body.validated_spec_id !== ""
+        ) {
+          const validatedSpec = await fetchArtifact(
+            namespace,
+            model,
+            version,
+            response._data.body.validated_spec_id,
+          );
+          form.value.findings = loadFindings(validatedSpec);
+        }
       },
       onResponseError() {
         responseErrorAlert();
       },
     },
   );
+}
+
+// Fetch a artifact by ID.
+async function fetchArtifact(
+  namespace: string,
+  model: string,
+  version: string,
+  artifactId: string,
+) {
+  const { data, pending, error, refresh, status } = await useFetch(
+    "http://localhost:8080/api/namespace/" +
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        return null;
+      },
+      onResponse({ response }) {
+        return response._data;
+      },
+      onResponseError() {
+        return null;
+      },
+    },
+  );
+
+  // TODO(Kyle): Error handling.
+  if (status._value !== "success") {
+    return null;
+  }
+
+  return data._value;
+}
+
+// Load findings from a validated specication.
+function loadFindings(proxyObject: any) {
+  const findings = [];
+  // TODO(Kyle): Standardize conversion of proxy objects.
+  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
+  validatedSpec.body.properties.forEach((property) => {
+    // TODO(Kyle): This is not portable to some browsers.
+    const results = new Map(Object.entries(property.results));
+    results.forEach((value, key) => {
+      const finding = {
+        status: value.type,
+        property: property.name,
+        measurement: value.metadata.measurement_type,
+        evidence_id: value.metadata.identifier.name,
+        message: value.message,
+      };
+      findings.push(finding);
+    });
+  });
+  return findings;
 }
 
 // Capitalize all words in a string.
@@ -386,9 +480,6 @@ function capitalizeWord(word: string) {
 
 // Export the current report.
 function exportReport() {
-  alert(
-    "Report export is not currently implemented.",
-  );
+  alert("Report export is not currently implemented.");
 }
-
 </script>
