@@ -442,11 +442,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  requestErrorAlert,
-  responseErrorAlert,
-} from "../composables/error-handling";
-
 import { isValidNegotiation } from "../composables/artifact-validation.ts";
 
 const path = ref([
