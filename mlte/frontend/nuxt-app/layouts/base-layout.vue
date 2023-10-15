@@ -92,7 +92,7 @@ header {
 
 .body-div {
   width: 100%;
-  max-width: 100ch;
+  max-width: 128ch;
   margin-top: 8px;
   margin-left: 40px;
   padding-right: 40px;

@@ -30,34 +30,22 @@
 
     <div style="display: flex">
       <div class="split-div">
-        <b>Model(s)</b>
-        <div class="scrollable-div">
-          <div v-for="entry in modelOptions" :key="entry.model">
-            <ScrollableListItem
-              :selected="entry.selected"
-              @update="updateSelectedModels(entry)"
-              @delete="deleteModel(entry)"
-            >
-              {{ entry.model }}
-            </ScrollableListItem>
-          </div>
-        </div>
+        <b>Model</b>
+        <UsaSelect
+          :options="modelOptions"
+          :model-value="selectedModel"
+          @update:modelValue="updateSelectedModel($event)"
+        />
         <br />
       </div>
 
       <div class="split-div">
-        <b>Version(s)</b>
-        <div class="scrollable-div">
-          <div v-for="entry in versionOptions" :key="entry.version">
-            <ScrollableListItem
-              :selected="entry.selected"
-              @update="updateSelectedVersions(entry)"
-              @delete="deleteVersion(entry)"
-            >
-              {{ entry.model }} - {{ entry.version }}
-            </ScrollableListItem>
-          </div>
-        </div>
+        <b>Version</b>
+        <UsaSelect
+          :options="versionOptions"
+          :model-value="selectedVersion"
+          @update:modelValue="updateSelectedVersion($event)"
+        />
         <br />
       </div>
 
@@ -78,12 +66,6 @@
             throughout development and is updated at prescribed negotiation
             points.
           </p>
-          <!-- <UsaTable
-            :headers="cardSpecReportHeaders"
-            :rows="negotiationCards"
-            borderless
-            class="table"
-          /> -->
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
@@ -93,38 +75,51 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="card in negotiationCards">
+              <tr v-for="card in negotiationCards" :key="card.id">
                 <th scope="row">{{ card.id }}</th>
                 <td>{{ card.timestamp }}</td>
                 <td>
                   <NuxtLink
                     :to="{
                       path: 'negotiation-card',
-                      query: { namespace: selectedNamespace, model: card.model, version: card.version, artifactId: card.id },
+                      query: {
+                        namespace: selectedNamespace,
+                        model: card.model,
+                        version: card.version,
+                        artifactId: card.id,
+                      },
                     }"
                   >
-                    <UsaButton class="primary-button">
-                      Edit
-                    </UsaButton>
+                    <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>
             </tbody>
           </table>
-          <!-- TODO : Adjust this once a mode/version selector is implemented -->
-          <p v-if="selectedVersion == ''" style="float: left; color: red;">
-            Select a model version in order to start a new negotiation card
-          </p>
           <NuxtLink
             :to="{
               path: 'negotiation-card',
-              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
+              query: {
+                namespace: selectedNamespace,
+                model: selectedModel,
+                version: selectedVersion,
+              },
             }"
           >
-            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
-              Start new negotiation card
+            <UsaButton
+              :disabled="selectedModel === '' || selectedVersion === ''"
+              class="primary-button"
+              style="float: left"
+            >
+              New
             </UsaButton>
           </NuxtLink>
+          <p
+            v-if="selectedModel === '' || selectedVersion === ''"
+            style="float: left; color: red"
+          >
+            Select a model and version to start a new negotiation card here.
+          </p>
         </div>
       </UsaAccordionItem>
 
@@ -134,12 +129,6 @@
             A report is a human and machine-readable summary of all knowledge
             gained about a model during the MLTE process.
           </p>
-          <!-- <UsaTable
-            :headers="cardSpecReportHeaders"
-            :rows="reports"
-            borderless
-            class="table"
-          /> -->
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
@@ -149,38 +138,68 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="report in reports">
+              <tr v-for="report in reports" :key="report.id">
                 <th scope="row">{{ report.id }}</th>
                 <td>{{ report.timestamp }}</td>
                 <td>
                   <NuxtLink
                     :to="{
                       path: 'report',
-                      query: { namespace: selectedNamespace, model: report.model, version: report.version, arfifactId: report.id },
+                      query: {
+                        namespace: selectedNamespace,
+                        model: report.model,
+                        version: report.version,
+                        arfifactId: report.id,
+                      },
                     }"
                   >
-                    <UsaButton class="primary-button">
+                    <UsaButton :disabled="true" class="primary-button">
                       Edit
                     </UsaButton>
+                  </NuxtLink>
+                </td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: 'report',
+                      query: {
+                        namespace: selectedNamespace,
+                        model: report.model,
+                        version: report.version,
+                        arfifactId: report.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> View </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>
             </tbody>
           </table>
-          <!-- TODO : Adjust this once a mode/version selector is implemented -->
-          <p v-if="selectedVersion == ''" style="float: left; color: red;">
-            Select a model version in order to start a new report
-          </p>
           <NuxtLink
             :to="{
               path: 'report',
-              query: { namespace: selectedNamespace, model: selectedModel, version: selectedVersion },
+              query: {
+                namespace: selectedNamespace,
+                model: selectedModel,
+                version: selectedVersion,
+              },
             }"
           >
-            <UsaButton :disabled="selectedVersion == ''" class="primary-button" style="float: right">
-              Start new report
+            <UsaButton
+              :disabled="selectedModel === '' || selectedVersion === ''"
+              class="primary-button"
+              style="float: left"
+            >
+              New
             </UsaButton>
           </NuxtLink>
+          <p
+            v-if="selectedModel === '' || selectedVersion === ''"
+            style="float: left; color: red"
+          >
+            Select a model and version to start a new report.
+          </p>
         </div>
       </UsaAccordionItem>
 
@@ -193,7 +212,7 @@
           <UsaTable
             :headers="cardSpecReportHeaders"
             :rows="specifications"
-            borderless 
+            borderless
             class="table"
           />
         </div>
@@ -202,9 +221,9 @@
       <UsaAccordionItem label="Validated Specification">
         <div class="scrollable-table-div">
           <p>
-            Validated Specification are produced by combining a specification with its
-            corresponding results; this artifact communicates how well a model
-            performed against all of its requirements.
+            Validated Specification are produced by combining a specification
+            with its corresponding results; this artifact communicates how well
+            a model performed against all of its requirements.
           </p>
           <UsaTable
             :headers="validatedSpecHeaders"
@@ -247,10 +266,18 @@
 </template>
 
 <script setup lang="ts">
+import {
+  isValidNegotiation,
+  isValidReport,
+  isValidSpec,
+  isValidValidatedSpec,
+  isValidValue,
+} from "../composables/artifact-validation.ts";
+
 const path = ref([
   {
     href: "/",
-    text: "Artifact Store",
+    text: "",
   },
 ]);
 
@@ -258,11 +285,13 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   "http://localhost:8080/api/namespace",
   { method: "GET" },
 );
+
+// The selected namespace
 const selectedNamespace = ref("");
-// TODO : Remove these once a mode/version selector is implemented
+// The selected model
 const selectedModel = ref("");
+// The selected model version
 const selectedVersion = ref("");
-// -- end block to be removed
 
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
   selectNamespace(namespaceOptions.value[0]);
@@ -270,11 +299,10 @@ if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
 
-const modelOptions = ref<{ model: string; selected: boolean }[]>([]);
-const versionOptions = ref<
-  { model: string; version: string; selected: boolean }[]
->([]);
-// const searchInput = ref("");
+// The models in the namespace
+const modelOptions = ref<{ value: string; text: string }[]>([]);
+// The versions available for the model
+const versionOptions = ref<{ value: string; text: string }[]>([]);
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -287,14 +315,6 @@ const validatedSpecHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-// const resultsHeaders = ref([
-//   { id: "id", label: "ID", sortable: true },
-//   { id: "value", label: "value", sortable: true },
-//   { id: "condition", label: "Condition", sortable: true },
-//   { id: "outcome", label: "Outcome", sortable: true },
-//   { id: "Date", label: "Date", sortable: true },
-// ]);
-
 const valuesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "measurement", label: "Measurement", sortable: true },
@@ -302,20 +322,34 @@ const valuesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
+// TODO(Kyle): Is there a better way we can manage this state?
 const negotiationCards = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
 const specifications = ref<
-  { id: string; timestamp: string, model: string, version: string }[]
+  { id: string; timestamp: string; model: string; version: string }[]
 >([]);
 const reports = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
 const validatedSpecs = ref<
-  { id: string; specid: string; timestamp: string, model: string, version: string }[]
+  {
+    id: string;
+    specid: string;
+    timestamp: string;
+    model: string;
+    version: string;
+  }[]
 >([]);
 const values = ref<
-  { id: string; measurement: string; type: string; timestamp: string, model: string, version: string }[]
+  {
+    id: string;
+    measurement: string;
+    type: string;
+    timestamp: string;
+    model: string;
+    version: string;
+  }[]
 >([]);
 
 async function selectNamespace(namespace: string) {
@@ -336,11 +370,11 @@ async function selectNamespace(namespace: string) {
 
         response._data.forEach((modelName: string) => {
           if (!modelOptions.value.some((item) => item.model === modelName)) {
-            modelOptions.value.push({ model: modelName, selected: false });
+            modelOptions.value.push({ value: modelName, text: modelName });
           }
         });
 
-        modelOptions.value.sort((a, b) => a.model.localeCompare(b.model));
+        modelOptions.value.sort((a, b) => a.text.localeCompare(b.text));
 
         negotiationCards.value = [];
         reports.value = [];
@@ -403,12 +437,8 @@ async function deleteNamespace(namespace: string) {
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse({ response }){
-          negotiationCards.value = [];
-          reports.value = [];
-          specifications.value = [];
-          validatedSpecs.value = [];
-          values.value = [];
+        onResponse() {
+          clearArtifacts();
         },
         onResponseError() {
           responseErrorAlert();
@@ -444,329 +474,171 @@ async function deleteNamespace(namespace: string) {
   }
 }
 
-async function updateSelectedModels(entry: {
-  model: string;
-  selected: boolean;
-}) {
-  // TODO : Ideally this would be handled with the prop of the component
-  entry.selected = !entry.selected;
+// Update the selected model for the artifact store.
+async function updateSelectedModel(modelName: string) {
+  selectedModel.value = modelName;
 
-  if (entry.selected) {
-    await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
-        "/model/" +
-        entry.model +
-        "/version",
-      {
-        retry: 0,
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response._data) {
-            response._data.forEach((version: string) => {
-              versionOptions.value.push({
-                model: entry.model,
-                version,
-                selected: false,
-              });
-            });
-          }
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
-  } else {
-    versionOptions.value = versionOptions.value.filter(function (versionItem: {
-      model: string;
-      version: string;
-    }) {
-      return versionItem.model !== entry.model;
-    });
-    clearDeselectedArtifacts(entry.model, "");
+  selectedVersion.value = "";
+  if (modelName === "") {
+    clearArtifacts();
+    return;
   }
+
+  await useFetch(
+    "http://localhost:8080/api/namespace/" +
+      selectedNamespace.value +
+      "/model/" +
+      modelName +
+      "/version",
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response._data) {
+          selectedModel.value = modelName;
+          response._data.forEach((version: string) => {
+            versionOptions.value.push({
+              value: version,
+              text: version,
+            });
+          });
+        }
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
 
   versionOptions.value.sort(function (
-    a: { model: string; version: string },
-    b: { model: string; version: string },
+    a: { value: string; text: string },
+    b: { value: string; text: string },
   ) {
-    if (a.model < b.model) {
+    if (a.value < b.value) {
       return -1;
-    } else if (a.model > b.model) {
+    } else if (a.value > b.value) {
       return 1;
-    } else if (a.model === b.model) {
-      if (a.version < b.version) {
-        return -1;
-      } else {
-        return 1;
-      }
+    } else {
+      return 0;
     }
-    return 0;
   });
 }
 
-async function deleteModel(entry: { model: string; selected: boolean }) {
-  if (
-    confirm("Are you sure you want to delete the model: " + entry.model + "?")
-  ) {
-    await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
-        "/model/" +
-        entry.model,
-      {
-        retry: 0,
-        method: "DELETE",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse() {
-          const index = modelOptions.value.indexOf(entry);
-          modelOptions.value.splice(index, 1);
-          updateSelectedModels(entry);
-          negotiationCards.value = [];
-          reports.value = [];
-          specifications.value = [];
-          validatedSpecs.value = [];
-          values.value = [];
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
+// Update the selected version for the artifact store.
+async function updateSelectedVersion(versionName: string) {
+  selectedVersion.value = versionName;
+
+  if (versionName === "") {
+    clearArtifacts();
+    return;
   }
+
+  await useFetch(
+    "http://localhost:8080/api/namespace/" +
+      selectedNamespace.value +
+      "/model/" +
+      selectedModel.value +
+      "/version/" +
+      versionName +
+      "/artifact",
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response._data) {
+          selectedVersion.value = versionName;
+          populateArtifacts(
+            selectedModel.value,
+            selectedVersion.value,
+            response._data,
+          );
+        }
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
 }
 
-async function updateSelectedVersions(entry: {
-  model: string;
-  version: string;
-  selected: boolean;
-}) {
-  // TODO : Ideally this would be handled with the prop of the component
-  entry.selected = !entry.selected;
-
-  if (entry.selected) {
-    // TODO : Remove this block once a mode/version selector is implemented
-    // Block handles updating artifacts when a second version is selected.
-    // This implementation makes only one selectable at a time.
-    // When removed, also update start new negotiation card and start new report button,
-    // remove the global selectedModel and selectedVersion values, and adjust the else
-    // block after this if
-    versionOptions.value.forEach((version) => {
-      negotiationCards.value = [];
-      reports.value = [];
-      specifications.value = [];
-      validatedSpecs.value = [];
-      values.value = [];
-      version.selected = false;
-    })
-    entry.selected = true;
-    selectedModel.value = entry.model;
-    selectedVersion.value = entry.version;
-    // -- end block to be removed
-
-    await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
-        "/model/" +
-        entry.model +
-        "/version/" +
-        entry.version +
-        "/artifact",
-      {
-        retry: 0,
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response._data) {
-            addSelectedArtifacts(entry.model, entry.version, response._data);
-          }
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
-  }
-  else{
-    clearDeselectedArtifacts(entry.model, entry.version);
-
-    // TODO : Remove this block once a mode/version selector is implemented
-    selectedModel.value = "";
-    selectedVersion.value = "";
-    // -- end block to be removed
-  }
-}
-
-async function deleteVersion(entry: {
-  model: string;
-  version: string;
-  selected: boolean;
-}) {
-  if (
-    confirm(
-      "Are you sure you want to delete the version: " +
-        entry.model +
-        " - " +
-        entry.version +
-        "?",
-    )
-  ) {
-    await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
-        "/model/" +
-        entry.model +
-        "/version/" +
-        entry.version,
-      {
-        retry: 0,
-        method: "DELETE",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse() {
-          const index = versionOptions.value.indexOf(entry);
-          versionOptions.value.splice(index, 1);
-          clearDeselectedArtifacts(entry.model, entry.version);
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
-  }
-}
-
+// Populate artifacts for a given model and version.
 // TODO : Do better typing on the artifactList and artifact
-function addSelectedArtifacts(model: string, version: string, artifactList: any){
+function populateArtifacts(model: string, version: string, artifactList: any) {
   artifactList.forEach((artifact: any) => {
-    // negotiation card
-    if(artifact.header.type == "negotiation_card"){
-      if(isValidNegotiation(artifact)){
-        negotiationCards.value.push(
-          {
-            id: artifact.header.identifier,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
+    // Negotiation card
+    if (artifact.header.type === "negotiation_card") {
+      if (isValidNegotiation(artifact)) {
+        negotiationCards.value.push({
+          id: artifact.header.identifier,
+          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          model,
+          version,
+        });
       }
     }
-    // report
-    else if(artifact.header.type == "report"){
-      if(isValidReport(artifact)){
-        reports.value.push(
-          {
-            id: artifact.header.identifier,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
+    // Report
+    else if (artifact.header.type === "report") {
+      if (isValidReport(artifact)) {
+        reports.value.push({
+          id: artifact.header.identifier,
+          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          model,
+          version,
+        });
       }
     }
-    // spec
-    else if(artifact.header.type == "spec"){
-      if(isValidSpec(artifact)){
-        specifications.value.push(
-          {
-            id: artifact.header.identifier,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
+    // Spec
+    else if (artifact.header.type === "spec") {
+      if (isValidSpec(artifact)) {
+        specifications.value.push({
+          id: artifact.header.identifier,
+          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          model,
+          version,
+        });
       }
     }
-    // validated spec
-    else if(artifact.header.type == "validated_spec"){
-      if(isValidValidatedSpec(artifact)){
-        validatedSpecs.value.push(
-          {
-            id: artifact.header.identifier,
-            specid: artifact.body.spec_identifier,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
+    // Validated spec
+    else if (artifact.header.type === "validated_spec") {
+      if (isValidValidatedSpec(artifact)) {
+        validatedSpecs.value.push({
+          id: artifact.header.identifier,
+          specid: artifact.body.spec_identifier,
+          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          model,
+          version,
+        });
       }
     }
-    // value
-    if(artifact.header.type == "value") {
-      if(isValidValue(artifact)){
-        values.value.push(
-          {
-            id: artifact.header.identifier.slice(0, -6),
-            measurement: artifact.body.metadata.measurement_type,
-            type: artifact.body.value.value_type,
-            timestamp: new Date(artifact.header.timestamp * 1000).toString(),
-            model: model,
-            version: version
-          }
-        )
-      } 
+    // Value
+    if (artifact.header.type === "value") {
+      if (isValidValue(artifact)) {
+        values.value.push({
+          id: artifact.header.identifier.slice(0, -6),
+          measurement: artifact.body.metadata.measurement_type,
+          type: artifact.body.value.value_type,
+          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          model,
+          version,
+        });
+      }
     }
   });
 }
 
-function clearDeselectedArtifacts(model: string, version: string){
-  // Passing a version causes both model and version to be checked before filtering items
-  // If an empty string is passed as the version, all artifacts under the model will be filtered out
-
-  negotiationCards.value = specifications.value.filter(function (card) {
-    if(version === ""){
-      return card.model !== model;
-    }
-    else{
-      return card.model !== model || card.version !== version;
-    }
-  });
-
-  reports.value = specifications.value.filter(function (report) {
-    if(version === ""){
-      return report.model !== model;
-    }
-    else{
-      return report.model !== model || report.version !== version;
-    }
-  });
-
-  specifications.value = specifications.value.filter(function (spec) {
-    if(version === ""){
-      return spec.model !== model
-    }
-    else{
-      return spec.model !== model || spec.version !== version;
-    }
-  });
-
-  validatedSpecs.value = validatedSpecs.value.filter(function (validatedSpec) {
-    if(version === ""){
-      return validatedSpec.model !== model
-    }
-    else{
-      return validatedSpec.model !== model || validatedSpec.version !== version;
-    }
-  });
-
-  values.value = values.value.filter(function (value) {
-    if(version === ""){
-      return value.model !== model
-    }
-    else{
-      return value.model !== model || value.version !== version;
-    }
-  });
+// Clear all artifacts from local state.
+function clearArtifacts() {
+  negotiationCards.value = [];
+  reports.value = [];
+  specifications.value = [];
+  validatedSpecs.value = [];
+  values.value = [];
 }
 </script>
 
