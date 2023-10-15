@@ -96,13 +96,6 @@
               </tr>
             </tbody>
           </table>
-          <!-- TODO : Adjust this once a mode/version selector is implemented -->
-          <p
-            v-if="selectedModel === '' || selectedVersion === ''"
-            style="float: left; color: red"
-          >
-            Select a model and version to start a new negotiation card.
-          </p>
           <NuxtLink
             :to="{
               path: 'negotiation-card',
@@ -121,6 +114,12 @@
               New
             </UsaButton>
           </NuxtLink>
+          <p
+            v-if="selectedModel === '' || selectedVersion === ''"
+            style="float: left; color: red"
+          >
+            Select a model and version to start a new negotiation card here.
+          </p>
         </div>
       </UsaAccordionItem>
 
@@ -177,13 +176,6 @@
               </tr>
             </tbody>
           </table>
-          <!-- TODO : Adjust this once a mode/version selector is implemented -->
-          <p
-            v-if="selectedModel === '' || selectedVersion === ''"
-            style="float: left; color: red"
-          >
-            Select a model and version to start a new report.
-          </p>
           <NuxtLink
             :to="{
               path: 'report',
@@ -202,6 +194,12 @@
               New
             </UsaButton>
           </NuxtLink>
+          <p
+            v-if="selectedModel === '' || selectedVersion === ''"
+            style="float: left; color: red"
+          >
+            Select a model and version to start a new report.
+          </p>
         </div>
       </UsaAccordionItem>
 
@@ -269,11 +267,6 @@
 
 <script setup lang="ts">
 import {
-  requestErrorAlert,
-  responseErrorAlert,
-} from "../composables/error-handling";
-
-import {
   isValidNegotiation,
   isValidReport,
   isValidSpec,
@@ -292,10 +285,6 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   "http://localhost:8080/api/namespace",
   { method: "GET" },
 );
-
-// TODO(Kyle): Alex left a comment below that indicates he wants to
-// remove the selectedModel and selectedVersion state; is there a
-// better (e.g. more idiomatic) way to handle this state?
 
 // The selected namespace
 const selectedNamespace = ref("");

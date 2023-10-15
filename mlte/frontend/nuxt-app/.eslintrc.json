@@ -9,7 +9,9 @@
     "defineNuxtPlugin": true,
     "useRoute": true,
     "ref": true,
-    "useFetch": true
+    "useFetch": true,
+    "requestErrorAlert": true,
+    "responseErrorAlert": true
   },
   "extends": [
     "standard",
