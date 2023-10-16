@@ -7,10 +7,10 @@
     <h2>Model Summary</h2>
     <p>A summary of the model under evaluation.</p>
 
-    <UsaTextInput :model-value="form.summary.problem_type">
+    <UsaTextInput :model-value="form.summary.problem_type" disabled>
       <template #label> Problem Type </template>
     </UsaTextInput>
-    <UsaTextInput :model-value="form.summary.task">
+    <UsaTextInput :model-value="form.summary.task" disabled>
       <template #label> Task </template>
     </UsaTextInput>
 
@@ -27,19 +27,19 @@
     >
       <h3>Goal {{ goalIndex + 1 }}</h3>
 
-      <UsaTextInput v-model="goal.description">
+      <UsaTextInput v-model="goal.description" disabled>
         <template #label> Goal Description </template>
       </UsaTextInput>
       <h4 class="no-margin-section-header">Metrics</h4>
       <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
         <div class="inline-input-left">
-          <UsaTextInput v-model="metric.description">
+          <UsaTextInput v-model="metric.description" disabled>
             <template #label> Description </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="metric.baseline">
+          <UsaTextInput v-model="metric.baseline" disabled>
             <template #label> Baseline </template>
           </UsaTextInput>
         </div>
@@ -70,10 +70,10 @@
 
     <h2>Intended Use</h2>
     <p>A description of how the model is intended to be used.</p>
-    <UsaTextarea :model-value="form.intended_use.context"></UsaTextarea>
+    <UsaTextarea :model-value="form.intended_use.context" disabled></UsaTextarea>
 
     <UsaTextarea
-      v-model="form.intended_use.production_requirements.integration"
+      v-model="form.intended_use.production_requirements.integration" disabled
     >
       <template #label>
         A description of model integration practices.
@@ -84,6 +84,7 @@
       v-model="
         form.intended_use.production_requirements.interface.input.description
       "
+      disabled
     >
       <template #label> Model input description. </template>
     </UsaTextInput>
@@ -92,6 +93,7 @@
       v-model="
         form.intended_use.production_requirements.interface.output.description
       "
+      disabled
     >
       <template #label> Mode output description. </template>
     </UsaTextInput>
@@ -101,7 +103,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.gpu"
+            v-model="form.intended_use.production_requirements.resources.gpu" disabled
           >
             <template #label> GPU </template>
           </UsaTextInput>
@@ -109,7 +111,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.cpu"
+            v-model="form.intended_use.production_requirements.resources.cpu" disabled
           >
             <template #label> CPU </template>
           </UsaTextInput>
@@ -119,7 +121,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.memory"
+            v-model="form.intended_use.production_requirements.resources.memory" disabled
           >
             <template #label> Memory </template>
           </UsaTextInput>
@@ -130,6 +132,7 @@
             v-model="
               form.intended_use.production_requirements.resources.storage
             "
+            disabled
           >
             <template #label> Storage </template>
           </UsaTextInput>
@@ -138,15 +141,15 @@
     </div>
 
     <h3>Risks</h3>
-    <UsaTextInput v-model="form.risks.fp">
+    <UsaTextInput v-model="form.risks.fp" disabled>
       <template #label> False Positive Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.fn">
+    <UsaTextInput v-model="form.risks.fn" disabled>
       <template #label> False Negative Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.other">
+    <UsaTextInput v-model="form.risks.other" disabled>
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
@@ -156,25 +159,25 @@
     <div class="input-group">
       <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
         <h4>Dataset {{ dataItemIndex + 1 }}</h4>
-        <UsaTextInput v-model="dataItem.access">
+        <UsaTextInput v-model="dataItem.access" disabled>
           <template #label> Account Access / Account Availability </template>
         </UsaTextInput>
 
         <div>
           <div class="inline-input-left">
-            <UsaTextInput v-model="dataItem.description">
+            <UsaTextInput v-model="dataItem.description" disabled>
               <template #label> Data Description </template>
             </UsaTextInput>
           </div>
 
           <div class="inline-input-right">
-            <UsaTextInput v-model="dataItem.source">
+            <UsaTextInput v-model="dataItem.source" disabled>
               <template #label> Source Data Location </template>
             </UsaTextInput>
           </div>
         </div>
 
-        <UsaTextInput v-model="dataItem.classification">
+        <UsaTextInput v-model="dataItem.classification" disabled>
           <template #label> Data Classification </template>
         </UsaTextInput>
 
@@ -182,13 +185,13 @@
           <h4 class="no-margin-section-header">Data Ontology</h4>
           <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
             <div class="inline-input-left">
-              <UsaTextInput v-model="label.description">
+              <UsaTextInput v-model="label.description" disabled>
                 <template #label> Label Description </template>
               </UsaTextInput>
             </div>
 
             <div class="inline-input-right">
-              <UsaTextInput v-model="label.percentage" type="number">
+              <UsaTextInput v-model="label.percentage" type="number" disabled>
                 <template #label> Percentage </template>
               </UsaTextInput>
             </div>
@@ -200,13 +203,13 @@
           <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.name">
+                <UsaTextInput v-model="field.name" disabled>
                   <template #label> Field Name </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.description">
+                <UsaTextInput v-model="field.description" disabled>
                   <template #label> Field Description </template>
                 </UsaTextInput>
               </div>
@@ -214,13 +217,13 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.type">
+                <UsaTextInput v-model="field.type" disabled>
                   <template #label> Field Type </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.expected_values">
+                <UsaTextInput v-model="field.expected_values" disabled>
                   <template #label> Expected Values </template>
                 </UsaTextInput>
               </div>
@@ -228,13 +231,13 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.missing_values">
+                <UsaTextInput v-model="field.missing_values" disabled>
                   <template #label> Missing Values </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.special_values">
+                <UsaTextInput v-model="field.special_values" disabled>
                   <template #label> Special Values </template>
                 </UsaTextInput>
               </div>
@@ -243,15 +246,15 @@
           </div>
         </div>
 
-        <UsaTextInput v-model="dataItem.rights">
+        <UsaTextInput v-model="dataItem.rights" disabled>
           <template #label> Data Rights </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="dataItem.policies">
+        <UsaTextInput v-model="dataItem.policies" disabled>
           <template #label> Data Policies </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="dataItem.identifiable_information">
+        <UsaTextInput v-model="dataItem.identifiable_information" disabled>
           <template #label> Identifiable Information </template>
         </UsaTextInput>
       </div>
@@ -261,7 +264,7 @@
     <p>Free-form comments from model developers and system integrators.</p>
 
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
-      <UsaTextInput v-model="comment.content"> </UsaTextInput>
+      <UsaTextInput v-model="comment.content" disabled> </UsaTextInput>
     </div>
 
     <h3>Quantitative Analysis</h3>
