@@ -10,9 +10,6 @@ authors = ["MLTE Engineers"]
 packages = [
   { include = "mlte" }
 ]
-exclude = [
-  "mlte/frontend/nuxt-app/node_modules"
-]
 
 [tool.poetry.scripts]
 mlte = "mlte.cli:run"
