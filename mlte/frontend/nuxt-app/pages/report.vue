@@ -4,105 +4,288 @@
 
     <h1 class="section-header">MLTE REPORT</h1>
 
-    <h3>Model Summary</h3>
-    <UsaTextarea>
-      <template #label> Summary of the model being evaluated. </template>
-      <!-- Note that when I type in this text box, 
-            it clicks out of the area every time I type a letter.
-          The same thing happens in the negotiation card
-          in a few of the text boxes, so we need to fix that. -->
-    </UsaTextarea>
+    <h2>Model Summary</h2>
+    <p>A summary of the model under evaluation.</p>
+
+    <UsaTextInput :model-value="form.summary.problem_type">
+      <template #label> Problem Type </template>
+    </UsaTextInput>
+    <UsaTextInput :model-value="form.summary.task">
+      <template #label> Task </template>
+    </UsaTextInput>
 
     <!-- Kept the goals section consistent with the negotiation card.
     Probably need to rewrite once we figure out how we want to pull 
     sections from the negotiation card.-->
-    <h3>Goals of the System</h3>
-    <p>Goals or objectives that the model helps to satisfy.</p>
-    <div v-for="(goal, goalIndex) in form.goals" :key="goal.description">
+
+    <h2>Performance</h2>
+    <p>Model performance evaluation.</p>
+
+    <div
+      v-for="(goal, goalIndex) in form.performance.goals"
+      :key="goal.description"
+    >
       <h3>Goal {{ goalIndex + 1 }}</h3>
 
       <UsaTextInput v-model="goal.description">
         <template #label> Goal Description </template>
       </UsaTextInput>
+      <h4 class="no-margin-section-header">Metrics</h4>
+      <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
+        <div class="inline-input-left">
+          <UsaTextInput v-model="metric.description">
+            <template #label> Description </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput v-model="metric.baseline">
+            <template #label> Baseline </template>
+          </UsaTextInput>
+        </div>
+      </div>
     </div>
-    <AddButton class="margin-button" @click="addGoal()"> Add goal </AddButton>
 
     <h3>MLTE Evaluation</h3>
-    <p>
-      THIS IS A PLACEHOLDER
-      <br />
-      <br />
-      <br />
-      TO DELINEATE A SPACE
-      <br />
-      <br />
-      <br />
-      WHERE MLTE EVALUATION RESULTS
-      <br />
-      <br />
-      <br />
-      WILL EVENTUALLY LIVE.
-      <br />
-      <br />
-      <br />
-    </p>
+    <table class="table usa-table usa-table--borderless">
+      <thead>
+        <tr>
+          <th data-sortable scope="col" role="columnheader">Status</th>
+          <th data-sortable scope="col" role="columnheader">Property</th>
+          <th data-sortable scope="col" role="columnheader">Measurement</th>
+          <th data-sortable scope="col" role="columnheader">Evidence ID</th>
+          <th data-sortable scope="col" role="columnheader">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="finding in form.findings" :key="finding.evidence_id">
+          <td>{{ finding.status }}</td>
+          <td>{{ finding.property }}</td>
+          <td>{{ finding.measurement }}</td>
+          <td>{{ finding.evidence_id }}</td>
+          <td>{{ finding.message }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <h3>Intended Use</h3>
-    <UsaTextarea>
+    <h2>Intended Use</h2>
+    <p>A description of how the model is intended to be used.</p>
+    <UsaTextarea :model-value="form.intended_use.context"></UsaTextarea>
+
+    <UsaTextarea
+      v-model="form.intended_use.production_requirements.integration"
+    >
       <template #label>
-        Description of how the model is intended to be used.
+        A description of model integration practices.
       </template>
     </UsaTextarea>
+
+    <UsaTextInput
+      v-model="
+        form.intended_use.production_requirements.interface.input.description
+      "
+    >
+      <template #label> Model input description. </template>
+    </UsaTextInput>
+
+    <UsaTextInput
+      v-model="
+        form.intended_use.production_requirements.interface.output.description
+      "
+    >
+      <template #label> Mode output description. </template>
+    </UsaTextInput>
+
+    <div class="input-group" style="margin-top: 1em">
+      <h3>Production Resource Requirements</h3>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput
+            v-model="form.intended_use.production_requirements.resources.gpu"
+          >
+            <template #label> GPU </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput
+            v-model="form.intended_use.production_requirements.resources.cpu"
+          >
+            <template #label> CPU </template>
+          </UsaTextInput>
+        </div>
+      </div>
+
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput
+            v-model="form.intended_use.production_requirements.resources.memory"
+          >
+            <template #label> Memory </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput
+            v-model="
+              form.intended_use.production_requirements.resources.storage
+            "
+          >
+            <template #label> Storage </template>
+          </UsaTextInput>
+        </div>
+      </div>
+    </div>
 
     <h3>Risks</h3>
-    <UsaTextarea>
-      <template #label> Description of model and system risks. </template>
-    </UsaTextarea>
+    <UsaTextInput v-model="form.risks.fp">
+      <template #label> False Positive Risk </template>
+    </UsaTextInput>
+
+    <UsaTextInput v-model="form.risks.fn">
+      <template #label> False Negative Risk </template>
+    </UsaTextInput>
+
+    <UsaTextInput v-model="form.risks.other">
+      <template #label> Other risks of producing incorrect results </template>
+    </UsaTextInput>
 
     <h3>Data</h3>
-    <UsaTextarea>
-      <template #label> Description of data used to train the model. </template>
-    </UsaTextarea>
+    <p>A description of the data used to train the model.</p>
 
-    <h3>Caveats and Recommendations</h3>
-    <UsaTextarea>
-      <template #label>
-        Description of any caveats and recommendations for the system or model.
-      </template>
-    </UsaTextarea>
+    <div class="input-group">
+      <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
+        <h4>Dataset {{ dataItemIndex + 1 }}</h4>
+        <UsaTextInput v-model="dataItem.access">
+          <template #label> Account Access / Account Availability </template>
+        </UsaTextInput>
+
+        <div>
+          <div class="inline-input-left">
+            <UsaTextInput v-model="dataItem.description">
+              <template #label> Data Description </template>
+            </UsaTextInput>
+          </div>
+
+          <div class="inline-input-right">
+            <UsaTextInput v-model="dataItem.source">
+              <template #label> Source Data Location </template>
+            </UsaTextInput>
+          </div>
+        </div>
+
+        <UsaTextInput v-model="dataItem.classification">
+          <template #label> Data Classification </template>
+        </UsaTextInput>
+
+        <div class="input-group" style="margin-top: 1em">
+          <h4 class="no-margin-section-header">Data Ontology</h4>
+          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
+            <div class="inline-input-left">
+              <UsaTextInput v-model="label.description">
+                <template #label> Label Description </template>
+              </UsaTextInput>
+            </div>
+
+            <div class="inline-input-right">
+              <UsaTextInput v-model="label.percentage" type="number">
+                <template #label> Percentage </template>
+              </UsaTextInput>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group" style="margin-top: 1em">
+          <h4 class="no-margin-section-header">Data Schema</h4>
+          <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.name">
+                  <template #label> Field Name </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.description">
+                  <template #label> Field Description </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.type">
+                  <template #label> Field Type </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.expected_values">
+                  <template #label> Expected Values </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.missing_values">
+                  <template #label> Missing Values </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.special_values">
+                  <template #label> Special Values </template>
+                </UsaTextInput>
+              </div>
+            </div>
+            <hr />
+          </div>
+        </div>
+
+        <UsaTextInput v-model="dataItem.rights">
+          <template #label> Data Rights </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="dataItem.policies">
+          <template #label> Data Policies </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="dataItem.identifiable_information">
+          <template #label> Identifiable Information </template>
+        </UsaTextInput>
+      </div>
+    </div>
+
+    <h3>Comments</h3>
+    <p>Free-form comments from model developers and system integrators.</p>
+
+    <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
+      <UsaTextInput v-model="comment.content"> </UsaTextInput>
+    </div>
 
     <h3>Quantitative Analysis</h3>
-    <p>
-      THIS IS A PLACEHOLDER
-      <br />
-      <br />
-      <br />
-      TO REPRESENT THE SPACE
-      <br />
-      <br />
-      <br />
-      WHERE FUN AND INFORMATIVE GRAPHS
-      <br />
-      <br />
-      <br />
-      WILL EVENTUALLY LIVE!
-      <br />
-      <br />
-      <br />
-    </p>
+    <p>No quantitative analysis included with this report.</p>
 
     <!--Added in the submit and cancel buttons and functions from the negotiation card.
     It doesn't seem to me that the submit button is working, but I don't know 
     how to test it appropriately. -->
-    <div style="text-align: right; margin-top: 1em">
-      <UsaButton class="primary-button" @click="submit()"> Export </UsaButton>
-      <UsaButton class="secondary-button" @click="cancel()"> Cancel </UsaButton>
-      <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
+    <div style="text-align: center; margin-top: 1em">
+      <UsaButton class="primary-button" @click="exportReport()">
+        Export
+      </UsaButton>
     </div>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
+import {
+  requestErrorAlert,
+  responseErrorAlert,
+} from "../composables/error-handling";
+
+import { isValidReport } from "../composables/artifact-validation.ts";
+
 const path = ref([
   {
     href: "/",
@@ -117,47 +300,186 @@ const path = ref([
 // Rewrote the form so that every item is at the top level;
 // not sure that is exactly what we want but I figured it is a starting point.
 const form = ref({
-  model_summary: "",
-  goals: [
-    {
-      description: "",
-      metrics: [
-        {
+  summary: {
+    problem_type: "",
+    task: "",
+  },
+  performance: {
+    goals: [],
+    findings: [],
+  },
+  intended_use: {
+    context: "",
+    production_requirements: {
+      integration: "",
+      interface: {
+        input: {
           description: "",
-          baseline: "",
         },
-      ],
+        output: {
+          description: "",
+        },
+      },
+      resources: {
+        cpu: "",
+        gpu: "",
+        memory: "",
+        storage: "",
+      },
     },
-  ],
-  mlte_evaluation: "",
-  intended_use: "",
-  risks: "",
-  data: "",
-  caveats: "",
-  analysis: "",
+  },
+  risks: {
+    fp: "",
+    fn: "",
+    other: "",
+  },
+  data: [],
+  comments: [],
+  analysis: {},
 });
 
-// Cancel editing of a report.
-function cancel() {
-  if (
-    confirm(
-      "Are you sure you want to leave this page? All changes will be lost.",
-    )
-  ) {
-    location.href = "/";
+if (useRoute().query.artifactId !== undefined) {
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+  const artifactId = useRoute().query.artifactId;
+
+  await useFetch(
+    "http://localhost:8080/api/namespace/" +
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        requestErrorAlert();
+      },
+      async onResponse({ response }) {
+        form.value.summary.problem_type = capitalizeWord(
+          response._data.body.summary.problem_type,
+        );
+        form.value.summary.task = capitalizeString(
+          response._data.body.summary.task,
+        );
+
+        form.value.performance.goals = response._data.body.performance.goals;
+
+        form.value.intended_use.context =
+          response._data.body.intended_use.usage_context;
+        form.value.intended_use.production_requirements.integration =
+          response._data.body.intended_use.production_requirements.integration;
+        form.value.intended_use.production_requirements.interface =
+          response._data.body.intended_use.production_requirements.interface;
+        form.value.intended_use.production_requirements.resources =
+          response._data.body.intended_use.production_requirements.resources;
+
+        form.value.risks = response._data.body.risks;
+
+        form.value.data = response._data.body.data;
+
+        form.value.comments = response._data.body.comments;
+
+        if (
+          response._data.body.validated_spec_id !== undefined &&
+          response._data.body.validated_spec_id !== ""
+        ) {
+          const validatedSpec = await fetchArtifact(
+            namespace,
+            model,
+            version,
+            response._data.body.validated_spec_id,
+          );
+          form.value.findings = loadFindings(validatedSpec);
+        }
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
+}
+
+// Fetch a artifact by ID.
+async function fetchArtifact(
+  namespace: string,
+  model: string,
+  version: string,
+  artifactId: string,
+) {
+  const { data, pending, error, refresh, status } = await useFetch(
+    "http://localhost:8080/api/namespace/" +
+      namespace +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      onRequestError() {
+        return null;
+      },
+      onResponse({ response }) {
+        return response._data;
+      },
+      onResponseError() {
+        return null;
+      },
+    },
+  );
+
+  // TODO(Kyle): Error handling.
+  if (status._value !== "success") {
+    return null;
   }
+
+  return data._value;
 }
 
-// TODO(Kyle): populate.
-function submit() {
-  console.log(form.value);
-  console.log(useRoute().query.namespace);
-}
-
-function addGoal() {
-  form.value.goals.push({
-    description: "",
-    metrics: [{ description: "", baseline: "" }],
+// Load findings from a validated specication.
+function loadFindings(proxyObject: any) {
+  const findings = [];
+  // TODO(Kyle): Standardize conversion of proxy objects.
+  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
+  validatedSpec.body.properties.forEach((property) => {
+    // TODO(Kyle): This is not portable to some browsers.
+    const results = new Map(Object.entries(property.results));
+    results.forEach((value, key) => {
+      const finding = {
+        status: value.type,
+        property: property.name,
+        measurement: value.metadata.measurement_type,
+        evidence_id: value.metadata.identifier.name,
+        message: value.message,
+      };
+      findings.push(finding);
+    });
   });
+  return findings;
+}
+
+// Capitalize all words in a string.
+function capitalizeString(string: string) {
+  return string
+    .split(" ")
+    .map((word) => capitalizeWord(word))
+    .join(" ");
+}
+
+// Capitalize a word.
+function capitalizeWord(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+// Export the current report.
+function exportReport() {
+  alert("Report export is not currently implemented.");
 }
 </script>
