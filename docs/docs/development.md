@@ -124,35 +124,22 @@ We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyP
 
 Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
-Create the source distribution and the wheel:
+Build the static distribution for the frontend; the command below assumes that you have the dependencies for frontend builds installed:
 
 ```bash
-$ python setup.py sdist bdist_wheel
+$ cd mlte/frontend/nuxt-app && npm run build
 ```
 
-Check the package contents with `twine`:
+Create the source distribution and wheel:
 
 ```bash
-twine check dist/*
+$ poetry build
 ```
 
-Manually check the contents of the source distribution (optional):
+Publish the package to `PyPi`:
 
 ```bash
-$ cd dist/
-$ tar tzf mlte-0.0.0.tar.gz
-```
-
-Upload the package to <a href="https://test.pypi.org/" target="_blank">`TestPyPi`</a> to verify that the package appears as expected:
-
-```bash
-$ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-```
-
-Finally, upload the package to `PyPi`:
-
-```
-$ twine upload dist/*
+$ poetry publish --username <USERNAME> --password <PASSWORD>
 ```
 
 ### Docker Integration
