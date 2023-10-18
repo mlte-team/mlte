@@ -25,6 +25,8 @@ for path in sorted(Path(package_root).rglob("*.py")):
         continue
     if "_private" in str(path):
         continue
+    if "node_modules" in str(path):
+        continue
 
     module_path = path.relative_to(package_root).with_suffix("")
     doc_path = path.relative_to(package_root).with_suffix(".md")
