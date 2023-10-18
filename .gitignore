@@ -33,12 +33,5 @@ build/
 # OSX artifacts
 .DS_Store
 
-# Demo artifacts
-demo/data
-demo/models
-demo/store
-demo/media
-demo/reports
-
 # VS Code local configs.
 .vscode/

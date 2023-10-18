@@ -1,0 +1,6 @@
+# Demo artifacts
+simple/data
+simple/models
+**/store
+**/media
+**/reports
