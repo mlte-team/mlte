@@ -9,7 +9,7 @@ isort:
 	poetry run isort mlte/
 	poetry run isort test/
 	poetry run isort testbed/
-	poetry run isort demo/*.py
+	poetry run isort demo/
 	poetry run isort tools/
 
 .PHONY: check-isort
@@ -17,7 +17,7 @@ check-isort:
 	poetry run isort --check mlte/
 	poetry run isort --check test/
 	poetry run isort --check testbed/
-	poetry run isort --check demo/*.py
+	poetry run isort --check demo/
 	poetry run isort --check tools/
 
 # Format all source code
@@ -26,8 +26,9 @@ format:
 	poetry run black mlte/
 	poetry run black test/
 	poetry run black testbed/
-	poetry run black demo/*.py
-	poetry run black demo/*.ipynb
+	poetry run black demo/
+	poetry run black demo/simple/*.ipynb
+	poetry run black demo/scenarios/*.ipynb
 	poetry run black tools/
 
 .PHONY: check-format 
@@ -35,8 +36,9 @@ check-format:
 	poetry run black --check mlte/
 	poetry run black --check test/
 	poetry run black --check testbed/
-	poetry run black --check demo/*.py
-	poetry run black --check demo/*.ipynb
+	poetry run black --check demo/
+	poetry run black --check demo/simple/*.ipynb
+	poetry run black --check demo/scenarios/*.ipynb
 	poetry run black --check tools/
 
 # Lint all source code
