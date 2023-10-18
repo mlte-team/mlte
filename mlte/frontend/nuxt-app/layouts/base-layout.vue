@@ -36,7 +36,7 @@
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://github.com/mlte-team"
+          href="https://github.com/mlte-team/mlte"
           >Github</a
         >
         <a
@@ -45,9 +45,12 @@
           href="https://mlte.readthedocs.io/en/latest/"
           >Docs</a
         >
-        <a>User Guide</a>
-        <a>Keep in Touch</a>
-        <span>v0.2</span>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://mlte.readthedocs.io/en/latest/using_mlte/"
+          >User Guide</a>
+        <span>v0.2.2</span>
       </div>
     </footer>
   </div>
