@@ -83,6 +83,45 @@ $ tox --develop
 
 Unit tests failures result in build failures in CI.
 
+## Front End
+
+Front end development requires Node.js. The front end was developed using v18.14.2; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
+
+To initialize the development environment for the front end, navigate to `/mlte/mlte/frontend/nuxt-app` and run:
+
+```bash
+$ npm install
+$ npx gulp compile
+$ npx gulp init
+```
+
+Now the environment is set up and the front end can be run with the following command:
+
+```bash
+$ npm run dev
+```
+
+This will run the front end at `http://localhost:3000` so be sure to specify that as an allowed origin when running the store:
+
+```bash
+$ mlte store --backend-uri fs://store --allowed-origins http://localhost:3000
+```
+
+### Front End Formatting and Linting
+
+We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run locally from the root of the nuxt application.
+
+```bash
+$ npm run lint
+```
+
+### Front End Static Type Checking
+All typescript code takes advantage of static typing. This type checking can be done by running the following command:
+
+```bash
+$ npx vue-tsc
+```
+
 ## Continuous Integration
 
 We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub Actions</a> for continuous integration.
@@ -124,7 +163,7 @@ We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyP
 
 Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
-Build the static distribution for the frontend; the command below assumes that you have the dependencies for frontend builds installed:
+Build the static distribution for the front end; the command below assumes that you have the dependencies for front end builds installed:
 
 ```bash
 $ cd mlte/frontend/nuxt-app && npm run build
@@ -221,3 +260,7 @@ make test
 ```
 
 Once all QA checks and unit tests pass, we can be assured that the environment dependencies are properly specified.
+
+## Contributing
+
+To contribute to `MLTE`, check out our <a href="https://github.com/mlte-team/mlte" target="_blank">GitHub</a>!

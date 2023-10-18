@@ -47,10 +47,19 @@ from mlte.report ... #importing from report subpackage
 ## Running the User Interface
 
 To run the user interface (UI), run the following in your command line:
-```
+```bash
 $ mlte-ui
 ```
-Once you run it, follow the link to view the `MLTE` UI homepage. For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
+
+In order for the frontend to be able to communicate with the store you will need to allow the frontend as an origin.
+This can be done by specifying the `--allowed-origins` flag when running the store. 
+When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the store command will look something like this:
+
+```bash
+$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+```
+
+Once you run it, go to the hosted address to view the `MLTE` UI homepage. For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
 
 ## Next Steps
 
