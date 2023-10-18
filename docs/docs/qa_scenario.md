@@ -2,7 +2,7 @@
 
 The elicitation of QA Scenarios (QAS) to clearly define model quality requirements should guide the negotiation that takes place in System Dependent Model Testing (SDMT). After model quality requirements are documented, the steps to translate these scenarios into MLTE specifications are described below.
 
-NOTE: This is a high-level overview. For a detailed example visit the `demo/scenario`  folder in the repository.
+NOTE: This is a high-level overview. For a detailed example visit the `demo/scenarios`  folder in the repository.
 
 In the steps below, we will be focusing mostly on one of the QAS defined in the demo, which is the one for Fairness.
 
@@ -66,7 +66,7 @@ For each Property, identify the Conditions you want to validate for the associat
 For each Condition you will need to use or select a validation method from a `Value` object. Existing Value types can be used (see package `mlte.value.types`), and validation methods from those Values can be used to create the Conditions (see section 2.3 for how they are called). However, if you need a more complex validation, or a more complex Value, you will need to create a new Value that derives from either `mlte.value.base`, or from one of the standard Value types mentioned above.
 
 * For Conditions that are very simple, and just need to check a scalar value against a threshold, selecting a `Value` type from the types package, and calling a validation method from it will be enough, so no additional classes are needed.
-* For Conditions that require more complex Values, a new Value has to be created that derives from `mlte.value.base.ValueBase`, that has an ``__init__``  method, a ``__str__``  method, a ``serialize()``  method and a ``deserialize()``  method. Besides these, you will need to add the actual validation method that creates the Condition you need. For an example of this case, see the `demo/scenairo/values/array_value.py` file for the `Array` value.
+* For Conditions that require more complex Values, a new Value has to be created that derives from `mlte.value.base.ValueBase`, that has an ``__init__``  method, a ``__str__``  method, a ``serialize()``  method and a ``deserialize()``  method. Besides these, you will need to add the actual validation method that creates the Condition you need. For an example of this case, see the `demo/scenarios/values/array_value.py` file for the `Array` value.
 * For Conditions that are more complex than default types but do not need to store more data than one of the standard `Value` types, a new Value has to be created that derives from whatever existing Value type you need, and only a validation method has to be added. We will be doing this for our sample Fairness scenario. For this, we will create a value called `MultipleAccuracy` that will derive from the `Array` value mentioned above, and that will add one validation method to check for Fairness. More specifically, we will be storing the accuracy results for multiple groups in the array in our Value, and we want to validate that all those accuracies are above a certain threshold. Note that the threshold itself is not defined here, so this validation method can be reused as needed. 
 
 ```python
@@ -133,7 +133,7 @@ Note that for the `Fairness` property, we are:
 * Defining an identifier for the Condition (in this case, "accuracy across gardens"). Note that this identifier will need to be used when gathering measurements for this Property, to automatically validate it later.
 
 ## Step 3 - Gathering Measurement Evidence
-The next step is to gather data from measurements for each of the `Condition`s defined in the `Spec`. See `demo/scenario/evidence.ipynb` for a self-guided explanation on how to do this.
+The next step is to gather data from measurements for each of the `Condition`s defined in the `Spec`. See `demo/scenarios/evidence.ipynb` for a self-guided explanation on how to do this.
 
 In particular, for Fairness, after loading helper code to process the data and load model results, the following code is used to store measurements related to accuracy (the method `calculate_model_performance_acc`  is defined earlier in the demo notebook, as well as `split_data`). Note that the identifier "accuracy across gardens" is used when creating the Measurement, to later link it to the `Condition` in the `Spec`.
 
@@ -154,7 +154,7 @@ accuracy.save(force=True)
 ```
 
 ## Step 4 - Validation
-The final step is to validate your results, and optionally generate a report. Validation will generate a `ValidatedSpec` indicating the results of validating the `Condition`s for each Quality Attribute. See `demo/scenario/report.ipynb` for the full example, but below is the validation code:
+The final step is to validate your results, and optionally generate a report. Validation will generate a `ValidatedSpec` indicating the results of validating the `Condition`s for each Quality Attribute. See `demo/scenarios/report.ipynb` for the full example, but below is the validation code:
 
 ```python
 # Load the specification
