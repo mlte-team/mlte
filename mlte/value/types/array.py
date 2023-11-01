@@ -14,7 +14,7 @@ import numpy.typing as npt
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.artifact import Value
 from mlte.value.model import ArrayValueModel, ValueModel, ValueType
 from mlte.value.types.integer import Integer
@@ -94,9 +94,7 @@ class Array(Value):
         return_value = Real(self.metadata, float(self.array[position]))
 
         # Add suffix to id based on position.
-        return_value.identifier = Identifier(
-            name=f"{return_value.identifier}.{position}"
-        )
+        return_value.identifier = f"{return_value.identifier}.{position}"
         return return_value
 
     def get_as_integer(self, position: int) -> Integer:
@@ -111,7 +109,5 @@ class Array(Value):
         return_value = Integer(self.metadata, int(self.array[position]))
 
         # Add suffix to id based on position.
-        return_value.identifier = Identifier(
-            name=f"{return_value.identifier}.{position}"
-        )
+        return_value.identifier = f"{return_value.identifier}.{position}"
         return return_value
