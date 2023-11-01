@@ -17,6 +17,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.value.artifact import Value
 from mlte.value.model import ArrayValueModel, ValueModel, ValueType
+from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
 
 
@@ -91,6 +92,23 @@ class Array(Value):
                 f"Position {position} is not in array of size {len(self.array)}"
             )
         return_value = Real(self.metadata, float(self.array[position]))
+
+        # Add suffix to id based on position.
+        return_value.metadata.identifier = Identifier(
+            name=f"{return_value.metadata.identifier}.{position}"
+        )
+        return return_value
+
+    def get_as_integer(self, position: int) -> Integer:
+        """
+        Return a value from the given position, as an Integer value type.
+        :param position: The position to get the value from.
+        """
+        if position >= len(self.array):
+            raise RuntimeError(
+                f"Position {position} is not in array of size {len(self.array)}"
+            )
+        return_value = Integer(self.metadata, int(self.array[position]))
 
         # Add suffix to id based on position.
         return_value.metadata.identifier = Identifier(
