@@ -34,7 +34,7 @@ class Array(Value):
         """
         super().__init__(self, metadata)
 
-        self.array: npt.NDArray[Any] = array
+        self.array: npt.NDArray[Any] = np.array(array)
         """Underlying values represented as numpy array."""
 
     def to_model(self) -> ArtifactModel:
