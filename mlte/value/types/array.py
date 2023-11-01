@@ -76,7 +76,7 @@ class Array(Value):
         """Comparison between Array values."""
         if not isinstance(other, Array):
             return False
-        return np.array_equal(self.array, other.array)
+        return bool(np.array_equal(self.array, other.array))
 
     def __neq__(self, other: Array) -> bool:
         """Comparison between Array values."""

@@ -3,17 +3,17 @@ Implementation of MultipleRaknsums value.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict
 
 import numpy as np
 
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
-from mlte.value.types.array import Array
+from mlte.value.base import ValueBase
 
 
-class MultipleRanksums(Array):
+class MultipleRanksums(ValueBase):
     """An array with multiple ranksums."""
 
     def __init__(
@@ -22,13 +22,17 @@ class MultipleRanksums(Array):
         array: np.ndarray,
         num_pops: int = 1,
     ):
-        super().__init__(evidence_metadata, array)
+        super().__init__(self, evidence_metadata)
+
+        self.array = array
+        """The array to store data in."""
 
         self.num_pops: int = num_pops
         """Number of populations or groups.."""
 
-    def serialize(self) -> dict[str, Any]:
-        doc: dict[str, Any] = super().serialize()
+    def serialize(self) -> Dict[str, Any]:
+        doc: dict[str, Any] = {}
+        doc["array"] = [val for val in self.array]
         doc["num_pops"] = self.num_pops
         return doc
 
