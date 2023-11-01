@@ -7,7 +7,7 @@ Model implementation for MLTE value types.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, Literal, Union
+from typing import Any, Dict, List, Literal, Union
 
 from pydantic import Field
 
@@ -31,6 +31,9 @@ class ValueType(str, Enum):
     IMAGE = "image"
     """An image media type."""
 
+    ARRAY = "array"
+    """An array of values."""
+
 
 class ValueModel(BaseModel):
     """The model implementation for MLTE values."""
@@ -46,6 +49,7 @@ class ValueModel(BaseModel):
         "RealValueModel",
         "OpaqueValueModel",
         "ImageValueModel",
+        "ArrayValueModel",
     ] = Field(..., discriminator="value_type")
     """The body of the value."""
 
@@ -97,6 +101,19 @@ class ImageValueModel(BaseModel):
 
     data: str
     """The image data as base64-encoded string."""
+
+    class Config:
+        use_enum_values = True
+
+
+class ArrayValueModel(BaseModel):
+    """The model implementation for MLTE array values."""
+
+    value_type: Literal[ValueType.ARRAY]
+    """An identitifier for the value type."""
+
+    data: List[Any]
+    """The array to capture."""
 
     class Config:
         use_enum_values = True

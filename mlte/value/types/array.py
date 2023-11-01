@@ -1,0 +1,99 @@
+"""
+mlte/value/types/array.py
+
+Implementation of Array value.
+"""
+
+from __future__ import annotations
+
+import typing
+from typing import Any
+
+import numpy as np
+import numpy.typing as npt
+
+from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.value.artifact import Value
+from mlte.value.model import ArrayValueModel, ValueModel, ValueType
+from mlte.value.types.real import Real
+
+
+class Array(Value):
+    """
+    Array implements the Value interface for a numpy array of values.
+    """
+
+    def __init__(self, metadata: EvidenceMetadata, array: npt.NDArray[Any]):
+        """
+        Initialize an Array instance.
+        :param metadata: The generating measurement's metadata
+        :param value: The numpy array.
+        """
+        super().__init__(self, metadata)
+
+        self.array: npt.NDArray[Any] = array
+        """Underlying values represented as numpy array."""
+
+    def to_model(self) -> ArtifactModel:
+        """
+        Convert an array value artifact to its corresponding model.
+        :return: The artifact model
+        """
+        return ArtifactModel(
+            header=self.build_artifact_header(),
+            body=ValueModel(
+                artifact_type=ArtifactType.VALUE,
+                metadata=self.metadata,
+                value=ArrayValueModel(
+                    value_type=ValueType.ARRAY, data=self.array.tolist()
+                ),
+            ),
+        )
+
+    @classmethod
+    def from_model(cls, model: ArtifactModel) -> Array:  # type: ignore[override]
+        """
+        Convert an array value model to its corresponding artifact.
+        :param model: The model representation
+        :return: The array value
+        """
+        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
+        body = typing.cast(ValueModel, model.body)
+
+        assert body.value.value_type == ValueType.ARRAY, "Broken Precondition."
+        return Array(
+            metadata=body.metadata,
+            array=np.asarray(body.value.data),
+        )
+
+    def __str__(self) -> str:
+        return str(self.array)
+
+    def __eq__(self, other: object) -> bool:
+        """Comparison between Array values."""
+        if not isinstance(other, Array):
+            return False
+        return np.array_equal(self.array, other.array)
+
+    def __neq__(self, other: Array) -> bool:
+        """Comparison between Array values."""
+        return not self.__eq__(other)
+
+    def get_as_real(self, position: int) -> Real:
+        """
+        Return a value from the given position, as a Real value type.
+        :param position: The position to get the value from.
+        """
+        if position >= len(self.array):
+            raise RuntimeError(
+                f"Position {position} is not in array of size {len(self.array)}"
+            )
+        return_value = Real(self.metadata, float(self.array[position]))
+
+        # Add suffix to id based on position.
+        return_value.metadata.identifier = Identifier(
+            name=f"{return_value.metadata.identifier}.{position}"
+        )
+        return return_value

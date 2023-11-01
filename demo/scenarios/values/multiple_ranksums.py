@@ -6,11 +6,11 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-from values.array_value import Array
 
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
+from mlte.value.types.array import Array
 
 
 class MultipleRanksums(Array):
