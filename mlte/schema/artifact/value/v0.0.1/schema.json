@@ -1,5 +1,25 @@
 {
   "$defs": {
+    "ArrayValueModel": {
+      "description": "The model implementation for MLTE array values.",
+      "properties": {
+        "value_type": {
+          "const": "array",
+          "title": "Value Type"
+        },
+        "data": {
+          "items": {},
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value_type",
+        "data"
+      ],
+      "title": "ArrayValueModel",
+      "type": "object"
+    },
     "EvidenceMetadata": {
       "description": "A simple wrapper for evidence metadata.",
       "properties": {
@@ -133,6 +153,7 @@
     "value": {
       "discriminator": {
         "mapping": {
+          "array": "#/$defs/ArrayValueModel",
           "image": "#/$defs/ImageValueModel",
           "integer": "#/$defs/IntegerValueModel",
           "opaque": "#/$defs/OpaqueValueModel",
@@ -152,6 +173,9 @@
         },
         {
           "$ref": "#/$defs/ImageValueModel"
+        },
+        {
+          "$ref": "#/$defs/ArrayValueModel"
         }
       ],
       "title": "Value"
