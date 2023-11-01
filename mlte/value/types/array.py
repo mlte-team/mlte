@@ -94,8 +94,8 @@ class Array(Value):
         return_value = Real(self.metadata, float(self.array[position]))
 
         # Add suffix to id based on position.
-        return_value.metadata.identifier = Identifier(
-            name=f"{return_value.metadata.identifier}.{position}"
+        return_value.identifier = Identifier(
+            name=f"{return_value.identifier}.{position}"
         )
         return return_value
 
@@ -111,7 +111,7 @@ class Array(Value):
         return_value = Integer(self.metadata, int(self.array[position]))
 
         # Add suffix to id based on position.
-        return_value.metadata.identifier = Identifier(
-            name=f"{return_value.metadata.identifier}.{position}"
+        return_value.identifier = Identifier(
+            name=f"{return_value.identifier}.{position}"
         )
         return return_value

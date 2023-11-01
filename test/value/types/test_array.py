@@ -95,10 +95,10 @@ def test_get_as_real():
     real_val = array.get_as_real(1)
 
     assert int_val.value == 1
-    assert int_val.identifier == "id.0"
+    assert str(int_val.identifier) == "id.value.0"
 
     assert real_val.value == 2.2
-    assert real_val.identifier == "id.1"
+    assert str(real_val.identifier) == "id.value.1"
 
 
 def test_get_invalid_position():
