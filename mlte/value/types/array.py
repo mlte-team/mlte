@@ -7,10 +7,7 @@ Implementation of Array value.
 from __future__ import annotations
 
 import typing
-from typing import Any
-
-import numpy as np
-import numpy.typing as npt
+from typing import Any, List
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -26,7 +23,7 @@ class Array(Value):
     Array implements the Value interface for a numpy array of values.
     """
 
-    def __init__(self, metadata: EvidenceMetadata, array: npt.NDArray[Any]):
+    def __init__(self, metadata: EvidenceMetadata, array: List[Any]):
         """
         Initialize an Array instance.
         :param metadata: The generating measurement's metadata
@@ -34,7 +31,7 @@ class Array(Value):
         """
         super().__init__(self, metadata)
 
-        self.array: npt.NDArray[Any] = np.array(array)
+        self.array: List[Any] = array
         """Underlying values represented as numpy array."""
 
     def to_model(self) -> ArtifactModel:
@@ -48,7 +45,7 @@ class Array(Value):
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value=ArrayValueModel(
-                    value_type=ValueType.ARRAY, data=self.array.tolist()
+                    value_type=ValueType.ARRAY, data=self.array
                 ),
             ),
         )
@@ -66,7 +63,7 @@ class Array(Value):
         assert body.value.value_type == ValueType.ARRAY, "Broken Precondition."
         return Array(
             metadata=body.metadata,
-            array=np.asarray(body.value.data),
+            array=body.value.data,
         )
 
     def __str__(self) -> str:
@@ -76,7 +73,7 @@ class Array(Value):
         """Comparison between Array values."""
         if not isinstance(other, Array):
             return False
-        return bool(np.array_equal(self.array, other.array))
+        return self.array == other.array
 
     def __neq__(self, other: Array) -> bool:
         """Comparison between Array values."""

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Tuple
 
-import numpy as np
 import pytest
 
 from mlte.context.context import Context
@@ -25,7 +24,7 @@ class DummyMeasurementArray(Measurement):
         super().__init__(self, identifier)
 
     def __call__(self) -> Array:
-        return Array(self.metadata, np.array([1, 2, 3]))
+        return Array(self.metadata, [1, 2, 3])
 
 
 def test_measurement():
@@ -35,7 +34,7 @@ def test_measurement():
     t = m.evaluate()
     assert isinstance(t, Array)
 
-    assert np.array_equal(t.array, np.array([1, 2, 3]))
+    assert t.array == [1, 2, 3]
 
 
 def test_equality():
@@ -45,16 +44,16 @@ def test_equality():
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    a = Array(m, np.array([1, 2, 3]))
-    b = Array(m, np.array([1, 2, 3]))
+    a = Array(m, [1, 2, 3])
+    b = Array(m, [1, 2, 3])
     assert a == b
 
-    a = Array(m, np.array([1.1, 2.2, 3.3]))
-    b = Array(m, np.array([1.1, 2.2, 3.3]))
+    a = Array(m, [1.1, 2.2, 3.3])
+    b = Array(m, [1.1, 2.2, 3.3])
     assert a == b
 
-    a = Array(m, np.array(["a", "b", "c"], dtype=object))
-    b = Array(m, np.array(["a", "b", "c"], dtype=object))
+    a = Array(m, ["a", "b", "c"])
+    b = Array(m, ["a", "b", "c"])
     assert a == b
 
 
@@ -63,7 +62,7 @@ def test_serde() -> None:
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
-    o = Array(m, np.array([1, 2, 3]))
+    o = Array(m, [1, 2, 3])
 
     model = o.to_model()
     e = Array.from_model(model)
@@ -78,7 +77,7 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     m = EvidenceMetadata(
         measurement_type="typename", identifier=Identifier(name="id")
     )
-    o = Array(m, np.array([1, 2, 3]))
+    o = Array(m, [1, 2, 3])
     o.save_with(ctx, store)
 
     loaded = Array.load_with("id.value", context=ctx, store=store)
@@ -90,7 +89,7 @@ def test_get_as_real():
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    array = Array(m, np.array([1.0, 2.2, 3.3]))
+    array = Array(m, [1.0, 2.2, 3.3])
     int_val = array.get_as_integer(0)
     real_val = array.get_as_real(1)
 
@@ -106,7 +105,7 @@ def test_get_invalid_position():
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    array = Array(m, np.array([1.1, 2.2, 3.3]))
+    array = Array(m, [1.1, 2.2, 3.3])
 
     with pytest.raises(RuntimeError):
         _ = array.get_as_real(5)
