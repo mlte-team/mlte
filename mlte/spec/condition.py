@@ -33,9 +33,7 @@ class Condition:
         Initialize a Condition instance.
 
         :param name: The name of the name method, for documenting purposes.
-        :type name: str
         :param callback: The callable that implements validation
-        :type callback: Callable[[Value], Result]
         """
 
         self.name: str = name
@@ -52,10 +50,8 @@ class Condition:
         Invoke the validation callback
 
         :param value: The value of measurement evaluation
-        :type value: Value
 
         :return: The result of measurement validation
-        :rtype: Result
         """
         return self.callback(value)._with_evidence_metadata(value.metadata)
 
@@ -64,15 +60,17 @@ class Condition:
         Returns this condition as a model.
 
         :return: The serialized model object.
-        :rtype: ConditionModel
         """
         return ConditionModel(
             name=self.name,
             arguments=self.arguments,
-            callback=base64.b64encode(dill.dumps(self.callback)).decode(
-                "utf-8"
-            ),
+            callback=Condition.encode_callback(self.callback),
         )
+
+    @staticmethod
+    def encode_callback(callback: Callable[[Value], Result]) -> str:
+        """Encodes the callback as a base64 string."""
+        return base64.b64encode(dill.dumps(callback)).decode("utf-8")
 
     @classmethod
     def from_model(cls, model: ConditionModel) -> Condition:
@@ -80,10 +78,8 @@ class Condition:
         Deserialize a Condition from a model.
 
         :param model: The model.
-        :type model: ConditionModel
 
         :return: The deserialized Condition
-        :rtype: Condition
         """
         condition: Condition = Condition(
             model.name,
@@ -106,7 +102,12 @@ class Condition:
         if not isinstance(other, Condition):
             return False
         reference: Condition = other
-        return self.name == reference.name
+        return (
+            self.name == reference.name
+            and Condition.encode_callback(self.callback)
+            == Condition.encode_callback(other.callback)
+            and self.arguments == other.arguments
+        )
 
     def __neq__(self, other: Condition) -> bool:
         """Compare Condition instances for inequality."""
