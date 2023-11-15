@@ -136,7 +136,7 @@ class Condition:
 
     def __str__(self) -> str:
         """Return a string representation of Condition."""
-        return f"{self.name} ({self.arguments}): {self.value_class}"
+        return f"{self.name} ({self.arguments}) from {self.value_class}"
 
     # -------------------------------------------------------------------------
     # Equality Testing
