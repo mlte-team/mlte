@@ -16,11 +16,16 @@
         "callback": {
           "title": "Callback",
           "type": "string"
+        },
+        "value_class": {
+          "title": "Value Class",
+          "type": "string"
         }
       },
       "required": [
         "name",
-        "callback"
+        "callback",
+        "value_class"
       ],
       "title": "ConditionModel",
       "type": "object"
