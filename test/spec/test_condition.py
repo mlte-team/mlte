@@ -18,6 +18,7 @@ def test_condition_model() -> None:
             name="less_than",
             arguments=[3.0],
             callback="invalid^#*@&^ASD@#",
+            value_class="mlte.value.types.real.Real",
         ),
         ConditionModel(
             name="greater_than",
@@ -27,6 +28,7 @@ def test_condition_model() -> None:
                 if 3 < 4
                 else Failure("Real magnitude 2 exceeds threshold 1")
             ),
+            value_class="mlte.value.types.real.Real",
         ),
     ]
 

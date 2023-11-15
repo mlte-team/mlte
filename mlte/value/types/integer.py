@@ -94,16 +94,14 @@ class Integer(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "less_than",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda integer: Success(
                 f"Integer magnitude {integer.value} less than threshold {value}"
             )
             if integer.value < value
             else Failure(
                 f"Integer magnitude {integer.value} exceeds threshold {value}"
-            ),
+            )
         )
         return condition
 
@@ -118,9 +116,7 @@ class Integer(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "less_or_equal_to",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda integer: Success(
                 f"Integer magnitude {integer.value} "
                 f"less than or equal to threshold {value}"

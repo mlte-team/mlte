@@ -30,6 +30,7 @@ def test_spec_body() -> None:
                             name="less_than",
                             arguments=[3.0],
                             callback="invalid^#*@&^ASD@#",
+                            value_class="mlte.value.types.real.Real",
                         )
                     },
                 )

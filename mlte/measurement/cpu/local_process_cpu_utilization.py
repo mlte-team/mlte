@@ -101,9 +101,7 @@ class CPUStatistics(ValueBase):
 
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition(
-            "max_utilization_less_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda stats: Success(
                 f"Maximum utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
@@ -127,9 +125,7 @@ class CPUStatistics(ValueBase):
 
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition(
-            "average_utilization_less_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda stats: Success(
                 f"Average utilization {stats.max:.2f} "
                 f"below threshold {threshold:.2f}"
