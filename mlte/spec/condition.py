@@ -9,7 +9,7 @@ from __future__ import annotations
 import base64
 import inspect
 import typing
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Type
 
 import dill
 
@@ -68,19 +68,27 @@ class Condition:
 
     @staticmethod
     def build_condition(test: Callable[[Value], Result]) -> Condition:
-        # Get info about caller function using inspection.
+        # Get info about the caller from inspection.
         curr_frame = inspect.currentframe()
         if curr_frame is None:
             raise Exception("Unexpected error reading validation method data.")
         caller_function = curr_frame.f_back
         if caller_function is None:
             raise Exception("Unexpected error reading validation method data.")
+
+        # Get function name and arguments of callers.
         validation_name = caller_function.f_code.co_name
         arguments = caller_function.f_locals
-        cls = arguments["cls"]
+
+        # Build the class info as a string.
+        if "cls" not in arguments:
+            raise Exception(
+                "'cls' argument is needed in validation method arguments."
+            )
+        cls: Type[Value] = arguments["cls"]
         cls_str = f"{cls.__module__}.{cls.__name__}"
 
-        # Validation args are all arguments except for the value class type.
+        # Validation args include all caller arguments except for the value class type.
         validation_args = []
         for arg_key, arg_value in arguments.items():
             if arg_key != "cls":
