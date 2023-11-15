@@ -85,5 +85,5 @@ def test_call_condition():
     result = condition(Real(ev, 0.0))
     assert str(result) == "Failure"
 
-    result = condition(Real(ev, 1.0))
+    result = condition(Real(ev, 11.0))
     assert str(result) == "Failure"
