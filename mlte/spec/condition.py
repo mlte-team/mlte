@@ -9,7 +9,7 @@ from __future__ import annotations
 import base64
 import inspect
 import typing
-from typing import Any, Callable, List, Type
+from typing import Any, Callable, List
 
 import dill
 
@@ -29,7 +29,7 @@ class Condition:
         name: str,
         arguments: List[Any],
         callback: Callable[[Value], Result],
-        value_class: Type[Value] = Value,
+        value_class: str = "",
     ):
         """
         Initialize a Condition instance.
@@ -49,7 +49,12 @@ class Condition:
         self.callback: Callable[[Value], Result] = callback
         """The callback that implements validation."""
 
-        self.value_class: str = Condition.value_class_to_str(value_class)
+        self.value_class: str = (
+            value_class
+            if value_class != ""
+            else f"{Value.__module__}.{Value.__name__}"
+        )
+        """Value type class where this Condition came from."""
 
     def __call__(self, value: Value) -> Result:
         """
@@ -60,19 +65,6 @@ class Condition:
         :return: The result of measurement validation
         """
         return self.callback(value)._with_evidence_metadata(value.metadata)
-
-    def to_model(self) -> ConditionModel:
-        """
-        Returns this condition as a model.
-
-        :return: The serialized model object.
-        """
-        return ConditionModel(
-            name=self.name,
-            arguments=self.arguments,
-            callback=Condition.encode_callback(self.callback),
-            value_class=self.value_class,
-        )
 
     @staticmethod
     def build_condition(test: Callable[[Value], Result]) -> Condition:
@@ -86,6 +78,7 @@ class Condition:
         validation_name = caller_function.f_code.co_name
         arguments = caller_function.f_locals
         cls = arguments["cls"]
+        cls_str = f"{cls.__module__}.{cls.__name__}"
 
         # Validation args are all arguments except for the value class type.
         validation_args = []
@@ -94,24 +87,22 @@ class Condition:
                 validation_args.append(arg_value)
 
         condition: Condition = Condition(
-            validation_name, validation_args, test, cls
+            validation_name, validation_args, test, cls_str
         )
         return condition
 
-    @staticmethod
-    def value_class_to_str(value_class: Type[Value]) -> str:
-        """Returns a full module.class name string for the given type."""
-        return f"{value_class.__module__}.{value_class.__name__}"
+    def to_model(self) -> ConditionModel:
+        """
+        Returns this condition as a model.
 
-    @staticmethod
-    @typing.no_type_check
-    def str_to_value_class(value_class: str) -> Type[Value]:
-        import sys
-
-        parts = value_class.rsplit(".", 1)
-        module_name = parts[0]
-        class_name = parts[1]
-        return getattr(sys.modules[module_name], class_name)
+        :return: The serialized model object.
+        """
+        return ConditionModel(
+            name=self.name,
+            arguments=self.arguments,
+            callback=Condition.encode_callback(self.callback),
+            value_class=self.value_class,
+        )
 
     @staticmethod
     def encode_callback(callback: Callable[[Value], Result]) -> str:
@@ -131,7 +122,7 @@ class Condition:
             model.name,
             model.arguments,
             dill.loads(base64.b64decode(str(model.callback).encode("utf-8"))),
-            Condition.str_to_value_class(model.value_class),
+            model.value_class,
         )
         return condition
 
