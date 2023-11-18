@@ -7,11 +7,17 @@ Artifact implementation for MLTE values.
 from __future__ import annotations
 
 import abc
+import importlib
+import typing
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.store.base import Store
+from mlte.value.model import ValueModel
+from mlte._private.reflection import load_class
 
 
 class Value(Artifact, metaclass=abc.ABCMeta):
@@ -57,3 +63,33 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         is delegated to subclasses that implement concrete types
         """
         raise NotImplementedError("Value.from_model()")
+
+    @classmethod
+    def load_all(cls) -> list[Value]:
+        """Loads all artifact models of the given type for the current session."""
+        value_models = cls.load_all_models(ArtifactType.VALUE)
+        return Value.load_from_models(value_models)
+
+    @classmethod
+    def load_all_with(cls, context: Context, store: Store) -> list[Value]:
+        """Loads all artifact models of the given type for the given context and store."""
+        value_models = cls.load_all_models_with(
+            ArtifactType.VALUE, context, store
+        )
+        return Value.load_from_models(value_models)
+    
+    @staticmethod
+    def load_from_models(value_models: list[ArtifactModel]) -> list[Value]:
+        """Converts a list of value models (as Artifact Models) into values."""
+        values = []
+        for artifact_model in value_models:
+            value_model: ValueModel = typing.cast(ValueModel, artifact_model.body)
+            value_type: Value = load_class(value_model.value_class)
+            value = value_type.from_model(artifact_model)
+            values.append(value)
+        return values        
+
+    @classmethod
+    def get_class_path(cls) -> str:
+        """Returns the full path to this class, including module."""
+        return f"{cls.__module__}.{cls.__name__}"

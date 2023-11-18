@@ -11,6 +11,7 @@ import time
 from typing import Optional
 
 import mlte._private.meta as meta
+import mlte.store.query as query
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
@@ -165,6 +166,34 @@ class Artifact(metaclass=abc.ABCMeta):
 
         artifact.post_load_hook(context, store)
         return artifact
+
+    @classmethod
+    def load_all_models(
+        cls, artifact_type: ArtifactType
+    ) -> list[ArtifactModel]:
+        """Loads all artifact models of the given type from the session."""
+        return cls.load_all_models_with(
+            artifact_type, context=session().context, store=session().store
+        )
+
+    @classmethod
+    def load_all_models_with(
+        cls, artifact_type: ArtifactType, context: Context, store: Store
+    ) -> list[ArtifactModel]:
+        """Loads all artifact models of the given type for the given context and store."""
+        with ManagedSession(store.session()) as handle:
+            query_instance = query.Query(
+                filter=query.ArtifactTypeFilter(
+                    type=query.FilterType.TYPE, artifact_type=artifact_type
+                )
+            )
+            artifact_models = handle.search_artifacts(
+                context.namespace,
+                context.model,
+                context.version,
+                query_instance,
+            )
+            return artifact_models
 
     @staticmethod
     def get_default_id() -> str:
