@@ -19,6 +19,8 @@ def load_class(class_path: str) -> typing.Type:
     try:
         class_type = getattr(loaded_module, class_name)
     except:
-        raise RuntimeError(f"Class {class_name} in module {module_name} not found")
-    
+        raise RuntimeError(
+            f"Class {class_name} in module {module_name} not found"
+        )
+
     return class_type

@@ -45,7 +45,7 @@ class Real(Value):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value_class=Real.get_class_path(),
+                value_class=self.get_class_path(),
                 value=RealValueModel(
                     value_type=ValueType.REAL,
                     real=self.value,

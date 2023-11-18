@@ -44,7 +44,7 @@ class Integer(Value):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value_class=Integer.get_class_path(),
+                value_class=self.get_class_path(),
                 value=IntegerValueModel(
                     value_type=ValueType.INTEGER,
                     integer=self.value,

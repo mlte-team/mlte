@@ -23,7 +23,6 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
-from mlte.value.types.opaque import Opaque
 
 
 class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
@@ -65,7 +64,7 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
-                value_class=Opaque.get_class_path(),
+                value_class=self.get_class_path(),
                 value=OpaqueValueModel(
                     value_type=ValueType.OPAQUE,
                     data=self.serialize(),
