@@ -1,8 +1,8 @@
 import importlib
-import typing
+from typing import Any, Type
 
 
-def load_class(class_path: str) -> typing.Type:
+def load_class(class_path: str) -> Type[Any]:
     """
     Returns a class type of the given class name/path.
     :param class_path: A path to a class to use, including absolute package/module path and class name.
@@ -14,11 +14,11 @@ def load_class(class_path: str) -> typing.Type:
 
     try:
         loaded_module = importlib.import_module(module_name)
-    except:
+    except Exception:
         raise RuntimeError(f"Module {module_name} not found")
     try:
-        class_type = getattr(loaded_module, class_name)
-    except:
+        class_type: Type[Any] = getattr(loaded_module, class_name)
+    except Exception:
         raise RuntimeError(
             f"Class {class_name} in module {module_name} not found"
         )

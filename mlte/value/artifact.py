@@ -85,7 +85,9 @@ class Value(Artifact, metaclass=abc.ABCMeta):
             value_model: ValueModel = typing.cast(
                 ValueModel, artifact_model.body
             )
-            value_type: Value = load_class(value_model.value_class)
+            value_type: Value = typing.cast(
+                Value, load_class(value_model.value_class)
+            )
             value = value_type.from_model(artifact_model)
             values.append(value)
         return values

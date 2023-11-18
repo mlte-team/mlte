@@ -110,7 +110,7 @@ def _make_value(id: str) -> ValueModel:
     return ValueModel(
         artifact_type=ArtifactType.VALUE,
         metadata=m,
-        value_class=self.get_class_path(),
+        value_class=Integer.get_class_path(),
         value=IntegerValueModel(
             value_type=ValueType.INTEGER,
             integer=1,
