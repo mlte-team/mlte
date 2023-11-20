@@ -167,18 +167,16 @@ class Artifact(metaclass=abc.ABCMeta):
         artifact.post_load_hook(context, store)
         return artifact
 
-    @classmethod
-    def load_all_models(
-        cls, artifact_type: ArtifactType
-    ) -> list[ArtifactModel]:
+    @staticmethod
+    def load_all_models(artifact_type: ArtifactType) -> list[ArtifactModel]:
         """Loads all artifact models of the given type from the session."""
-        return cls.load_all_models_with(
+        return Artifact.load_all_models_with(
             artifact_type, context=session().context, store=session().store
         )
 
-    @classmethod
+    @staticmethod
     def load_all_models_with(
-        cls, artifact_type: ArtifactType, context: Context, store: Store
+        artifact_type: ArtifactType, context: Context, store: Store
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""
         with ManagedSession(store.session()) as handle:

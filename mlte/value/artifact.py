@@ -63,22 +63,22 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("Value.from_model()")
 
-    @classmethod
-    def load_all(cls) -> list[Value]:
+    @staticmethod
+    def load_all() -> list[Value]:
         """Loads all artifact models of the given type for the current session."""
-        value_models = cls.load_all_models(ArtifactType.VALUE)
-        return Value.load_from_models(value_models)
-
-    @classmethod
-    def load_all_with(cls, context: Context, store: Store) -> list[Value]:
-        """Loads all artifact models of the given type for the given context and store."""
-        value_models = cls.load_all_models_with(
-            ArtifactType.VALUE, context, store
-        )
-        return Value.load_from_models(value_models)
+        value_models = Value.load_all_models(ArtifactType.VALUE)
+        return Value._load_from_models(value_models)
 
     @staticmethod
-    def load_from_models(value_models: list[ArtifactModel]) -> list[Value]:
+    def load_all_with(context: Context, store: Store) -> list[Value]:
+        """Loads all artifact models of the given type for the given context and store."""
+        value_models = Value.load_all_models_with(
+            ArtifactType.VALUE, context, store
+        )
+        return Value._load_from_models(value_models)
+
+    @staticmethod
+    def _load_from_models(value_models: list[ArtifactModel]) -> list[Value]:
         """Converts a list of value models (as Artifact Models) into values."""
         values = []
         for artifact_model in value_models:
