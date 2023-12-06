@@ -44,6 +44,7 @@ class Array(Value):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
+                value_class=self.get_class_path(),
                 value=ArrayValueModel(
                     value_type=ValueType.ARRAY, data=self.array
                 ),
