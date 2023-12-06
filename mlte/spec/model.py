@@ -22,6 +22,9 @@ class ConditionModel(BaseModel):
     callback: str
     """A text-encoded, dilled-serialized version of the callback to execute when validating this condition."""
 
+    value_class: str
+    """A string indicating the full module and class name of the Value used to generate this condition."""
+
 
 class PropertyModel(BaseModel):
     """A description of a property."""

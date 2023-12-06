@@ -61,6 +61,7 @@ class Image(Value):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
+                value_class=self.get_class_path(),
                 value=ImageValueModel(
                     value_type=ValueType.IMAGE,
                     data=base64.encodebytes(self.image).decode("utf-8"),
@@ -91,9 +92,7 @@ class Image(Value):
         :param reason: The reason for ignoring the image
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition(
-            "Ignore",
-            [reason],
+        condition: Condition = Condition.build_condition(
             lambda _: Ignore(reason),
         )
         return condition
