@@ -92,9 +92,7 @@ class Image(Value):
         :param reason: The reason for ignoring the image
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition(
-            "Ignore",
-            [reason],
+        condition: Condition = Condition.build_condition(
             lambda _: Ignore(reason),
         )
         return condition

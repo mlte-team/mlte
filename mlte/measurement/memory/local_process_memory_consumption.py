@@ -107,9 +107,7 @@ class MemoryStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "max_consumption_less_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda stats: Success(
                 f"Maximum consumption {stats.max} "
                 f"below threshold {threshold}"
@@ -135,9 +133,7 @@ class MemoryStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "average_consumption_less_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda stats: Success(
                 f"Average consumption {stats.avg} "
                 f"below threshold {threshold}"

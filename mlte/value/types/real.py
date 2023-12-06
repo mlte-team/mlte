@@ -94,9 +94,7 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "less_than",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda real: Success(
                 f"Real magnitude {real.value} less than threshold {value}"
             )
@@ -118,9 +116,7 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "less_or_equal_to",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"less than or equal to threshold {value}"
@@ -143,9 +139,7 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "greater_than",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda real: Success(
                 f"Real magnitude {real.value} greater than threshold {value}"
             )
@@ -167,16 +161,12 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         :rtype: Condition
         """
-        condition: Condition = Condition(
-            "greater_or_equal_to",
-            [value],
+        condition: Condition = Condition.build_condition(
             lambda real: Success(
                 f"Real magnitude {real.value} "
                 f"greater than or equal to threshold {value}"
             )
             if real.value >= value
-            else Failure(
-                f"Real magnitude {real.value} below threshold {value}"
-            ),
+            else Failure(f"Real magnitude {real.value} below threshold {value}")
         )
         return condition
