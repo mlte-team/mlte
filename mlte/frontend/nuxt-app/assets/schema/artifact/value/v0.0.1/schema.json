@@ -130,6 +130,10 @@
     "metadata": {
       "$ref": "#/$defs/EvidenceMetadata"
     },
+    "value_class": {
+      "title": "Value Class",
+      "type": "string"
+    },
     "value": {
       "discriminator": {
         "mapping": {
@@ -160,6 +164,7 @@
   "required": [
     "artifact_type",
     "metadata",
+    "value_class",
     "value"
   ],
   "title": "ValueModel",

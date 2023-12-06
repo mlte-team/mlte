@@ -33,14 +33,6 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         """Define the interface for all Value subclasses."""
         return meta.has_callables(subclass, "serialize", "deserialize")
 
-    def __init__(self, instance: ValueBase, metadata: EvidenceMetadata) -> None:
-        """
-        Initialize a MLTE value.
-        :param instance: The subclass instance
-        :param metadata: Evidence metadata associated with the value
-        """
-        super().__init__(instance, metadata)
-
     @abc.abstractmethod
     def serialize(self) -> Dict[str, Any]:
         """
@@ -72,8 +64,10 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
+                value_class=self.get_class_path(),
                 value=OpaqueValueModel(
-                    value_type=ValueType.OPAQUE, data=self.serialize()
+                    value_type=ValueType.OPAQUE,
+                    data=self.serialize(),
                 ),
             ),
         )

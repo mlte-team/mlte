@@ -41,6 +41,9 @@ class ValueModel(BaseModel):
     metadata: EvidenceMetadata
     """Evidence metadata associated with the value."""
 
+    value_class: str
+    """Full path to class that implements this value."""
+
     value: Union[
         "IntegerValueModel",
         "RealValueModel",

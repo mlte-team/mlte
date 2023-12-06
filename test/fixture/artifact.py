@@ -18,6 +18,7 @@ from mlte.report.model import ReportModel
 from mlte.spec.model import SpecModel
 from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import IntegerValueModel, ValueModel, ValueType
+from mlte.value.types.integer import Integer
 
 
 def _random_id(length: int = 5) -> str:
@@ -109,7 +110,11 @@ def _make_value(id: str) -> ValueModel:
     return ValueModel(
         artifact_type=ArtifactType.VALUE,
         metadata=m,
-        value=IntegerValueModel(value_type=ValueType.INTEGER, integer=1),
+        value_class=Integer.get_class_path(),
+        value=IntegerValueModel(
+            value_type=ValueType.INTEGER,
+            integer=1,
+        ),
     )
 
 

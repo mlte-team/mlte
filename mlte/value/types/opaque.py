@@ -44,8 +44,10 @@ class Opaque(Value):
             body=ValueModel(
                 artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
+                value_class=self.get_class_path(),
                 value=OpaqueValueModel(
-                    value_type=ValueType.OPAQUE, data=self.data
+                    value_type=ValueType.OPAQUE,
+                    data=self.data,
                 ),
             ),
         )
