@@ -107,5 +107,5 @@ def test_get_invalid_position():
 
     array = Array(m, [1.1, 2.2, 3.3])
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         _ = array.get_as_real(5)
