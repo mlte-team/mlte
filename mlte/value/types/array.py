@@ -85,7 +85,7 @@ class Array(Value):
         :param position: The position to get the value from.
         """
         if position >= len(self.array):
-            raise RuntimeError(
+            raise IndexError(
                 f"Position {position} is not in array of size {len(self.array)}"
             )
         return_value = Real(self.metadata, float(self.array[position]))
@@ -100,7 +100,7 @@ class Array(Value):
         :param position: The position to get the value from.
         """
         if position >= len(self.array):
-            raise RuntimeError(
+            raise IndexError(
                 f"Position {position} is not in array of size {len(self.array)}"
             )
         return_value = Integer(self.metadata, int(self.array[position]))
