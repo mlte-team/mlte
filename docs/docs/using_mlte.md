@@ -244,7 +244,7 @@ spec.save(parents=True, force=True)
 
 ### SDMT: Collect Evidence
 
-After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
 
 #### Evidence: MLTE Measurements
 

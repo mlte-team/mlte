@@ -48,7 +48,7 @@ from mlte.report ... #importing from report subpackage
 
 To run the user interface (UI), run the following in your command line:
 ```bash
-$ mlte-ui
+$ mlte ui
 ```
 
 In order for the frontend to be able to communicate with the store you will need to allow the frontend as an origin.
