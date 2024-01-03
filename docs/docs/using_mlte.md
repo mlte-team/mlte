@@ -30,9 +30,11 @@ import os
 from mlte.session import set_context, set_store
 
 store_path = os.path.join(os.getcwd(), "store")
-os.makedirs(store_path, exist_ok=True)   # Ensure we are creating the folder if it is not there.
+os.makedirs(
+    store_path, exist_ok=True
+)   # Ensure we are creating the folder if it is not there.
 
-set_context("ns", "IrisClassifier", "0.0.1")
+set_context("ns", "OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
 ```
 
@@ -56,7 +58,7 @@ spec.save(parents=True, force=True)
 
 ### IMT: Collect Evidence
 
-After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
 
 ```python
 from sklearn.metrics import accuracy_score
@@ -182,7 +184,7 @@ Once the negotiation is complete and the contents of the negotiation card have b
 SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated negotiation card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. To do so, `MLTE` uses the following process:
 
 - Initialize the `MLTE` context.
-- Define a preliminary specification.
+- Define a specification.
 - Collect evidence.
 - Validate results.
 - Examine findings.
@@ -198,7 +200,7 @@ from mlte.session import set_context, set_store
 store_path = os.path.join(os.getcwd(), "store")
 os.makedirs(store_path, exist_ok=True)   # Ensure we are creating the folder if it is not there.
 
-set_context("ns", "IrisClassifier", "0.0.1")
+set_context("ns", "OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
 ```
 
@@ -244,7 +246,7 @@ spec.save(parents=True, force=True)
 
 ### SDMT: Collect Evidence
 
-After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/500a80c9dd15310e1f37b127a289472533200c24/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
 
 #### Evidence: MLTE Measurements
 

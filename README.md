@@ -17,7 +17,7 @@
 $ pip install mlte-python
 ```
 
-Read the [documentation](https://mlte.readthedocs.io/en/latest/) for more details on getting started with `mlte`.
+Once installed, you can head to our guide on [using MLTE](https://mlte.readthedocs.io/en/latest/using_mlte/) for next steps. If you just want to know how to use the package in an existing project, check out our [MLTE Mechanics](https://mlte.readthedocs.io/en/latest/mlte_mechanics/) guide. If you're interested in reading about the project more generally, see our [documentation](https://mlte.readthedocs.io/en/latest/).
 
 ### Citing This Work
 
