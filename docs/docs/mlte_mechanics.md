@@ -1,42 +1,59 @@
-# MLTE Mechanics (Redux of *Using MLTE*)
+# MLTE Mechanics 
 
-This section provides insight into the mechanics required to use MLTE, whether or not you're following the MLTE process.
+This section provides insight into the mechanics required to use the `MLTE` Python package. If you're looking for a more comprehensive guide that covers the framework and how to implement it using the package, see the [Using MLTE](using_mlte.md) Guide.
 
-The `MLTE` Team believes that effective evaluation starts at the inception of a project, so `MLTE` starts with a negotiation - a discussion about requirements - amongst stakeholders, software engineers, data scientists, and anyone else involved in the project. More information about this can be found in the [Using MLTE](using_mlte.md) Guide.
+## Install `MLTE`
+You can install *`MLTE`* with
 
+```bash
+$ pip install mlte-python
+```
+or
+
+```bash
+$ conda install mlte-python
+```
 
 ## Model Testing
 
-MLTE has two types of model testing, internal model testing (IMT) and system dependent model testing (SDMT). The mechanics are similar for both, and this section goes through an example that will allow you to work through either type of testing. Evaluation in `MLTE` follows this process:
+MLTE has two types of model testing, internal model testing (IMT) and system dependent model testing (SDMT). The mechanics are similar for both, and this section goes through an example that will allow you to work through either type of testing. 
 
-- Initialize the `MLTE` context.
-- Define a specification.
-- Collect evidence.
-- Validate results.
-- Examine findings.
+Testing a model using `MLTE` follows this process:
 
-The scenario used in this section is a hypothetical where visitors to a botanical garden are identifying flowers in the gardens to learn more about them. They are helped by an ML system which uses a model that was trained on the flower category dataset ([Nilsback 2008](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/)).
+1. Initialize the `MLTE` context.
+2. Define a specification.
+3. Collect evidence.
+4. Validate results.
+5. Examine findings.
 
-### Initialize the `MLTE` Context
+## Example Scenario
 
-`MLTE` contains a global context that manages the currently active session. Initializing the context tells MLTE how to store all of the artifacts that it produces.
+The scenario used here is a hypothetical where visitors to a botanical garden are identifying flowers to learn more about them. They are helped by a machine learning (ML) model that runs on a camera they loan from the botanical garden. The model was trained on the flower category dataset ([Nilsback 2008](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/)). The complete files for this example can be found in the `MLTE` repository in the 
+<a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a>.
+
+## 1. Initialize the `MLTE` Context
+
+One core tenet of `MLTE` is that evaluation requires evidence in the form of artifacts. These are gathered throughout the testing process, and `MLTE` contains a global context that manages the currently active session so you can collect artifacts and store them all in the same place. Initializing your context tells `MLTE` how to store your artifacts.
 
 ```python
 import os
 from mlte.session import set_context, set_store
 
+# Set up the path for where we are storing artifacts
 store_path = os.path.join(os.getcwd(), "store")
 os.makedirs(
     store_path, exist_ok=True
-)  # Ensure we are creating the folder if it is not there.
+)
 
+# Initialize the context
 set_context("ns", "OxfordFlower", "0.0.1")
+# Set the artifact storage path
 set_store(f"local://{store_path}")
 ```
 
 ### Run the `MLTE` UI
 
-Once the context is initialized, you can view all your artifacts in the front end. To run the user interface (UI), run the following in your command line:
+Once the context is initialized, you can view all your artifacts in the front end if you choose. To use the user interface (UI), run the following in your command line:
 
 ```bash
 $ mlte ui
@@ -44,7 +61,8 @@ $ mlte ui
 
 In order for the frontend to be able to communicate with the store you will need to allow the frontend as an origin.
 This can be done by specifying the `--allowed-origins` flag when running the store. 
-When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the store command will look like this:
+
+When ran through the `MLTE` package, the frontend will be hosted at `http://localhost:8000` so the store command will look like this:
 
 ```bash
 $ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
@@ -52,31 +70,44 @@ $ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
 
 Once you run it, go to the hosted address to view the `MLTE` UI homepage. 
 
-### Define a Specification
+## 2. Define a Specification
 
-In MLTE, we define requirements by constructing a specification (`Spec`). A `Spec` represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. This includes the measurement as well as the threshold for that measurement (a Condition).
+In `MLTE`, requirements are defined by constructing a specification (`Spec`). A `Spec` contains the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. This is done with the structure of properties and conditions. Properties are characteristics of the trained model, the procedure used to train it (including training data), or its ability to perform inference. Conditions are a measurement and a threshold that correspond to a particular property - they are a concrete way to evaluate a property. 
 
-#### Conditions
+### Conditions
 
-For this flower scenario, our `Spec` includes the following properties and conditions:
+For this scenario, our `Spec` includes the following properties and conditions:
 
 - Fairness - Model Impartial to Photo Location
-    - The model receives a picture taken at the garden and, regardless of the garden location, can correctly identify the correct flowers at least 90% of the time. Test data needs to include pictures of the flowers from the different gardens, grouped by the garden that the image was taken at. The quantity of the flower images should be representative of the garden population they are taken from. The total accuracy of the model across each garden population should be higher or equal to 0.9.
-- Robustness- Model Robust to Noise (Image Blur)
-    - The model receives a picture taken at a garden by a member of the general public, and it is a bit blurry. The model should still be able to successfully identify the flower at the same rate as non-blurry images. Test data needs to include blurred flower images. Blurred images will be created using ImageMagick. Three datasets will be generated, each with different amounts of blur: minimal blur, maximum blur, and in between minimal and maximum blur. Blurry images are successfully identified at rates equal to that of non-blurred images. This will be measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05.
+    - The model receives a picture taken in the garden and can correctly identify the correct flowers at least 90% of the time regardless of the location where the photo was taken. 
+    - Test data needs to include pictures of the flowers from the different gardens, grouped by the garden that the image was taken at and representative of the garden population they are taken from. 
+    - The total accuracy of the model across each garden population should be higher or equal to 0.9.
+- Robustness - Model Robust to Noise (Image Blur)
+    - If the model receives a picture taken in a garden that is a bit blurry, it should still be able to successfully identify the flower.
+    - Test data needs to include blurred flower images (created using ImageMagick). 
+    - Robustness to blur is measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05.
 - Robustness - Model Robust to Noise (Channel Loss)
-    - The model receives a picture taken at a garden using a loaned device. These devices are known to sometimes lose a channel (i.e., RGB channel). The model should still be able to successfully identify the flower at the same rate as full images. Test data needs to include images with a missing channel. Test images will be generated by removing the R, G and B channels in the original test data using ImageMagic, therefore producing three data sets. Images with a missing channel are successfully identified at rates equal to that of original images. This will be measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05.
+    - The model should be able to successfully identify a picture of a flower from the garden even if the device has lost one of its RGB channels.
+    - Test data needs to include images with a missing channel (created by removing each of the three channels using ImageMagic).
+    - Robustness to channel loss is measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05.
 - Performance on Operational Platform
-    - The model will need to run on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively). The original test dataset can be used. 1- Executing the model on the loaned platform will not exceed maximum CPU usage of 30% to ensure reasonable response time. CPU usage will be measure using ps. 2- Memory usage at inference time will not exceed available memory of 512 MB. This will be measured using pmap. 3 - Disk usage will not exceed available disk space of 128 GB. This will be measured using by adding the size of each file in the path for the model code.
+    - The model needs to run on the devices loaned out by the garden centers to visitors, which are small, inexpensive devices with limited CPU power, memory, and disk space (512 MB and 128 GB, respectively). 
+    - Executing the model on the devices cannot exceed 30% of maximum CPU usage to ensure reasonable response time; CPU usage will be measure using ps.
+    - Memory usage at inference time will not exceed available memory of 512 MB, measured using pmap.
+    - Disk usage will not exceed available disk space of 128 GB, measured by adding the size of each file in the path for the model code.
 - Interpretability - Understanding Model Results
-    - The application that runs on the loaned device should indicate the main features that were used to recognize the flower, as part of the educational experience. The app will display the image highlighting the most informative features in flower identification, in addition to the flower name. The original test data set can be used. The model needs to return evidence, in this case a heat map implementing the Integrated Gradients algorithm, showing the pixels that were most informative in the classification decision. This evidence should be returned with each inference.
+    - The application that runs on the loaned camera should indicate the main features that were used to recognize the flower as part of the educational experience. 
+    - The app will display the image highlighting the most informative features in flower identification, in addition to the flower name. 
+    - The model needs to return evidence with each inference showing the pixels that were most informative in the classification decision (done using a heat map implementing the Integrated Gradients algorithm).
 
-#### Code for a `Spec`
+### Building the `Spec`
+
+Now that we've defined the properties and conditions for this scenario, we can build the `Spec` in code.
 
 ```python
 from mlte.spec.spec import Spec
 
-# The Properties we want to validate, associated with our scenarios.
+# Import the Properties for this scenario
 from mlte.property.costs.storage_cost import StorageCost
 from properties.fairness import Fairness
 from properties.robustness import Robustness
@@ -84,7 +115,7 @@ from properties.interpretability import Interpretability
 from properties.predicting_memory_cost import PredictingMemoryCost
 from properties.predicting_compute_cost import PredictingComputeCost
 
-# The Value types we will use to validate each condition.
+# Import Value types for each condition
 from mlte.measurement.storage import LocalObjectSize
 from mlte.measurement.cpu import LocalProcessCPUUtilization
 from mlte.measurement.memory import LocalProcessMemoryConsumption
@@ -93,7 +124,7 @@ from values.multiple_accuracy import MultipleAccuracy
 from values.ranksums import RankSums
 from values.multiple_ranksums import MultipleRanksums
 
-# The full spec. Note that the Robustness Property contains conditions for both Robustness scenarios.
+# Define the Spec (Note that the Robustness Property contains conditions for both Robustness requirements)
 spec = Spec(
     properties={
         Fairness(
@@ -139,19 +170,21 @@ spec = Spec(
 spec.save(parents=True, force=True)
 ```
 
-### Collect Evidence
+## 3. Collect Evidence
 
-After defining a specification, we can collect evidence to attest to the fact that the model realized the specified properties.
+After defining a `Spec`, `MLTE` mandates that you collect evidence to attest to the fact that the model realized the specified properties.
 
-We define and instantiate `Measurements` to generate this evidence. Each individual piece of evidence is a `Value`. Once `Value`s are produced, we can persist them to the artifact store to maintain our evidence.
+We define and instantiate `Measurements` to generate this evidence. Each individual piece of evidence is a `Value`. Once `Value`s are produced, persist them to the artifact store to maintain your set of evidence.
+
+Preliminaries to set up for collecting evidence.
 
 ```python
 from pathlib import Path
 
-# The path at which datasets are stored
+# Delineate the path at which datasets are stored
 DATASETS_DIR = Path.cwd() / "data"
 
-# Path where the model files are stored.
+# Set where the model files are stored.
 MODELS_DIR = Path.cwd() / "model"
 
 # The path at which media is stored
@@ -159,18 +192,17 @@ MEDIA_DIR = Path.cwd() / "media"
 os.makedirs(MEDIA_DIR, exist_ok=True)
 ```
 
-Download the model that will be used for some of these measurements.
+Download the model that will be used (note that you'll need to get the requisite files from the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a> in the `MLTE` repository).
  
 ```bash
 !sh get_model.sh
 ```
 
-```python
-# General functions.
+Functions that facilitate the code for this scenario (corresponding files can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a> in the `MLTE` repository), along with data preparation.
 
+```python
 import garden
 import numpy as np
-
 
 def load_data(data_folder: str):
     """Loads all garden data results and taxonomy categories."""
@@ -211,10 +243,10 @@ def split_data(df_info, df_all):
     ).astype(int)
     df_gardenpop
 
-    # build populations from test data set that match the garden compositions
+    # Build populations from test data set that match the garden compositions
     from random import choices
 
-    # build 3 gardens with populations of 1000.
+    # Build 3 gardens with populations of 1000
     pop_names = ["Population1", "Population2", "Population3"]
     gardenpops = np.zeros((3, 1000), int)
     gardenmems = np.zeros((3, 1000), int)
@@ -239,7 +271,7 @@ def split_data(df_info, df_all):
 
 
 def calculate_model_performance_acc(gardenpops, gardenmems):
-    """Get accucray of models across the garden populations"""
+    """Get accucray of models across the garden populations."""
     gardenacc = np.zeros((3, 1000), float)
     for i in range(1000):
         for g in range(3):
@@ -257,23 +289,23 @@ def calculate_model_performance_acc(gardenpops, gardenmems):
         print("%1d %1.3f %1.3f %1.3f %1.3f" % (g, avg, std, min, max))
 
     return model_performance_acc
-```
 
-```python
-# Prepare the data. For this section, instead of executing the model, we will use CSV files containing the results of an already executed run of the model.
+# Prepare the data. Here we use CSV files 
+# containing the results of an already executed 
+# run of the model (rather than running it again).
 data = load_data(DATASETS_DIR)
 split_data = split_data(data[0], data[1])
 ```
 
-In this first example, we simply wrap the output from `accuracy_score` with a custom Result type to cope with the output of a third-party library that is not supported by a MLTE builtin.
+### Accuracy Measurements
 
-#### Accuracy Measurements
+To collect evidence of model accuracy, we wrap the output from `accuracy_score` with a custom `Result` type to handle the output of a third-party library that is not supported by a `MLTE` builtin.
 
 ```python
 from values.multiple_accuracy import MultipleAccuracy
 from mlte.measurement import ExternalMeasurement
 
-# Evaluate accuracy, identifier has to be the same one defined in the Spec.
+# Evaluate accuracy in accordance with condition laid out in the Spec
 accuracy_measurement = ExternalMeasurement(
     "accuracy across gardens", MultipleAccuracy, calculate_model_performance_acc
 )
@@ -286,14 +318,15 @@ print(accuracy)
 accuracy.save(force=True)
 ```
 
-#### Robustness Measurements
+### Robustness Measurements
+
+Again we set up some general functions to facilitate the robustness measurements as well as prepare the data needed.
+
 ```python
-# General functions.
 import pandas as pd
 
-
 def calculate_base_accuracy(df_results: pd.DataFrame) -> pd.DataFrame:
-    # Calculate the base model accuracy result per data label
+    # Calculate the base model accuracy result for each data label
     df_pos = (
         df_results[df_results["model correct"] == True].groupby("label").count()
     )
@@ -322,7 +355,7 @@ def calculate_base_accuracy(df_results: pd.DataFrame) -> pd.DataFrame:
 def calculate_accuracy_per_set(
     data_folder: str, df_results: pd.DataFrame, df_res: pd.DataFrame
 ) -> pd.DataFrame:
-    # Calculate the model accuracy per data label for each blurred data set
+    # Calculate the model accuracy by data label for each blurred data set
     base_filename = "FlowerModelv1_TestSetResults"
     ext_filename = ".csv"
     set_filename = ["_blur2x8", "_blur5x8", "_blur0x8", "_noR", "_noG", "_noB"]
@@ -373,23 +406,24 @@ def print_model_accuracy(df_res: pd.DataFrame, key: str, name: str):
 ```
 
 ```python
-# Prepare all data. Same as the case above, we will use CSV files that contain results of a previous execution of the model.
+# Prepare all data. Same as above, we use CSV files that
+# contain results of a previous execution of the model.
 df_results = garden.load_base_results(DATASETS_DIR)
 df_res = calculate_base_accuracy(df_results)
 df_res = calculate_accuracy_per_set(DATASETS_DIR, df_results, df_res)
 df_info = garden.load_taxonomy(DATASETS_DIR)
 df_all = garden.merge_taxonomy_with_results(df_res, df_info, "label", "Label")
 
-# fill in missing model accuracy data
+# Fill in missing model accuracy data
 df_all["model acc_noR"].fillna(0, inplace=True)
 df_all["model acc_noG"].fillna(0, inplace=True)
 df_all["model acc_noB"].fillna(0, inplace=True)
 ```
 
-Now do the actual measurements. First simply see the model accuracy across blurs.
+Now we execute the measurements, starting with model accuracy across blurs.
 
 ```python
-# view changes in model accuracy
+# View changes in model accuracy with blurring
 print_model_accuracy(df_res, "model acc", "base model accuracy")
 print_model_accuracy(
     df_res, "model acc_blur2x8", "model accuracy with 2x8 blur"
@@ -401,7 +435,7 @@ print_model_accuracy(
     df_res, "model acc_blur0x8", "model accuracy with 0x8 blur"
 ```
 
-Measure the ranksums (p-value) for all blur cases, using scipy.stats.ranksums and the ExternalMeasurement wrapper.
+Now we measure the ranksums (p-value) for all blur cases, using scipy.stats.ranksums and the `ExternalMeasurement` wrapper from `MLTE`.
 
 ```python
 import scipy.stats
@@ -411,12 +445,12 @@ from mlte.measurement import ExternalMeasurement
 
 my_blur = ["2x8", "5x8", "0x8"]
 for i in range(len(my_blur)):
-    # Define measurements.
+    # Define measurements
     ranksum_measurement = ExternalMeasurement(
         f"ranksums blur{my_blur[i]}", RankSums, scipy.stats.ranksums
     )
 
-    # Evaluate.
+    # Evaluate
     ranksum: RankSums = ranksum_measurement.evaluate(
         df_res["model acc"], df_res[f"model acc_blur{my_blur[i]}"]
     )
@@ -428,16 +462,13 @@ for i in range(len(my_blur)):
     ranksum.save(force=True)
 ```
 
-Now to next part of the question- is this equal across the phylogenic groups?
-
-First we will check the effect of blur for Clade 2.
+Now we have to determing if the accuracy on blurry photos is equal across the flower population groups. To start, we will check the effects of blurring on one flower population (called Clade 2 - a clade is a natural group of organisms that share a common ancestor within an evolutionary tree).
 
 ```python
 from typing import List
-
 from values.multiple_ranksums import MultipleRanksums
 
-# use the initial result, blur columns to anaylze effect of blur
+# Using the initial result, blur columns to anaylze effect of blur
 df_all["delta_2x8"] = df_all["model acc"] - df_all["model acc_blur2x8"]
 df_all["delta_5x8"] = df_all["model acc"] - df_all["model acc_blur5x8"]
 df_all["delta_0x8"] = df_all["model acc"] - df_all["model acc_blur0x8"]
@@ -473,7 +504,7 @@ multiple_ranksums.num_pops = len(pops)
 multiple_ranksums.save(force=True)
 ```
 
-Now we check between clade 2 and clade 3.
+We continue to determe if the accuracy on blurry photos is equal across the flower population groups by looking at the next group, Clade 3, in comparison with Clade 2. 
 
 ```python
 df_now = (
@@ -533,12 +564,17 @@ multiple_ranksums.num_pops = len(ps1)
 multiple_ranksums.save(force=True)
 ```
 
-#### Performance Measurements
+### Performance Measurements
 
-Now we collect stored, CPU and memory usage data when predicting with the model, for the Performance scenario. NOTE: the version of tensorflow used in this demo requires running it under Python 3.9 or higher.
+Next we collect stored, CPU, and memory usage data. Doing so requires running the model as this property is associated with that process.
+
+*NOTE 1: The version of tensorflow used here requires Python 3.9 or higher.*
+
+*NOTE 2: Files can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a> of the `MLTE` repository.*
+
+Set up the external script that will load and run the model for inference/prediction.
 
 ```python
-# This is the external script that will load and run the model for inference/prediction.
 script = Path.cwd() / "model_predict.py"
 args = [
     "--images",
@@ -550,6 +586,8 @@ args = [
 ]
 ```
 
+Import and execute storage measurements.
+
 ```python
 from mlte.measurement.storage import LocalObjectSize
 from mlte.value.types.integer import Integer
@@ -559,6 +597,8 @@ size: Integer = store_measurement.evaluate(MODELS_DIR)
 print(size)
 size.save(force=True)
 ```
+
+Import and execute CPU measurements.
 
 ```python
 from mlte.measurement import ProcessMeasurement
@@ -571,6 +611,8 @@ cpu_stats: CPUStatistics = cpu_measurement.evaluate(
 print(cpu_stats)
 cpu_stats.save(force=True)
 ```
+
+Import and execute memory measurements.
 
 ```python
 from mlte.measurement.memory import (
@@ -586,9 +628,9 @@ print(mem_stats)
 mem_stats.save(force=True)
 ```
 
-#### Interpretability Measurements
+### Interpretability Measurements
 
-Now we proceed to gather data about the Interpretability of the model, for the corresponding scenario. NOTE: the version of tensorflow used in this demo requires running it under Python 3.9 or higher.
+Now we can gather data about the interpretability of the model; to start, we set up the model and weights files.
 
 ```python
 model_filename = (
@@ -597,14 +639,15 @@ model_filename = (
 weights_filename = MODELS_DIR / "model_f_a.h5"  # The weights file for the model
 ```
 
+Load the model, and then load and display the image.
+
 ```python
 from model_analysis import *
 
-# Load the model/
 loaded_model = load_model(model_filename, weights_filename)
-# Load and show the image.
 
-flower_img = "flower3.jpg"  # Filename of flower image to use, public domain image adapted from: https://commons.wikimedia.org/wiki/File:Beautiful_white_flower_in_garden.jpg
+# Flower image to use (public domain, from: https://commons.wikimedia.org/wiki/File:Beautiful_white_flower_in_garden.jpg)
+flower_img = "flower3.jpg" 
 flower_idx = (
     42  # Classifier index of associated flower (see OxfordFlower102Labels.csv)
 )
@@ -616,6 +659,8 @@ plt.axis("off")
 plt.show()
 ```
 
+Predict.
+
 ```python
 predictions = run_model(im, loaded_model)
 
@@ -624,6 +669,8 @@ interpolated_images = interpolate_images(
     baseline=baseline, image=im, alphas=alphas
 )
 ```
+
+Display the image.
 
 ```python
 fig = plt.figure(figsize=(20, 20))
@@ -639,6 +686,8 @@ for alpha, image in zip(alphas[0::10], interpolated_images[0::10]):
 plt.tight_layout()
 ```
 
+Calculate and display image attributions.
+
 ```python
 path_gradients = compute_gradients(
     loaded_model=loaded_model,
@@ -646,9 +695,7 @@ path_gradients = compute_gradients(
     target_class_idx=flower_idx,
 )
 print(path_gradients.shape)
-```
 
-```python
 ig = integral_approximation(gradients=path_gradients)
 print(ig.shape)
 ig_attributions = integrated_gradients(
@@ -659,9 +706,7 @@ ig_attributions = integrated_gradients(
     m_steps=240,
 )
 print(ig_attributions.shape)
-```
 
-```python
 fig = plot_img_attributions(
     image=im,
     baseline=baseline,
@@ -675,6 +720,8 @@ fig = plot_img_attributions(
 plt.savefig(MEDIA_DIR / "attributions.png")
 ```
 
+Finally, save the image attributions to the artifact store.
+
 ```python
 from mlte.measurement import ExternalMeasurement
 from mlte.value.types.image import Image
@@ -685,31 +732,11 @@ img = img_collector.ingest(MEDIA_DIR / "attributions.png")
 img.save(force=True)
 ```
 
-### Validate Results
+## 4. Validate Results
 
-The final phase of SDMT involves aggregating evidence, validating the metrics reflected by the evidence we collected, and displaying this information in a report.
+After collecting evidence, `MLTE` requires that you confirm that your evidence proves that the model meets the conditions stipulated in the `Spec`. `MLTE` does so by validating the metrics reflected by the evidence collected with a `SpecValidator`. This will then generate a  `ValidatedSpec` which contains the results of whether or not your evidence meets your specified thresholds.
 
-```python
-import os
-from mlte.session import set_context, set_store
-from pathlib import Path
-
-store_path = os.path.join(os.getcwd(), "store")
-os.makedirs(
-    store_path, exist_ok=True
-)  # Ensure we are creating the folder if it is not there.
-
-set_context("ns", "OxfordFlower", "0.0.1")
-set_store(f"local://{store_path}")
-
-# The path at which reports are stored
-REPORTS_DIR = Path(os.getcwd()) / "reports"
-os.makedirs(REPORTS_DIR, exist_ok=True)
-```
-
-Validate Values and get an updated ValidatedSpec with Results
-
-Now that we have our Spec ready and we have enough evidence, we create a SpecValidator with our spec, and add all the Values we have. With that we can validate our spec and generate an output ValidatedSpec, with the validation results.
+*NOTE: if you are doing this in a new session (separate from the past steps as is done in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a>), you will need to re-initialize the `MLTE` context.*
 
 ```python
 from mlte.spec.spec import Spec
@@ -719,27 +746,23 @@ from mlte.value.artifact import Value
 # Load the specification
 spec = Spec.load()
 
-# Add all values to the validator.
+# Add all values to the validator
 spec_validator = SpecValidator(spec)
 spec_validator.add_values(Value.load_all())
-```
 
-```python
 # Validate requirements and get validated details.
 validated_spec = spec_validator.validate()
 validated_spec.save(force=True)
 
-# We want to see the validation results in the Notebook, regardles sof them being saved.
+# Display validation results
 validated_spec.print_results()
 ```
 
-Here we see some of the results of the validation.
+Once they are displayed, we can examine the validation results. One highlight is the significant difference between the model detecting images with no blur and images with a blur of 0x8. We see a drop in model accuracy with this maximum increased blur (0x8), but the model accuracy does not fall substantially for lesser levels of blur.
 
-For example, there is a significant difference between original model with no blur and blur 0x8. So we see a drop in model accuracy with increasing blur. But aside from max blur (0x8), the model accuracy fall off isn't bad.
+## 5. Generate a Report
 
-### Generate a Report
-
-Generate a report to communicate the results of model evaluation.
+After validating results, `MLTE` allows you to generate a report so you can communicate your evaluation findings. The report can be generated as seen below, or you can use the front end to do so.
 
 ```python
 from mlte.model.shared import (
@@ -840,3 +863,8 @@ report = Report(
 
 report.save(force=True, parents=True)
 ```
+
+------
+All files that correspond to this example can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a> of the `MLTE` repository.
+
+If you're looking for a more comprehensive guide that covers the framework and how to implement it using the package, see the [Using MLTE](using_mlte.md) Guide.
