@@ -35,3 +35,6 @@ build/
 
 # VS Code local configs.
 .vscode/
+
+# credentials
+token.txt
