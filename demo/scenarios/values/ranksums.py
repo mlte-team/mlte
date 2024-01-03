@@ -3,10 +3,9 @@ Implementation of RankSums value.
 """
 from __future__ import annotations
 
-from values.array_value import Array
-
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
+from mlte.value.types.array import Array
 
 
 class RankSums(Array):
