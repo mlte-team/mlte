@@ -7,6 +7,18 @@ Unit tests for origin utilities.
 from typing import List
 
 
+def _removeprefix(text: str, prefix: str) -> str:
+    """
+    Remove a prefix from a string.
+    :param text: The input text
+    :param prefix: The target prefix
+    :return: The modified string
+    """
+    if text.startswith(prefix):
+        return text[len(prefix) :]
+    return text
+
+
 def is_localhost(origin: str) -> bool:
     """
     Determine if an origin is localhost.
@@ -15,7 +27,7 @@ def is_localhost(origin: str) -> bool:
     """
     host = origin
     for protocol in ["http://", "https://"]:
-        host = host.removeprefix(protocol)
+        host = _removeprefix(host, protocol)
 
     host = host.split(":")[0]
     return host == "localhost"
