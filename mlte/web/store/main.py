@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic.networks import HttpUrl
 
 import mlte.web.store.app_factory as app_factory
+import mlte.web.store.util.origins as util
 from mlte.store.base import StoreType
 from mlte.store.factory import create_store
 from mlte.web.store.api.api import api_router
@@ -45,6 +46,9 @@ def run(
     :param allowed_origins: A list of allowed CORS origins
     :return: Return code
     """
+    # Resolve hosts
+    allowed_origins = util.resolve_hosts(allowed_origins)
+    # Validate resolved origins
     _ = _validate_origins(allowed_origins)
 
     # The global FastAPI application
