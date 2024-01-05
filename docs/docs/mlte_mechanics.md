@@ -3,7 +3,7 @@
 This section provides insight into the mechanics required to use the `MLTE` Python package. If you're looking for a more comprehensive guide that covers the framework and how to implement it using the package, see the [Using MLTE](using_mlte.md) Guide.
 
 ## Install `MLTE`
-You can install *`MLTE`* with
+You can install `MLTE` with
 
 ```bash
 $ pip install mlte-python
@@ -51,24 +51,7 @@ set_context("ns", "OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
 ```
 
-### Run the `MLTE` UI
-
-Once the context is initialized, you can view all your artifacts in the front end if you choose. To use the user interface (UI), run the following in your command line:
-
-```bash
-$ mlte ui
-```
-
-In order for the frontend to be able to communicate with the store you will need to allow the frontend as an origin.
-This can be done by specifying the `--allowed-origins` flag when running the store. 
-
-When ran through the `MLTE` package, the frontend will be hosted at `http://localhost:8000` so the store command will look like this:
-
-```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
-```
-
-Once you run it, go to the hosted address to view the `MLTE` UI homepage. 
+Note that running this code merely sets the context, it does *NOT* establish a namespace. To do so, we have to save our first artifact. When you save an artifact, `MLTE` draws on the context you set and then creates the namespace, which will allow you to then view your arifacts in the MLTE user interface (UI).
 
 ## 2. Define a Specification
 
@@ -102,7 +85,9 @@ For this scenario, our `Spec` includes the following properties and conditions:
 
 ### Building the `Spec`
 
-Now that we've defined the properties and conditions for this scenario, we can build the `Spec` in code.
+Now that we've defined the properties and conditions for this scenario, we can build the `Spec` in code. 
+
+*NOTE:* to run this code, you'll need to download the supporting files from the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">demo folder</a> in the `MLTE` repository as it uses functions from those files.
 
 ```python
 from mlte.spec.spec import Spec
@@ -169,6 +154,26 @@ spec = Spec(
 )
 spec.save(parents=True, force=True)
 ```
+
+### Run the `MLTE` UI
+
+Once the context is initialized and you've created your first artifact, you can view them in the front end if you choose. To use the UI, you'll need to run both the front end and the back end using two shells.
+
+To run the front end:
+
+```bash
+$ mlte ui
+```
+
+To run the back end: 
+
+```bash
+$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+```
+
+This allows the front end to be able to communicate with the store by allowing the requisite origin. The front end is hosted at `http://localhost:8000`.
+
+Once you are running both the front and back ends in two shells, you can go to the hosted address to view the `MLTE` UI homepage. You should see the namespace you created on the lefthand side, and you should see the `Spec` we created above under the Specifications section of the artifacts.
 
 ## 3. Collect Evidence
 
