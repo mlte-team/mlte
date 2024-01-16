@@ -51,7 +51,7 @@ class CatalogEntryModel(BaseModel):
     """The actual code for the entry."""
 
     description: str
-    """The description of the code for the entry."""    
+    """The description of the code for the entry."""
 
     inputs: str
     """The input for the entry."""
