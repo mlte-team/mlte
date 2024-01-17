@@ -6,7 +6,7 @@ Common utilities for store implementations.
 
 import mlte.store.error as errors
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.artifact.artifact_store import ArtifactStoreSession
+from mlte.store.artifact.store import ArtifactStoreSession
 
 
 def create_parents(

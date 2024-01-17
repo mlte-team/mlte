@@ -15,7 +15,7 @@ from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.session.state import set_context, set_store
 from mlte.spec.spec import Spec
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real

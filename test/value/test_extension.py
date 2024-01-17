@@ -12,7 +12,7 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.base import ValueBase
 
 from ..fixture.store import store_with_context  # noqa

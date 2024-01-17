@@ -4,7 +4,7 @@ mlte/store/artifact/factory.py
 Top-level functions for artifact store creation.
 """
 
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.artifact.underlying.memory import InMemoryStore

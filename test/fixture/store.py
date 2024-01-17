@@ -12,11 +12,8 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.artifact.artifact_store import (
-    ArtifactStore,
-    ManagedArtifactSession,
-)
 from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 
 # The namespace identifier for default context
 FX_NAMESPACE_ID = "ns0"

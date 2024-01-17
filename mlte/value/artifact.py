@@ -15,7 +15,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.model import ValueModel
 
 

@@ -27,10 +27,7 @@ from mlte.report.model import (
     ReportModel,
     SummaryDescriptor,
 )
-from mlte.store.artifact.artifact_store import (
-    ArtifactStore,
-    ManagedArtifactSession,
-)
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 
 DEFAULT_REPORT_ID = "default.report"
 

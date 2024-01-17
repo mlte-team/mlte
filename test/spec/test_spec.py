@@ -15,7 +15,7 @@ from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 
 from ..fixture.store import store_with_context  # noqa
 

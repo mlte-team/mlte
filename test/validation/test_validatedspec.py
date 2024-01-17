@@ -14,7 +14,7 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Result
 from mlte.validation.spec_validator import SpecValidator
 from mlte.validation.validated_spec import ValidatedSpec

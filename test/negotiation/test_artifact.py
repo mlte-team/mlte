@@ -13,7 +13,7 @@ import pytest
 import mlte.store.error as errors
 from mlte.context.context import Context
 from mlte.negotiation.artifact import NegotiationCard
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 
 from ..fixture.store import store  # noqa
 from ..fixture.store import store_with_context  # noqa

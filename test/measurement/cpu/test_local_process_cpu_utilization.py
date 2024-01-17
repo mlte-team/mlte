@@ -18,7 +18,7 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Failure, Success
 
 from ...fixture.store import store_with_context  # noqa

@@ -20,11 +20,8 @@ from mlte.context.model import (
     Version,
     VersionCreate,
 )
-from mlte.store.artifact.artifact_store import (
-    ArtifactStore,
-    ArtifactStoreSession,
-)
 from mlte.store.artifact.query import Query
+from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 
 # The prefix that indicates a local filesystem directory is used

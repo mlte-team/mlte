@@ -7,8 +7,8 @@ Session state management for the MLTE library.
 from typing import Optional
 
 from mlte.context import Context
-from mlte.store.artifact.artifact_store import ArtifactStore
 from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.store import ArtifactStore
 
 
 class Session:

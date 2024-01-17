@@ -8,7 +8,7 @@ from typing import Tuple
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.artifact import Value
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real

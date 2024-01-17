@@ -6,7 +6,7 @@ Globally-accessible application state.
 
 from typing import Optional
 
-from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.store import ArtifactStore
 
 
 class State:
