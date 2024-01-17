@@ -1,5 +1,5 @@
 """
-mlte/store/underlying/http.py
+mlte/store/artifact/underlying/http.py
 
 Implementation of remote HTTP artifact store.
 """

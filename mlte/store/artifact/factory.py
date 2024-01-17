@@ -1,5 +1,5 @@
 """
-mlte/store/factory.py
+mlte/store/artifact/factory.py
 
 Top-level functions for artifact store creation.
 """

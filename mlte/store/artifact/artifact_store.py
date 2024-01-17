@@ -1,5 +1,5 @@
 """
-mlte/store/base.py
+mlte/store/artifact/artifact_store.py
 
 MLTE artifact store interface implementation.
 """

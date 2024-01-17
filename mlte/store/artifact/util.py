@@ -1,5 +1,5 @@
 """
-mlte/store/util.py
+mlte/store/artifact/util.py
 
 Common utilities for store implementations.
 """

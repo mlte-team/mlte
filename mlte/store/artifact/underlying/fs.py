@@ -1,5 +1,5 @@
 """
-mlte/store/underlying/fs.py
+mlte/store/artifact/underlying/fs.py
 
 Implementation of local file system artifact store.
 """

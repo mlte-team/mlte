@@ -1,5 +1,5 @@
 """
-mlte/store/underlying/memory.py
+mlte/store/artifact/underlying/memory.py
 
 Implementation of in-memory artifact store.
 """
