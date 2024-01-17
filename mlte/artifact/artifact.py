@@ -11,12 +11,12 @@ import time
 from typing import Optional
 
 import mlte._private.meta as meta
-import mlte.store.query as query
+import mlte.store.artifact.query as query
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.session.state import session
-from mlte.store.base import ManagedSession, Store
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 
 
 class Artifact(metaclass=abc.ABCMeta):
@@ -63,7 +63,7 @@ class Artifact(metaclass=abc.ABCMeta):
             "Artifact.from_model() not implemented for abstract Artifact."
         )
 
-    def pre_save_hook(self, context: Context, store: Store) -> None:
+    def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         A method that artifact subclasses can override to enforce pre-save invariants.
         :param context: The context in which to save the artifact
@@ -73,7 +73,7 @@ class Artifact(metaclass=abc.ABCMeta):
         # Default implementation is a no-op
         pass
 
-    def post_load_hook(self, context: Context, store: Store) -> None:
+    def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         A method that artifact subclasses may override to enforce post-load invariants.
         :param context: The context in which to save the artifact
@@ -101,7 +101,7 @@ class Artifact(metaclass=abc.ABCMeta):
     def save_with(
         self,
         context: Context,
-        store: Store,
+        store: ArtifactStore,
         *,
         force: bool = False,
         parents: bool = False,
@@ -118,7 +118,7 @@ class Artifact(metaclass=abc.ABCMeta):
 
         artifact_model = self.to_model()
         artifact_model.header.timestamp = int(time.time())
-        with ManagedSession(store.session()) as handle:
+        with ManagedArtifactSession(store.session()) as handle:
             handle.write_artifact(
                 context.namespace,
                 context.model,
@@ -143,7 +143,11 @@ class Artifact(metaclass=abc.ABCMeta):
 
     @classmethod
     def load_with(
-        cls, identifier: Optional[str] = None, *, context: Context, store: Store
+        cls,
+        identifier: Optional[str] = None,
+        *,
+        context: Context,
+        store: ArtifactStore,
     ) -> Artifact:
         """
         Load an artifact with the given context and store configuration.
@@ -154,7 +158,7 @@ class Artifact(metaclass=abc.ABCMeta):
         if identifier is None:
             identifier = cls.get_default_id()
 
-        with ManagedSession(store.session()) as handle:
+        with ManagedArtifactSession(store.session()) as handle:
             artifact = cls.from_model(
                 handle.read_artifact(
                     context.namespace,
@@ -176,10 +180,10 @@ class Artifact(metaclass=abc.ABCMeta):
 
     @staticmethod
     def load_all_models_with(
-        artifact_type: ArtifactType, context: Context, store: Store
+        artifact_type: ArtifactType, context: Context, store: ArtifactStore
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""
-        with ManagedSession(store.session()) as handle:
+        with ManagedArtifactSession(store.session()) as handle:
             query_instance = query.Query(
                 filter=query.ArtifactTypeFilter(
                     type=query.FilterType.TYPE, artifact_type=artifact_type

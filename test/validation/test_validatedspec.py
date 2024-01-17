@@ -14,7 +14,7 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Result
 from mlte.validation.spec_validator import SpecValidator
 from mlte.validation.validated_spec import ValidatedSpec
@@ -23,7 +23,7 @@ from mlte.value.types.integer import Integer
 from ..fixture.store import store_with_context  # noqa
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
+def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     spec = Spec(

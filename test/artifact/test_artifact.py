@@ -15,7 +15,7 @@ from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.session.state import set_context, set_store
 from mlte.spec.spec import Spec
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
@@ -40,7 +40,7 @@ def test_save_load_session() -> None:
     _ = NegotiationCard.load("my-card")
 
 
-def fill_test_store(ctx: Context, store: Store):
+def fill_test_store(ctx: Context, store: ArtifactStore):
     """Fills a sample store."""
     n1 = NegotiationCard("test-card")
     n2 = NegotiationCard("test-card2")
@@ -74,7 +74,7 @@ def fill_test_store(ctx: Context, store: Store):
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_load_all_models(
     artifact_type: ArtifactType,
-    store_with_context: Tuple[Store, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ):
     """
     Loading all models of a given type.

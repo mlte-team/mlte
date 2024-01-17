@@ -8,7 +8,7 @@ from typing import Tuple
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.artifact import Value
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
@@ -17,7 +17,7 @@ from ..fixture.store import store_with_context  # noqa
 
 
 def test_load_all(
-    store_with_context: Tuple[Store, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ):
     """
     Loading all models of a given type.

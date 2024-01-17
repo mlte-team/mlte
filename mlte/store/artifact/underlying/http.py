@@ -1,5 +1,5 @@
 """
-mlte/store/underlying/http.py
+mlte/store/artifact/underlying/http.py
 
 Implementation of remote HTTP artifact store.
 """
@@ -23,8 +23,9 @@ from mlte.context.model import (
     Version,
     VersionCreate,
 )
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.store.query import Query
+from mlte.store.artifact.query import Query
+from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.base import StoreURI
 from mlte.web.store.api.model import WriteArtifactRequest
 
 # -----------------------------------------------------------------------------
@@ -81,7 +82,7 @@ class RequestsClient(RemoteHttpStoreClient):
 # -----------------------------------------------------------------------------
 
 
-class RemoteHttpStoreSession(StoreSession):
+class RemoteHttpStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
     def __init__(self, *, url: str, client: RemoteHttpStoreClient) -> None:
@@ -302,7 +303,7 @@ def raise_for_response(response: requests.Response) -> None:
         raise errors.InternalError(f"{response.json()}")
 
 
-class RemoteHttpStore(Store):
+class RemoteHttpStore(ArtifactStore):
     """A remote HTTP implementation of the MLTE artifact store."""
 
     def __init__(
