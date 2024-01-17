@@ -13,7 +13,7 @@ import pytest
 import mlte.store.error as errors
 from mlte.context.context import Context
 from mlte.negotiation.artifact import NegotiationCard
-from mlte.store.base import Store
+from mlte.store.artifact.artifact_store import ArtifactStore
 
 from ..fixture.store import store  # noqa
 from ..fixture.store import store_with_context  # noqa
@@ -29,7 +29,9 @@ def test_round_trip() -> None:
     _ = NegotiationCard.from_model(model)
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
+def test_save_load(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+) -> None:
     """Negotiation card can be saved to and loaded from artifact store."""
     store, ctx = store_with_context  # noqa
 
@@ -40,7 +42,7 @@ def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
     assert loaded == card
 
 
-def test_save_noparents(store: Store) -> None:  # noqa
+def test_save_noparents(store: ArtifactStore) -> None:  # noqa
     """Save fails when no parents are present."""
     ctx = Context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
 
@@ -49,7 +51,7 @@ def test_save_noparents(store: Store) -> None:  # noqa
         card.save_with(ctx, store)
 
 
-def test_save_parents(store: Store) -> None:  # noqa
+def test_save_parents(store: ArtifactStore) -> None:  # noqa
     """Save succeeds when parents are present."""
     ctx = Context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
 
@@ -58,7 +60,7 @@ def test_save_parents(store: Store) -> None:  # noqa
 
 
 def test_save_overwrite(
-    store_with_context: Tuple[Store, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ) -> None:
     """Save succeeds when old artifact is overwritten."""
     store, ctx = store_with_context  # noqa

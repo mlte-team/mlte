@@ -15,7 +15,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.store.base import Store
+from mlte.store.artifact.artifact_store import ArtifactStore
 from mlte.value.model import ValueModel
 
 
@@ -70,7 +70,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         return Value._load_from_models(value_models)
 
     @staticmethod
-    def load_all_with(context: Context, store: Store) -> list[Value]:
+    def load_all_with(context: Context, store: ArtifactStore) -> list[Value]:
         """Loads all artifact models of the given type for the given context and store."""
         value_models = Value.load_all_models_with(
             ArtifactType.VALUE, context, store

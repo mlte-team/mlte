@@ -14,15 +14,15 @@ from fastapi.testclient import TestClient
 
 import mlte.web.store.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
-from mlte.store.base import StoreURI
-from mlte.store.factory import create_store
-from mlte.store.underlying.fs import LocalFileSystemStore
-from mlte.store.underlying.http import (
+from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.underlying.fs import LocalFileSystemStore
+from mlte.store.artifact.underlying.http import (
     ClientType,
     RemoteHttpStore,
     RemoteHttpStoreClient,
 )
-from mlte.store.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.base import StoreURI
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state

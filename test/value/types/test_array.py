@@ -13,7 +13,7 @@ import pytest
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import Measurement
-from mlte.store.base import Store
+from mlte.store.artifact.artifact_store import ArtifactStore
 from mlte.value.types.array import Array
 
 from ...fixture.store import store_with_context  # noqa
@@ -70,7 +70,9 @@ def test_serde() -> None:
     assert e == o
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
+def test_save_load(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+) -> None:
     """Array can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.query import Query
+from mlte.store.artifact.query import Query
 from mlte.web.store.api.model import WriteArtifactRequest
 
 from ...fixture.artifact import ArtifactFactory

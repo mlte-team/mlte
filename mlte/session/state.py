@@ -7,8 +7,8 @@ Session state management for the MLTE library.
 from typing import Optional
 
 from mlte.context import Context
-from mlte.store.base import Store
-from mlte.store.factory import create_store
+from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.factory import create_store
 
 
 class Session:
@@ -30,7 +30,7 @@ class Session:
         self._context: Optional[Context] = None
         """The MLTE context for the session."""
 
-        self._store: Optional[Store] = None
+        self._store: Optional[ArtifactStore] = None
         """The MLTE store instance for the session."""
 
     @property
@@ -40,7 +40,7 @@ class Session:
         return self._context
 
     @property
-    def store(self) -> Store:
+    def store(self) -> ArtifactStore:
         if self._store is None:
             raise RuntimeError("Must initialize MLTE store for session.")
         return self._store
@@ -49,7 +49,7 @@ class Session:
         """Set the session context."""
         self._context = context
 
-    def _set_store(self, store: Store) -> None:
+    def _set_store(self, store: ArtifactStore) -> None:
         """Set the session store."""
         self._store = store
 

@@ -4,13 +4,14 @@ mlte/store/factory.py
 Top-level functions for artifact store creation.
 """
 
-from mlte.store.base import Store, StoreType, StoreURI
-from mlte.store.underlying.fs import LocalFileSystemStore
-from mlte.store.underlying.http import RemoteHttpStore
-from mlte.store.underlying.memory import InMemoryStore
+from mlte.store.artifact.artifact_store import ArtifactStore
+from mlte.store.artifact.underlying.fs import LocalFileSystemStore
+from mlte.store.artifact.underlying.http import RemoteHttpStore
+from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.base import StoreType, StoreURI
 
 
-def create_store(uri: str) -> Store:
+def create_store(uri: str) -> ArtifactStore:
     """
     Create a MLTE artifact store instance.
     :param uri: The URI for the store instance

@@ -9,8 +9,8 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List
 
+import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
-import mlte.store.util as storeutil
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
     Model,
@@ -20,8 +20,12 @@ from mlte.context.model import (
     Version,
     VersionCreate,
 )
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.store.query import Query
+from mlte.store.artifact.artifact_store import (
+    ArtifactStore,
+    ArtifactStoreSession,
+)
+from mlte.store.artifact.query import Query
+from mlte.store.base import StoreURI
 
 # The prefix that indicates a local filesystem directory is used
 LOCAL_URI_PREFIX = "local://"
@@ -84,7 +88,7 @@ class JsonFileStorage:
 # -----------------------------------------------------------------------------
 
 
-class LocalFileSystemStoreSession(StoreSession):
+class LocalFileSystemStoreSession(ArtifactStoreSession):
     """A local file-system implementation of the MLTE artifact store."""
 
     def __init__(self, uri: str, storage: JsonFileStorage) -> None:
@@ -445,7 +449,7 @@ class LocalFileSystemStoreSession(StoreSession):
         )
 
 
-class LocalFileSystemStore(Store):
+class LocalFileSystemStore(ArtifactStore):
     """A local file system implementation of the MLTE artifact store."""
 
     def __init__(self, uri: StoreURI) -> None:
