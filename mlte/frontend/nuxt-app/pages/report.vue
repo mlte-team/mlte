@@ -59,7 +59,9 @@
       </thead>
       <tbody>
         <tr v-for="finding in form.findings" :key="finding.evidence_id">
-          <td>{{ finding.status }}</td>
+          <td v-if="finding.status == 'Success'" style="background-color: rgba(210,232,221,255)">{{ finding.status }}</td>
+          <td v-if="finding.status == 'Ignore'" style="background-color: rgba(255,243,205,255)">{{ finding.status }}</td>
+          <td v-if="finding.status == 'Failure'" style="background-color: rgba(248,216,219,255)">{{ finding.status }}</td>
           <td>{{ finding.property }}</td>
           <td>{{ finding.measurement }}</td>
           <td>{{ finding.evidence_id }}</td>
@@ -439,9 +441,12 @@ async function fetchArtifact(
   );
 
   // TODO(Kyle): Error handling.
-  if (status._value !== "success") {
-    return null;
-  }
+  // Alex: Accessing status._value causes a weird error where it doesn't show any error, but the findings don't populate
+  // Commenting this out "fixes" that. Only seems to happen on my machine which is very odd. But status isn't an actual
+  // return from useFetch so error handling with have to happen differently
+  // if (status._value !== "success") {
+  //   return null;
+  // }
 
   return data._value;
 }
