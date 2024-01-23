@@ -15,17 +15,17 @@ solution that involves manual context management with a global state object.
 from contextlib import contextmanager
 from typing import Generator
 
-from mlte.store.base import StoreSession
+from mlte.store.artifact.store import ArtifactStoreSession
 from mlte.web.store.state import state
 
 
 @contextmanager
-def session() -> Generator[StoreSession, None, None]:
+def session() -> Generator[ArtifactStoreSession, None, None]:
     """
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session = state.store.session()
+    session: ArtifactStoreSession = state.store.session()
     try:
         yield session
     finally:

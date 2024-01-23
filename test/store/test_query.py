@@ -7,7 +7,7 @@ Unit tests for store query functionality.
 import pytest
 
 from mlte.artifact.type import ArtifactType
-from mlte.store.query import (
+from mlte.store.artifact.query import (
     AllFilter,
     AndFilter,
     ArtifactIdentifierFilter,

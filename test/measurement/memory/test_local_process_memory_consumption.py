@@ -17,7 +17,7 @@ from mlte.measurement.memory import (
     MemoryStatistics,
 )
 from mlte.spec.condition import Condition
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Failure, Success
 
 from ...fixture.store import store_with_context  # noqa
@@ -94,7 +94,7 @@ def test_memory_validate_failure() -> None:
 
 
 def test_result_save_load(
-    store_with_context: Tuple[Store, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ) -> None:
     store, ctx = store_with_context
 

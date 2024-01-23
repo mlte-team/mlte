@@ -1,5 +1,5 @@
 """
-mlte/store/underlying/memory.py
+mlte/store/artifact/underlying/memory.py
 
 Implementation of in-memory artifact store.
 """
@@ -9,8 +9,8 @@ from __future__ import annotations
 from collections import OrderedDict
 from typing import Dict, List
 
+import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
-import mlte.store.util as storeutil
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
     Model,
@@ -20,8 +20,9 @@ from mlte.context.model import (
     Version,
     VersionCreate,
 )
-from mlte.store.base import Store, StoreSession, StoreURI
-from mlte.store.query import Query
+from mlte.store.artifact.query import Query
+from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.base import StoreURI
 
 # -----------------------------------------------------------------------------
 # Data Structures
@@ -73,7 +74,7 @@ class Storage:
 # -----------------------------------------------------------------------------
 
 
-class InMemoryStoreSession(StoreSession):
+class InMemoryStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
     def __init__(self, *, storage: Storage) -> None:
@@ -395,7 +396,7 @@ class InMemoryStoreSession(StoreSession):
         return model.versions[version_id]
 
 
-class InMemoryStore(Store):
+class InMemoryStore(ArtifactStore):
     """An in-memory implementation of the MLTE artifact store."""
 
     def __init__(self, uri: StoreURI) -> None:

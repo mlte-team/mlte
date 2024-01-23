@@ -12,7 +12,7 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.base import ValueBase
 
 from ..fixture.store import store_with_context  # noqa
@@ -77,7 +77,9 @@ def test_model() -> None:
     assert r == cm
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
+def test_save_load(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+) -> None:
     """Confusion matrix can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

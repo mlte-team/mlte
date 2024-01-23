@@ -15,12 +15,12 @@ from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 
 from ..fixture.store import store_with_context  # noqa
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
+def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     s = Spec(
@@ -37,7 +37,9 @@ def test_save_load(store_with_context: Tuple[Store, Context]):  # noqa
     assert s == loaded
 
 
-def test_save_load_default(store_with_context: Tuple[Store, Context]):  # noqa
+def test_save_load_default(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+):
     store, ctx = store_with_context
 
     s = Spec(
@@ -53,7 +55,9 @@ def test_save_load_default(store_with_context: Tuple[Store, Context]):  # noqa
     assert s == loaded
 
 
-def test_load_failure(store_with_context: Tuple[Store, Context]):  # noqa
+def test_load_failure(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+):
     store, ctx = store_with_context
     with pytest.raises(RuntimeError):
         _ = Spec.load_with("spec", context=ctx, store=store)
@@ -70,7 +74,7 @@ def test_non_unique_properties():
 
 
 def test_save_load_extended_property(
-    store_with_context: Tuple[Store, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ):
     store, ctx = store_with_context
 

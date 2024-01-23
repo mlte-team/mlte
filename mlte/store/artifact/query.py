@@ -1,5 +1,5 @@
 """
-mlte/store/query.py
+mlte/store/artifact/query.py
 
 Query and filtering functionality for store operations.
 """
