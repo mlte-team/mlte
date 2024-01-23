@@ -13,7 +13,7 @@ import requests
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 from mlte.value.types.image import Image
 
 from ...fixture.store import store_with_context  # noqa
@@ -71,7 +71,7 @@ def test_from_bytes(tmp_path):
 
 
 def test_save_load(
-    tmp_path, store_with_context: Tuple[Store, Context]  # noqa
+    tmp_path, store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

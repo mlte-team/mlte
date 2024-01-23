@@ -11,7 +11,7 @@ from mlte.model.shared import ProblemType
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.report.model import SummaryDescriptor
-from mlte.store.base import Store
+from mlte.store.artifact.store import ArtifactStore
 
 from ..fixture.store import store_with_context  # noqa
 
@@ -25,7 +25,9 @@ def test_round_trip() -> None:
     _ = Report.from_model(model)
 
 
-def test_save_load(store_with_context: Tuple[Store, Context]) -> None:  # noqa
+def test_save_load(
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+) -> None:
     """Report can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 

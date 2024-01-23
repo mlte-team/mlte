@@ -27,7 +27,7 @@ from mlte.report.model import (
     ReportModel,
     SummaryDescriptor,
 )
-from mlte.store.base import ManagedSession, Store
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 
 DEFAULT_REPORT_ID = "default.report"
 
@@ -90,7 +90,7 @@ class Report(Artifact):
             ),
         )
 
-    def pre_save_hook(self, context: Context, store: Store) -> None:
+    def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         Override Artifact.pre_save_hook().
         :param context: The context in which to save the artifact
@@ -100,7 +100,7 @@ class Report(Artifact):
         if self.validated_spec_id is None:
             return
 
-        with ManagedSession(store.session()) as handle:
+        with ManagedArtifactSession(store.session()) as handle:
             try:
                 artifact = handle.read_artifact(
                     context.namespace,
@@ -118,7 +118,7 @@ class Report(Artifact):
                 f"Validated specification with identifier {self.validated_spec_id} not found."
             )
 
-    def post_load_hook(self, context: Context, store: Store) -> None:
+    def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         Override Artifact.post_load_hook().
         :param context: The context in which to save the artifact

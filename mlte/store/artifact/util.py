@@ -1,16 +1,19 @@
 """
-mlte/store/util.py
+mlte/store/artifact/util.py
 
 Common utilities for store implementations.
 """
 
 import mlte.store.error as errors
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.base import StoreSession
+from mlte.store.artifact.store import ArtifactStoreSession
 
 
 def create_parents(
-    session: StoreSession, namespace_id: str, model_id: str, version_id: str
+    session: ArtifactStoreSession,
+    namespace_id: str,
+    model_id: str,
+    version_id: str,
 ) -> None:
     """
     Create organizational elements within a store. If they exist, this operation is a noop.

@@ -1,7 +1,7 @@
 """
 mlte/store/error.py
 
-Error definitions for artifact store implementations.
+Error definitions for store implementations.
 """
 
 
