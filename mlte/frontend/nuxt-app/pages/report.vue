@@ -442,12 +442,9 @@ async function fetchArtifact(
   );
 
   // TODO(Kyle): Error handling.
-  // Alex: Accessing status._value causes a weird error where it doesn't show any error, but the findings don't populate
-  // Commenting this out "fixes" that. Only seems to happen on my machine which is very odd. But status isn't an actual
-  // return from useFetch so error handling with have to happen differently
-  // if (status._value !== "success") {
-  //   return null;
-  // }
+  if (status._value !== "success") {
+    return null;
+  }
 
   return data._value;
 }
