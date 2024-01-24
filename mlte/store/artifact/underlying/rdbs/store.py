@@ -6,6 +6,8 @@ Implementation of relational database system artifact store.
 
 from typing import List
 
+import sqlalchemy
+
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
     Model,
@@ -27,12 +29,13 @@ from mlte.store.base import StoreURI
 class RelationalDBStoreSession(ArtifactStoreSession):
     """A local file-system implementation of the MLTE artifact store."""
 
-    def __init__(self, uri: str) -> None:
-        raise NotImplementedError("Not implemented")
+    def __init__(self, storage: sqlalchemy.engine.Engine) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
 
     def close(self) -> None:
         """Close the session."""
-        raise NotImplementedError("Not implemented")
+        self.storage.dispose()
 
     # -------------------------------------------------------------------------
     # Structural Elements
@@ -138,11 +141,14 @@ class RelationalDBStore(ArtifactStore):
     """A local file system implementation of the MLTE artifact store."""
 
     def __init__(self, uri: StoreURI) -> None:
-        raise NotImplementedError("Not implemented")
+        super().__init__(uri=uri)
+
+        self.storage = sqlalchemy.create_engine(uri.uri, echo=True)
+        """The underlying storage for the store."""
 
     def session(self) -> RelationalDBStoreSession:  # type: ignore[override]
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        raise NotImplementedError("Not implemented")
+        return RelationalDBStoreSession(storage=self.storage)
