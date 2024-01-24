@@ -1,5 +1,5 @@
 """
-mlte/store/artifact/underlying/rdbs.py
+mlte/store/artifact/underlying/rdbs/store.py
 
 Implementation of relational database system artifact store.
 """
