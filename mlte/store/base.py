@@ -25,6 +25,30 @@ class StoreType(Enum):
     REMOTE_HTTP = "remote_http"
     """A remote HTTP implementation."""
 
+    RELATIONAL_DB = "relational_db"
+    """A relational database system implementation."""
+
+
+# -----------------------------------------------------------------------------
+# StoreURIPrefix
+# -----------------------------------------------------------------------------
+
+
+class StoreURIPrefix:
+    """Represents the valid prefixes for a MLTE store URI."""
+
+    LOCAL_MEMORY = ["memory://"]
+    """The in-memory store prefix."""
+
+    LOCAL_FILESYSTEM = ["fs://", "local://"]
+    """The local filesystem prefixes."""
+
+    REMOTE_HTTP = ["http://"]
+    """The remote HTTP prefix."""
+
+    RELATIONAL_DB = ["sqlite", "mysql", "postgresql", "oracle", "mssql"]
+    """The relational database system prefixes."""
+
 
 # -----------------------------------------------------------------------------
 # StoreURI
@@ -53,12 +77,14 @@ class StoreURI:
         :param uri: The URI
         :return: The parsed StoreURI
         """
-        if uri.startswith("memory://"):
+        if uri.startswith(tuple(StoreURIPrefix.LOCAL_MEMORY)):
             return StoreURI(uri, StoreType.LOCAL_MEMORY)
-        if uri.startswith("fs://") or uri.startswith("local://"):
+        if uri.startswith(tuple(StoreURIPrefix.LOCAL_FILESYSTEM)):
             return StoreURI(uri, StoreType.LOCAL_FILESYSTEM)
-        if uri.startswith("http://"):
+        if uri.startswith(tuple(StoreURIPrefix.REMOTE_HTTP)):
             return StoreURI(uri, StoreType.REMOTE_HTTP)
+        if uri.startswith(tuple(StoreURIPrefix.RELATIONAL_DB)):
+            return StoreURI(uri, StoreType.RELATIONAL_DB)
         raise RuntimeError(f"Unrecognized backend URI: {uri}.")
 
 
