@@ -153,24 +153,9 @@
                       },
                     }"
                   >
-                    <UsaButton :disabled="true" class="primary-button">
+                    <UsaButton class="primary-button">
                       Edit
                     </UsaButton>
-                  </NuxtLink>
-                </td>
-                <td>
-                  <NuxtLink
-                    :to="{
-                      path: 'report',
-                      query: {
-                        namespace: selectedNamespace,
-                        model: report.model,
-                        version: report.version,
-                        artifactId: report.id,
-                      },
-                    }"
-                  >
-                    <UsaButton class="primary-button"> View </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>

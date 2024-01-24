@@ -435,7 +435,7 @@
     </div>
 
     <div style="text-align: right; margin-top: 1em">
-      <UsaButton class="secondary-button" @click="cancel()"> Cancel </UsaButton>
+      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')"> Cancel </UsaButton>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
   </NuxtLayout>

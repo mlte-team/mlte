@@ -7,10 +7,10 @@
     <h2>Model Summary</h2>
     <p>A summary of the model under evaluation.</p>
 
-    <UsaTextInput :model-value="form.summary.problem_type" disabled>
+    <UsaTextInput :model-value="form.summary.problem_type">
       <template #label> Problem Type </template>
     </UsaTextInput>
-    <UsaTextInput :model-value="form.summary.task" disabled>
+    <UsaTextInput :model-value="form.summary.task">
       <template #label> Task </template>
     </UsaTextInput>
 
@@ -27,19 +27,19 @@
     >
       <h3>Goal {{ goalIndex + 1 }}</h3>
 
-      <UsaTextInput v-model="goal.description" disabled>
+      <UsaTextInput v-model="goal.description">
         <template #label> Goal Description </template>
       </UsaTextInput>
       <h4 class="no-margin-section-header">Metrics</h4>
       <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
         <div class="inline-input-left">
-          <UsaTextInput v-model="metric.description" disabled>
+          <UsaTextInput v-model="metric.description">
             <template #label> Description </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="metric.baseline" disabled>
+          <UsaTextInput v-model="metric.baseline">
             <template #label> Baseline </template>
           </UsaTextInput>
         </div>
@@ -73,10 +73,10 @@
 
     <h2>Intended Use</h2>
     <p>A description of how the model is intended to be used.</p>
-    <UsaTextarea :model-value="form.intended_use.context" disabled></UsaTextarea>
+    <UsaTextarea :model-value="form.intended_use.context"></UsaTextarea>
 
     <UsaTextarea
-      v-model="form.intended_use.production_requirements.integration" disabled
+      v-model="form.intended_use.production_requirements.integration"
     >
       <template #label>
         A description of model integration practices.
@@ -87,7 +87,6 @@
       v-model="
         form.intended_use.production_requirements.interface.input.description
       "
-      disabled
     >
       <template #label> Model input description. </template>
     </UsaTextInput>
@@ -96,7 +95,6 @@
       v-model="
         form.intended_use.production_requirements.interface.output.description
       "
-      disabled
     >
       <template #label> Mode output description. </template>
     </UsaTextInput>
@@ -106,7 +104,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.gpu" disabled
+            v-model="form.intended_use.production_requirements.resources.gpu"
           >
             <template #label> GPU </template>
           </UsaTextInput>
@@ -114,7 +112,7 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.cpu" disabled
+            v-model="form.intended_use.production_requirements.resources.cpu"
           >
             <template #label> CPU </template>
           </UsaTextInput>
@@ -124,7 +122,7 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.memory" disabled
+            v-model="form.intended_use.production_requirements.resources.memory"
           >
             <template #label> Memory </template>
           </UsaTextInput>
@@ -135,7 +133,6 @@
             v-model="
               form.intended_use.production_requirements.resources.storage
             "
-            disabled
           >
             <template #label> Storage </template>
           </UsaTextInput>
@@ -144,15 +141,15 @@
     </div>
 
     <h3>Risks</h3>
-    <UsaTextInput v-model="form.risks.fp" disabled>
+    <UsaTextInput v-model="form.risks.fp">
       <template #label> False Positive Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.fn" disabled>
+    <UsaTextInput v-model="form.risks.fn">
       <template #label> False Negative Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.other" disabled>
+    <UsaTextInput v-model="form.risks.other">
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
@@ -162,25 +159,25 @@
     <div class="input-group">
       <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
         <h4>Dataset {{ dataItemIndex + 1 }}</h4>
-        <UsaTextInput v-model="dataItem.access" disabled>
+        <UsaTextInput v-model="dataItem.access">
           <template #label> Account Access / Account Availability </template>
         </UsaTextInput>
 
         <div>
           <div class="inline-input-left">
-            <UsaTextInput v-model="dataItem.description" disabled>
+            <UsaTextInput v-model="dataItem.description">
               <template #label> Data Description </template>
             </UsaTextInput>
           </div>
 
           <div class="inline-input-right">
-            <UsaTextInput v-model="dataItem.source" disabled>
+            <UsaTextInput v-model="dataItem.source">
               <template #label> Source Data Location </template>
             </UsaTextInput>
           </div>
         </div>
 
-        <UsaTextInput v-model="dataItem.classification" disabled>
+        <UsaTextInput v-model="dataItem.classification">
           <template #label> Data Classification </template>
         </UsaTextInput>
 
@@ -188,13 +185,13 @@
           <h4 class="no-margin-section-header">Data Ontology</h4>
           <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
             <div class="inline-input-left">
-              <UsaTextInput v-model="label.description" disabled>
+              <UsaTextInput v-model="label.description">
                 <template #label> Label Description </template>
               </UsaTextInput>
             </div>
 
             <div class="inline-input-right">
-              <UsaTextInput v-model="label.percentage" type="number" disabled>
+              <UsaTextInput v-model="label.percentage" type="number">
                 <template #label> Percentage </template>
               </UsaTextInput>
             </div>
@@ -206,13 +203,13 @@
           <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.name" disabled>
+                <UsaTextInput v-model="field.name">
                   <template #label> Field Name </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.description" disabled>
+                <UsaTextInput v-model="field.description">
                   <template #label> Field Description </template>
                 </UsaTextInput>
               </div>
@@ -220,13 +217,13 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.type" disabled>
+                <UsaTextInput v-model="field.type">
                   <template #label> Field Type </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.expected_values" disabled>
+                <UsaTextInput v-model="field.expected_values">
                   <template #label> Expected Values </template>
                 </UsaTextInput>
               </div>
@@ -234,13 +231,13 @@
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="field.missing_values" disabled>
+                <UsaTextInput v-model="field.missing_values">
                   <template #label> Missing Values </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="field.special_values" disabled>
+                <UsaTextInput v-model="field.special_values">
                   <template #label> Special Values </template>
                 </UsaTextInput>
               </div>
@@ -249,15 +246,15 @@
           </div>
         </div>
 
-        <UsaTextInput v-model="dataItem.rights" disabled>
+        <UsaTextInput v-model="dataItem.rights">
           <template #label> Data Rights </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="dataItem.policies" disabled>
+        <UsaTextInput v-model="dataItem.policies">
           <template #label> Data Policies </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="dataItem.identifiable_information" disabled>
+        <UsaTextInput v-model="dataItem.identifiable_information">
           <template #label> Identifiable Information </template>
         </UsaTextInput>
       </div>
@@ -267,20 +264,20 @@
     <p>Free-form comments from model developers and system integrators.</p>
 
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
-      <UsaTextInput v-model="comment.content" disabled> </UsaTextInput>
+      <UsaTextInput v-model="comment.content"> </UsaTextInput>
     </div>
 
     <h3>Quantitative Analysis</h3>
     <p>No quantitative analysis included with this report.</p>
 
-    <!--Added in the submit and cancel buttons and functions from the negotiation card.
-    It doesn't seem to me that the submit button is working, but I don't know 
-    how to test it appropriately. -->
-    <div style="text-align: center; margin-top: 1em">
-      <UsaButton class="primary-button" @click="exportReport()">
+    <div style="text-align: right; margin-top: 1em">
+      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')"> Cancel </UsaButton>
+      <UsaButton class="primary-button" @click="exportReport()" disabled>
         Export
       </UsaButton>
+      <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
+    
   </NuxtLayout>
 </template>
 
@@ -289,8 +286,6 @@ import {
   requestErrorAlert,
   responseErrorAlert,
 } from "../composables/error-handling";
-
-import { isValidReport } from "../composables/artifact-validation.ts";
 
 const path = ref([
   {
