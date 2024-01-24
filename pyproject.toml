@@ -28,6 +28,7 @@ uvicorn = "^0.23.2"
 deepdiff = "^6.3.1"
 dill = "^0.3.7"
 psutil = "^5.9.5"
+SQLAlchemy = "^2.0.25"
 
 [tool.poetry.group.qa.dependencies]
 isort = "^5.12.0"
