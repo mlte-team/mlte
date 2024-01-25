@@ -59,7 +59,10 @@
       </thead>
       <tbody>
         <tr v-for="finding in form.findings" :key="finding.evidence_id">
-          <td>{{ finding.status }}</td>
+          <td v-if="finding.status == 'Success'" style="background-color: rgba(210,232,221,255)">{{ finding.status }}</td>
+          <td v-else-if="finding.status == 'Ignore'" style="background-color: rgba(255,243,205,255)">{{ finding.status }}</td>
+          <td v-else-if="finding.status == 'Failure'" style="background-color: rgba(248,216,219,255)">{{ finding.status }}</td>
+          <td v-else>{{ finding.status }}</td>
           <td>{{ finding.property }}</td>
           <td>{{ finding.measurement }}</td>
           <td>{{ finding.evidence_id }}</td>
