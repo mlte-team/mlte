@@ -663,8 +663,7 @@ async function submit() {
         method: "POST",
         body: {
           artifact,
-          // TODO Find out what these values should be
-          force: false,
+          force: useRoute().query.artifactId != undefined,
           parents: false,
         },
         onRequestError() {
