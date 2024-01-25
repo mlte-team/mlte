@@ -396,11 +396,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  requestErrorAlert,
-  responseErrorAlert,
-} from "../composables/error-handling";
-
 const path = ref([
   {
     href: "/",
@@ -640,8 +635,7 @@ async function submit(){
   }
 
   if (isValidReport(artifact)){
-    console.log('valid report');
-    await useFetch(
+    await $fetch(
       "http://localhost:8080/api/namespace/" +
         namespace +
         "/model/" +
@@ -673,7 +667,7 @@ async function submit(){
     );
   }
   else{
-    console.log('invalid report')
+    console.log("Invalid report.")
   }
 }
 

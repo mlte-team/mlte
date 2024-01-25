@@ -650,7 +650,7 @@ async function submit() {
   };
 
   if (isValidNegotiation(artifact)) {
-    await useFetch(
+    await $fetch(
       "http://localhost:8080/api/namespace/" +
         namespace +
         "/model/" +
