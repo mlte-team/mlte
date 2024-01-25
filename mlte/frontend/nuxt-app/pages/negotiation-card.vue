@@ -442,8 +442,6 @@
 </template>
 
 <script setup lang="ts">
-import { isValidNegotiation } from "../composables/artifact-validation.ts";
-
 const path = ref([
   {
     href: "/",

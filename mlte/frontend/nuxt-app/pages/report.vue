@@ -17,7 +17,7 @@
       </template>
     </UsaTextInput>
 
-    <h2>Model Summary</h2>
+    <h2 class="section-header">Model Summary</h2>
     <p>A summary of the model under evaluation.</p>
 
     <UsaSelect v-model="form.summary.problem_type" :options="problemTypeOptions">
@@ -33,36 +33,68 @@
       <template #label> Task </template>
     </UsaTextInput>
 
-    <!-- Kept the goals section consistent with the negotiation card.
-    Probably need to rewrite once we figure out how we want to pull 
-    sections from the negotiation card.-->
-
-    <h2>Performance</h2>
+    <h2 class="section-header">Performance</h2>
     <p>Model performance evaluation.</p>
+    <div class="input-group">
+      <h3>Goals</h3>
+      <p>Goals or objectives that the model is going to help satisfy.</p>
+      <div v-for="(goal, goalIndex) in form.performance.goals" :key="goalIndex">
+        <h3>Goal {{ goalIndex + 1 }}</h3>
 
-    <div
-      v-for="(goal, goalIndex) in form.performance.goals"
-      :key="goal.description"
-    >
-      <h3>Goal {{ goalIndex + 1 }}</h3>
+        <UsaTextInput v-model="goal.description">
+          <template #label> Goal Description </template>
+        </UsaTextInput>
 
-      <UsaTextInput v-model="goal.description">
-        <template #label> Goal Description </template>
-      </UsaTextInput>
-      <h4 class="no-margin-section-header">Metrics</h4>
-      <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
-        <div class="inline-input-left">
-          <UsaTextInput v-model="metric.description">
-            <template #label> Description </template>
-          </UsaTextInput>
+        <h3 class="no-margin-section-header">Metrics</h3>
+        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
+          <div class="inline-input-left">
+            <UsaTextInput v-model="metric.description">
+              <template #label>
+                Description
+                <InfoIcon>
+                  For each goal, select a performance metric that captures the
+                  system's <br />
+                  ability to accomplish that goal; e.g., acceptance criteria for
+                  determining <br />
+                  that the model is performing correctly.
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+          </div>
+
+          <div class="inline-input-right">
+            <UsaTextInput v-model="metric.baseline">
+              <template #label>
+                Baseline
+                <InfoIcon>
+                  Select a baseline for each performance metric, which means a
+                  measurement that <br />
+                  evaluates whether or not the model will/can achieve the main
+                  goal for which it is being created. <br />
+                  If the goal cannot be measured directly, select a reasonable
+                  proxy and justify how that will <br />
+                  reliably predict the model’s performance in achieving its
+                  goal.
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+          </div>
+          <div class="inline-button">
+            <DeleteButton @click="deleteMetric(goalIndex, metricIndex)">
+              Delete Metric
+            </DeleteButton>
+          </div>
         </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput v-model="metric.baseline">
-            <template #label> Baseline </template>
-          </UsaTextInput>
-        </div>
+        <AddButton class="margin-button" @click="addMetric(goalIndex)">
+          Add Metric
+        </AddButton>
+        <DeleteButton @click="deleteGoal(goalIndex)">
+          Delete goal
+        </DeleteButton>
+        <hr />
       </div>
+
+      <AddButton class="margin-button" @click="addGoal()"> Add goal </AddButton>
     </div>
 
     <h3>MLTE Evaluation</h3>
@@ -90,7 +122,7 @@
       </tbody>
     </table>
 
-    <h2>Intended Use</h2>
+    <h2 class="section-header">Intended Use</h2>
     <p>A description of how the model is intended to be used.</p>
     <UsaTextarea :model-value="form.intended_use.context"></UsaTextarea>
 
@@ -119,7 +151,11 @@
     </UsaTextInput>
 
     <div class="input-group" style="margin-top: 1em">
-      <h3>Production Resource Requirements</h3>
+      <h3>Production Compute Resources</h3>
+      <p>
+        Describe the hardware and software requirements including amount of
+        compute resources needed for inference.
+      </p>
       <div>
         <div class="inline-input-left">
           <UsaTextInput
@@ -159,7 +195,7 @@
       </div>
     </div>
 
-    <h3>Risks</h3>
+    <h2 class="section-header">Risks</h2>
     <UsaTextInput v-model="form.risks.fp">
       <template #label> False Positive Risk </template>
     </UsaTextInput>
@@ -172,12 +208,19 @@
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
-    <h3>Data</h3>
+    <h2 class="section-header">Data</h2>
     <p>A description of the data used to train the model.</p>
 
+    <h2 class="section-header">Data</h2>
+    <p>
+      Details of the data that will influence development efforts; fill out all
+      that are known. For access / availability, record what needs to happen to
+      access the data, such as accounts that need to be created or methods for
+      data transportation.
+    </p>
     <div class="input-group">
       <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
-        <h4>Dataset {{ dataItemIndex + 1 }}</h4>
+        <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="dataItem.access">
           <template #label> Account Access / Account Availability </template>
         </UsaTextInput>
@@ -196,9 +239,6 @@
           </div>
         </div>
 
-        <UsaTextInput v-model="dataItem.classification">
-          <template #label> Data Classification </template>
-        </UsaTextInput>
         <UsaSelect
           v-model="dataItem.classification"
           :options="classificationOptions"
@@ -206,10 +246,11 @@
           <template #label> Data Classification </template>
         </UsaSelect>
 
-
         <div class="input-group" style="margin-top: 1em">
-          <h4 class="no-margin-section-header">Data Ontology</h4>
-          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
+          <div
+            v-for="(label, labelIndex) in dataItem.labels"
+            :key="labelIndex"
+          >
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
                 <template #label> Label Description </template>
@@ -221,12 +262,26 @@
                 <template #label> Percentage </template>
               </UsaTextInput>
             </div>
+            <div class="inline-button">
+              <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
+                Delete label
+              </DeleteButton>
+            </div>
           </div>
+
+          <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
+            Add additional label
+          </AddButton>
         </div>
 
         <div class="input-group" style="margin-top: 1em">
-          <h4 class="no-margin-section-header">Data Schema</h4>
-          <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
+          <div
+            v-for="(field, schema_index) in dataItem.fields"
+            :key="schema_index"
+          >
+            <h3 class="no-margin-section-header">
+              Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
+            </h3>
             <div>
               <div class="inline-input-left">
                 <UsaTextInput v-model="field.name">
@@ -268,22 +323,55 @@
                 </UsaTextInput>
               </div>
             </div>
+            <DeleteButton
+              class="margin-button"
+              @click="deleteSchema(dataItemIndex, schema_index)"
+            >
+              Delete schema
+            </DeleteButton>
             <hr />
           </div>
+
+          <AddButton class="margin-button" @click="addSchema(dataItemIndex)">
+            Add additional schema
+          </AddButton>
         </div>
 
         <UsaTextInput v-model="dataItem.rights">
-          <template #label> Data Rights </template>
+          <template #label>
+            Data Rights
+            <InfoIcon>
+              Are there particular ways in which the data can and cannot be
+              used?
+            </InfoIcon>
+          </template>
         </UsaTextInput>
 
         <UsaTextInput v-model="dataItem.policies">
-          <template #label> Data Policies </template>
+          <template #label>
+            Data Policies
+            <InfoIcon>
+              Are there policies that govern the data and its use, such as
+              Personally Identifiable Information [PII]?
+            </InfoIcon>
+          </template>
         </UsaTextInput>
 
         <UsaTextInput v-model="dataItem.identifiable_information">
           <template #label> Identifiable Information </template>
         </UsaTextInput>
+
+        <DeleteButton
+          class="margin-button"
+          @click="deleteDataItem(dataItemIndex)"
+        >
+          Delete data item
+        </DeleteButton>
+        <hr />
       </div>
+      <AddButton class="margin-button" @click="addDataItem()">
+        Add data item
+      </AddButton>
     </div>
 
     <h3>Comments</h3>
@@ -328,11 +416,21 @@ const userInputArtifactId = ref("");
 
 const form = ref({
   summary: {
-    problem_type: "",
+    problem_type: "classification",
     task: "",
   },
   performance: {
-    goals: [],
+    goals: [
+      {
+        description: "",
+        metrics: [
+          {
+            description: "",
+            baseline: "",
+          }
+        ]
+      }
+    ],
     findings: null,
   },
   intended_use: {
@@ -362,10 +460,10 @@ const form = ref({
   },
   data: [
     {
+      access: "",
       description: "",
       source: "",
-      classification: "",
-      access: "",
+      classification: "unclassified",
       labels: [
         {
           description: "",
@@ -644,5 +742,95 @@ function loadFindings(proxyObject: any) {
 // Export the current report.
 function exportReport() {
   alert("Report export is not currently implemented.");
+}
+
+function addGoal() {
+  form.value.performance.goals.push({
+    description: "",
+    metrics: [{ description: "", baseline: "" }],
+  });
+}
+
+function deleteGoal(goalIndex: number) {
+  if (confirm("Are you sure you want to delete this goal?")) {
+    form.value.performance.goals.splice(goalIndex, 1);
+  }
+}
+
+function addMetric(goalIndex: number) {
+  form.value.performance.goals[goalIndex].metrics.push({
+    description: "",
+    baseline: "",
+  });
+}
+
+function deleteMetric(goalIndex: number, metricIndex: number) {
+  if (confirm("Are you sure you want to delete this metric?")) {
+    form.value.performance.goals[goalIndex].metrics.splice(metricIndex, 1);
+  }
+}
+
+function addDataItem() {
+  form.value.data.push({
+    access: "",
+    description: "",
+    source: "",
+    classification: "unclassified",
+    labels: [
+      {
+        description: "",
+        percentage: 0,
+      },
+    ],
+    fields: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
+        missing_values: "",
+        special_values: "",
+      },
+    ],
+    rights: "",
+    policies: "",
+    identifiable_information: "",
+  });
+}
+
+function deleteDataItem(dataItemIndex: number) {
+  if (confirm("Are you sure you want to delete this data item?")) {
+    form.value.data.splice(dataItemIndex, 1);
+  }
+}
+
+function addLabel(dataItemIndex: number) {
+  form.value.data[dataItemIndex].labels.push({
+    description: "",
+    percentage: 0,
+  });
+}
+
+function deleteLabel(dataItemIndex: number, labelIndex: number) {
+  if (confirm("Are you sure you want to delete this label?")) {
+    form.value.data[dataItemIndex].labels.splice(labelIndex, 1);
+  }
+}
+
+function addSchema(dataItemIndex: number) {
+  form.value.data[dataItemIndex].fields.push({
+    name: "",
+    description: "",
+    type: "",
+    expected_values: "",
+    missing_values: "",
+    special_values: "",
+  });
+}
+
+function deleteSchema(dataItemIndex: number, fieldIndex: number) {
+  if (confirm("Are you sure you want to delete this field?")) {
+    form.value.data[dataItemIndex].fields.splice(fieldIndex, 1);
+  }
 }
 </script>
