@@ -4,12 +4,31 @@
 
     <h1 class="section-header">MLTE REPORT</h1>
 
+    <UsaTextInput
+      v-if="useRoute().query.artifactId === undefined"
+      v-model="userInputArtifactId"
+    >
+      <template #label>
+        Artifact ID
+        <InfoIcon>
+          The Artifact ID this negotiation card <br />
+          will be saved under upon submission.
+        </InfoIcon>
+      </template>
+    </UsaTextInput>
+
     <h2>Model Summary</h2>
     <p>A summary of the model under evaluation.</p>
 
-    <UsaTextInput :model-value="form.summary.problem_type">
-      <template #label> Problem Type </template>
-    </UsaTextInput>
+    <UsaSelect v-model="form.summary.problem_type" :options="problemTypeOptions">
+      <template #label>
+        Problem Type
+        <InfoIcon>
+          Type of ML problem the model is intended to solve
+        </InfoIcon>
+      </template>
+    </UsaSelect>
+
     <UsaTextInput :model-value="form.summary.task">
       <template #label> Task </template>
     </UsaTextInput>
@@ -180,6 +199,13 @@
         <UsaTextInput v-model="dataItem.classification">
           <template #label> Data Classification </template>
         </UsaTextInput>
+        <UsaSelect
+          v-model="dataItem.classification"
+          :options="classificationOptions"
+        >
+          <template #label> Data Classification </template>
+        </UsaSelect>
+
 
         <div class="input-group" style="margin-top: 1em">
           <h4 class="no-margin-section-header">Data Ontology</h4>
@@ -262,11 +288,11 @@
 
     <h3>Comments</h3>
     <p>Free-form comments from model developers and system integrators.</p>
-
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
       <UsaTextInput v-model="comment.content"> </UsaTextInput>
     </div>
 
+    <!-- TODO: Implement this visualization -->
     <h3>Quantitative Analysis</h3>
     <p>No quantitative analysis included with this report.</p>
 
@@ -298,8 +324,8 @@ const path = ref([
   },
 ]);
 
-// Rewrote the form so that every item is at the top level;
-// not sure that is exactly what we want but I figured it is a starting point.
+const userInputArtifactId = ref("");
+
 const form = ref({
   summary: {
     problem_type: "",
@@ -307,7 +333,7 @@ const form = ref({
   },
   performance: {
     goals: [],
-    findings: [],
+    findings: null,
   },
   intended_use: {
     context: "",
@@ -334,10 +360,73 @@ const form = ref({
     fn: "",
     other: "",
   },
-  data: [],
-  comments: [],
-  analysis: {},
+  data: [
+    {
+      description: "",
+      source: "",
+      classification: "",
+      access: "",
+      labels: [
+        {
+          description: "",
+          percentage: 0
+        }
+      ],
+      fields: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+          missing_values: "",
+          special_values: ""
+        }
+      ],
+      rights: "",
+      policies: "",
+      identifiable_information: ""
+    }
+  ],
+  comments: [
+    {
+      content: ""
+    }
+  ],
+  quantitative_analysis: {},
+  validated_spec_id: null,
 });
+
+// TODO: Pull these from the schema
+const problemTypeOptions = [
+  { value: "classification", text: "Classification" },
+  { value: "clustering", text: "Clustering" },
+  { value: "detection", text: "Detection" },
+  { value: "trend", text: "Trend" },
+  { value: "alert", text: "Alert" },
+  { value: "forecasting", text: "Forecasting" },
+  { value: "content_generation", text: "Content Generation" },
+  { value: "benchmarking", text: "Benchmarking" },
+  { value: "goals", text: "Goals" },
+  { value: "other", text: "Other" },
+];
+
+// TODO: Pull these from the schema
+const classificationOptions = [
+  { value: "unclassified", text: "Unclassified" },
+  {
+    value: "cui",
+    text: "Controlled Unclassified Information (CUI)",
+  },
+  {
+    value: "pii",
+    text: "Personally Identifiable Information (PII)",
+  },
+  {
+    value: "phi",
+    text: "Protected Health Information (PHI)",
+  },
+  { value: "other", text: "Other" },
+];
 
 if (useRoute().query.artifactId !== undefined) {
   const namespace = useRoute().query.namespace;
@@ -361,41 +450,57 @@ if (useRoute().query.artifactId !== undefined) {
         requestErrorAlert();
       },
       async onResponse({ response }) {
-        form.value.summary.problem_type = capitalizeWord(
-          response._data.body.summary.problem_type,
-        );
-        form.value.summary.task = capitalizeString(
-          response._data.body.summary.task,
-        );
+        if (isValidReport(response._data)){
+          form.value.summary = response._data.body.summary;
+          form.value.performance.goals = response._data.body.performance.goals;
+          form.value.intended_use.context =
+            response._data.body.intended_use.usage_context;
+          form.value.intended_use.production_requirements.integration =
+            response._data.body.intended_use.production_requirements.integration;
+          form.value.intended_use.production_requirements.interface =
+            response._data.body.intended_use.production_requirements.interface;
+          form.value.intended_use.production_requirements.resources =
+            response._data.body.intended_use.production_requirements.resources;
 
-        form.value.performance.goals = response._data.body.performance.goals;
+          form.value.risks = response._data.body.risks;
+          form.value.data = response._data.body.data;
+          form.value.comments = response._data.body.comments;
 
-        form.value.intended_use.context =
-          response._data.body.intended_use.usage_context;
-        form.value.intended_use.production_requirements.integration =
-          response._data.body.intended_use.production_requirements.integration;
-        form.value.intended_use.production_requirements.interface =
-          response._data.body.intended_use.production_requirements.interface;
-        form.value.intended_use.production_requirements.resources =
-          response._data.body.intended_use.production_requirements.resources;
+          const problemType = response._data.body.summary.problem_type;
+          if (
+            problemTypeOptions.find((x) => x.value === problemType)?.value !==
+            undefined
+          ) {
+            form.value.summary.problem_type = problemTypeOptions.find(
+              (x) => x.value === problemType,
+            )?.value;
+          }
 
-        form.value.risks = response._data.body.risks;
+          response._data.data.forEach((item) => {
+            const classification = item.classification;
+            if (
+              classificationOptions.find((x) => x.value === classification)
+                ?.value !== undefined
+            ) {
+              item.classification = classificationOptions.find(
+                (x) => x.value === classification,
+              )?.value;
+            }
+          });
 
-        form.value.data = response._data.body.data;
-
-        form.value.comments = response._data.body.comments;
-
-        if (
-          response._data.body.validated_spec_id !== undefined &&
-          response._data.body.validated_spec_id !== ""
-        ) {
-          const validatedSpec = await fetchArtifact(
-            namespace,
-            model,
-            version,
-            response._data.body.validated_spec_id,
-          );
-          form.value.findings = loadFindings(validatedSpec);
+          if (
+            response._data.body.validated_spec_id !== undefined &&
+            response._data.body.validated_spec_id !== ""
+          ) {
+            form.value.validated_spec_id = response._data.body.validated_spec_id;
+            const validatedSpec = await fetchArtifact(
+              namespace,
+              model,
+              version,
+              response._data.body.validated_spec_id,
+            );
+            form.value.findings = loadFindings(validatedSpec);
+          }
         }
       },
       onResponseError() {
@@ -403,6 +508,76 @@ if (useRoute().query.artifactId !== undefined) {
       },
     },
   );
+}
+
+async function submit(){
+  const namespace = useRoute().query.namespace;
+  const model = useRoute().query.model;
+  const version = useRoute().query.version;
+
+  let identifier = "";
+  if (useRoute().query.artifactId === undefined) {
+    identifier = userInputArtifactId.value;
+  } else {
+    identifier = useRoute().query.artifactId?.toString();
+  }
+
+  const artifact = {
+    header: {
+      identifier,
+      type: "report",
+      timestamp: Date.now(),
+    },
+    body: {
+      artifact_type: "report",
+      summary: form.value.summary,
+      performance: form.value.performance,
+      intended_use: form.value.intended_use,
+      risks: form.value.risks,
+      data: form.value.data,
+      comments: form.value.comments,
+      analysis: form.value.quantitative_analysis,
+      validated_spec_id: form.value.validated_spec_id
+    }
+  }
+
+  if (isValidReport(artifact)){
+    console.log('valid report');
+    await useFetch(
+      "http://localhost:8080/api/namespace/" +
+        namespace +
+        "/model/" +
+        model +
+        "/version/" +
+        version +
+        "/artifact",
+      {
+        retry: 0,
+        method: "POST",
+        body: {
+          artifact,
+          // TODO Find out what these values should be
+          force: false,
+          parents: false,
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          // TODO : If anything needs to happen after the artifact is successfully saved, do it here
+          // For example, redirect back to the homepage.
+          // Can check any data that is contained within response,
+          console.log(response);
+        },
+        onResponseError() {
+          responseErrorAlert();
+        },
+      },
+    );
+  }
+  else{
+    console.log('invalid report')
+  }
 }
 
 // Fetch a artifact by ID.
@@ -464,19 +639,6 @@ function loadFindings(proxyObject: any) {
     });
   });
   return findings;
-}
-
-// Capitalize all words in a string.
-function capitalizeString(string: string) {
-  return string
-    .split(" ")
-    .map((word) => capitalizeWord(word))
-    .join(" ");
-}
-
-// Capitalize a word.
-function capitalizeWord(word: string) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 // Export the current report.

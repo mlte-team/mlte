@@ -54,7 +54,7 @@
 
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
-      v-model="userInputArifactId"
+      v-model="UserInputArtifactId"
     >
       <template #label>
         Artifact ID
@@ -178,28 +178,28 @@
       data transportation.
     </p>
     <div class="input-group">
-      <div v-for="(data_item, dataItemIndex) in form.data" :key="dataItemIndex">
+      <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
-        <UsaTextInput v-model="data_item.access">
+        <UsaTextInput v-model="dataItem.access">
           <template #label> Account Access / Account Availability </template>
         </UsaTextInput>
 
         <div>
           <div class="inline-input-left">
-            <UsaTextInput v-model="data_item.description">
+            <UsaTextInput v-model="dataItem.description">
               <template #label> Data Description </template>
             </UsaTextInput>
           </div>
 
           <div class="inline-input-right">
-            <UsaTextInput v-model="data_item.source">
+            <UsaTextInput v-model="dataItem.source">
               <template #label> Source Data Location </template>
             </UsaTextInput>
           </div>
         </div>
 
         <UsaSelect
-          v-model="data_item.classification"
+          v-model="dataItem.classification"
           :options="classificationOptions"
         >
           <template #label> Data Classification </template>
@@ -207,7 +207,7 @@
 
         <div class="input-group" style="margin-top: 1em">
           <div
-            v-for="(label, labelIndex) in data_item.labels"
+            v-for="(label, labelIndex) in dataItem.labels"
             :key="labelIndex"
           >
             <div class="inline-input-left">
@@ -235,7 +235,7 @@
 
         <div class="input-group" style="margin-top: 1em">
           <div
-            v-for="(schema, schema_index) in data_item.schema"
+            v-for="(schema, schema_index) in dataItem.schema"
             :key="schema_index"
           >
             <h3 class="no-margin-section-header">
@@ -296,7 +296,7 @@
           </AddButton>
         </div>
 
-        <UsaTextInput v-model="data_item.rights">
+        <UsaTextInput v-model="dataItem.rights">
           <template #label>
             Data Rights
             <InfoIcon>
@@ -306,7 +306,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="data_item.policies">
+        <UsaTextInput v-model="dataItem.policies">
           <template #label>
             Data Policies
             <InfoIcon>
@@ -316,7 +316,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="data_item.identifiable_information">
+        <UsaTextInput v-model="dataItem.identifiable_information">
           <template #label> Identifiable Information </template>
         </UsaTextInput>
 
@@ -455,7 +455,7 @@ const path = ref([
   },
 ]);
 
-const userInputArifactId = ref("");
+const UserInputArtifactId = ref("");
 
 const form = ref({
   system: {
@@ -535,20 +535,21 @@ const form = ref({
   },
 });
 
+// TODO: Pull these from the schema
 const problemTypeOptions = [
   { value: "classification", text: "Classification" },
   { value: "clustering", text: "Clustering" },
-  { value: "content_generation", text: "Content Generation" },
   { value: "detection", text: "Detection" },
   { value: "trend", text: "Trend" },
   { value: "alert", text: "Alert" },
   { value: "forecasting", text: "Forecasting" },
-  // { value: "Summarization", text: "Summarization" },
+  { value: "content_generation", text: "Content Generation" },
   { value: "benchmarking", text: "Benchmarking" },
   { value: "goals", text: "Goals" },
   { value: "other", text: "Other" },
 ];
 
+// TODO: Pull these from the schema
 const classificationOptions = [
   { value: "unclassified", text: "Unclassified" },
   {
@@ -630,7 +631,7 @@ async function submit() {
 
   let identifier = "";
   if (useRoute().query.artifactId === undefined) {
-    identifier = userInputArifactId.value;
+    identifier = UserInputArtifactId.value;
   } else {
     identifier = useRoute().query.artifactId?.toString();
   }
