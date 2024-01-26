@@ -17,7 +17,7 @@ from mlte.store.artifact.query import (
     OrFilter,
 )
 
-from ..fixture.artifact import ArtifactFactory, TypeUtil
+from ...fixture.artifact import ArtifactFactory, TypeUtil
 
 
 def test_all() -> None:

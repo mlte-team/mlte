@@ -10,16 +10,18 @@ import mlte.store.error as errors
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
-from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import RemoteHttpStore
-from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.base import StoreURI
 
-from ..fixture.artifact import ArtifactFactory
+from ...fixture.artifact import ArtifactFactory
 from .fixture import (  # noqa
+    create_fs_store,
+    create_memory_store,
+    create_rdbs_store,
     fs_store,
     http_store,
     memory_store,
+    rdbs_store,
     stores,
     stores_and_types,
 )
@@ -27,7 +29,7 @@ from .fixture import (  # noqa
 
 def test_init_memory() -> None:
     """An in-memory store can be initialized."""
-    _ = InMemoryStore(StoreURI.from_string("memory://"))
+    _ = create_memory_store()
 
 
 def test_init_http() -> None:
@@ -37,7 +39,12 @@ def test_init_http() -> None:
 
 def test_init_fs(tmp_path) -> None:
     """An local FS store can be initialized."""
-    _ = LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
+    _ = create_fs_store(tmp_path)
+
+
+def test_init_rdbs() -> None:
+    """A relational DB store can be initialized."""
+    _ = create_rdbs_store()
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())

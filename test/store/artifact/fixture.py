@@ -22,6 +22,7 @@ from mlte.store.artifact.underlying.http import (
     RemoteHttpStoreClient,
 )
 from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
 from mlte.store.base import StoreURI
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
@@ -71,16 +72,36 @@ def http_store() -> RemoteHttpStore:
     return store
 
 
+def create_memory_store() -> InMemoryStore:
+    return InMemoryStore(StoreURI.from_string("memory://"))
+
+
 @pytest.fixture(scope="function")
 def memory_store() -> InMemoryStore:
     """A fixture for an in-memory store."""
-    return InMemoryStore(StoreURI.from_string("memory://"))
+    return create_memory_store()
+
+
+def create_fs_store(tmp_path) -> LocalFileSystemStore:
+    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
 
 
 @pytest.fixture(scope="function")
 def fs_store(tmp_path) -> LocalFileSystemStore:
     """A fixture for an local FS store."""
-    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
+    return create_fs_store(tmp_path)
+
+
+def create_rdbs_store() -> RelationalDBStore:
+    return RelationalDBStore(
+        StoreURI.from_string("sqlite+pysqlite:///:memory:")
+    )
+
+
+@pytest.fixture(scope="function")
+def rdbs_store() -> RelationalDBStore:
+    """A fixture for an in-memory RDBS store."""
+    return create_rdbs_store()
 
 
 def stores() -> Generator[str, None, None]:
