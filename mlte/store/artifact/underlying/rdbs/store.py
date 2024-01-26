@@ -7,6 +7,7 @@ Implementation of relational database system artifact store.
 from typing import List
 
 import sqlalchemy
+import sqlalchemy.orm
 import sqlalchemy_utils
 
 from mlte.artifact.model import ArtifactModel
@@ -20,7 +21,7 @@ from mlte.context.model import (
 )
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
-from mlte.store.artifact.underlying.rdbs.metadata import create_all
+from mlte.store.artifact.underlying.rdbs.metadata import DBNamespace, create_all
 from mlte.store.base import StoreURI
 
 # -----------------------------------------------------------------------------
@@ -44,16 +45,79 @@ class RelationalDBStoreSession(ArtifactStoreSession):
     # -------------------------------------------------------------------------
 
     def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
-        raise NotImplementedError("Not implemented")
+        with sqlalchemy.orm.Session(self.engine) as session:
+            namespace_obj = DBNamespace(name=namespace.identifier, models=[])
+            session.add(namespace_obj)
+            session.commit()
+            return Namespace(identifier=namespace.identifier, models=[])
 
     def read_namespace(self, namespace_id: str) -> Namespace:
-        raise NotImplementedError("Not implemented")
+        with sqlalchemy.orm.Session(self.engine) as session:
+            stmt = sqlalchemy.select(DBNamespace).where(
+                DBNamespace.name == namespace_id
+            )
+            result = session.execute(stmt)
+
+            namespace_obj = result.scalar()
+            if namespace_obj is None:
+                raise Exception(
+                    f"Namespace with identifier {namespace_id} was not found in the artifact store."
+                )
+            else:
+                return Namespace(
+                    identifier=namespace_obj.name,
+                    models=[
+                        Model(
+                            identifier=model_obj.name,
+                            versions=[
+                                Version(identifier=version_obj.name)
+                                for version_obj in model_obj.versions
+                            ],
+                        )
+                        for model_obj in namespace_obj.models
+                    ],
+                )
 
     def list_namespaces(self) -> List[str]:
-        raise NotImplementedError("Not implemented")
+        namespaces: List[str] = []
+        with sqlalchemy.orm.Session(self.engine) as session:
+            stmt = sqlalchemy.select(DBNamespace)
+            result = session.execute(stmt)
+
+            for namespace_obj in result.scalars():
+                namespaces.append(namespace_obj.name)
+
+        return namespaces
 
     def delete_namespace(self, namespace_id: str) -> Namespace:
-        raise NotImplementedError("Not implemented")
+        with sqlalchemy.orm.Session(self.engine) as session:
+            stmt = sqlalchemy.select(DBNamespace).where(
+                DBNamespace.name == namespace_id
+            )
+            result = session.execute(stmt)
+
+            namespace_obj = result.scalar()
+            if namespace_obj is None:
+                raise Exception(
+                    f"Namespace with identifier {namespace_id} was not found in the artifact store."
+                )
+            else:
+                namespace = Namespace(
+                    identifier=namespace_obj.name,
+                    models=[
+                        Model(
+                            identifier=model_obj.name,
+                            versions=[
+                                Version(identifier=version_obj.name)
+                                for version_obj in model_obj.versions
+                            ],
+                        )
+                        for model_obj in namespace_obj.models
+                    ],
+                )
+                session.delete(namespace_obj)
+                session.commit()
+                return namespace
 
     def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
         raise NotImplementedError("Not implemented")

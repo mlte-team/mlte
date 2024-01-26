@@ -6,7 +6,7 @@ Definition of the metadata (DB schema) for the artifact store.
 
 from typing import List
 
-from sqlalchemy import Engine, ForeignKey
+from sqlalchemy import Engine, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -34,6 +34,8 @@ class DBNamespace(Base):
 
     models: Mapped[List["DBModel"]] = relationship(back_populates="namespace")
 
+    __table_args__ = (UniqueConstraint("name", name="_namespace_identifier"),)
+
     def __repr__(self) -> str:
         return f"Namespace(id={self.id!r}, name={self.name!r})"
 
@@ -48,6 +50,8 @@ class DBModel(Base):
     namespace: Mapped[DBNamespace] = relationship(back_populates="models")
     versions: Mapped[List["DBVersion"]] = relationship(back_populates="model")
 
+    __table_args__ = (UniqueConstraint("name", name="_model_identifier"),)
+
     def __repr__(self) -> str:
         return f"Version(id={self.id!r}, name={self.name!r})"
 
@@ -60,6 +64,8 @@ class DBVersion(Base):
     model_id = mapped_column(ForeignKey("model.id"))
 
     model: Mapped[DBModel] = relationship(back_populates="versions")
+
+    __table_args__ = (UniqueConstraint("name", name="_version_identifier"),)
 
     def __repr__(self) -> str:
         return f"Version(id={self.id!r}, name={self.name!r})"
