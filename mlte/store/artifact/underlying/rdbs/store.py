@@ -7,6 +7,7 @@ Implementation of relational database system artifact store.
 from typing import List
 
 import sqlalchemy
+import sqlalchemy_utils
 
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
@@ -30,13 +31,13 @@ from mlte.store.base import StoreURI
 class RelationalDBStoreSession(ArtifactStoreSession):
     """A relational DB implementation of the MLTE artifact store."""
 
-    def __init__(self, storage: sqlalchemy.engine.Engine) -> None:
-        self.storage = storage
+    def __init__(self, engine: sqlalchemy.engine.Engine) -> None:
+        self.engine = engine
         """A reference to underlying storage."""
 
     def close(self) -> None:
         """Close the session."""
-        self.storage.dispose()
+        self.engine.dispose()
 
     # -------------------------------------------------------------------------
     # Structural Elements
@@ -144,15 +145,19 @@ class RelationalDBStore(ArtifactStore):
     def __init__(self, uri: StoreURI) -> None:
         super().__init__(uri=uri)
 
-        self.storage = sqlalchemy.create_engine(uri.uri, echo=True)
+        self.engine = sqlalchemy.create_engine(uri.uri, echo=True)
         """The underlying storage for the store."""
 
+        # Create the DB if it doesn't exist already.
+        if not sqlalchemy_utils.database_exists(self.engine.url):
+            sqlalchemy_utils.create_database(self.engine.url)
+
         # Creates the DB items if they don't exist already.
-        create_all(self.storage)
+        create_all(self.engine)
 
     def session(self) -> RelationalDBStoreSession:  # type: ignore[override]
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBStoreSession(storage=self.storage)
+        return RelationalDBStoreSession(engine=self.engine)
