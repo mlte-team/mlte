@@ -6,7 +6,7 @@ Definition of the metadata (DB schema) for the artifact store.
 
 from typing import List
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import Engine, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -14,6 +14,11 @@ class Base(DeclarativeBase):
     """Base class for store metadata."""
 
     pass
+
+
+def create_all(engine: Engine):
+    """Creates all items, if they don't exist already."""
+    Base.metadata.create_all(engine)
 
 
 # -------------------------------------------------------------------------
@@ -163,7 +168,7 @@ class DBResult(Base):
 
 
 class DBEvidenceMetadata(Base):
-    __tablename__ = "result"
+    __tablename__ = "evidence_metadata"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]

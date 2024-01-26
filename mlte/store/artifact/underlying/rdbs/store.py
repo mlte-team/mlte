@@ -19,6 +19,7 @@ from mlte.context.model import (
 )
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.artifact.underlying.rdbs.metadata import create_all
 from mlte.store.base import StoreURI
 
 # -----------------------------------------------------------------------------
@@ -27,7 +28,7 @@ from mlte.store.base import StoreURI
 
 
 class RelationalDBStoreSession(ArtifactStoreSession):
-    """A local file-system implementation of the MLTE artifact store."""
+    """A relational DB implementation of the MLTE artifact store."""
 
     def __init__(self, storage: sqlalchemy.engine.Engine) -> None:
         self.storage = storage
@@ -145,6 +146,9 @@ class RelationalDBStore(ArtifactStore):
 
         self.storage = sqlalchemy.create_engine(uri.uri, echo=True)
         """The underlying storage for the store."""
+
+        # Creates the DB items if they don't exist already.
+        create_all(self.storage)
 
     def session(self) -> RelationalDBStoreSession:  # type: ignore[override]
         """
