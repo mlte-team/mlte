@@ -454,6 +454,7 @@ const path = ref([
 ]);
 
 const UserInputArtifactId = ref("");
+const forceSaveParam = ref(useRoute().query.artifactId != undefined);
 
 const form = ref({
   system: {
@@ -650,36 +651,41 @@ async function submit() {
   };
 
   if (isValidNegotiation(artifact)) {
-    await $fetch(
-      "http://localhost:8080/api/namespace/" +
-        namespace +
-        "/model/" +
-        model +
-        "/version/" +
-        version +
-        "/artifact",
-      {
+    try {
+      await $fetch(
+        "http://localhost:8080/api/namespace/" +
+          namespace +
+          "/model/" +
+          model +
+          "/version/" +
+          version +
+          "/artifact",
+        {
         retry: 0,
         method: "POST",
         body: {
           artifact,
-          force: useRoute().query.artifactId != undefined,
+          force: forceSaveParam.value,
           parents: false,
         },
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse({ response }) {
-          // TODO : If anything needs to happen after the artifact is successfully saved, do it here
-          // For example, redirect back to the homepage.
-          // Can check any data that is contained within response,
-          console.log(response);
+        onResponseError({ response }) {
+          if (response.status === 409){
+            conflictErrorAlert();
+          }
+          else{
+            responseErrorAlert();
+          }
         },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
+      });
+      forceSaveParam.value = true;
+    }
+    catch(error){
+      console.log("Error in fetch.");
+      console.log(error);
+    }
   }
 }
 
