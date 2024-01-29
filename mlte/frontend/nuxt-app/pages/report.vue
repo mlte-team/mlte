@@ -665,6 +665,7 @@ async function submit(){
           }
         },
       });
+      successfulSubmission('report', identifier);
       forceSaveParam.value = true;
     }
     catch(error){

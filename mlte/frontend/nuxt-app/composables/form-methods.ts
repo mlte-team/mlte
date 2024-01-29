@@ -1,3 +1,9 @@
+export function successfulSubmission(artifactType: string, artifactName: string) {
+  alert(
+    `Your ${artifactType}, ${artifactName}, has been saved successfully.`
+  )
+}
+
 export function cancelFormSubmission(redirect: string) {
   if (
     confirm(

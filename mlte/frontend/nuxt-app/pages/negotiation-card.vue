@@ -680,6 +680,7 @@ async function submit() {
           }
         },
       });
+      successfulSubmission('negotiation card', identifier);
       forceSaveParam.value = true;
     }
     catch(error){
