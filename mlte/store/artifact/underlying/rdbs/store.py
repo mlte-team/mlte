@@ -10,6 +10,7 @@ import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy_utils
 
+import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import (
     Model,
@@ -60,7 +61,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 
             namespace_obj = result.scalar()
             if namespace_obj is None:
-                raise Exception(
+                raise errors.ErrorNotFound(
                     f"Namespace with identifier {namespace_id} was not found in the artifact store."
                 )
             else:
@@ -98,7 +99,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 
             namespace_obj = result.scalar()
             if namespace_obj is None:
-                raise Exception(
+                raise errors.ErrorNotFound(
                     f"Namespace with identifier {namespace_id} was not found in the artifact store."
                 )
             else:
@@ -206,10 +207,10 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 class RelationalDBStore(ArtifactStore):
     """A local file system implementation of the MLTE artifact store."""
 
-    def __init__(self, uri: StoreURI) -> None:
+    def __init__(self, uri: StoreURI, **kwargs) -> None:
         super().__init__(uri=uri)
 
-        self.engine = sqlalchemy.create_engine(uri.uri, echo=True)
+        self.engine = sqlalchemy.create_engine(uri.uri, echo=True, **kwargs)
         """The underlying storage for the store."""
 
         # Create the DB if it doesn't exist already.

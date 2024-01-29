@@ -6,11 +6,13 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
+import typing
 from typing import Any, Generator, Tuple
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.pool import StaticPool
 
 import mlte.web.store.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
@@ -57,7 +59,7 @@ def http_store() -> RemoteHttpStore:
     :return: The configured store
     """
     # Configure the backing store
-    state.set_store(create_store("memory://"))
+    state.set_store(create_memory_store())
 
     # Configure the application
     app = app_factory.create()
@@ -73,7 +75,7 @@ def http_store() -> RemoteHttpStore:
 
 
 def create_memory_store() -> InMemoryStore:
-    return InMemoryStore(StoreURI.from_string("memory://"))
+    return typing.cast(InMemoryStore, create_store("memory://"))
 
 
 @pytest.fixture(scope="function")
@@ -83,7 +85,9 @@ def memory_store() -> InMemoryStore:
 
 
 def create_fs_store(tmp_path) -> LocalFileSystemStore:
-    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
+    return typing.cast(
+        LocalFileSystemStore, create_store(f"local://{tmp_path}")
+    )
 
 
 @pytest.fixture(scope="function")
@@ -94,7 +98,8 @@ def fs_store(tmp_path) -> LocalFileSystemStore:
 
 def create_rdbs_store() -> RelationalDBStore:
     return RelationalDBStore(
-        StoreURI.from_string("sqlite+pysqlite:///:memory:")
+        StoreURI.from_string("sqlite+pysqlite:///:memory:"),
+        poolclass=StaticPool,
     )
 
 

@@ -54,26 +54,21 @@ def test_namespace(
     """An artifact store supports namespace operations."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
+    namespace_id = "ns0"
 
     with ManagedArtifactSession(store.session()) as handle:
         _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         _ = handle.read_namespace(namespace_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         ids = handle.list_namespaces()
         assert len(ids) == 1
 
-    with ManagedArtifactSession(store.session()) as handle:
         _ = handle.delete_namespace(namespace_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_namespace(namespace_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         ids = handle.list_namespaces()
         assert len(ids) == 0
 
@@ -90,7 +85,6 @@ def test_namespace_list(
     with ManagedArtifactSession(store.session()) as handle:
         _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         namespaces = handle.list_namespaces()
         assert len(namespaces) == 1
         assert namespaces[0] == "ns0"
@@ -107,20 +101,15 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     with ManagedArtifactSession(store.session()) as handle:
         _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(namespace_id, ModelCreate(identifier=model_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         _ = handle.read_model(namespace_id, model_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         models = handle.list_models(namespace_id)
         assert len(models) == 1
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.delete_model(namespace_id, model_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             handle.read_model(namespace_id, model_id)
 
@@ -139,7 +128,6 @@ def test_model_list(
         _ = handle.create_namespace(NamespaceCreate(identifier=namespace_id))
         _ = handle.create_model(namespace_id, ModelCreate(identifier=model_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         models = handle.list_models(namespace_id)
         assert len(models) == 1
         assert models[0] == "model0"
@@ -160,22 +148,17 @@ def test_version(
         handle.create_namespace(NamespaceCreate(identifier=namespace_id))
         handle.create_model(namespace_id, ModelCreate(identifier=model_id))
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.create_version(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    with ManagedArtifactSession(store.session()) as handle:
         _ = handle.read_version(namespace_id, model_id, version_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         versions = handle.list_versions(namespace_id, model_id)
         assert len(versions) == 1
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.delete_version(namespace_id, model_id, version_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_version(namespace_id, model_id, version_id)
 
@@ -198,7 +181,6 @@ def test_version_list(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    with ManagedArtifactSession(store.session()) as handle:
         versions = handle.list_versions(namespace_id, model_id)
         assert len(versions) == 1
         assert versions[0] == "version0"
@@ -224,14 +206,12 @@ def test_search(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    a0 = ArtifactFactory.make(artifact_type, "id0")
-    a1 = ArtifactFactory.make(artifact_type, "id1")
+        a0 = ArtifactFactory.make(artifact_type, "id0")
+        a1 = ArtifactFactory.make(artifact_type, "id1")
 
-    with ManagedArtifactSession(store.session()) as handle:
         for artifact in [a0, a1]:
             handle.write_artifact(namespace_id, model_id, version_id, artifact)
 
-    with ManagedArtifactSession(store.session()) as handle:
         artifacts = handle.search_artifacts(namespace_id, model_id, version_id)
         assert len(artifacts) == 2
 
@@ -257,24 +237,19 @@ def test_artifact(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+        artifact = ArtifactFactory.make(artifact_type, artifact_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.write_artifact(namespace_id, model_id, version_id, artifact)
 
-    with ManagedArtifactSession(store.session()) as handle:
         _ = handle.read_artifact(
             namespace_id, model_id, version_id, artifact_id
         )
 
-    with ManagedArtifactSession(store.session()) as handle:
         read = handle.read_artifacts(namespace_id, model_id, version_id)
         assert len(read) == 1
 
-    with ManagedArtifactSession(store.session()) as handle:
         handle.delete_artifact(namespace_id, model_id, version_id, artifact_id)
 
-    with ManagedArtifactSession(store.session()) as handle:
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_artifact(
                 namespace_id, model_id, version_id, artifact_id
@@ -327,14 +302,12 @@ def test_artifact_parents(
             namespace_id, model_id, version_id, artifact, parents=True
         )
 
-    # The organizational elements are present
-    with ManagedArtifactSession(store.session()) as handle:
+        # The organizational elements are present
         assert len(handle.list_namespaces()) == 1
         assert len(handle.list_models(namespace_id)) == 1
         assert len(handle.list_versions(namespace_id, model_id)) == 1
 
-    # The artifact is present
-    with ManagedArtifactSession(store.session()) as handle:
+        # The artifact is present
         read = handle.read_artifacts(namespace_id, model_id, version_id)
         assert len(read) == 1
 
@@ -360,10 +333,9 @@ def test_artifact_overwrite(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+        artifact = ArtifactFactory.make(artifact_type, artifact_id)
 
-    # The initial write succeeds
-    with ManagedArtifactSession(store.session()) as handle:
+        # The initial write succeeds
         _ = handle.write_artifact(
             namespace_id,
             model_id,
@@ -371,8 +343,7 @@ def test_artifact_overwrite(
             artifact,
         )
 
-    # Another attempt to write fails
-    with ManagedArtifactSession(store.session()) as handle:
+        # Another attempt to write fails
         with pytest.raises(errors.ErrorAlreadyExists):
             _ = handle.write_artifact(
                 namespace_id,
@@ -381,8 +352,7 @@ def test_artifact_overwrite(
                 artifact,
             )
 
-    # Attempt to write with `force` succeeds
-    with ManagedArtifactSession(store.session()) as handle:
+        # Attempt to write with `force` succeeds
         _ = handle.write_artifact(
             namespace_id, model_id, version_id, artifact, force=True
         )
