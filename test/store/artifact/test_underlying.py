@@ -140,9 +140,9 @@ def test_version(
     """An artifact store supports model version operations."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_namespace(NamespaceCreate(identifier=namespace_id))
@@ -195,9 +195,9 @@ def test_search(
     """An artifact store store supports queries."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_namespace(NamespaceCreate(identifier=namespace_id))
@@ -225,9 +225,9 @@ def test_artifact(
     """An artifact store supports basic artifact operations."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
     artifact_id = "myid"
 
     with ManagedArtifactSession(store.session()) as handle:
@@ -265,9 +265,9 @@ def test_artifact_without_parents(
     """An artifact does not create organizational elements by default, on write."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
     artifact_id = "myid"
 
     artifact = ArtifactFactory.make(artifact_type, artifact_id)
@@ -289,9 +289,9 @@ def test_artifact_parents(
     """An artifact store can create organizational elements implicitly, on write."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
     artifact_id = "myid"
 
     artifact = ArtifactFactory.make(artifact_type, artifact_id)
@@ -321,9 +321,9 @@ def test_artifact_overwrite(
     """An artifact cam be overwritten with the `force` option."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    namespace_id = "namespace"
-    model_id = "model"
-    version_id = "version"
+    namespace_id = "ns0"
+    model_id = "model0"
+    version_id = "version0"
     artifact_id = "myid"
 
     with ManagedArtifactSession(store.session()) as handle:
