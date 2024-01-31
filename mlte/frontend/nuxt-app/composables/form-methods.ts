@@ -1,7 +1,8 @@
-export function successfulSubmission(artifactType: string, artifactName: string) {
-  alert(
-    `Your ${artifactType}, ${artifactName}, has been saved successfully.`
-  )
+export function successfulSubmission(
+  artifactType: string,
+  artifactName: string,
+) {
+  alert(`Your ${artifactType}, ${artifactName}, has been saved successfully.`);
 }
 
 export function cancelFormSubmission(redirect: string) {
@@ -26,8 +27,6 @@ export function responseErrorAlert() {
   );
 }
 
-export function conflictErrorAlert(){
-  alert(
-    "Name specified for artifact is already in use."
-  )
+export function conflictErrorAlert() {
+  alert("Name specified for artifact is already in use.");
 }

@@ -20,12 +20,13 @@
     <h2 class="section-header">Model Summary</h2>
     <p>A summary of the model under evaluation.</p>
 
-    <UsaSelect v-model="form.summary.problem_type" :options="problemTypeOptions">
+    <UsaSelect
+      v-model="form.summary.problem_type"
+      :options="problemTypeOptions"
+    >
       <template #label>
         Problem Type
-        <InfoIcon>
-          Type of ML problem the model is intended to solve
-        </InfoIcon>
+        <InfoIcon> Type of ML problem the model is intended to solve </InfoIcon>
       </template>
     </UsaSelect>
 
@@ -110,9 +111,24 @@
       </thead>
       <tbody>
         <tr v-for="finding in form.findings" :key="finding.evidence_id">
-          <td v-if="finding.status == 'Success'" style="background-color: rgba(210,232,221,255)">{{ finding.status }}</td>
-          <td v-else-if="finding.status == 'Ignore'" style="background-color: rgba(255,243,205,255)">{{ finding.status }}</td>
-          <td v-else-if="finding.status == 'Failure'" style="background-color: rgba(248,216,219,255)">{{ finding.status }}</td>
+          <td
+            v-if="finding.status == 'Success'"
+            style="background-color: rgba(210, 232, 221, 255)"
+          >
+            {{ finding.status }}
+          </td>
+          <td
+            v-else-if="finding.status == 'Ignore'"
+            style="background-color: rgba(255, 243, 205, 255)"
+          >
+            {{ finding.status }}
+          </td>
+          <td
+            v-else-if="finding.status == 'Failure'"
+            style="background-color: rgba(248, 216, 219, 255)"
+          >
+            {{ finding.status }}
+          </td>
           <td v-else>{{ finding.status }}</td>
           <td>{{ finding.property }}</td>
           <td>{{ finding.measurement }}</td>
@@ -247,10 +263,7 @@
         </UsaSelect>
 
         <div class="input-group" style="margin-top: 1em">
-          <div
-            v-for="(label, labelIndex) in dataItem.labels"
-            :key="labelIndex"
-          >
+          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
                 <template #label> Label Description </template>
@@ -385,13 +398,14 @@
     <p>No quantitative analysis included with this report.</p>
 
     <div style="text-align: right; margin-top: 1em">
-      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')"> Cancel </UsaButton>
-      <UsaButton class="primary-button" @click="exportReport()" disabled>
+      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
+        Cancel
+      </UsaButton>
+      <UsaButton class="primary-button" disabled @click="exportReport()">
         Export
       </UsaButton>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
-    
   </NuxtLayout>
 </template>
 
@@ -423,9 +437,9 @@ const form = ref({
           {
             description: "",
             baseline: "",
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
     findings: null,
   },
@@ -463,8 +477,8 @@ const form = ref({
       labels: [
         {
           description: "",
-          percentage: 0
-        }
+          percentage: 0,
+        },
       ],
       fields: [
         {
@@ -473,18 +487,18 @@ const form = ref({
           type: "",
           expected_values: "",
           missing_values: "",
-          special_values: ""
-        }
+          special_values: "",
+        },
       ],
       rights: "",
       policies: "",
-      identifiable_information: ""
-    }
+      identifiable_information: "",
+    },
   ],
   comments: [
     {
-      content: ""
-    }
+      content: "",
+    },
   ],
   quantitative_analysis: {},
   validated_spec_id: null,
@@ -544,7 +558,7 @@ if (useRoute().query.artifactId !== undefined) {
         requestErrorAlert();
       },
       async onResponse({ response }) {
-        if (isValidReport(response._data)){
+        if (isValidReport(response._data)) {
           form.value.summary = response._data.body.summary;
           form.value.performance.goals = response._data.body.performance.goals;
           form.value.intended_use.context =
@@ -586,7 +600,8 @@ if (useRoute().query.artifactId !== undefined) {
             response._data.body.validated_spec_id !== undefined &&
             response._data.body.validated_spec_id !== ""
           ) {
-            form.value.validated_spec_id = response._data.body.validated_spec_id;
+            form.value.validated_spec_id =
+              response._data.body.validated_spec_id;
             const validatedSpec = await fetchArtifact(
               namespace,
               model,
@@ -604,7 +619,7 @@ if (useRoute().query.artifactId !== undefined) {
   );
 }
 
-async function submit(){
+async function submit() {
   const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
@@ -631,11 +646,11 @@ async function submit(){
       data: form.value.data,
       comments: form.value.comments,
       analysis: form.value.quantitative_analysis,
-      validated_spec_id: form.value.validated_spec_id
-    }
-  }
+      validated_spec_id: form.value.validated_spec_id,
+    },
+  };
 
-  if (isValidReport(artifact)){
+  if (isValidReport(artifact)) {
     try {
       await $fetch(
         "http://localhost:8080/api/namespace/" +
@@ -646,35 +661,33 @@ async function submit(){
           version +
           "/artifact",
         {
-        retry: 0,
-        method: "POST",
-        body: {
-          artifact,
-          force: forceSaveParam.value,
-          parents: false,
+          retry: 0,
+          method: "POST",
+          body: {
+            artifact,
+            force: forceSaveParam.value,
+            parents: false,
+          },
+          onRequestError() {
+            requestErrorAlert();
+          },
+          onResponseError({ response }) {
+            if (response.status === 409) {
+              conflictErrorAlert();
+            } else {
+              responseErrorAlert();
+            }
+          },
         },
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponseError({ response }) {
-          if (response.status === 409){
-            conflictErrorAlert();
-          }
-          else{
-            responseErrorAlert();
-          }
-        },
-      });
-      successfulSubmission('report', identifier);
+      );
+      successfulSubmission("report", identifier);
       forceSaveParam.value = true;
-    }
-    catch(error){
-      console.log("Error in fetch.")
+    } catch (error) {
+      console.log("Error in fetch.");
       console.log(error);
-    };
-  }
-  else{
-    console.log("Invalid report.")
+    }
+  } else {
+    console.log("Invalid report.");
   }
 }
 

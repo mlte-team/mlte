@@ -206,10 +206,7 @@
         </UsaSelect>
 
         <div class="input-group" style="margin-top: 1em">
-          <div
-            v-for="(label, labelIndex) in dataItem.labels"
-            :key="labelIndex"
-          >
+          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
                 <template #label> Label Description </template>
@@ -435,7 +432,9 @@
     </div>
 
     <div style="text-align: right; margin-top: 1em">
-      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')"> Cancel </UsaButton>
+      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
+        Cancel
+      </UsaButton>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
   </NuxtLayout>
@@ -661,29 +660,28 @@ async function submit() {
           version +
           "/artifact",
         {
-        retry: 0,
-        method: "POST",
-        body: {
-          artifact,
-          force: forceSaveParam.value,
-          parents: false,
+          retry: 0,
+          method: "POST",
+          body: {
+            artifact,
+            force: forceSaveParam.value,
+            parents: false,
+          },
+          onRequestError() {
+            requestErrorAlert();
+          },
+          onResponseError({ response }) {
+            if (response.status === 409) {
+              conflictErrorAlert();
+            } else {
+              responseErrorAlert();
+            }
+          },
         },
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponseError({ response }) {
-          if (response.status === 409){
-            conflictErrorAlert();
-          }
-          else{
-            responseErrorAlert();
-          }
-        },
-      });
-      successfulSubmission('negotiation card', identifier);
+      );
+      successfulSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
-    }
-    catch(error){
+    } catch (error) {
       console.log("Error in fetch.");
       console.log(error);
     }

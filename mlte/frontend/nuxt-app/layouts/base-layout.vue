@@ -49,7 +49,8 @@
           target="_blank"
           rel="noopener noreferrer"
           href="https://mlte.readthedocs.io/en/latest/using_mlte/"
-          >User Guide</a>
+          >User Guide</a
+        >
         <span>v0.2.2</span>
       </div>
     </footer>
