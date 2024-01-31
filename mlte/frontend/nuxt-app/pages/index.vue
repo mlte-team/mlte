@@ -153,24 +153,7 @@
                       },
                     }"
                   >
-                    <UsaButton :disabled="true" class="primary-button">
-                      Edit
-                    </UsaButton>
-                  </NuxtLink>
-                </td>
-                <td>
-                  <NuxtLink
-                    :to="{
-                      path: 'report',
-                      query: {
-                        namespace: selectedNamespace,
-                        model: report.model,
-                        version: report.version,
-                        artifactId: report.id,
-                      },
-                    }"
-                  >
-                    <UsaButton class="primary-button"> View </UsaButton>
+                    <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>
@@ -266,14 +249,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  isValidNegotiation,
-  isValidReport,
-  isValidSpec,
-  isValidValidatedSpec,
-  isValidValue,
-} from "../composables/artifact-validation.ts";
-
 const path = ref([
   {
     href: "/",
@@ -286,11 +261,8 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   { method: "GET" },
 );
 
-// The selected namespace
 const selectedNamespace = ref("");
-// The selected model
 const selectedModel = ref("");
-// The selected model version
 const selectedVersion = ref("");
 
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
@@ -576,7 +548,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidNegotiation(artifact)) {
         negotiationCards.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -587,7 +561,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidReport(artifact)) {
         reports.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -598,7 +574,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidSpec(artifact)) {
         specifications.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -610,7 +588,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
         validatedSpecs.value.push({
           id: artifact.header.identifier,
           specid: artifact.body.spec_identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -623,7 +603,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
           id: artifact.header.identifier.slice(0, -6),
           measurement: artifact.body.metadata.measurement_type,
           type: artifact.body.value.value_type,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
