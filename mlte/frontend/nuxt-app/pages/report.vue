@@ -422,7 +422,7 @@ const path = ref([
 ]);
 
 const userInputArtifactId = ref("");
-const forceSaveParam = ref(useRoute().query.artifactId != undefined);
+const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
 const form = ref({
   summary: {
@@ -698,7 +698,7 @@ async function fetchArtifact(
   version: string,
   artifactId: string,
 ) {
-  const { data, pending, error, refresh, status } = await useFetch(
+  const { data, status } = await useFetch(
     "http://localhost:8080/api/namespace/" +
       namespace +
       "/model/" +

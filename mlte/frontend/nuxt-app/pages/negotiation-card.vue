@@ -453,7 +453,7 @@ const path = ref([
 ]);
 
 const UserInputArtifactId = ref("");
-const forceSaveParam = ref(useRoute().query.artifactId != undefined);
+const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
 const form = ref({
   system: {
@@ -847,16 +847,6 @@ function descriptorUpload(event: Event, descriptorName: string) {
       }
     };
     reader.readAsText(file);
-  }
-}
-
-function cancel() {
-  if (
-    confirm(
-      "Are you sure you want to leave this page? All changes will be lost.",
-    )
-  ) {
-    location.href = "/";
   }
 }
 

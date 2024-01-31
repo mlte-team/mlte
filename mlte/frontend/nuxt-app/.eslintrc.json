@@ -9,9 +9,19 @@
     "defineNuxtPlugin": true,
     "useRoute": true,
     "ref": true,
+    "$fetch": true,
     "useFetch": true,
+    "isValidNegotiation": true,
+    "isValidSpec": true,
+    "isValidValidatedSpec": true,
+    "isValidValue": true,
+    "isValidReport": true,
+    "isValidArtifact": true,
+    "successfulSubmission": true,
+    "cancelFormSubmission": true,
     "requestErrorAlert": true,
-    "responseErrorAlert": true
+    "responseErrorAlert": true,
+    "conflictErrorAlert": true
   },
   "extends": [
     "standard",

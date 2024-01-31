@@ -249,14 +249,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  isValidNegotiation,
-  isValidReport,
-  isValidSpec,
-  isValidValidatedSpec,
-  isValidValue,
-} from "../composables/artifact-validation.ts";
-
 const path = ref([
   {
     href: "/",
