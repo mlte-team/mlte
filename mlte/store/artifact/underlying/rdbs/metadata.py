@@ -6,7 +6,7 @@ Definition of the metadata (DB schema) for the artifact store.
 
 from typing import List
 
-from sqlalchemy import Engine, ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -14,11 +14,6 @@ class Base(DeclarativeBase):
     """Base class for store metadata."""
 
     pass
-
-
-def create_all(engine: Engine):
-    """Creates all items, if they don't exist already."""
-    Base.metadata.create_all(engine)
 
 
 # -------------------------------------------------------------------------
@@ -144,6 +139,7 @@ class DBCondition(Base):
     __tablename__ = "condition"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    measurement_id: Mapped[str]
     name: Mapped[str]
     arguments: Mapped[str]  # Json string of the aray of arguments.
     callback: Mapped[str]
