@@ -5,14 +5,15 @@ Implementation of relational database system artifact store.
 """
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy_utils
-from sqlalchemy import Engine, select
+from sqlalchemy import Engine, ScalarResult, select
 from sqlalchemy.orm import Session
 
+import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -29,12 +30,23 @@ from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
     Base,
+    DBArtifactHeader,
     DBArtifactType,
     DBModel,
     DBNamespace,
+    DBSpec,
+    DBValidatedSpec,
     DBVersion,
 )
 from mlte.store.base import StoreURI
+
+# -----------------------------------------------------------------------------
+# Artifact Type - DB Object mapping.
+# -----------------------------------------------------------------------------
+ARTIFACT_DB_CLASSES = {
+    ArtifactType.SPEC: DBSpec,
+}
+
 
 # -----------------------------------------------------------------------------
 # RelationalDBStore
@@ -303,7 +315,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         namespace_id: str,
         session: Session,
     ) -> Tuple[Version, DBVersion]:
-        """Reads the version with the given identifier using the provided session, and returns a Version and DBVersion object."""
+        """Reads the version with the given identifier using the provided session, and returns a Version and DBVersion object. Raises ErrorNotFound if not found."""
         version_obj = session.scalar(
             select(DBVersion)
             .where(DBVersion.name == version_id)
@@ -334,18 +346,32 @@ class RelationalDBStoreSession(ArtifactStoreSession):
     ) -> ArtifactModel:
         with Session(self.engine) as session:
             if parents:
-                pass
-                # TODO: create parents
-                # storeutil.create_parents(self, namespace_id, model_id, version_id)
+                storeutil.create_parents(
+                    self, namespace_id, model_id, version_id
+                )
+            else:
+                # Ensure parents exist.
+                _ = self._read_version(
+                    version_id, model_id, namespace_id, session
+                )
 
-            # TODO: check already exists
-            #        artifacts = self._get_version_artifacts(
-            #            namespace_id, model_id, version_id
-            #        )
-            #        if artifact.header.identifier in artifacts and not force:
-            #            raise errors.ErrorAlreadyExists(
-            #                f"Artifact '{artifact.header.identifier}'"
-            #            )
+            # Check if artifact already exists.
+            try:
+                artifact, _ = self._read_artifact(
+                    namespace_id,
+                    model_id,
+                    version_id,
+                    artifact.header.identifier,
+                    session,
+                )
+                if not force:
+                    raise errors.ErrorAlreadyExists(
+                        f"Artifact '{artifact.header.identifier}' already exists."
+                    )
+            except errors.ErrorNotFound:
+                # If artifact was not found, it is ok, force it or not we will create it.
+                pass
+
             artifact_type_obj = self._read_artifact_type(
                 artifact.header.type, session
             )
@@ -363,7 +389,11 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        raise NotImplementedError("Not implemented")
+        with Session(self.engine) as session:
+            artifact, _ = self._read_artifact(
+                namespace_id, model_id, version_id, artifact_id, session
+            )
+            return artifact
 
     def read_artifacts(
         self,
@@ -373,7 +403,17 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
-        raise NotImplementedError("Not implemented")
+        # TODO: support for limit and offset.
+        with Session(self.engine) as session:
+            all_artifacts = []
+            for artifact_type in [
+                ArtifactType.SPEC
+            ]:  # TODO: Change to ArtifactType once they are all supported.
+                artifacts = self._read_artifacts_for_type(
+                    namespace_id, model_id, version_id, artifact_type, session
+                )
+                all_artifacts.extend(artifacts)
+            return all_artifacts
 
     def search_artifacts(
         self,
@@ -391,7 +431,13 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        raise NotImplementedError("Not implemented")
+        with Session(self.engine) as session:
+            artifact, artifact_obj = self._read_artifact(
+                namespace_id, model_id, version_id, artifact_id, session
+            )
+            session.delete(artifact_obj)
+            session.commit()
+            return artifact
 
     def _read_artifact_type(
         self, type: ArtifactType, session: Session
@@ -404,3 +450,92 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         if artifact_type_obj is None:
             raise Exception(f"Unknown artifact type requested: {type}")
         return artifact_type_obj
+
+    def _read_artifact(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_id: str,
+        session: Session,
+    ) -> Tuple[ArtifactModel, Union[DBSpec, DBValidatedSpec]]:
+        """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
+        # First get the class of the artifact we are trying to read, so we can use the ORM by passing the DB object type.
+        artifact_header_obj = self._get_artifact_header(artifact_id, session)
+        artifact_type = ArtifactType(artifact_header_obj.type.name)
+
+        # Get artifact.
+        artifact_class = self._get_artifact_class(artifact_type)
+        artifact_obj: Union[DBSpec, DBValidatedSpec] = session.scalar(
+            select(artifact_class)
+            .where(DBVersion.name == version_id)
+            .where(DBModel.name == model_id)
+            .where(DBNamespace.name == namespace_id)
+            .where(DBArtifactHeader.id == artifact_class.artifact_header_id)
+            .where(DBArtifactHeader.identifier == artifact_id)
+        )
+
+        if artifact_obj is None:
+            raise errors.ErrorNotFound(
+                f"Artifact with identifier {artifact_id}  and associated to namespace {namespace_id}, model {model_id}, and version {version_id} was not found in the artifact store."
+            )
+        else:
+            return (
+                factory.create_artifact_from_db(
+                    artifact_header_obj, artifact_obj
+                ),
+                artifact_obj,
+            )
+
+    def _read_artifacts_for_type(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact_type: ArtifactType,
+        session: Session,
+    ) -> List[ArtifactModel]:
+        """Loads and returns a list with all the artifacts of the given type, for the given namespace/model/version."""
+        artifact_class = self._get_artifact_class(artifact_type)
+        artifact_objs: ScalarResult[
+            Union[DBSpec, DBValidatedSpec]
+        ] = session.scalars(
+            (
+                select(artifact_class)
+                .where(DBVersion.name == version_id)
+                .where(DBModel.name == model_id)
+                .where(DBNamespace.name == namespace_id)
+            )
+        )
+        artifacts = []
+        for artifact_obj in artifact_objs:
+            artifact = factory.create_artifact_from_db(
+                artifact_obj.artifact_header, artifact_obj
+            )
+            artifacts.append(artifact)
+        return artifacts
+
+    def _get_artifact_header(
+        self, artifact_id: str, session: Session
+    ) -> DBArtifactHeader:
+        """Gets the artifact header object of the artifact identifier provided."""
+        artifact_header_obj = session.scalar(
+            select(DBArtifactHeader).where(
+                DBArtifactHeader.identifier == artifact_id
+            )
+        )
+        if artifact_header_obj is None:
+            raise errors.ErrorNotFound(
+                f"Artifact with identifier {artifact_id} was not found in the artifact store."
+            )
+        else:
+            return artifact_header_obj
+
+    def _get_artifact_class(
+        self, artifact_type: ArtifactType
+    ) -> Union[type[DBSpec], type[DBValidatedSpec]]:
+        """Gets the DB class of the artifact header provided."""
+        if artifact_type in ARTIFACT_DB_CLASSES:
+            return ARTIFACT_DB_CLASSES[ArtifactType(artifact_type)]
+        else:
+            raise Exception(f"Unsupported artifact type: {artifact_type.value}")

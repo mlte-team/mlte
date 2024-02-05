@@ -6,9 +6,9 @@ Creation of metadata objects from pydantic models.
 
 import typing
 
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.spec.model import SpecModel
+from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import (
     Base,
     DBArtifactHeader,
@@ -56,4 +56,54 @@ def create_db_artifact(
 
         return spec_obj
     else:
-        raise Exception(f"Unsupported artifact: {artifact.header.type}")
+        raise Exception(
+            f"Unsupported artifact type for conversion: {artifact.header.type}"
+        )
+
+
+def create_artifact_from_db(
+    artifact_header_obj: DBArtifactHeader, artifact_obj: Base
+) -> ArtifactModel:
+    """
+    Creates an Artifact model from the corresponding DB object and DB header.
+
+    :param artifact_header_obj: A DBArtifactHeader object from the DB with header info.
+    :param artifact_obj: A DB object of the specific artifact type with the artifact info.
+    :return: the DB data converted into an ArtifactModel.
+    """
+    artifact_header = ArtifactHeaderModel(
+        identifier=artifact_header_obj.identifier,
+        type=ArtifactType(artifact_header_obj.type.name),
+        timestamp=artifact_header_obj.timestamp,
+    )
+
+    body = None
+    if artifact_header.type == ArtifactType.SPEC:
+        artifact_obj = typing.cast(DBSpec, artifact_obj)
+        body = SpecModel(
+            artifact_type=artifact_header.type,
+            properties=[
+                PropertyModel(
+                    name=property.name,
+                    description=property.description,
+                    rationale=property.rationale,
+                    module=property.module,
+                    conditions={
+                        condition.measurement_id: ConditionModel(
+                            name=condition.name,
+                            callback=condition.callback,
+                            value_class=condition.value_class,
+                            arguments=condition.arguments.split(" "),
+                        )
+                        for condition in property.conditions
+                    },
+                )
+                for property in artifact_obj.properties
+            ],
+        )
+    else:
+        raise Exception(
+            f"Unsuppored artifact type for conversion: {artifact_header.type}"
+        )
+
+    return ArtifactModel(header=artifact_header, body=body)
