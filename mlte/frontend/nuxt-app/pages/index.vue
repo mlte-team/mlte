@@ -34,7 +34,7 @@
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="updateSelectedModel($event)"
+          @update:modelValue="updateSelectedModel($event, false)"
         />
         <br />
       </div>
@@ -261,12 +261,21 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   { method: "GET" },
 );
 
-const selectedNamespace = ref("");
-const selectedModel = ref("");
-const selectedVersion = ref("");
+const selectedNamespace = useCookie("selectedNamespace");
+selectedNamespace.value = selectedNamespace.value || "";
+const selectedModel = useCookie("selectedModel");
+selectedModel.value = selectedModel.value || "";
+const selectedVersion = useCookie("selectedVersion");
+selectedVersion.value = selectedVersion.value || "";
 
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
   selectNamespace(namespaceOptions.value[0]);
+  if (selectedModel.value !== ""){
+    updateSelectedModel(selectedModel.value, true);
+    if (selectedVersion.value !== ""){
+      updateSelectedVersion(selectedVersion.value);
+    }
+  }
 }
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
@@ -447,10 +456,11 @@ async function deleteNamespace(namespace: string) {
 }
 
 // Update the selected model for the artifact store.
-async function updateSelectedModel(modelName: string) {
+async function updateSelectedModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
-
-  selectedVersion.value = "";
+  if (!initialPageLoad){
+    selectedVersion.value = "";
+  }
   if (modelName === "") {
     clearArtifacts();
     return;
@@ -471,6 +481,7 @@ async function updateSelectedModel(modelName: string) {
       onResponse({ response }) {
         if (response._data) {
           selectedModel.value = modelName;
+          versionOptions.value = [];
           response._data.forEach((version: string) => {
             versionOptions.value.push({
               value: version,
@@ -616,6 +627,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
 
 // Clear all artifacts from local state.
 function clearArtifacts() {
+  versionOptions.value = [];
   negotiationCards.value = [];
   reports.value = [];
   specifications.value = [];
