@@ -16,7 +16,6 @@ from sqlalchemy.orm import Session
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.context.model import (
     Model,
     ModelCreate,
@@ -29,11 +28,15 @@ from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactType,
     DBBase,
     DBModel,
     DBNamespace,
     DBVersion,
+    init_artifact_types,
+)
+from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    init_classification_types,
+    init_problem_types,
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.base import StoreURI
@@ -76,12 +79,9 @@ class RelationalDBStore(ArtifactStore):
 
         # Pre-populate artifact types.
         with Session(self.engine) as session:
-            if session.scalars(select(DBArtifactType)).first() is None:
-                types = [e.value for e in ArtifactType]
-                for type in types:
-                    type_obj = DBArtifactType(name=type)
-                    session.add(type_obj)
-                session.commit()
+            init_artifact_types(session)
+            init_problem_types(session)
+            init_classification_types(session)
 
 
 # -----------------------------------------------------------------------------

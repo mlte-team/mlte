@@ -20,10 +20,12 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactType,
     DBModel,
     DBNamespace,
+    DBVersion,
+)
+from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBProperty,
     DBSpec,
     DBValidatedSpec,
-    DBVersion,
 )
 
 

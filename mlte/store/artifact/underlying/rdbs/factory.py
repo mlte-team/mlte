@@ -16,6 +16,8 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBArtifactType,
     DBBase,
+)
+from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
     DBProperty,
     DBResult,
