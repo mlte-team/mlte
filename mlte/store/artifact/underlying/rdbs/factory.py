@@ -6,6 +6,8 @@ Creation of metadata objects from pydantic models.
 
 import typing
 
+from sqlalchemy.orm import Session
+
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
@@ -20,15 +22,15 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBSpec,
     DBValidatedSpec,
 )
-from mlte.validation.model import (
-    PropertyAndResultsModel,
-    ResultModel,
-    ValidatedSpecModel,
-)
+from mlte.store.artifact.underlying.rdbs.reader import DBReader
+from mlte.validation.model import ResultModel, ValidatedSpecModel
 
 
 def create_db_artifact(
-    artifact: ArtifactModel, artifact_type_obj: DBArtifactType, version_id: int
+    artifact: ArtifactModel,
+    artifact_type_obj: DBArtifactType,
+    version_id: int,
+    session: Session,
 ) -> DBBase:
     """Converts an internal model to its corresponding DB object for artifacts."""
     artifact_header = DBArtifactHeader(
@@ -71,13 +73,15 @@ def create_db_artifact(
             results=[],
             spec=validated_spec.spec,
         )
-        for property in validated_spec.properties:
-            for measurement_id, result in property.results.items():
+        for property_name, results in validated_spec.results.items():
+            for measurement_id, result in results.items():
                 result_obj = DBResult(
                     measurement_id=measurement_id,
                     type=result.type,
                     message=result.message,
-                    property=property_obj,
+                    property=DBReader.get_property(
+                        validated_spec.spec_identifier, property_name, session
+                    ),
                     validated_spec=validated_spec_obj,
                 )
                 validated_spec_obj.results.append(result_obj)
@@ -134,38 +138,23 @@ def create_artifact_from_db(
         )
         body = ValidatedSpecModel(
             artifact_type=artifact_header.type,
-            properties=[
-                PropertyAndResultsModel(
-                    name=property.name,
-                    description=property.description,
-                    rationale=property.rationale,
-                    module=property.module,
-                    conditions={
-                        condition.measurement_id: ConditionModel(
-                            name=condition.name,
-                            callback=condition.callback,
-                            value_class=condition.value_class,
-                            arguments=condition.arguments.split(" "),
-                        )
-                        for condition in property.conditions
-                    },
-                    results={
-                        result.measurement_id: ResultModel(
-                            type=result.type,
-                            message=result.message,
-                            metadata=EvidenceMetadata(
-                                measurement_type=result.evidence_metadata.measurement_type,
-                                identifier=Identifier(
-                                    name=result.evidence_metadata.identifier
-                                ),
+            results={
+                property.name: {
+                    result.measurement_id: ResultModel(
+                        type=result.type,
+                        message=result.message,
+                        metadata=EvidenceMetadata(
+                            measurement_type=result.evidence_metadata.measurement_type,
+                            identifier=Identifier(
+                                name=result.evidence_metadata.identifier
                             ),
-                        )
-                        for result in validated_obj.results
-                        if result.property.name == property.name
-                    },
-                )
+                        ),
+                    )
+                    for result in validated_obj.results
+                    if result.property.name == property.name
+                }
                 for property in validated_obj.spec.properties
-            ]
+            }
             if validated_obj.spec is not None
             else [],
         )

@@ -20,6 +20,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactType,
     DBModel,
     DBNamespace,
+    DBProperty,
     DBSpec,
     DBValidatedSpec,
     DBVersion,
@@ -229,3 +230,22 @@ class DBReader:
             ]
         else:
             raise Exception(f"Unsupported artifact type: {artifact_type.value}")
+
+    @staticmethod
+    def get_property(
+        spec_identifier: str, property_name: str, session: Session
+    ) -> DBProperty:
+        """Gets the property with the given name for the indicated Spec."""
+        property_obj = session.scalar(
+            select(DBProperty)
+            .where(DBProperty.name == property_name)
+            .where(DBSpec.id == DBProperty.spec_id)
+            .where(DBSpec.artifact_header_id == DBArtifactHeader.id)
+            .where(DBArtifactHeader.identifier == spec_identifier)
+        )
+        if property_obj is None:
+            raise errors.ErrorNotFound(
+                f"Property with name {property_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
+            )
+        else:
+            return property_obj

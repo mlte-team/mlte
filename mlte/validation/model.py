@@ -4,12 +4,12 @@ mlte/validation/model.py
 Model implementation for the ValidatedSpec artifact.
 """
 
-from typing import Dict, List, Literal, Optional
+from typing import Dict, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
-from mlte.spec.model import PropertyModel, SpecModel
+from mlte.spec.model import SpecModel
 
 
 class ResultModel(BaseModel):
@@ -25,13 +25,6 @@ class ResultModel(BaseModel):
     """Evidence metadata associated with the value."""
 
 
-class PropertyAndResultsModel(PropertyModel):
-    """A description of a property, along with results."""
-
-    results: Dict[str, ResultModel] = {}
-    """A dictionary of results, keyed by measurement id, which are only present when the conditions have been validated."""
-
-
 class ValidatedSpecModel(BaseModel):
     """The model implementation for the ValidatedSpec artifact."""
 
@@ -44,8 +37,8 @@ class ValidatedSpecModel(BaseModel):
     spec: Optional[SpecModel] = None
     """A link to the actual Spec details."""
 
-    properties: List[PropertyAndResultsModel] = []
-    """A list of properties for this spec, along with validation results."""
+    results: Dict[str, Dict[str, ResultModel]] = {}
+    """A list of validation results, for each measurement id, grouped by property."""
 
 
 ValidatedSpecModel.model_rebuild()

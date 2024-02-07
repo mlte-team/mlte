@@ -305,7 +305,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 
             # Create the actual object.
             artifact_obj = factory.create_db_artifact(
-                artifact, artifact_type_obj, version_obj.id
+                artifact, artifact_type_obj, version_obj.id, session
             )
 
             # Use session to add object.

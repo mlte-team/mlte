@@ -86,13 +86,7 @@ class Spec(Artifact):
         body = typing.cast(SpecModel, model.body)
         return Spec(
             identifier=model.header.identifier,
-            properties={
-                Property.from_model(property_model): {
-                    measurement_id: Condition.from_model(condition_model)
-                    for measurement_id, condition_model in property_model.conditions.items()
-                }
-                for property_model in body.properties
-            },
+            properties=Spec.to_properties(body.properties),
         )
 
     def _to_property_model(self, property: Property) -> PropertyModel:
@@ -111,6 +105,19 @@ class Spec(Artifact):
             for measurement_id, condition in self.properties[property].items()
         }
         return property_model
+
+    @classmethod
+    def to_properties(
+        cls, property_models: List[PropertyModel]
+    ) -> Dict[Property, Dict[str, Condition]]:
+        """Converts a list of property models, into a dict of properties and conditions."""
+        return {
+            Property.from_model(property_model): {
+                measurement_id: Condition.from_model(condition_model)
+                for measurement_id, condition_model in property_model.conditions.items()
+            }
+            for property_model in property_models
+        }
 
     @staticmethod
     def get_default_id() -> str:

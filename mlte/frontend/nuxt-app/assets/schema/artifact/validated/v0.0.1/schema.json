@@ -74,65 +74,6 @@
       "title": "Identifier",
       "type": "object"
     },
-    "PropertyAndResultsModel": {
-      "description": "A description of a property, along with results.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
-        },
-        "rationale": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Rationale"
-        },
-        "conditions": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ConditionModel"
-          },
-          "default": {},
-          "title": "Conditions",
-          "type": "object"
-        },
-        "module": {
-          "title": "Module",
-          "type": "string"
-        },
-        "results": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ResultModel"
-          },
-          "default": {},
-          "title": "Results",
-          "type": "object"
-        }
-      },
-      "required": [
-        "name",
-        "module"
-      ],
-      "title": "PropertyAndResultsModel",
-      "type": "object"
-    },
     "PropertyModel": {
       "description": "A description of a property.",
       "properties": {
@@ -259,13 +200,16 @@
       ],
       "default": null
     },
-    "properties": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/PropertyAndResultsModel"
+    "results": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ResultModel"
+        },
+        "type": "object"
       },
-      "default": [],
-      "title": "Properties"
+      "default": {},
+      "title": "Results",
+      "type": "object"
     }
   },
   "required": [
