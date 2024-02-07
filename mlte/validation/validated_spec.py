@@ -87,6 +87,7 @@ class ValidatedSpec(Artifact):
             body=ValidatedSpecModel(
                 artifact_type=ArtifactType.VALIDATED_SPEC,
                 spec_identifier=self.spec.identifier,
+                spec=typing.cast(SpecModel, self.spec.to_model().body),
                 properties=[
                     PropertyAndResultsModel(
                         name=property_model.name,

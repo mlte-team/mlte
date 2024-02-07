@@ -9,7 +9,7 @@ from typing import Dict, List, Literal, Optional
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
-from mlte.spec.model import PropertyModel
+from mlte.spec.model import PropertyModel, SpecModel
 
 
 class ResultModel(BaseModel):
@@ -40,6 +40,9 @@ class ValidatedSpecModel(BaseModel):
 
     spec_identifier: str = ""
     """The identifier of the Spec this ValidatedSpec came from."""
+
+    spec: Optional[SpecModel] = None
+    """A link to the actual Spec details."""
 
     properties: List[PropertyAndResultsModel] = []
     """A list of properties for this spec, along with validation results."""

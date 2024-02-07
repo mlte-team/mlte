@@ -133,6 +133,57 @@
       "title": "PropertyAndResultsModel",
       "type": "object"
     },
+    "PropertyModel": {
+      "description": "A description of a property.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        },
+        "conditions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ConditionModel"
+          },
+          "default": {},
+          "title": "Conditions",
+          "type": "object"
+        },
+        "module": {
+          "title": "Module",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "module"
+      ],
+      "title": "PropertyModel",
+      "type": "object"
+    },
     "ResultModel": {
       "description": "A description of a Result.",
       "properties": {
@@ -162,6 +213,28 @@
       ],
       "title": "ResultModel",
       "type": "object"
+    },
+    "SpecModel": {
+      "description": "The model implementation for the Spec artifact.",
+      "properties": {
+        "artifact_type": {
+          "const": "spec",
+          "title": "Artifact Type"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PropertyModel"
+          },
+          "default": [],
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "artifact_type"
+      ],
+      "title": "SpecModel",
+      "type": "object"
     }
   },
   "description": "The model implementation for the ValidatedSpec artifact.",
@@ -174,6 +247,17 @@
       "default": "",
       "title": "Spec Identifier",
       "type": "string"
+    },
+    "spec": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SpecModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "properties": {
       "type": "array",
