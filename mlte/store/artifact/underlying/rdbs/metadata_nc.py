@@ -52,14 +52,18 @@ class DBNegotiationCard(DBBase):
     model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_dev_resources: Mapped[DBModelResourcesDescriptor] = relationship(foreign_keys=[model_dev_resources_id])
+    model_dev_resources: Mapped[DBModelResourcesDescriptor] = relationship(
+        foreign_keys=[model_dev_resources_id]
+    )
     model_prod_integration: Mapped[Optional[str]]
     model_prod_interface_input_desc: Mapped[Optional[str]]
     model_prod_interface_output_desc: Mapped[Optional[str]]
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_prod_resources: Mapped[DBModelResourcesDescriptor] = relationship(foreign_keys=[model_prod_resources_id])
+    model_prod_resources: Mapped[DBModelResourcesDescriptor] = relationship(
+        foreign_keys=[model_prod_resources_id]
+    )
 
     def __repr__(self) -> str:
         return f"NegotiationCard(id={self.id!r}, artifact_header={self.artifact_header!r})"
