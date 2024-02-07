@@ -156,7 +156,7 @@ def create_artifact_from_db(
                 for property in validated_obj.spec.properties
             }
             if validated_obj.spec is not None
-            else [],
+            else {},
         )
     else:
         raise Exception(
