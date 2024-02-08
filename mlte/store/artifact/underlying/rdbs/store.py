@@ -280,7 +280,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 
             # Check if artifact already exists.
             try:
-                artifact, _ = DBReader.get_artifact(
+                artifact, artifact_obj = DBReader.get_artifact(
                     namespace_id,
                     model_id,
                     version_id,
@@ -291,6 +291,10 @@ class RelationalDBStoreSession(ArtifactStoreSession):
                     raise errors.ErrorAlreadyExists(
                         f"Artifact '{artifact.header.identifier}' already exists."
                     )
+                else:
+                    # We have no edit functionality, nor any versioning system, so delete the previous version.
+                    # TODO: versioning? Keep previous versions?
+                    session.delete(artifact_obj)
             except errors.ErrorNotFound:
                 # If artifact was not found, it is ok, force it or not we will create it.
                 pass

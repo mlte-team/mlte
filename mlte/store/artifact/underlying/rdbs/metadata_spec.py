@@ -29,9 +29,11 @@ class DBSpec(DBBase):
     )
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_spec"
+        back_populates="body_spec", cascade="all, delete-orphan"
     )
-    properties: Mapped[List[DBProperty]] = relationship(back_populates="spec")
+    properties: Mapped[List[DBProperty]] = relationship(
+        back_populates="spec", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"Spec(id={self.id!r}, artifact_header={self.artifact_header!r}, properties={self.properties!r})"
@@ -49,7 +51,7 @@ class DBProperty(DBBase):
 
     spec: Mapped[DBSpec] = relationship(back_populates="properties")
     conditions: Mapped[List[DBCondition]] = relationship(
-        back_populates="property"
+        cascade="all, delete-orphan", back_populates="property"
     )
     results: Mapped[List[DBResult]] = relationship(back_populates="property")
 
@@ -84,7 +86,7 @@ class DBValidatedSpec(DBBase):
     spec_id: Mapped[Optional[int]] = mapped_column(ForeignKey("spec.id"))
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_validated_spec"
+        back_populates="body_validated_spec", cascade="all, delete-orphan"
     )
     spec: Mapped[DBSpec] = relationship()
     results: Mapped[List[DBResult]] = relationship(
@@ -108,7 +110,7 @@ class DBResult(DBBase):
     )
 
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
-        back_populates="result"
+        cascade="all, delete-orphan", back_populates="result"
     )
     validated_spec: Mapped[DBValidatedSpec] = relationship(
         back_populates="results"

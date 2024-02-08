@@ -50,7 +50,9 @@ class DBNamespace(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    models: Mapped[List[DBModel]] = relationship(back_populates="namespace")
+    models: Mapped[List[DBModel]] = relationship(
+        back_populates="namespace", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (UniqueConstraint("name", name="_namespace_identifier"),)
 
@@ -66,7 +68,9 @@ class DBModel(DBBase):
     namespace_id = mapped_column(ForeignKey("namespace.id"))
 
     namespace: Mapped[DBNamespace] = relationship(back_populates="models")
-    versions: Mapped[List[DBVersion]] = relationship(back_populates="model")
+    versions: Mapped[List[DBVersion]] = relationship(
+        back_populates="model", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (UniqueConstraint("name", name="_model_identifier"),)
 

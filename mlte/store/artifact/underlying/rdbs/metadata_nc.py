@@ -30,11 +30,13 @@ class DBNegotiationCard(DBBase):
         ForeignKey("artifact_header.id")
     )
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_negotiation_card"
+        back_populates="body_negotiation_card", cascade="all, delete-orphan"
     )
 
     # System
-    sys_goals: Mapped[List[DBGoalDescriptor]] = relationship()
+    sys_goals: Mapped[List[DBGoalDescriptor]] = relationship(
+        cascade="all, delete-orphan"
+    )
     sys_problem_type_id: Mapped[int] = mapped_column(
         ForeignKey("nc_problem_type.id")
     )
@@ -46,14 +48,16 @@ class DBNegotiationCard(DBBase):
     sys_risks_other: Mapped[Optional[str]]
 
     # Data
-    data_descriptors: Mapped[List[DBDataDescriptor]] = relationship()
+    data_descriptors: Mapped[List[DBDataDescriptor]] = relationship(
+        cascade="all, delete-orphan"
+    )
 
     # Model
     model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
     model_dev_resources: Mapped[DBModelResourcesDescriptor] = relationship(
-        foreign_keys=[model_dev_resources_id]
+        cascade="all, delete-orphan", foreign_keys=[model_dev_resources_id]
     )
     model_prod_integration: Mapped[Optional[str]]
     model_prod_interface_input_desc: Mapped[Optional[str]]
@@ -62,7 +66,7 @@ class DBNegotiationCard(DBBase):
         ForeignKey("nc_model_resource.id")
     )
     model_prod_resources: Mapped[DBModelResourcesDescriptor] = relationship(
-        foreign_keys=[model_prod_resources_id]
+        cascade="all, delete-orphan", foreign_keys=[model_prod_resources_id]
     )
 
     def __repr__(self) -> str:
@@ -89,7 +93,7 @@ class DBGoalDescriptor(DBBase):
     )
 
     metrics: Mapped[List[DBMerticDescriptor]] = relationship(
-        back_populates="goal_descriptor"
+        cascade="all, delete-orphan", back_populates="goal_descriptor"
     )
 
     def __repr__(self) -> str:
@@ -144,10 +148,10 @@ class DBDataDescriptor(DBBase):
 
     classification: Mapped[DBDataClassification] = relationship()
     labels: Mapped[List[DBLabelDescriptor]] = relationship(
-        back_populates="data_descriptor"
+        cascade="all, delete-orphan", back_populates="data_descriptor"
     )
     fields: Mapped[List[DBFieldDescriptor]] = relationship(
-        back_populates="data_descriptor"
+        cascade="all, delete-orphan", back_populates="data_descriptor"
     )
 
     def __repr__(self) -> str:
