@@ -11,11 +11,20 @@ from sqlalchemy.orm import Session
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBArtifactType,
-    DBBase,
+)
+from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    DBDataDescriptor,
+    DBFieldDescriptor,
+    DBGoalDescriptor,
+    DBLabelDescriptor,
+    DBMetricDescriptor,
+    DBModelResourcesDescriptor,
+    DBNegotiationCard,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
@@ -33,7 +42,7 @@ def create_db_artifact(
     artifact_type_obj: DBArtifactType,
     version_id: int,
     session: Session,
-) -> DBBase:
+) -> typing.Union[DBSpec, DBValidatedSpec, DBNegotiationCard]:
     """Converts an internal model to its corresponding DB object for artifacts."""
     artifact_header = DBArtifactHeader(
         identifier=artifact.header.identifier,
@@ -88,6 +97,98 @@ def create_db_artifact(
                 )
                 validated_spec_obj.results.append(result_obj)
         return validated_spec_obj
+    elif artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+        negotiation_card = typing.cast(NegotiationCardModel, artifact.body)
+
+        # Create intermedidate objects.
+        problem_type_obj = (
+            DBReader.get_problem_type(
+                negotiation_card.system.problem_type, session
+            )
+            if negotiation_card.system.problem_type is not None
+            else None
+        )
+        model_dev_resources_obj = DBModelResourcesDescriptor(
+            cpu=negotiation_card.model.development.resources.cpu,
+            gpu=negotiation_card.model.development.resources.gpu,
+            memory=negotiation_card.model.development.resources.memory,
+            storage=negotiation_card.model.development.resources.storage,
+        )
+        model_prod_resources_obj = DBModelResourcesDescriptor(
+            cpu=negotiation_card.model.production.resources.cpu,
+            gpu=negotiation_card.model.production.resources.gpu,
+            memory=negotiation_card.model.production.resources.memory,
+            storage=negotiation_card.model.production.resources.storage,
+        )
+
+        # Create the actual objects.
+        negotiation_card_obj = DBNegotiationCard(
+            artifact_header=artifact_header,
+            sys_goals=[],
+            sys_problem_type=problem_type_obj,
+            sys_task=negotiation_card.system.task,
+            sys_usage_context=negotiation_card.system.usage_context,
+            sys_risks_fp=negotiation_card.system.risks.fp,
+            sys_risks_fn=negotiation_card.system.risks.fn,
+            sys_risks_other=negotiation_card.system.risks.other,
+            model_dev_resources=model_dev_resources_obj,
+            model_prod_resources=model_prod_resources_obj,
+            model_prod_integration=negotiation_card.model.production.integration,
+            model_prod_interface_input_desc=negotiation_card.model.production.interface.input.description,
+            model_prod_interface_output_desc=negotiation_card.model.production.interface.output.description,
+            data_descriptors=[],
+        )
+
+        # Create list of system goal objects.
+        for goal in negotiation_card.system.goals:
+            goal_obj = DBGoalDescriptor(
+                description=goal.description, metrics=[]
+            )
+            for metric in goal.metrics:
+                metric_obj = DBMetricDescriptor(
+                    description=metric.description, baseline=metric.baseline
+                )
+                goal_obj.metrics.append(metric_obj)
+            negotiation_card_obj.sys_goals.append(goal_obj)
+
+        # Create list of data descriptor objects.
+        for data_descriptor in negotiation_card.data:
+            class_obj = (
+                DBReader.get_classification_type(
+                    data_descriptor.classification, session
+                )
+                if data_descriptor.classification is not None
+                else None
+            )
+            data_obj = DBDataDescriptor(
+                description=data_descriptor.description,
+                source=data_descriptor.source,
+                access=data_descriptor.access,
+                rights=data_descriptor.rights,
+                policies=data_descriptor.policies,
+                identifiable_information=data_descriptor.identifiable_information,
+                classification=class_obj,
+                labels=[],
+                fields=[],
+            )
+            for label in data_descriptor.labels:
+                label_obj = DBLabelDescriptor(
+                    description=label.description, percentage=label.percentage
+                )
+                data_obj.labels.append(label_obj)
+            for field in data_descriptor.fields:
+                field_obj = DBFieldDescriptor(
+                    name=field.name,
+                    description=field.description,
+                    type=field.type,
+                    expected_values=field.expected_values,
+                    missing_values=field.missing_values,
+                    special_values=field.special_values,
+                )
+                data_obj.fields.append(field_obj)
+            negotiation_card_obj.data_descriptors.append(data_obj)
+
+        return negotiation_card_obj
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact.header.type}"

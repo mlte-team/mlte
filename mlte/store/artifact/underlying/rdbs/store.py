@@ -308,12 +308,12 @@ class RelationalDBStoreSession(ArtifactStoreSession):
             )
 
             # Create the actual object.
-            artifact_obj = factory.create_db_artifact(
+            new_artifact_obj = factory.create_db_artifact(
                 artifact, artifact_type_obj, version_obj.id, session
             )
 
             # Use session to add object.
-            session.add(artifact_obj)
+            session.add(new_artifact_obj)
             session.commit()
             return artifact
 

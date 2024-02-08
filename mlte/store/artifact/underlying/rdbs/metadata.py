@@ -120,13 +120,13 @@ class DBArtifactHeader(DBBase):
     type: Mapped[DBArtifactType] = relationship()
     version: Mapped[DBVersion] = relationship()
     body_spec: Mapped[Optional[DBSpec]] = relationship(
-        back_populates="artifact_header"
+        back_populates="artifact_header", cascade="all, delete-orphan"
     )
     body_validated_spec: Mapped[Optional[DBValidatedSpec]] = relationship(
-        back_populates="artifact_header"
+        back_populates="artifact_header", cascade="all, delete-orphan"
     )
     body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
-        back_populates="artifact_header"
+        back_populates="artifact_header", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

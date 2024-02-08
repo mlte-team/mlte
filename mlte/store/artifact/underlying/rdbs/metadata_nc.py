@@ -30,17 +30,18 @@ class DBNegotiationCard(DBBase):
         ForeignKey("artifact_header.id")
     )
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_negotiation_card", cascade="all, delete-orphan"
+        back_populates="body_negotiation_card",
+        cascade="all",
     )
 
     # System
     sys_goals: Mapped[List[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
-    sys_problem_type_id: Mapped[int] = mapped_column(
+    sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("nc_problem_type.id")
     )
-    sys_problem_type: Mapped[DBProblemType] = relationship()
+    sys_problem_type: Mapped[Optional[DBProblemType]] = relationship()
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
     sys_risks_fp: Mapped[Optional[str]]
@@ -56,8 +57,9 @@ class DBNegotiationCard(DBBase):
     model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_dev_resources: Mapped[DBModelResourcesDescriptor] = relationship(
-        cascade="all, delete-orphan", foreign_keys=[model_dev_resources_id]
+    model_dev_resources: Mapped[Optional[DBModelResourcesDescriptor]] = relationship(
+        cascade="all",
+        foreign_keys=[model_dev_resources_id],
     )
     model_prod_integration: Mapped[Optional[str]]
     model_prod_interface_input_desc: Mapped[Optional[str]]
@@ -65,8 +67,9 @@ class DBNegotiationCard(DBBase):
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_prod_resources: Mapped[DBModelResourcesDescriptor] = relationship(
-        cascade="all, delete-orphan", foreign_keys=[model_prod_resources_id]
+    model_prod_resources: Mapped[Optional[DBModelResourcesDescriptor]] = relationship(
+        cascade="all",
+        foreign_keys=[model_prod_resources_id],
     )
 
     def __repr__(self) -> str:
@@ -92,7 +95,7 @@ class DBGoalDescriptor(DBBase):
         ForeignKey("negotiation_card.id")
     )
 
-    metrics: Mapped[List[DBMerticDescriptor]] = relationship(
+    metrics: Mapped[List[DBMetricDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="goal_descriptor"
     )
 
@@ -100,7 +103,7 @@ class DBGoalDescriptor(DBBase):
         return f"GoalDescriptor(id={self.id!r}, name={self.description!r})"
 
 
-class DBMerticDescriptor(DBBase):
+class DBMetricDescriptor(DBBase):
     __tablename__ = "nc_metric_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -232,7 +235,7 @@ class DBModelResourcesDescriptor(DBBase):
 def init_problem_types(session: Session):
     """Initializes the table with the configured problem types."""
     if session.scalars(select(DBProblemType)).first() is None:
-        types = [e.value for e in DataClassification]
+        types = [e.value for e in ProblemType]
         for type in types:
             type_obj = DBProblemType(name=type)
             session.add(type_obj)
@@ -242,7 +245,7 @@ def init_problem_types(session: Session):
 def init_classification_types(session: Session):
     """Initializes the table with the configured classification types."""
     if session.scalars(select(DBDataClassification)).first() is None:
-        types = [e.value for e in ProblemType]
+        types = [e.value for e in DataClassification]
         for type in types:
             type_obj = DBDataClassification(name=type)
             session.add(type_obj)

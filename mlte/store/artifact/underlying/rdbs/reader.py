@@ -14,6 +14,7 @@ import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model.model import Model, Namespace, Version
+from mlte.model.shared import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
@@ -21,6 +22,10 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBModel,
     DBNamespace,
     DBVersion,
+)
+from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    DBDataClassification,
+    DBProblemType,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBProperty,
@@ -251,3 +256,29 @@ class DBReader:
             )
         else:
             return property_obj
+
+    @staticmethod
+    def get_problem_type(type: ProblemType, session: Session) -> DBProblemType:
+        """Gets the problem type DB object corresponding to the given internal type."""
+        artifact_type_obj = session.scalar(
+            select(DBProblemType).where(DBProblemType.name == type)
+        )
+
+        if artifact_type_obj is None:
+            raise Exception(f"Unknown problem type requested: {type}")
+        return artifact_type_obj
+
+    @staticmethod
+    def get_classification_type(
+        type: DataClassification, session: Session
+    ) -> DBDataClassification:
+        """Gets the data classification DB object corresponding to the given internal type."""
+        artifact_type_obj = session.scalar(
+            select(DBDataClassification).where(
+                DBDataClassification.name == type
+            )
+        )
+
+        if artifact_type_obj is None:
+            raise Exception(f"Unknown data classification requested: {type}")
+        return artifact_type_obj

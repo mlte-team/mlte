@@ -29,7 +29,7 @@ class DBSpec(DBBase):
     )
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_spec", cascade="all, delete-orphan"
+        back_populates="body_spec", cascade="all"
     )
     properties: Mapped[List[DBProperty]] = relationship(
         back_populates="spec", cascade="all, delete-orphan"
@@ -86,7 +86,7 @@ class DBValidatedSpec(DBBase):
     spec_id: Mapped[Optional[int]] = mapped_column(ForeignKey("spec.id"))
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_validated_spec", cascade="all, delete-orphan"
+        back_populates="body_validated_spec", cascade="all"
     )
     spec: Mapped[DBSpec] = relationship()
     results: Mapped[List[DBResult]] = relationship(
