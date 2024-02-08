@@ -11,7 +11,24 @@ from sqlalchemy.orm import Session
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.negotiation.model import NegotiationCardModel
+from mlte.model.shared import (
+    DataClassification,
+    DataDescriptor,
+    FieldDescriptor,
+    GoalDescriptor,
+    LabelDescriptor,
+    MetricDescriptor,
+    ModelDescriptor,
+    ModelDevelopmentDescriptor,
+    ModelInputDescriptor,
+    ModelInterfaceDescriptor,
+    ModelOutputDescriptor,
+    ModelProductionDescriptor,
+    ModelResourcesDescriptor,
+    ProblemType,
+    RiskDescriptor,
+)
+from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
 from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
@@ -52,7 +69,7 @@ def create_db_artifact(
     )
 
     if artifact.header.type == ArtifactType.SPEC:
-        # Create a Spec and its internal lists: properties, and inside them, conditions.
+        # Create a DBSpec and its internal lists: properties, and inside them, conditions.
         spec = typing.cast(SpecModel, artifact.body)
         spec_obj = DBSpec(artifact_header=artifact_header, properties=[])
         for property in spec.properties:
@@ -78,6 +95,7 @@ def create_db_artifact(
 
         return spec_obj
     elif artifact.header.type == ArtifactType.VALIDATED_SPEC:
+        # Create a DBValidatedSpec db object.
         validated_spec = typing.cast(ValidatedSpecModel, artifact.body)
         validated_spec_obj = DBValidatedSpec(
             artifact_header=artifact_header,
@@ -98,6 +116,7 @@ def create_db_artifact(
                 validated_spec_obj.results.append(result_obj)
         return validated_spec_obj
     elif artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+        # Create a DBNegotiationCard object and all its subpieces.
         negotiation_card = typing.cast(NegotiationCardModel, artifact.body)
 
         # Create intermedidate objects.
@@ -121,7 +140,7 @@ def create_db_artifact(
             storage=negotiation_card.model.production.resources.storage,
         )
 
-        # Create the actual objects.
+        # Create the actual object.
         negotiation_card_obj = DBNegotiationCard(
             artifact_header=artifact_header,
             sys_goals=[],
@@ -211,8 +230,9 @@ def create_artifact_from_db(
         timestamp=artifact_header_obj.timestamp,
     )
 
-    body: typing.Union[SpecModel, ValidatedSpecModel]
+    body: typing.Union[SpecModel, ValidatedSpecModel, NegotiationCardModel]
     if artifact_header.type == ArtifactType.SPEC:
+        # Creating a Spec from DB data.
         spec_obj = typing.cast(DBSpec, artifact_header_obj.body_spec)
         body = SpecModel(
             artifact_type=artifact_header.type,
@@ -236,6 +256,7 @@ def create_artifact_from_db(
             ],
         )
     elif artifact_header.type == ArtifactType.VALIDATED_SPEC:
+        # Creating a ValidatedSpec from DB data.
         validated_obj = typing.cast(
             DBValidatedSpec, artifact_header_obj.body_validated_spec
         )
@@ -260,6 +281,114 @@ def create_artifact_from_db(
             }
             if validated_obj.spec is not None
             else {},
+        )
+    elif artifact_header.type == ArtifactType.NEGOTIATION_CARD:
+        # Creating a NegotiationCard from DB data.
+        negotiation_obj = typing.cast(
+            DBNegotiationCard, artifact_header_obj.body_negotiation_card
+        )
+        body = NegotiationCardModel(
+            artifact_type=artifact_header.type,
+            system=SystemDescriptor(
+                task=negotiation_obj.sys_task,
+                usage_context=negotiation_obj.sys_usage_context,
+                risks=RiskDescriptor(
+                    fp=negotiation_obj.sys_risks_fp,
+                    fn=negotiation_obj.sys_risks_fn,
+                    other=negotiation_obj.sys_risks_other,
+                ),
+                problem_type=ProblemType(negotiation_obj.sys_problem_type.name)
+                if negotiation_obj.sys_problem_type is not None
+                else None,
+                goals=[
+                    GoalDescriptor(
+                        description=goal.description,
+                        metrics=[
+                            MetricDescriptor(
+                                description=metric.description,
+                                baseline=metric.baseline,
+                            )
+                            for metric in goal.metrics
+                        ],
+                    )
+                    for goal in negotiation_obj.sys_goals
+                ],
+            ),
+            data=[
+                DataDescriptor(
+                    description=data_descriptor.description,
+                    source=data_descriptor.source,
+                    classification=DataClassification(
+                        data_descriptor.classification.name
+                    ),
+                    access=data_descriptor.access,
+                    rights=data_descriptor.rights,
+                    policies=data_descriptor.policies,
+                    identifiable_information=data_descriptor.identifiable_information,
+                    labels=[
+                        LabelDescriptor(
+                            description=label.description,
+                            percentage=label.percentage,
+                        )
+                        for label in data_descriptor.labels
+                    ],
+                    fields=[
+                        FieldDescriptor(
+                            name=field.name,
+                            description=field.description,
+                            type=field.type,
+                            expected_values=field.expected_values,
+                            missing_values=field.missing_values,
+                            special_values=field.special_values,
+                        )
+                        for field in data_descriptor.fields
+                    ],
+                )
+                for data_descriptor in negotiation_obj.data_descriptors
+            ],
+            model=ModelDescriptor(
+                development=ModelDevelopmentDescriptor(
+                    resources=ModelResourcesDescriptor(
+                        cpu=negotiation_obj.model_dev_resources.cpu
+                        if negotiation_obj.model_dev_resources
+                        else None,
+                        gpu=negotiation_obj.model_dev_resources.gpu
+                        if negotiation_obj.model_dev_resources
+                        else None,
+                        memory=negotiation_obj.model_dev_resources.memory
+                        if negotiation_obj.model_dev_resources
+                        else None,
+                        storage=negotiation_obj.model_dev_resources.storage
+                        if negotiation_obj.model_dev_resources
+                        else None,
+                    )
+                ),
+                production=ModelProductionDescriptor(
+                    integration=negotiation_obj.model_prod_integration,
+                    interface=ModelInterfaceDescriptor(
+                        input=ModelInputDescriptor(
+                            description=negotiation_obj.model_prod_interface_input_desc
+                        ),
+                        output=ModelOutputDescriptor(
+                            description=negotiation_obj.model_prod_interface_output_desc
+                        ),
+                    ),
+                    resources=ModelResourcesDescriptor(
+                        cpu=negotiation_obj.model_prod_resources.cpu
+                        if negotiation_obj.model_prod_resources
+                        else None,
+                        gpu=negotiation_obj.model_prod_resources.gpu
+                        if negotiation_obj.model_prod_resources
+                        else None,
+                        memory=negotiation_obj.model_prod_resources.memory
+                        if negotiation_obj.model_prod_resources
+                        else None,
+                        storage=negotiation_obj.model_prod_resources.storage
+                        if negotiation_obj.model_prod_resources
+                        else None,
+                    ),
+                ),
+            ),
         )
     else:
         raise Exception(

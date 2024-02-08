@@ -57,7 +57,9 @@ class DBNegotiationCard(DBBase):
     model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_dev_resources: Mapped[Optional[DBModelResourcesDescriptor]] = relationship(
+    model_dev_resources: Mapped[
+        Optional[DBModelResourcesDescriptor]
+    ] = relationship(
         cascade="all",
         foreign_keys=[model_dev_resources_id],
     )
@@ -67,7 +69,9 @@ class DBNegotiationCard(DBBase):
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_prod_resources: Mapped[Optional[DBModelResourcesDescriptor]] = relationship(
+    model_prod_resources: Mapped[
+        Optional[DBModelResourcesDescriptor]
+    ] = relationship(
         cascade="all",
         foreign_keys=[model_prod_resources_id],
     )
