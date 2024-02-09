@@ -22,6 +22,7 @@ from mlte.artifact.type import ArtifactType
 if TYPE_CHECKING:
     from mlte.store.artifact.underlying.rdbs.metadata_nc import (
         DBNegotiationCard,
+        DBReport,
     )
     from mlte.store.artifact.underlying.rdbs.metadata_spec import (
         DBSpec,
@@ -31,6 +32,7 @@ else:
     DBNegotiationCard = "DBNegotiationCard"
     DBSpec = "DBSpec"
     DBValidatedSpec = "DBValidatedSpec"
+    DBReport = "DBReport"
 
 
 class DBBase(DeclarativeBase):
@@ -126,6 +128,9 @@ class DBArtifactHeader(DBBase):
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
     body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
+        back_populates="artifact_header", cascade="all, delete-orphan"
+    )
+    body_report: Mapped[Optional[DBReport]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
 

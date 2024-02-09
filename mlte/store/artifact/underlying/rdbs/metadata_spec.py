@@ -16,7 +16,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
 )
 
 # -------------------------------------------------------------------------
-# Spec and Validated Spec Elements
+# Spec Elements
 # -------------------------------------------------------------------------
 
 
@@ -74,6 +74,11 @@ class DBCondition(DBBase):
 
     def __repr__(self) -> str:
         return f"Condition(id={self.id!r}, name={self.name!r}, arguments={self.arguments!r}, value_class={self.value_class!r}, property={self.property!r})"
+
+
+# -------------------------------------------------------------------------
+# ValidatedSpec Elements
+# -------------------------------------------------------------------------
 
 
 class DBValidatedSpec(DBBase):

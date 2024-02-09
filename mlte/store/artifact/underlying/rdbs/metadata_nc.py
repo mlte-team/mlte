@@ -15,6 +15,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
+from mlte.store.artifact.underlying.rdbs.metadata_spec import DBValidatedSpec
 
 # -------------------------------------------------------------------------
 # Negotiation Card
@@ -85,6 +86,90 @@ class DBNegotiationCard(DBBase):
 # -------------------------------------------------------------------------
 
 
+class DBReport(DBBase):
+    __tablename__ = "report"
+
+    # General
+    id: Mapped[int] = mapped_column(primary_key=True)
+    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
+        ForeignKey("artifact_header.id")
+    )
+    artifact_header: Mapped[DBArtifactHeader] = relationship(
+        back_populates="body_report",
+        cascade="all",
+    )
+
+    # Summary
+    summary_task: Mapped[Optional[str]]
+    summary_problem_type_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("nc_problem_type.id")
+    )
+    summary_problem_type: Mapped[Optional[DBProblemType]] = relationship()
+
+    # Performance results
+    performance_findings: Mapped[Optional[str]]
+    performance_goals: Mapped[List[DBGoalDescriptor]] = relationship(
+        cascade="all, delete-orphan"
+    )
+
+    # Intended use
+    intended_usage_context: Mapped[Optional[str]]
+    intended_reqs_model_prod_integration: Mapped[Optional[str]]
+    intended_reqs_model_prod_interface_input_desc: Mapped[Optional[str]]
+    intended_reqs_model_prod_interface_output_desc: Mapped[Optional[str]]
+    intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(
+        ForeignKey("nc_model_resource.id")
+    )
+    intended_reqs_model_prod_resources: Mapped[
+        Optional[DBModelResourcesDescriptor]
+    ] = relationship(
+        cascade="all",
+        foreign_keys=[intended_reqs_model_prod_resources_id],
+    )
+
+    # Risks
+    risks_fp: Mapped[Optional[str]]
+    risks_fn: Mapped[Optional[str]]
+    risks_other: Mapped[Optional[str]]
+
+    # Data
+    data_descriptors: Mapped[List[DBDataDescriptor]] = relationship(
+        cascade="all, delete-orphan"
+    )
+
+    # Comments
+    comments: Mapped[List[DBCommentDescriptor]] = relationship(
+        back_populates="report", cascade="all, delete-orphan"
+    )
+
+    # Analysis.
+    quantitative_analysis_content: Mapped[str]
+
+    # Validated spec.
+    validated_spec_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("validated_spec.id")
+    )
+    validated_spec: Mapped[DBValidatedSpec] = relationship()
+
+    def __repr__(self) -> str:
+        return (
+            f"Report(id={self.id!r}, artifact_header={self.artifact_header!r})"
+        )
+
+
+class DBCommentDescriptor(DBBase):
+    __tablename__ = "report_comment"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    content: Mapped[Optional[str]]
+    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
+
+    report: Mapped[DBReport] = relationship(back_populates="comments")
+
+    def __repr__(self) -> str:
+        return f"Comment(id={self.id!r}, content={self.content!r})"
+
+
 # -------------------------------------------------------------------------
 # Shared Elements
 # -------------------------------------------------------------------------
@@ -95,9 +180,10 @@ class DBGoalDescriptor(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[Optional[str]]
-    negotiation_card_id: Mapped[int] = mapped_column(
+    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")
     )
+    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     metrics: Mapped[List[DBMetricDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="goal_descriptor"
@@ -149,9 +235,10 @@ class DBDataDescriptor(DBBase):
     classification_id: Mapped[int] = mapped_column(
         ForeignKey("nc_data_classification.id")
     )
-    negotiation_card_id: Mapped[int] = mapped_column(
+    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")
     )
+    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     classification: Mapped[DBDataClassification] = relationship()
     labels: Mapped[List[DBLabelDescriptor]] = relationship(
@@ -226,6 +313,9 @@ class DBModelResourcesDescriptor(DBBase):
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")
     )
+    report_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("report.id")
+    )    
 
     def __repr__(self) -> str:
         return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, memory={self.memory!r}, storage={self.storage!r})"
