@@ -164,18 +164,26 @@ Bumping the version for a new release can be accomplished with:
 $ bumpversion patch
 ```
 
-where `patch` may be replaced with `minor` or `major` as appropriate for the release.
+where `patch` may be replaced with `minor` or `major` as appropriate for the release. You may need to use:
+
+```bash
+$ bumpversion --allow-dirty patch
+```
 
 ## Publishing
 
-We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. The current procedure we follow for publication is described below.
-
-Ensure you have properly incremented the version for the new release, as described in Versioning above.
+We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
 Build the static distribution for the front end; the command below assumes that you have the dependencies for front end builds installed:
 
 ```bash
 $ cd mlte/frontend/nuxt-app && npm run build
+```
+
+If publishing on MacOS, you'll need to remove the node_modules directory before building the package (they can be reinstalled afterwards using `npm install`):
+
+```bash
+$ rm -rf mlte/frontend/nuxt-app/node_modules
 ```
 
 Create the source distribution and wheel:
@@ -184,10 +192,10 @@ Create the source distribution and wheel:
 $ poetry build
 ```
 
-Publish the package to `PyPi`:
+Publish the package to `PyPi` using a PyPi API token:
 
 ```bash
-$ poetry publish --username <USERNAME> --password <PASSWORD>
+$ poetry publish --username __token__ --password <TOKEN>
 ```
 
 ### Docker Integration
