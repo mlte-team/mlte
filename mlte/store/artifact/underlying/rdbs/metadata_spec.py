@@ -15,6 +15,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
+from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
 
 # -------------------------------------------------------------------------
 # Spec Elements
@@ -137,6 +138,7 @@ class DBEvidenceMetadata(DBBase):
     result_id: Mapped[int] = mapped_column(ForeignKey("result.id"))
 
     result: Mapped[DBResult] = relationship(back_populates="evidence_metadata")
+    value: Mapped[DBValue] = relationship(back_populates="evidence_metadata")
 
     def __repr__(self) -> str:
         return f"EvidenceMetadata(id={self.id!r}, identifier={self.identifier!r}, measurement_type={self.measurement_type!r}, info={self.info!r})"

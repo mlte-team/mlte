@@ -28,11 +28,13 @@ if TYPE_CHECKING:
         DBSpec,
         DBValidatedSpec,
     )
+    from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
 else:
     DBNegotiationCard = "DBNegotiationCard"
     DBSpec = "DBSpec"
     DBValidatedSpec = "DBValidatedSpec"
     DBReport = "DBReport"
+    DBValue = "DBValue"
 
 
 class DBBase(DeclarativeBase):
@@ -131,6 +133,9 @@ class DBArtifactHeader(DBBase):
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
     body_report: Mapped[Optional[DBReport]] = relationship(
+        back_populates="artifact_header", cascade="all, delete-orphan"
+    )
+    body_value: Mapped[Optional[DBValue]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
 

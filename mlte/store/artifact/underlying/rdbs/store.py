@@ -38,6 +38,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     init_classification_types,
     init_problem_types,
 )
+from mlte.store.artifact.underlying.rdbs.metadata_value import init_value_types
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.base import StoreURI
 
@@ -82,6 +83,7 @@ class RelationalDBStore(ArtifactStore):
             init_artifact_types(session)
             init_problem_types(session)
             init_classification_types(session)
+            init_value_types(session)
 
 
 # -----------------------------------------------------------------------------
