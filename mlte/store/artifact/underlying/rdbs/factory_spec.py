@@ -12,6 +12,7 @@ from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
+    DBEvidenceMetadata,
     DBProperty,
     DBResult,
     DBSpec,
@@ -106,6 +107,14 @@ def create_v_spec_db_from_model(
                     validated_spec.spec_identifier, property_name, session
                 ),
                 validated_spec=validated_spec_obj,
+                evidence_metadata=DBEvidenceMetadata(
+                    identifier=measurement_id,
+                    measurement_type=result.metadata.measurement_type,
+                    info=result.metadata.info,
+                    info=result.metadata.info,
+                )
+                if result.metadata is not None
+                else None,
             )
             validated_spec_obj.results.append(result_obj)
     return validated_spec_obj
