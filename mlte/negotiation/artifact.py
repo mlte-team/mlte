@@ -46,7 +46,6 @@ class NegotiationCard(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=NegotiationCardModel(
-                artifact_type=ArtifactType.NEGOTIATION_CARD,
                 system=self.system,
                 data=self.data,
                 model=self.model,

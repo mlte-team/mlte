@@ -313,9 +313,7 @@ class DBModelResourcesDescriptor(DBBase):
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")
     )
-    report_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("report.id")
-    )    
+    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     def __repr__(self) -> str:
         return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, memory={self.memory!r}, storage={self.storage!r})"

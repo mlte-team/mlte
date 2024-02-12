@@ -71,7 +71,6 @@ class Spec(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=SpecModel(
-                artifact_type=ArtifactType.SPEC,
                 properties=[
                     self._to_property_model(property)
                     for property, _ in self.properties.items()

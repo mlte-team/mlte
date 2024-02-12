@@ -68,7 +68,7 @@ class QuantitiveAnalysisDescriptor(BaseModel):
 class ReportModel(BaseModel):
     """The model implementation for the MLTE report artifact."""
 
-    artifact_type: Literal[ArtifactType.REPORT]
+    artifact_type: Literal[ArtifactType.REPORT] = ArtifactType.REPORT
     """Union discriminator."""
 
     summary: SummaryDescriptor = SummaryDescriptor()

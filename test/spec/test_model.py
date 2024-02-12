@@ -7,7 +7,6 @@ Unit tests for specification model.
 from __future__ import annotations
 
 import mlte.spec.model as model
-from mlte.artifact.type import ArtifactType
 
 # -----------------------------------------------------------------------------
 # SpecModel
@@ -18,7 +17,6 @@ def test_spec_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
         model.SpecModel(
-            artifact_type=ArtifactType.SPEC,
             properties=[
                 model.PropertyModel(
                     name="TaskEfficacy",
@@ -36,7 +34,7 @@ def test_spec_body() -> None:
                 )
             ],
         ),
-        model.SpecModel(artifact_type=ArtifactType.SPEC),
+        model.SpecModel(),
     ]
 
     for object in objects:

@@ -42,7 +42,6 @@ class Array(Value):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=ArrayValueModel(

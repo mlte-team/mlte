@@ -38,7 +38,7 @@ class ValueType(str, Enum):
 class ValueModel(BaseModel):
     """The model implementation for MLTE values."""
 
-    artifact_type: Literal[ArtifactType.VALUE]
+    artifact_type: Literal[ArtifactType.VALUE] = ArtifactType.VALUE
     """Union discriminator."""
 
     metadata: EvidenceMetadata
@@ -66,9 +66,6 @@ class IntegerValueModel(BaseModel):
     integer: int
     """The encapsulated value."""
 
-    class Config:
-        use_enum_values = True
-
 
 class RealValueModel(BaseModel):
     """The model implementation for MLTE real values."""
@@ -78,9 +75,6 @@ class RealValueModel(BaseModel):
 
     real: float
     """The encapsulated value."""
-
-    class Config:
-        use_enum_values = True
 
 
 class OpaqueValueModel(BaseModel):
@@ -92,9 +86,6 @@ class OpaqueValueModel(BaseModel):
     data: Dict[str, Any]
     """Encapsulated, opaque data."""
 
-    class Config:
-        use_enum_values = True
-
 
 class ImageValueModel(BaseModel):
     """The model implementation for MLTE image values."""
@@ -105,9 +96,6 @@ class ImageValueModel(BaseModel):
     data: str
     """The image data as base64-encoded string."""
 
-    class Config:
-        use_enum_values = True
-
 
 class ArrayValueModel(BaseModel):
     """The model implementation for MLTE array values."""
@@ -117,9 +105,6 @@ class ArrayValueModel(BaseModel):
 
     data: List[Any]
     """The array to capture."""
-
-    class Config:
-        use_enum_values = True
 
 
 ValueModel.model_rebuild()

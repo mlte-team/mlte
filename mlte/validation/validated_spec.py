@@ -73,7 +73,6 @@ class ValidatedSpec(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValidatedSpecModel(
-                artifact_type=ArtifactType.VALIDATED_SPEC,
                 spec_identifier=self.spec.identifier,
                 spec=spec_body_model,
                 results={

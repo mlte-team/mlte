@@ -10,7 +10,6 @@ from typing import Any, Dict
 
 from deepdiff import DeepDiff
 
-from mlte.artifact.type import ArtifactType
 from mlte.model.shared import (
     DataClassification,
     DataDescriptor,
@@ -39,7 +38,6 @@ def test_negotiation_card() -> None:
     """A negotiation card model can be serialized and deserialized."""
     objects = [
         NegotiationCardModel(
-            artifact_type=ArtifactType.NEGOTIATION_CARD,
             system=SystemDescriptor(
                 goals=[
                     GoalDescriptor(
@@ -103,7 +101,7 @@ def test_negotiation_card() -> None:
                 ),
             ),
         ),
-        NegotiationCardModel(artifact_type=ArtifactType.NEGOTIATION_CARD),
+        NegotiationCardModel(),
     ]
 
     for object in objects:

@@ -96,7 +96,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
     Make a minimal negotiation card.
     :return: The artifact
     """
-    return NegotiationCardModel(artifact_type=ArtifactType.NEGOTIATION_CARD)
+    return NegotiationCardModel()
 
 
 def _make_value(id: str) -> ValueModel:
@@ -108,7 +108,6 @@ def _make_value(id: str) -> ValueModel:
         measurement_type="typename", identifier=Identifier(name=id)
     )
     return ValueModel(
-        artifact_type=ArtifactType.VALUE,
         metadata=m,
         value_class=Integer.get_class_path(),
         value=IntegerValueModel(
@@ -123,7 +122,7 @@ def _make_spec() -> SpecModel:
     Make a minimal spec.
     :return: The artifact
     """
-    return SpecModel(artifact_type=ArtifactType.SPEC)
+    return SpecModel()
 
 
 def _make_validated_spec() -> ValidatedSpecModel:
@@ -131,7 +130,7 @@ def _make_validated_spec() -> ValidatedSpecModel:
     Make a minimal validated spec.
     :return: The artifact
     """
-    return ValidatedSpecModel(artifact_type=ArtifactType.VALIDATED_SPEC)
+    return ValidatedSpecModel()
 
 
 def _make_report() -> ReportModel:
@@ -139,4 +138,4 @@ def _make_report() -> ReportModel:
     Make a minimal report.
     :return: The artifact
     """
-    return ReportModel(artifact_type=ArtifactType.REPORT)
+    return ReportModel()

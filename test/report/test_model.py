@@ -4,7 +4,6 @@ test/report/test_model.py
 Unit tests for report model.
 """
 
-from mlte.artifact.type import ArtifactType
 from mlte.model.shared import (
     DataClassification,
     DataDescriptor,
@@ -34,7 +33,6 @@ def test_report() -> None:
     """A report model can be serialized and deserialized."""
     objects = [
         ReportModel(
-            artifact_type=ArtifactType.REPORT,
             summary=SummaryDescriptor(
                 problem_type=ProblemType.CLASSIFICATION, task="task"
             ),
@@ -95,7 +93,7 @@ def test_report() -> None:
                 content="content"
             ),
         ),
-        ReportModel(artifact_type=ArtifactType.REPORT),
+        ReportModel(),
     ]
 
     for object in objects:

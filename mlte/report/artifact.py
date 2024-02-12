@@ -78,7 +78,6 @@ class Report(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ReportModel(
-                artifact_type=ArtifactType.REPORT,
                 summary=self.summary,
                 performance=self.performance,
                 intended_use=self.intended_use,

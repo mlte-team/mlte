@@ -9,7 +9,6 @@ from __future__ import annotations
 import typing
 
 import mlte.validation.model as model
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.functionality.task_efficacy import TaskEfficacy
 from mlte.spec.condition import Condition
@@ -25,7 +24,6 @@ def test_validated_spec_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
         model.ValidatedSpecModel(
-            artifact_type=ArtifactType.VALIDATED_SPEC,
             spec_identifier="Spec1",
             spec=typing.cast(
                 SpecModel,
@@ -59,7 +57,7 @@ def test_validated_spec_body() -> None:
                 },
             },
         ),
-        model.ValidatedSpecModel(artifact_type=ArtifactType.VALIDATED_SPEC),
+        model.ValidatedSpecModel(),
     ]
 
     for object in objects:

@@ -28,7 +28,10 @@ class ResultModel(BaseModel):
 class ValidatedSpecModel(BaseModel):
     """The model implementation for the ValidatedSpec artifact."""
 
-    artifact_type: Literal[ArtifactType.VALIDATED_SPEC]
+    artifact_type: Literal[
+        ArtifactType.VALIDATED_SPEC
+    ] = ArtifactType.VALIDATED_SPEC
+
     """Union discriminator."""
 
     spec_identifier: str = ""
