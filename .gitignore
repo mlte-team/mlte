@@ -38,3 +38,6 @@ build/
 
 # credentials
 token.txt
+
+# docs
+docs/site

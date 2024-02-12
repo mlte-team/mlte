@@ -10,9 +10,12 @@ authors = ["MLTE Engineers"]
 packages = [
   { include = "mlte" }
 ]
+
 include = [
-  "mlte/**/*.py",
   "mlte/frontend/nuxt-app/.output/public/**/*"
+]
+exclude = [
+  "mlte/frontend/nuxt-app/**/**/*"
 ]
 
 [tool.poetry.scripts]
