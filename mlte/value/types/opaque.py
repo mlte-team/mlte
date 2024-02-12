@@ -45,7 +45,6 @@ class Opaque(Value):
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=OpaqueValueModel(
-                    value_type=ValueType.OPAQUE,
                     data=self.data,
                 ),
             ),

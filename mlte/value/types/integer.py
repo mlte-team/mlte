@@ -45,7 +45,6 @@ class Integer(Value):
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=IntegerValueModel(
-                    value_type=ValueType.INTEGER,
                     integer=self.value,
                 ),
             ),

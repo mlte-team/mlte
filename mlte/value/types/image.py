@@ -62,7 +62,6 @@ class Image(Value):
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=ImageValueModel(
-                    value_type=ValueType.IMAGE,
                     data=base64.encodebytes(self.image).decode("utf-8"),
                 ),
             ),

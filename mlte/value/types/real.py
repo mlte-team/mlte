@@ -46,7 +46,6 @@ class Real(Value):
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=RealValueModel(
-                    value_type=ValueType.REAL,
                     real=self.value,
                 ),
             ),
