@@ -134,9 +134,9 @@ class DBEvidenceMetadata(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
     measurement_type: Mapped[str]
-    info: Mapped[str]
-    result_id: Mapped[int] = mapped_column(ForeignKey("result.id"))
-    value_id: Mapped[int] = mapped_column(ForeignKey("value.id"))
+    info: Mapped[Optional[str]]
+    result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("result.id"))
+    value_id: Mapped[Optional[int]] = mapped_column(ForeignKey("value.id"))
 
     result: Mapped[DBResult] = relationship(back_populates="evidence_metadata")
     value: Mapped[DBValue] = relationship(back_populates="evidence_metadata")

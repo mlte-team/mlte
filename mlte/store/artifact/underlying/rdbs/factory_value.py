@@ -30,7 +30,7 @@ def create_value_db_from_model(
             info=value.metadata.info,
         ),
         value_class=value.value_class,
-        value_type=value.value.value_type.name,
+        value_type=value.value.value_type.value,
         data_json=json.dumps(value.value.to_json()),
     )
     return value_obj

@@ -146,7 +146,7 @@ def create_artifact_from_db(
         body = create_report_model_from_db(report_obj)
     elif artifact_header.type == ArtifactType.VALUE:
         # Creating a Value from DB data.
-        value_obj = typing.cast(DBValue, artifact_header_obj.body_report)
+        value_obj = typing.cast(DBValue, artifact_header_obj.body_value)
         body = create_value_model_from_db(value_obj)
 
     else:
