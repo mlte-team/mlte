@@ -108,3 +108,26 @@ class ArrayValueModel(BaseModel):
 
 
 ValueModel.model_rebuild()
+
+
+# Value type mapping to models.
+VALUE_MODEL_CLASS: dict[
+    ValueType,
+    Union[
+        type[IntegerValueModel],
+        type[RealValueModel],
+        type[OpaqueValueModel],
+        type[ImageValueModel],
+        type[ArrayValueModel],
+    ],
+] = {
+    ValueType.INTEGER: IntegerValueModel,
+    ValueType.REAL: RealValueModel,
+    ValueType.OPAQUE: OpaqueValueModel,
+    ValueType.IMAGE: ImageValueModel,
+    ValueType.ARRAY: ArrayValueModel,
+}
+
+
+def get_model_class(type: ValueType):
+    return VALUE_MODEL_CLASS[type]
