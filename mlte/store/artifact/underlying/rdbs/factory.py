@@ -25,6 +25,10 @@ from mlte.store.artifact.underlying.rdbs.factory_spec import (
     create_v_spec_db_from_model,
     create_v_spec_model_from_db,
 )
+from mlte.store.artifact.underlying.rdbs.factory_value import (
+    create_value_db_from_model,
+    create_value_model_from_db,
+)
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBArtifactType,
@@ -37,7 +41,9 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBSpec,
     DBValidatedSpec,
 )
+from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
 from mlte.validation.model import ValidatedSpecModel
+from mlte.value.model import ValueModel
 
 # -------------------------------------------------------------------------
 # DB artifact factory.
@@ -49,7 +55,9 @@ def create_db_artifact(
     artifact_type_obj: DBArtifactType,
     version_id: int,
     session: Session,
-) -> typing.Union[DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport]:
+) -> typing.Union[
+    DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue
+]:
     """Converts an internal model to its corresponding DB object for artifacts."""
     artifact_header = DBArtifactHeader(
         identifier=artifact.header.identifier,
@@ -78,6 +86,10 @@ def create_db_artifact(
         # Create a DBReport object and all its subpieces.
         report = typing.cast(ReportModel, artifact.body)
         return create_report_db_from_model(report, artifact_header, session)
+    elif artifact.header.type == ArtifactType.VALUE:
+        # Create a DBValue object and all its subpieces.
+        value = typing.cast(ValueModel, artifact.body)
+        return create_value_db_from_model(value, artifact_header)
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact.header.type}"
@@ -106,7 +118,11 @@ def create_artifact_from_db(
     )
 
     body: typing.Union[
-        SpecModel, ValidatedSpecModel, NegotiationCardModel, ReportModel
+        SpecModel,
+        ValidatedSpecModel,
+        NegotiationCardModel,
+        ReportModel,
+        ValueModel,
     ]
     if artifact_header.type == ArtifactType.SPEC:
         # Creating a Spec from DB data.
@@ -128,6 +144,11 @@ def create_artifact_from_db(
         # Creating a Report from DB data.
         report_obj = typing.cast(DBReport, artifact_header_obj.body_report)
         body = create_report_model_from_db(report_obj)
+    elif artifact_header.type == ArtifactType.VALUE:
+        # Creating a Value from DB data.
+        value_obj = typing.cast(DBValue, artifact_header_obj.body_report)
+        body = create_value_model_from_db(value_obj)
+
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact_header.type}"

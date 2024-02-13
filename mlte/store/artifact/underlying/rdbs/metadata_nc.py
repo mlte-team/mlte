@@ -143,7 +143,7 @@ class DBReport(DBBase):
     )
 
     # Analysis.
-    quantitative_analysis_content: Mapped[str]
+    quantitative_analysis_content: Mapped[Optional[str]]
 
     # Validated spec.
     validated_spec_id: Mapped[Optional[str]] = mapped_column(
