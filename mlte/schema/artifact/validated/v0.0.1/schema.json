@@ -160,6 +160,7 @@
       "properties": {
         "artifact_type": {
           "const": "spec",
+          "default": "spec",
           "title": "Artifact Type"
         },
         "properties": {
@@ -171,9 +172,6 @@
           "title": "Properties"
         }
       },
-      "required": [
-        "artifact_type"
-      ],
       "title": "SpecModel",
       "type": "object"
     }
@@ -182,6 +180,7 @@
   "properties": {
     "artifact_type": {
       "const": "validated_spec",
+      "default": "validated_spec",
       "title": "Artifact Type"
     },
     "spec_identifier": {
@@ -212,9 +211,6 @@
       "type": "object"
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "ValidatedSpecModel",
   "type": "object"
 }

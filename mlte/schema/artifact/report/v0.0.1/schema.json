@@ -651,6 +651,7 @@
   "properties": {
     "artifact_type": {
       "const": "report",
+      "default": "report",
       "title": "Artifact Type"
     },
     "summary": {
@@ -753,9 +754,6 @@
       "title": "Validated Spec Id"
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "ReportModel",
   "type": "object"
 }

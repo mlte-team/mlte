@@ -5,6 +5,7 @@
       "properties": {
         "value_type": {
           "const": "array",
+          "default": "array",
           "title": "Value Type"
         },
         "data": {
@@ -14,7 +15,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "ArrayValueModel",
@@ -69,6 +69,7 @@
       "properties": {
         "value_type": {
           "const": "image",
+          "default": "image",
           "title": "Value Type"
         },
         "data": {
@@ -77,7 +78,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "ImageValueModel",
@@ -88,6 +88,7 @@
       "properties": {
         "value_type": {
           "const": "integer",
+          "default": "integer",
           "title": "Value Type"
         },
         "integer": {
@@ -96,7 +97,6 @@
         }
       },
       "required": [
-        "value_type",
         "integer"
       ],
       "title": "IntegerValueModel",
@@ -107,6 +107,7 @@
       "properties": {
         "value_type": {
           "const": "opaque",
+          "default": "opaque",
           "title": "Value Type"
         },
         "data": {
@@ -115,7 +116,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "OpaqueValueModel",
@@ -126,6 +126,7 @@
       "properties": {
         "value_type": {
           "const": "real",
+          "default": "real",
           "title": "Value Type"
         },
         "real": {
@@ -134,7 +135,6 @@
         }
       },
       "required": [
-        "value_type",
         "real"
       ],
       "title": "RealValueModel",
@@ -145,6 +145,7 @@
   "properties": {
     "artifact_type": {
       "const": "value",
+      "default": "value",
       "title": "Artifact Type"
     },
     "metadata": {
@@ -186,7 +187,6 @@
     }
   },
   "required": [
-    "artifact_type",
     "metadata",
     "value_class",
     "value"

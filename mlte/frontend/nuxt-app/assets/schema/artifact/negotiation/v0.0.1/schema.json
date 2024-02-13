@@ -646,6 +646,7 @@
   "properties": {
     "artifact_type": {
       "const": "negotiation_card",
+      "default": "negotiation_card",
       "title": "Artifact Type"
     },
     "system": {
@@ -709,9 +710,6 @@
       }
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "NegotiationCardModel",
   "type": "object"
 }
