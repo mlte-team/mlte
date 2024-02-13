@@ -340,7 +340,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
-        # TODO: support for limit and offset.
+        # TODO: not the best support of offset and limit, still loading everything from DB.
         with Session(self.engine) as session:
             all_artifacts = []
             for artifact_type in DBReader.SUPPORTED_ARTIFACT_DB_CLASSES.keys():
@@ -348,7 +348,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
                     namespace_id, model_id, version_id, artifact_type, session
                 )
                 all_artifacts.extend(artifacts)
-            return all_artifacts
+            return all_artifacts[offset : offset + limit]
 
     def search_artifacts(
         self,
@@ -357,7 +357,11 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         version_id: str,
         query: Query = Query(),
     ) -> List[ArtifactModel]:
-        raise NotImplementedError("Not implemented")
+        # TODO: not the most efficient way, since it loads all artifacts first, before filtering.
+        artifacts = self.read_artifacts(namespace_id, model_id, version_id)
+        return [
+            artifact for artifact in artifacts if query.filter.match(artifact)
+        ]
 
     def delete_artifact(
         self,

@@ -30,7 +30,7 @@ from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state
 
-_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store"]
+_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
 class TestclientCient(RemoteHttpStoreClient):
