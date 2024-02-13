@@ -111,7 +111,6 @@ def create_v_spec_db_from_model(
                     identifier=measurement_id,
                     measurement_type=result.metadata.measurement_type,
                     info=result.metadata.info,
-                    info=result.metadata.info,
                 )
                 if result.metadata is not None
                 else None,
