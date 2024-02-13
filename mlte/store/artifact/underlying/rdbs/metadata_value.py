@@ -5,6 +5,8 @@ Definition of the metadata (DB schema) for Values in the artifact store.
 """
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
@@ -12,8 +14,16 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBEvidenceMetadata
 from mlte.value.model import ValueType
+
+# Needed to avoid circular import issues from relationships between tables classes.
+if TYPE_CHECKING:
+    from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+        DBEvidenceMetadata,
+    )
+else:
+    DBEvidenceMetadata = "DBEvidenceMetadata"
+
 
 # -------------------------------------------------------------------------
 # Value Elements
@@ -38,13 +48,14 @@ class DBValue(DBBase):
         ForeignKey("artifact_header.id")
     )
     value_class: Mapped[str]
+    value_type: Mapped[str]
     data_json: Mapped[str]
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
         back_populates="body_value", cascade="all"
     )
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
-        cascade="all, delete-orphan", back_populates="result"
+        back_populates="value", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
