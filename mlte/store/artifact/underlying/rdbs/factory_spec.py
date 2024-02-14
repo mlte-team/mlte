@@ -97,7 +97,9 @@ def create_v_spec_db_from_model(
         results=[],
         spec=DBReader.get_spec(
             validated_spec.spec_identifier, artifact_header.version_id, session
-        ),
+        )
+        if validated_spec.spec_identifier != ""
+        else None,
     )
     for property_name, results in validated_spec.results.items():
         for measurement_id, result in results.items():
