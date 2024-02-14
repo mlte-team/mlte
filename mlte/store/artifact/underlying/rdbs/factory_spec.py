@@ -107,7 +107,7 @@ def create_v_spec_db_from_model(
                 measurement_id=measurement_id,
                 type=result.type,
                 message=result.message,
-                property=DBReader.get_property(
+                property_id=DBReader.get_property_id(
                     property_name,
                     validated_spec.spec_identifier,
                     artifact_header.version_id,

@@ -281,27 +281,27 @@ class DBReader:
             return property_obj
 
     @staticmethod
-    def get_property(
+    def get_property_id(
         property_name: str,
         spec_identifier: str,
         version_id: int,
         session: Session,
-    ) -> DBProperty:
-        """Gets the property with the given name for the indicated Spec."""
-        property_obj = session.scalar(
-            select(DBProperty)
+    ) -> int:
+        """Gets the id of the property with the given name for the indicated Spec."""
+        property_id = session.scalar(
+            select(DBProperty.id)
             .where(DBProperty.name == property_name)
             .where(DBSpec.id == DBProperty.spec_id)
             .where(DBSpec.artifact_header_id == DBArtifactHeader.id)
             .where(DBArtifactHeader.identifier == spec_identifier)
             .where(DBArtifactHeader.version_id == version_id)
         )
-        if property_obj is None:
+        if property_id is None:
             raise errors.ErrorNotFound(
                 f"Property with name {property_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
             )
         else:
-            return property_obj
+            return property_id
 
     @staticmethod
     def get_problem_type(type: ProblemType, session: Session) -> DBProblemType:
