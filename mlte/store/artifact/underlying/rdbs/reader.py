@@ -263,8 +263,29 @@ class DBReader:
             raise Exception(f"Unsupported artifact type: {artifact_type.value}")
 
     @staticmethod
+    def get_spec(
+        spec_identifier: str, version_id: int, session: Session
+    ) -> DBSpec:
+        """Gets the Spec with the given identifier."""
+        property_obj = session.scalar(
+            select(DBSpec)
+            .where(DBSpec.artifact_header_id == DBArtifactHeader.id)
+            .where(DBArtifactHeader.identifier == spec_identifier)
+            .where(DBArtifactHeader.version_id == version_id)
+        )
+        if property_obj is None:
+            raise errors.ErrorNotFound(
+                f"Spec with identifier {spec_identifier} was not found in the artifact store."
+            )
+        else:
+            return property_obj
+
+    @staticmethod
     def get_property(
-        spec_identifier: str, property_name: str, session: Session
+        property_name: str,
+        spec_identifier: str,
+        version_id: int,
+        session: Session,
     ) -> DBProperty:
         """Gets the property with the given name for the indicated Spec."""
         property_obj = session.scalar(
@@ -273,6 +294,7 @@ class DBReader:
             .where(DBSpec.id == DBProperty.spec_id)
             .where(DBSpec.artifact_header_id == DBArtifactHeader.id)
             .where(DBArtifactHeader.identifier == spec_identifier)
+            .where(DBArtifactHeader.version_id == version_id)
         )
         if property_obj is None:
             raise errors.ErrorNotFound(

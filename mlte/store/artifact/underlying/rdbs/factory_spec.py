@@ -95,7 +95,9 @@ def create_v_spec_db_from_model(
     validated_spec_obj = DBValidatedSpec(
         artifact_header=artifact_header,
         results=[],
-        spec=validated_spec.spec,
+        spec=DBReader.get_spec(
+            validated_spec.spec_identifier, artifact_header.version_id, session
+        ),
     )
     for property_name, results in validated_spec.results.items():
         for measurement_id, result in results.items():
@@ -104,7 +106,10 @@ def create_v_spec_db_from_model(
                 type=result.type,
                 message=result.message,
                 property=DBReader.get_property(
-                    validated_spec.spec_identifier, property_name, session
+                    property_name,
+                    validated_spec.spec_identifier,
+                    artifact_header.version_id,
+                    session,
                 ),
                 validated_spec=validated_spec_obj,
                 evidence_metadata=DBEvidenceMetadata(
