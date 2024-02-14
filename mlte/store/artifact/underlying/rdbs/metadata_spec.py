@@ -97,7 +97,7 @@ class DBValidatedSpec(DBBase):
     )
     spec: Mapped[DBSpec] = relationship()
     results: Mapped[List[DBResult]] = relationship(
-        back_populates="validated_spec"
+        back_populates="validated_spec", cascade="all"
     )
 
     def __repr__(self) -> str:

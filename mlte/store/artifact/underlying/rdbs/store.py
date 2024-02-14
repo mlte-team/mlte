@@ -282,7 +282,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
 
             # Check if artifact already exists.
             try:
-                artifact, artifact_obj = DBReader.get_artifact(
+                _, artifact_obj = DBReader.get_artifact(
                     namespace_id,
                     model_id,
                     version_id,
