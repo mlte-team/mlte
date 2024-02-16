@@ -78,6 +78,11 @@ check: check-isort check-format check-lint check-typecheck
 test:
 	poetry run pytest test
 
+# Open coverage results in a browser
+.PHONY: cov-results
+cov-results:
+	coverage html && open htmlcov/index.html
+
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
 # -----------------------------------------------------------------------------

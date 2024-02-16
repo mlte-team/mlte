@@ -17,6 +17,7 @@ mlte.egg-info
 .coverage.*
 *.coverage
 .pytest_cache/
+htmlcov/
 
 # sphinx artifacts
 build/
