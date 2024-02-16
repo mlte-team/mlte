@@ -34,7 +34,7 @@
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="updateSelectedModel($event)"
+          @update:modelValue="updateSelectedModel($event, false)"
         />
         <br />
       </div>
@@ -153,24 +153,7 @@
                       },
                     }"
                   >
-                    <UsaButton :disabled="true" class="primary-button">
-                      Edit
-                    </UsaButton>
-                  </NuxtLink>
-                </td>
-                <td>
-                  <NuxtLink
-                    :to="{
-                      path: 'report',
-                      query: {
-                        namespace: selectedNamespace,
-                        model: report.model,
-                        version: report.version,
-                        artifactId: report.id,
-                      },
-                    }"
-                  >
-                    <UsaButton class="primary-button"> View </UsaButton>
+                    <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>
@@ -266,14 +249,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  isValidNegotiation,
-  isValidReport,
-  isValidSpec,
-  isValidValidatedSpec,
-  isValidValue,
-} from "../composables/artifact-validation.ts";
-
 const path = ref([
   {
     href: "/",
@@ -286,15 +261,21 @@ const { data: namespaceOptions } = await useFetch<string[]>(
   { method: "GET" },
 );
 
-// The selected namespace
-const selectedNamespace = ref("");
-// The selected model
-const selectedModel = ref("");
-// The selected model version
-const selectedVersion = ref("");
+const selectedNamespace = useCookie("selectedNamespace");
+selectedNamespace.value = selectedNamespace.value || "";
+const selectedModel = useCookie("selectedModel");
+selectedModel.value = selectedModel.value || "";
+const selectedVersion = useCookie("selectedVersion");
+selectedVersion.value = selectedVersion.value || "";
 
 if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
   selectNamespace(namespaceOptions.value[0]);
+  if (selectedModel.value !== ""){
+    updateSelectedModel(selectedModel.value, true);
+    if (selectedVersion.value !== ""){
+      updateSelectedVersion(selectedVersion.value);
+    }
+  }
 }
 const newNamespaceFlag = ref(false);
 const newNamespaceInput = ref("");
@@ -475,10 +456,11 @@ async function deleteNamespace(namespace: string) {
 }
 
 // Update the selected model for the artifact store.
-async function updateSelectedModel(modelName: string) {
+async function updateSelectedModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
-
-  selectedVersion.value = "";
+  if (!initialPageLoad){
+    selectedVersion.value = "";
+  }
   if (modelName === "") {
     clearArtifacts();
     return;
@@ -499,6 +481,7 @@ async function updateSelectedModel(modelName: string) {
       onResponse({ response }) {
         if (response._data) {
           selectedModel.value = modelName;
+          versionOptions.value = [];
           response._data.forEach((version: string) => {
             versionOptions.value.push({
               value: version,
@@ -576,7 +559,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidNegotiation(artifact)) {
         negotiationCards.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -587,7 +572,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidReport(artifact)) {
         reports.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -598,7 +585,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidSpec(artifact)) {
         specifications.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -610,7 +599,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
         validatedSpecs.value.push({
           id: artifact.header.identifier,
           specid: artifact.body.spec_identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -623,7 +614,9 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
           id: artifact.header.identifier.slice(0, -6),
           measurement: artifact.body.metadata.measurement_type,
           type: artifact.body.value.value_type,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: new Date(artifact.header.timestamp).toLocaleString(
+            "en-US",
+          ),
           model,
           version,
         });
@@ -634,6 +627,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
 
 // Clear all artifacts from local state.
 function clearArtifacts() {
+  versionOptions.value = [];
   negotiationCards.value = [];
   reports.value = [];
   specifications.value = [];

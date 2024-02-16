@@ -4,15 +4,18 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "mlte-python"
-version = "0.2.6"
+version = "0.2.7"
 description = "An infrastructure for machine learning test and evaluation."
 authors = ["MLTE Engineers"]
 packages = [
   { include = "mlte" }
 ]
+
 include = [
-  "mlte/**/*.py",
   "mlte/frontend/nuxt-app/.output/public/**/*"
+]
+exclude = [
+  "mlte/frontend/nuxt-app/**/**/*"
 ]
 
 [tool.poetry.scripts]
