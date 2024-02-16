@@ -89,3 +89,10 @@ gen:
 .PHONY: vet
 vet:
 	poetry run python tools/schema.py vet mlte --verbose
+
+
+# -----------------------------------------------------------------------------
+# All actions and checks needed to update and review for pushing.
+# -----------------------------------------------------------------------------
+.PHONY: ci
+ci: gen qa test
