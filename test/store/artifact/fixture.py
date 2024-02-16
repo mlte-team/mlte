@@ -118,11 +118,12 @@ def stores() -> Generator[str, None, None]:
         yield store_fixture_name
 
 
-def stores_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
+def stores_and_types() -> Generator[Tuple[str, ArtifactType, bool], None, None]:
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)
     """
     for store_fixture_name in _STORE_FIXTURE_NAMES:
         for type in ArtifactType:
-            yield store_fixture_name, type
+            for complete in [False, True]:
+                yield store_fixture_name, type, complete

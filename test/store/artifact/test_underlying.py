@@ -9,7 +9,12 @@ import pytest
 import mlte.store.error as errors
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.spec.spec import Spec
+from mlte.store.artifact.store import (
+    ArtifactStore,
+    ArtifactStoreSession,
+    ManagedArtifactSession,
+)
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.base import StoreURI
 
@@ -45,6 +50,25 @@ def test_init_fs(tmp_path) -> None:
 def test_init_rdbs() -> None:
     """A relational DB store can be initialized."""
     _ = create_rdbs_store()
+
+
+def _create_spec_if_needed(
+    artifact_type: ArtifactType,
+    complete: bool,
+    handle: ArtifactStoreSession,
+    namespace_id: str,
+    model_id: str,
+    version_id: str,
+):
+    """Helper to create spec if a ValidatedSpec needs it."""
+    # ValidatedSpec needs a previously generated Spec.
+    if artifact_type == ArtifactType.VALIDATED_SPEC and complete:
+        spec = ArtifactFactory.make(
+            ArtifactType.SPEC,
+            id=Spec.get_default_id(),
+            complete=complete,
+        )
+        handle.write_artifact(namespace_id, model_id, version_id, spec)
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
@@ -186,10 +210,13 @@ def test_version_list(
         assert versions[0] == "version0"
 
 
-@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+@pytest.mark.parametrize(
+    "store_fixture_name,artifact_type,complete", stores_and_types()
+)
 def test_search(
     store_fixture_name: str,
     artifact_type: ArtifactType,
+    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store store supports queries."""
@@ -206,8 +233,11 @@ def test_search(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        a0 = ArtifactFactory.make(artifact_type, "id0")
-        a1 = ArtifactFactory.make(artifact_type, "id1")
+        _create_spec_if_needed(
+            artifact_type, complete, handle, namespace_id, model_id, version_id
+        )
+        a0 = ArtifactFactory.make(artifact_type, "id0", complete)
+        a1 = ArtifactFactory.make(artifact_type, "id1", complete)
 
         for artifact in [a0, a1]:
             handle.write_artifact(namespace_id, model_id, version_id, artifact)
@@ -216,10 +246,13 @@ def test_search(
         assert len(artifacts) == 2
 
 
-@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+@pytest.mark.parametrize(
+    "store_fixture_name,artifact_type,complete", stores_and_types()
+)
 def test_artifact(
     store_fixture_name: str,
     artifact_type: ArtifactType,
+    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store supports basic artifact operations."""
@@ -237,7 +270,10 @@ def test_artifact(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        artifact = ArtifactFactory.make(artifact_type, artifact_id)
+        _create_spec_if_needed(
+            artifact_type, complete, handle, namespace_id, model_id, version_id
+        )
+        artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
         handle.write_artifact(namespace_id, model_id, version_id, artifact)
 
@@ -256,10 +292,13 @@ def test_artifact(
             )
 
 
-@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+@pytest.mark.parametrize(
+    "store_fixture_name,artifact_type,complete", stores_and_types()
+)
 def test_artifact_without_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
+    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact does not create organizational elements by default, on write."""
@@ -270,20 +309,31 @@ def test_artifact_without_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+    artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
         with ManagedArtifactSession(store.session()) as handle:
+            _create_spec_if_needed(
+                artifact_type,
+                complete,
+                handle,
+                namespace_id,
+                model_id,
+                version_id,
+            )
             _ = handle.write_artifact(
                 namespace_id, model_id, version_id, artifact
             )
 
 
-@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+@pytest.mark.parametrize(
+    "store_fixture_name,artifact_type,complete", stores_and_types()
+)
 def test_artifact_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
+    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store can create organizational elements implicitly, on write."""
@@ -294,10 +344,13 @@ def test_artifact_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id)
+    artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
+        _create_spec_if_needed(
+            artifact_type, complete, handle, namespace_id, model_id, version_id
+        )
         _ = handle.write_artifact(
             namespace_id, model_id, version_id, artifact, parents=True
         )
@@ -312,10 +365,13 @@ def test_artifact_parents(
         assert len(read) == 1
 
 
-@pytest.mark.parametrize("store_fixture_name,artifact_type", stores_and_types())
+@pytest.mark.parametrize(
+    "store_fixture_name,artifact_type,complete", stores_and_types()
+)
 def test_artifact_overwrite(
     store_fixture_name: str,
     artifact_type: ArtifactType,
+    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact cam be overwritten with the `force` option."""
@@ -333,7 +389,10 @@ def test_artifact_overwrite(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        artifact = ArtifactFactory.make(artifact_type, artifact_id)
+        _create_spec_if_needed(
+            artifact_type, complete, handle, namespace_id, model_id, version_id
+        )
+        artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
         # The initial write succeeds
         _ = handle.write_artifact(

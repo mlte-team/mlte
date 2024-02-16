@@ -4,12 +4,10 @@ test/report/test_model.py
 Unit tests for report model.
 """
 
+from test.fixture.artifact import make_complete_report
+
 from mlte.model.shared import (
-    DataClassification,
-    DataDescriptor,
-    FieldDescriptor,
     GoalDescriptor,
-    LabelDescriptor,
     MetricDescriptor,
     ModelInputDescriptor,
     ModelInterfaceDescriptor,
@@ -17,7 +15,6 @@ from mlte.model.shared import (
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
-    RiskDescriptor,
 )
 from mlte.report.model import (
     CommentDescriptor,
@@ -32,67 +29,7 @@ from mlte.report.model import (
 def test_report() -> None:
     """A report model can be serialized and deserialized."""
     objects = [
-        ReportModel(
-            summary=SummaryDescriptor(
-                problem_type=ProblemType.CLASSIFICATION, task="task"
-            ),
-            performance=PerformanceDesciptor(
-                goals=[
-                    GoalDescriptor(
-                        description="description",
-                        metrics=[
-                            MetricDescriptor(
-                                description="description", baseline="baseline"
-                            )
-                        ],
-                    )
-                ]
-            ),
-            intended_use=IntendedUseDescriptor(
-                usage_context="context",
-                production_requirements=ModelProductionDescriptor(
-                    integration="integration",
-                    interface=ModelInterfaceDescriptor(
-                        input=ModelInputDescriptor(description="description"),
-                        output=ModelOutputDescriptor(description="output"),
-                    ),
-                    resources=ModelResourcesDescriptor(
-                        cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                    ),
-                ),
-            ),
-            risks=RiskDescriptor(fp="fp", fn="fn", other="other"),
-            data=[
-                DataDescriptor(
-                    description="description",
-                    classification=DataClassification.UNCLASSIFIED,
-                    access="access",
-                    fields=[
-                        FieldDescriptor(
-                            name="name",
-                            description="description",
-                            type="type",
-                            expected_values="expected_values",
-                            missing_values="missing_values",
-                            special_values="special_values",
-                        )
-                    ],
-                    labels=[
-                        LabelDescriptor(
-                            description="description", percentage=95.0
-                        )
-                    ],
-                    policies="policies",
-                    rights="rights",
-                    source="source",
-                    identifiable_information="identifiable_information",
-                )
-            ],
-            comments=[CommentDescriptor(content="content")],
-            quantitative_analysis=QuantitiveAnalysisDescriptor(
-                content="content"
-            ),
-        ),
+        make_complete_report(),
         ReportModel(),
     ]
 
