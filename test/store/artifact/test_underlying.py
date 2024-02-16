@@ -9,12 +9,7 @@ import pytest
 import mlte.store.error as errors
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.spec.spec import Spec
-from mlte.store.artifact.store import (
-    ArtifactStore,
-    ArtifactStoreSession,
-    ManagedArtifactSession,
-)
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.base import StoreURI
 
@@ -50,25 +45,6 @@ def test_init_fs(tmp_path) -> None:
 def test_init_rdbs() -> None:
     """A relational DB store can be initialized."""
     _ = create_rdbs_store()
-
-
-def _create_spec_if_needed(
-    artifact_type: ArtifactType,
-    complete: bool,
-    handle: ArtifactStoreSession,
-    namespace_id: str,
-    model_id: str,
-    version_id: str,
-):
-    """Helper to create spec if a ValidatedSpec needs it."""
-    # ValidatedSpec needs a previously generated Spec.
-    if artifact_type == ArtifactType.VALIDATED_SPEC and complete:
-        spec = ArtifactFactory.make(
-            ArtifactType.SPEC,
-            id=Spec.get_default_id(),
-            complete=complete,
-        )
-        handle.write_artifact(namespace_id, model_id, version_id, spec)
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
@@ -233,9 +209,6 @@ def test_search(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        _create_spec_if_needed(
-            artifact_type, complete, handle, namespace_id, model_id, version_id
-        )
         a0 = ArtifactFactory.make(artifact_type, "id0", complete)
         a1 = ArtifactFactory.make(artifact_type, "id1", complete)
 
@@ -270,9 +243,6 @@ def test_artifact(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        _create_spec_if_needed(
-            artifact_type, complete, handle, namespace_id, model_id, version_id
-        )
         artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
         handle.write_artifact(namespace_id, model_id, version_id, artifact)
@@ -314,14 +284,6 @@ def test_artifact_without_parents(
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
         with ManagedArtifactSession(store.session()) as handle:
-            _create_spec_if_needed(
-                artifact_type,
-                complete,
-                handle,
-                namespace_id,
-                model_id,
-                version_id,
-            )
             _ = handle.write_artifact(
                 namespace_id, model_id, version_id, artifact
             )
@@ -348,9 +310,6 @@ def test_artifact_parents(
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
-        _create_spec_if_needed(
-            artifact_type, complete, handle, namespace_id, model_id, version_id
-        )
         _ = handle.write_artifact(
             namespace_id, model_id, version_id, artifact, parents=True
         )
@@ -389,9 +348,6 @@ def test_artifact_overwrite(
             namespace_id, model_id, VersionCreate(identifier=version_id)
         )
 
-        _create_spec_if_needed(
-            artifact_type, complete, handle, namespace_id, model_id, version_id
-        )
         artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
         # The initial write succeeds

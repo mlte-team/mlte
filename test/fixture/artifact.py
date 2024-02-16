@@ -40,7 +40,6 @@ from mlte.report.model import (
     SummaryDescriptor,
 )
 from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
-from mlte.spec.spec import Spec
 from mlte.validation.model import ResultModel, ValidatedSpecModel
 from mlte.value.model import IntegerValueModel, ValueModel
 from mlte.value.types.integer import Integer
@@ -164,10 +163,9 @@ def _make_validated_spec(complete: bool) -> ValidatedSpecModel:
     Make a minimal validated spec, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    if not complete:
-        return ValidatedSpecModel()
-    else:
-        return make_complete_validated_spec_model()
+    # TODO: Make a complete VSpec that is properly connected to Spec and Properties, which is not trivial.
+    # Maybe create in DB here? Find way to make this work for better coverage.
+    return ValidatedSpecModel()
 
 
 def _make_report(complete: bool) -> ReportModel:
@@ -281,7 +279,7 @@ def make_complete_validated_spec_model() -> ValidatedSpecModel:
     :return: The artifact model
     """
     return ValidatedSpecModel(
-        spec_identifier=Spec.get_default_id(),
+        spec_identifier="",
         spec=make_complete_spec_model(),
         results={
             "TaskEfficacy": {
