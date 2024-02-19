@@ -87,7 +87,7 @@ Unit tests failures result in build failures in CI.
 
 Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
 
-To initialize the development environment for the front end, navigate to `/mlte/mlte/frontend/nuxt-app` and run:
+To initialize the development environment for the front end, navigate to `mlte/frontend/nuxt-app` and run:
 
 ```bash
 $ npm install

@@ -584,7 +584,8 @@ if (useRoute().query.artifactId !== undefined) {
             )?.value;
           }
 
-          response._data.data.forEach((item) => {
+          // Setting .value for each classification item to work in the select
+          response._data.body.data.forEach((item) => {
             const classification = item.classification;
             if (
               classificationOptions.find((x) => x.value === classification)
@@ -735,9 +736,9 @@ function loadFindings(proxyObject: any) {
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.properties.forEach((property) => {
+  validatedSpec.body.spec.properties.forEach((property) => {
     // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(Object.entries(property.results));
+    const results = new Map(Object.entries(validatedSpec.body.results[property.name]));
     results.forEach((value, key) => {
       const finding = {
         status: value.type,
