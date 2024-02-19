@@ -28,6 +28,7 @@ from mlte.model.shared import (
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
 from mlte.report.model import (
+    CommentDescriptor,
     IntendedUseDescriptor,
     PerformanceDesciptor,
     ReportModel,
@@ -228,11 +229,12 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             ),
         ),
         risks=RiskDescriptor(
-            fp=report_obj.risks_fn,
+            fp=report_obj.risks_fp,
             fn=report_obj.risks_fn,
             other=report_obj.risks_other,
         ),
         data=_build_data_descriptors(report_obj.data_descriptors),
+        comments=[CommentDescriptor(comment.content) for comment in report_obj.comments]
     )
     return body
 
