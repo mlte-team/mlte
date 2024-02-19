@@ -7,8 +7,9 @@ This document describes some of the development practices used within `MLTE`.
 Use Poetry to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first. Once it is installed, you can set up your environment like this:
 
 ```bash
-$ poetry install
+$ python -m venv .venv
 $ source .venv/bin/activate
+$ poetry install
 ```
 
 Instead of activating the environment, you can also choose to use `poetry run` to run specific commands.
