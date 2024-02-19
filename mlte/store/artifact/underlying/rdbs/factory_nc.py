@@ -234,7 +234,11 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             other=report_obj.risks_other,
         ),
         data=_build_data_descriptors(report_obj.data_descriptors),
-        comments=[CommentDescriptor(comment.content) for comment in report_obj.comments]
+        comments=[
+            CommentDescriptor(content=comment.content)
+            for comment in report_obj.comments
+            if comment.content is not None
+        ],
     )
     return body
 
