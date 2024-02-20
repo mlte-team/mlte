@@ -253,6 +253,7 @@ def test_artifact(
 
         read = handle.read_artifacts(namespace_id, model_id, version_id)
         assert len(read) == 1
+        assert artifact.to_json() == read[0].to_json()
 
         handle.delete_artifact(namespace_id, model_id, version_id, artifact_id)
 
