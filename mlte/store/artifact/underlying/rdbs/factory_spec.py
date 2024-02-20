@@ -5,6 +5,8 @@ Conversions between schema and internal models.
 """
 from __future__ import annotations
 
+import json
+
 from sqlalchemy.orm import Session
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
@@ -45,7 +47,7 @@ def create_spec_db_from_model(
             condition_obj = DBCondition(
                 name=condition.name,
                 measurement_id=measurement_id,
-                arguments=" ".join(str(x) for x in condition.arguments),
+                arguments=json.dumps(condition.arguments),
                 callback=condition.callback,
                 value_class=condition.value_class,
                 property=property_obj,
@@ -70,7 +72,7 @@ def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
                         name=condition.name,
                         callback=condition.callback,
                         value_class=condition.value_class,
-                        arguments=condition.arguments.split(" "),
+                        arguments=json.loads(condition.arguments),
                     )
                     for condition in property.conditions
                 },
