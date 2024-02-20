@@ -31,6 +31,7 @@ from mlte.report.model import (
     CommentDescriptor,
     IntendedUseDescriptor,
     PerformanceDesciptor,
+    QuantitiveAnalysisDescriptor,
     ReportModel,
     SummaryDescriptor,
 )
@@ -243,6 +244,9 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             for comment in report_obj.comments
             if comment.content is not None
         ],
+        quantitative_analysis=QuantitiveAnalysisDescriptor(
+            content=report_obj.quantitative_analysis_content
+        ),
         validated_spec_id=report_obj.validated_spec.artifact_header.identifier
         if report_obj.validated_spec is not None
         else None,

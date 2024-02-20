@@ -357,5 +357,5 @@ def make_complete_report() -> ReportModel:
             )
         ],
         comments=[CommentDescriptor(content="content")],
-        quantitative_analysis=QuantitiveAnalysisDescriptor(content="content"),
+        quantitative_analysis=QuantitiveAnalysisDescriptor(content="analysis"),
     )
