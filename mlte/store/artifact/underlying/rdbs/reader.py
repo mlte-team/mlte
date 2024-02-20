@@ -191,7 +191,7 @@ class DBReader:
             )
         else:
             return (
-                factory.create_artifact_from_db(artifact_header_obj),
+                factory.create_artifact_from_db(artifact_header_obj, session),
                 artifact_obj,
             )
 
@@ -222,7 +222,7 @@ class DBReader:
         artifacts = []
         for artifact_obj in artifact_objs:
             artifact = factory.create_artifact_from_db(
-                artifact_obj.artifact_header
+                artifact_obj.artifact_header, session
             )
             artifacts.append(artifact)
         return artifacts

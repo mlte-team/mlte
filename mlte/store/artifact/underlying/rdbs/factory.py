@@ -102,7 +102,7 @@ def create_db_artifact(
 
 
 def create_artifact_from_db(
-    artifact_header_obj: DBArtifactHeader,
+    artifact_header_obj: DBArtifactHeader, session: Session
 ) -> ArtifactModel:
     """
     Creates an Artifact model from the corresponding DB object and DB header.
@@ -133,7 +133,7 @@ def create_artifact_from_db(
         validated_obj = typing.cast(
             DBValidatedSpec, artifact_header_obj.body_validated_spec
         )
-        body = create_v_spec_model_from_db(validated_obj)
+        body = create_v_spec_model_from_db(validated_obj, session)
     elif artifact_header.type == ArtifactType.NEGOTIATION_CARD:
         # Creating a NegotiationCard from DB data.
         negotiation_obj = typing.cast(

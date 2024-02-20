@@ -130,6 +130,7 @@ def create_v_spec_db_from_model(
 
 def create_v_spec_model_from_db(
     validated_obj: DBValidatedSpec,
+    session: Session,
 ) -> ValidatedSpecModel:
     """Creates the internal model object from the corresponding DB object."""
     body = ValidatedSpecModel(
@@ -152,5 +153,11 @@ def create_v_spec_model_from_db(
         }
         if validated_obj.spec is not None
         else {},
+        spec_identifier=validated_obj.spec.artifact_header.identifier
+        if validated_obj.spec is not None
+        else "",
+        spec=create_spec_model_from_db(validated_obj.spec)
+        if validated_obj.spec is not None
+        else None,
     )
     return body
