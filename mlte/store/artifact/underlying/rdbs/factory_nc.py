@@ -185,7 +185,11 @@ def create_report_db_from_model(
         data_descriptors=[],
         comments=[],
         quantitative_analysis_content=report.quantitative_analysis.content,
-        #    validated_spec: Mapped[DBValidatedSpec] = relationship()
+        validated_spec=DBReader.get_validated_spec(
+            report.validated_spec_id, artifact_header.version_id, session
+        )
+        if report.validated_spec_id is not None
+        else None,
     )
 
     # Create list of goal objects.
@@ -239,6 +243,9 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             for comment in report_obj.comments
             if comment.content is not None
         ],
+        validated_spec_id=report_obj.validated_spec.artifact_header.identifier
+        if report_obj.validated_spec is not None
+        else None,
     )
     return body
 

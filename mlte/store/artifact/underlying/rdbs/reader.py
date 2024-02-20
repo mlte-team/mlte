@@ -281,6 +281,24 @@ class DBReader:
             return property_obj
 
     @staticmethod
+    def get_validated_spec(
+        validated_spec_identifier: str, version_id: int, session: Session
+    ) -> DBValidatedSpec:
+        """Gets the Spec with the given identifier."""
+        property_obj = session.scalar(
+            select(DBValidatedSpec)
+            .where(DBValidatedSpec.artifact_header_id == DBArtifactHeader.id)
+            .where(DBArtifactHeader.identifier == validated_spec_identifier)
+            .where(DBArtifactHeader.version_id == version_id)
+        )
+        if property_obj is None:
+            raise errors.ErrorNotFound(
+                f"ValidatedSpec with identifier {validated_spec_identifier} was not found in the artifact store."
+            )
+        else:
+            return property_obj
+
+    @staticmethod
     def get_property_id(
         property_name: str,
         spec_identifier: str,
