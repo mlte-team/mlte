@@ -147,7 +147,7 @@ class DBReport(DBBase):
 
     # Validated spec.
     validated_spec_id: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("validated_spec.id")
+        ForeignKey("validated_spec.id", ondelete='SET NULL')
     )
     validated_spec: Mapped[DBValidatedSpec] = relationship()
 
