@@ -16,6 +16,29 @@ Instead of activating the environment, you can also choose to use `poetry run` t
 
 Now you are ready to start working on `MLTE`!
 
+## Project Commands
+
+You can run most project commands (to format sources, lint, etc.), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
+
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `source .venv/bin/activate` (see above), you can run all the commands below without the `poetry run` prefix.
+
+## Import Sorting
+
+We sort all Python imports code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
+
+```bash
+$ poetry run make isort
+```
+
+Alternatively, you can run `isort` manually from the project root:
+
+```bash
+$ poetry run isort mlte/
+$ poetry run isort test/
+```
+
+Code that does not satisfy the formatter will be rejected from pull requests.
+
 ## Source Formatting
 
 We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
@@ -24,7 +47,7 @@ We format all Python code in this project with the <a href="https://github.com/p
 $ poetry run make format
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `black` manually from the project root:
+Alternatively, you can run `black` manually from the project root:
 
 ```bash
 $ poetry run black mlte/
@@ -38,10 +61,10 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
 ```bash
-$ make lint
+$ poetry run make lint
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `flake8` manually from the project root:
+Alternatively, you can run `flake8` manually from the project root:
 
 ```bash
 $ poetry run flake8 mlte/
@@ -58,11 +81,11 @@ We run static type-checking with <a href="http://mypy-lang.org/" target="_blank"
 $ poetry run make typecheck
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `mypy` manually from the project root:
+Alternatively, you can run `mypy` manually from the project root:
 
 ```bash
-$ mypy mlte/
-$ mypy test/
+$ poetry run mypy mlte/
+$ poetry run mypy test/
 ```
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
@@ -72,16 +95,40 @@ Code that does not satisfy static type-checking will be rejected from pull reque
 We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
 ```bash
-$ make test
+$ poetry run make test
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run the tests manually from the project root:
+Alternatively, you can run the tests manually from the project root:
 
 ```bash
 $ poetry run pytest test
 ```
 
 Unit tests failures result in build failures in CI.
+
+## Model Schema Generation
+
+The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
+
+```bash
+$ poetry run make gen
+```
+
+Alternatively, you can run this manually from the project root:
+
+```bash
+$ poetry run python tools/schema.py generate mlte --verbose
+```
+
+Unit tests failures result in build failures in CI.
+
+## Make Shorthand Commands
+
+There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
+
+* `poetry run make qa`: execues the source sorting, formatting, source linting, and static type checking commands.
+* `poetry run make ci`: execues the same commands as `qa`, but also runs `gen` to generate updated schemas if needed, and runs `test` to execute the unit tests.
+
 
 ## Front End
 
