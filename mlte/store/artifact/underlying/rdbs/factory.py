@@ -133,7 +133,7 @@ def create_artifact_from_db(
         validated_obj = typing.cast(
             DBValidatedSpec, artifact_header_obj.body_validated_spec
         )
-        body = create_v_spec_model_from_db(validated_obj, session)
+        body = create_v_spec_model_from_db(validated_obj)
     elif artifact_header.type == ArtifactType.NEGOTIATION_CARD:
         # Creating a NegotiationCard from DB data.
         negotiation_obj = typing.cast(

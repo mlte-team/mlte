@@ -130,7 +130,6 @@ def create_v_spec_db_from_model(
 
 def create_v_spec_model_from_db(
     validated_obj: DBValidatedSpec,
-    session: Session,
 ) -> ValidatedSpecModel:
     """Creates the internal model object from the corresponding DB object."""
     body = ValidatedSpecModel(
