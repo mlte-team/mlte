@@ -521,7 +521,7 @@
           "title": "Goals",
           "type": "array"
         },
-        "findings": {
+        "validated_spec_id": {
           "anyOf": [
             {
               "type": "string"
@@ -531,7 +531,7 @@
             }
           ],
           "default": null,
-          "title": "Findings"
+          "title": "Validated Spec Id"
         }
       },
       "title": "PerformanceDesciptor",
@@ -673,7 +673,7 @@
       ],
       "default": {
         "goals": [],
-        "findings": null
+        "validated_spec_id": null
       }
     },
     "intended_use": {
@@ -740,18 +740,6 @@
       "default": {
         "content": null
       }
-    },
-    "validated_spec_id": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Validated Spec Id"
     }
   },
   "title": "ReportModel",
