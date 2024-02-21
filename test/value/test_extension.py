@@ -39,7 +39,7 @@ class ConfusionMatrix(ValueBase):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ConfusionMatrix):
             return False
-        return self.matrix == other.matrix
+        return self._equal(other)
 
 
 class BadInteger(ValueBase):

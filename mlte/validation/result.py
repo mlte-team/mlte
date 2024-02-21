@@ -98,7 +98,7 @@ class Result(metaclass=abc.ABCMeta):
         assert self.metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
-        return self.metadata.identifier == other.metadata.identifier  # type: ignore
+        return self.to_model() == other.to_model()
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""

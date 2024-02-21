@@ -71,11 +71,7 @@ class Array(Value):
         """Comparison between Array values."""
         if not isinstance(other, Array):
             return False
-        return self.array == other.array
-
-    def __neq__(self, other: Array) -> bool:
-        """Comparison between Array values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     def get_as_real(self, position: int) -> Real:
         """

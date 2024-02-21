@@ -62,6 +62,26 @@ class Artifact(metaclass=abc.ABCMeta):
             "Artifact.from_model() not implemented for abstract Artifact."
         )
 
+    def _equal(a: Artifact, b: Artifact) -> bool:
+        """
+        Compare Artifact instances for equality.
+
+        :param a: Input instance
+        :param b: Input instance
+        :return: `True` if `a` and `b` are equal, `False` otherwise
+        """
+        return a.to_model() == b.to_model()
+
+    def __eq__(self, other: object) -> bool:
+        """Test instance for equality."""
+        if not isinstance(other, Artifact):
+            return False
+        return self._equal(other)
+
+    def __neq__(self, other: object) -> bool:
+        """Test instance for inequality."""
+        return not self.__eq__(other)
+
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         A method that artifact subclasses can override to enforce pre-save invariants.

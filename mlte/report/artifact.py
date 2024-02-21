@@ -10,8 +10,6 @@ import typing
 from copy import deepcopy
 from typing import List
 
-from deepdiff import DeepDiff
-
 import mlte.store.error as errors
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -173,4 +171,4 @@ class Report(Artifact):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Report):
             return False
-        return len(DeepDiff(self, other)) == 0
+        return self._equal(other)

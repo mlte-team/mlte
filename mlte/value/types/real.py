@@ -75,11 +75,7 @@ class Real(Value):
         """Comparison between Real values."""
         if not isinstance(other, Real):
             return False
-        return self.value == other.value
-
-    def __neq__(self, other: Real) -> bool:
-        """Comparison between Real values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     @classmethod
     def less_than(cls, value: float) -> Condition:

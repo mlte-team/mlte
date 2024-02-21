@@ -170,30 +170,4 @@ class Spec(Artifact):
         if not isinstance(other, Spec):
             return False
         reference: Spec = other
-        return _equal(self, reference)
-
-    def __neq__(self, other: Spec) -> bool:
-        """Compare Spec instances for inequality."""
-        return not self.__eq__(other)
-
-
-def _equal(a: Spec, b: Spec) -> bool:
-    """
-    Compare Spec instances for equality.
-
-    :param a: Input instance
-    :type a: Spec
-    :param b: Input instance
-    :type b: Spec
-
-    :return: `True` if `a` and `b` are equal, `False` otherwise
-    :rtype: bool
-    """
-    same_props = all(b.has_property(p) for p in a.properties) and all(
-        a.has_property(p) for p in b.properties
-    )
-    same_conditions = all(
-        a.properties[prop] == b.properties[b.get_property(prop.name)]
-        for prop in a.properties
-    )
-    return a.identifier == b.identifier and same_props and same_conditions
+        return self._equal(reference)

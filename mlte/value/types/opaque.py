@@ -9,8 +9,6 @@ from __future__ import annotations
 import typing
 from typing import Any, Dict
 
-import deepdiff
-
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
@@ -85,11 +83,4 @@ class Opaque(Value):
         """Compare Opaque instances for equality."""
         if not isinstance(other, Opaque):
             return False
-        return (
-            self.metadata == other.metadata
-            and len(deepdiff.DeepDiff(self.data, other.data)) == 0
-        )
-
-    def __neq__(self, other: object) -> bool:
-        """Compare Opaque instances for inequality."""
-        return not self.__eq__(other)
+        return self._equal(other)

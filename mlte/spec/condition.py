@@ -147,13 +147,7 @@ class Condition:
         if not isinstance(other, Condition):
             return False
         reference: Condition = other
-        return (
-            self.name == reference.name
-            and Condition.encode_callback(self.callback)
-            == Condition.encode_callback(other.callback)
-            and self.arguments == other.arguments
-            and self.value_class == other.value_class
-        )
+        return self.to_model() == reference.to_model()
 
     def __neq__(self, other: Condition) -> bool:
         """Compare Condition instances for inequality."""

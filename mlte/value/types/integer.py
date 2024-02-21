@@ -73,11 +73,7 @@ class Integer(Value):
         """Comparison between Integer values."""
         if not isinstance(other, Integer):
             return False
-        return self.value == other.value
-
-    def __neq__(self, other: Integer) -> bool:
-        """Comparison between Integer values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     def __str__(self) -> str:
         """Return a string representation of the Integer."""

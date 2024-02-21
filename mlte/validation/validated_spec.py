@@ -137,23 +137,4 @@ class ValidatedSpec(Artifact):
         """Test ValidatedSpec instance for equality."""
         if not isinstance(other, ValidatedSpec):
             return False
-        return _equal(self, other)
-
-    def __neq__(self, other: object) -> bool:
-        """Test ValidatedSpec instance for inequality."""
-        return not self.__eq__(other)
-
-
-def _equal(a: ValidatedSpec, b: ValidatedSpec) -> bool:
-    """
-    Determine if two ValidatedSpec instances are equal.
-
-    :param a: Input instance
-    :param b: Input instance
-    :return: `True` if instances are equal, `False` otherwise
-    """
-    return (
-        a.identifier == b.identifier
-        and a.spec == b.spec
-        and a.results == b.results
-    )
+        return self._equal(other)
