@@ -6,6 +6,7 @@ API definition for MLTE artifacts.
 
 from __future__ import annotations
 
+import traceback
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -38,7 +39,7 @@ def write_artifact(
     """
     with dependencies.session() as handle:
         try:
-            artifact = handle.write_artifact(
+            artifact = handle.write_artifact_with_timestamp(
                 namespace_id,
                 model_id,
                 version_id,
@@ -56,6 +57,7 @@ def write_artifact(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception:
+            print(traceback.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",

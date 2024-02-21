@@ -201,7 +201,9 @@ def check_artifact_writing(
 ):
     """Helper function that writes an artifact, and then reads it and check they are the same."""
     # First write it.
-    handle.write_artifact(namespace_id, model_id, version_id, artifact)
+    handle.write_artifact_with_timestamp(
+        namespace_id, model_id, version_id, artifact
+    )
 
     # Then read it from storage.
     _ = handle.read_artifact(namespace_id, model_id, version_id, artifact_id)
@@ -239,7 +241,9 @@ def test_search(
         a1 = ArtifactFactory.make(artifact_type, "id1", complete)
 
         for artifact in [a0, a1]:
-            handle.write_artifact(namespace_id, model_id, version_id, artifact)
+            handle.write_artifact_with_timestamp(
+                namespace_id, model_id, version_id, artifact
+            )
 
         artifacts = handle.search_artifacts(namespace_id, model_id, version_id)
         assert len(artifacts) == 2
@@ -312,7 +316,7 @@ def test_artifact_without_parents(
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
         with ManagedArtifactSession(store.session()) as handle:
-            _ = handle.write_artifact(
+            _ = handle.write_artifact_with_timestamp(
                 namespace_id, model_id, version_id, artifact
             )
 
@@ -338,7 +342,7 @@ def test_artifact_parents(
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.write_artifact(
+        _ = handle.write_artifact_with_timestamp(
             namespace_id, model_id, version_id, artifact, parents=True
         )
 
@@ -379,7 +383,7 @@ def test_artifact_overwrite(
         artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
         # The initial write succeeds
-        _ = handle.write_artifact(
+        _ = handle.write_artifact_with_timestamp(
             namespace_id,
             model_id,
             version_id,
@@ -388,7 +392,7 @@ def test_artifact_overwrite(
 
         # Another attempt to write fails
         with pytest.raises(errors.ErrorAlreadyExists):
-            _ = handle.write_artifact(
+            _ = handle.write_artifact_with_timestamp(
                 namespace_id,
                 model_id,
                 version_id,
@@ -396,6 +400,6 @@ def test_artifact_overwrite(
             )
 
         # Attempt to write with `force` succeeds
-        _ = handle.write_artifact(
+        _ = handle.write_artifact_with_timestamp(
             namespace_id, model_id, version_id, artifact, force=True
         )

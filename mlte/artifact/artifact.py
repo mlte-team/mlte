@@ -7,7 +7,6 @@ Artifact protocol implementation.
 from __future__ import annotations
 
 import abc
-import time
 from typing import Optional
 
 import mlte._private.meta as meta
@@ -117,9 +116,8 @@ class Artifact(metaclass=abc.ABCMeta):
         self.pre_save_hook(context, store)
 
         artifact_model = self.to_model()
-        artifact_model.header.timestamp = int(time.time())
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact(
+            handle.write_artifact_with_timestamp(
                 context.namespace,
                 context.model,
                 context.version,

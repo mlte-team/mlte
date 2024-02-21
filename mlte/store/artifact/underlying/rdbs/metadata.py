@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import ForeignKey, UniqueConstraint, select
+from sqlalchemy import BigInteger, ForeignKey, UniqueConstraint, select
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -117,7 +117,7 @@ class DBArtifactHeader(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
-    timestamp: Mapped[int]
+    timestamp: Mapped[int] = mapped_column(BigInteger)
     type_id: Mapped[int] = mapped_column(ForeignKey("artifact_type.id"))
     version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
 
