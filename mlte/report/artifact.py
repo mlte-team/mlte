@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import typing
 from copy import deepcopy
-from typing import List, Optional
+from typing import List
 
 from deepdiff import DeepDiff
 
@@ -45,7 +45,6 @@ class Report(Artifact):
         data: List[DataDescriptor] = [],
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
-        validated_spec_id: Optional[str] = None,
     ) -> None:
         super().__init__(identifier, ArtifactType.REPORT)
 
@@ -70,9 +69,6 @@ class Report(Artifact):
         self.quantitative_analysis = quantitative_analysis
         """The quantitative analysis for the evaluation."""
 
-        self.validated_spec_id = validated_spec_id
-        """The identifier for the associated validated specification."""
-
     def to_model(self) -> ArtifactModel:
         """Convert a report artifact to its corresponding model."""
         return ArtifactModel(
@@ -85,18 +81,17 @@ class Report(Artifact):
                 data=self.data,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
-                validated_spec_id=self.validated_spec_id,
             ),
         )
 
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
-        Override Artifact.pre_save_hook().
+        Override Artifact.pre_save_hook(). Loads the associated ValidatedSpec details.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
         :raises RuntimeError: On broken invariant
         """
-        if self.validated_spec_id is None:
+        if self.performance.validated_spec_id is None:
             return
 
         with ManagedArtifactSession(store.session()) as handle:
@@ -105,16 +100,16 @@ class Report(Artifact):
                     context.namespace,
                     context.model,
                     context.version,
-                    self.validated_spec_id,
+                    self.performance.validated_spec_id,
                 )
             except errors.ErrorNotFound:
                 raise RuntimeError(
-                    f"Validated specification with identifier {self.validated_spec_id} not found."
+                    f"Validated specification with identifier {self.performance.validated_spec_id} not found."
                 )
 
         if not artifact.header.type == ArtifactType.VALIDATED_SPEC:
             raise RuntimeError(
-                f"Validated specification with identifier {self.validated_spec_id} not found."
+                f"Validated specification with identifier {self.performance.validated_spec_id} not found."
             )
 
     def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
@@ -140,7 +135,6 @@ class Report(Artifact):
             data=body.data,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
-            validated_spec_id=body.validated_spec_id,
         )
 
     def populate_from(self, artifact: NegotiationCard) -> Report:

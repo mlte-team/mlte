@@ -107,7 +107,10 @@ class DBReport(DBBase):
     summary_problem_type: Mapped[Optional[DBProblemType]] = relationship()
 
     # Performance results
-    performance_findings: Mapped[Optional[str]]
+    validated_spec_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("validated_spec.id", ondelete="SET NULL")
+    )
+    validated_spec: Mapped[DBValidatedSpec] = relationship()
     performance_goals: Mapped[List[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
@@ -144,12 +147,6 @@ class DBReport(DBBase):
 
     # Analysis.
     quantitative_analysis_content: Mapped[Optional[str]]
-
-    # Validated spec.
-    validated_spec_id: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("validated_spec.id", ondelete="SET NULL")
-    )
-    validated_spec: Mapped[DBValidatedSpec] = relationship()
 
     def __repr__(self) -> str:
         return (

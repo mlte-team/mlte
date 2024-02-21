@@ -173,7 +173,13 @@ def create_report_db_from_model(
         artifact_header=artifact_header,
         summary_problem_type=problem_type_obj,
         summary_task=report.summary.task,
-        performance_findings=report.performance.findings,
+        validated_spec=DBReader.get_validated_spec(
+            report.performance.validated_spec_id,
+            artifact_header.version_id,
+            session,
+        )
+        if report.performance.validated_spec_id is not None
+        else None,
         performance_goals=[],
         intended_usage_context=report.intended_use.usage_context,
         intended_reqs_model_prod_integration=report.intended_use.production_requirements.integration,
@@ -186,11 +192,6 @@ def create_report_db_from_model(
         data_descriptors=[],
         comments=[],
         quantitative_analysis_content=report.quantitative_analysis.content,
-        validated_spec=DBReader.get_validated_spec(
-            report.validated_spec_id, artifact_header.version_id, session
-        )
-        if report.validated_spec_id is not None
-        else None,
     )
 
     # Create list of goal objects.
@@ -222,7 +223,9 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
         ),
         performance=PerformanceDesciptor(
             goals=_build_goal_descriptors(report_obj.performance_goals),
-            findings=report_obj.performance_findings,
+            validated_spec_id=report_obj.validated_spec.artifact_header.identifier
+            if report_obj.validated_spec is not None
+            else None,
         ),
         intended_use=IntendedUseDescriptor(
             usage_context=report_obj.intended_usage_context,
@@ -247,9 +250,6 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
         quantitative_analysis=QuantitiveAnalysisDescriptor(
             content=report_obj.quantitative_analysis_content
         ),
-        validated_spec_id=report_obj.validated_spec.artifact_header.identifier
-        if report_obj.validated_spec is not None
-        else None,
     )
     return body
 

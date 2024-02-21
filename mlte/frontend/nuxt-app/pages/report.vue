@@ -598,16 +598,16 @@ if (useRoute().query.artifactId !== undefined) {
           });
 
           if (
-            response._data.body.validated_spec_id !== undefined &&
-            response._data.body.validated_spec_id !== ""
+            response._data.body.performance.validated_spec_id !== undefined &&
+            response._data.body.performance.validated_spec_id !== ""
           ) {
             form.value.validated_spec_id =
-              response._data.body.validated_spec_id;
+              response._data.body.performance.validated_spec_id;
             const validatedSpec = await fetchArtifact(
               namespace,
               model,
               version,
-              response._data.body.validated_spec_id,
+              response._data.body.performance.validated_spec_id,
             );
             form.value.findings = loadFindings(validatedSpec);
           }
