@@ -7,9 +7,14 @@ Unit tests for the underlying artifact store implementations.
 import pytest
 
 import mlte.store.error as errors
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.artifact.store import (
+    ArtifactStore,
+    ArtifactStoreSession,
+    ManagedArtifactSession,
+)
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.base import StoreURI
 
@@ -186,6 +191,27 @@ def test_version_list(
         assert versions[0] == "version0"
 
 
+def check_artifact_writing(
+    handle: ArtifactStoreSession,
+    namespace_id: str,
+    model_id: str,
+    version_id: str,
+    artifact_id: str,
+    artifact: ArtifactModel,
+):
+    """Helper function that writes an artifact, and then reads it and check they are the same."""
+    # First write it.
+    handle.write_artifact(namespace_id, model_id, version_id, artifact)
+
+    # Then read it from storage.
+    _ = handle.read_artifact(namespace_id, model_id, version_id, artifact_id)
+
+    # Check that we have the same artifact.
+    read = handle.read_artifacts(namespace_id, model_id, version_id)
+    assert len(read) == 1
+    assert artifact.to_json() == read[0].to_json()
+
+
 @pytest.mark.parametrize(
     "store_fixture_name,artifact_type,complete", stores_and_types()
 )
@@ -245,22 +271,23 @@ def test_artifact(
 
         artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
 
-        handle.write_artifact(namespace_id, model_id, version_id, artifact)
-
-        _ = handle.read_artifact(
-            namespace_id, model_id, version_id, artifact_id
+        # First check we can write and load an artifact.
+        check_artifact_writing(
+            handle, namespace_id, model_id, version_id, artifact_id, artifact
         )
 
-        read = handle.read_artifacts(namespace_id, model_id, version_id)
-        assert len(read) == 1
-        assert artifact.to_json() == read[0].to_json()
-
+        # Second check that we can delete the artifact, and that it is really deleted.
         handle.delete_artifact(namespace_id, model_id, version_id, artifact_id)
 
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.read_artifact(
                 namespace_id, model_id, version_id, artifact_id
             )
+
+        # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
+        check_artifact_writing(
+            handle, namespace_id, model_id, version_id, artifact_id, artifact
+        )
 
 
 @pytest.mark.parametrize(
