@@ -639,7 +639,7 @@ async function submit() {
     header: {
       identifier,
       type: "negotiation_card",
-      timestamp: Date.now(),
+      timestamp: -1,
     },
     body: {
       artifact_type: "negotiation_card",

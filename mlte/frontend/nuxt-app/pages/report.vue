@@ -110,7 +110,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="finding in form.findings" :key="finding.evidence_id">
+        <tr v-for="finding in findings" :key="finding.evidence_id">
           <td
             v-if="finding.status == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
@@ -424,6 +424,7 @@ const path = ref([
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
+const findings = ref(null)
 const form = ref({
   summary: {
     problem_type: "classification",
@@ -442,7 +443,6 @@ const form = ref({
       },
     ],
     validated_spec_id: null,
-    findings: null,
   },
   intended_use: {
     context: "",
@@ -609,7 +609,7 @@ if (useRoute().query.artifactId !== undefined) {
               version,
               form.value.performance.validated_spec_id,
             );
-            form.value.findings = loadFindings(validatedSpec);
+            findings.value = loadFindings(validatedSpec);
           }
         }
       },
@@ -636,7 +636,7 @@ async function submit() {
     header: {
       identifier,
       type: "report",
-      timestamp: Date.now(),
+      timestamp: -1,
     },
     body: {
       artifact_type: "report",
@@ -647,7 +647,6 @@ async function submit() {
       data: form.value.data,
       comments: form.value.comments,
       analysis: form.value.quantitative_analysis,
-      validated_spec_id: form.value.validated_spec_id,
     },
   };
 
