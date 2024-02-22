@@ -441,6 +441,7 @@ const form = ref({
         ],
       },
     ],
+    validated_spec_id: null,
     findings: null,
   },
   intended_use: {
@@ -501,7 +502,6 @@ const form = ref({
     },
   ],
   quantitative_analysis: {},
-  validated_spec_id: null,
 });
 
 // TODO: Pull these from the schema
@@ -601,13 +601,13 @@ if (useRoute().query.artifactId !== undefined) {
             response._data.body.performance.validated_spec_id !== undefined &&
             response._data.body.performance.validated_spec_id !== ""
           ) {
-            form.value.validated_spec_id =
+            form.value.performance.validated_spec_id =
               response._data.body.performance.validated_spec_id;
             const validatedSpec = await fetchArtifact(
               namespace,
               model,
               version,
-              response._data.body.performance.validated_spec_id,
+              form.value.performance.validated_spec_id,
             );
             form.value.findings = loadFindings(validatedSpec);
           }
