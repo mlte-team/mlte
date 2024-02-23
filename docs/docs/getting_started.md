@@ -81,7 +81,7 @@ $ mlte store --backend-uri postgresql://mlte_user:mlte_pass@localhost/mlte --all
 
 Example for setting the store inside code when you are using MLTE as a library:
 
-set_store("postgresql://postgres:fpamu381@localhost/mlte")
+`set_store("postgresql://mlte_user:mlte_pass@localhost/mlte")`
 
 ## Next Steps
 
