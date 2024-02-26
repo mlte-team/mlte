@@ -4,31 +4,54 @@ This document describes some of the development practices used within `MLTE`.
 
 ## Quickstart
 
-Create a Python virtual environment and install the required development packages. Install the set of depenencies that are relevant for the version of Python that you plan to use for development. For example, if you are using Python version `3.8`, installation looks like:
+Use Poetry to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first. Once it is installed, you can set up your environment like this:
 
 ```bash
-$ python -m venv env
-$ source ./env/bin/activate
-$ pip install -r requirements_dev_3.8.txt
+$ python -m venv .venv
+$ source .venv/bin/activate
+$ poetry install
 ```
 
-We only maintain a single `requirements.txt` file for each minor release of Python; that is, the patch version is not included in the name of the `requirements.txt` to reflect the fact that dependencies should remain stable across all patches within a minor version. See [Development Dependencies](#development-dependencies) for further information.
+Instead of activating the environment, you can also choose to use `poetry run` to run specific commands.
 
 Now you are ready to start working on `MLTE`!
+
+## Project Commands
+
+You can run most project commands (to format sources, lint, etc.), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
+
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `source .venv/bin/activate` (see above), you can run all the commands below without the `poetry run` prefix.
+
+## Import Sorting
+
+We sort all Python imports code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
+
+```bash
+$ poetry run make isort
+```
+
+Alternatively, you can run `isort` manually from the project root:
+
+```bash
+$ poetry run isort mlte/
+$ poetry run isort test/
+```
+
+Code that does not satisfy the formatter will be rejected from pull requests.
 
 ## Source Formatting
 
 We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
 
 ```bash
-$ make format
+$ poetry run make format
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `black` manually from the project root:
+Alternatively, you can run `black` manually from the project root:
 
 ```bash
-$ black src/
-$ black test/
+$ poetry run black mlte/
+$ poetry run black test/
 ```
 
 Code that does not satisfy the formatter will be rejected from pull requests.
@@ -38,14 +61,14 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
 ```bash
-$ make lint
+$ poetry run make lint
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `flake8` manually from the project root:
+Alternatively, you can run `flake8` manually from the project root:
 
 ```bash
-$ flake8 src/
-$ flake8 test/
+$ poetry run flake8 mlte/
+$ poetry run flake8 test/
 ```
 
 Code that does not satisfy the linter will be rejected from pull requests.
@@ -55,39 +78,63 @@ Code that does not satisfy the linter will be rejected from pull requests.
 We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
 
 ```bash
-$ make typecheck
+$ poetry run make typecheck
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `mypy` manually from the project root:
+Alternatively, you can run `mypy` manually from the project root:
 
 ```bash
-$ mypy src/
-$ mypy test/
+$ poetry run mypy mlte/
+$ poetry run mypy test/
 ```
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
 
 ## Unit Tests
 
-We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package and <a href="https://tox.wiki/en/latest/" target="_blank">`tox`</a>. The former is a test-runner for Python while the latter is a tool for environment isolation and automation. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
+We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
 ```bash
-$ make test
+$ poetry run make test
 ```
 
-This works on UNIX-like systems (or anywhere `make` is available). Alternatively, you can run `tox` manually from the project root:
+Alternatively, you can run the tests manually from the project root:
 
 ```bash
-$ tox --develop
+$ poetry run pytest test
 ```
 
 Unit tests failures result in build failures in CI.
+
+## Model Schema Generation
+
+The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
+
+```bash
+$ poetry run make gen
+```
+
+Alternatively, you can run this manually from the project root:
+
+```bash
+$ poetry run python tools/schema.py generate mlte --verbose
+```
+
+Unit tests failures result in build failures in CI.
+
+## Make Shorthand Commands
+
+There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
+
+* `poetry run make qa`: execues the source sorting, formatting, source linting, and static type checking commands.
+* `poetry run make ci`: execues the same commands as `qa`, but also runs `gen` to generate updated schemas if needed, and runs `test` to execute the unit tests.
+
 
 ## Front End
 
 Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
 
-To initialize the development environment for the front end, navigate to `/mlte/mlte/frontend/nuxt-app` and run:
+To initialize the development environment for the front end, navigate to the subfolder `./mlte/frontend/nuxt-app` and run:
 
 ```bash
 $ npm install
@@ -221,13 +268,13 @@ docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
 
 ## Development Dependencies
 
-We maintain a distinct set of Python dependencies for each minor version of Python that `MLTE` supports. Currently, `MLTE` supports the following Python versions:
+Currently, `MLTE` supports the following Python versions:
 
 - `3.8`
 - `3.9`
 - `3.10`
 
-<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. Repeat the following procedure for each desired version. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
+<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
 
 **Establishing Depdencies for a Particular Python Version**
 
@@ -239,35 +286,13 @@ export VERSION=3.8
 # Install the desired version
 pyenv install $VERSION
 # Activate the desired version
-pyenv shell $VERSION
+pyenv local $VERSION
 # Confirm the version
 python --version
 Python 3.8.16
 ```
 
-With the proper version activated, create a virtual environment for requirements generation, and install <a href="https://github.com/jazzband/pip-tools" target="_blank">`pip-tools`</a>:
-
-```bash
-python -m venv env
-source ./env/bin/activate
-pip install pip-tools
-```
-
-Now use the `pip-compile` functionality within `pip-tools` to compile the `requirements.in` file to a pinned `requirements.txt`:
-
-```bash
-pip-compile -r --verbose --output-file "requirements_dev_${VERSION}.txt" requirements_dev.in
-```
-
-Now deactivate the current environment, and create a new one for development to ensure that dependency specification is functioning as expected:
-
-```bash
-deactivate
-rm -rf env
-python -m venv env
-source ./env/bin/activate
-pip install -r "requirements_dev_${VERSION}.txt"
-```
+With the proper version activated, use `poetry` as described in the QuickStart to create a virtual environment and install dependencies.
 
 ```bash
 # Check QA mechanisms

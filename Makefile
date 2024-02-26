@@ -78,6 +78,11 @@ check: check-isort check-format check-lint check-typecheck
 test:
 	poetry run pytest test
 
+# Open coverage results in a browser
+.PHONY: cov-results
+cov-results:
+	coverage html && open htmlcov/index.html
+
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
 # -----------------------------------------------------------------------------
@@ -89,3 +94,10 @@ gen:
 .PHONY: vet
 vet:
 	poetry run python tools/schema.py vet mlte --verbose
+
+
+# -----------------------------------------------------------------------------
+# All actions and checks needed to update and review for pushing.
+# -----------------------------------------------------------------------------
+.PHONY: ci
+ci: gen qa test

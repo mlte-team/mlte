@@ -38,7 +38,7 @@ class ValueType(str, Enum):
 class ValueModel(BaseModel):
     """The model implementation for MLTE values."""
 
-    artifact_type: Literal[ArtifactType.VALUE]
+    artifact_type: Literal[ArtifactType.VALUE] = ArtifactType.VALUE
     """Union discriminator."""
 
     metadata: EvidenceMetadata
@@ -60,66 +60,74 @@ class ValueModel(BaseModel):
 class IntegerValueModel(BaseModel):
     """The model implementation for MLTE integer values."""
 
-    value_type: Literal[ValueType.INTEGER]
+    value_type: Literal[ValueType.INTEGER] = ValueType.INTEGER
     """An identitifier for the value type."""
 
     integer: int
     """The encapsulated value."""
 
-    class Config:
-        use_enum_values = True
-
 
 class RealValueModel(BaseModel):
     """The model implementation for MLTE real values."""
 
-    value_type: Literal[ValueType.REAL]
+    value_type: Literal[ValueType.REAL] = ValueType.REAL
     """An identitifier for the value type."""
 
     real: float
     """The encapsulated value."""
 
-    class Config:
-        use_enum_values = True
-
 
 class OpaqueValueModel(BaseModel):
     """The model implementation for MLTE opaque values."""
 
-    value_type: Literal[ValueType.OPAQUE]
+    value_type: Literal[ValueType.OPAQUE] = ValueType.OPAQUE
     """An identitifier for the value type."""
 
     data: Dict[str, Any]
     """Encapsulated, opaque data."""
 
-    class Config:
-        use_enum_values = True
-
 
 class ImageValueModel(BaseModel):
     """The model implementation for MLTE image values."""
 
-    value_type: Literal[ValueType.IMAGE]
+    value_type: Literal[ValueType.IMAGE] = ValueType.IMAGE
     """An identitifier for the value type."""
 
     data: str
     """The image data as base64-encoded string."""
 
-    class Config:
-        use_enum_values = True
-
 
 class ArrayValueModel(BaseModel):
     """The model implementation for MLTE array values."""
 
-    value_type: Literal[ValueType.ARRAY]
+    value_type: Literal[ValueType.ARRAY] = ValueType.ARRAY
     """An identitifier for the value type."""
 
     data: List[Any]
     """The array to capture."""
 
-    class Config:
-        use_enum_values = True
-
 
 ValueModel.model_rebuild()
+
+
+# Value type mapping to models.
+VALUE_MODEL_CLASS: dict[
+    ValueType,
+    Union[
+        type[IntegerValueModel],
+        type[RealValueModel],
+        type[OpaqueValueModel],
+        type[ImageValueModel],
+        type[ArrayValueModel],
+    ],
+] = {
+    ValueType.INTEGER: IntegerValueModel,
+    ValueType.REAL: RealValueModel,
+    ValueType.OPAQUE: OpaqueValueModel,
+    ValueType.IMAGE: ImageValueModel,
+    ValueType.ARRAY: ArrayValueModel,
+}
+
+
+def get_model_class(type: ValueType):
+    return VALUE_MODEL_CLASS[type]

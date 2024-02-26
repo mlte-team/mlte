@@ -6,6 +6,7 @@ MLTE artifact store interface implementation.
 
 from __future__ import annotations
 
+import time
 from typing import List, cast
 
 from mlte.artifact.model import ArtifactModel
@@ -191,6 +192,36 @@ class ArtifactStoreSession(StoreSession):
     # -------------------------------------------------------------------------
     # Interface: Artifact
     # -------------------------------------------------------------------------
+
+    def write_artifact_with_timestamp(
+        self,
+        namespace_id: str,
+        model_id: str,
+        version_id: str,
+        artifact: ArtifactModel,
+        *,
+        force: bool = False,
+        parents: bool = False,
+    ) -> ArtifactModel:
+        """
+        Write an artifact, generating the timestamp. Internally calls the actual write_artifact implementation.
+        :param namespace_id: The identifier for the namespace
+        :param model_id: The identifier for the model
+        :param version_id: The identifier for the model version
+        :param artifact: The artifact
+        :param force: Overwrite an artifact if it already exists
+        :param parents: Indicates whether organizational elements
+        for artifact should be implictly created (default: False)
+        """
+        artifact.header.timestamp = int(time.time())
+        return self.write_artifact(
+            namespace_id,
+            model_id,
+            version_id,
+            artifact,
+            force=force,
+            parents=parents,
+        )
 
     def write_artifact(
         self,

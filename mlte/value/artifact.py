@@ -9,6 +9,7 @@ from __future__ import annotations
 import abc
 import typing
 
+from mlte._private.meta import get_class_path
 from mlte._private.reflection import load_class
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -95,4 +96,4 @@ class Value(Artifact, metaclass=abc.ABCMeta):
     @classmethod
     def get_class_path(cls) -> str:
         """Returns the full path to this class, including module."""
-        return f"{cls.__module__}.{cls.__name__}"
+        return get_class_path(cls)

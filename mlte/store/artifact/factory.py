@@ -8,6 +8,7 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
 from mlte.store.base import StoreType, StoreURI
 
 
@@ -24,4 +25,9 @@ def create_store(uri: str) -> ArtifactStore:
         return LocalFileSystemStore(parsed_uri)
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return RemoteHttpStore(parsed_uri)
-    assert False, "Unreachable."
+    if parsed_uri.type == StoreType.RELATIONAL_DB:
+        return RelationalDBStore(parsed_uri)
+    else:
+        raise Exception(
+            f"Store can't be created, unknown URI prefix received for uri {parsed_uri}"
+        )

@@ -9,8 +9,6 @@ from __future__ import annotations
 import typing
 from typing import List
 
-from deepdiff import DeepDiff
-
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -46,7 +44,6 @@ class NegotiationCard(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=NegotiationCardModel(
-                artifact_type=ArtifactType.NEGOTIATION_CARD,
                 system=self.system,
                 data=self.data,
                 model=self.model,
@@ -75,4 +72,4 @@ class NegotiationCard(Artifact):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):
             return False
-        return len(DeepDiff(self, other)) == 0
+        return self._equal(other)

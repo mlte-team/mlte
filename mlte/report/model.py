@@ -33,8 +33,7 @@ class PerformanceDesciptor(BaseModel):
     goals: List[GoalDescriptor] = []
     """A list of the goals for the system."""
 
-    # TODO(Kyle): Implement this.
-    findings: Optional[str] = None
+    validated_spec_id: Optional[str] = None
     """The findings from MLTE evaluation."""
 
 
@@ -68,7 +67,7 @@ class QuantitiveAnalysisDescriptor(BaseModel):
 class ReportModel(BaseModel):
     """The model implementation for the MLTE report artifact."""
 
-    artifact_type: Literal[ArtifactType.REPORT]
+    artifact_type: Literal[ArtifactType.REPORT] = ArtifactType.REPORT
     """Union discriminator."""
 
     summary: SummaryDescriptor = SummaryDescriptor()
@@ -93,6 +92,3 @@ class ReportModel(BaseModel):
         QuantitiveAnalysisDescriptor()
     )
     """Quantitative analysis included in the report."""
-
-    validated_spec_id: Optional[str] = None
-    """The identifier for the validated specification."""

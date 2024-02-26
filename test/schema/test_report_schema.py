@@ -4,9 +4,6 @@ test/schema/test_report_schema.py
 Unit tests for report schema validation.
 """
 
-import pytest
-from jsonschema import ValidationError
-
 from mlte.model.shared import (
     DataClassification,
     DataDescriptor,
@@ -104,10 +101,3 @@ def test_valid_instance() -> None:
     )
     doc = report.to_model().to_json()
     util.validate_report_schema(doc["body"])
-
-
-def test_invalid_instance():
-    """An invalid instances fails validation."""
-
-    with pytest.raises(ValidationError):
-        util.validate_report_schema({})

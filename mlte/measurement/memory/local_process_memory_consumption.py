@@ -43,11 +43,11 @@ class MemoryStatistics(ValueBase):
 
         :param evidence_metadata: The generating measurement's metadata
         :type evidence_metadata: EvidenceMetadata
-        :param avg: The average memory consumption
+        :param avg: The average memory consumption, in KB
         :type avg: int
-        :param min: The minimum memory consumption
+        :param min: The minimum memory consumption, in KB
         :type avg: int
-        :param max: The maximum memory consumption
+        :param max: The maximum memory consumption, in KB
         :type max: int
         """
         super().__init__(self, evidence_metadata)
@@ -127,7 +127,7 @@ class MemoryStatistics(ValueBase):
         """
         Construct and invoke a condition for average memory consumption.
 
-        :param threshold: The threshold value for average consumption
+        :param threshold: The threshold value for average consumption, in KB
         :type threshold: int
 
         :return: The Condition that can be used to validate a Value.

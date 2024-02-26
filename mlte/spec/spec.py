@@ -71,7 +71,6 @@ class Spec(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=SpecModel(
-                artifact_type=ArtifactType.SPEC,
                 properties=[
                     self._to_property_model(property)
                     for property, _ in self.properties.items()
@@ -86,13 +85,7 @@ class Spec(Artifact):
         body = typing.cast(SpecModel, model.body)
         return Spec(
             identifier=model.header.identifier,
-            properties={
-                Property.from_model(property_model): {
-                    measurement_id: Condition.from_model(condition_model)
-                    for measurement_id, condition_model in property_model.conditions.items()
-                }
-                for property_model in body.properties
-            },
+            properties=Spec.to_property_dict(body.properties),
         )
 
     def _to_property_model(self, property: Property) -> PropertyModel:
@@ -111,6 +104,19 @@ class Spec(Artifact):
             for measurement_id, condition in self.properties[property].items()
         }
         return property_model
+
+    @classmethod
+    def to_property_dict(
+        cls, property_models: List[PropertyModel]
+    ) -> Dict[Property, Dict[str, Condition]]:
+        """Converts a list of property models, into a dict of properties and conditions."""
+        return {
+            Property.from_model(property_model): {
+                measurement_id: Condition.from_model(condition_model)
+                for measurement_id, condition_model in property_model.conditions.items()
+            }
+            for property_model in property_models
+        }
 
     @staticmethod
     def get_default_id() -> str:
@@ -164,30 +170,4 @@ class Spec(Artifact):
         if not isinstance(other, Spec):
             return False
         reference: Spec = other
-        return _equal(self, reference)
-
-    def __neq__(self, other: Spec) -> bool:
-        """Compare Spec instances for inequality."""
-        return not self.__eq__(other)
-
-
-def _equal(a: Spec, b: Spec) -> bool:
-    """
-    Compare Spec instances for equality.
-
-    :param a: Input instance
-    :type a: Spec
-    :param b: Input instance
-    :type b: Spec
-
-    :return: `True` if `a` and `b` are equal, `False` otherwise
-    :rtype: bool
-    """
-    same_props = all(b.has_property(p) for p in a.properties) and all(
-        a.has_property(p) for p in b.properties
-    )
-    same_conditions = all(
-        a.properties[prop] == b.properties[b.get_property(prop.name)]
-        for prop in a.properties
-    )
-    return a.identifier == b.identifier and same_props and same_conditions
+        return self._equal(reference)

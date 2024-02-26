@@ -632,8 +632,8 @@
             }
           ],
           "default": {
-            "fn": null,
             "fp": null,
+            "fn": null,
             "other": null
           }
         }
@@ -646,6 +646,7 @@
   "properties": {
     "artifact_type": {
       "const": "negotiation_card",
+      "default": "negotiation_card",
       "title": "Artifact Type"
     },
     "system": {
@@ -657,13 +658,13 @@
       "default": {
         "goals": [],
         "problem_type": null,
+        "task": null,
+        "usage_context": null,
         "risks": {
           "fn": null,
           "fp": null,
           "other": null
-        },
-        "task": null,
-        "usage_context": null
+        }
       }
     },
     "data": {
@@ -709,9 +710,6 @@
       }
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "NegotiationCardModel",
   "type": "object"
 }

@@ -62,7 +62,7 @@ class NamespaceWithModels:
         """The collection of models in the namespace."""
 
 
-class Storage:
+class MemoryStorage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
@@ -77,7 +77,7 @@ class Storage:
 class InMemoryStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
-    def __init__(self, *, storage: Storage) -> None:
+    def __init__(self, *, storage: MemoryStorage) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -402,7 +402,7 @@ class InMemoryStore(ArtifactStore):
     def __init__(self, uri: StoreURI) -> None:
         super().__init__(uri=uri)
 
-        self.storage = Storage()
+        self.storage = MemoryStorage()
         """The underlying storage for the store."""
 
     def session(self) -> InMemoryStoreSession:  # type: ignore[override]

@@ -6,11 +6,13 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
+import typing
 from typing import Any, Generator, Tuple
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.pool import StaticPool
 
 import mlte.web.store.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
@@ -22,12 +24,13 @@ from mlte.store.artifact.underlying.http import (
     RemoteHttpStoreClient,
 )
 from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
 from mlte.store.base import StoreURI
 from mlte.web.store.api.api import api_router
 from mlte.web.store.core.config import settings
 from mlte.web.store.state import state
 
-_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store"]
+_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
 class TestclientCient(RemoteHttpStoreClient):
@@ -56,7 +59,7 @@ def http_store() -> RemoteHttpStore:
     :return: The configured store
     """
     # Configure the backing store
-    state.set_store(create_store("memory://"))
+    state.set_store(create_memory_store())
 
     # Configure the application
     app = app_factory.create()
@@ -71,16 +74,39 @@ def http_store() -> RemoteHttpStore:
     return store
 
 
+def create_memory_store() -> InMemoryStore:
+    return typing.cast(InMemoryStore, create_store("memory://"))
+
+
 @pytest.fixture(scope="function")
 def memory_store() -> InMemoryStore:
     """A fixture for an in-memory store."""
-    return InMemoryStore(StoreURI.from_string("memory://"))
+    return create_memory_store()
+
+
+def create_fs_store(tmp_path) -> LocalFileSystemStore:
+    return typing.cast(
+        LocalFileSystemStore, create_store(f"local://{tmp_path}")
+    )
 
 
 @pytest.fixture(scope="function")
 def fs_store(tmp_path) -> LocalFileSystemStore:
     """A fixture for an local FS store."""
-    return LocalFileSystemStore(StoreURI.from_string(f"local://{tmp_path}"))
+    return create_fs_store(tmp_path)
+
+
+def create_rdbs_store() -> RelationalDBStore:
+    return RelationalDBStore(
+        StoreURI.from_string("sqlite+pysqlite:///:memory:"),
+        poolclass=StaticPool,
+    )
+
+
+@pytest.fixture(scope="function")
+def rdbs_store() -> RelationalDBStore:
+    """A fixture for an in-memory RDBS store."""
+    return create_rdbs_store()
 
 
 def stores() -> Generator[str, None, None]:
@@ -92,11 +118,12 @@ def stores() -> Generator[str, None, None]:
         yield store_fixture_name
 
 
-def stores_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
+def stores_and_types() -> Generator[Tuple[str, ArtifactType, bool], None, None]:
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)
     """
     for store_fixture_name in _STORE_FIXTURE_NAMES:
         for type in ArtifactType:
-            yield store_fixture_name, type
+            for complete in [False, True]:
+                yield store_fixture_name, type, complete

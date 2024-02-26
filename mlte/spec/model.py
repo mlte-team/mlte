@@ -48,7 +48,7 @@ class PropertyModel(BaseModel):
 class SpecModel(BaseModel):
     """The model implementation for the Spec artifact."""
 
-    artifact_type: Literal[ArtifactType.SPEC]
+    artifact_type: Literal[ArtifactType.SPEC] = ArtifactType.SPEC
     """Union discriminator."""
 
     properties: List[PropertyModel] = []

@@ -521,7 +521,7 @@
           "title": "Goals",
           "type": "array"
         },
-        "findings": {
+        "validated_spec_id": {
           "anyOf": [
             {
               "type": "string"
@@ -531,7 +531,7 @@
             }
           ],
           "default": null,
-          "title": "Findings"
+          "title": "Validated Spec Id"
         }
       },
       "title": "PerformanceDesciptor",
@@ -651,6 +651,7 @@
   "properties": {
     "artifact_type": {
       "const": "report",
+      "default": "report",
       "title": "Artifact Type"
     },
     "summary": {
@@ -671,8 +672,8 @@
         }
       ],
       "default": {
-        "findings": null,
-        "goals": []
+        "goals": [],
+        "validated_spec_id": null
       }
     },
     "intended_use": {
@@ -682,6 +683,7 @@
         }
       ],
       "default": {
+        "usage_context": null,
         "production_requirements": {
           "integration": null,
           "interface": {
@@ -698,8 +700,7 @@
             "memory": null,
             "storage": null
           }
-        },
-        "usage_context": null
+        }
       }
     },
     "risks": {
@@ -709,8 +710,8 @@
         }
       ],
       "default": {
-        "fn": null,
         "fp": null,
+        "fn": null,
         "other": null
       }
     },
@@ -739,23 +740,8 @@
       "default": {
         "content": null
       }
-    },
-    "validated_spec_id": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Validated Spec Id"
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "ReportModel",
   "type": "object"
 }

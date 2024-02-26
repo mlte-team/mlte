@@ -43,11 +43,9 @@ class Real(Value):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=RealValueModel(
-                    value_type=ValueType.REAL,
                     real=self.value,
                 ),
             ),
@@ -77,11 +75,7 @@ class Real(Value):
         """Comparison between Real values."""
         if not isinstance(other, Real):
             return False
-        return self.value == other.value
-
-    def __neq__(self, other: Real) -> bool:
-        """Comparison between Real values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     @classmethod
     def less_than(cls, value: float) -> Condition:

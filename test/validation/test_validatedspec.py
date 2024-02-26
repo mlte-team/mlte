@@ -31,7 +31,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     )
     specValidator = SpecValidator(spec)
 
-    # A dummy result
+    # A dummy value
     i = Integer(
         EvidenceMetadata(
             measurement_type="typename", identifier=Identifier(name="id")

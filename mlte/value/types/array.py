@@ -42,12 +42,9 @@ class Array(Value):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
-                value=ArrayValueModel(
-                    value_type=ValueType.ARRAY, data=self.array
-                ),
+                value=ArrayValueModel(data=self.array),
             ),
         )
 
@@ -74,11 +71,7 @@ class Array(Value):
         """Comparison between Array values."""
         if not isinstance(other, Array):
             return False
-        return self.array == other.array
-
-    def __neq__(self, other: Array) -> bool:
-        """Comparison between Array values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     def get_as_real(self, position: int) -> Real:
         """
