@@ -140,7 +140,7 @@
 
     <h2 class="section-header">Intended Use</h2>
     <p>A description of how the model is intended to be used.</p>
-    <UsaTextarea :model-value="form.intended_use.context"></UsaTextarea>
+    <UsaTextarea :model-value="form.intended_use.usage_context"></UsaTextarea>
 
     <UsaTextarea
       v-model="form.intended_use.production_requirements.integration"
@@ -426,6 +426,7 @@ const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
 const findings = ref(null);
 const form = ref({
+  artifact_type: "report",
   summary: {
     problem_type: "classification",
     task: "",
@@ -445,7 +446,7 @@ const form = ref({
     validated_spec_id: null,
   },
   intended_use: {
-    context: "",
+    usage_context: "",
     production_requirements: {
       integration: "",
       interface: {
@@ -556,21 +557,7 @@ if (useRoute().query.artifactId !== undefined) {
       },
       async onResponse({ response }) {
         if (isValidReport(response._data)) {
-          form.value.summary = response._data.body.summary;
-          form.value.performance.goals = response._data.body.performance.goals;
-          form.value.intended_use.context =
-            response._data.body.intended_use.usage_context;
-          form.value.intended_use.production_requirements.integration =
-            response._data.body.intended_use.production_requirements.integration;
-          form.value.intended_use.production_requirements.interface =
-            response._data.body.intended_use.production_requirements.interface;
-          form.value.intended_use.production_requirements.resources =
-            response._data.body.intended_use.production_requirements.resources;
-
-          form.value.risks = response._data.body.risks;
-          form.value.data = response._data.body.data;
-          form.value.comments = response._data.body.comments;
-
+          form.value = response._data.body;
           const problemType = response._data.body.summary.problem_type;
           if (
             problemTypeOptions.find((x) => x.value === problemType)?.value !==
@@ -633,16 +620,7 @@ async function submit() {
       type: "report",
       timestamp: -1,
     },
-    body: {
-      artifact_type: "report",
-      summary: form.value.summary,
-      performance: form.value.performance,
-      intended_use: form.value.intended_use,
-      risks: form.value.risks,
-      data: form.value.data,
-      comments: form.value.comments,
-      analysis: form.value.quantitative_analysis,
-    },
+    body: form.value
   };
 
   if (isValidReport(artifact)) {
