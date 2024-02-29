@@ -21,7 +21,8 @@
     "cancelFormSubmission": true,
     "requestErrorAlert": true,
     "responseErrorAlert": true,
-    "conflictErrorAlert": true
+    "conflictErrorAlert": true,
+    "fetchArtifact": true
   },
   "extends": [
     "standard",

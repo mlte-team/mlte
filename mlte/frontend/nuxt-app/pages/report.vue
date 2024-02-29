@@ -662,42 +662,6 @@ async function submit() {
   }
 }
 
-// Fetch a artifact by ID.
-async function fetchArtifact(
-  model: string,
-  version: string,
-  artifactId: string,
-) {
-  const { data, status } = await useFetch(
-    "http://localhost:8080/api/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        return null;
-      },
-      onResponse({ response }) {
-        return response._data;
-      },
-      onResponseError() {
-        return null;
-      },
-    },
-  );
-
-  // TODO(Kyle): Error handling.
-  if (status._value !== "success") {
-    return null;
-  }
-
-  return data._value;
-}
-
 // Load findings from a validated specication.
 function loadFindings(proxyObject: any) {
   const findings = [];
