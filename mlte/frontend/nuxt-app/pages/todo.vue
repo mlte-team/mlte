@@ -73,5 +73,4 @@ async function deleteVersion(entry: {
     );
   }
 }
-
 </script>

@@ -581,10 +581,7 @@ if (useRoute().query.artifactId !== undefined) {
             }
           });
 
-          if (
-            response._data.body.performance.validated_spec_id !== undefined &&
-            response._data.body.performance.validated_spec_id !== ""
-          ) {
+          if (response._data.body.performance.validated_spec_id) {
             form.value.performance.validated_spec_id =
               response._data.body.performance.validated_spec_id;
             const validatedSpec = await fetchArtifact(
@@ -620,7 +617,7 @@ async function submit() {
       type: "report",
       timestamp: -1,
     },
-    body: form.value
+    body: form.value,
   };
 
   if (isValidReport(artifact)) {
@@ -672,7 +669,7 @@ function loadFindings(proxyObject: any) {
     const results = new Map(
       Object.entries(validatedSpec.body.results[property.name]),
     );
-    results.forEach((value, key) => {
+    results.forEach((value) => {
       const finding = {
         status: value.type,
         property: property.name,

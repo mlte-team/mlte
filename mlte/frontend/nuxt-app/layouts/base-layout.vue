@@ -51,7 +51,7 @@
           href="https://mlte.readthedocs.io/en/latest/using_mlte/"
           >User Guide</a
         >
-        <span>v0.2.2</span>
+        <span>v0.2.7</span>
       </div>
     </footer>
   </div>

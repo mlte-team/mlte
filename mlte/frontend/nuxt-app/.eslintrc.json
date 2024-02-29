@@ -11,6 +11,7 @@
     "ref": true,
     "$fetch": true,
     "useFetch": true,
+    "useCookie": true,
     "isValidNegotiation": true,
     "isValidSpec": true,
     "isValidValidatedSpec": true,
