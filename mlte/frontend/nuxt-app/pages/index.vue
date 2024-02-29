@@ -305,11 +305,12 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     selectedVersion.value = "";
   }
   if (modelName === "") {
+    versionOptions.value = [];
     clearArtifacts();
     return;
   }
 
-  await useFetch("http://localhost:8080/api/model/" + modelName + "/version", {
+  await $fetch("http://localhost:8080/api/model/" + modelName + "/version", {
     retry: 0,
     method: "GET",
     onRequestError() {
@@ -355,7 +356,7 @@ async function selectVersion(versionName: string) {
     return;
   }
 
-  await useFetch(
+  await $fetch(
     "http://localhost:8080/api/model/" +
       selectedModel.value +
       "/version/" +
@@ -454,7 +455,6 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
 
 // Clear all artifacts from local state.
 function clearArtifacts() {
-  versionOptions.value = [];
   negotiationCards.value = [];
   reports.value = [];
   specifications.value = [];
