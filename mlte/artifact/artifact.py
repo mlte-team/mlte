@@ -38,7 +38,7 @@ class Artifact(metaclass=abc.ABCMeta):
         """
         The identifier for the artifact.
         An artifact identifier is unique within a MLTE context
-        (namespace, model, version) and for a given artifact type.
+        (model, version) and for a given artifact type.
         """
 
         self.type = type
@@ -138,7 +138,6 @@ class Artifact(metaclass=abc.ABCMeta):
         artifact_model = self.to_model()
         with ManagedArtifactSession(store.session()) as handle:
             handle.write_artifact_with_timestamp(
-                context.namespace,
                 context.model,
                 context.version,
                 artifact_model,
@@ -179,7 +178,6 @@ class Artifact(metaclass=abc.ABCMeta):
         with ManagedArtifactSession(store.session()) as handle:
             artifact = cls.from_model(
                 handle.read_artifact(
-                    context.namespace,
                     context.model,
                     context.version,
                     identifier,
@@ -208,7 +206,6 @@ class Artifact(metaclass=abc.ABCMeta):
                 )
             )
             artifact_models = handle.search_artifacts(
-                context.namespace,
                 context.model,
                 context.version,
                 query_instance,

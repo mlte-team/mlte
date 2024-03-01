@@ -95,7 +95,6 @@ class Report(Artifact):
         with ManagedArtifactSession(store.session()) as handle:
             try:
                 artifact = handle.read_artifact(
-                    context.namespace,
                     context.model,
                     context.version,
                     self.performance.validated_spec_id,

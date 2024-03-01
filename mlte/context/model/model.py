@@ -24,7 +24,7 @@ class Version(BaseModel):
 
     # TODO(Kyle): In the future, we may implement new endpoints
     # that allow one to GET /version to get all artifacts associated
-    # with a (namespace, model, version) triple
+    # with a (model, version) duple
 
 
 class ModelCreate(BaseModel):
@@ -42,20 +42,3 @@ class Model(BaseModel):
 
     versions: List[Version]
     """A collection of the model versions."""
-
-
-class NamespaceCreate(BaseModel):
-    """The model that defines the data necessary to create a MLTE namespace."""
-
-    identifier: str
-    """The identifier for the namespace."""
-
-
-class Namespace(BaseModel):
-    """Model implementation for MLTE namespace."""
-
-    identifier: str
-    """The name of the namespace."""
-
-    models: List[Model]
-    """"A collection of the namespace models."""

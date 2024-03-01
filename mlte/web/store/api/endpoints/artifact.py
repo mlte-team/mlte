@@ -24,14 +24,12 @@ router = APIRouter()
 
 @router.post("")
 def write_artifact(
-    namespace_id: str,
     model_id: str,
     version_id: str,
     request: WriteArtifactRequest,
 ) -> WriteArtifactResponse:
     """
     Write an artifact.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
     :param request: The artifact write request
@@ -40,7 +38,6 @@ def write_artifact(
     with dependencies.session() as handle:
         try:
             artifact = handle.write_artifact_with_timestamp(
-                namespace_id,
                 model_id,
                 version_id,
                 request.artifact,
@@ -66,11 +63,10 @@ def write_artifact(
 
 @router.get("/{artifact_id}")
 def read_artifact(
-    namespace_id: str, model_id: str, version_id: str, artifact_id: str
+    model_id: str, version_id: str, artifact_id: str
 ) -> ArtifactModel:
     """
     Read an artifact by identifier.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
     :param artifact_id: The identifier for the artifact
@@ -78,9 +74,7 @@ def read_artifact(
     """
     with dependencies.session() as handle:
         try:
-            return handle.read_artifact(
-                namespace_id, model_id, version_id, artifact_id
-            )
+            return handle.read_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -94,7 +88,6 @@ def read_artifact(
 
 @router.get("")
 def read_artifacts(
-    namespace_id: str,
     model_id: str,
     version_id: str,
     limit: int = 100,
@@ -102,7 +95,6 @@ def read_artifacts(
 ) -> List[ArtifactModel]:
     """
     Read artifacts with limit and offset.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
     :param limit: The limit on returned artifacts
@@ -111,9 +103,7 @@ def read_artifacts(
     """
     with dependencies.session() as handle:
         try:
-            return handle.read_artifacts(
-                namespace_id, model_id, version_id, limit, offset
-            )
+            return handle.read_artifacts(model_id, version_id, limit, offset)
         except Exception:
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
@@ -123,11 +113,11 @@ def read_artifacts(
 
 @router.post("/search")
 def search_artifacts(
-    namespace_id: str, model_id: str, version_id: str, query: Query
+    model_id: str, version_id: str, query: Query
 ) -> List[ArtifactModel]:
     """
     Search artifacts.
-    :param namespace_id: The namespace identifier
+
     :param model_id: The model identifier
     :param version_id: The version identifier
     :param query: The artifact query
@@ -135,9 +125,7 @@ def search_artifacts(
     """
     with dependencies.session() as handle:
         try:
-            return handle.search_artifacts(
-                namespace_id, model_id, version_id, query
-            )
+            return handle.search_artifacts(model_id, version_id, query)
         except Exception:
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
@@ -147,11 +135,10 @@ def search_artifacts(
 
 @router.delete("/{artifact_id}")
 def delete_artifact(
-    namespace_id: str, model_id: str, version_id: str, artifact_id: str
+    model_id: str, version_id: str, artifact_id: str
 ) -> ArtifactModel:
     """
     Delete an artifact by identifier.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
     :param artifact_id: The identifier for the artifact
@@ -159,9 +146,7 @@ def delete_artifact(
     """
     with dependencies.session() as handle:
         try:
-            return handle.delete_artifact(
-                namespace_id, model_id, version_id, artifact_id
-            )
+            return handle.delete_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

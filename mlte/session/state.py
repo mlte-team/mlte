@@ -63,15 +63,14 @@ def session() -> Session:
     return g_session
 
 
-def set_context(namespace_id: str, model_id: str, version_id: str):
+def set_context(model_id: str, version_id: str):
     """
     Set the global MLTE context.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
     """
     global g_session
-    g_session._set_context(Context(namespace_id, model_id, version_id))
+    g_session._set_context(Context(model_id, version_id))
 
 
 def set_store(artifact_store_uri: str):

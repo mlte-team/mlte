@@ -7,7 +7,7 @@ Test the HTTP interface for model operations.
 import pytest
 from fastapi.testclient import TestClient
 
-from mlte.context.model import Model, ModelCreate, NamespaceCreate
+from mlte.context.model import Model, ModelCreate
 
 from ..fixure.http import clients, mem_client  # noqa
 
@@ -32,11 +32,10 @@ def test_create(
 ) -> None:  # noqa
     """Models can be created."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace("0", client)
 
     model = ModelCreate(identifier="model")
 
-    res = client.post("/api/namespace/0/model", json=model.model_dump())
+    res = client.post("/api/model", json=model.model_dump())
     assert res.status_code == 200
     _ = Model(**res.json())
 
@@ -47,15 +46,14 @@ def test_read(
 ) -> None:  # noqa
     """Models can be read."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace("0", client)
 
     model = ModelCreate(identifier="0")
-    res = client.post("/api/namespace/0/model", json=model.model_dump())
+    res = client.post("/api/model", json=model.model_dump())
     assert res.status_code == 200
 
     created = Model(**res.json())
 
-    res = client.get("/api/namespace/0/model/0")
+    res = client.get("/api/model/0")
     assert res.status_code == 200
     read = Model(**res.json())
     assert read == created
@@ -65,16 +63,15 @@ def test_read(
 def test_list(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
-    """Namespace can be listed."""
+    """Models can be listed."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace("0", client)
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/namespace/0/model", json=model.model_dump())
+    res = client.post("/api/model", json=model.model_dump())
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model")
+    res = client.get("/api/model")
     assert res.status_code == 200
     assert len(res.json()) == 1
 
@@ -83,30 +80,21 @@ def test_list(
 def test_delete(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
-    """Namespaces can be deleted."""
+    """Models can be deleted."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace("0", client)
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/namespace/0/model", json=model.model_dump())
+    res = client.post("/api/model", json=model.model_dump())
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model")
+    res = client.get("/api/model")
     assert res.status_code == 200
     assert len(res.json()) == 1
 
-    res = client.delete("/api/namespace/0/model/0")
+    res = client.delete("/api/model/0")
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model")
+    res = client.get("/api/model")
     assert res.status_code == 200
     assert len(res.json()) == 0
-
-
-def create_namespace(id: str, client: TestClient) -> None:
-    """Create a namespace with the given identifier."""
-    res = client.post(
-        "/api/namespace", json=NamespaceCreate(identifier=id).model_dump()
-    )
-    assert res.status_code == 200

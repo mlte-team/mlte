@@ -23,9 +23,6 @@ class Context:
     is a standalone data structure that is then exported by the global state module.
     """
 
-    namespace: str
-    """The context namespace."""
-
     model: str
     """The context model identifier."""
 

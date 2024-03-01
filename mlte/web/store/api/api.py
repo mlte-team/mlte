@@ -9,9 +9,7 @@ from fastapi import APIRouter
 from mlte.web.store.api.endpoints import artifact, health, metadata
 
 # The common URL prefix for all artifact routes
-_ARTIFACT_PREFIX = (
-    "/namespace/{namespace_id}/model/{model_id}/version/{version_id}"
-)
+_ARTIFACT_PREFIX = "/model/{model_id}/version/{version_id}"
 
 # The base API router across all endpoints
 api_router = APIRouter()

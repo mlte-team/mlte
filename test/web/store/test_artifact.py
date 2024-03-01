@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
+from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.web.store.api.model import WriteArtifactRequest
 
@@ -38,13 +38,13 @@ def test_write(
     """Artifacts can be written."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
-    namespace_id, model_id, version_id = "0", "0", "0"
-    create_context(namespace_id, model_id, version_id, client)
+    model_id, version_id = "0", "0"
+    create_context(model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        f"/api/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
     assert res.status_code == 200
@@ -59,22 +59,20 @@ def test_read(
     """Artifacts can be read."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
-    namespace_id, model_id, version_id = "0", "0", "0"
-    create_context(namespace_id, model_id, version_id, client)
+    model_id, version_id = "0", "0"
+    create_context(model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, id="id0")
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        f"/api/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
     assert res.status_code == 200
     artifact = res.json()["artifact"]
     created = ArtifactModel(**artifact)
 
-    res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
-    )
+    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
     assert res.status_code == 200
     read = ArtifactModel(**res.json())
     assert read == created
@@ -89,13 +87,13 @@ def test_search(
     """Artifacts can be searched."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
-    namespace_id, model_id, version_id = "0", "0", "0"
-    create_context(namespace_id, model_id, version_id, client)
+    model_id, version_id = "0", "0"
+    create_context(model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        f"/api/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
     assert res.status_code == 200
@@ -103,7 +101,7 @@ def test_search(
     created = ArtifactModel(**artifact)
 
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/search",
+        f"/api/model/{model_id}/version/{version_id}/artifact/search",
         json=Query().model_dump(),
     )
     assert res.status_code == 200
@@ -124,51 +122,39 @@ def test_delete(
     """Artifacts can be deleted."""
     client: TestClient = request.getfixturevalue(client_fixture)
 
-    namespace_id, model_id, version_id = "0", "0", "0"
-    create_context(namespace_id, model_id, version_id, client)
+    model_id, version_id = "0", "0"
+    create_context(model_id, version_id, client)
 
     a = ArtifactFactory.make(artifact_type, "id0")
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact",
+        f"/api/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
     assert res.status_code == 200
 
-    res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
-    )
+    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
     assert res.status_code == 200
 
     res = client.delete(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
+        f"/api/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 200
 
-    res = client.get(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version/{version_id}/artifact/id0"
-    )
+    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
     assert res.status_code == 404
 
 
-def create_context(
-    namespace_id: str, model_id: str, version_id: str, client: TestClient
-) -> None:
+def create_context(model_id: str, version_id: str, client: TestClient) -> None:
     """Create context for artifacts.."""
     res = client.post(
-        "/api/namespace",
-        json=NamespaceCreate(identifier=namespace_id).model_dump(),
-    )
-    assert res.status_code == 200
-
-    res = client.post(
-        f"/api/namespace/{namespace_id}/model",
+        "/api/model",
         json=ModelCreate(identifier=model_id).model_dump(),
     )
     assert res.status_code == 200
 
     res = client.post(
-        f"/api/namespace/{namespace_id}/model/{model_id}/version",
+        f"/api/model/{model_id}/version",
         json=VersionCreate(identifier=version_id).model_dump(),
     )
     assert res.status_code == 200

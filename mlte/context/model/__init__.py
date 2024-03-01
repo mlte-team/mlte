@@ -1,17 +1,8 @@
-from .model import (
-    Model,
-    ModelCreate,
-    Namespace,
-    NamespaceCreate,
-    Version,
-    VersionCreate,
-)
+from .model import Model, ModelCreate, Version, VersionCreate
 
 __all__ = [
-    "Namespace",
     "Model",
     "Version",
-    "NamespaceCreate",
     "ModelCreate",
     "VersionCreate",
 ]

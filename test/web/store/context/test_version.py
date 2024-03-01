@@ -7,12 +7,7 @@ Test the HTTP interface for version operations.
 import pytest
 from fastapi.testclient import TestClient
 
-from mlte.context.model import (
-    ModelCreate,
-    NamespaceCreate,
-    Version,
-    VersionCreate,
-)
+from mlte.context.model import ModelCreate, Version, VersionCreate
 
 from ..fixure.http import clients, mem_client  # noqa
 
@@ -33,13 +28,11 @@ def test_create(
 ) -> None:  # noqa
     """Versions can be created."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace_and_model("0", "0", client)
+    create_model("0", client)
 
     version = VersionCreate(identifier="0")
 
-    res = client.post(
-        "/api/namespace/0/model/0/version", json=version.model_dump()
-    )
+    res = client.post("/api/model/0/version", json=version.model_dump())
     assert res.status_code == 200
     _ = Version(**res.json())
 
@@ -50,17 +43,15 @@ def test_read(
 ) -> None:  # noqa
     """Versions can be read."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace_and_model("0", "0", client)
+    create_model("0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post(
-        "/api/namespace/0/model/0/version", json=version.model_dump()
-    )
+    res = client.post("/api/model/0/version", json=version.model_dump())
     assert res.status_code == 200
 
     created = Version(**res.json())
 
-    res = client.get("/api/namespace/0/model/0/version/0")
+    res = client.get("/api/model/0/version/0")
     assert res.status_code == 200
     read = Version(**res.json())
     assert read == created
@@ -72,15 +63,13 @@ def test_list(
 ) -> None:  # noqa
     """Versions can be listed."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace_and_model("0", "0", client)
+    create_model("0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post(
-        "/api/namespace/0/model/0/version", json=version.model_dump()
-    )
+    res = client.post("/api/model/0/version", json=version.model_dump())
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model/0/version")
+    res = client.get("/api/model/0/version")
     assert res.status_code == 200
     assert len(res.json()) == 1
 
@@ -91,38 +80,28 @@ def test_delete(
 ) -> None:  # noqa
     """Versions can be deleted."""
     client: TestClient = request.getfixturevalue(client_fixture)
-    create_namespace_and_model("0", "0", client)
+    create_model("0", client)
 
     version = VersionCreate(identifier="0")
-    res = client.post(
-        "/api/namespace/0/model/0/version", json=version.model_dump()
-    )
+    res = client.post("/api/model/0/version", json=version.model_dump())
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model/0/version")
+    res = client.get("/api/model/0/version")
     assert res.status_code == 200
     assert len(res.json()) == 1
 
-    res = client.delete("/api/namespace/0/model/0/version/0")
+    res = client.delete("/api/model/0/version/0")
     assert res.status_code == 200
 
-    res = client.get("/api/namespace/0/model/0/version")
+    res = client.get("/api/model/0/version")
     assert res.status_code == 200
     assert len(res.json()) == 0
 
 
-def create_namespace_and_model(
-    namespace_id: str, model_id: str, client: TestClient
-) -> None:
-    """Create a namespace and model with the given identifiers."""
+def create_model(model_id: str, client: TestClient) -> None:
+    """Create a model with the given identifier."""
     res = client.post(
-        "/api/namespace",
-        json=NamespaceCreate(identifier=namespace_id).model_dump(),
-    )
-    assert res.status_code == 200
-
-    res = client.post(
-        f"/api/namespace/{namespace_id}/model",
+        "/api/model",
         json=ModelCreate(identifier=model_id).model_dump(),
     )
     assert res.status_code == 200
