@@ -1,40 +1,13 @@
 <template>
   <NuxtLayout name="base-layout">
-    <template #sidebar>
-      <div style="padding-top: 115px">
-        Namespaces
-        <hr />
-        <div v-for="namespaceName in namespaceOptions" :key="namespaceName">
-          <SidebarItem
-            @select="selectNamespace(namespaceName)"
-            @delete="deleteNamespace(namespaceName)"
-          >
-            {{ namespaceName }}
-          </SidebarItem>
-        </div>
-
-        <AddButton v-if="!newNamespaceFlag" @click="newNamespaceFlag = true" />
-        <UsaTextInput
-          v-if="newNamespaceFlag"
-          v-model="newNamespaceInput"
-          @keyup.enter="addNamespace(newNamespaceInput)"
-          @keyup.escape="newNamespaceFlag = false"
-        />
-      </div>
-    </template>
-
     <UsaBreadcrumb :items="path" />
-
-    <h1>{{ selectedNamespace }}</h1>
-    <hr />
-
     <div style="display: flex">
       <div class="split-div">
         <b>Model</b>
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="updateSelectedModel($event, false)"
+          @update:modelValue="selectModel($event, false)"
         />
         <br />
       </div>
@@ -44,7 +17,7 @@
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
-          @update:modelValue="updateSelectedVersion($event)"
+          @update:modelValue="selectVersion($event)"
         />
         <br />
       </div>
@@ -83,7 +56,6 @@
                     :to="{
                       path: 'negotiation-card',
                       query: {
-                        namespace: selectedNamespace,
                         model: card.model,
                         version: card.version,
                         artifactId: card.id,
@@ -100,7 +72,6 @@
             :to="{
               path: 'negotiation-card',
               query: {
-                namespace: selectedNamespace,
                 model: selectedModel,
                 version: selectedVersion,
               },
@@ -146,7 +117,6 @@
                     :to="{
                       path: 'report',
                       query: {
-                        namespace: selectedNamespace,
                         model: report.model,
                         version: report.version,
                         artifactId: report.id,
@@ -163,7 +133,6 @@
             :to="{
               path: 'report',
               query: {
-                namespace: selectedNamespace,
                 model: selectedModel,
                 version: selectedVersion,
               },
@@ -256,34 +225,31 @@ const path = ref([
   },
 ]);
 
-const { data: namespaceOptions } = await useFetch<string[]>(
-  "http://localhost:8080/api/namespace",
+const modelOptions = ref<{ value: string; text: string }[]>([]);
+const versionOptions = ref<{ value: string; text: string }[]>([]);
+const { data: modelList } = await useFetch<string[]>(
+  "http://localhost:8080/api/model",
   { method: "GET" },
 );
+if(modelList.value){
+  modelList.value.forEach((modelName: string) => {
+    modelOptions.value.push({ value: modelName, text: modelName });
+  })
+}
 
-const selectedNamespace = useCookie("selectedNamespace");
-selectedNamespace.value = selectedNamespace.value || "";
 const selectedModel = useCookie("selectedModel");
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion");
 selectedVersion.value = selectedVersion.value || "";
 
-if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
-  selectNamespace(namespaceOptions.value[0]);
+if (modelOptions.value !== null && modelOptions.value.length > 0) {
   if (selectedModel.value !== ""){
-    updateSelectedModel(selectedModel.value, true);
+    selectModel(selectedModel.value, true);
     if (selectedVersion.value !== ""){
-      updateSelectedVersion(selectedVersion.value);
+      selectVersion(selectedVersion.value);
     }
   }
 }
-const newNamespaceFlag = ref(false);
-const newNamespaceInput = ref("");
-
-// The models in the namespace
-const modelOptions = ref<{ value: string; text: string }[]>([]);
-// The versions available for the model
-const versionOptions = ref<{ value: string; text: string }[]>([]);
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -303,7 +269,6 @@ const valuesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-// TODO(Kyle): Is there a better way we can manage this state?
 const negotiationCards = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
@@ -333,130 +298,8 @@ const values = ref<
   }[]
 >([]);
 
-async function selectNamespace(namespace: string) {
-  await useFetch(
-    "http://localhost:8080/api/namespace/" + namespace + "/model",
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (selectedNamespace.value !== namespace) {
-          selectedNamespace.value = namespace;
-          modelOptions.value = [];
-          versionOptions.value = [];
-        }
-
-        response._data.forEach((modelName: string) => {
-          if (!modelOptions.value.some((item) => item.model === modelName)) {
-            modelOptions.value.push({ value: modelName, text: modelName });
-          }
-        });
-
-        modelOptions.value.sort((a, b) => a.text.localeCompare(b.text));
-
-        negotiationCards.value = [];
-        reports.value = [];
-        specifications.value = [];
-        validatedSpecs.value = [];
-        values.value = [];
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    },
-  );
-}
-
-async function addNamespace(namespace: string) {
-  if (namespace !== "") {
-    const { error } = await useFetch("http://localhost:8080/api/namespace", {
-      retry: 0,
-      method: "POST",
-      body: {
-        identifier: namespace,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
-
-    if (error.value === null) {
-      await useFetch("http://localhost:8080/api/namespace", {
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          namespaceOptions.value =
-            response._data !== null ? response._data : [];
-          newNamespaceFlag.value = false;
-          newNamespaceInput.value = "";
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      });
-    }
-  }
-}
-
-async function deleteNamespace(namespace: string) {
-  if (
-    confirm("Are you sure you want to delete the namespace: " + namespace + "?")
-  ) {
-    const { error } = await useFetch(
-      "http://localhost:8080/api/namespace/" + namespace,
-      {
-        retry: 0,
-        method: "DELETE",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse() {
-          clearArtifacts();
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
-
-    if (error.value === null) {
-      await useFetch("http://localhost:8080/api/namespace", {
-        retry: 0,
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          namespaceOptions.value =
-            response._data !== null ? response._data : [];
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      });
-    }
-  }
-
-  // Reselecting the top listed namespace if the one that was selected is the one that is being deleted
-  if (selectedNamespace.value === namespace) {
-    selectedNamespace.value =
-      namespaceOptions.value !== null ? namespaceOptions.value[0] : "";
-    if (selectedNamespace.value !== "") {
-      selectNamespace(selectedNamespace.value);
-    }
-  }
-}
-
 // Update the selected model for the artifact store.
-async function updateSelectedModel(modelName: string, initialPageLoad: boolean) {
+async function selectModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
   if (!initialPageLoad){
     selectedVersion.value = "";
@@ -467,9 +310,7 @@ async function updateSelectedModel(modelName: string, initialPageLoad: boolean) 
   }
 
   await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      selectedNamespace.value +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       modelName +
       "/version",
     {
@@ -511,7 +352,7 @@ async function updateSelectedModel(modelName: string, initialPageLoad: boolean) 
 }
 
 // Update the selected version for the artifact store.
-async function updateSelectedVersion(versionName: string) {
+async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
 
   if (versionName === "") {
@@ -520,9 +361,7 @@ async function updateSelectedVersion(versionName: string) {
   }
 
   await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      selectedNamespace.value +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       selectedModel.value +
       "/version/" +
       versionName +
