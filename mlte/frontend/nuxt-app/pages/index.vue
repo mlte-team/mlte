@@ -231,10 +231,10 @@ const { data: modelList } = await useFetch<string[]>(
   "http://localhost:8080/api/model",
   { method: "GET" },
 );
-if(modelList.value){
+if (modelList.value) {
   modelList.value.forEach((modelName: string) => {
     modelOptions.value.push({ value: modelName, text: modelName });
-  })
+  });
 }
 
 const selectedModel = useCookie("selectedModel");
@@ -243,9 +243,9 @@ const selectedVersion = useCookie("selectedVersion");
 selectedVersion.value = selectedVersion.value || "";
 
 if (modelOptions.value !== null && modelOptions.value.length > 0) {
-  if (selectedModel.value !== ""){
+  if (selectedModel.value !== "") {
     selectModel(selectedModel.value, true);
-    if (selectedVersion.value !== ""){
+    if (selectedVersion.value !== "") {
       selectVersion(selectedVersion.value);
     }
   }
@@ -301,7 +301,7 @@ const values = ref<
 // Update the selected model for the artifact store.
 async function selectModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
-  if (!initialPageLoad){
+  if (!initialPageLoad) {
     selectedVersion.value = "";
   }
   if (modelName === "") {
@@ -309,33 +309,28 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     return;
   }
 
-  await useFetch(
-    "http://localhost:8080/api/model/" +
-      modelName +
-      "/version",
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response._data) {
-          selectedModel.value = modelName;
-          versionOptions.value = [];
-          response._data.forEach((version: string) => {
-            versionOptions.value.push({
-              value: version,
-              text: version,
-            });
-          });
-        }
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
+  await useFetch("http://localhost:8080/api/model/" + modelName + "/version", {
+    retry: 0,
+    method: "GET",
+    onRequestError() {
+      requestErrorAlert();
     },
-  );
+    onResponse({ response }) {
+      if (response._data) {
+        selectedModel.value = modelName;
+        versionOptions.value = [];
+        response._data.forEach((version: string) => {
+          versionOptions.value.push({
+            value: version,
+            text: version,
+          });
+        });
+      }
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
 
   versionOptions.value.sort(function (
     a: { value: string; text: string },
@@ -393,7 +388,9 @@ async function selectVersion(versionName: string) {
 // TODO : Do better typing on the artifactList and artifact
 function populateArtifacts(model: string, version: string, artifactList: any) {
   artifactList.forEach((artifact: any) => {
-    artifact.header.timestamp = new Date(artifact.header.timestamp * 1000).toLocaleString("en-US");
+    artifact.header.timestamp = new Date(
+      artifact.header.timestamp * 1000,
+    ).toLocaleString("en-US");
     // Negotiation card
     if (artifact.header.type === "negotiation_card") {
       if (isValidNegotiation(artifact)) {

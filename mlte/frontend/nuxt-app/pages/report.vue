@@ -424,7 +424,7 @@ const path = ref([
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
-const findings = ref(null)
+const findings = ref(null);
 const form = ref({
   summary: {
     problem_type: "classification",
@@ -727,7 +727,9 @@ function loadFindings(proxyObject: any) {
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
   validatedSpec.body.spec.properties.forEach((property) => {
     // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(Object.entries(validatedSpec.body.results[property.name]));
+    const results = new Map(
+      Object.entries(validatedSpec.body.results[property.name]),
+    );
     results.forEach((value, key) => {
       const finding = {
         status: value.type,
