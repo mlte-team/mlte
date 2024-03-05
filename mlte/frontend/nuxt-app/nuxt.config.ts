@@ -1,3 +1,5 @@
+import pkg from './package.json'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   typescript: {
@@ -10,4 +12,9 @@ export default defineNuxtConfig({
       "/api/**": { proxy: "http://localhost:8080/api/**" },
     },
   },
+  runtimeConfig: {
+    public: {
+      version: pkg.version
+    },
+  }
 });
