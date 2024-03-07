@@ -243,10 +243,23 @@ const selectedVersion = useCookie("selectedVersion");
 selectedVersion.value = selectedVersion.value || "";
 
 if (modelOptions.value !== null && modelOptions.value.length > 0) {
+  const modelList = modelOptions.value.map((model) => {
+    return model.value;
+  });
+  if (!modelList.includes(selectedModel.value)) {
+    selectedModel.value = "";
+    selectedVersion.value = "";
+  }
   if (selectedModel.value !== "") {
-    selectModel(selectedModel.value, true);
+    await selectModel(selectedModel.value, true);
+    const versionList = versionOptions.value.map((version) => {
+      return version.value;
+    });
+    if (!versionList.includes(selectedVersion.value)) {
+      selectedVersion.value = "";
+    }
     if (selectedVersion.value !== "") {
-      selectVersion(selectedVersion.value);
+      await selectVersion(selectedVersion.value);
     }
   }
 }
@@ -350,7 +363,6 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
 // Update the selected version for the artifact store.
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
-
   if (versionName === "") {
     clearArtifacts();
     return;

@@ -12,6 +12,7 @@
     "$fetch": true,
     "useFetch": true,
     "useCookie": true,
+    "useRuntimeConfig": true,
     "isValidNegotiation": true,
     "isValidSpec": true,
     "isValidValidatedSpec": true,

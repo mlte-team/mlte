@@ -1,14 +1,11 @@
 // Fetch a artifact by ID.
 export async function fetchArtifact(
-  namespace: string,
   model: string,
   version: string,
   artifactId: string,
 ) {
   const data = await $fetch(
-    "http://localhost:8080/api/namespace/" +
-      namespace +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       model +
       "/version/" +
       version +

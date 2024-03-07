@@ -1,4 +1,4 @@
-import pkg from './package.json'
+import pkg from "./package.json";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      version: pkg.version
+      version: pkg.version,
     },
-  }
+  },
 });
