@@ -17,7 +17,7 @@ from mlte.store.artifact.store import ArtifactStore
 
 from ..fixture.store import store  # noqa
 from ..fixture.store import store_with_context  # noqa
-from ..fixture.store import FX_MODEL_ID, FX_NAMESPACE_ID, FX_VERSION_ID  # noqa
+from ..fixture.store import FX_MODEL_ID, FX_VERSION_ID  # noqa
 
 
 def test_round_trip() -> None:
@@ -44,7 +44,7 @@ def test_save_load(
 
 def test_save_noparents(store: ArtifactStore) -> None:  # noqa
     """Save fails when no parents are present."""
-    ctx = Context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
+    ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = NegotiationCard("my-card")
     with pytest.raises(errors.ErrorNotFound):
@@ -53,7 +53,7 @@ def test_save_noparents(store: ArtifactStore) -> None:  # noqa
 
 def test_save_parents(store: ArtifactStore) -> None:  # noqa
     """Save succeeds when parents are present."""
-    ctx = Context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
+    ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = NegotiationCard("my-card")
     card.save_with(ctx, store, parents=True)

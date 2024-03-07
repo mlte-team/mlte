@@ -8,4 +8,4 @@ from mlte.context import Context
 
 
 def test_complete() -> None:
-    _ = Context("ns0", "model0", "v0")
+    _ = Context("model0", "v0")

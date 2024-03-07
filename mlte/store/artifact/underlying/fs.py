@@ -12,14 +12,7 @@ from typing import Any, Dict, List
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.context.model import (
-    Model,
-    ModelCreate,
-    Namespace,
-    NamespaceCreate,
-    Version,
-    VersionCreate,
-)
+from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
@@ -109,175 +102,100 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_namespace(self, namespace: NamespaceCreate) -> Namespace:
+    def create_model(self, model: ModelCreate) -> Model:
         try:
-            self.storage.create_folder(Path(self.root, namespace.identifier))
-        except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Namespace {namespace.identifier}")
-        return Namespace(identifier=namespace.identifier, models=[])
-
-    def read_namespace(self, namespace_id: str) -> Namespace:
-        self._ensure_namespace_exists(namespace_id)
-        return self._read_namespace(namespace_id)
-
-    def list_namespaces(self) -> List[str]:
-        return [
-            str(ns_path.relative_to(self.root))
-            for ns_path in self.storage.list_folders(Path(self.root))
-        ]
-
-    def delete_namespace(self, namespace_id: str) -> Namespace:
-        self._ensure_namespace_exists(namespace_id)
-        namespace = self._read_namespace(namespace_id)
-        self.storage.delete_folder(Path(self.root, namespace_id))
-        return namespace
-
-    def create_model(self, namespace_id: str, model: ModelCreate) -> Model:
-        self._ensure_namespace_exists(namespace_id)
-
-        try:
-            self.storage.create_folder(
-                Path(self.root, namespace_id, model.identifier)
-            )
+            self.storage.create_folder(Path(self.root, model.identifier))
         except FileExistsError:
             raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
 
         return Model(identifier=model.identifier, versions=[])
 
-    def read_model(self, namespace_id: str, model_id: str) -> Model:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-        return self._read_model(namespace_id, model_id)
+    def read_model(self, model_id: str) -> Model:
+        self._ensure_model_exists(model_id)
+        return self._read_model(model_id)
 
-    def list_models(self, namespace_id: str) -> List[str]:
-        self._ensure_namespace_exists(namespace_id)
-
-        namespace_path = Path(self.root, namespace_id)
+    def list_models(self) -> List[str]:
         return [
-            str(model_path.relative_to(namespace_path))
-            for model_path in self.storage.list_folders(namespace_path)
+            str(model_path.relative_to(self.root))
+            for model_path in self.storage.list_folders(Path(self.root))
         ]
 
-    def delete_model(self, namespace_id: str, model_id: str) -> Model:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-
-        model = self._read_model(namespace_id, model_id)
-        self.storage.delete_folder(Path(self.root, namespace_id, model_id))
+    def delete_model(self, model_id: str) -> Model:
+        self._ensure_model_exists(model_id)
+        model = self._read_model(model_id)
+        self.storage.delete_folder(Path(self.root, model_id))
         return model
 
-    def create_version(
-        self, namespace_id: str, model_id: str, version: VersionCreate
-    ) -> Version:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
+    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+        self._ensure_model_exists(model_id)
 
         try:
             self.storage.create_folder(
-                Path(self.root, namespace_id, model_id, version.identifier)
+                Path(self.root, model_id, version.identifier)
             )
         except FileExistsError:
             raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
         return Version(identifier=version.identifier)
 
-    def read_version(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> Version:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-        self._ensure_version_exists(namespace_id, model_id, version_id)
+    def read_version(self, model_id: str, version_id: str) -> Version:
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(model_id, version_id)
 
-        return self._read_version(namespace_id, model_id, version_id)
+        return self._read_version(model_id, version_id)
 
-    def list_versions(self, namespace_id: str, model_id: str) -> List[str]:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
+    def list_versions(self, model_id: str) -> List[str]:
+        self._ensure_model_exists(model_id)
 
-        model_path = Path(self.root, namespace_id, model_id)
+        model_path = Path(self.root, model_id)
         return [
             str(version_path.relative_to(model_path))
             for version_path in self.storage.list_folders(model_path)
         ]
 
-    def delete_version(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> Version:
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-        self._ensure_version_exists(namespace_id, model_id, version_id)
+    def delete_version(self, model_id: str, version_id: str) -> Version:
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(model_id, version_id)
 
-        version = self._read_version(namespace_id, model_id, version_id)
-        self.storage.delete_folder(
-            Path(self.root, namespace_id, model_id, version_id)
-        )
+        version = self._read_version(model_id, version_id)
+        self.storage.delete_folder(Path(self.root, model_id, version_id))
         return version
 
-    def _ensure_namespace_exists(self, namespace_id: str) -> None:
-        """Throws an ErrorNotFound if the given namespace does not exist."""
-        if not Path(self.root, namespace_id).exists():
-            raise errors.ErrorNotFound(f"Namespace {namespace_id}")
+    def _ensure_model_exists(self, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given model  does not exist."""
+        if not Path(self.root, model_id).exists():
+            raise errors.ErrorNotFound(f"Model {model_id}")
 
-    def _ensure_model_exists(self, namespace_id: str, model_id: str) -> None:
-        """Throws an ErrorNotFound if the given model in the given namespace does not exist."""
-        if not Path(self.root, namespace_id, model_id).exists():
+    def _ensure_version_exists(self, model_id: str, version_id: str) -> None:
+        """Throws an ErrorNotFound if the given version of the given model does not exist."""
+        if not Path(self.root, model_id, version_id).exists():
             raise errors.ErrorNotFound(
-                f"Model {model_id} in namespace {namespace_id}"
+                f"Version {version_id} in model {model_id}"
             )
 
-    def _ensure_version_exists(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> None:
-        """Throws an ErrorNotFound if the given version of the given model in the given namespace does not exist."""
-        if not Path(self.root, namespace_id, model_id, version_id).exists():
-            raise errors.ErrorNotFound(
-                f"Version {version_id} in model {model_id} in namespace {namespace_id}"
-            )
-
-    def _read_namespace(self, namespace_id: str) -> Namespace:
-        """
-        Lazily construct a Namespace object on read.
-        :param namespace_id: The namespace identifer
-        :return: The Namespace object
-        """
-        self._ensure_namespace_exists(namespace_id)
-        return Namespace(
-            identifier=namespace_id,
-            models=[
-                self._read_model(namespace_id, id)
-                for id in self.list_models(namespace_id)
-            ],
-        )
-
-    def _read_model(self, namespace_id: str, model_id: str) -> Model:
+    def _read_model(self, model_id: str) -> Model:
         """
         Lazily construct a Model object on read.
-        :param namespace_id: The namespace identifier
         :param model_id: The model identifier
         :return: The model object
         """
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
+        self._ensure_model_exists(model_id)
         return Model(
             identifier=model_id,
             versions=[
-                self._read_version(namespace_id, model_id, id)
-                for id in self.list_versions(namespace_id, model_id)
+                self._read_version(model_id, id)
+                for id in self.list_versions(model_id)
             ],
         )
 
-    def _read_version(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> Version:
+    def _read_version(self, model_id: str, version_id: str) -> Version:
         """
         Lazily construct a Version object on read.
-        :param namespace_id: The namespace identifier
         :param model_id: The model identifier
         :param version_id: The version identifier
         :return: The version object
         """
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-        self._ensure_version_exists(namespace_id, model_id, version_id)
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(model_id, version_id)
         return Version(identifier=version_id)
 
     # -------------------------------------------------------------------------
@@ -286,7 +204,6 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def write_artifact(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact: ArtifactModel,
@@ -295,11 +212,9 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         parents: bool = False,
     ) -> ArtifactModel:
         if parents:
-            storeutil.create_parents(self, namespace_id, model_id, version_id)
+            storeutil.create_parents(self, model_id, version_id)
 
-        artifacts = self._get_version_artifacts(
-            namespace_id, model_id, version_id
-        )
+        artifacts = self._get_version_artifacts(model_id, version_id)
         if artifact.header.identifier in artifacts and not force:
             raise errors.ErrorAlreadyExists(
                 f"Artifact '{artifact.header.identifier}'"
@@ -307,7 +222,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
         self.storage.write_json_to_file(
             self._artifact_path(
-                namespace_id, model_id, version_id, artifact.header.identifier
+                model_id, version_id, artifact.header.identifier
             ),
             artifact.model_dump(),
         )
@@ -315,41 +230,31 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def read_artifact(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        artifacts = self._get_version_artifacts(
-            namespace_id, model_id, version_id
-        )
+        artifacts = self._get_version_artifacts(model_id, version_id)
 
         self._ensure_artifact_exists(artifact_id, artifacts)
         return ArtifactModel(
             **self.storage.read_json_file(
-                self._artifact_path(
-                    namespace_id, model_id, version_id, artifact_id
-                )
+                self._artifact_path(model_id, version_id, artifact_id)
             )
         )
 
     def read_artifacts(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
-        artifacts = self._get_version_artifacts(
-            namespace_id, model_id, version_id
-        )
+        artifacts = self._get_version_artifacts(model_id, version_id)
         return [
             ArtifactModel(
                 **self.storage.read_json_file(
-                    self._artifact_path(
-                        namespace_id, model_id, version_id, artifact_id
-                    )
+                    self._artifact_path(model_id, version_id, artifact_id)
                 )
             )
             for artifact_id in artifacts
@@ -357,29 +262,25 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def search_artifacts(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         query: Query = Query(),
     ) -> List[ArtifactModel]:
-        artifacts = self.read_artifacts(namespace_id, model_id, version_id)
+        artifacts = self.read_artifacts(model_id, version_id)
         return [
             artifact for artifact in artifacts if query.filter.match(artifact)
         ]
 
     def delete_artifact(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        artifact = self.read_artifact(
-            namespace_id, model_id, version_id, artifact_id
-        )
+        artifact = self.read_artifact(model_id, version_id, artifact_id)
         self.storage.delete_file(
             self._artifact_path(
-                namespace_id, model_id, version_id, artifact.header.identifier
+                model_id, version_id, artifact.header.identifier
             )
         )
         return artifact
@@ -392,56 +293,49 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
             raise errors.ErrorNotFound(f"Artifact {artifact_id}")
 
     def _get_version_artifacts(
-        self, namespace_id: str, model_id: str, version_id: str
+        self, model_id: str, version_id: str
     ) -> List[str]:
         """
         Get artifacts for a version from storage.
-        :param namespace_id: The identifier for the namespace
-        :param model_id: The identifier for the model
+         :param model_id: The identifier for the model
         :param version_id: The identifier for the version
         :raises ErrorNotFound: If the required structural elements are not present
         :return: The associated artifacts
         """
-        self._ensure_namespace_exists(namespace_id)
-        self._ensure_model_exists(namespace_id, model_id)
-        self._ensure_version_exists(namespace_id, model_id, version_id)
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(model_id, version_id)
 
         return [
             a.stem
             for a in self.storage.list_json_files(
-                self._base_path(namespace_id, model_id, version_id)
+                self._base_path(model_id, version_id)
             )
         ]
 
-    def _base_path(
-        self, namespace_id: str, model_id: str, version_id: str
-    ) -> Path:
+    def _base_path(self, model_id: str, version_id: str) -> Path:
         """
-        Format a local FS path to a version of a model of a namespace.
-        :param namespace_id: The namespace identifier
+        Format a local FS path to a version of a model .
         :param model_id: The model identifier
         :param version_id: The version identifier
         :return: The formatted path
         """
-        return Path(self.root, namespace_id, model_id, version_id)
+        return Path(self.root, model_id, version_id)
 
     def _artifact_path(
         self,
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
     ):
         """
         Formats a local FS path to an artifact.
-        :param namespace_id: The namespace identifier
         :param model_id: The model identifier
         :param version_id: The version identifier
         :param artifact_id: The artifact identifier
         :return: The formatted path
         """
         return Path(
-            self._base_path(namespace_id, model_id, version_id),
+            self._base_path(model_id, version_id),
             artifact_id + ".json",
         )
 

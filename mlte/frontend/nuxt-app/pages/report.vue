@@ -424,7 +424,7 @@ const path = ref([
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
-const findings = ref(null)
+const findings = ref(null);
 const form = ref({
   summary: {
     problem_type: "classification",
@@ -537,15 +537,12 @@ const classificationOptions = [
 ];
 
 if (useRoute().query.artifactId !== undefined) {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
   await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      namespace +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       model +
       "/version/" +
       version +
@@ -604,7 +601,6 @@ if (useRoute().query.artifactId !== undefined) {
             form.value.performance.validated_spec_id =
               response._data.body.performance.validated_spec_id;
             const validatedSpec = await fetchArtifact(
-              namespace,
               model,
               version,
               form.value.performance.validated_spec_id,
@@ -621,7 +617,6 @@ if (useRoute().query.artifactId !== undefined) {
 }
 
 async function submit() {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
@@ -653,9 +648,7 @@ async function submit() {
   if (isValidReport(artifact)) {
     try {
       await $fetch(
-        "http://localhost:8080/api/namespace/" +
-          namespace +
-          "/model/" +
+        "http://localhost:8080/api/model/" +
           model +
           "/version/" +
           version +
@@ -693,15 +686,12 @@ async function submit() {
 
 // Fetch a artifact by ID.
 async function fetchArtifact(
-  namespace: string,
   model: string,
   version: string,
   artifactId: string,
 ) {
   const { data, status } = await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      namespace +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       model +
       "/version/" +
       version +
@@ -737,7 +727,9 @@ function loadFindings(proxyObject: any) {
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
   validatedSpec.body.spec.properties.forEach((property) => {
     // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(Object.entries(validatedSpec.body.results[property.name]));
+    const results = new Map(
+      Object.entries(validatedSpec.body.results[property.name]),
+    );
     results.forEach((value, key) => {
       const finding = {
         status: value.type,

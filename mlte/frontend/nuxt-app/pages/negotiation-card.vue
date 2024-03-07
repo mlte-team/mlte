@@ -566,15 +566,12 @@ const classificationOptions = [
 ];
 
 if (useRoute().query.artifactId !== undefined) {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
   await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      namespace +
-      "/model/" +
+    "http://localhost:8080/api/model/" +
       model +
       "/version/" +
       version +
@@ -623,7 +620,6 @@ if (useRoute().query.artifactId !== undefined) {
 }
 
 async function submit() {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
@@ -652,9 +648,7 @@ async function submit() {
   if (isValidNegotiation(artifact)) {
     try {
       await $fetch(
-        "http://localhost:8080/api/namespace/" +
-          namespace +
-          "/model/" +
+        "http://localhost:8080/api/model/" +
           model +
           "/version/" +
           version +

@@ -13,14 +13,13 @@ from sqlalchemy.orm import Session
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.model.model import Model, Namespace, Version
+from mlte.context.model.model import Model, Version
 from mlte.model.shared import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBArtifactType,
     DBModel,
-    DBNamespace,
     DBVersion,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_nc import (
@@ -59,50 +58,15 @@ class DBReader:
     }
 
     @staticmethod
-    def get_namespace(
-        namespace_id: str, session: Session
-    ) -> Tuple[Namespace, DBNamespace]:
-        """Reads the namespace with the given identifier using the provided session, and returns a Namespace and DBNamespace object."""
-        namespace_obj = session.scalar(
-            select(DBNamespace).where(DBNamespace.name == namespace_id)
-        )
-        if namespace_obj is None:
-            raise errors.ErrorNotFound(
-                f"Namespace with identifier {namespace_id} was not found in the artifact store."
-            )
-        else:
-            return (
-                Namespace(
-                    identifier=namespace_obj.name,
-                    models=[
-                        Model(
-                            identifier=model_obj.name,
-                            versions=[
-                                Version(identifier=version_obj.name)
-                                for version_obj in model_obj.versions
-                            ],
-                        )
-                        for model_obj in namespace_obj.models
-                    ],
-                ),
-                namespace_obj,
-            )
-
-    @staticmethod
-    def get_model(
-        namespace_id: str, model_id: str, session: Session
-    ) -> Tuple[Model, DBModel]:
+    def get_model(model_id: str, session: Session) -> Tuple[Model, DBModel]:
         """Reads the model with the given identifier using the provided session, and returns a Model and DBModel object."""
         model_obj = session.scalar(
-            select(DBModel)
-            .where(DBModel.name == model_id)
-            .where(DBModel.namespace_id == DBNamespace.id)
-            .where(DBNamespace.name == namespace_id)
+            select(DBModel).where(DBModel.name == model_id)
         )
 
         if model_obj is None:
             raise errors.ErrorNotFound(
-                f"Model with identifier {model_id} and associated to namespace {namespace_id} was not found in the artifact store."
+                f"Model with identifier {model_id} was not found in the artifact store."
             )
         else:
             return (
@@ -118,7 +82,6 @@ class DBReader:
 
     @staticmethod
     def get_version(
-        namespace_id: str,
         model_id: str,
         version_id: str,
         session: Session,
@@ -128,14 +91,12 @@ class DBReader:
             select(DBVersion)
             .where(DBVersion.name == version_id)
             .where(DBVersion.model_id == DBModel.id)
-            .where(DBModel.namespace_id == DBNamespace.id)
             .where(DBModel.name == model_id)
-            .where(DBNamespace.name == namespace_id)
         )
 
         if version_obj is None:
             raise errors.ErrorNotFound(
-                f"Version with identifier {version_id}  and associated to model {model_id} and namespace {namespace_id} was not found in the artifact store."
+                f"Version with identifier {version_id}  and associated to model {model_id} was not found in the artifact store."
             )
         else:
             return (Version(identifier=version_obj.name)), version_obj
@@ -155,7 +116,6 @@ class DBReader:
 
     @staticmethod
     def get_artifact(
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_id: str,
@@ -176,10 +136,8 @@ class DBReader:
         ] = session.scalar(
             select(artifact_class)
             .where(DBVersion.model_id == DBModel.id)
-            .where(DBModel.namespace_id == DBNamespace.id)
             .where(DBVersion.name == version_id)
             .where(DBModel.name == model_id)
-            .where(DBNamespace.name == namespace_id)
             .where(DBArtifactHeader.id == artifact_class.artifact_header_id)
             .where(DBArtifactHeader.identifier == artifact_id)
             .where(DBArtifactHeader.version_id == DBVersion.id)
@@ -187,7 +145,7 @@ class DBReader:
 
         if artifact_obj is None:
             raise errors.ErrorNotFound(
-                f"Artifact with identifier {artifact_id}  and associated to namespace {namespace_id}, model {model_id}, and version {version_id} was not found in the artifact store."
+                f"Artifact with identifier {artifact_id}  and associated to model {model_id}, and version {version_id} was not found in the artifact store."
             )
         else:
             return (
@@ -197,13 +155,12 @@ class DBReader:
 
     @staticmethod
     def get_artifacts_for_type(
-        namespace_id: str,
         model_id: str,
         version_id: str,
         artifact_type: ArtifactType,
         session: Session,
     ) -> List[ArtifactModel]:
-        """Loads and returns a list with all the artifacts of the given type, for the given namespace/model/version."""
+        """Loads and returns a list with all the artifacts of the given type, for the given model/version."""
         artifact_class = DBReader.get_artifact_class(artifact_type)
         artifact_objs: ScalarResult[
             Union[DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue]
@@ -211,10 +168,8 @@ class DBReader:
             (
                 select(artifact_class)
                 .where(DBVersion.model_id == DBModel.id)
-                .where(DBModel.namespace_id == DBNamespace.id)
                 .where(DBVersion.name == version_id)
                 .where(DBModel.name == model_id)
-                .where(DBNamespace.name == namespace_id)
                 .where(DBArtifactHeader.id == artifact_class.artifact_header_id)
                 .where(DBArtifactHeader.version_id == DBVersion.id)
             )

@@ -11,12 +11,9 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.context.model import ModelCreate, NamespaceCreate, VersionCreate
+from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
-
-# The namespace identifier for default context
-FX_NAMESPACE_ID = "ns0"
 
 # The mode identifier for default context
 FX_MODEL_ID = "model0"
@@ -36,14 +33,10 @@ def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
     store = create_store("memory://")
     with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.create_namespace(NamespaceCreate(identifier=FX_NAMESPACE_ID))
-        _ = handle.create_model(
-            FX_NAMESPACE_ID, ModelCreate(identifier=FX_MODEL_ID)
-        )
+        _ = handle.create_model(ModelCreate(identifier=FX_MODEL_ID))
         _ = handle.create_version(
-            FX_NAMESPACE_ID,
             FX_MODEL_ID,
             VersionCreate(identifier=FX_VERSION_ID),
         )
 
-    return store, Context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
+    return store, Context(FX_MODEL_ID, FX_VERSION_ID)

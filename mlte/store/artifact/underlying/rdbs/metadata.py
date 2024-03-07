@@ -48,30 +48,12 @@ class DBBase(DeclarativeBase):
 # -------------------------------------------------------------------------
 
 
-class DBNamespace(DBBase):
-    __tablename__ = "namespace"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-
-    models: Mapped[List[DBModel]] = relationship(
-        back_populates="namespace", cascade="all, delete-orphan"
-    )
-
-    __table_args__ = (UniqueConstraint("name", name="_namespace_identifier"),)
-
-    def __repr__(self) -> str:
-        return f"Namespace(id={self.id!r}, name={self.name!r})"
-
-
 class DBModel(DBBase):
     __tablename__ = "model"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    namespace_id = mapped_column(ForeignKey("namespace.id"))
 
-    namespace: Mapped[DBNamespace] = relationship(back_populates="models")
     versions: Mapped[List[DBVersion]] = relationship(
         back_populates="model", cascade="all, delete-orphan"
     )
