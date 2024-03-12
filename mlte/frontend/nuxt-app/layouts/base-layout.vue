@@ -51,11 +51,16 @@
           href="https://mlte.readthedocs.io/en/latest/using_mlte/"
           >User Guide</a
         >
-        <span>v0.2.2</span>
+        <span>v{{ version }}</span>
       </div>
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+const config = useRuntimeConfig();
+const version = config.public.version;
+</script>
 
 <style>
 header {

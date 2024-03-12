@@ -218,6 +218,7 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig();
 const path = ref([
   {
     href: "/",
@@ -228,7 +229,7 @@ const path = ref([
 const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
 const { data: modelList } = await useFetch<string[]>(
-  "http://localhost:8080/api/model",
+  config.public.apiPath + "/model",
   { method: "GET" },
 );
 if (modelList.value) {
@@ -241,15 +242,6 @@ const selectedModel = useCookie("selectedModel");
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion");
 selectedVersion.value = selectedVersion.value || "";
-
-if (modelOptions.value !== null && modelOptions.value.length > 0) {
-  if (selectedModel.value !== "") {
-    selectModel(selectedModel.value, true);
-    if (selectedVersion.value !== "") {
-      selectVersion(selectedVersion.value);
-    }
-  }
-}
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -298,6 +290,28 @@ const values = ref<
   }[]
 >([]);
 
+if (modelOptions.value !== null && modelOptions.value.length > 0) {
+  const modelList = modelOptions.value.map((model) => {
+    return model.value;
+  });
+  if (!modelList.includes(selectedModel.value)) {
+    selectedModel.value = "";
+    selectedVersion.value = "";
+  }
+  if (selectedModel.value !== "") {
+    await selectModel(selectedModel.value, true);
+    const versionList = versionOptions.value.map((version) => {
+      return version.value;
+    });
+    if (!versionList.includes(selectedVersion.value)) {
+      selectedVersion.value = "";
+    }
+    if (selectedVersion.value !== "") {
+      await selectVersion(selectedVersion.value);
+    }
+  }
+}
+
 // Update the selected model for the artifact store.
 async function selectModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
@@ -305,11 +319,12 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     selectedVersion.value = "";
   }
   if (modelName === "") {
+    versionOptions.value = [];
     clearArtifacts();
     return;
   }
 
-  await useFetch("http://localhost:8080/api/model/" + modelName + "/version", {
+  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
     retry: 0,
     method: "GET",
     onRequestError() {
@@ -349,14 +364,14 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
 // Update the selected version for the artifact store.
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
-
   if (versionName === "") {
     clearArtifacts();
     return;
   }
 
-  await useFetch(
-    "http://localhost:8080/api/model/" +
+  await $fetch(
+    config.public.apiPath +
+      "/model/" +
       selectedModel.value +
       "/version/" +
       versionName +
@@ -454,7 +469,6 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
 
 // Clear all artifacts from local state.
 function clearArtifacts() {
-  versionOptions.value = [];
   negotiationCards.value = [];
   reports.value = [];
   specifications.value = [];

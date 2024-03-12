@@ -11,6 +11,8 @@
     "ref": true,
     "$fetch": true,
     "useFetch": true,
+    "useCookie": true,
+    "useRuntimeConfig": true,
     "isValidNegotiation": true,
     "isValidSpec": true,
     "isValidValidatedSpec": true,
@@ -21,7 +23,8 @@
     "cancelFormSubmission": true,
     "requestErrorAlert": true,
     "responseErrorAlert": true,
-    "conflictErrorAlert": true
+    "conflictErrorAlert": true,
+    "fetchArtifact": true
   },
   "extends": [
     "standard",
