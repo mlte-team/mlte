@@ -218,6 +218,7 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig();
 const path = ref([
   {
     href: "/",
@@ -228,7 +229,7 @@ const path = ref([
 const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
 const { data: modelList } = await useFetch<string[]>(
-  "http://localhost:8080/api/model",
+  config.public.apiPath + "/model",
   { method: "GET" },
 );
 if (modelList.value) {
@@ -241,28 +242,6 @@ const selectedModel = useCookie("selectedModel");
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion");
 selectedVersion.value = selectedVersion.value || "";
-
-if (modelOptions.value !== null && modelOptions.value.length > 0) {
-  const modelList = modelOptions.value.map((model) => {
-    return model.value;
-  });
-  if (!modelList.includes(selectedModel.value)) {
-    selectedModel.value = "";
-    selectedVersion.value = "";
-  }
-  if (selectedModel.value !== "") {
-    await selectModel(selectedModel.value, true);
-    const versionList = versionOptions.value.map((version) => {
-      return version.value;
-    });
-    if (!versionList.includes(selectedVersion.value)) {
-      selectedVersion.value = "";
-    }
-    if (selectedVersion.value !== "") {
-      await selectVersion(selectedVersion.value);
-    }
-  }
-}
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -311,6 +290,28 @@ const values = ref<
   }[]
 >([]);
 
+if (modelOptions.value !== null && modelOptions.value.length > 0) {
+  const modelList = modelOptions.value.map((model) => {
+    return model.value;
+  });
+  if (!modelList.includes(selectedModel.value)) {
+    selectedModel.value = "";
+    selectedVersion.value = "";
+  }
+  if (selectedModel.value !== "") {
+    await selectModel(selectedModel.value, true);
+    const versionList = versionOptions.value.map((version) => {
+      return version.value;
+    });
+    if (!versionList.includes(selectedVersion.value)) {
+      selectedVersion.value = "";
+    }
+    if (selectedVersion.value !== "") {
+      await selectVersion(selectedVersion.value);
+    }
+  }
+}
+
 // Update the selected model for the artifact store.
 async function selectModel(modelName: string, initialPageLoad: boolean) {
   selectedModel.value = modelName;
@@ -323,7 +324,7 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     return;
   }
 
-  await $fetch("http://localhost:8080/api/model/" + modelName + "/version", {
+  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
     retry: 0,
     method: "GET",
     onRequestError() {
@@ -369,7 +370,8 @@ async function selectVersion(versionName: string) {
   }
 
   await $fetch(
-    "http://localhost:8080/api/model/" +
+    config.public.apiPath +
+      "/model/" +
       selectedModel.value +
       "/version/" +
       versionName +

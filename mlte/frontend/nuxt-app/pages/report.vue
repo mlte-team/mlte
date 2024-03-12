@@ -410,6 +410,7 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig();
 const path = ref([
   {
     href: "/",
@@ -543,7 +544,8 @@ if (useRoute().query.artifactId !== undefined) {
   const artifactId = useRoute().query.artifactId;
 
   await useFetch(
-    "http://localhost:8080/api/model/" +
+    config.public.apiPath +
+      "/model/" +
       model +
       "/version/" +
       version +
@@ -623,7 +625,8 @@ async function submit() {
   if (isValidReport(artifact)) {
     try {
       await $fetch(
-        "http://localhost:8080/api/model/" +
+        config.public.apiPath +
+          "/model/" +
           model +
           "/version/" +
           version +

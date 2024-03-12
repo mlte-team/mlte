@@ -1,3 +1,5 @@
+const config = useRuntimeConfig();
+
 // Fetch a artifact by ID.
 export async function fetchArtifact(
   model: string,
@@ -5,7 +7,8 @@ export async function fetchArtifact(
   artifactId: string,
 ) {
   const data = await $fetch(
-    "http://localhost:8080/api/model/" +
+    config.public.apiPath +
+      "/model/" +
       model +
       "/version/" +
       version +

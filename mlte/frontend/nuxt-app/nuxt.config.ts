@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      apiPath: "http://localhost:8080/api",
       version: pkg.version,
     },
   },
