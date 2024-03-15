@@ -7,6 +7,15 @@ Status codes for MLTE artifact store.
 """HTTP 'OK'"""
 OK = 200
 
+"""HTTP 'Bad Request'"""
+BAD_REQUEST = 400
+
+"""HTTP 'Unauthorized'"""
+UNAUTHORIZED = 401
+
+"""HTTP 'Forbidden'"""
+FORBIDDEN = 403
+
 """HTTP 'Not Found'"""
 NOT_FOUND = 404
 
