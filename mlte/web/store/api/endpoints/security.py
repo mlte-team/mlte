@@ -28,12 +28,14 @@ async def get_current_user(
     current_token: Annotated[str, Depends(oauth2_scheme)]
 ) -> User:
     try:
-        token_data = token.decode_user_token(current_token)
+        username = token.decode_user_token(
+            token.Token(access_token=current_token)
+        )
     except Exception:
         raise HTTPAuthException(
             detail="Could not decode token properly", error="invalid_token"
         )
-    user = db.get_user(username=token_data.username)
+    user = db.get_user(username=username)
     if user is None:
         raise HTTPAuthException(
             detail="Could not validate credentials", error="invalid_token"

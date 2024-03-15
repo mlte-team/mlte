@@ -38,13 +38,6 @@ class Token(BaseModel):
     """The token type, currently only supporting one default value."""
 
 
-class TokenData(BaseModel):
-    """Model for the decoded data in the token."""
-
-    username: Optional[str] = None
-    """Only data in the token currently is the username."""
-
-
 def create_user_token(username: str) -> Token:
     """Creates a user token given a username."""
     data = {SUBJECT_CLAIM_KEY: username}
@@ -68,14 +61,15 @@ def _create_access_token(
     return encoded_jwt
 
 
-def decode_user_token(token: str) -> TokenData:
+def decode_user_token(token: Token) -> str:
     """Decodes the provided user token."""
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token.access_token, SECRET_KEY, algorithms=[ALGORITHM]
+        )
         username: str = payload.get(SUBJECT_CLAIM_KEY)
         if username is None:
             raise Exception("No valid user in token")
-        token_data = TokenData(username=username)
-        return token_data
+        return username
     except JWTError as ex:
         raise Exception(f"Error decoding token: {str(ex)}")
