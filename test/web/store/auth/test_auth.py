@@ -5,15 +5,15 @@ Test the authentication operations
 """
 
 
-from mlte.web.store.api.auth import authentication, token
+from mlte.web.store.api.auth import authentication, jwt
 
 
 def test_token_encode_decode() -> None:
     """Checks that a token can be encoded and decoded properly."""
     username = "myuser"
 
-    new_token = token.create_user_token(username)
-    decoded_username = token.decode_user_token(new_token)
+    new_token = jwt.create_user_token(username)
+    decoded_username = jwt.decode_user_token(new_token.encoded_token)
 
     assert username == decoded_username
 

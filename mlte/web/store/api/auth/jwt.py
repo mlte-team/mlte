@@ -1,7 +1,7 @@
 """
-mlte/web/store/api/auth/token.py
+mlte/web/store/api/auth/jwt.py
 
-Handling of authentication tokens.
+Handling of JWT tokens.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -17,11 +17,8 @@ SECRET_KEY = "399fd92f61c99e35d7f2f6fdb9d65293c4047f9ac500af1886b8868b495f20b3"
 ALGORITHM = "HS256"
 """Token hashing algorithm."""
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+DEFAULT_EXPIRATION_MINS = 30
 """Default token expiration time."""
-
-DEFAULT_TOKEN_TYPE = "bearer"
-"""Default token type."""
 
 SUBJECT_CLAIM_KEY = "sub"
 EXPIRATION_CLAIM_KEY = "exp"
@@ -29,44 +26,46 @@ EXPIRATION_CLAIM_KEY = "exp"
 
 
 class Token(BaseModel):
-    """Model for the token to return."""
+    """Model for the token."""
 
-    access_token: str
+    encoded_token: str
     """The actual encoded token."""
 
-    token_type: str = DEFAULT_TOKEN_TYPE
-    """The token type, currently only supporting one default value."""
+    expires_in: int
+    """Lifetime in seconds of the token."""
 
 
 def create_user_token(username: str) -> Token:
-    """Creates a user token given a username."""
+    """Creates an access token containing a given username."""
     data = {SUBJECT_CLAIM_KEY: username}
     access_token = _create_access_token(data)
-    return Token(access_token=access_token)
+    return access_token
 
 
 def _create_access_token(
     data: dict[str, Any], expires_delta: Optional[timedelta] = None
-):
+) -> Token:
     """Creates a token given a data dictionary and an expiration time."""
-    to_encode = data.copy()
-    if expires_delta:
-        expiration_time = datetime.now(timezone.utc) + expires_delta
-    else:
-        expiration_time = datetime.now(timezone.utc) + timedelta(
-            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-    to_encode.update({EXPIRATION_CLAIM_KEY: expiration_time})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    claims = data.copy()
+
+    # Calculate expiration time, and add it to claims.
+    if expires_delta is None:
+        expires_delta = timedelta(minutes=DEFAULT_EXPIRATION_MINS)
+    expiration_time = datetime.now(timezone.utc) + expires_delta
+    claims.update({EXPIRATION_CLAIM_KEY: expiration_time})
+
+    # Encode and sign token, and return it.
+    encoded_jwt = jwt.encode(claims, SECRET_KEY, algorithm=ALGORITHM)
+    token = Token(
+        encoded_token=encoded_jwt, expires_in=int(expires_delta.total_seconds())
+    )
+    return token
 
 
-def decode_user_token(token: Token) -> str:
-    """Decodes the provided user token."""
+def decode_user_token(encoded_token: str) -> str:
+    """Decodes the provided user access token."""
     try:
-        payload = jwt.decode(
-            token.access_token, SECRET_KEY, algorithms=[ALGORITHM]
-        )
+        payload = jwt.decode(encoded_token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get(SUBJECT_CLAIM_KEY)
         if username is None:
             raise Exception("No valid user in token")
