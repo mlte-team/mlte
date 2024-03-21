@@ -25,7 +25,7 @@ class User(BaseModel):
     """Whether the user is disabled."""
 
 
-class UserInDB(User):
+class StoredUser(User):
     """User with additional information only used locally when stored."""
 
     hashed_password: str

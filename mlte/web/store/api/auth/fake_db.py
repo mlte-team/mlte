@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from mlte.user.model import User, UserInDB
+from mlte.user.model import User, StoredUser
 
 fake_users_db = {
     "johndoe": {
@@ -25,10 +25,10 @@ def get_user(username: Optional[str]) -> Optional[User]:
         return None
 
 
-def get_user_in_db(username: str) -> Optional[UserInDB]:
+def get_user_in_db(username: str) -> Optional[StoredUser]:
     if username in fake_users_db:
         user_dict: dict[str, Any] = fake_users_db[username]
-        return UserInDB(**user_dict)
+        return StoredUser(**user_dict)
     else:
         return None
 
