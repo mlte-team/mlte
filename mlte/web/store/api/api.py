@@ -6,7 +6,7 @@ Top-level API functionality.
 
 from fastapi import APIRouter
 
-from mlte.web.store.api.endpoints import artifact, health, metadata, user, token
+from mlte.web.store.api.endpoints import artifact, health, metadata, token, user
 
 # The common URL prefix for all artifact routes
 _ARTIFACT_PREFIX = "/model/{model_id}/version/{version_id}"
