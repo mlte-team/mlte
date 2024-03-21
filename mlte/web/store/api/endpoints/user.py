@@ -4,9 +4,8 @@ mlte/web/store/api/endpoints/user.py
 Security setup and token endpoints.
 """
 
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
+from typing_extensions import Annotated
 
 from mlte.user.model import User
 from mlte.web.store.api.auth.authorization import get_user_from_token

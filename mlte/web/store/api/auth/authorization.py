@@ -4,10 +4,9 @@ mlte/web/store/api/auth/authorization.py
 Setup of OAuth based authorization checks.
 """
 
-from typing import Annotated
-
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from typing_extensions import Annotated
 
 from mlte.user.model import User
 from mlte.web.store.api import codes

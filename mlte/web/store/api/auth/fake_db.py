@@ -1,5 +1,7 @@
 ###################
 # TODO MOVE to STORE
+from __future__ import annotations
+
 from typing import Any, Optional
 
 from mlte.user.model import User, UserInDB

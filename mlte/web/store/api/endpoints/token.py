@@ -4,10 +4,9 @@ mlte/web/store/api/endpoints/token.py
 Token endpoint.
 """
 
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from typing_extensions import Annotated
 
 from mlte.model.base_model import BaseModel
 from mlte.web.store.api import codes
