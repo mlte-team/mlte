@@ -11,12 +11,12 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
+import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-import mlte.web.store.api.codes as codes
 from mlte.artifact.model import ArtifactModel
+from mlte.backend.api import dependencies
+from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
 from mlte.store.artifact.query import Query
-from mlte.web.store.api import dependencies
-from mlte.web.store.api.model import WriteArtifactRequest, WriteArtifactResponse
 
 # The router exported by this submodule
 router = APIRouter()

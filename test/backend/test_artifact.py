@@ -9,11 +9,11 @@ from fastapi.testclient import TestClient
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.backend.api.model import WriteArtifactRequest
 from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
-from mlte.web.store.api.model import WriteArtifactRequest
 
-from ...fixture.artifact import ArtifactFactory
+from ..fixture.artifact import ArtifactFactory
 from .fixure.http import clients_and_types, mem_client  # noqa
 
 

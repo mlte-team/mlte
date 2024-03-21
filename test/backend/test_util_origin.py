@@ -6,7 +6,7 @@ Unit tests for origin utility functionality.
 
 from typing import List
 
-from mlte.web.store.util.origins import is_localhost, resolve_hosts
+from mlte.backend.util.origins import is_localhost, resolve_hosts
 
 
 def test_localhost_identitification() -> None:

@@ -8,9 +8,9 @@ import argparse
 import sys
 import traceback
 
+import mlte.backend.main as server
 import mlte.frontend as frontend
-import mlte.web.store.main as server
-from mlte.web.store.core.config import settings
+from mlte.backend.core.config import settings
 
 # CLI exit codes
 EXIT_SUCCESS = 0

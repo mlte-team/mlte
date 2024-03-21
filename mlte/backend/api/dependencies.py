@@ -15,8 +15,8 @@ solution that involves manual context management with a global state object.
 from contextlib import contextmanager
 from typing import Generator
 
+from mlte.backend.state import state
 from mlte.store.artifact.store import ArtifactStoreSession
-from mlte.web.store.state import state
 
 
 @contextmanager

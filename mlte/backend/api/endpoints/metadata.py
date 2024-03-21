@@ -10,10 +10,10 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
+import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-import mlte.web.store.api.codes as codes
+from mlte.backend.api import dependencies
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.web.store.api import dependencies
 
 # The router exported by this submodule
 router = APIRouter()

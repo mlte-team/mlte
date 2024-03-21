@@ -12,13 +12,13 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic.networks import HttpUrl
 
-import mlte.web.store.app_factory as app_factory
-import mlte.web.store.util.origins as util
+import mlte.backend.app_factory as app_factory
+import mlte.backend.util.origins as util
+from mlte.backend.api.api import api_router
+from mlte.backend.core.config import settings
+from mlte.backend.state import state
 from mlte.store.artifact.factory import create_store
 from mlte.store.base import StoreType
-from mlte.web.store.api.api import api_router
-from mlte.web.store.core.config import settings
-from mlte.web.store.state import state
 
 # Application exit codes
 EXIT_SUCCESS = 0

@@ -8,12 +8,12 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
 
+from mlte.backend.api import codes
+from mlte.backend.api.auth import fake_db as db
+from mlte.backend.api.auth import jwt
+from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
+from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.user.model import User
-from mlte.web.store.api import codes
-from mlte.web.store.api.auth import fake_db as db
-from mlte.web.store.api.auth import jwt
-from mlte.web.store.api.auth.http_auth_exception import HTTPAuthException
-from mlte.web.store.api.endpoints.token import TOKEN_ENDPOINT_URL
 
 # TODO: Add support for more than password grant type.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=TOKEN_ENDPOINT_URL)

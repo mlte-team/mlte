@@ -6,7 +6,7 @@ Web application factory.
 
 from fastapi import FastAPI
 
-from mlte.web.store.core.config import settings
+from mlte.backend.core.config import settings
 
 
 def create() -> FastAPI:

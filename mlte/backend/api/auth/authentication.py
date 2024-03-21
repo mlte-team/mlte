@@ -5,7 +5,7 @@ Handling of authentication and passwords.
 """
 from passlib.context import CryptContext
 
-from mlte.web.store.api.auth import fake_db as db
+from mlte.backend.api.auth import fake_db as db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 """Context to be used when hashing passwords."""

@@ -8,12 +8,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
 
+from mlte.backend.api import codes
+from mlte.backend.api.auth import authentication
+from mlte.backend.api.auth import fake_db as db
+from mlte.backend.api.auth import jwt
+from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.model.base_model import BaseModel
-from mlte.web.store.api import codes
-from mlte.web.store.api.auth import authentication
-from mlte.web.store.api.auth import fake_db as db
-from mlte.web.store.api.auth import jwt
-from mlte.web.store.api.auth.http_auth_exception import HTTPAuthException
 
 GRANT_TYPE_PASSWORD = "password"
 """Grant type name used in token requests."""

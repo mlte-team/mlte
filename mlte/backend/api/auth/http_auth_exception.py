@@ -6,7 +6,7 @@ Exception used for authentication issues.
 
 from fastapi import HTTPException
 
-from mlte.web.store.api import codes
+from mlte.backend.api import codes
 
 
 class HTTPAuthException(HTTPException):

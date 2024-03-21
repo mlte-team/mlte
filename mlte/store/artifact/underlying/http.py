@@ -12,14 +12,14 @@ from typing import Any, List
 
 import requests
 
+import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-import mlte.web.store.api.codes as codes
 from mlte.artifact.model import ArtifactModel
+from mlte.backend.api.model import WriteArtifactRequest
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
-from mlte.web.store.api.model import WriteArtifactRequest
 
 # -----------------------------------------------------------------------------
 # Client Configuration

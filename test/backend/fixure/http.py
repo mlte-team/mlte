@@ -11,12 +11,12 @@ from typing import Generator, Tuple
 import pytest
 from fastapi.testclient import TestClient
 
-import mlte.web.store.app_factory as app_factory
+import mlte.backend.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
+from mlte.backend.api.api import api_router
+from mlte.backend.core.config import settings
+from mlte.backend.state import state
 from mlte.store.artifact.factory import create_store
-from mlte.web.store.api.api import api_router
-from mlte.web.store.core.config import settings
-from mlte.web.store.state import state
 
 """
 This list contains the global collection of test clients.

@@ -5,7 +5,7 @@ Test the authentication operations
 """
 
 
-from mlte.web.store.api.auth import authentication, jwt
+from mlte.backend.api.auth import authentication, jwt
 
 
 def test_token_encode_decode() -> None:

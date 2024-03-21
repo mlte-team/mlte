@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from mlte.user.model import User, StoredUser
+from mlte.user.model import StoredUser, User
 
 fake_users_db = {
     "johndoe": {

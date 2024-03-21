@@ -7,8 +7,8 @@ Security setup and token endpoints.
 from fastapi import APIRouter, Depends
 from typing_extensions import Annotated
 
+from mlte.backend.api.auth.authorization import get_user_from_token
 from mlte.user.model import User
-from mlte.web.store.api.auth.authorization import get_user_from_token
 
 # The router exported by this submodule
 router = APIRouter()
