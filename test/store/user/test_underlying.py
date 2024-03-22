@@ -47,13 +47,15 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     test_user = get_test_user()
 
     with ManagedUserSession(store.session()) as handle:
+        original_users = handle.list_users()
+
         handle.create_user(test_user)
 
         read_user = handle.read_user(test_user.username)
         assert read_user == test_user
 
         users = handle.list_users()
-        assert len(users) == 1
+        assert len(users) == 1 + len(original_users)
 
         handle.delete_user(test_user.username)
 

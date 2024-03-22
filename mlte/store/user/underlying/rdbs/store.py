@@ -16,7 +16,11 @@ from sqlalchemy.orm import Session
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.store.user.underlying.rdbs.metadata import DBBase, DBUser
+from mlte.store.user.underlying.rdbs.metadata import (
+    DBBase,
+    DBUser,
+    init_default_user,
+)
 from mlte.store.user.underlying.rdbs.reader import DBReader
 from mlte.user.model import User
 
@@ -55,7 +59,8 @@ class RelationalDBUserStore(UserStore):
 
     def _init_tables(self):
         """Pre-populate tables."""
-        pass
+        with Session(self.engine) as session:
+            init_default_user(session)
 
 
 # -----------------------------------------------------------------------------

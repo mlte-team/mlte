@@ -3,6 +3,7 @@ mlte/cli/cli.py
 
 Top-level command line interface.
 """
+from __future__ import annotations
 
 import argparse
 import sys
