@@ -32,19 +32,21 @@ def _prepare_parser():
 
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
-    for attach_to in [_attach_store, _attach_ui]:
+    for attach_to in [_attach_backend, _attach_ui]:
         attach_to(subparser)
     return base_parser
 
 
-def _attach_store(
-    subparser,
+def _attach_backend(
+    subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
         "backend", help="Run an instance of the MLTE artifact store."
     )
     parser.set_defaults(func=server.run)
+
+    # Additional arguments.
     parser.add_argument(
         "--host",
         type=str,
@@ -72,7 +74,7 @@ def _attach_store(
 
 
 def _attach_ui(
-    subparser,
+    subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
