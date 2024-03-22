@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/auth/http_auth_exception.py
+mlte/backend/api/auth/http_auth_exception.py
 
 Exception used for authentication issues.
 """

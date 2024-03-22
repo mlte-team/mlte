@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/endpoints/user.py
+mlte/backend/api/endpoints/user.py
 
 Security setup and token endpoints.
 """

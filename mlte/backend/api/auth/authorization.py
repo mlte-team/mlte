@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/auth/authorization.py
+mlte/backend/api/auth/authorization.py
 
 Setup of OAuth based authorization checks.
 """

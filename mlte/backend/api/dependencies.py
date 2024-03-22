@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/dependencies.py
+mlte/backend/api/dependencies.py
 
 This file defines common dependencies that are used by API functions.
 In practice, this ensures that the backend is initialized prior to

@@ -1,5 +1,5 @@
 """
-test/web/store/context/test_version.py
+test/backend/context/test_version.py
 
 Test the HTTP interface for version operations.
 """

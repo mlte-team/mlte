@@ -1,5 +1,5 @@
 """
-mlte/web/store/main.py
+mlte/backend/main.py
 
 Entry point for MLTE artifact store server.
 """

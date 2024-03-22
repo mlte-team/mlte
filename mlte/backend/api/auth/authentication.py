@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/auth/authentication.py
+mlte/backend/api/auth/authentication.py
 
 Handling of authentication and passwords.
 """

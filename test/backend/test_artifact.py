@@ -1,5 +1,5 @@
 """
-test/web/store/artifcat/test_negotiation_card.py
+test/backend/artifcat/test_negotiation_card.py
 
 Test the HTTP interface for negotiation card operations.
 """

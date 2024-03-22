@@ -1,5 +1,5 @@
 """
-test/web/store/auth/test_auth.py
+test/backend/auth/test_auth.py
 
 Test the authentication operations
 """

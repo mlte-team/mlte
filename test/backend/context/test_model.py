@@ -1,5 +1,5 @@
 """
-test/web/store/contex/test_model.py
+test/backend/contex/test_model.py
 
 Test the HTTP interface for model operations.
 """

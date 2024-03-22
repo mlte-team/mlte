@@ -8,7 +8,7 @@ import argparse
 import sys
 import traceback
 
-import mlte.backend.main as server
+import mlte.backend.main as backend
 import mlte.frontend as frontend
 from mlte.backend.core.config import settings
 
@@ -32,19 +32,19 @@ def _prepare_parser():
 
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
-    for attach_to in [_attach_backend, _attach_ui]:
+    for attach_to in [_attach_backend_parser, _attach_frontend_parser]:
         attach_to(subparser)
     return base_parser
 
 
-def _attach_backend(
+def _attach_backend_parser(
     subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
         "backend", help="Run an instance of the MLTE artifact store."
     )
-    parser.set_defaults(func=server.run)
+    parser.set_defaults(func=backend.run)
 
     # Additional arguments.
     parser.add_argument(
@@ -73,10 +73,10 @@ def _attach_backend(
     )
 
 
-def _attach_ui(
+def _attach_frontend_parser(
     subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
-    """Attach the artifact store subparser to the base parser."""
+    """Attach the frontend UI subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
         "ui", help="Run an instance of the MLTE frontend user interface."
     )

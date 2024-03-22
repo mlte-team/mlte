@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/auth/jwt.py
+mlte/backend/api/auth/jwt.py
 
 Handling of JWT tokens.
 """

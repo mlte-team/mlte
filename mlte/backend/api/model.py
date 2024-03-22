@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/model.py
+mlte/backend/api/model.py
 
 Model implementations for artifact store.
 

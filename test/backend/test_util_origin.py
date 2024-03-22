@@ -1,5 +1,5 @@
 """
-test/web/store/test_util_origin.py
+test/backend/test_util_origin.py
 
 Unit tests for origin utility functionality.
 """

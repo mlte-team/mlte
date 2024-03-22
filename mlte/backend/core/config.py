@@ -1,5 +1,5 @@
 """
-mlte/web/store/core/config.py
+mlte/backend/core/config.py
 
 Configuration management for FastAPI application.
 """

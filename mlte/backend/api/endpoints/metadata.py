@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/endpoints/metadata.py
+mlte/backend/api/endpoints/metadata.py
 
 Endpoints for artifact organization.
 """

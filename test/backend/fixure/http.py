@@ -1,5 +1,5 @@
 """
-test/web/store/fixture/http.py
+test/backend/fixture/http.py
 
 Fixtures for artifact store HTTP unit tests.
 """

@@ -1,5 +1,5 @@
 """
-mlte/web/store/api/endpoints/token.py
+mlte/backend/api/endpoints/token.py
 
 Token endpoint.
 """
