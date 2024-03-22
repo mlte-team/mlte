@@ -26,7 +26,7 @@ def create_model(*, model: ModelCreate) -> Model:
     :param model: The model create model
     :return: The created model
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.create_model(model)
         except errors.ErrorNotFound as e:
@@ -51,7 +51,7 @@ def read_model(*, model_id: str) -> Model:
     :param model_id: The model identifier
     :return: The read model
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.read_model(model_id)
         except errors.ErrorNotFound as e:
@@ -71,7 +71,7 @@ def list_models() -> List[str]:
     List MLTE models.
     :return: A collection of model identifiers
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.list_models()
         except errors.ErrorNotFound as e:
@@ -92,7 +92,7 @@ def delete_model(*, model_id: str) -> Model:
     :param model_id: The model identifier
     :return: The deleted model
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.delete_model(model_id)
         except errors.ErrorNotFound as e:
@@ -114,7 +114,7 @@ def create_version(*, model_id: str, version: VersionCreate) -> Version:
     :param version: The version create model
     :return: The created version
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.create_version(model_id, version)
         except errors.ErrorNotFound as e:
@@ -140,7 +140,7 @@ def read_version(*, model_id: str, version_id) -> Version:
     :param version_id: The version identifier
     :return: The read version
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.read_version(model_id, version_id)
         except errors.ErrorNotFound as e:
@@ -161,7 +161,7 @@ def list_versions(model_id: str) -> List[str]:
     :param model_id: The model identifier
     :return: A collection of version identifiers
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.list_versions(model_id)
         except errors.ErrorNotFound as e:
@@ -183,7 +183,7 @@ def delete_version(*, model_id: str, version_id) -> Version:
     :param version_id: The version identifier
     :return: The deleted version
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.delete_version(model_id, version_id)
         except errors.ErrorNotFound as e:

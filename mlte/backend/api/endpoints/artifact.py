@@ -35,7 +35,7 @@ def write_artifact(
     :param request: The artifact write request
     :return: The created artifact
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             artifact = handle.write_artifact_with_timestamp(
                 model_id,
@@ -72,7 +72,7 @@ def read_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The read artifact
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.read_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
@@ -101,7 +101,7 @@ def read_artifacts(
     :param offset: The offset on returned artifacts
     :return: The read artifacts
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.read_artifacts(model_id, version_id, limit, offset)
         except Exception:
@@ -123,7 +123,7 @@ def search_artifacts(
     :param query: The artifact query
     :return: The read artifacts
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.search_artifacts(model_id, version_id, query)
         except Exception:
@@ -144,7 +144,7 @@ def delete_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The deleted artifact
     """
-    with dependencies.session() as handle:
+    with dependencies.artifact_store_session() as handle:
         try:
             return handle.delete_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:

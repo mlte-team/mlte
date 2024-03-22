@@ -5,7 +5,7 @@ Handling of authentication and passwords.
 """
 from passlib.context import CryptContext
 
-from mlte.backend.api.auth import fake_db as db
+from mlte.backend.api import dependencies
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 """Context to be used when hashing passwords."""
@@ -13,10 +13,14 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def authenticate_user(username: str, password: str) -> bool:
     """Validates the credentials."""
-    user_in_db = db.get_user_in_db(username)
-    if user_in_db is None:
-        return False
-    elif not _verify_password(password, user_in_db.hashed_password):
+    user = None
+    with dependencies.user_store_session() as handle:
+        try:
+            user = handle.read_user(username)
+        except Exception:
+            # Assume any exception means we couldn't load user it.
+            return False
+    if not _verify_password(password, user.hashed_password):
         return False
     else:
         return True

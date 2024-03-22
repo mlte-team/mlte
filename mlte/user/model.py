@@ -9,7 +9,7 @@ from typing import Optional
 from mlte.model import BaseModel
 
 
-class User(BaseModel):
+class BasicUser(BaseModel):
     """A model class representing a user of the system"""
 
     username: str
@@ -18,14 +18,11 @@ class User(BaseModel):
     email: Optional[str] = None
     """An optional email associated to the user."""
 
-    full_name: Optional[str] = None
-    """The full name of the user."""
-
     disabled: bool = False
     """Whether the user is disabled."""
 
 
-class StoredUser(User):
+class User(BasicUser):
     """User with additional information only used locally when stored."""
 
     hashed_password: str

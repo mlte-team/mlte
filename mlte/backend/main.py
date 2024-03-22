@@ -17,8 +17,9 @@ import mlte.backend.util.origins as util
 from mlte.backend.api.api import api_router
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.store.artifact.factory import create_store
+from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.base import StoreType
+from mlte.store.user import factory as user_store_factory
 
 # Application exit codes
 EXIT_SUCCESS = 0
@@ -67,13 +68,18 @@ def run(
         allow_headers=["*"],
     )
 
-    # Initialize the backing store instance
-    store = create_store(backend_uri)
+    # Initialize the backing artifact store instance
+    store = artifact_store_factory.create_store(backend_uri)
     if store.uri.type == StoreType.REMOTE_HTTP:
         raise RuntimeError(
             "Cannot run artifact store server with remote HTTP backend."
         )
-    state.set_store(store)
+    state.set_artifact_store(store)
+
+    # Initialize the backing user store instance. Assume same store as artifact one for now.
+    # TODO: allow for separate config of uri here
+    user_store = user_store_factory.create_store(backend_uri)
+    state.set_user_store(user_store)
 
     # Run the server
     uvicorn.run(app, host=host, port=port)

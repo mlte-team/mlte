@@ -17,15 +17,29 @@ from typing import Generator
 
 from mlte.backend.state import state
 from mlte.store.artifact.store import ArtifactStoreSession
+from mlte.store.user.store import UserStoreSession
 
 
 @contextmanager
-def session() -> Generator[ArtifactStoreSession, None, None]:
+def artifact_store_session() -> Generator[ArtifactStoreSession, None, None]:
     """
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: ArtifactStoreSession = state.store.session()
+    session: ArtifactStoreSession = state.artifact_store.session()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+@contextmanager
+def user_store_session() -> Generator[UserStoreSession, None, None]:
+    """
+    Get a handle to underlying store session.
+    :return: The session handle
+    """
+    session: UserStoreSession = state.user_store.session()
     try:
         yield session
     finally:

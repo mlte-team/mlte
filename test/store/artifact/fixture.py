@@ -59,7 +59,7 @@ def http_store() -> RemoteHttpStore:
     :return: The configured store
     """
     # Configure the backing store
-    state.set_store(create_memory_store())
+    state.set_artifact_store(create_memory_store())
 
     # Configure the application
     app = app_factory.create()

@@ -8,10 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
 
-from mlte.backend.api import codes
-from mlte.backend.api.auth import authentication
-from mlte.backend.api.auth import fake_db as db
-from mlte.backend.api.auth import jwt
+from mlte.backend.api import codes, dependencies
+from mlte.backend.api.auth import authentication, jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.model.base_model import BaseModel
 
@@ -67,7 +65,8 @@ async def login_for_access_token(
         )
         if not is_valid_user:
             raise HTTPAuthException(detail="Incorrect username or password")
-        user = db.get_user(form_data.username)
+        with dependencies.user_store_session() as handle:
+            user = handle.read_user(form_data.username)
     else:
         raise HTTPException(
             codes.INTERNAL_ERROR,

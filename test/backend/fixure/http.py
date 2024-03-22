@@ -38,7 +38,7 @@ def mem_client() -> TestClient:
     :return: The configured client
     """
     # Configure the backing store
-    state.set_store(create_store("memory://"))
+    state.set_artifact_store(create_store("memory://"))
 
     # Configure the application
     app = app_factory.create()
