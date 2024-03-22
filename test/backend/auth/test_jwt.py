@@ -1,7 +1,7 @@
 """
-test/backend/auth/test_auth.py
+test/backend/auth/test_jwt.py
 
-Test the authentication operations
+Test JWT functions.
 """
 
 
