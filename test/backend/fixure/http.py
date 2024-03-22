@@ -17,6 +17,7 @@ from mlte.backend.api.api import api_router
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.artifact.factory import create_store
+from mlte.store.base import StoreURIPrefix
 
 """
 This list contains the global collection of test clients.
@@ -38,7 +39,7 @@ def mem_client() -> TestClient:
     :return: The configured client
     """
     # Configure the backing store
-    state.set_artifact_store(create_store("memory://"))
+    state.set_artifact_store(create_store(StoreURIPrefix.LOCAL_MEMORY[0]))
 
     # Configure the application
     app = app_factory.create()

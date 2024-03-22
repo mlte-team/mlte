@@ -12,7 +12,7 @@ from typing import Generator
 import pytest
 from sqlalchemy.pool import StaticPool
 
-from mlte.store.base import StoreURI
+from mlte.store.base import StoreURI, StoreURIPrefix
 from mlte.store.user.factory import create_store
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
@@ -21,7 +21,9 @@ _STORE_FIXTURE_NAMES = ["memory_store", "rdbs_store"]
 
 
 def create_memory_store() -> InMemoryUserStore:
-    return typing.cast(InMemoryUserStore, create_store("memory://"))
+    return typing.cast(
+        InMemoryUserStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+    )
 
 
 @pytest.fixture(scope="function")

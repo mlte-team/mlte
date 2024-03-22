@@ -14,6 +14,7 @@ from mlte.context.context import Context
 from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.base import StoreURIPrefix
 
 # The mode identifier for default context
 FX_MODEL_ID = "model0"
@@ -25,13 +26,13 @@ FX_VERSION_ID = "v0"
 @pytest.fixture(scope="function")
 def store() -> ArtifactStore:
     """Create an in-memory artifact store."""
-    return create_store("memory://")
+    return create_store(StoreURIPrefix.LOCAL_MEMORY[0])
 
 
 @pytest.fixture(scope="function")
 def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
-    store = create_store("memory://")
+    store = create_store(StoreURIPrefix.LOCAL_MEMORY[0])
     with ManagedArtifactSession(store.session()) as handle:
         _ = handle.create_model(ModelCreate(identifier=FX_MODEL_ID))
         _ = handle.create_version(

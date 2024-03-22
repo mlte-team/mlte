@@ -28,7 +28,7 @@ from mlte.store.artifact.underlying.http import (
 )
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
-from mlte.store.base import StoreURI
+from mlte.store.base import StoreURI, StoreURIPrefix
 
 _STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
@@ -75,7 +75,9 @@ def http_store() -> RemoteHttpStore:
 
 
 def create_memory_store() -> InMemoryStore:
-    return typing.cast(InMemoryStore, create_store("memory://"))
+    return typing.cast(
+        InMemoryStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+    )
 
 
 @pytest.fixture(scope="function")

@@ -11,6 +11,8 @@ from typing import List
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from mlte.store.base import StoreURIPrefix
+
 # An enumeration of supported log levels
 _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
 
@@ -42,7 +44,7 @@ class Settings(BaseSettings):
             ) from None
         return v
 
-    BACKEND_URI: str = "memory://"
+    BACKEND_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
     """The backend URI string; defaults to in-memory backend."""
 
     LOG_LEVEL: str = "ERROR"
