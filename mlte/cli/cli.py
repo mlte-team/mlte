@@ -42,7 +42,7 @@ def _attach_store(
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
-        "store", help="Run an instance of the MLTE artifact store."
+        "backend", help="Run an instance of the MLTE artifact store."
     )
     parser.set_defaults(func=server.run)
     parser.add_argument(
@@ -76,7 +76,7 @@ def _attach_ui(
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
-        "ui", help="Run an instance of the MLTE user interface."
+        "ui", help="Run an instance of the MLTE frontend user interface."
     )
     parser.set_defaults(func=frontend.run_frontend)
 
