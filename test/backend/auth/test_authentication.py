@@ -14,7 +14,7 @@ from mlte.user import passwords
 from mlte.user.model import User
 
 from ...store.user.fixture import memory_store, rdbs_store, stores  # noqa
-from .. import state_setup
+from ..fixture import state as state_setup
 
 
 def set_test_user(
