@@ -23,7 +23,7 @@ def set_test_user(
     """Sets a test user in the backend state."""
     user = User(
         username=username,
-        hashed_password=passwords.get_password_hash(password),
+        hashed_password=passwords.hash_password(password),
     )
     user_store_session.create_user(user)
 
