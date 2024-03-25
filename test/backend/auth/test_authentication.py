@@ -9,6 +9,7 @@ import pytest
 
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
+from mlte.store.user.store import UserStoreSession
 from mlte.user import passwords
 from mlte.user.model import User
 
@@ -16,14 +17,15 @@ from ...store.user.fixture import memory_store, rdbs_store, stores  # noqa
 from .. import state_setup
 
 
-def set_test_user(username: str, password: str):
+def set_test_user(
+    username: str, password: str, user_store_session: UserStoreSession
+):
     """Sets a test user in the backend state."""
-    with dependencies.user_store_session() as handle:
-        user = User(
-            username=username,
-            hashed_password=passwords.get_password_hash(password),
-        )
-        handle.create_user(user)
+    user = User(
+        username=username,
+        hashed_password=passwords.get_password_hash(password),
+    )
+    user_store_session.create_user(user)
 
 
 @pytest.fixture(autouse=True)
@@ -44,11 +46,14 @@ def test_authenticate_valid_user(
     # Set user store in state before each test.
     state_setup.set_memory_user_store_in_state(store_fixture_name, request)
 
-    set_test_user(username, password)
+    with dependencies.user_store_session() as user_store_sesion:
+        set_test_user(username, password, user_store_sesion)
 
-    success = authentication.authenticate_user(username, password)
+        success = authentication.authenticate_user(
+            username, password, user_store_sesion
+        )
 
-    assert success
+        assert success
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
@@ -62,9 +67,12 @@ def test_authenticate_inexistent_user(
     # Set user store in state before each test.
     state_setup.set_memory_user_store_in_state(store_fixture_name, request)
 
-    success = authentication.authenticate_user(username, password)
+    with dependencies.user_store_session() as user_store_sesion:
+        success = authentication.authenticate_user(
+            username, password, user_store_sesion
+        )
 
-    assert not success
+        assert not success
 
 
 @pytest.mark.parametrize("store_fixture_name", stores())
@@ -78,8 +86,11 @@ def test_authenticate_wrong_password(
     # Set user store in state before each test.
     state_setup.set_memory_user_store_in_state(store_fixture_name, request)
 
-    set_test_user(username, password)
+    with dependencies.user_store_session() as user_store_sesion:
+        set_test_user(username, password, user_store_sesion)
 
-    success = authentication.authenticate_user(username, "wrong_password")
+        success = authentication.authenticate_user(
+            username, "wrong_password", user_store_sesion
+        )
 
-    assert not success
+        assert not success

@@ -35,6 +35,7 @@ def memory_store() -> InMemoryUserStore:
 def create_rdbs_store() -> RelationalDBUserStore:
     return RelationalDBUserStore(
         StoreURI.from_string("sqlite+pysqlite:///:memory:"),
+        connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
 

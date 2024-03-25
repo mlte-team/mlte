@@ -60,13 +60,13 @@ async def login_for_access_token(
     user = None
     if form_data.grant_type == GRANT_TYPE_PASSWORD:
         # Validate user and password from db.
-        is_valid_user = authentication.authenticate_user(
-            form_data.username, form_data.password
-        )
-        if not is_valid_user:
-            raise HTTPAuthException(detail="Incorrect username or password")
-        with dependencies.user_store_session() as handle:
-            user = handle.read_user(form_data.username)
+        with dependencies.user_store_session() as user_store_session:
+            is_valid_user = authentication.authenticate_user(
+                form_data.username, form_data.password, user_store_session
+            )
+            if not is_valid_user:
+                raise HTTPAuthException(detail="Incorrect username or password")
+            user = user_store_session.read_user(form_data.username)
     else:
         raise HTTPException(
             codes.INTERNAL_ERROR,
