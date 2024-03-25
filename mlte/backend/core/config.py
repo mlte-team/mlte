@@ -63,7 +63,9 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: List[str] = []
     """A list of allowed CORS origins."""
 
-    JWT_SECRET_KEY: str = ""
+    JWT_SECRET_KEY: str = (
+        "399fd92f61c99e35d7f2f6fdb9d65293c4047f9ac500af1886b8868b495f20b3"
+    )
     """The secret key used to encode/decode JWT tokens."""
 
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
