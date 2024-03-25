@@ -12,6 +12,7 @@ from mlte.backend.api import codes, dependencies
 from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
+from mlte.backend.core.config import settings
 from mlte.user.model import BasicUser
 
 # TODO: Add support for more than password grant type.
@@ -29,7 +30,7 @@ async def get_user_from_token(
     :return: A User data structure, with a User that has access to the resources.
     """
     try:
-        username = jwt.decode_user_token(token)
+        username = jwt.decode_user_token(token, settings.JWT_SECRET_KEY)
     except Exception:
         raise HTTPAuthException(
             detail="Could not decode token properly", error="invalid_token"

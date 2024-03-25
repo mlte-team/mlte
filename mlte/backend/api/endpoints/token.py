@@ -11,6 +11,7 @@ from typing_extensions import Annotated
 from mlte.backend.api import codes, dependencies
 from mlte.backend.api.auth import authentication, jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
+from mlte.backend.core.config import settings
 from mlte.model.base_model import BaseModel
 
 GRANT_TYPE_PASSWORD = "password"
@@ -78,5 +79,5 @@ async def login_for_access_token(
         raise HTTPAuthException(detail="Could not load user details")
 
     # Create and return token using username as data.
-    access_token = jwt.create_user_token(user.username)
+    access_token = jwt.create_user_token(user.username, settings.JWT_SECRET_KEY)
     return create_token_response(access_token)

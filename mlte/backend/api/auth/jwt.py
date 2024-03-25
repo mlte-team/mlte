@@ -10,7 +10,6 @@ from typing import Any, Optional
 
 from jose import JWTError, jwt
 
-from mlte.backend.core.config import settings
 from mlte.model.base_model import BaseModel
 
 ALGORITHM = "HS256"
@@ -34,15 +33,15 @@ class Token(BaseModel):
     """Lifetime in seconds of the token."""
 
 
-def create_user_token(username: str) -> Token:
+def create_user_token(username: str, key: str) -> Token:
     """Creates an access token containing a given username."""
     data = {SUBJECT_CLAIM_KEY: username}
-    access_token = _create_access_token(data)
+    access_token = _create_access_token(data, key)
     return access_token
 
 
 def _create_access_token(
-    data: dict[str, Any], expires_delta: Optional[timedelta] = None
+    data: dict[str, Any], key: str, expires_delta: Optional[timedelta] = None
 ) -> Token:
     """Creates a token given a data dictionary and an expiration time."""
     claims = data.copy()
@@ -54,21 +53,17 @@ def _create_access_token(
     claims.update({EXPIRATION_CLAIM_KEY: expiration_time})
 
     # Encode and sign token, and return it.
-    encoded_jwt = jwt.encode(
-        claims, settings.JWT_SECRET_KEY, algorithm=ALGORITHM
-    )
+    encoded_jwt = jwt.encode(claims, key, algorithm=ALGORITHM)
     token = Token(
         encoded_token=encoded_jwt, expires_in=int(expires_delta.total_seconds())
     )
     return token
 
 
-def decode_user_token(encoded_token: str) -> str:
+def decode_user_token(encoded_token: str, key: str) -> str:
     """Decodes the provided user access token."""
     try:
-        payload = jwt.decode(
-            encoded_token, settings.JWT_SECRET_KEY, algorithms=[ALGORITHM]
-        )
+        payload = jwt.decode(encoded_token, key, algorithms=[ALGORITHM])
         username: str = payload.get(SUBJECT_CLAIM_KEY)
         if username is None:
             raise Exception("No valid user in token")

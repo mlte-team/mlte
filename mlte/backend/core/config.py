@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     """
     The BaseSettings class from pydantic automatically manages
     reading environment variables from the environment or a
-    .env file is configured properly.
+    .env file if configured properly.
     """
 
     ENVIRONMENT: str = "default"
