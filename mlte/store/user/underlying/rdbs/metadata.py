@@ -23,7 +23,7 @@ class DBBase(DeclarativeBase):
 
 
 class DBUser(DBBase):
-    __tablename__ = "model"
+    __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str]

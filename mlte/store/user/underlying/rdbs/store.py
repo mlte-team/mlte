@@ -80,7 +80,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
         self.engine.dispose()
 
     # -------------------------------------------------------------------------
-    # Structural Elements
+    # User CRUD Elements
     # -------------------------------------------------------------------------
 
     def create_user(self, user: User) -> User:
