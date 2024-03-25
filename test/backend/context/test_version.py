@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mlte.context.model import ModelCreate, Version, VersionCreate
 
-from ..fixure.http import clients, mem_client  # noqa
+from ..fixture.http import clients, mem_client  # noqa
 
 
 @pytest.mark.parametrize("client_fixture", clients())

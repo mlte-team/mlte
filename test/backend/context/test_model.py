@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mlte.context.model import Model, ModelCreate
 
-from ..fixure.http import clients, mem_client  # noqa
+from ..fixture.http import clients, mem_client  # noqa
 
 # -----------------------------------------------------------------------------
 # Tests: Model

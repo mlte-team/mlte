@@ -14,7 +14,7 @@ from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 
 from ..fixture.artifact import ArtifactFactory
-from .fixure.http import clients_and_types, mem_client  # noqa
+from .fixture.http import clients_and_types, mem_client  # noqa
 
 
 @pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
