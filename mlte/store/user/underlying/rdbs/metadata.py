@@ -10,7 +10,10 @@ from typing import Optional
 from sqlalchemy import UniqueConstraint, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
-from mlte.user import passwords
+from mlte.store.user.underlying.default_user import (
+    DEFAULT_PASSWORD,
+    DEFAULT_USERNAME,
+)
 
 
 class DBBase(DeclarativeBase):
@@ -38,8 +41,8 @@ def init_default_user(session: Session):
     """Initializes the table with the configured classification types."""
     if session.scalars(select(DBUser)).first() is None:
         user = DBUser(
-            username="admin",
-            hashed_password=passwords.get_password_hash("admin1234"),
+            username=DEFAULT_USERNAME,
+            hashed_password=DEFAULT_PASSWORD,
         )
         session.add(user)
         session.commit()

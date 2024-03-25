@@ -11,6 +11,10 @@ from typing import Dict, List
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
+from mlte.store.user.underlying.default_user import (
+    DEFAULT_PASSWORD,
+    DEFAULT_USERNAME,
+)
 from mlte.user.model import User
 
 # -----------------------------------------------------------------------------
@@ -40,6 +44,13 @@ class MemoryUserStorage:
 
     def __init__(self) -> None:
         self.users: Dict[str, User] = {}
+
+        # Default user.
+        user = User(
+            username=DEFAULT_USERNAME,
+            hashed_password=DEFAULT_PASSWORD,
+        )
+        self.users[user.username] = user
 
 
 # -----------------------------------------------------------------------------
