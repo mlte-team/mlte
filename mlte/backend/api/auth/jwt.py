@@ -10,10 +10,8 @@ from typing import Any, Optional
 
 from jose import JWTError, jwt
 
+from mlte.backend.core.config import settings
 from mlte.model.base_model import BaseModel
-
-SECRET_KEY = "399fd92f61c99e35d7f2f6fdb9d65293c4047f9ac500af1886b8868b495f20b3"
-"""Used for signing tokens."""
 
 ALGORITHM = "HS256"
 """Token hashing algorithm."""
@@ -56,7 +54,9 @@ def _create_access_token(
     claims.update({EXPIRATION_CLAIM_KEY: expiration_time})
 
     # Encode and sign token, and return it.
-    encoded_jwt = jwt.encode(claims, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(
+        claims, settings.JWT_SECRET_KEY, algorithm=ALGORITHM
+    )
     token = Token(
         encoded_token=encoded_jwt, expires_in=int(expires_delta.total_seconds())
     )
@@ -66,7 +66,9 @@ def _create_access_token(
 def decode_user_token(encoded_token: str) -> str:
     """Decodes the provided user access token."""
     try:
-        payload = jwt.decode(encoded_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            encoded_token, settings.JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        )
         username: str = payload.get(SUBJECT_CLAIM_KEY)
         if username is None:
             raise Exception("No valid user in token")
