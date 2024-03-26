@@ -76,7 +76,7 @@ def setup_API_and_test_client() -> FastAPITestHttpClient:
     # Setup API, configure to use memory artifact store and create app itself.
     app = setup_api_with_mem_stores()
 
-    # Create the test client.
+    # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
     client.authenticate("/api/token", DEFAULT_USERNAME, DEFAULT_PASSWORD)
     return client

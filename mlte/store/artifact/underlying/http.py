@@ -89,7 +89,7 @@ class OAuthHttpClient(HttpClient):
 
     def _store_token(self, access_token: str):
         """Stores the token and sets proper headers."""
-        if self.access_token is not None:
+        if access_token is not None:
             self.access_token = access_token
             self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
