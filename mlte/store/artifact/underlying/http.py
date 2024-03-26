@@ -1,15 +1,16 @@
 """
 mlte/store/artifact/underlying/http.py
 
-Implementation of remote HTTP artifact store.
+Implementation of HTTP artifact store.
 """
 
 from __future__ import annotations
 
 import typing
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Optional, Union
 
+import httpx
 import requests
 
 import mlte.backend.api.codes as codes
@@ -20,54 +21,149 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
+from mlte.store.user.underlying.default_user import (
+    DEFAULT_PASSWORD,
+    DEFAULT_USERNAME,
+)
 
 # -----------------------------------------------------------------------------
-# Client Configuration
+# HTTP Client Configuration
 # -----------------------------------------------------------------------------
 
 
-class ClientType(Enum):
-    """An enumeration over client types."""
+class HttpClientType(Enum):
+    """An enumeration over HTTP client types."""
 
     REQUESTS = "requests"
-    """The requests-based client."""
+    """The requests-based HTTP client."""
 
     TESTCLIENT = "testclient"
-    """The fastapi TestClient client."""
+    """The fastapi TestClient HTTP client."""
 
 
-class RemoteHttpStoreClient:
-    """A base client type for RemoteHttpStore."""
+HttpResponse = Union[requests.Response, httpx.Response]
+"""Standard HTTP response, both have same implicit interface."""
 
-    def __init__(self, type: ClientType) -> None:
+
+class HttpClient:
+    """Interface for an HTTP client."""
+
+    def __init__(self, type: HttpClientType) -> None:
         self.type = type
+        self.headers: dict[str, str] = {}
 
-    def get(self, url: str, **kwargs) -> requests.Response:
+    def get(self, url: str, **kwargs) -> HttpResponse:
         raise NotImplementedError("get()")
 
     def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> requests.Response:
+    ) -> HttpResponse:
         raise NotImplementedError("post()")
 
-    def delete(self, url: str, **kwargs) -> requests.Response:
+    def delete(self, url: str, **kwargs) -> HttpResponse:
         raise NotImplementedError("delete()")
 
 
-class RequestsClient(RemoteHttpStoreClient):
+class OAuthHttpClient(HttpClient):
+    """A base HTTP client type for an server needing OAuth authentication."""
+
+    TOKEN_REQ_PASS_PAYLOAD = {"grant_type": "password"}
+    TOKEN_REQ_HEADERS = {
+        "accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    def __init__(self, type: HttpClientType) -> None:
+        super().__init__(type)
+
+        self.access_token: Optional[str] = None
+        """The access token."""
+
+    def _format_oauth_password_payload(
+        self, username: str, password: str
+    ) -> dict[str, str]:
+        """Returns a properly structured payload with credentials to be sent to get a token."""
+        payload = dict(self.TOKEN_REQ_PASS_PAYLOAD)
+        payload.update({"username": username, "password": password})
+        return payload
+
+    def _store_token(self, access_token: str):
+        """Stores the token and sets proper headers."""
+        if self.access_token is not None:
+            self.access_token = access_token
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
+
+    def authenticate(self, url: str, username: str, password: str):
+        """Sends an authentication request and retrieves and stores the token."""
+        self.headers = self.TOKEN_REQ_HEADERS
+        response = self.post(
+            url,
+            data=self._format_oauth_password_payload(username, password),
+        )
+        self.headers = {}
+        if response.status_code != codes.OK:
+            reply = response.content.decode("utf-8")
+            raise Exception(
+                f"Token request was unsuccessful - code: {response.status_code}, reply: {reply}"
+            )
+
+        response_data = response.json()
+        if response_data is None:
+            raise Exception(
+                "Did not receive any valid response for token request."
+            )
+        if "access_token" not in response_data:
+            raise Exception("Access token was not contained in response.")
+
+        self._store_token(response_data["access_token"])
+
+
+class RequestsClient(OAuthHttpClient):
+    """Client implementation using requests library."""
+
     def __init__(self) -> None:
-        super().__init__(ClientType.REQUESTS)
+        super().__init__(HttpClientType.REQUESTS)
 
     def get(self, url: str, **kwargs) -> requests.Response:
-        return requests.get(url, **kwargs)
+        return requests.get(url, headers=self.headers, **kwargs)
 
     def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> requests.Response:
-        return requests.post(url, data=data, json=json, **kwargs)
+        return requests.post(
+            url,
+            headers=self.headers,
+            data=data,
+            json=json,
+            **kwargs,
+        )
 
     def delete(self, url: str, **kwargs) -> requests.Response:
-        return requests.delete(url, **kwargs)
+        return requests.delete(url, headers=self.headers, **kwargs)
+
+
+# -----------------------------------------------------------------------------
+# RemoteHttpStore
+# -----------------------------------------------------------------------------
+
+
+class RemoteHttpStore(ArtifactStore):
+    """A remote HTTP implementation of the MLTE artifact store."""
+
+    def __init__(
+        self, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
+    ) -> None:
+        super().__init__(uri=uri)
+
+        self.client = client
+        """The client for requests."""
+
+    def session(self) -> RemoteHttpStoreSession:  # type: ignore[override]
+        """
+        Return a session handle for the store instance.
+        :return: The session handle
+        """
+        return RemoteHttpStoreSession(url=self.uri.uri, client=self.client)
 
 
 # -----------------------------------------------------------------------------
@@ -78,12 +174,20 @@ class RequestsClient(RemoteHttpStoreClient):
 class RemoteHttpStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
-    def __init__(self, *, url: str, client: RemoteHttpStoreClient) -> None:
+    def __init__(self, *, url: str, client: OAuthHttpClient) -> None:
         self.url = url
         """The remote artifact store URL."""
 
         self.client = client
         """The client for HTTP requests."""
+
+        # Authenticate.
+        # TODO: fix this, what username is used in general? How does a local install get this?
+        self.client.authenticate(
+            f"{self.url}/api/token",
+            username=DEFAULT_USERNAME,
+            password=DEFAULT_PASSWORD,
+        )
 
     def close(self) -> None:
         """Close the session."""
@@ -236,7 +340,7 @@ def _url(base: str, model_id: str, version_id: str) -> str:
     return f"{base}/api/model/{model_id}/version/{version_id}"
 
 
-def raise_for_response(response: requests.Response) -> None:
+def raise_for_response(response: HttpResponse) -> None:
     """
     Raise an error from from a response.
     :param response: The response object
@@ -250,22 +354,3 @@ def raise_for_response(response: requests.Response) -> None:
         raise errors.ErrorAlreadyExists(f"{response.json()}")
     else:
         raise errors.InternalError(f"{response.json()}")
-
-
-class RemoteHttpStore(ArtifactStore):
-    """A remote HTTP implementation of the MLTE artifact store."""
-
-    def __init__(
-        self, uri: StoreURI, client: RemoteHttpStoreClient = RequestsClient()
-    ) -> None:
-        super().__init__(uri=uri)
-
-        self.client = client
-        """The client for requests."""
-
-    def session(self) -> RemoteHttpStoreSession:  # type: ignore[override]
-        """
-        Return a session handle for the store instance.
-        :return: The session handle
-        """
-        return RemoteHttpStoreSession(url=self.uri.uri, client=self.client)

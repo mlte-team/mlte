@@ -22,9 +22,9 @@ from mlte.backend.state import state
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import (
-    ClientType,
+    HttpClientType,
+    OAuthHttpClient,
     RemoteHttpStore,
-    RemoteHttpStoreClient,
 )
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
@@ -33,23 +33,27 @@ from mlte.store.base import StoreURI, StoreURIPrefix
 _STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
-class TestclientCient(RemoteHttpStoreClient):
+class TestclientCient(OAuthHttpClient):
+    """An HTTP client based on FastAPI's TestClient."""
+
     def __init__(self, client: TestClient) -> None:
-        super().__init__(ClientType.TESTCLIENT)
+        super().__init__(HttpClientType.TESTCLIENT)
 
         self.client = client
         """The underlying client."""
 
     def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.get(url, **kwargs)
+        return self.client.get(url, headers=self.headers, **kwargs)
 
     def post(  # type: ignore[override]
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> httpx.Response:
-        return self.client.post(url, data=data, json=json, **kwargs)
+        return self.client.post(
+            url, headers=self.headers, data=data, json=json, **kwargs
+        )
 
     def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.delete(url, **kwargs)
+        return self.client.delete(url, headers=self.headers, **kwargs)
 
 
 @pytest.fixture(scope="function")
