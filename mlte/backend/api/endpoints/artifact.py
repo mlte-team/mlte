@@ -9,14 +9,17 @@ from __future__ import annotations
 import traceback
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from typing_extensions import Annotated
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api import dependencies
+from mlte.backend.api.auth.authorization import get_authorized_user
 from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
 from mlte.store.artifact.query import Query
+from mlte.user.model import BasicUser
 
 # The router exported by this submodule
 router = APIRouter()
@@ -27,6 +30,7 @@ def write_artifact(
     model_id: str,
     version_id: str,
     request: WriteArtifactRequest,
+    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
 ) -> WriteArtifactResponse:
     """
     Write an artifact.
@@ -63,7 +67,10 @@ def write_artifact(
 
 @router.get("/{artifact_id}")
 def read_artifact(
-    model_id: str, version_id: str, artifact_id: str
+    model_id: str,
+    version_id: str,
+    artifact_id: str,
+    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
 ) -> ArtifactModel:
     """
     Read an artifact by identifier.
@@ -90,6 +97,7 @@ def read_artifact(
 def read_artifacts(
     model_id: str,
     version_id: str,
+    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
     limit: int = 100,
     offset: int = 0,
 ) -> List[ArtifactModel]:
@@ -113,7 +121,10 @@ def read_artifacts(
 
 @router.post("/search")
 def search_artifacts(
-    model_id: str, version_id: str, query: Query
+    model_id: str,
+    version_id: str,
+    query: Query,
+    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
 ) -> List[ArtifactModel]:
     """
     Search artifacts.
@@ -135,7 +146,10 @@ def search_artifacts(
 
 @router.delete("/{artifact_id}")
 def delete_artifact(
-    model_id: str, version_id: str, artifact_id: str
+    model_id: str,
+    version_id: str,
+    artifact_id: str,
+    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
 ) -> ArtifactModel:
     """
     Delete an artifact by identifier.
