@@ -20,7 +20,7 @@ GRANT_TYPE_PASSWORD = "password"
 BEARER_TOKEN_TYPE = "bearer"
 """Bearer token type."""
 
-TOKEN_ENDPOINT_URL = "token"
+TOKEN_ENDPOINT_URL = "/token"
 """The relative URL of the endpoint."""
 
 # The router exported by this submodule
@@ -50,7 +50,7 @@ def create_token_response(access_token: jwt.Token) -> TokenResponse:
 
 
 # TODO: Add support for other grant types.
-@router.post(f"/{TOKEN_ENDPOINT_URL}")
+@router.post(f"{TOKEN_ENDPOINT_URL}")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> TokenResponse:

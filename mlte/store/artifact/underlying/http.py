@@ -17,6 +17,7 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.model import WriteArtifactRequest
+from mlte.backend.core.config import settings
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
@@ -72,6 +73,7 @@ class OAuthHttpClient(HttpClient):
         "accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
     }
+    TOKEN_ENDPOINT = "/token"
 
     def __init__(self, type: HttpClientType) -> None:
         super().__init__(type)
@@ -93,9 +95,10 @@ class OAuthHttpClient(HttpClient):
             self.access_token = access_token
             self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
-    def authenticate(self, url: str, username: str, password: str):
+    def authenticate(self, api_url: str, username: str, password: str):
         """Sends an authentication request and retrieves and stores the token."""
         self.headers = self.TOKEN_REQ_HEADERS
+        url = f"{api_url}{self.TOKEN_ENDPOINT}"
         response = self.post(
             url,
             data=self._format_oauth_password_payload(username, password),
@@ -184,7 +187,7 @@ class RemoteHttpStoreSession(ArtifactStoreSession):
         # Authenticate.
         # TODO: fix this, what username is used in general? How does a local install get this?
         self.client.authenticate(
-            f"{self.url}/api/token",
+            f"{self.url}{settings.API_PREFIX}",
             username=DEFAULT_USERNAME,
             password=DEFAULT_PASSWORD,
         )
@@ -199,56 +202,56 @@ class RemoteHttpStoreSession(ArtifactStoreSession):
     # -------------------------------------------------------------------------
 
     def create_model(self, model: ModelCreate) -> Model:
-        url = f"{self.url}/api/model"
+        url = f"{self.url}{settings.API_PREFIX}/model"
         res = self.client.post(url, json=model.model_dump())
         raise_for_response(res)
 
         return Model(**res.json())
 
     def read_model(self, model_id: str) -> Model:
-        url = f"{self.url}/api/model/{model_id}"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}"
         res = self.client.get(url)
         raise_for_response(res)
 
         return Model(**res.json())
 
     def list_models(self) -> List[str]:
-        url = f"{self.url}/api/model"
+        url = f"{self.url}{settings.API_PREFIX}/model"
         res = self.client.get(url)
         raise_for_response(res)
 
         return typing.cast(List[str], res.json())
 
     def delete_model(self, model_id: str) -> Model:
-        url = f"{self.url}/api/model/{model_id}"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}"
         res = self.client.delete(url)
         raise_for_response(res)
 
         return Model(**res.json())
 
     def create_version(self, model_id: str, version: VersionCreate) -> Version:
-        url = f"{self.url}/api/model/{model_id}/version"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version"
         res = self.client.post(url, json=version.model_dump())
         raise_for_response(res)
 
         return Version(**res.json())
 
     def read_version(self, model_id: str, version_id: str) -> Version:
-        url = f"{self.url}/api/model/{model_id}/version/{version_id}"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
         res = self.client.get(url)
         raise_for_response(res)
 
         return Version(**res.json())
 
     def list_versions(self, model_id: str) -> List[str]:
-        url = f"{self.url}/api/model/{model_id}/version"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version"
         res = self.client.get(url)
         raise_for_response(res)
 
         return typing.cast(List[str], res.json())
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
-        url = f"{self.url}/api/model/{model_id}/version/{version_id}"
+        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
         res = self.client.delete(url)
         raise_for_response(res)
 
@@ -337,7 +340,7 @@ def _url(base: str, model_id: str, version_id: str) -> str:
     :param version_id: The version identifier
     :return: The formatted URL
     """
-    return f"{base}/api/model/{model_id}/version/{version_id}"
+    return f"{base}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
 
 
 def raise_for_response(response: HttpResponse) -> None:

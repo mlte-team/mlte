@@ -8,7 +8,9 @@ import pytest
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.backend.api import codes
 from mlte.backend.api.model import WriteArtifactRequest
+from mlte.backend.core.config import settings
 from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 
@@ -28,8 +30,8 @@ def test_init(
 ) -> None:  # noqa
     """The server can initialize."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-    res = client.get("/api/healthz")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/healthz")
+    assert res.status_code == codes.OK
 
 
 @pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
@@ -47,10 +49,10 @@ def test_write(
     a = ArtifactFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/model/{model_id}/version/{version_id}/artifact",
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
 
 
 @pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
@@ -68,15 +70,17 @@ def test_read(
     a = ArtifactFactory.make(artifact_type, id="id0")
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/model/{model_id}/version/{version_id}/artifact",
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
     artifact = res.json()["artifact"]
     created = ArtifactModel(**artifact)
 
-    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
-    assert res.status_code == 200
+    res = client.get(
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+    )
+    assert res.status_code == codes.OK
     read = ArtifactModel(**res.json())
     assert read == created
 
@@ -96,18 +100,18 @@ def test_search(
     a = ArtifactFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/model/{model_id}/version/{version_id}/artifact",
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
     artifact = res.json()["artifact"]
     created = ArtifactModel(**artifact)
 
     res = client.post(
-        f"/api/model/{model_id}/version/{version_id}/artifact/search",
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/search",
         json=Query().model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
 
     collection = res.json()
     assert len(collection) == 1
@@ -131,20 +135,24 @@ def test_delete(
     a = ArtifactFactory.make(artifact_type, "id0")
     r = WriteArtifactRequest(artifact=a)
     res = client.post(
-        f"/api/model/{model_id}/version/{version_id}/artifact",
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
         json=r.model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
 
-    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
-    assert res.status_code == 200
+    res = client.get(
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+    )
+    assert res.status_code == codes.OK
 
     res = client.delete(
-        f"/api/model/{model_id}/version/{version_id}/artifact/id0"
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
 
-    res = client.get(f"/api/model/{model_id}/version/{version_id}/artifact/id0")
+    res = client.get(
+        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+    )
     assert res.status_code == 404
 
 
@@ -153,13 +161,13 @@ def create_context(
 ) -> None:
     """Create context for artifacts.."""
     res = client.post(
-        "/api/model",
+        f"{settings.API_PREFIX}/model",
         json=ModelCreate(identifier=model_id).model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK
 
     res = client.post(
-        f"/api/model/{model_id}/version",
+        f"{settings.API_PREFIX}/model/{model_id}/version",
         json=VersionCreate(identifier=version_id).model_dump(),
     )
-    assert res.status_code == 200
+    assert res.status_code == codes.OK

@@ -13,6 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from mlte.artifact.type import ArtifactType
+from mlte.backend.core.config import settings
 from mlte.store.artifact.underlying.http import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.default_user import (
     DEFAULT_PASSWORD,
@@ -78,7 +79,9 @@ def setup_API_and_test_client() -> FastAPITestHttpClient:
 
     # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
-    client.authenticate("/api/token", DEFAULT_USERNAME, DEFAULT_PASSWORD)
+    client.authenticate(
+        f"{settings.API_PREFIX}", DEFAULT_USERNAME, DEFAULT_PASSWORD
+    )
     return client
 
 

@@ -6,6 +6,8 @@ Test the HTTP interface for model operations.
 
 import pytest
 
+from mlte.backend.api import codes
+from mlte.backend.core.config import settings
 from mlte.context.model import Model, ModelCreate
 
 from ..fixture.http import (  # noqa
@@ -25,8 +27,8 @@ def test_init(
 ) -> None:  # noqa
     """The server can initialize."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-    res = client.get("/api/healthz")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/healthz")
+    assert res.status_code == codes.OK
 
 
 @pytest.mark.parametrize("client_fixture", clients())
@@ -38,8 +40,8 @@ def test_create(
 
     model = ModelCreate(identifier="model")
 
-    res = client.post("/api/model", json=model.model_dump())
-    assert res.status_code == 200
+    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    assert res.status_code == codes.OK
     _ = Model(**res.json())
 
 
@@ -50,14 +52,15 @@ def test_read(
     """Models can be read."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
-    model = ModelCreate(identifier="0")
-    res = client.post("/api/model", json=model.model_dump())
-    assert res.status_code == 200
+    model_id = "0"
+    model = ModelCreate(identifier=model_id)
+    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    assert res.status_code == codes.OK
 
     created = Model(**res.json())
 
-    res = client.get("/api/model/0")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/model/{model_id}")
+    assert res.status_code == codes.OK
     read = Model(**res.json())
     assert read == created
 
@@ -71,11 +74,11 @@ def test_list(
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/model", json=model.model_dump())
-    assert res.status_code == 200
+    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    assert res.status_code == codes.OK
 
-    res = client.get("/api/model")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/model")
+    assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
 
@@ -88,16 +91,16 @@ def test_delete(
 
     model = ModelCreate(identifier="0")
 
-    res = client.post("/api/model", json=model.model_dump())
-    assert res.status_code == 200
+    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    assert res.status_code == codes.OK
 
-    res = client.get("/api/model")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/model")
+    assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
-    res = client.delete("/api/model/0")
-    assert res.status_code == 200
+    res = client.delete(f"{settings.API_PREFIX}/model/0")
+    assert res.status_code == codes.OK
 
-    res = client.get("/api/model")
-    assert res.status_code == 200
+    res = client.get(f"{settings.API_PREFIX}/model")
+    assert res.status_code == codes.OK
     assert len(res.json()) == 0
