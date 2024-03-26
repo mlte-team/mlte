@@ -20,7 +20,7 @@ def authenticate_user(
         # print(f"Error reading user: {ex}")
         return False
     if not passwords.verify_password(password, user.hashed_password):
-        # print("Could not verify password")
+        # print(f"Could not verify password <{password}> vs hashed <{user.hashed_password}>")
         return False
     else:
         return True

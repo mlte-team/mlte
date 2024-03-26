@@ -12,7 +12,7 @@ import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
 from mlte.store.user.underlying.default_user import (
-    DEFAULT_PASSWORD,
+    DEFAULT_HASHED_PASSWORD,
     DEFAULT_USERNAME,
 )
 from mlte.user.model import User
@@ -48,7 +48,7 @@ class MemoryUserStorage:
         # Default user.
         user = User(
             username=DEFAULT_USERNAME,
-            hashed_password=DEFAULT_PASSWORD,
+            hashed_password=DEFAULT_HASHED_PASSWORD,
         )
         self.users[user.username] = user
 

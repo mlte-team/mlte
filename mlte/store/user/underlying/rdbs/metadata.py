@@ -11,7 +11,7 @@ from sqlalchemy import UniqueConstraint, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 from mlte.store.user.underlying.default_user import (
-    DEFAULT_PASSWORD,
+    DEFAULT_HASHED_PASSWORD,
     DEFAULT_USERNAME,
 )
 
@@ -42,7 +42,7 @@ def init_default_user(session: Session):
     if session.scalars(select(DBUser)).first() is None:
         user = DBUser(
             username=DEFAULT_USERNAME,
-            hashed_password=DEFAULT_PASSWORD,
+            hashed_password=DEFAULT_HASHED_PASSWORD,
         )
         session.add(user)
         session.commit()

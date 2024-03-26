@@ -14,6 +14,10 @@ from fastapi.testclient import TestClient
 
 from mlte.artifact.type import ArtifactType
 from mlte.store.artifact.underlying.http import HttpClientType, OAuthHttpClient
+from mlte.store.user.underlying.default_user import (
+    DEFAULT_PASSWORD,
+    DEFAULT_USERNAME,
+)
 
 from .api import setup_api_with_mem_stores
 
@@ -73,7 +77,9 @@ def setup_API_and_test_client() -> FastAPITestHttpClient:
     app = setup_api_with_mem_stores()
 
     # Create the test client.
-    return FastAPITestHttpClient(TestClient(app))
+    client = FastAPITestHttpClient(TestClient(app))
+    client.authenticate("/api/token", DEFAULT_USERNAME, DEFAULT_PASSWORD)
+    return client
 
 
 def clients() -> Generator[str, None, None]:
