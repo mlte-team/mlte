@@ -5,7 +5,6 @@ Test the HTTP interface for negotiation card operations.
 """
 
 import pytest
-from fastapi.testclient import TestClient
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -14,7 +13,11 @@ from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 
 from ..fixture.artifact import ArtifactFactory
-from .fixture.http import clients_and_types, mem_client  # noqa
+from .fixture.http import (  # noqa
+    FastAPITestHttpClient,
+    clients_and_types,
+    mem_store_and_test_http_client,
+)
 
 
 @pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())
@@ -24,7 +27,7 @@ def test_init(
     request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """The server can initialize."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     res = client.get("/api/healthz")
     assert res.status_code == 200
 
@@ -36,7 +39,7 @@ def test_write(
     request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """Artifacts can be written."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model_id, version_id = "0", "0"
     create_context(model_id, version_id, client)
@@ -57,7 +60,7 @@ def test_read(
     request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """Artifacts can be read."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model_id, version_id = "0", "0"
     create_context(model_id, version_id, client)
@@ -85,7 +88,7 @@ def test_search(
     request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """Artifacts can be searched."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model_id, version_id = "0", "0"
     create_context(model_id, version_id, client)
@@ -120,7 +123,7 @@ def test_delete(
     request: pytest.FixtureRequest,
 ) -> None:  # noqa
     """Artifacts can be deleted."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model_id, version_id = "0", "0"
     create_context(model_id, version_id, client)
@@ -145,7 +148,9 @@ def test_delete(
     assert res.status_code == 404
 
 
-def create_context(model_id: str, version_id: str, client: TestClient) -> None:
+def create_context(
+    model_id: str, version_id: str, client: FastAPITestHttpClient
+) -> None:
     """Create context for artifacts.."""
     res = client.post(
         "/api/model",

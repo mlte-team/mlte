@@ -12,8 +12,7 @@ from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.report.model import SummaryDescriptor
 from mlte.store.artifact.store import ArtifactStore
-
-from ..fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_round_trip() -> None:

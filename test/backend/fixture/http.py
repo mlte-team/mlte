@@ -6,18 +6,16 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
-from typing import Generator, Tuple
+from typing import Any, Generator, Tuple
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-import mlte.backend.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
-from mlte.backend.api.api import api_router
-from mlte.backend.core.config import settings
-from mlte.backend.state import state
-from mlte.store.artifact.factory import create_store
-from mlte.store.base import StoreURIPrefix
+from mlte.store.artifact.underlying.http import HttpClientType, OAuthHttpClient
+
+from .api import setup_api_with_mem_stores
 
 """
 This list contains the global collection of test clients.
@@ -25,7 +23,35 @@ However, because we cannot directly parametrize a test with
 a fixture function, we specify via strings and then use the
 `request` fixture to translate this into the actual fixture.
 """
-_CLIENTS = ["mem_client"]
+_CLIENTS = ["mem_store_and_test_http_client"]
+
+# -----------------------------------------------------------------------------
+# Test HTTP client based on FastAPI's TestClient.
+# -----------------------------------------------------------------------------
+
+
+class FastAPITestHttpClient(OAuthHttpClient):
+    """An HTTP client based on FastAPI's TestClient."""
+
+    def __init__(self, client: TestClient) -> None:
+        super().__init__(HttpClientType.TESTCLIENT)
+
+        self.client = client
+        """The underlying client."""
+
+    def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
+        return self.client.get(url, headers=self.headers, **kwargs)
+
+    def post(  # type: ignore[override]
+        self, url: str, data: Any = None, json: Any = None, **kwargs
+    ) -> httpx.Response:
+        return self.client.post(
+            url, headers=self.headers, data=data, json=json, **kwargs
+        )
+
+    def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
+        return self.client.delete(url, headers=self.headers, **kwargs)
+
 
 # -----------------------------------------------------------------------------
 # Store Backend Fixtures
@@ -33,18 +59,21 @@ _CLIENTS = ["mem_client"]
 
 
 @pytest.fixture(scope="function")
-def mem_client() -> TestClient:
-    """
-    Get a TestClient instance configured for an in-memory store.
-    :return: The configured client
-    """
-    # Configure the backing store
-    state.set_artifact_store(create_store(StoreURIPrefix.LOCAL_MEMORY[0]))
+def mem_store_and_test_http_client() -> FastAPITestHttpClient:
+    """Sets up memory based store for the API and gets an associated client."""
+    return setup_API_and_test_client()
 
-    # Configure the application
-    app = app_factory.create()
-    app.include_router(api_router, prefix=settings.API_PREFIX)
-    return TestClient(app)
+
+def setup_API_and_test_client() -> FastAPITestHttpClient:
+    """
+    Configure API for memory stores and return a test HTTP client.
+    :return: The client
+    """
+    # Setup API, configure to use memory artifact store and create app itself.
+    app = setup_api_with_mem_stores()
+
+    # Create the test client.
+    return FastAPITestHttpClient(TestClient(app))
 
 
 def clients() -> Generator[str, None, None]:

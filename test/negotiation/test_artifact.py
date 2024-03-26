@@ -14,10 +14,12 @@ import mlte.store.error as errors
 from mlte.context.context import Context
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.store.artifact.store import ArtifactStore
-
-from ..fixture.store import store  # noqa
-from ..fixture.store import store_with_context  # noqa
-from ..fixture.store import FX_MODEL_ID, FX_VERSION_ID  # noqa
+from test.store.artifact.fixture import (  # noqa
+    FX_MODEL_ID,
+    FX_VERSION_ID,
+    memory_store,
+    store_with_context,
+)
 
 
 def test_round_trip() -> None:
@@ -42,21 +44,21 @@ def test_save_load(
     assert loaded == card
 
 
-def test_save_noparents(store: ArtifactStore) -> None:  # noqa
+def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
     """Save fails when no parents are present."""
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = NegotiationCard("my-card")
     with pytest.raises(errors.ErrorNotFound):
-        card.save_with(ctx, store)
+        card.save_with(ctx, memory_store)
 
 
-def test_save_parents(store: ArtifactStore) -> None:  # noqa
+def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
     """Save succeeds when parents are present."""
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = NegotiationCard("my-card")
-    card.save_with(ctx, store, parents=True)
+    card.save_with(ctx, memory_store, parents=True)
 
 
 def test_save_overwrite(

@@ -15,7 +15,7 @@ from .fixture import (  # noqa
     create_rdbs_store,
     memory_store,
     rdbs_store,
-    stores,
+    user_stores,
 )
 
 
@@ -39,7 +39,7 @@ def get_test_user() -> User:
     return test_user
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", user_stores())
 def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     """An artifact store supports model operations."""
     store: UserStore = request.getfixturevalue(store_fixture_name)

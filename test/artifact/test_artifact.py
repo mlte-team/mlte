@@ -20,9 +20,8 @@ from mlte.store.base import StoreURIPrefix
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
-
-from ..fixture.store import store_with_context  # noqa
-from ..fixture.store import FX_MODEL_ID, FX_VERSION_ID
+from test.store.artifact.fixture import store_with_context  # noqa
+from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
 
 
 def test_save_load_session() -> None:

@@ -17,24 +17,22 @@ from mlte.store.artifact.store import (
 )
 from mlte.store.artifact.underlying.http import RemoteHttpStore
 from mlte.store.base import StoreURI
+from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory
 from .fixture import (  # noqa
-    create_fs_store,
-    create_memory_store,
-    create_rdbs_store,
+    artifact_stores,
+    artifact_stores_and_types,
     fs_store,
     http_store,
     memory_store,
     rdbs_store,
-    stores,
-    stores_and_types,
 )
 
 
 def test_init_memory() -> None:
     """An in-memory store can be initialized."""
-    _ = create_memory_store()
+    _ = artifact_store_creators.create_memory_store()
 
 
 def test_init_http() -> None:
@@ -44,15 +42,15 @@ def test_init_http() -> None:
 
 def test_init_fs(tmp_path) -> None:
     """An local FS store can be initialized."""
-    _ = create_fs_store(tmp_path)
+    _ = artifact_store_creators.create_fs_store(tmp_path)
 
 
 def test_init_rdbs() -> None:
     """A relational DB store can be initialized."""
-    _ = create_rdbs_store()
+    _ = artifact_store_creators.create_rdbs_store()
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     """An artifact store supports model operations."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
@@ -73,7 +71,7 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             handle.read_model(model_id)
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_model_list(
     store_fixture_name: str, request: pytest.FixtureRequest
 ) -> None:
@@ -90,7 +88,7 @@ def test_model_list(
         assert models[0] == "model0"
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_version(
     store_fixture_name: str, request: pytest.FixtureRequest
 ) -> None:
@@ -116,7 +114,7 @@ def test_version(
             _ = handle.read_version(model_id, version_id)
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_version_list(
     store_fixture_name: str, request: pytest.FixtureRequest
 ) -> None:
@@ -157,7 +155,7 @@ def check_artifact_writing(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", stores_and_types()
+    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
 )
 def test_search(
     store_fixture_name: str,
@@ -186,7 +184,7 @@ def test_search(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", stores_and_types()
+    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
 )
 def test_artifact(
     store_fixture_name: str,
@@ -225,7 +223,7 @@ def test_artifact(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", stores_and_types()
+    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
 )
 def test_artifact_without_parents(
     store_fixture_name: str,
@@ -249,7 +247,7 @@ def test_artifact_without_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", stores_and_types()
+    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
 )
 def test_artifact_parents(
     store_fixture_name: str,
@@ -280,7 +278,7 @@ def test_artifact_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", stores_and_types()
+    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
 )
 def test_artifact_overwrite(
     store_fixture_name: str,

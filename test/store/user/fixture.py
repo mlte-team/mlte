@@ -46,7 +46,7 @@ def rdbs_store() -> RelationalDBUserStore:
     return create_rdbs_store()
 
 
-def stores() -> Generator[str, None, None]:
+def user_stores() -> Generator[str, None, None]:
     """
     Yield User store fixture names.
     :return: Store fixture name

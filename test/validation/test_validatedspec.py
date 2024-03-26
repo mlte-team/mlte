@@ -19,8 +19,7 @@ from mlte.validation.result import Result
 from mlte.validation.spec_validator import SpecValidator
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
-
-from ..fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa

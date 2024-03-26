@@ -5,11 +5,14 @@ Test the HTTP interface for model operations.
 """
 
 import pytest
-from fastapi.testclient import TestClient
 
 from mlte.context.model import Model, ModelCreate
 
-from ..fixture.http import clients, mem_client  # noqa
+from ..fixture.http import (  # noqa
+    FastAPITestHttpClient,
+    clients,
+    mem_store_and_test_http_client,
+)
 
 # -----------------------------------------------------------------------------
 # Tests: Model
@@ -21,7 +24,7 @@ def test_init(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """The server can initialize."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     res = client.get("/api/healthz")
     assert res.status_code == 200
 
@@ -31,7 +34,7 @@ def test_create(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Models can be created."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model = ModelCreate(identifier="model")
 
@@ -45,7 +48,7 @@ def test_read(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Models can be read."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model = ModelCreate(identifier="0")
     res = client.post("/api/model", json=model.model_dump())
@@ -64,7 +67,7 @@ def test_list(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Models can be listed."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model = ModelCreate(identifier="0")
 
@@ -81,7 +84,7 @@ def test_delete(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Models can be deleted."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     model = ModelCreate(identifier="0")
 

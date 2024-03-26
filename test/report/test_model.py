@@ -4,8 +4,6 @@ test/report/test_model.py
 Unit tests for report model.
 """
 
-from test.fixture.artifact import make_complete_report
-
 from mlte.model.shared import (
     GoalDescriptor,
     MetricDescriptor,
@@ -24,6 +22,7 @@ from mlte.report.model import (
     ReportModel,
     SummaryDescriptor,
 )
+from test.fixture.artifact import make_complete_report
 
 
 def test_report() -> None:

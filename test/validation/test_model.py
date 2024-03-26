@@ -6,9 +6,8 @@ Unit tests for validated specification model.
 
 from __future__ import annotations
 
-from test.fixture.artifact import make_complete_validated_spec_model
-
 import mlte.validation.model as model
+from test.fixture.artifact import make_complete_validated_spec_model
 
 # -----------------------------------------------------------------------------
 # SpecModel

@@ -5,11 +5,14 @@ Test the HTTP interface for version operations.
 """
 
 import pytest
-from fastapi.testclient import TestClient
 
 from mlte.context.model import ModelCreate, Version, VersionCreate
 
-from ..fixture.http import clients, mem_client  # noqa
+from ..fixture.http import (  # noqa
+    FastAPITestHttpClient,
+    clients,
+    mem_store_and_test_http_client,
+)
 
 
 @pytest.mark.parametrize("client_fixture", clients())
@@ -17,7 +20,7 @@ def test_init(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """The server can initialize."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     res = client.get("/api/healthz")
     assert res.status_code == 200
 
@@ -27,7 +30,7 @@ def test_create(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Versions can be created."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     create_model("0", client)
 
     version = VersionCreate(identifier="0")
@@ -42,7 +45,7 @@ def test_read(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Versions can be read."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     create_model("0", client)
 
     version = VersionCreate(identifier="0")
@@ -62,7 +65,7 @@ def test_list(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Versions can be listed."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     create_model("0", client)
 
     version = VersionCreate(identifier="0")
@@ -79,7 +82,7 @@ def test_delete(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa
     """Versions can be deleted."""
-    client: TestClient = request.getfixturevalue(client_fixture)
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
     create_model("0", client)
 
     version = VersionCreate(identifier="0")
@@ -98,7 +101,7 @@ def test_delete(
     assert len(res.json()) == 0
 
 
-def create_model(model_id: str, client: TestClient) -> None:
+def create_model(model_id: str, client: FastAPITestHttpClient) -> None:
     """Create a model with the given identifier."""
     res = client.post(
         "/api/model",
