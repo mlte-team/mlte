@@ -70,8 +70,8 @@ async def login_for_access_token(
             user = user_store_session.read_user(form_data.username)
     else:
         raise HTTPException(
-            codes.INTERNAL_ERROR,
-            detail=f"Unsupported grant type: {form_data.grant_type}",
+            codes.BAD_REQUEST,
+            detail="unsupported_grant_type",
         )
 
     # Check if we were able to get a user's info properly.

@@ -4,23 +4,23 @@ mlte/backend/api/codes.py
 Status codes for MLTE artifact store.
 """
 
-"""HTTP 'OK'"""
 OK = 200
+"""HTTP 'OK'"""
 
-"""HTTP 'Bad Request'"""
 BAD_REQUEST = 400
+"""HTTP 'Bad Request'"""
 
-"""HTTP 'Unauthorized'"""
 UNAUTHORIZED = 401
+"""HTTP 'Unauthorized'"""
 
-"""HTTP 'Forbidden'"""
 FORBIDDEN = 403
+"""HTTP 'Forbidden'"""
 
-"""HTTP 'Not Found'"""
 NOT_FOUND = 404
+"""HTTP 'Not Found'"""
 
-"""HTTP 'Already Exists'"""
 ALREADY_EXISTS = 409
+"""HTTP 'Already Exists'"""
 
-"""HTTP 'Internal Server Error'"""
 INTERNAL_ERROR = 500
+"""HTTP 'Internal Server Error'"""

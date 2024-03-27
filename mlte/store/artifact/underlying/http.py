@@ -70,8 +70,8 @@ class OAuthHttpClient(HttpClient):
 
     TOKEN_REQ_PASS_PAYLOAD = {"grant_type": "password"}
     TOKEN_REQ_HEADERS = {
-        "accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
     }
     TOKEN_ENDPOINT = "/token"
 
