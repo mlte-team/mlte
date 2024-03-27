@@ -14,8 +14,8 @@ from mlte.backend.core.config import settings
 from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 
-from ..fixture.artifact import ArtifactFactory
-from .fixture.http import (  # noqa
+from ...fixture.artifact import ArtifactFactory
+from ..fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients_and_types,
     mem_store_and_test_http_client,

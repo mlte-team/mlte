@@ -72,7 +72,8 @@ def test_list(
     """Models can be listed."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
-    model = ModelCreate(identifier="0")
+    model_id = "0"
+    model = ModelCreate(identifier=model_id)
 
     res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
     assert res.status_code == codes.OK
@@ -89,7 +90,8 @@ def test_delete(
     """Models can be deleted."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
-    model = ModelCreate(identifier="0")
+    model_id = "0"
+    model = ModelCreate(identifier=model_id)
 
     res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
     assert res.status_code == codes.OK
@@ -98,7 +100,7 @@ def test_delete(
     assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
-    res = client.delete(f"{settings.API_PREFIX}/model/0")
+    res = client.delete(f"{settings.API_PREFIX}/model/{model_id}")
     assert res.status_code == codes.OK
 
     res = client.get(f"{settings.API_PREFIX}/model")

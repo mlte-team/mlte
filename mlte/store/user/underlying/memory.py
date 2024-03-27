@@ -15,7 +15,8 @@ from mlte.store.user.underlying.default_user import (
     DEFAULT_HASHED_PASSWORD,
     DEFAULT_USERNAME,
 )
-from mlte.user.model import User
+from mlte.user.model import User, UserCreate
+from mlte.user.model_logic import convert_user_create_to_user
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -74,11 +75,14 @@ class InMemoryUserStoreSession(UserStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_user(self, user: User) -> User:
+    def create_user(self, user: UserCreate) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
-        self.storage.users[user.username] = user.model_copy()
-        return self.storage.users[user.username]
+
+        # Create user with hashed passwords.
+        stored_user = convert_user_create_to_user(user)
+        self.storage.users[user.username] = stored_user
+        return stored_user
 
     def read_user(self, username: str) -> User:
         if username not in self.storage.users:

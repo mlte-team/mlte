@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import List, cast
 
 from mlte.store.base import ManagedSession, Store, StoreSession
-from mlte.user.model import User
+from mlte.user.model import User, UserCreate
 
 # -----------------------------------------------------------------------------
 # UserStore
@@ -46,7 +46,7 @@ class UserStoreSession(StoreSession):
     # Interface: Context
     # -------------------------------------------------------------------------
 
-    def create_user(self, user: User) -> User:
+    def create_user(self, user: UserCreate) -> User:
         """
         Create a user.
         :param user: The data to create the user

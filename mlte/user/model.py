@@ -27,3 +27,10 @@ class User(BasicUser):
 
     hashed_password: str
     """The hashed password of the user."""
+
+
+class UserCreate(BasicUser):
+    """User with additional information only used when creating a user."""
+
+    password: str
+    """The plain password of the user."""

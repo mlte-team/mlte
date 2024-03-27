@@ -10,8 +10,7 @@ import pytest
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
 from mlte.store.user.store import UserStoreSession
-from mlte.user import passwords
-from mlte.user.model import User
+from mlte.user.model import UserCreate
 from test.store.user.fixture import (  # noqa
     memory_store,
     rdbs_store,
@@ -25,9 +24,9 @@ def set_test_user(
     username: str, password: str, user_store_session: UserStoreSession
 ):
     """Sets a test user in the backend state."""
-    user = User(
+    user = UserCreate(
         username=username,
-        hashed_password=passwords.hash_password(password),
+        password=password,
     )
     user_store_session.create_user(user)
 

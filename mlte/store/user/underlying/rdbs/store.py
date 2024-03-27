@@ -22,7 +22,8 @@ from mlte.store.user.underlying.rdbs.metadata import (
     init_default_user,
 )
 from mlte.store.user.underlying.rdbs.reader import DBReader
-from mlte.user.model import User
+from mlte.user.model import User, UserCreate
+from mlte.user.model_logic import convert_user_create_to_user
 
 # -----------------------------------------------------------------------------
 # RelationalDBUserStore
@@ -83,7 +84,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
     # User CRUD Elements
     # -------------------------------------------------------------------------
 
-    def create_user(self, user: User) -> User:
+    def create_user(self, user: UserCreate) -> User:
         with Session(self.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -92,15 +93,17 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
+                # Hash password and create a user with hashed passwords to be stored.
+                hashed_user = convert_user_create_to_user(user)
                 user_obj = DBUser(
-                    username=user.username,
-                    email=user.email,
-                    disabled=user.disabled,
-                    hashed_password=user.hashed_password,
+                    username=hashed_user.username,
+                    email=hashed_user.email,
+                    disabled=hashed_user.disabled,
+                    hashed_password=hashed_user.hashed_password,
                 )
                 session.add(user_obj)
                 session.commit()
-                return user.model_copy()
+                return hashed_user
 
     def read_user(self, username: str) -> User:
         with Session(self.engine) as session:
