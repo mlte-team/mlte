@@ -6,7 +6,7 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
-from typing import Any, Generator, Tuple
+from typing import Any, Generator, Optional, Tuple
 
 import httpx
 import pytest
@@ -38,8 +38,13 @@ _CLIENTS = ["mem_store_and_test_http_client"]
 class FastAPITestHttpClient(OAuthHttpClient):
     """An HTTP client based on FastAPI's TestClient."""
 
-    def __init__(self, client: TestClient) -> None:
-        super().__init__(HttpClientType.TESTCLIENT)
+    def __init__(
+        self,
+        client: TestClient,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> None:
+        super().__init__(HttpClientType.TESTCLIENT, username, password)
 
         self.client = client
         """The underlying client."""
@@ -66,10 +71,15 @@ class FastAPITestHttpClient(OAuthHttpClient):
 @pytest.fixture(scope="function")
 def mem_store_and_test_http_client() -> FastAPITestHttpClient:
     """Sets up memory based store for the API and gets an associated client."""
-    return setup_API_and_test_client()
+    return setup_API_and_test_client(
+        username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD
+    )
 
 
-def setup_API_and_test_client() -> FastAPITestHttpClient:
+def setup_API_and_test_client(
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+) -> FastAPITestHttpClient:
     """
     Configure API for memory stores and return a test HTTP client.
     :return: The client
@@ -79,9 +89,8 @@ def setup_API_and_test_client() -> FastAPITestHttpClient:
 
     # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
-    client.authenticate(
-        f"{settings.API_PREFIX}", DEFAULT_USERNAME, DEFAULT_PASSWORD
-    )
+    if username is not None and password is not None:
+        client.authenticate(f"{settings.API_PREFIX}", username, password)
     return client
 
 

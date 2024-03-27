@@ -15,6 +15,7 @@ import requests
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
+from mlte._private import url
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.model import WriteArtifactRequest
 from mlte.backend.core.config import settings
@@ -22,10 +23,6 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
-from mlte.store.user.underlying.default_user import (
-    DEFAULT_PASSWORD,
-    DEFAULT_USERNAME,
-)
 
 # -----------------------------------------------------------------------------
 # HTTP Client Configuration
@@ -75,11 +72,22 @@ class OAuthHttpClient(HttpClient):
     }
     TOKEN_ENDPOINT = "/token"
 
-    def __init__(self, type: HttpClientType) -> None:
+    def __init__(
+        self,
+        type: HttpClientType,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> None:
         super().__init__(type)
 
         self.access_token: Optional[str] = None
         """The access token."""
+
+        self.username = username
+        """The username to use when authenticating."""
+
+        self.password = password
+        """The password to use when authenticating."""
 
     def _format_oauth_password_payload(
         self, username: str, password: str
@@ -95,8 +103,28 @@ class OAuthHttpClient(HttpClient):
             self.access_token = access_token
             self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
-    def authenticate(self, api_url: str, username: str, password: str):
+    def authenticate(
+        self,
+        api_url: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ):
         """Sends an authentication request and retrieves and stores the token."""
+        # Valiadte we have a user and password.
+        if username is None:
+            username = self.username
+            if username is None:
+                raise Exception(
+                    "Can't authenticate without user, no internal or argument username received."
+                )
+        if password is None:
+            password = self.password
+            if password is None:
+                raise Exception(
+                    "Can't authenticate without password, no internal or argument password received."
+                )
+
+        # Send authentication request to get token.
         self.headers = self.TOKEN_REQ_HEADERS
         url = f"{api_url}{self.TOKEN_ENDPOINT}"
         response = self.post(
@@ -110,6 +138,7 @@ class OAuthHttpClient(HttpClient):
                 f"Token request was unsuccessful - code: {response.status_code}, reply: {reply}"
             )
 
+        # Process reply and store token.
         response_data = response.json()
         if response_data is None:
             raise Exception(
@@ -117,15 +146,16 @@ class OAuthHttpClient(HttpClient):
             )
         if "access_token" not in response_data:
             raise Exception("Access token was not contained in response.")
-
         self._store_token(response_data["access_token"])
 
 
 class RequestsClient(OAuthHttpClient):
     """Client implementation using requests library."""
 
-    def __init__(self) -> None:
-        super().__init__(HttpClientType.REQUESTS)
+    def __init__(
+        self, username: Optional[str] = None, password: Optional[str] = None
+    ) -> None:
+        super().__init__(HttpClientType.REQUESTS, username, password)
 
     def get(self, url: str, **kwargs) -> requests.Response:
         return requests.get(url, headers=self.headers, **kwargs)
@@ -156,10 +186,12 @@ class RemoteHttpStore(ArtifactStore):
     def __init__(
         self, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
     ) -> None:
-        super().__init__(uri=uri)
-
         self.client = client
         """The client for requests."""
+
+        # Get credentials, if any, from the uri and into the client.
+        uri.uri = self._process_credentials(uri.uri)
+        super().__init__(uri=uri)
 
     def session(self) -> RemoteHttpStoreSession:  # type: ignore[override]
         """
@@ -167,6 +199,17 @@ class RemoteHttpStore(ArtifactStore):
         :return: The session handle
         """
         return RemoteHttpStoreSession(url=self.uri.uri, client=self.client)
+
+    def _process_credentials(self, uri: str) -> str:
+        """Obtains user and password from uri for client auth, and returns cleaned up uri."""
+        # Parse URI for user and password.
+        uri, username, password = url.remove_url_username_password(uri)
+        if username is not None and password is not None:
+            # If URI had user and password, get them for client auth.
+            self.client.username = username
+            self.client.password = password
+
+        return uri
 
 
 # -----------------------------------------------------------------------------
@@ -184,17 +227,19 @@ class RemoteHttpStoreSession(ArtifactStoreSession):
         self.client = client
         """The client for HTTP requests."""
 
-        # Authenticate.
-        # TODO: fix this, what username is used in general? How does a local install get this?
-        self.client.authenticate(
-            f"{self.url}{settings.API_PREFIX}",
-            username=DEFAULT_USERNAME,
-            password=DEFAULT_PASSWORD,
-        )
+        if client.username is None or client.password is None:
+            print("Not authenticating, no user or password provided.")
+        else:
+            # Authenticate.
+            self.client.authenticate(
+                f"{self.url}{settings.API_PREFIX}",
+                username=client.username,
+                password=client.password,
+            )
 
     def close(self) -> None:
         """Close the session."""
-        # NOTE(Kyle): Closing a remote HTTP session is a no-op.
+        # Closing a remote HTTP session is a no-op.
         pass
 
     # -------------------------------------------------------------------------
@@ -355,5 +400,7 @@ def raise_for_response(response: HttpResponse) -> None:
         raise errors.ErrorNotFound(f"{response.json()}")
     if response.status_code == codes.ALREADY_EXISTS:
         raise errors.ErrorAlreadyExists(f"{response.json()}")
+    if response.status_code == codes.UNAUTHORIZED:
+        raise errors.UnauthenticatedError(f"{response.json()}")
     else:
         raise errors.InternalError(f"{response.json()}")
