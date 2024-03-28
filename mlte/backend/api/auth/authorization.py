@@ -52,7 +52,9 @@ def is_authorized(current_user: BasicUser, resource: str) -> bool:
 
 
 # TODO: Add support for more than password grant type.
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=TOKEN_ENDPOINT_URL)
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_PREFIX}{TOKEN_ENDPOINT_URL}"
+)
 """Securty scheme to be used."""
 
 
