@@ -30,7 +30,7 @@
 
     <footer>
       <p class="footer-text-left">
-        <b>MLTE - 2023</b>
+        <b>MLTE - 2024</b>
       </p>
       <div class="footer-text-right">
         <a

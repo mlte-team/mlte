@@ -431,7 +431,7 @@
       </div>
     </div>
 
-    <div style="text-align: right; margin-top: 1em">
+    <div class="margin-button" style="text-align: right;">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
         Cancel
       </UsaButton>

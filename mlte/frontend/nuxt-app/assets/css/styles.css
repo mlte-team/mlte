@@ -49,6 +49,12 @@
     vertical-align: middle;
 }
 
+.centered-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 hr {
     margin-top: 1em;
 }
