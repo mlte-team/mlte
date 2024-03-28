@@ -7,13 +7,8 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import UniqueConstraint, select
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
-
-from mlte.store.user.underlying.default_user import (
-    DEFAULT_HASHED_PASSWORD,
-    DEFAULT_USERNAME,
-)
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class DBBase(DeclarativeBase):
@@ -35,14 +30,3 @@ class DBUser(DBBase):
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, username={self.username!r}, email={self.email!r}, disabled={self.disabled!r})"
-
-
-def init_default_user(session: Session):
-    """Initializes the table with the configured classification types."""
-    if session.scalars(select(DBUser)).first() is None:
-        user = DBUser(
-            username=DEFAULT_USERNAME,
-            hashed_password=DEFAULT_HASHED_PASSWORD,
-        )
-        session.add(user)
-        session.commit()

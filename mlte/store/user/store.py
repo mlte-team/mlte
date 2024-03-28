@@ -11,6 +11,11 @@ from typing import List, cast
 from mlte.store.base import ManagedSession, Store, StoreSession
 from mlte.user.model import User, UserCreate
 
+DEFAULT_USERNAME = "admin"
+DEFAULT_PASSWORD = "admin1234"
+"""Default user for setup."""
+
+
 # -----------------------------------------------------------------------------
 # UserStore
 # -----------------------------------------------------------------------------
@@ -27,6 +32,12 @@ class UserStore(Store):
         :return: The session handle
         """
         raise NotImplementedError("Cannot get handle to abstract Store.")
+
+    def _init_default_user(self):
+        """Adds the default user."""
+        self.session().create_user(
+            UserCreate(username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD)
+        )
 
 
 # -----------------------------------------------------------------------------

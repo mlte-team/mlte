@@ -14,6 +14,7 @@ from mlte.user.model_logic import are_users_equal
 from .fixture import (  # noqa
     create_memory_store,
     create_rdbs_store,
+    fs_store,
     memory_store,
     rdbs_store,
     user_stores,

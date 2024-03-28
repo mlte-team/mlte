@@ -6,6 +6,7 @@ Top-level functions for artifact store creation.
 
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.user.store import UserStore
+from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 
@@ -21,6 +22,8 @@ def create_store(uri: str) -> UserStore:
         return InMemoryUserStore(parsed_uri)
     if parsed_uri.type == StoreType.RELATIONAL_DB:
         return RelationalDBUserStore(parsed_uri)
+    if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
+        return FileSystemUserStore(parsed_uri)
     else:
         raise Exception(
             f"Store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
