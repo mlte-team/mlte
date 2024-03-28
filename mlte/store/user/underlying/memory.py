@@ -11,10 +11,6 @@ from typing import Dict, List
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.store.user.underlying.default_user import (
-    DEFAULT_HASHED_PASSWORD,
-    DEFAULT_USERNAME,
-)
 from mlte.user.model import User, UserCreate
 from mlte.user.model_logic import convert_user_create_to_user
 
@@ -32,6 +28,9 @@ class InMemoryUserStore(UserStore):
         self.storage = MemoryUserStorage()
         """The underlying storage for the store."""
 
+        # Initialize default user.
+        self._init_default_user()
+
     def session(self) -> InMemoryUserStoreSession:  # type: ignore[override]
         """
         Return a session handle for the store instance.
@@ -45,13 +44,6 @@ class MemoryUserStorage:
 
     def __init__(self) -> None:
         self.users: Dict[str, User] = {}
-
-        # Default user.
-        user = User(
-            username=DEFAULT_USERNAME,
-            hashed_password=DEFAULT_HASHED_PASSWORD,
-        )
-        self.users[user.username] = user
 
 
 # -----------------------------------------------------------------------------

@@ -3,11 +3,10 @@ mlte/store/artifact/underlying/fs.py
 
 Implementation of local file system artifact store.
 """
+from __future__ import annotations
 
-import json
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import List
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
@@ -16,61 +15,28 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
+from mlte.store.common.fs import JsonFileStorage, parse_root_path
 
-# The prefix that indicates a local filesystem directory is used
-LOCAL_URI_PREFIX = "local://"
-FS_URI_PREFIX = "fs://"
-
-
-def _parse_root_path(uristr: str) -> Path:
-    """
-    Parse the root path for the backend from the URI.
-    :param uri: The URI
-    :type uri: str
-    :return: The parsed path
-    :rtype: Path
-    """
-    assert uristr.startswith(FS_URI_PREFIX) or uristr.startswith(
-        LOCAL_URI_PREFIX
-    ), "Broken precondition."
-    prefix = (
-        FS_URI_PREFIX if uristr.startswith(FS_URI_PREFIX) else LOCAL_URI_PREFIX
-    )
-    return Path(uristr[len(prefix) :])
+# -----------------------------------------------------------------------------
+# LocalFileSystemStore
+# -----------------------------------------------------------------------------
 
 
-class JsonFileStorage:
-    """A simple JSON storage wrapper for the file system store."""
+class LocalFileSystemStore(ArtifactStore):
+    """A local file system implementation of the MLTE artifact store."""
 
-    def create_folder(self, path: Path) -> None:
-        Path.mkdir(path, parents=True)
+    def __init__(self, uri: StoreURI) -> None:
+        super().__init__(uri=uri)
 
-    def list_folders(self, path: Path) -> List[Path]:
-        return [x for x in sorted(path.iterdir()) if x.is_dir()]
+        self.storage = JsonFileStorage()
+        """The underlying storage for the store."""
 
-    def delete_folder(self, path: Path) -> None:
-        shutil.rmtree(path)
-
-    def list_json_files(self, path: Path) -> List[Path]:
-        return [
-            x
-            for x in sorted(path.iterdir())
-            if x.is_file() and x.suffix == ".json"
-        ]
-
-    def read_json_file(self, path: Path) -> Dict[str, Any]:
-        with path.open("r") as f:
-            data: Dict[str, Any] = json.load(f)
-        return data
-
-    def write_json_to_file(self, path: Path, data: Dict[str, Any]) -> None:
-        with path.open("w") as f:
-            json.dump(data, f, indent=4)
-
-    def delete_file(self, path: Path) -> None:
-        if not path.exists():
-            raise RuntimeError(f"Path {path} does not exist.")
-        path.unlink()
+    def session(self) -> LocalFileSystemStoreSession:
+        """
+        Return a session handle for the store instance.
+        :return: The session handle
+        """
+        return LocalFileSystemStoreSession(self.uri.uri, storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -85,7 +51,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self.storage = storage
         """A reference to underlying storage."""
 
-        self.root = _parse_root_path(uri)
+        self.root = parse_root_path(uri)
         """The remote artifact store URL."""
 
         if not self.root.exists():
@@ -336,22 +302,5 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         """
         return Path(
             self._base_path(model_id, version_id),
-            artifact_id + ".json",
+            self.storage.add_extension(artifact_id),
         )
-
-
-class LocalFileSystemStore(ArtifactStore):
-    """A local file system implementation of the MLTE artifact store."""
-
-    def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
-
-        self.storage = JsonFileStorage()
-        """The underlying storage for the store."""
-
-    def session(self) -> LocalFileSystemStoreSession:  # type: ignore[override]
-        """
-        Return a session handle for the store instance.
-        :return: The session handle
-        """
-        return LocalFileSystemStoreSession(self.uri.uri, storage=self.storage)

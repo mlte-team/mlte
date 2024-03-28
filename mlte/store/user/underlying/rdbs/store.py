@@ -16,11 +16,7 @@ from sqlalchemy.orm import Session
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.store.user.underlying.rdbs.metadata import (
-    DBBase,
-    DBUser,
-    init_default_user,
-)
+from mlte.store.user.underlying.rdbs.metadata import DBBase, DBUser
 from mlte.store.user.underlying.rdbs.reader import DBReader
 from mlte.user.model import User, UserCreate
 from mlte.user.model_logic import convert_user_create_to_user
@@ -45,7 +41,7 @@ class RelationalDBUserStore(UserStore):
 
         # Creates the DB items if they don't exist already.
         self._create_tables()
-        self._init_tables()
+        self._init_default_user()
 
     def session(self) -> RelationalDBUserStoreSession:  # type: ignore[override]
         """
@@ -57,11 +53,6 @@ class RelationalDBUserStore(UserStore):
     def _create_tables(self):
         """Creates all items, if they don't exist already."""
         DBBase.metadata.create_all(self.engine)
-
-    def _init_tables(self):
-        """Pre-populate tables."""
-        with Session(self.engine) as session:
-            init_default_user(session)
 
 
 # -----------------------------------------------------------------------------

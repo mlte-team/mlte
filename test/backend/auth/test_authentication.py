@@ -12,6 +12,7 @@ from mlte.backend.api.auth import authentication
 from mlte.store.user.store import UserStoreSession
 from mlte.user.model import UserCreate
 from test.store.user.fixture import (  # noqa
+    fs_store,
     memory_store,
     rdbs_store,
     user_stores,

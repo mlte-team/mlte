@@ -7,6 +7,7 @@ Fixtures for MLTE artifact store unit tests.
 from __future__ import annotations
 
 import typing
+from pathlib import Path
 
 from sqlalchemy.pool import StaticPool
 
@@ -51,7 +52,7 @@ def create_memory_store() -> InMemoryStore:
     )
 
 
-def create_fs_store(tmp_path) -> LocalFileSystemStore:
+def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
         create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
