@@ -15,12 +15,6 @@ from mlte.store.artifact.store import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
-from mlte.store.artifact.underlying.http import RemoteHttpStore, RequestsClient
-from mlte.store.base import StoreURI
-from mlte.store.user.underlying.default_user import (
-    DEFAULT_PASSWORD,
-    DEFAULT_USERNAME,
-)
 from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory
@@ -41,13 +35,7 @@ def test_init_memory() -> None:
 
 def test_init_http() -> None:
     """A remote HTTP store can be initialized."""
-    client = RequestsClient(DEFAULT_USERNAME, DEFAULT_PASSWORD)
-    _ = RemoteHttpStore(
-        StoreURI.from_string(
-            f"http://{DEFAULT_USERNAME}:{DEFAULT_PASSWORD}@localhost:8080"
-        ),
-        client,
-    )
+    _ = artifact_store_creators.create_http_store()
 
 
 def test_init_fs(tmp_path) -> None:

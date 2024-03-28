@@ -15,13 +15,25 @@ from mlte.backend.api.api import api_router
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.user.store import UserStore
+from mlte.user.model import UserCreate
 from test.store.artifact import artifact_store_creators
+
+TEST_API_USER = "api_user"
+TEST_API_PASS = "api_pass"
+"""User and passwords added to test the API."""
 
 
 def setup_api_with_mem_stores() -> FastAPI:
     """Setup API, configure to use memory artifact store and create app itself."""
+    # Set up user store with test user.
+    user_store = user_store_fixture.create_memory_store()
+    user_store.session().create_user(
+        UserCreate(username=TEST_API_USER, password=TEST_API_PASS)
+    )
+
+    # Set the API state and app.
+    state.set_user_store(user_store)
     state.set_artifact_store(artifact_store_creators.create_memory_store())
-    state.set_user_store(user_store_fixture.create_memory_store())
     app = app_factory.create()
     app.include_router(api_router, prefix=settings.API_PREFIX)
     return app

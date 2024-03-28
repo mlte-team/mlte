@@ -12,15 +12,10 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+import test.backend.fixture.api as api_helpers
 from mlte.artifact.type import ArtifactType
 from mlte.backend.core.config import settings
 from mlte.store.artifact.underlying.http import HttpClientType, OAuthHttpClient
-from mlte.store.user.underlying.default_user import (
-    DEFAULT_PASSWORD,
-    DEFAULT_USERNAME,
-)
-
-from .api import setup_api_with_mem_stores
 
 """
 This list contains the global collection of test clients.
@@ -71,26 +66,22 @@ class FastAPITestHttpClient(OAuthHttpClient):
 @pytest.fixture(scope="function")
 def mem_store_and_test_http_client() -> FastAPITestHttpClient:
     """Sets up memory based store for the API and gets an associated client."""
-    return setup_API_and_test_client(
-        username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD
-    )
+    return setup_API_and_test_client()
 
 
-def setup_API_and_test_client(
-    username: Optional[str] = None,
-    password: Optional[str] = None,
-) -> FastAPITestHttpClient:
+def setup_API_and_test_client() -> FastAPITestHttpClient:
     """
     Configure API for memory stores and return a test HTTP client.
     :return: The client
     """
     # Setup API, configure to use memory artifact store and create app itself.
-    app = setup_api_with_mem_stores()
+    app = api_helpers.setup_api_with_mem_stores()
 
     # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
-    if username is not None and password is not None:
-        client.authenticate(f"{settings.API_PREFIX}", username, password)
+    client.username = api_helpers.TEST_API_USER
+    client.password = api_helpers.TEST_API_PASS
+    client.authenticate(f"{settings.API_PREFIX}")
     return client
 
 
