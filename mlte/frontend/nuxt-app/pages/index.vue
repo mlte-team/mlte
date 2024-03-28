@@ -219,6 +219,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token")
 const path = ref([
   {
     href: "/",
@@ -230,7 +231,12 @@ const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
 const { data: modelList } = await useFetch<string[]>(
   config.public.apiPath + "/model",
-  { method: "GET" },
+  { method: "GET",
+    headers: {
+        'Authorization': 'Bearer ' + token.value
+      },
+  },
+  
 );
 if (modelList.value) {
   modelList.value.forEach((modelName: string) => {
@@ -327,6 +333,9 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
   await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
     retry: 0,
     method: "GET",
+    headers: {
+      'Authorization': 'Bearer ' + token.value
+    },
     onRequestError() {
       requestErrorAlert();
     },
@@ -379,6 +388,9 @@ async function selectVersion(versionName: string) {
     {
       retry: 0,
       method: "GET",
+      headers: {
+        'Authorization': 'Bearer ' + token.value
+      },
       onRequestError() {
         requestErrorAlert();
       },
