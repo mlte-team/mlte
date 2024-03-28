@@ -15,7 +15,7 @@ from fastapi.testclient import TestClient
 import test.backend.fixture.api as api_helpers
 from mlte.artifact.type import ArtifactType
 from mlte.backend.core.config import settings
-from mlte.store.artifact.underlying.http import HttpClientType, OAuthHttpClient
+from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 
 """
 This list contains the global collection of test clients.

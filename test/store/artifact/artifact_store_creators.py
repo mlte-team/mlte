@@ -13,14 +13,11 @@ from sqlalchemy.pool import StaticPool
 from mlte._private import url as url_utils
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
-from mlte.store.artifact.underlying.http import (
-    OAuthHttpClient,
-    RemoteHttpStore,
-    RequestsClient,
-)
+from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
 from mlte.store.base import StoreURI, StoreURIPrefix
+from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
 
 FAKE_USER = "fake_user"
 FAKE_PASS = "fake_pass"
@@ -33,14 +30,14 @@ def create_http_store(
     password: typing.Optional[str] = FAKE_PASS,
     uri: str = FAKE_URI,
     client: typing.Optional[OAuthHttpClient] = None,
-) -> RemoteHttpStore:
+) -> HttpArtifactStore:
     if client is None:
         client = RequestsClient(username, password)
     if username is None:
         username = FAKE_USER
     if password is None:
         password = FAKE_PASS
-    return RemoteHttpStore(
+    return HttpArtifactStore(
         StoreURI.from_string(
             url_utils.set_url_username_password(uri, username, password)
         ),
