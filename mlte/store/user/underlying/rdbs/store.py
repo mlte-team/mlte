@@ -89,6 +89,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 user_obj = DBUser(
                     username=hashed_user.username,
                     email=hashed_user.email,
+                    full_name=hashed_user.full_name,
                     disabled=hashed_user.disabled,
                     hashed_password=hashed_user.hashed_password,
                 )

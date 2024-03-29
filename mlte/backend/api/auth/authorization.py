@@ -94,9 +94,7 @@ async def get_authorized_user(
         )
 
     # Convert to simple user version to avoid including hashed password.
-    basic_user = BasicUser(
-        username=user.username, email=user.email, disabled=user.disabled
-    )
+    basic_user = BasicUser(**user.model_dump())
     return basic_user
 
 
