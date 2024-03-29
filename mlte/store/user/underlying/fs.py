@@ -60,6 +60,12 @@ class FileSystemUserStoreSession(UserStoreSession):
                 f"Root data storage location does not exist: {self.root}."
             )
 
+        try:
+            self.storage.create_folder(self._base_path())
+        except FileExistsError:
+            # If it already existed, we just ignore warning.
+            pass
+
     def close(self) -> None:
         """Close the session."""
         # Closing a local FS session is a no-op.
@@ -86,7 +92,7 @@ class FileSystemUserStoreSession(UserStoreSession):
     def list_users(self) -> List[str]:
         return [
             self.storage.get_just_filename(user_path)
-            for user_path in self.storage.list_json_files(Path(self.root))
+            for user_path in self.storage.list_json_files(self._base_path())
         ]
 
     def delete_user(self, username: str) -> User:
@@ -98,6 +104,10 @@ class FileSystemUserStoreSession(UserStoreSession):
     # -------------------------------------------------------------------------
     # Internal helpers.
     # -------------------------------------------------------------------------
+
+    def _base_path(self) -> Path:
+        """Returns the base path for storing."""
+        return Path(self.root, "users")
 
     def _ensure_user_exists(self, username: str) -> None:
         """Throws an ErrorNotFound if the given user does not exist."""
@@ -119,7 +129,7 @@ class FileSystemUserStoreSession(UserStoreSession):
         :param username: The user identifier
         :return: The formatted path
         """
-        return Path(self.root, self.storage.add_extension(username))
+        return Path(self._base_path(), self.storage.add_extension(username))
 
     def _user_name(self, user_path: Path) -> str:
         """
