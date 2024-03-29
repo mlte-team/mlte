@@ -15,6 +15,10 @@ from mlte.store.user.store import UserStore, UserStoreSession
 from mlte.user.model import User, UserCreate
 from mlte.user.model_logic import convert_user_create_to_user
 
+BASE_USERS_FOLDER = "users"
+"""Base fodler to store users in."""
+
+
 # -----------------------------------------------------------------------------
 # FileSystemUserStore
 # -----------------------------------------------------------------------------
@@ -107,7 +111,7 @@ class FileSystemUserStoreSession(UserStoreSession):
 
     def _base_path(self) -> Path:
         """Returns the base path for storing."""
-        return Path(self.root, "users")
+        return Path(self.root, BASE_USERS_FOLDER)
 
     def _ensure_user_exists(self, username: str) -> None:
         """Throws an ErrorNotFound if the given user does not exist."""
