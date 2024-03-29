@@ -34,6 +34,7 @@ class DBReader:
                 User(
                     username=user_obj.username,
                     email=user_obj.email,
+                    full_name=user_obj.full_name,
                     disabled=user_obj.disabled,
                     hashed_password=user_obj.hashed_password,
                 ),

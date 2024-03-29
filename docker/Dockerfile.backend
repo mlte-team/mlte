@@ -1,12 +1,10 @@
-# Dockerfile.store
+# Dockerfile.backend
 #
-# Image definition for MLTE artifact store container.
+# Image definition for MLTE backend container.
 
 FROM python:3.10-alpine
 
 WORKDIR /mnt/lib
-COPY setup.cfg /mnt/lib
-COPY setup.py /mnt/lib
 COPY pyproject.toml /mnt/lib
 COPY src /mnt/lib/src
 
@@ -20,7 +18,7 @@ RUN ["mkdir", "/mnt/store"]
 ENV APP_HOST=0.0.0.0
 ENV APP_PORT=8080
 
-# Run the mlte artifact store server
-ENTRYPOINT ["mlte", "store"]
+# Run the mlte backend server
+ENTRYPOINT ["mlte", "backend"]
 # By default, run a local filesystem backend
 CMD ["--backend-uri", "fs:///mnt/store"]

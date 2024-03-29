@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import List, cast
 
+from mlte.store import error
 from mlte.store.base import ManagedSession, Store, StoreSession
 from mlte.user.model import User, UserCreate
 
@@ -35,9 +36,13 @@ class UserStore(Store):
 
     def _init_default_user(self):
         """Adds the default user."""
-        self.session().create_user(
-            UserCreate(username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD)
-        )
+        try:
+            self.session().create_user(
+                UserCreate(username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD)
+            )
+        except error.ErrorAlreadyExists:
+            # If default user was already there, ignore warning, we don't want to overrwite any changes on it.
+            pass
 
 
 # -----------------------------------------------------------------------------

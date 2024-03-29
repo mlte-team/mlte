@@ -23,10 +23,11 @@ class DBUser(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str]
     email: Mapped[Optional[str]]
+    full_name: Mapped[Optional[str]]
     hashed_password: Mapped[str]
     disabled: Mapped[bool] = mapped_column(default=False)
 
     __table_args__ = (UniqueConstraint("username", name="_username"),)
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, username={self.username!r}, email={self.email!r}, disabled={self.disabled!r})"
+        return f"User(id={self.id!r}, username={self.username!r}, email={self.email!r}, name={self.full_name}, disabled={self.disabled!r})"

@@ -18,6 +18,9 @@ class BasicUser(BaseModel):
     email: Optional[str] = None
     """An optional email associated to the user."""
 
+    full_name: Optional[str] = None
+    """The full name of the user."""
+
     disabled: bool = False
     """Whether the user is disabled."""
 
