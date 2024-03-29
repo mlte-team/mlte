@@ -12,6 +12,7 @@
     "$fetch": true,
     "useFetch": true,
     "useCookie": true,
+    "navigateTo": true,
     "useRuntimeConfig": true,
     "isValidNegotiation": true,
     "isValidSpec": true,
@@ -24,7 +25,8 @@
     "requestErrorAlert": true,
     "responseErrorAlert": true,
     "conflictErrorAlert": true,
-    "fetchArtifact": true
+    "unsuccessfulLogin": true,
+    "fetchArtifact": true,
   },
   "extends": [
     "standard",

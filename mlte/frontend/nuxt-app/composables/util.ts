@@ -19,7 +19,7 @@ export async function fetchArtifact(
       retry: 0,
       method: "GET",
       headers: {
-        'Authorization': 'Bearer ' + token
+        Authorization: "Bearer " + token,
       },
       onRequestError() {
         requestErrorAlert();

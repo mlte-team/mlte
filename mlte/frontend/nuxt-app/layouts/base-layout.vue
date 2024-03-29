@@ -24,6 +24,11 @@
       </div>
 
       <div class="body-div">
+        <div v-if="token" class="logout-button">
+          <UsaButton class="secondary-button" @click.prevent="confirmLogout()">
+            Logout
+          </UsaButton>
+        </div>
         <slot name="default" />
       </div>
     </div>
@@ -59,6 +64,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
 const version = config.public.version;
 </script>
 
@@ -87,6 +93,12 @@ header {
 .header-link {
   color: white;
   text-decoration: none;
+}
+
+.logout-button {
+  display: flex;
+  align-items: right;
+  justify-content: right;
 }
 
 .flex-container {
