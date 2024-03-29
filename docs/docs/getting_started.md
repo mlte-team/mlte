@@ -38,7 +38,7 @@ If you are new to Python and haven't installed it, we recommend starting with <a
 *`MLTE`* can be imported like any Python pacakge using the standard conventions.
 
 ```python
-from mlte.properties ... #importing from properties subpackage
+from mlte.property ... #importing from properties subpackage
 from mlte.measurement ... #importing from measurement subpackage
 from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
@@ -51,32 +51,32 @@ To run the user interface (UI), run the following in your command line:
 $ mlte ui
 ```
 
-In order for the frontend to be able to communicate with the store you will need to allow the frontend as an origin.
-This can be done by specifying the `--allowed-origins` flag when running the store. 
-When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the store command will look something like this:
+In order for the frontend to be able to communicate with the backend you will need to allow the frontend as an origin.
+This can be done by specifying the `--allowed-origins` flag when running the backend. 
+When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the backend command will look something like this:
 
 ```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+$ mlte backend --backend-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 Once you run it, go to the hosted address to view the `MLTE` UI homepage. For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
 
 ## Using a Relational DB Engine Backend
 
-To use a relational DB engine as a backend for the store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
+To use a relational DB engine as a store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
 To install your DB engine, you need to follow the specific instructions depending on the engine type. Usually the steps will include:
 1. Download the DB engine installer (e.g., for PostgreSQL, download it from https://www.postgresql.org/download/)
 1. Execute the installation as required for the DB engine.
 1. Ensure the DB engine is running.
-1. Create a user with DB creation permissions to be used by MLTE (or create a regular user, and create the DB for MLTE manually using a superuser).
+1. Create a user with DB creation permissions to be used by MLTE (or create a regular user, and create the DB for MLTE manually using a user that can do that).
 
-Then, you can just pass the URI for the DB backend when running the MLTE store, or when using `set_store` and using MLTE as a library.
+Then, you can just pass the URI for the DB store when running the MLTE backend, or when using `set_store` and using MLTE as a library.
 
-Example of running the store backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte`:
+Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte`:
 
 ```bash
-$ mlte store --backend-uri postgresql://mlte_user:mlte_pass@localhost/mlte --allowed-origins http://localhost:8000
+$ mlte backend --backend-uri postgresql://mlte_user:mlte_pass@localhost/mlte --allowed-origins http://localhost:8000
 ```
 
 Example for setting the store inside code when you are using MLTE as a library:
