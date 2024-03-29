@@ -82,13 +82,14 @@ class FileSystemUserStoreSession(UserStoreSession):
     def create_user(self, user: UserCreate) -> User:
         if self._user_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
+        return self._write_user(user)
 
-        new_user = convert_user_create_to_user(user)
-        self.storage.write_json_to_file(
-            self._user_path(new_user.username),
-            new_user.model_dump(),
-        )
-        return new_user
+    def edit_user(self, user: UserCreate) -> User:
+        if not self._user_path(user.username).exists():
+            raise errors.ErrorNotFound(f"User '{user.username}'")
+
+        # For this implementation, editing is just overwriting.
+        return self._write_user(user)
 
     def read_user(self, username: str) -> User:
         return self._read_user(username)
@@ -126,6 +127,15 @@ class FileSystemUserStoreSession(UserStoreSession):
         """
         self._ensure_user_exists(username)
         return User(**self.storage.read_json_file(self._user_path(username)))
+
+    def _write_user(self, user: UserCreate) -> User:
+        """Writes a user to storage."""
+        to_write_user = convert_user_create_to_user(user)
+        self.storage.write_json_to_file(
+            self._user_path(to_write_user.username),
+            to_write_user.model_dump(),
+        )
+        return to_write_user
 
     def _user_path(self, username: str) -> Path:
         """

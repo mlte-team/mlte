@@ -97,6 +97,21 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 session.commit()
                 return hashed_user
 
+    def edit_user(self, user: UserCreate) -> User:
+        with Session(self.engine) as session:
+            hashed_user = convert_user_create_to_user(user)
+            _, user_obj = DBReader.get_user(hashed_user.username, session)
+
+            # Update existing user.
+            user_obj.username = hashed_user.username
+            user_obj.email = hashed_user.email
+            user_obj.full_name = hashed_user.full_name
+            user_obj.disabled = hashed_user.disabled
+            user_obj.hashed_password = hashed_user.hashed_password
+            session.commit()
+
+            return hashed_user
+
     def read_user(self, username: str) -> User:
         with Session(self.engine) as session:
             user, _ = DBReader.get_user(username, session)

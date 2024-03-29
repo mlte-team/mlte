@@ -45,6 +45,7 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     store: UserStore = request.getfixturevalue(store_fixture_name)
 
     test_user = get_test_user()
+    email2 = "email2@server.com"
 
     with ManagedUserSession(store.session()) as handle:
         original_users = handle.list_users()
@@ -56,6 +57,11 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
         users = handle.list_users()
         assert len(users) == 1 + len(original_users)
+
+        test_user.email = email2
+        _ = handle.edit_user(test_user)
+        read_user = handle.read_user(test_user.username)
+        assert read_user.email == email2
 
         handle.delete_user(test_user.username)
 

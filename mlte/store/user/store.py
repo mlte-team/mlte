@@ -70,6 +70,14 @@ class UserStoreSession(StoreSession):
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
+    def edit_user(self, user: UserCreate) -> User:
+        """
+        Edit an existing user.
+        :param user: The data to edit the user
+        :return: The edited user
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
     def read_user(self, username: str) -> User:
         """
         Read a user.

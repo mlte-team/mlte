@@ -76,9 +76,18 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.storage.users[user.username] = stored_user
         return stored_user
 
+    def edit_user(self, user: UserCreate) -> User:
+        if user.username not in self.storage.users:
+            raise errors.ErrorNotFound(f"User {user.username}")
+
+        # For this implementation, editing is just overwriting.
+        stored_user = convert_user_create_to_user(user)
+        self.storage.users[user.username] = stored_user
+        return stored_user
+
     def read_user(self, username: str) -> User:
         if username not in self.storage.users:
-            raise errors.ErrorNotFound(f"Model {username}")
+            raise errors.ErrorNotFound(f"User {username}")
         return self.storage.users[username]
 
     def list_users(self) -> List[str]:
