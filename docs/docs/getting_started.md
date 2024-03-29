@@ -59,7 +59,10 @@ When ran through the mlte package, the frontend will be hosted at `http://localh
 $ mlte backend --backend-uri fs://store --allowed-origins http://localhost:8000
 ```
 
-Once you run it, go to the hosted address to view the `MLTE` UI homepage. For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
+Once you run it, go to the hosted address to view the `MLTE` UI homepage. You will need to log in to access the functionality in the UI. To start with you can
+use the default user, but you should change its password as a first step. You can later use the UI to set up new users as well.
+
+For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
 
 ## Using a Relational DB Engine Backend
 
