@@ -44,6 +44,69 @@ def test_create(
 
 
 @pytest.mark.parametrize("client_fixture", clients())
+def test_edit_no_pass(
+    client_fixture: str, request: pytest.FixtureRequest
+) -> None:  # noqa
+    """Users can be edited."""
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
+
+    user = get_test_user()
+    email2 = "user2@test.com"
+
+    # Create test user.
+    res = client.post(
+        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+    )
+    assert res.status_code == codes.OK
+
+    # Edit user.
+    user_w_pass = BasicUser(**user.model_dump())
+    user_w_pass.email = email2
+    res = client.put(
+        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user_w_pass.model_dump()
+    )
+    assert res.status_code == codes.OK
+
+    # Read it back.
+    res = client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}")
+    assert res.status_code == codes.OK
+    edited_user = BasicUser(**res.json())
+
+    assert edited_user.email == email2
+
+
+@pytest.mark.parametrize("client_fixture", clients())
+def test_edit_pass(
+    client_fixture: str, request: pytest.FixtureRequest
+) -> None:  # noqa
+    """Users can be edited."""
+    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
+
+    user = get_test_user()
+    email2 = "user2@test.com"
+
+    # Create test user.
+    res = client.post(
+        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+    )
+    assert res.status_code == codes.OK
+
+    # Edit user.
+    user.email = email2
+    res = client.put(
+        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+    )
+    assert res.status_code == codes.OK
+
+    # Read it back.
+    res = client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}")
+    assert res.status_code == codes.OK
+    edited_user = BasicUser(**res.json())
+
+    assert edited_user.email == email2
+
+
+@pytest.mark.parametrize("client_fixture", clients())
 def test_read(
     client_fixture: str, request: pytest.FixtureRequest
 ) -> None:  # noqa

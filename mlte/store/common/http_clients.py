@@ -46,6 +46,11 @@ class HttpClient:
     ) -> HttpResponse:
         raise NotImplementedError("post()")
 
+    def put(
+        self, url: str, data: Any = None, json: Any = None, **kwargs
+    ) -> HttpResponse:
+        raise NotImplementedError("put()")
+
     def delete(self, url: str, **kwargs) -> HttpResponse:
         raise NotImplementedError("delete()")
 
@@ -181,6 +186,17 @@ class RequestsClient(OAuthHttpClient):
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> requests.Response:
         return requests.post(
+            url,
+            headers=self.headers,
+            data=data,
+            json=json,
+            **kwargs,
+        )
+
+    def put(
+        self, url: str, data: Any = None, json: Any = None, **kwargs
+    ) -> requests.Response:
+        return requests.put(
             url,
             headers=self.headers,
             data=data,

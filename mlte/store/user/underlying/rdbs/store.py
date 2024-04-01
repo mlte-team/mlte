@@ -5,7 +5,7 @@ Implementation of relational database system user store.
 """
 from __future__ import annotations
 
-from typing import List
+from typing import List, Union
 
 import sqlalchemy
 import sqlalchemy.orm
@@ -18,8 +18,8 @@ from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
 from mlte.store.user.underlying.rdbs.metadata import DBBase, DBUser
 from mlte.store.user.underlying.rdbs.reader import DBReader
-from mlte.user.model import User, UserCreate
-from mlte.user.model_logic import convert_user_create_to_user
+from mlte.user.model import BasicUser, User, UserCreate
+from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
 # RelationalDBUserStore
@@ -85,7 +85,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
                 # Hash password and create a user with hashed passwords to be stored.
-                hashed_user = convert_user_create_to_user(user)
+                hashed_user = convert_to_hashed_user(user)
                 user_obj = DBUser(
                     username=hashed_user.username,
                     email=hashed_user.email,
@@ -97,20 +97,20 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 session.commit()
                 return hashed_user
 
-    def edit_user(self, user: UserCreate) -> User:
+    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
         with Session(self.engine) as session:
-            hashed_user = convert_user_create_to_user(user)
-            _, user_obj = DBReader.get_user(hashed_user.username, session)
+            curr_user, user_obj = DBReader.get_user(user.username, session)
+            updated_user = update_user(curr_user, user)
 
             # Update existing user.
-            user_obj.username = hashed_user.username
-            user_obj.email = hashed_user.email
-            user_obj.full_name = hashed_user.full_name
-            user_obj.disabled = hashed_user.disabled
-            user_obj.hashed_password = hashed_user.hashed_password
+            user_obj.username = updated_user.username
+            user_obj.email = updated_user.email
+            user_obj.full_name = updated_user.full_name
+            user_obj.disabled = updated_user.disabled
+            user_obj.hashed_password = updated_user.hashed_password
             session.commit()
 
-            return hashed_user
+            return updated_user
 
     def read_user(self, username: str) -> User:
         with Session(self.engine) as session:

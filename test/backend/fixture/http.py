@@ -44,17 +44,24 @@ class FastAPITestHttpClient(OAuthHttpClient):
         self.client = client
         """The underlying client."""
 
-    def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
+    def get(self, url: str, **kwargs) -> httpx.Response:
         return self.client.get(url, headers=self.headers, **kwargs)
 
-    def post(  # type: ignore[override]
+    def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> httpx.Response:
         return self.client.post(
             url, headers=self.headers, data=data, json=json, **kwargs
         )
 
-    def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
+    def put(
+        self, url: str, data: Any = None, json: Any = None, **kwargs
+    ) -> httpx.Response:
+        return self.client.put(
+            url, headers=self.headers, data=data, json=json, **kwargs
+        )
+
+    def delete(self, url: str, **kwargs) -> httpx.Response:
         return self.client.delete(url, headers=self.headers, **kwargs)
 
 

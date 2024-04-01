@@ -6,13 +6,13 @@ Implementation of in-memory user store.
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.user.model import User, UserCreate
-from mlte.user.model_logic import convert_user_create_to_user
+from mlte.user.model import BasicUser, User, UserCreate
+from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -72,18 +72,18 @@ class InMemoryUserStoreSession(UserStoreSession):
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
         # Create user with hashed passwords.
-        stored_user = convert_user_create_to_user(user)
+        stored_user = convert_to_hashed_user(user)
         self.storage.users[user.username] = stored_user
         return stored_user
 
-    def edit_user(self, user: UserCreate) -> User:
+    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
         if user.username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {user.username}")
 
-        # For this implementation, editing is just overwriting.
-        stored_user = convert_user_create_to_user(user)
-        self.storage.users[user.username] = stored_user
-        return stored_user
+        curr_user = self.storage.users[user.username]
+        updated_user = update_user(curr_user, user)
+        self.storage.users[user.username] = updated_user
+        return updated_user
 
     def read_user(self, username: str) -> User:
         if username not in self.storage.users:

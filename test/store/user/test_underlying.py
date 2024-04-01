@@ -8,7 +8,7 @@ import pytest
 
 import mlte.store.error as errors
 from mlte.store.user.store import ManagedUserSession, UserStore
-from mlte.user.model import UserCreate
+from mlte.user.model import BasicUser, UserCreate
 from mlte.user.model_logic import are_users_equal
 
 from .fixture import (  # noqa
@@ -46,24 +46,37 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
     test_user = get_test_user()
     email2 = "email2@server.com"
+    name2 = "new name"
 
     with ManagedUserSession(store.session()) as handle:
         original_users = handle.list_users()
 
+        # Test creating a user.
         handle.create_user(test_user)
-
         read_user = handle.read_user(test_user.username)
         assert are_users_equal(test_user, read_user)
 
+        # Test listing users.
         users = handle.list_users()
         assert len(users) == 1 + len(original_users)
 
+        # Test editing all user info.
         test_user.email = email2
         _ = handle.edit_user(test_user)
         read_user = handle.read_user(test_user.username)
         assert read_user.email == email2
 
-        handle.delete_user(test_user.username)
+        # Test editing user info w/out changing password.
+        hashed_password = read_user.hashed_password
+        test_user.password = "password that should be ignored"
+        test_user2 = BasicUser(**test_user.model_dump())
+        test_user2.full_name = name2
+        _ = handle.edit_user(test_user2)
+        read_user = handle.read_user(test_user2.username)
+        assert read_user.full_name == name2
+        assert read_user.hashed_password == hashed_password
 
+        # Test deleting a user.
+        handle.delete_user(test_user.username)
         with pytest.raises(errors.ErrorNotFound):
             handle.read_user(test_user.username)

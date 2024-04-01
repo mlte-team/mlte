@@ -6,7 +6,7 @@ which automatically removes the hashed password from the model returned.
 """
 from __future__ import annotations
 
-from typing import List
+from typing import List, Union
 
 from fastapi import APIRouter, HTTPException
 
@@ -44,6 +44,31 @@ def create_user(
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+
+@router.put("/user")
+def edit_user(
+    *,
+    user: Union[UserCreate, BasicUser],
+    current_user: AuthorizedUser,
+) -> BasicUser:
+    """
+    Edit a MLTE user.
+    :param user: The user to edit
+    :return: The edited user
+    """
+    with dependencies.user_store_session() as user_store:
+        try:
+            return user_store.edit_user(user)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception:
             raise HTTPException(

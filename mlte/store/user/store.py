@@ -6,11 +6,11 @@ MLTE user store interface implementation.
 
 from __future__ import annotations
 
-from typing import List, cast
+from typing import List, Union, cast
 
 from mlte.store import error
 from mlte.store.base import ManagedSession, Store, StoreSession
-from mlte.user.model import User, UserCreate
+from mlte.user.model import BasicUser, User, UserCreate
 
 DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = "admin1234"
@@ -70,7 +70,7 @@ class UserStoreSession(StoreSession):
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def edit_user(self, user: UserCreate) -> User:
+    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
         """
         Edit an existing user.
         :param user: The data to edit the user

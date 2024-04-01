@@ -6,14 +6,14 @@ Implementation of local file system artifact store.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.fs import JsonFileStorage, parse_root_path
 from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.user.model import User, UserCreate
-from mlte.user.model_logic import convert_user_create_to_user
+from mlte.user.model import BasicUser, User, UserCreate
+from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 BASE_USERS_FOLDER = "users"
 """Base fodler to store users in."""
@@ -82,14 +82,16 @@ class FileSystemUserStoreSession(UserStoreSession):
     def create_user(self, user: UserCreate) -> User:
         if self._user_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
-        return self._write_user(user)
 
-    def edit_user(self, user: UserCreate) -> User:
+        new_user = convert_to_hashed_user(user)
+        return self._write_user(new_user)
+
+    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
         if not self._user_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 
-        # For this implementation, editing is just overwriting.
-        return self._write_user(user)
+        updated_user = update_user(self._read_user(user.username), user)
+        return self._write_user(updated_user)
 
     def read_user(self, username: str) -> User:
         return self._read_user(username)
@@ -128,14 +130,13 @@ class FileSystemUserStoreSession(UserStoreSession):
         self._ensure_user_exists(username)
         return User(**self.storage.read_json_file(self._user_path(username)))
 
-    def _write_user(self, user: UserCreate) -> User:
+    def _write_user(self, user: User) -> User:
         """Writes a user to storage."""
-        to_write_user = convert_user_create_to_user(user)
         self.storage.write_json_to_file(
-            self._user_path(to_write_user.username),
-            to_write_user.model_dump(),
+            self._user_path(user.username),
+            user.model_dump(),
         )
-        return to_write_user
+        return user
 
     def _user_path(self, username: str) -> Path:
         """
