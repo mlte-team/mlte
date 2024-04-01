@@ -34,7 +34,7 @@ class HTTPTokenException(HTTPException):
         headers = {"Content-Type": "application/json;charset=UTF-8"}
         details = {}
         if error != "":
-            details = {error: error_decription}
+            details = {"error": error, "error_description": error_decription}
 
         super().__init__(
             status_code=status_code,

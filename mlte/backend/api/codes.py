@@ -22,5 +22,8 @@ NOT_FOUND = 404
 ALREADY_EXISTS = 409
 """HTTP 'Already Exists'"""
 
+UNPROCESSABLE_ENTITY = 422
+"""HTTP 'Unprocessable Entitiy'"""
+
 INTERNAL_ERROR = 500
 """HTTP 'Internal Server Error'"""

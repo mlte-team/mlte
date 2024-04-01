@@ -9,16 +9,10 @@ import sys
 from typing import List
 
 import uvicorn
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic.networks import HttpUrl
 
 import mlte.backend.app_factory as app_factory
 import mlte.backend.util.origins as util
-from mlte.backend.api.api import api_router
-from mlte.backend.api.auth.http_auth_exception import (
-    HTTPTokenException,
-    json_content_exception_handler,
-)
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.artifact import factory as artifact_store_factory
@@ -57,25 +51,7 @@ def run(
     _ = _validate_origins(allowed_origins)
 
     # The global FastAPI application
-    app = app_factory.create()
-
-    # Inject routes
-    app.include_router(api_router, prefix=settings.API_PREFIX)
-
-    # Attach middleware
-    # NOTE(Kyle): It is imporant middleware is applied AFTER routes are injected
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=allowed_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-    # Add proper exception handling for Token responses, to be OAuth compliant.
-    app.add_exception_handler(
-        HTTPTokenException, json_content_exception_handler  # type: ignore
-    )
+    app = app_factory.create(allowed_origins)
 
     # Initialize the backing artifact store instance
     store = artifact_store_factory.create_store(backend_uri)

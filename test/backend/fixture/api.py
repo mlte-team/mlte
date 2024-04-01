@@ -11,8 +11,6 @@ from fastapi import FastAPI
 
 import mlte.backend.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
-from mlte.backend.api.api import api_router
-from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.user.store import UserStore
 from mlte.user.model import UserCreate
@@ -35,7 +33,6 @@ def setup_api_with_mem_stores() -> FastAPI:
     state.set_user_store(user_store)
     state.set_artifact_store(artifact_store_creators.create_memory_store())
     app = app_factory.create()
-    app.include_router(api_router, prefix=settings.API_PREFIX)
     return app
 
 
