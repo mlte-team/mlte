@@ -15,6 +15,10 @@ from pydantic.networks import HttpUrl
 import mlte.backend.app_factory as app_factory
 import mlte.backend.util.origins as util
 from mlte.backend.api.api import api_router
+from mlte.backend.api.auth.http_auth_exception import (
+    HTTPTokenException,
+    json_content_exception_handler,
+)
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.artifact import factory as artifact_store_factory
@@ -66,6 +70,11 @@ def run(
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+    )
+
+    # Add proper exception handling for Token responses, to be OAuth compliant.
+    app.add_exception_handler(
+        HTTPTokenException, json_content_exception_handler  # type: ignore
     )
 
     # Initialize the backing artifact store instance

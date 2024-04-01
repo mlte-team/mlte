@@ -72,14 +72,16 @@ async def get_authorized_user(
         username = jwt.decode_user_token(token, settings.JWT_SECRET_KEY)
     except Exception:
         raise HTTPAuthException(
-            detail="Could not decode token properly", error="invalid_token"
+            error="invalid_token",
+            error_decription="Could not decode token properly",
         )
     user = None
     with dependencies.user_store_session() as handle:
         user = handle.read_user(username)
     if user is None:
         raise HTTPAuthException(
-            detail="Could not validate credentials", error="invalid_token"
+            error="invalid_token",
+            error_decription="Could not validate credentials",
         )
     if user.disabled:
         raise HTTPException(

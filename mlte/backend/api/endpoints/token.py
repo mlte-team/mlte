@@ -4,13 +4,13 @@ mlte/backend/api/endpoints/token.py
 Token endpoint.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
 
-from mlte.backend.api import codes, dependencies
+from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication, jwt
-from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
+from mlte.backend.api.auth.http_auth_exception import HTTPTokenException
 from mlte.backend.core.config import settings
 from mlte.model.base_model import BaseModel
 
@@ -66,17 +66,23 @@ async def login_for_access_token(
                 form_data.username, form_data.password, user_store_session
             )
             if not is_valid_user:
-                raise HTTPAuthException(detail="Incorrect username or password")
+                raise HTTPTokenException(
+                    error="invalid_grant",
+                    error_decription="Incorrect username or password",
+                )
             user = user_store_session.read_user(form_data.username)
     else:
-        raise HTTPException(
-            codes.BAD_REQUEST,
-            detail="unsupported_grant_type",
+        raise HTTPTokenException(
+            error="unsupported_grant_type",
+            error_decription=f"Grant type {form_data.grant_type} is not supported",
         )
 
     # Check if we were able to get a user's info properly.
     if user is None:
-        raise HTTPAuthException(detail="Could not load user details")
+        raise HTTPTokenException(
+            error="invalid_request",
+            error_decription="Could not load user details",
+        )
 
     # Create and return token using username as data.
     access_token = jwt.create_user_token(user.username, settings.JWT_SECRET_KEY)
