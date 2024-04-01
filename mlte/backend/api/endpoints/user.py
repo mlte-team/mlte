@@ -107,12 +107,37 @@ def list_users(
     current_user: AuthorizedUser,
 ) -> List[str]:
     """
-    List MLTE user.
+    List MLTE users.
     :return: A collection of usernames
     """
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.list_users()
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+
+@router.get("/users/details")
+def list_users_details(
+    current_user: AuthorizedUser,
+) -> List[BasicUser]:
+    """
+    List MLTE users, with details for each user.
+    :return: A collection of users with their details.
+    """
+    with dependencies.user_store_session() as user_store:
+        try:
+            detailed_users = []
+            usernames = user_store.list_users()
+            for username in usernames:
+                user_details = BasicUser(
+                    **user_store.read_user(username).model_dump()
+                )
+                detailed_users.append(user_details)
+            return detailed_users
         except Exception:
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,

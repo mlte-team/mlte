@@ -49,7 +49,6 @@ def create_token_response(access_token: jwt.Token) -> TokenResponse:
     )
 
 
-# TODO: Add support for other grant types.
 @router.post(f"{TOKEN_ENDPOINT_URL}")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
