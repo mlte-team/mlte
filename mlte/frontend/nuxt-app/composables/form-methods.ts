@@ -1,3 +1,7 @@
+export function alert400Error(message: string) {
+  alert(message);
+}
+
 export function successfulSubmission(
   artifactType: string,
   artifactName: string,

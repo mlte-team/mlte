@@ -1,7 +1,3 @@
-export function unsuccessfulLogin() {
-  alert("Incorrect username or password.");
-}
-
 export function confirmLogout() {
   const token = useCookie("token");
   if (

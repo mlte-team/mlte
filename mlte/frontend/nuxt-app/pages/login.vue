@@ -61,8 +61,8 @@ async function submit() {
         navigateTo("/");
       },
       onResponseError({ response }) {
-        if (response.status === 401) {
-          unsuccessfulLogin();
+        if (response.status === 400) {
+          alert400Error(response._data.invalid_grant);
         } else if (response.status === 409) {
           conflictErrorAlert();
         } else {
