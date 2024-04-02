@@ -334,7 +334,7 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     retry: 0,
     method: "GET",
     headers: {
-      Authorization: "Bearer " + token.value,
+      Authorization: "Bearer " + token.value
     },
     onRequestError() {
       requestErrorAlert();

@@ -7,12 +7,13 @@
           <th data-sortable scope="col" role="columnheader">Email</th>
           <th data-sortable scope="col" role="columnheader">Full Name</th>
           <th data-sortable scope="col" role="columnheader">Disabled</th>
+          <th data-sortable scope="col" role="columnheader">Password</th>
           <th scope="col" role="columnheader">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(user, index) in userList" :key="index">
-          <td v-if="!user.edit" class="input-box">
+          <td v-if="!user.newUser">
             {{ user.username }}
           </td>
           <td v-else>
@@ -40,29 +41,43 @@
               <UsaCheckbox v-model="user.disabled" />
             </div>
           </td>
-          <td>
+          <td v-if="!user.newUser">
+            *****
+          </td>
+          <td v-else>
+            <UsaTextInput v-model="user.password" class="input-box" />
+          </td>
+          <td v-if="!user.edit">
             <UsaButton
-              v-if="!user.edit"
               class="secondary-button"
-              @click="enableEdit(user)"
+              @click="editUser(user)"
             >
               Edit
+            </UsaButton>
+
+            <UsaButton @click="deleteUser(user.username)" class="usa-button usa-button--secondary">
+              Delete
+            </UsaButton>
+          </td>
+          <td v-else>
+            <UsaButton
+              class="secondary-button"
+              @click="cancelEdit(user)"
+            >
+              Cancel
             </UsaButton>
             <UsaButton
               v-if="user.edit"
               class="secondary-button"
-              @click="saveEdit(user)"
+              @click="saveUser(user)"
             >
               Save
-            </UsaButton>
-            <UsaButton class="usa-button usa-button--secondary">
-              Delete
             </UsaButton>
           </td>
         </tr>
       </tbody>
     </table>
-    <UsaButton class="primary-button" @click="addUser()"> Add User </UsaButton>
+    <UsaButton v-if="addUserButtonFlag" @click="addUser()" class="primary-button"> Add User </UsaButton>
   </NuxtLayout>
 </template>
 
@@ -70,6 +85,7 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
+const addUserButtonFlag = ref(true);
 const userList = ref<
   {
     username: string;
@@ -78,26 +94,46 @@ const userList = ref<
     disabled: boolean;
     password: string;
     edit: boolean;
+    newUser: boolean;
   }[]
 >([]);
 
-await useFetch(config.public.apiPath + "/users/details", {
-  retry: 0,
-  method: "GET",
-  headers: {
-    Authorization: "Bearer " + token.value,
-  },
-  onRequestError() {
-    requestErrorAlert();
-  },
-  onResponse({ response }) {
-    userList.value = response._data;
-    userList.value.forEach((user) => (user.edit = false));
-  },
-  onResponseError() {
-    responseErrorAlert();
-  },
-});
+updateUserList();
+
+async function updateUserList(){
+  await $fetch(config.public.apiPath + "/users/details", {
+    retry: 0,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse({ response }) {
+      userList.value = response._data;
+      userList.value.forEach((user) => (user.edit = false));
+      userList.value.forEach((user) => (user.newUser = false));
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
+}
+
+function editUser(user: any){
+  user.edit = true;
+}
+
+function cancelEdit(user: any){
+  if(user.newUser){
+    userList.value.pop();
+    addUserButtonFlag.value = true;
+  }
+  else{
+    user.edit = false;
+  }
+}
 
 function addUser() {
   userList.value.push({
@@ -107,24 +143,93 @@ function addUser() {
     disabled: false,
     password: "",
     edit: true,
+    newUser: true
   });
+
+  addUserButtonFlag.value = false;
 }
 
-function enableEdit(user: any) {
-  user.edit = true;
-}
+async function saveUser(user: any) {
+  if(user.newUser){
+    await $fetch(config.public.apiPath + "/user", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value
+      },
+      body: {
+        username: user.username,
+        email: user.email,
+        full_name: user.full_name,
+        disabled: user.disabled,
+        password: user.password
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        updateUserList();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    })
 
-function saveEdit(user: any) {
-  // TODO : Post to backend
+    addUserButtonFlag.value = true;
+  }
+  else {
+    await $fetch(config.public.apiPath + "/user", {
+      retry: 0,
+      method: "PUT",
+      body: {
+        username: user.username,
+        email: user.email,
+        full_name: user.full_name,
+        disabled: user.disabled,
+      },
+      headers: {
+        Authorization: "Bearer " + token.value
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        updateUserList();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      }
+    })
+  }
 
   user.edit = false;
 }
 
-function deleteUser(username: string) {}
+async function deleteUser(username: string) {
+  if (confirm("Are you sure you want to delete user, " + username + "?")){
+    await $fetch(config.public.apiPath + "/user/" + username, {
+      retry: 0,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token.value
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        console.log('deleted');
+        updateUserList();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    })
+  }
+}
 </script>
 
 <style>
 .input-box {
-  max-width: 10rem;
+  max-width: 7rem;
 }
 </style>

@@ -1,20 +1,22 @@
 <template>
   <NuxtLayout name="base-layout">
-    <div style="max-width: 30rem">
-      <h1 class="section-header">Login to MLTE</h1>
-      <UsaTextInput v-model="username" required type="text">
-        <template #label> Username </template>
-      </UsaTextInput>
-      <UsaTextInput v-model="password" required type="password">
-        <template #label> Password </template>
-      </UsaTextInput>
+    <form>
+      <div style="max-width: 30rem">
+        <h1 class="section-header">Login to MLTE</h1>
+        <UsaTextInput v-model="username" required type="text">
+          <template #label> Username </template>
+        </UsaTextInput>
+        <UsaTextInput v-model="password" required type="password">
+          <template #label> Password </template>
+        </UsaTextInput>
 
-      <div class="margin-button centered-container">
-        <UsaButton class="primary-button" @click.prevent="submit()">
-          Login
-        </UsaButton>
+        <div class="margin-button centered-container">
+          <UsaButton @click.prevent="submit()" type="submit" class="primary-button">
+            Login
+          </UsaButton>
+        </div>
       </div>
-    </div>
+    </form>
   </NuxtLayout>
 </template>
 
@@ -62,7 +64,7 @@ async function submit() {
       },
       onResponseError({ response }) {
         if (response.status === 400) {
-          alert400Error(response._data.invalid_grant);
+          alert400Error(response._data.error_description);
         } else if (response.status === 409) {
           conflictErrorAlert();
         } else {
