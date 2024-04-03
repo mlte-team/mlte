@@ -34,6 +34,11 @@
             >
               Logout
             </UsaButton>
+            <NuxtLink :to="{ path: 'user-management' }">
+              <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                Manage Users
+              </UsaButton>
+            </NuxtLink>
           </div>
         </div>
         <slot name="default" />
