@@ -11,7 +11,11 @@
         </UsaTextInput>
 
         <div class="margin-button centered-container">
-          <UsaButton @click.prevent="submit()" type="submit" class="primary-button">
+          <UsaButton
+            type="submit"
+            class="primary-button"
+            @click.prevent="submit()"
+          >
             Login
           </UsaButton>
         </div>

@@ -17,7 +17,11 @@
             {{ user.username }}
           </td>
           <td v-else>
-            <UsaTextInput v-model="user.username" type="email" class="input-box" />
+            <UsaTextInput
+              v-model="user.username"
+              type="email"
+              class="input-box"
+            />
           </td>
           <td v-if="!user.edit">
             {{ user.email }}
@@ -41,29 +45,24 @@
               <UsaCheckbox v-model="user.disabled" />
             </div>
           </td>
-          <td v-if="!user.newUser">
-            *****
-          </td>
+          <td v-if="!user.newUser">*****</td>
           <td v-else>
             <UsaTextInput v-model="user.password" class="input-box" />
           </td>
           <td v-if="!user.edit">
-            <UsaButton
-              class="secondary-button"
-              @click="editUser(user)"
-            >
+            <UsaButton class="secondary-button" @click="editUser(user)">
               Edit
             </UsaButton>
 
-            <UsaButton @click="deleteUser(user.username)" class="usa-button usa-button--secondary">
+            <UsaButton
+              class="usa-button usa-button--secondary"
+              @click="deleteUser(user.username)"
+            >
               Delete
             </UsaButton>
           </td>
           <td v-else>
-            <UsaButton
-              class="secondary-button"
-              @click="cancelEdit(user)"
-            >
+            <UsaButton class="secondary-button" @click="cancelEdit(user)">
               Cancel
             </UsaButton>
             <UsaButton
@@ -77,7 +76,13 @@
         </tr>
       </tbody>
     </table>
-    <UsaButton v-if="addUserButtonFlag" @click="addUser()" class="primary-button"> Add User </UsaButton>
+    <UsaButton
+      v-if="addUserButtonFlag"
+      class="primary-button"
+      @click="addUser()"
+    >
+      Add User
+    </UsaButton>
   </NuxtLayout>
 </template>
 
@@ -100,7 +105,7 @@ const userList = ref<
 
 updateUserList();
 
-async function updateUserList(){
+async function updateUserList() {
   await $fetch(config.public.apiPath + "/users/details", {
     retry: 0,
     method: "GET",
@@ -121,16 +126,15 @@ async function updateUserList(){
   });
 }
 
-function editUser(user: any){
+function editUser(user: any) {
   user.edit = true;
 }
 
-function cancelEdit(user: any){
-  if(user.newUser){
+function cancelEdit(user: any) {
+  if (user.newUser) {
     userList.value.pop();
     addUserButtonFlag.value = true;
-  }
-  else{
+  } else {
     user.edit = false;
   }
 }
@@ -143,15 +147,15 @@ function addUser() {
     disabled: false,
     password: "",
     edit: true,
-    newUser: true
+    newUser: true,
   });
 
   addUserButtonFlag.value = false;
 }
 
 async function saveUser(user: any) {
-  if(user.newUser){
-    if(user.username === "" || user.password === ""){
+  if (user.newUser) {
+    if (user.username === "" || user.password === "") {
       alert("Username and password are required.");
       return;
     }
@@ -160,14 +164,14 @@ async function saveUser(user: any) {
       retry: 0,
       method: "POST",
       headers: {
-        Authorization: "Bearer " + token.value
+        Authorization: "Bearer " + token.value,
       },
       body: {
         username: user.username,
         email: user.email,
         full_name: user.full_name,
         disabled: user.disabled,
-        password: user.password
+        password: user.password,
       },
       onRequestError() {
         requestErrorAlert();
@@ -177,12 +181,11 @@ async function saveUser(user: any) {
       },
       onResponseError() {
         responseErrorAlert();
-      }
-    })
+      },
+    });
 
     addUserButtonFlag.value = true;
-  }
-  else {
+  } else {
     await $fetch(config.public.apiPath + "/user", {
       retry: 0,
       method: "PUT",
@@ -193,7 +196,7 @@ async function saveUser(user: any) {
         disabled: user.disabled,
       },
       headers: {
-        Authorization: "Bearer " + token.value
+        Authorization: "Bearer " + token.value,
       },
       onRequestError() {
         requestErrorAlert();
@@ -203,32 +206,32 @@ async function saveUser(user: any) {
       },
       onResponseError() {
         responseErrorAlert();
-      }
-    })
+      },
+    });
   }
 
   user.edit = false;
 }
 
 async function deleteUser(username: string) {
-  if (confirm("Are you sure you want to delete user, " + username + "?")){
+  if (confirm("Are you sure you want to delete user, " + username + "?")) {
     await $fetch(config.public.apiPath + "/user/" + username, {
       retry: 0,
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + token.value
+        Authorization: "Bearer " + token.value,
       },
       onRequestError() {
         requestErrorAlert();
       },
       onResponse({ response }) {
-        console.log('deleted');
+        console.log("deleted");
         updateUserList();
       },
       onResponseError() {
         responseErrorAlert();
       },
-    })
+    });
   }
 }
 </script>
