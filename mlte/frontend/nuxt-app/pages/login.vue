@@ -63,7 +63,9 @@ async function submit() {
           Secure: true,
           maxAge: response?._data?.expires_in,
         });
+        const user = useCookie("user", { maxAge: response?._data?.expires_in });
         token.value = response?._data?.access_token;
+        user.value = username.value;
         navigateTo("/");
       },
       onResponseError({ response }) {

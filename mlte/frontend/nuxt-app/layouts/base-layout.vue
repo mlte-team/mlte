@@ -24,10 +24,17 @@
       </div>
 
       <div class="body-div">
-        <div v-if="token" class="logout-button">
-          <UsaButton class="secondary-button" @click.prevent="confirmLogout()">
-            Logout
-          </UsaButton>
+        <div v-if="token" class="logout-header">
+          <div class="centered-container">
+            Welcome, {{ user }}
+            <UsaButton
+              class="secondary-button"
+              style="margin-left: 0.5em"
+              @click.prevent="confirmLogout()"
+            >
+              Logout
+            </UsaButton>
+          </div>
         </div>
         <slot name="default" />
       </div>
@@ -65,6 +72,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const user = useCookie("user");
 const version = config.public.version;
 </script>
 
@@ -95,7 +103,7 @@ header {
   text-decoration: none;
 }
 
-.logout-button {
+.logout-header {
   display: flex;
   align-items: right;
   justify-content: right;

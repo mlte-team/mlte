@@ -89,6 +89,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const user = useCookie("user");
 
 const addUserButtonFlag = ref(true);
 const userList = ref<
@@ -214,7 +215,11 @@ async function saveUser(user: any) {
 }
 
 async function deleteUser(username: string) {
-  if (confirm("Are you sure you want to delete user, " + username + "?")) {
+  if (username === user.value) {
+    alert("Cannot delete the active user.");
+  } else if (
+    confirm("Are you sure you want to delete user, " + username + "?")
+  ) {
     await $fetch(config.public.apiPath + "/user/" + username, {
       retry: 0,
       method: "DELETE",
