@@ -17,7 +17,7 @@
             {{ user.username }}
           </td>
           <td v-else>
-            <UsaTextInput v-model="user.username" class="input-box" />
+            <UsaTextInput v-model="user.username" type="email" class="input-box" />
           </td>
           <td v-if="!user.edit">
             {{ user.email }}
@@ -151,6 +151,11 @@ function addUser() {
 
 async function saveUser(user: any) {
   if(user.newUser){
+    if(user.username === "" || user.password === ""){
+      alert("Username and password are required.");
+      return;
+    }
+
     await $fetch(config.public.apiPath + "/user", {
       retry: 0,
       method: "POST",
