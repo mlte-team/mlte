@@ -32,6 +32,13 @@ async def get_resource(request: Request) -> str:
     return resource
 
 
+def get_username_from_token(token: str, key: str) -> str:
+    """Obtains a user from an encoded token, if the token is valid."""
+    # Decode token, checking for format and expiration.
+    decoded_token = jwt.decode_user_token(token, key)
+    return decoded_token.username
+
+
 def is_authorized(current_user: BasicUser, resource: str) -> bool:
     """Checks if the current user is authorized to access the current resource."""
     # TODO: define resource names/actions as enum or similar
@@ -68,21 +75,26 @@ async def get_authorized_user(
     :param token: A JWT bearer access token with user information.
     :return: A User data structure, with a User that has access to the resources.
     """
+    # Validate token and get username.
     try:
-        decoded_token = jwt.decode_user_token(token, settings.JWT_SECRET_KEY)
-    except Exception:
+        username = get_username_from_token(token, settings.JWT_SECRET_KEY)
+    except Exception as ex:
         raise HTTPAuthException(
             error="invalid_token",
-            error_decription="Could not decode token properly",
+            error_decription=f"Could not decode token: {ex}",
         )
+
+    # Check if user in token exists.
     user = None
     with dependencies.user_store_session() as handle:
-        user = handle.read_user(decoded_token.username)
+        user = handle.read_user(username)
     if user is None:
         raise HTTPAuthException(
             error="invalid_token",
-            error_decription="Could not validate credentials",
+            error_decription="Username in token was not found.",
         )
+
+    # Check if user is enabled to be used.
     if user.disabled:
         raise HTTPException(
             status_code=codes.FORBIDDEN, detail="User is inactive"
