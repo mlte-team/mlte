@@ -40,7 +40,7 @@ class TokenResponse(BaseModel):
     """Lifetime in seconds of the token."""
 
 
-def create_token_response(access_token: jwt.Token) -> TokenResponse:
+def create_token_response(access_token: jwt.EncodedToken) -> TokenResponse:
     """Creates a Bearer Token response with the given access token."""
     return TokenResponse(
         access_token=access_token.encoded_token,

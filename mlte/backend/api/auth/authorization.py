@@ -69,7 +69,7 @@ async def get_authorized_user(
     :return: A User data structure, with a User that has access to the resources.
     """
     try:
-        username = jwt.decode_user_token(token, settings.JWT_SECRET_KEY)
+        decoded_token = jwt.decode_user_token(token, settings.JWT_SECRET_KEY)
     except Exception:
         raise HTTPAuthException(
             error="invalid_token",
@@ -77,7 +77,7 @@ async def get_authorized_user(
         )
     user = None
     with dependencies.user_store_session() as handle:
-        user = handle.read_user(username)
+        user = handle.read_user(decoded_token.username)
     if user is None:
         raise HTTPAuthException(
             error="invalid_token",
