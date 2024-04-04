@@ -67,20 +67,27 @@ async def login_for_access_token(
             if not is_valid_user:
                 raise HTTPTokenException(
                     error="invalid_grant",
-                    error_decription="Incorrect username or password",
+                    error_decription="Incorrect username or password.",
                 )
             user = user_store_session.read_user(form_data.username)
     else:
         raise HTTPTokenException(
             error="unsupported_grant_type",
-            error_decription=f"Grant type {form_data.grant_type} is not supported",
+            error_decription=f"Grant type {form_data.grant_type} is not supported.",
         )
 
     # Check if we were able to get a user's info properly.
     if user is None:
         raise HTTPTokenException(
             error="invalid_request",
-            error_decription="Could not load user details",
+            error_decription="Could not load user details.",
+        )
+
+    # Check if user is enabled to get tokens and access system.
+    if user.disabled:
+        raise HTTPTokenException(
+            error="invalid_request",
+            error_decription="User is inactive.",
         )
 
     # Create and return token using username as data.
