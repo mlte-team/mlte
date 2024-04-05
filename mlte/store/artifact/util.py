@@ -16,7 +16,7 @@ def create_parents(
 ) -> None:
     """
     Create organizational elements within a store. If they exist, this operation is a noop.
-    :param store: The store instance in which elements are created
+    :param session: The store instance in which elements are created
     :param model_id: The model identifier
     :param version_id: The version identifier
     """

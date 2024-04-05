@@ -33,9 +33,7 @@ class Measurement(metaclass=abc.ABCMeta):
         Initialize a new Measurement instance.
 
         :param instance: The invoking instance (Measurement subclass)
-        :type instance: Measurement
         :param identifier: A unique identifier for the instance
-        :type identifier: str
         """
         self.metadata = EvidenceMetadata(
             measurement_type=type(instance).__name__,

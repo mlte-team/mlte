@@ -25,7 +25,7 @@ class Integer(Value):
     def __init__(self, metadata: EvidenceMetadata, value: int):
         """
         Initialize an Integer instance.
-        :param identifier: An identifier for the value
+        :param metadata: The generating measurement's metadata
         :param value: The integer value
         """
         assert isinstance(value, int), "Argument must be `int`."
@@ -85,10 +85,7 @@ class Integer(Value):
         Determine if integer is strictly less than `value`.
 
         :param value: The threshold value
-        :type value: int
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda integer: Success(
@@ -107,10 +104,7 @@ class Integer(Value):
         Determine if integer is less than or equal to `value`.
 
         :param value: The threshold value
-        :type value: int
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda integer: Success(

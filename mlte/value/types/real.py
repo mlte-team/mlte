@@ -83,10 +83,7 @@ class Real(Value):
         Determine if real is strictly less than `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -105,10 +102,7 @@ class Real(Value):
         Determine if real is less than or equal to `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -128,10 +122,7 @@ class Real(Value):
         Determine if real is strictly greater than `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -150,10 +141,7 @@ class Real(Value):
         Determine if real is greater than or equal to `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(

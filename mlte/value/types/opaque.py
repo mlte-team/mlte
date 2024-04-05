@@ -24,7 +24,7 @@ class Opaque(Value):
     def __init__(self, metadata: EvidenceMetadata, data: Dict[str, Any]):
         """
         Initialize an Opaque instance.
-        :param evidence_metadata: The generating measurement's metadata
+        :param metadata: The generating measurement's metadata
         :param data: The output of the measurement
         """
         super().__init__(self, metadata)

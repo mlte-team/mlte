@@ -27,7 +27,7 @@ class Array(Value):
         """
         Initialize an Array instance.
         :param metadata: The generating measurement's metadata
-        :param value: The numpy array.
+        :param array: The numpy array.
         """
         super().__init__(self, metadata)
 

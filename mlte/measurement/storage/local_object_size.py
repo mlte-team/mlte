@@ -19,7 +19,6 @@ class LocalObjectSize(Measurement):
         Initialize a new LocalObjectSize measurement.
 
         :param identifier: A unique identifier for the measurement
-        :type identifier: str
         """
         super().__init__(self, identifier)
 
@@ -28,10 +27,8 @@ class LocalObjectSize(Measurement):
         Compute the size of the object at `path`.
 
         :param path: The path to the object
-        :type path: str
 
         :return: The size of the object, in bytes
-        :rtype: Integer
         """
         if not os.path.isfile(path) and not os.path.isdir(path):
             raise RuntimeError(f"Invalid path: {path}")

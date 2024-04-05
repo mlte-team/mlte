@@ -26,11 +26,8 @@ class ExternalMeasurement(Measurement):
         Initialize a new ExternalMeasurement measurement.
 
         :param identifier: A unique identifier for the instance
-        :type identifier: str
         :param value_type: The type of the Value this measurement will return.
-        :type value_type: Type
         :param function: The function to be used when evaluating.
-        :type function: Optional[Callable]
         """
         super().__init__(self, identifier)
 

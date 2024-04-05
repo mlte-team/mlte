@@ -42,13 +42,9 @@ class MemoryStatistics(ValueBase):
         Initialize a MemoryStatistics instance.
 
         :param evidence_metadata: The generating measurement's metadata
-        :type evidence_metadata: EvidenceMetadata
         :param avg: The average memory consumption, in KB
-        :type avg: int
         :param min: The minimum memory consumption, in KB
-        :type avg: int
         :param max: The maximum memory consumption, in KB
-        :type max: int
         """
         super().__init__(self, evidence_metadata)
 
@@ -77,7 +73,7 @@ class MemoryStatistics(ValueBase):
         Deserialize an MemoryStatistics from a JSON object.
 
         :param evidence_metadata: The generating measurement's metadata
-        :param json: The JSON object
+        :param data: The JSON object
 
         :return: The deserialized instance
         """
@@ -102,10 +98,8 @@ class MemoryStatistics(ValueBase):
         Construct and invoke a condition for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption, in KB
-        :type threshold: int
 
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda stats: Success(
@@ -128,10 +122,8 @@ class MemoryStatistics(ValueBase):
         Construct and invoke a condition for average memory consumption.
 
         :param threshold: The threshold value for average consumption, in KB
-        :type threshold: int
 
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda stats: Success(
@@ -162,7 +154,6 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         Initialize a LocalProcessMemoryConsumption instance.
 
         :param identifier: A unique identifier for the measurement
-        :type identifier: str
         """
         super().__init__(self, identifier)
 
@@ -171,12 +162,8 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         Monitor memory consumption of process at `pid` until exit.
 
         :param pid: The process identifier
-        :type pid: int
         :param poll_interval: The poll interval, in seconds
-        :type poll_interval: int
-
         :return: The captured statistics
-        :rtype: MemoryStatistics
         """
         stats = []
         while True:
@@ -209,10 +196,7 @@ def _get_memory_usage_pmap(pid: int) -> int:
     Get the current memory usage for the process with `pid`.
 
     :param pid: The identifier of the process
-    :type pid: int
-
     :return: The current memory usage in KB
-    :rtype: int
     """
     # sudo pmap 917 | tail -n 1 | awk '/[0-9]K/{print $2}'
     try:
@@ -245,7 +229,6 @@ def _get_memory_usage_psutil(pid: int) -> int:
     Get the current memory usage for the process with `pid`.
 
     :param pid: The identifier of the process
-
     :return: The current memory usage in KB
     """
     try:
