@@ -157,10 +157,10 @@ Now the environment is set up and the front end can be run with the following co
 $ npm run dev
 ```
 
-This will run the front end at `http://localhost:3000` so be sure to specify that as an allowed origin when running the store:
+This will run the front end at `http://localhost:3000` so be sure to specify that as an allowed origin when running the backend. The backend can be run with a command like this (using a file system store, in the local ./store folder):
 
 ```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:3000
+$ mlte backend --backend-uri fs://store --allowed-origins http://localhost:3000
 ```
 
 ### Front End Formatting and Linting
@@ -267,7 +267,7 @@ docker run --rm -p 8080:8080 mlte-backend
 This binds the backend to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The store implementation writes data to `/mnt/store` within the container. We can utilize a <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">bind mount</a> to extend the life of this data beyond the life of the container:
 
 ```bash
-docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
+docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-backend
 ```
 
 ## Python Version Support
