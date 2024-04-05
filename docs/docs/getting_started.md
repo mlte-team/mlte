@@ -60,7 +60,12 @@ $ mlte backend --backend-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 Once you run it, go to the hosted address to view the `MLTE` UI homepage. You will need to log in to access the functionality in the UI. To start with you can
-use the default user, but you should change its password as a first step. You can later use the UI to set up new users as well.
+use the default user. You can later use the UI to set up new users as well.
+
+NOTE: you should change the default user's password as soon as you can, if you are not on a local setup.
+
+* Default user: admin
+* Default password: admin1234
 
 For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
 
@@ -69,6 +74,7 @@ For more information on how to use the UI, see our how-to guide on [using `MLTE`
 To use a relational DB engine as a store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
 To install your DB engine, you need to follow the specific instructions depending on the engine type. Usually the steps will include:
+
 1. Download the DB engine installer (e.g., for PostgreSQL, download it from https://www.postgresql.org/download/)
 1. Execute the installation as required for the DB engine.
 1. Ensure the DB engine is running.

@@ -16,13 +16,13 @@ Instead of activating the environment, you can also choose to use `poetry run` t
 
 Now you are ready to start working on `MLTE`!
 
-## Project Commands
+## Project Development Commands
 
 You can run most project commands (to format sources, lint, etc.), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
 Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `source .venv/bin/activate` (see above), you can run all the commands below without the `poetry run` prefix.
 
-## Import Sorting
+### Import Sorting
 
 We sort all Python imports code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
 
@@ -39,7 +39,7 @@ $ poetry run isort test/
 
 Code that does not satisfy the formatter will be rejected from pull requests.
 
-## Source Formatting
+### Source Formatting
 
 We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
 
@@ -56,7 +56,7 @@ $ poetry run black test/
 
 Code that does not satisfy the formatter will be rejected from pull requests.
 
-## Source Linting
+### Source Linting
 
 We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
@@ -73,7 +73,7 @@ $ poetry run flake8 test/
 
 Code that does not satisfy the linter will be rejected from pull requests.
 
-## Static Type Checking
+### Static Type Checking
 
 We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
 
@@ -90,7 +90,7 @@ $ poetry run mypy test/
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
 
-## Unit Tests
+### Unit Tests
 
 We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
@@ -106,7 +106,7 @@ $ poetry run pytest test
 
 Unit tests failures result in build failures in CI.
 
-## Model Schema Generation
+### Model Schema Generation
 
 The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
 
@@ -122,7 +122,7 @@ $ poetry run python tools/schema.py generate mlte --verbose
 
 Unit tests failures result in build failures in CI.
 
-## Make Shorthand Commands
+### Make Shorthand Commands
 
 There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
 
@@ -190,18 +190,22 @@ We maintain a separate set of requirements for building the documentation under 
 
 ```bash
 $ cd docs
-$ python -m venv env
-$ source ./env/bin/activate
+$ python -m venv .venv
+$ source ./.venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-Now you can build the documentation with:
+Now you can build and serve the documentation with:
 
 ```bash
 $ mkdocs serve
 ```
 
-## Versioning
+You can preview the documentation accessing <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> on your browser.
+
+## Versioning and Publishing
+
+### Versioning
 
 We follow semantic versioning when versioning the `MLTE` package. We use <a href="https://github.com/c4urself/bump2version" target="_blank">`bump2version`</a> to consistently update versions across the project. A configuration file is provided in `.bumpversion.cfg` at the root of the project.
 
@@ -217,7 +221,7 @@ where `patch` may be replaced with `minor` or `major` as appropriate for the rel
 $ bumpversion --allow-dirty patch
 ```
 
-## Publishing
+### Publishing
 
 We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
@@ -245,28 +249,28 @@ Publish the package to `PyPi` using a PyPi API token:
 $ poetry publish --username __token__ --password <TOKEN>
 ```
 
-### Docker Integration
+## Docker Integration
 
-We package the `MLTE` artifact store as a Docker container image. To build the image from the source repository, run:
+We package the `MLTE` backend as a Docker container image. To build the image from the source repository, run:
 
 ```bash
 # From the repository root
-docker build . -f docker/Dockerfile.store -t mlte-store
+docker build . -f docker/Dockerfile.backend -t mlte-backend
 ```
 
 Run the container with:
 
 ```bash
-docker run --rm -p 8080:8080 mlte-store
+docker run --rm -p 8080:8080 mlte-backend
 ```
 
-This binds the artifact store to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The artifact store implementation writes data to `/mnt/store` within the container. We can utilize a <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">bind mount</a> to extend the life of this data beyond the life of the container:
+This binds the backend to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The store implementation writes data to `/mnt/store` within the container. We can utilize a <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">bind mount</a> to extend the life of this data beyond the life of the container:
 
 ```bash
 docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-store
 ```
 
-## Development Dependencies
+## Python Version Support
 
 Currently, `MLTE` supports the following Python versions:
 
@@ -292,7 +296,7 @@ python --version
 Python 3.8.16
 ```
 
-With the proper version activated, use `poetry` as described in the QuickStart to create a virtual environment and install dependencies.
+With the proper version activated, use `poetry` as described in the QuickStart section to create a virtual environment and install dependencies.
 
 ```bash
 # Check QA mechanisms
