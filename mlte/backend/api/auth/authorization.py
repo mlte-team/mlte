@@ -13,6 +13,7 @@ from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
+from mlte.backend.state import state
 from mlte.user.model import BasicUser
 
 # -----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ async def get_authorized_user(
     """
     # Validate token and get username.
     try:
-        username = get_username_from_token(token, settings.JWT_SECRET_KEY)
+        username = get_username_from_token(token, state.token_key)
     except Exception as ex:
         raise HTTPAuthException(
             error="invalid_token",

@@ -72,6 +72,12 @@ def _attach_backend_parser(
         default=settings.ALLOWED_ORIGINS,
         help=f"A list of allowed CORS origins (default: {settings.ALLOWED_ORIGINS})",
     )
+    parser.add_argument(
+        "--jwt-secret",
+        type=str,
+        default=settings.JWT_SECRET_KEY,
+        help="A secret random string key used to sign tokens",
+    )
 
 
 def _attach_frontend_parser(

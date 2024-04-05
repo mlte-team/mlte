@@ -20,6 +20,9 @@ class State:
         self._user_store: Optional[UserStore] = None
         """The user store instance maintained by the state object."""
 
+        self._jwt_secret_key: str = ""
+        """Secret key used to sign authentication tokens."""
+
     def set_artifact_store(self, store: ArtifactStore):
         """Set the globally-configured backend artifact store."""
         self._artifact_store = store
@@ -27,6 +30,10 @@ class State:
     def set_user_store(self, store: UserStore):
         """Set the globally-configured backend artifact store."""
         self._user_store = store
+
+    def set_token_key(self, token_key: str):
+        """Sets the globally used token secret key."""
+        self._jwt_secret_key = token_key
 
     @property
     def artifact_store(self) -> ArtifactStore:
@@ -41,6 +48,13 @@ class State:
         if self._user_store is None:
             raise RuntimeError("User store is not configured.")
         return self._user_store
+
+    @property
+    def token_key(self) -> str:
+        """Get the globally-configured token secret key."""
+        if self._jwt_secret_key == "":
+            raise RuntimeError("Token key has not been configured.")
+        return self._jwt_secret_key
 
 
 # Globally-accessible application state

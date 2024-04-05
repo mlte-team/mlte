@@ -20,6 +20,9 @@ TEST_API_USER = "api_user"
 TEST_API_PASS = "api_pass"
 """User and passwords added to test the API."""
 
+TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
+"""JWT token secret used for signing tokens."""
+
 
 def setup_api_with_mem_stores() -> FastAPI:
     """Setup API, configure to use memory artifact store and create app itself."""
@@ -32,6 +35,7 @@ def setup_api_with_mem_stores() -> FastAPI:
     # Set the API state and app.
     state.set_user_store(user_store)
     state.set_artifact_store(artifact_store_creators.create_memory_store())
+    state.set_token_key(TEST_JWT_TOKEN_SECRET)
     app = app_factory.create()
     return app
 

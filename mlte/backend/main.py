@@ -35,7 +35,11 @@ def _validate_origins(allowed_origins: List[str]) -> List[HttpUrl]:
 
 
 def run(
-    host: str, port: int, backend_uri: str, allowed_origins: List[str]
+    host: str,
+    port: int,
+    backend_uri: str,
+    allowed_origins: List[str],
+    jwt_secret: str,
 ) -> int:
     """
     Run the artifact store application.
@@ -43,11 +47,11 @@ def run(
     :param port: The application port
     :param backend_uri: The backend URI string
     :param allowed_origins: A list of allowed CORS origins
+    :param jwt_secret: A secret random string key used to sign tokens
     :return: Return code
     """
-    # Resolve hosts
+    # Resolve hosts and validate resolved origins.
     allowed_origins = util.resolve_hosts(allowed_origins)
-    # Validate resolved origins
     _ = _validate_origins(allowed_origins)
 
     # The global FastAPI application
@@ -66,6 +70,9 @@ def run(
     user_store = user_store_factory.create_store(backend_uri)
     state.set_user_store(user_store)
 
+    # Set the token signing key.
+    state.set_token_key(jwt_secret)
+
     # Run the server
     uvicorn.run(app, host=host, port=port)
     return EXIT_SUCCESS
@@ -79,6 +86,7 @@ def main() -> int:
         int(settings.APP_PORT),
         settings.BACKEND_URI,
         settings.ALLOWED_ORIGINS,
+        settings.JWT_SECRET_KEY,
     )
 
 

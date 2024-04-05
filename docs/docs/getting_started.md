@@ -59,6 +59,8 @@ When ran through the mlte package, the frontend will be hosted at `http://localh
 $ mlte backend --backend-uri fs://store --allowed-origins http://localhost:8000
 ```
 
+In real deployments, you should define a new secret to be used for token signing, instead of the default one. This can be done by either creating and .env file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`, or passing it as a command line argument with `--jwt-secret`.
+
 Once you run it, go to the hosted address to view the `MLTE` UI homepage. You will need to log in to access the functionality in the UI. To start with you can
 use the default user. You can later use the UI to set up new users as well.
 
