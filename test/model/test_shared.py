@@ -131,6 +131,7 @@ def test_data_descriptor() -> None:
             description="description",
             classification=DataClassification.UNCLASSIFIED,
             access="access",
+            labeling_method="by hand",
             fields=[
                 FieldDescriptor(
                     name="name",

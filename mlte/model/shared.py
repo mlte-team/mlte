@@ -212,6 +212,9 @@ class DataDescriptor(BaseModel):
     access: Optional[str] = None
     """A description of the manner in which this data is accessed."""
 
+    labeling_method: Optional[str] = None
+    """A description of how the data was labeled."""
+
     labels: List[LabelDescriptor] = []
     """A description of the labels that appear in the dataset."""
 

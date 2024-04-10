@@ -206,6 +206,7 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 description="description",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
+                labeling_method="by hand",
                 fields=[
                     FieldDescriptor(
                         name="name",
@@ -340,6 +341,7 @@ def make_complete_report() -> ReportModel:
                 description="description",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
+                labeling_method="by hand",
                 fields=[
                     FieldDescriptor(
                         name="name",

@@ -77,6 +77,7 @@ def test_valid_instance() -> None:
                 description="description",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
+                labeling_method="by hand",
                 fields=[
                     FieldDescriptor(
                         name="name",

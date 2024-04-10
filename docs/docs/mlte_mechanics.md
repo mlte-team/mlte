@@ -834,6 +834,7 @@ report = Report(
             description="Flower dataset.",
             classification=DataClassification.UNCLASSIFIED,
             access="None",
+            labeling_method="by hand",
             fields=[
                 FieldDescriptor(
                     name="Sepal length",

@@ -226,6 +226,7 @@ class DBDataDescriptor(DBBase):
     description: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
     access: Mapped[Optional[str]]
+    labeling_method: Mapped[Optional[str]]
     rights: Mapped[Optional[str]]
     policies: Mapped[Optional[str]]
     classification_id: Mapped[int] = mapped_column(

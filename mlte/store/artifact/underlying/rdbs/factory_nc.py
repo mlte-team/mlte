@@ -285,6 +285,7 @@ def _build_data_descriptor_obj(
         description=data_descriptor.description,
         source=data_descriptor.source,
         access=data_descriptor.access,
+        labeling_method=data_descriptor.labeling_method,
         rights=data_descriptor.rights,
         policies=data_descriptor.policies,
         classification=class_obj,
@@ -347,6 +348,7 @@ def _build_data_descriptors(
                 data_descriptor.classification.name
             ),
             access=data_descriptor.access,
+            labeling_method=data_descriptor.labeling_method,
             rights=data_descriptor.rights,
             policies=data_descriptor.policies,
             labels=[
