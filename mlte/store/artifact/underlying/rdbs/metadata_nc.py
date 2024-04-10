@@ -64,7 +64,8 @@ class DBNegotiationCard(DBBase):
         cascade="all",
         foreign_keys=[model_dev_resources_id],
     )
-    model_prod_integration: Mapped[Optional[str]]
+    model_prod_deployment_platform: Mapped[Optional[str]]
+    model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
     model_prod_interface_input_desc: Mapped[Optional[str]]
     model_prod_interface_output_desc: Mapped[Optional[str]]
     model_prod_resources_id: Mapped[int] = mapped_column(
@@ -117,7 +118,10 @@ class DBReport(DBBase):
 
     # Intended use
     intended_usage_context: Mapped[Optional[str]]
-    intended_reqs_model_prod_integration: Mapped[Optional[str]]
+    intended_reqs_model_prod_deployment_platform: Mapped[Optional[str]]
+    intended_reqs_model_prod_capability_deployment_mechanism: Mapped[
+        Optional[str]
+    ]
     intended_reqs_model_prod_interface_input_desc: Mapped[Optional[str]]
     intended_reqs_model_prod_interface_output_desc: Mapped[Optional[str]]
     intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(

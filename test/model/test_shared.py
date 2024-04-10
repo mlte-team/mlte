@@ -240,7 +240,8 @@ def test_model_production_descriptor() -> None:
     """A model production descriptor model can be serialized and deserialized."""
     objects = [
         ModelProductionDescriptor(
-            integration="integration",
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
                 input=ModelInputDescriptor(description="description"),
                 output=ModelOutputDescriptor(description="description"),
@@ -268,7 +269,8 @@ def test_model_descriptor() -> None:
                 )
             ),
             production=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
                     input=ModelInputDescriptor(description="description"),
                     output=ModelOutputDescriptor(description="description"),

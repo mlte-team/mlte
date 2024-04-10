@@ -79,7 +79,8 @@ def test_intended_use() -> None:
         IntendedUseDescriptor(
             usage_context="context",
             production_requirements=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
                     input=ModelInputDescriptor(description="description"),
                     output=ModelOutputDescriptor(description="output"),

@@ -62,6 +62,18 @@
           "default": null,
           "title": "Access"
         },
+        "labeling_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labeling Method"
+        },
         "labels": {
           "default": [],
           "items": {
@@ -311,7 +323,8 @@
             }
           ],
           "default": {
-            "integration": null,
+            "deployment_platform": null,
+            "capability_deployment_mechanism": null,
             "interface": {
               "input": {
                 "description": null
@@ -420,7 +433,7 @@
     "ModelProductionDescriptor": {
       "description": "A descriptor for model production considerations.",
       "properties": {
-        "integration": {
+        "deployment_platform": {
           "anyOf": [
             {
               "type": "string"
@@ -430,7 +443,19 @@
             }
           ],
           "default": null,
-          "title": "Integration"
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
         },
         "interface": {
           "allOf": [
@@ -691,7 +716,8 @@
           }
         },
         "production": {
-          "integration": null,
+          "capability_deployment_mechanism": null,
+          "deployment_platform": null,
           "interface": {
             "input": {
               "description": null

@@ -127,8 +127,11 @@ class ModelDevelopmentDescriptor(BaseModel):
 class ModelProductionDescriptor(BaseModel):
     """A descriptor for model production considerations."""
 
-    integration: Optional[str] = None
-    """A description of the manner in which the model is integrated with the system."""
+    deployment_platform: Optional[str] = None
+    """A description of the platform used to deploy the model into the system."""
+
+    capability_deployment_mechanism: Optional[str] = None
+    """A description of how the model capabilities will be made available."""
 
     interface: ModelInterfaceDescriptor = ModelInterfaceDescriptor()
     """A description of the model interface."""

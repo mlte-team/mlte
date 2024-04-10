@@ -814,7 +814,8 @@ report = Report(
     intended_use=IntendedUseDescriptor(
         usage_context="A handheld flower identification device.",
         production_requirements=ModelProductionDescriptor(
-            integration="integration",
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
                 input=ModelInputDescriptor(description="Vector[150]"),
                 output=ModelOutputDescriptor(description="Vector[3]"),

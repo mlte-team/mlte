@@ -236,7 +236,8 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 )
             ),
             production=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
                     input=ModelInputDescriptor(description="description"),
                     output=ModelOutputDescriptor(description="description"),
@@ -325,7 +326,8 @@ def make_complete_report() -> ReportModel:
         intended_use=IntendedUseDescriptor(
             usage_context="context",
             production_requirements=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
                     input=ModelInputDescriptor(description="description"),
                     output=ModelOutputDescriptor(description="output"),

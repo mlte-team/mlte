@@ -91,7 +91,8 @@ def create_negotiation_db_from_model(
         sys_risks_other=negotiation_card.system.risks.other,
         model_dev_resources=model_dev_resources_obj,
         model_prod_resources=model_prod_resources_obj,
-        model_prod_integration=negotiation_card.model.production.integration,
+        model_prod_deployment_platform=negotiation_card.model.production.deployment_platform,
+        model_prod_capability_deployment_mechanism=negotiation_card.model.production.capability_deployment_mechanism,
         model_prod_interface_input_desc=negotiation_card.model.production.interface.input.description,
         model_prod_interface_output_desc=negotiation_card.model.production.interface.output.description,
         data_descriptors=[],
@@ -134,7 +135,8 @@ def create_negotiation_model_from_db(
                 resources=_build_resources(negotiation_obj.model_dev_resources)
             ),
             production=_build_model_prod_descriptor(
-                negotiation_obj.model_prod_integration,
+                negotiation_obj.model_prod_deployment_platform,
+                negotiation_obj.model_prod_capability_deployment_mechanism,
                 negotiation_obj.model_prod_interface_input_desc,
                 negotiation_obj.model_prod_interface_output_desc,
                 negotiation_obj.model_prod_resources,
@@ -182,7 +184,8 @@ def create_report_db_from_model(
         else None,
         performance_goals=[],
         intended_usage_context=report.intended_use.usage_context,
-        intended_reqs_model_prod_integration=report.intended_use.production_requirements.integration,
+        intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
+        intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
         intended_reqs_model_prod_interface_input_desc=report.intended_use.production_requirements.interface.input.description,
         intended_reqs_model_prod_interface_output_desc=report.intended_use.production_requirements.interface.output.description,
         intended_reqs_model_prod_resources=model_prod_resources_obj,
@@ -230,7 +233,8 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
         intended_use=IntendedUseDescriptor(
             usage_context=report_obj.intended_usage_context,
             production_requirements=_build_model_prod_descriptor(
-                report_obj.intended_reqs_model_prod_integration,
+                report_obj.intended_reqs_model_prod_deployment_platform,
+                report_obj.intended_reqs_model_prod_capability_deployment_mechanism,
                 report_obj.intended_reqs_model_prod_interface_input_desc,
                 report_obj.intended_reqs_model_prod_interface_output_desc,
                 report_obj.intended_reqs_model_prod_resources,
@@ -376,13 +380,15 @@ def _build_data_descriptors(
 
 
 def _build_model_prod_descriptor(
-    integration: Optional[str],
+    deployment_platform: Optional[str],
+    capability_deployment_mechanism: Optional[str],
     input: Optional[str],
     output: Optional[str],
     resources: Optional[DBModelResourcesDescriptor],
 ) -> ModelProductionDescriptor:
     return ModelProductionDescriptor(
-        integration=integration,
+        deployment_platform=deployment_platform,
+        capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
             input=ModelInputDescriptor(description=input),
             output=ModelOutputDescriptor(description=output),

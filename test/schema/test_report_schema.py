@@ -61,7 +61,8 @@ def test_valid_instance() -> None:
         intended_use=IntendedUseDescriptor(
             usage_context="context",
             production_requirements=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
                     input=ModelInputDescriptor(description="description"),
                     output=ModelOutputDescriptor(description="output"),
