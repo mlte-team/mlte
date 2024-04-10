@@ -4,11 +4,9 @@ test/schema/test_report_schema.py
 Unit tests for report schema validation.
 """
 
-import typing
-
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 from mlte.report.artifact import Report
-from test.fixture.artifact import make_complete_report
+from test.fixture.artifact import ArtifactFactory
 
 from . import util as util
 
@@ -23,9 +21,7 @@ def test_empty_instance() -> None:
 
 def test_valid_instance() -> None:
     """A complete instance validates successfully."""
-    report_model: ArtifactModel = typing.cast(
-        ArtifactModel, make_complete_report()
-    )
-    report = Report.from_model(report_model)
+    artifact_model = ArtifactFactory.make(ArtifactType.REPORT, id="id0")
+    report = Report.from_model(artifact_model)
     doc = report.to_model().to_json()
     util.validate_report_schema(doc["body"])
