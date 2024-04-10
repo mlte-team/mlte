@@ -217,7 +217,11 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                     )
                 ],
                 labels=[
-                    LabelDescriptor(description="description", percentage=95.0)
+                    LabelDescriptor(
+                        name="label1",
+                        description="description",
+                        percentage=95.0,
+                    )
                 ],
                 policies="policies",
                 rights="rights",
@@ -347,7 +351,11 @@ def make_complete_report() -> ReportModel:
                     )
                 ],
                 labels=[
-                    LabelDescriptor(description="description", percentage=95.0)
+                    LabelDescriptor(
+                        name="label1",
+                        description="description",
+                        percentage=95.0,
+                    )
                 ],
                 policies="policies",
                 rights="rights",

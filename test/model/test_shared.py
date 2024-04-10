@@ -93,7 +93,9 @@ def test_risk_descriptor() -> None:
 def test_data_label_descriptor() -> None:
     """A data label descriptor model can be serialized and deserialized."""
     objects = [
-        LabelDescriptor(description="description", percentage=95.0),
+        LabelDescriptor(
+            name="label1", description="description", percentage=95.0
+        ),
         LabelDescriptor(),
     ]
     for object in objects:
@@ -140,7 +142,9 @@ def test_data_descriptor() -> None:
                 )
             ],
             labels=[
-                LabelDescriptor(description="description", percentage=95.0)
+                LabelDescriptor(
+                    name="label1", description="description", percentage=95.0
+                )
             ],
             policies="policies",
             rights="rights",

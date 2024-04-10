@@ -88,7 +88,11 @@ def test_valid_instance() -> None:
                     )
                 ],
                 labels=[
-                    LabelDescriptor(description="description", percentage=95.0)
+                    LabelDescriptor(
+                        name="label1",
+                        description="description",
+                        percentage=95.0,
+                    )
                 ],
                 policies="policies",
                 rights="rights",

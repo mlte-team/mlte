@@ -165,6 +165,9 @@ class DataClassification(str, Enum):
 class LabelDescriptor(BaseModel):
     """Describes a dataset label."""
 
+    name: Optional[str] = None
+    """The name of the label."""
+
     description: Optional[str] = None
     """A description of the label."""
 

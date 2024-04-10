@@ -272,6 +272,18 @@
     "LabelDescriptor": {
       "description": "Describes a dataset label.",
       "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
         "description": {
           "anyOf": [
             {

@@ -262,6 +262,7 @@ class DBLabelDescriptor(DBBase):
     __tablename__ = "nc_label_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     percentage: Mapped[Optional[float]]
     data_descriptor_id: Mapped[int] = mapped_column(
@@ -273,7 +274,7 @@ class DBLabelDescriptor(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"LabelDescriptor(id={self.id!r}, description={self.description!r}, description={self.percentage!r})"
+        return f"LabelDescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, description={self.percentage!r})"
 
 
 class DBFieldDescriptor(DBBase):

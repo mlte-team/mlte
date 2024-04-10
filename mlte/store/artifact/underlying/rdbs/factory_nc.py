@@ -293,7 +293,9 @@ def _build_data_descriptor_obj(
     )
     for label in data_descriptor.labels:
         label_obj = DBLabelDescriptor(
-            description=label.description, percentage=label.percentage
+            name=label.name,
+            description=label.description,
+            percentage=label.percentage,
         )
         data_obj.labels.append(label_obj)
     for field in data_descriptor.fields:
@@ -349,6 +351,7 @@ def _build_data_descriptors(
             policies=data_descriptor.policies,
             labels=[
                 LabelDescriptor(
+                    name=label.name,
                     description=label.description,
                     percentage=label.percentage,
                 )
