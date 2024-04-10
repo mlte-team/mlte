@@ -93,7 +93,6 @@ def test_valid_instance() -> None:
                 policies="policies",
                 rights="rights",
                 source="source",
-                identifiable_information="identifiable_information",
             )
         ],
         comments=[CommentDescriptor(content="content")],

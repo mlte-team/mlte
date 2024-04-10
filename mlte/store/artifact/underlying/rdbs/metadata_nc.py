@@ -228,7 +228,6 @@ class DBDataDescriptor(DBBase):
     access: Mapped[Optional[str]]
     rights: Mapped[Optional[str]]
     policies: Mapped[Optional[str]]
-    identifiable_information: Mapped[Optional[str]]
     classification_id: Mapped[int] = mapped_column(
         ForeignKey("nc_data_classification.id")
     )
@@ -246,7 +245,7 @@ class DBDataDescriptor(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"DataDescriptor(id={self.id!r}, description={self.description!r}, source={self.source!r}, access={self.access!r}, rights={self.rights!r}, policies={self.policies!r}, identifiable_information={self.identifiable_information!r})"
+        return f"DataDescriptor(id={self.id!r}, description={self.description!r}, source={self.source!r}, access={self.access!r}, rights={self.rights!r}, policies={self.policies!r})"
 
 
 class DBDataClassification(DBBase):

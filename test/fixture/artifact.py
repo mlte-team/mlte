@@ -222,7 +222,6 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 policies="policies",
                 rights="rights",
                 source="source",
-                identifiable_information="identifiable_information",
             )
         ],
         model=ModelDescriptor(
@@ -353,7 +352,6 @@ def make_complete_report() -> ReportModel:
                 policies="policies",
                 rights="rights",
                 source="source",
-                identifiable_information="identifiable_information",
             )
         ],
         comments=[CommentDescriptor(content="content")],

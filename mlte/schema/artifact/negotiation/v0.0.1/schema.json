@@ -101,18 +101,6 @@
           ],
           "default": null,
           "title": "Policies"
-        },
-        "identifiable_information": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Identifiable Information"
         }
       },
       "title": "DataDescriptor",

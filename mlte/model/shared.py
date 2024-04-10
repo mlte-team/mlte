@@ -220,6 +220,3 @@ class DataDescriptor(BaseModel):
 
     policies: Optional[str] = None
     """A description of the policies that govern use of this data."""
-
-    identifiable_information: Optional[str] = None
-    """A description of personaly-identifiable information considerations for this dataset."""

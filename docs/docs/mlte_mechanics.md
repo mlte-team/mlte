@@ -852,7 +852,6 @@ report = Report(
             policies="N/A",
             rights="N/A",
             source="https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
-            identifiable_information="N/A",
         )
     ],
     comments=[

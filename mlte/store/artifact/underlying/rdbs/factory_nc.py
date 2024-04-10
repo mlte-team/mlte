@@ -287,7 +287,6 @@ def _build_data_descriptor_obj(
         access=data_descriptor.access,
         rights=data_descriptor.rights,
         policies=data_descriptor.policies,
-        identifiable_information=data_descriptor.identifiable_information,
         classification=class_obj,
         labels=[],
         fields=[],
@@ -348,7 +347,6 @@ def _build_data_descriptors(
             access=data_descriptor.access,
             rights=data_descriptor.rights,
             policies=data_descriptor.policies,
-            identifiable_information=data_descriptor.identifiable_information,
             labels=[
                 LabelDescriptor(
                     description=label.description,
