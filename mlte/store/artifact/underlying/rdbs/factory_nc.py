@@ -42,6 +42,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     DBGoalDescriptor,
     DBLabelDescriptor,
     DBMetricDescriptor,
+    DBModelIODescriptor,
     DBModelResourcesDescriptor,
     DBNegotiationCard,
     DBReport,
@@ -77,6 +78,16 @@ def create_negotiation_db_from_model(
         memory=negotiation_card.model.production.resources.memory,
         storage=negotiation_card.model.production.resources.storage,
     )
+    model_input_desc_obj = DBModelIODescriptor(
+        name=negotiation_card.model.production.interface.input.name,
+        description=negotiation_card.model.production.interface.input.description,
+        type=negotiation_card.model.production.interface.input.type,
+    )
+    model_output_desc_obj = DBModelIODescriptor(
+        name=negotiation_card.model.production.interface.output.name,
+        description=negotiation_card.model.production.interface.output.description,
+        type=negotiation_card.model.production.interface.output.type,
+    )
 
     # Create the actual object.
     negotiation_card_obj = DBNegotiationCard(
@@ -92,8 +103,8 @@ def create_negotiation_db_from_model(
         model_prod_resources=model_prod_resources_obj,
         model_prod_deployment_platform=negotiation_card.model.production.deployment_platform,
         model_prod_capability_deployment_mechanism=negotiation_card.model.production.capability_deployment_mechanism,
-        model_prod_interface_input_desc=negotiation_card.model.production.interface.input.description,
-        model_prod_interface_output_desc=negotiation_card.model.production.interface.output.description,
+        model_prod_interface_input_desc=model_input_desc_obj,
+        model_prod_interface_output_desc=model_output_desc_obj,
         data_descriptors=[],
     )
 
@@ -168,6 +179,16 @@ def create_report_db_from_model(
         memory=report.intended_use.production_requirements.resources.memory,
         storage=report.intended_use.production_requirements.resources.storage,
     )
+    model_input_desc_obj = DBModelIODescriptor(
+        name=report.intended_use.production_requirements.interface.input.name,
+        description=report.intended_use.production_requirements.interface.input.description,
+        type=report.intended_use.production_requirements.interface.input.type,
+    )
+    model_output_desc_obj = DBModelIODescriptor(
+        name=report.intended_use.production_requirements.interface.output.name,
+        description=report.intended_use.production_requirements.interface.output.description,
+        type=report.intended_use.production_requirements.interface.output.type,
+    )
 
     # Create the actual object.
     report_obj = DBReport(
@@ -185,8 +206,8 @@ def create_report_db_from_model(
         intended_usage_context=report.intended_use.usage_context,
         intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
         intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
-        intended_reqs_model_prod_interface_input_desc=report.intended_use.production_requirements.interface.input.description,
-        intended_reqs_model_prod_interface_output_desc=report.intended_use.production_requirements.interface.output.description,
+        intended_reqs_model_prod_interface_input_desc=model_input_desc_obj,
+        intended_reqs_model_prod_interface_output_desc=model_output_desc_obj,
         intended_reqs_model_prod_resources=model_prod_resources_obj,
         risks_fp=report.risks.fp,
         risks_fn=report.risks.fn,
@@ -381,16 +402,26 @@ def _build_data_descriptors(
 def _build_model_prod_descriptor(
     deployment_platform: Optional[str],
     capability_deployment_mechanism: Optional[str],
-    input: Optional[str],
-    output: Optional[str],
+    input: Optional[DBModelIODescriptor],
+    output: Optional[DBModelIODescriptor],
     resources: Optional[DBModelResourcesDescriptor],
 ) -> ModelProductionDescriptor:
     return ModelProductionDescriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            input=ModelIODescriptor(description=input),
-            output=ModelIODescriptor(description=output),
+            input=ModelIODescriptor(
+                name=input.name, description=input.description, type=input.type
+            )
+            if input is not None
+            else ModelIODescriptor(),
+            output=ModelIODescriptor(
+                name=output.name,
+                description=output.description,
+                type=output.type,
+            )
+            if output is not None
+            else ModelIODescriptor(),
         ),
         resources=_build_resources(resources),
     )

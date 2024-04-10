@@ -94,10 +94,16 @@ class ModelResourcesDescriptor(BaseModel):
 
 
 class ModelIODescriptor(BaseModel):
-    """A description of the model input or otput specification."""
+    """A description of the model input or output specification."""
+
+    name: Optional[str] = None
+    """A name for the input or output."""
 
     description: Optional[str] = None
-    """A textual description of the specification."""
+    """A textual description of the input or output."""
+
+    type: Optional[str] = None
+    """A description of the type of data for this input or output."""
 
 
 class ModelInterfaceDescriptor(BaseModel):

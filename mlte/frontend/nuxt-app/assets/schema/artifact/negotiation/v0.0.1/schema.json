@@ -327,10 +327,14 @@
             "capability_deployment_mechanism": null,
             "interface": {
               "input": {
-                "description": null
+                "description": null,
+                "name": null,
+                "type": null
               },
               "output": {
-                "description": null
+                "description": null,
+                "name": null,
+                "type": null
               }
             },
             "resources": {
@@ -366,8 +370,20 @@
       "type": "object"
     },
     "ModelIODescriptor": {
-      "description": "A description of the model input or otput specification.",
+      "description": "A description of the model input or output specification.",
       "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
         "description": {
           "anyOf": [
             {
@@ -379,6 +395,18 @@
           ],
           "default": null,
           "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
         }
       },
       "title": "ModelIODescriptor",
@@ -394,7 +422,9 @@
             }
           ],
           "default": {
-            "description": null
+            "name": null,
+            "description": null,
+            "type": null
           }
         },
         "output": {
@@ -404,7 +434,9 @@
             }
           ],
           "default": {
-            "description": null
+            "name": null,
+            "description": null,
+            "type": null
           }
         }
       },
@@ -446,10 +478,14 @@
           ],
           "default": {
             "input": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             },
             "output": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             }
           }
         },
@@ -701,10 +737,14 @@
           "deployment_platform": null,
           "interface": {
             "input": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             },
             "output": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             }
           },
           "resources": {

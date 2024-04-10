@@ -66,8 +66,27 @@ class DBNegotiationCard(DBBase):
     )
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
-    model_prod_interface_input_desc: Mapped[Optional[str]]
-    model_prod_interface_output_desc: Mapped[Optional[str]]
+
+    model_prod_interface_input_desc_id: Mapped[int] = mapped_column(
+        ForeignKey("nc_model_io.id")
+    )
+    model_prod_interface_input_desc: Mapped[
+        Optional[DBModelIODescriptor]
+    ] = relationship(
+        cascade="all",
+        foreign_keys=[model_prod_interface_input_desc_id],
+    )
+
+    model_prod_interface_output_desc_id: Mapped[int] = mapped_column(
+        ForeignKey("nc_model_io.id")
+    )
+    model_prod_interface_output_desc: Mapped[
+        Optional[DBModelIODescriptor]
+    ] = relationship(
+        cascade="all",
+        foreign_keys=[model_prod_interface_output_desc_id],
+    )
+
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
@@ -122,8 +141,27 @@ class DBReport(DBBase):
     intended_reqs_model_prod_capability_deployment_mechanism: Mapped[
         Optional[str]
     ]
-    intended_reqs_model_prod_interface_input_desc: Mapped[Optional[str]]
-    intended_reqs_model_prod_interface_output_desc: Mapped[Optional[str]]
+
+    intended_reqs_model_prod_interface_input_desc_id: Mapped[
+        int
+    ] = mapped_column(ForeignKey("nc_model_io.id"))
+    intended_reqs_model_prod_interface_input_desc: Mapped[
+        Optional[DBModelIODescriptor]
+    ] = relationship(
+        cascade="all",
+        foreign_keys=[intended_reqs_model_prod_interface_input_desc_id],
+    )
+
+    intended_reqs_model_prod_interface_output_desc_id: Mapped[
+        int
+    ] = mapped_column(ForeignKey("nc_model_io.id"))
+    intended_reqs_model_prod_interface_output_desc: Mapped[
+        Optional[DBModelIODescriptor]
+    ] = relationship(
+        cascade="all",
+        foreign_keys=[intended_reqs_model_prod_interface_output_desc_id],
+    )
+
     intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
@@ -302,6 +340,22 @@ class DBFieldDescriptor(DBBase):
 
     def __repr__(self) -> str:
         return f"LabelDescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r}, expected_values={self.expected_values!r}, missing_values={self.missing_values!r}, special_values={self.special_values!r})"
+
+
+class DBModelIODescriptor(DBBase):
+    __tablename__ = "nc_model_io"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[Optional[str]]
+    description: Mapped[Optional[str]]
+    type: Mapped[Optional[str]]
+    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("negotiation_card.id")
+    )
+    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
+
+    def __repr__(self) -> str:
+        return f"ModelIODescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r})"
 
 
 class DBModelResourcesDescriptor(DBBase):
