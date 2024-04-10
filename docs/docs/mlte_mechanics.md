@@ -776,8 +776,7 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelProductionDescriptor,
     ModelInterfaceDescriptor,
-    ModelInputDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelResourcesDescriptor,
     RiskDescriptor,
     DataDescriptor,
@@ -817,8 +816,8 @@ report = Report(
             deployment_platform="local server",
             capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
-                input=ModelInputDescriptor(description="Vector[150]"),
-                output=ModelOutputDescriptor(description="Vector[3]"),
+                input=ModelIODescriptor(description="Vector[150]"),
+                output=ModelIODescriptor(description="Vector[3]"),
             ),
             resources=ModelResourcesDescriptor(
                 cpu="1", gpu="0", memory="6MiB", storage="2KiB"

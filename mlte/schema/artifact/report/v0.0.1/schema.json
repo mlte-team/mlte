@@ -356,8 +356,8 @@
       "title": "MetricDescriptor",
       "type": "object"
     },
-    "ModelInputDescriptor": {
-      "description": "A description of the model input specification.",
+    "ModelIODescriptor": {
+      "description": "A description of the model input or otput specification.",
       "properties": {
         "description": {
           "anyOf": [
@@ -372,7 +372,7 @@
           "title": "Description"
         }
       },
-      "title": "ModelInputDescriptor",
+      "title": "ModelIODescriptor",
       "type": "object"
     },
     "ModelInterfaceDescriptor": {
@@ -381,7 +381,7 @@
         "input": {
           "allOf": [
             {
-              "$ref": "#/$defs/ModelInputDescriptor"
+              "$ref": "#/$defs/ModelIODescriptor"
             }
           ],
           "default": {
@@ -391,7 +391,7 @@
         "output": {
           "allOf": [
             {
-              "$ref": "#/$defs/ModelOutputDescriptor"
+              "$ref": "#/$defs/ModelIODescriptor"
             }
           ],
           "default": {
@@ -400,25 +400,6 @@
         }
       },
       "title": "ModelInterfaceDescriptor",
-      "type": "object"
-    },
-    "ModelOutputDescriptor": {
-      "description": "A description of the model output specification.",
-      "properties": {
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
-        }
-      },
-      "title": "ModelOutputDescriptor",
       "type": "object"
     },
     "ModelProductionDescriptor": {

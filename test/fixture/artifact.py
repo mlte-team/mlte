@@ -22,9 +22,8 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
     ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
@@ -239,8 +238,8 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelInputDescriptor(description="description"),
-                    output=ModelOutputDescriptor(description="description"),
+                    input=ModelIODescriptor(description="description"),
+                    output=ModelIODescriptor(description="description"),
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu",
@@ -329,8 +328,8 @@ def make_complete_report() -> ReportModel:
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelInputDescriptor(description="description"),
-                    output=ModelOutputDescriptor(description="output"),
+                    input=ModelIODescriptor(description="description"),
+                    output=ModelIODescriptor(description="output"),
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"

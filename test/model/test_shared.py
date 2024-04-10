@@ -17,9 +17,8 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
     ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     RiskDescriptor,
@@ -182,26 +181,13 @@ def test_model_resources_descriptor() -> None:
 def test_model_input_descriptor() -> None:
     """A model input descriptor model can be serialized and deserialized."""
     objects = [
-        ModelInputDescriptor(description="description"),
-        ModelInputDescriptor(),
+        ModelIODescriptor(description="description"),
+        ModelIODescriptor(),
     ]
 
     for object in objects:
         s = object.to_json()
-        d = ModelInputDescriptor.from_json(s)
-        assert d == object
-
-
-def test_model_output_descriptor() -> None:
-    """A model output descriptor model can be serialized and deserialized."""
-    objects = [
-        ModelOutputDescriptor(description="description"),
-        ModelOutputDescriptor(),
-    ]
-
-    for object in objects:
-        s = object.to_json()
-        d = ModelOutputDescriptor.from_json(s)
+        d = ModelIODescriptor.from_json(s)
         assert d == object
 
 
@@ -209,8 +195,8 @@ def test_model_interface_descriptor() -> None:
     """A model interface descriptor model can be serialized and deserialized."""
     objects = [
         ModelInterfaceDescriptor(
-            input=ModelInputDescriptor(description="description"),
-            output=ModelOutputDescriptor(description="description"),
+            input=ModelIODescriptor(description="description"),
+            output=ModelIODescriptor(description="description"),
         ),
         ModelInterfaceDescriptor(),
     ]
@@ -243,8 +229,8 @@ def test_model_production_descriptor() -> None:
             deployment_platform="local server",
             capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
-                input=ModelInputDescriptor(description="description"),
-                output=ModelOutputDescriptor(description="description"),
+                input=ModelIODescriptor(description="description"),
+                output=ModelIODescriptor(description="description"),
             ),
             resources=ModelResourcesDescriptor(
                 cpu="cpu", gpu="gpu", memory="memory", storage="storage"
@@ -272,8 +258,8 @@ def test_model_descriptor() -> None:
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelInputDescriptor(description="description"),
-                    output=ModelOutputDescriptor(description="description"),
+                    input=ModelIODescriptor(description="description"),
+                    output=ModelIODescriptor(description="description"),
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"

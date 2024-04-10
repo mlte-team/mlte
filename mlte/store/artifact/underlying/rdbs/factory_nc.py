@@ -18,9 +18,8 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
     ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
@@ -390,8 +389,8 @@ def _build_model_prod_descriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            input=ModelInputDescriptor(description=input),
-            output=ModelOutputDescriptor(description=output),
+            input=ModelIODescriptor(description=input),
+            output=ModelIODescriptor(description=output),
         ),
         resources=_build_resources(resources),
     )

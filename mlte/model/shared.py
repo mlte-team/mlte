@@ -93,27 +93,20 @@ class ModelResourcesDescriptor(BaseModel):
     """A description of model storage requirements."""
 
 
-class ModelInputDescriptor(BaseModel):
-    """A description of the model input specification."""
+class ModelIODescriptor(BaseModel):
+    """A description of the model input or otput specification."""
 
     description: Optional[str] = None
-    """A textual description of the input specification."""
-
-
-class ModelOutputDescriptor(BaseModel):
-    """A description of the model output specification."""
-
-    description: Optional[str] = None
-    """A textual description of the output specification."""
+    """A textual description of the specification."""
 
 
 class ModelInterfaceDescriptor(BaseModel):
     """A description of the model interface."""
 
-    input: ModelInputDescriptor = ModelInputDescriptor()
+    input: ModelIODescriptor = ModelIODescriptor()
     """The model input specification."""
 
-    output: ModelOutputDescriptor = ModelOutputDescriptor()
+    output: ModelIODescriptor = ModelIODescriptor()
     """The model output specification."""
 
 
