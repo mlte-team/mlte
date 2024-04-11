@@ -2,6 +2,7 @@ const config = useRuntimeConfig();
 
 // Fetch a artifact by ID.
 export async function fetchArtifact(
+  token: string,
   model: string,
   version: string,
   artifactId: string,
@@ -17,6 +18,9 @@ export async function fetchArtifact(
     {
       retry: 0,
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
       onRequestError() {
         requestErrorAlert();
       },

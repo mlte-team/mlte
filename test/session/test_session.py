@@ -8,20 +8,21 @@ import pytest
 
 from mlte.session import session, set_context, set_store
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreURIPrefix
 
 from ..store.artifact.fixture import (  # noqa
+    artifact_stores,
     fs_store,
     http_store,
     memory_store,
     rdbs_store,
-    stores,
 )
 
 
 def test_session() -> None:
     model = "model"
     version = "v0.0.1"
-    uri = "memory://"
+    uri = StoreURIPrefix.LOCAL_MEMORY[0]
 
     set_context(model, version)
     set_store(uri)
@@ -33,7 +34,7 @@ def test_session() -> None:
     assert s.store.uri.uri == uri
 
 
-@pytest.mark.parametrize("store_fixture_name", stores())
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_eager_context_creation(
     store_fixture_name: str, request: pytest.FixtureRequest
 ) -> None:

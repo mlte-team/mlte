@@ -21,7 +21,7 @@ from mlte.store.base import ManagedSession, Store, StoreSession
 
 class ArtifactStore(Store):
     """
-    An abstract store.
+    An abstract artifact store.
 
     A Store instance is the "static" part of a store configuration.
     In contrast, a StoreSession represents an active session with the store.
@@ -61,7 +61,7 @@ class ArtifactStoreSession(StoreSession):
         """
         Read a MLTE model.
         :param model_id: The identifier for the model
-        :return: The model model
+        :return: The model
         """
         raise NotImplementedError(
             "Cannot invoke method on abstract ArtifactStoreSession."

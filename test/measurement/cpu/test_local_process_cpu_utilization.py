@@ -20,8 +20,8 @@ from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Failure, Success
+from test.store.artifact.fixture import store_with_context  # noqa
 
-from ...fixture.store import store_with_context  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds

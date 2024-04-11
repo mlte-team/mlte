@@ -12,8 +12,7 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.value.artifact import Value
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
-
-from ..fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_load_all(

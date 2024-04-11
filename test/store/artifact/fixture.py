@@ -6,110 +6,59 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
-import typing
-from typing import Any, Generator, Tuple
+from typing import Generator, Tuple
 
-import httpx
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy.pool import StaticPool
 
-import mlte.web.store.app_factory as app_factory
 from mlte.artifact.type import ArtifactType
-from mlte.store.artifact.factory import create_store
+from mlte.context.context import Context
+from mlte.context.model.model import ModelCreate, VersionCreate
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
-from mlte.store.artifact.underlying.http import (
-    ClientType,
-    RemoteHttpStore,
-    RemoteHttpStoreClient,
-)
+from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
-from mlte.store.base import StoreURI
-from mlte.web.store.api.api import api_router
-from mlte.web.store.core.config import settings
-from mlte.web.store.state import state
+from test.backend.fixture.http import setup_API_and_test_client
+from test.store.artifact import artifact_store_creators
 
 _STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
-class TestclientCient(RemoteHttpStoreClient):
-    def __init__(self, client: TestClient) -> None:
-        super().__init__(ClientType.TESTCLIENT)
-
-        self.client = client
-        """The underlying client."""
-
-    def get(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.get(url, **kwargs)
-
-    def post(  # type: ignore[override]
-        self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
-        return self.client.post(url, data=data, json=json, **kwargs)
-
-    def delete(self, url: str, **kwargs) -> httpx.Response:  # type: ignore[override]
-        return self.client.delete(url, **kwargs)
-
-
 @pytest.fixture(scope="function")
-def http_store() -> RemoteHttpStore:
+def http_store() -> HttpArtifactStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    # Configure the backing store
-    state.set_store(create_memory_store())
-
-    # Configure the application
-    app = app_factory.create()
-    app.include_router(api_router, prefix=settings.API_PREFIX)
-
-    # Return a remote store that is able to hit the app
-    client = TestClient(app)
-    store = RemoteHttpStore(
-        uri=StoreURI.from_string(str(client.base_url)),
-        client=TestclientCient(client),
+    # Set an in memory store and get a test http client, configured for the app.
+    client = setup_API_and_test_client()
+    return artifact_store_creators.create_http_store(
+        username=client.username,
+        password=client.password,
+        uri=str(client.client.base_url),
+        client=client,
     )
-    return store
-
-
-def create_memory_store() -> InMemoryStore:
-    return typing.cast(InMemoryStore, create_store("memory://"))
 
 
 @pytest.fixture(scope="function")
 def memory_store() -> InMemoryStore:
     """A fixture for an in-memory store."""
-    return create_memory_store()
-
-
-def create_fs_store(tmp_path) -> LocalFileSystemStore:
-    return typing.cast(
-        LocalFileSystemStore, create_store(f"local://{tmp_path}")
-    )
+    return artifact_store_creators.create_memory_store()
 
 
 @pytest.fixture(scope="function")
 def fs_store(tmp_path) -> LocalFileSystemStore:
     """A fixture for an local FS store."""
-    return create_fs_store(tmp_path)
-
-
-def create_rdbs_store() -> RelationalDBStore:
-    return RelationalDBStore(
-        StoreURI.from_string("sqlite+pysqlite:///:memory:"),
-        poolclass=StaticPool,
-    )
+    return artifact_store_creators.create_fs_store(tmp_path)
 
 
 @pytest.fixture(scope="function")
 def rdbs_store() -> RelationalDBStore:
     """A fixture for an in-memory RDBS store."""
-    return create_rdbs_store()
+    return artifact_store_creators.create_rdbs_store()
 
 
-def stores() -> Generator[str, None, None]:
+def artifact_stores() -> Generator[str, None, None]:
     """
     Yield store fixture names.
     :return: Store fixture name
@@ -118,7 +67,9 @@ def stores() -> Generator[str, None, None]:
         yield store_fixture_name
 
 
-def stores_and_types() -> Generator[Tuple[str, ArtifactType, bool], None, None]:
+def artifact_stores_and_types() -> (
+    Generator[Tuple[str, ArtifactType, bool], None, None]
+):
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)
@@ -127,3 +78,24 @@ def stores_and_types() -> Generator[Tuple[str, ArtifactType, bool], None, None]:
         for type in ArtifactType:
             for complete in [False, True]:
                 yield store_fixture_name, type, complete
+
+
+# The mode identifier for default context
+FX_MODEL_ID = "model0"
+
+# The version identifier for default context
+FX_VERSION_ID = "v0"
+
+
+@pytest.fixture(scope="function")
+def store_with_context() -> Tuple[ArtifactStore, Context]:
+    """Create an in-memory artifact store with initial context."""
+    store = artifact_store_creators.create_memory_store()
+    with ManagedArtifactSession(store.session()) as handle:
+        _ = handle.create_model(ModelCreate(identifier=FX_MODEL_ID))
+        _ = handle.create_version(
+            FX_MODEL_ID,
+            VersionCreate(identifier=FX_VERSION_ID),
+        )
+
+    return store, Context(FX_MODEL_ID, FX_VERSION_ID)

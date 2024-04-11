@@ -108,7 +108,7 @@ def create_artifact_from_db(
     Creates an Artifact model from the corresponding DB object and DB header.
 
     :param artifact_header_obj: A DBArtifactHeader object from the DB with header info.
-    :param artifact_obj: A DB object of the specific artifact type with the artifact info.
+    :param session: The DB session to use.
     :return: the DB data converted into an ArtifactModel.
     """
     artifact_header = ArtifactHeaderModel(

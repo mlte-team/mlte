@@ -6,7 +6,6 @@ Unit tests for negotiation card model.
 
 from __future__ import annotations
 
-from test.fixture.artifact import make_complete_negotiation_card
 from typing import Any, Dict
 
 from deepdiff import DeepDiff
@@ -18,6 +17,7 @@ from mlte.model.shared import (
     RiskDescriptor,
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
+from test.fixture.artifact import make_complete_negotiation_card
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel

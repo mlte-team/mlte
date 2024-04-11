@@ -3,14 +3,15 @@ mlte/cli/cli.py
 
 Top-level command line interface.
 """
+from __future__ import annotations
 
 import argparse
 import sys
 import traceback
 
+import mlte.backend.main as backend
 import mlte.frontend as frontend
-import mlte.web.store.main as server
-from mlte.web.store.core.config import settings
+from mlte.backend.core.config import settings
 
 # CLI exit codes
 EXIT_SUCCESS = 0
@@ -32,19 +33,21 @@ def _prepare_parser():
 
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
-    for attach_to in [_attach_store, _attach_ui]:
+    for attach_to in [_attach_backend_parser, _attach_frontend_parser]:
         attach_to(subparser)
     return base_parser
 
 
-def _attach_store(
-    subparser,
+def _attach_backend_parser(
+    subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
     """Attach the artifact store subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
-        "store", help="Run an instance of the MLTE artifact store."
+        "backend", help="Run an instance of the MLTE artifact store."
     )
-    parser.set_defaults(func=server.run)
+    parser.set_defaults(func=backend.run)
+
+    # Additional arguments.
     parser.add_argument(
         "--host",
         type=str,
@@ -69,14 +72,20 @@ def _attach_store(
         default=settings.ALLOWED_ORIGINS,
         help=f"A list of allowed CORS origins (default: {settings.ALLOWED_ORIGINS})",
     )
+    parser.add_argument(
+        "--jwt-secret",
+        type=str,
+        default=settings.JWT_SECRET_KEY,
+        help="A secret random string key used to sign tokens",
+    )
 
 
-def _attach_ui(
-    subparser,
+def _attach_frontend_parser(
+    subparser: argparse._SubParsersAction[argparse.ArgumentParser],
 ):
-    """Attach the artifact store subparser to the base parser."""
+    """Attach the frontend UI subparser to the base parser."""
     parser: argparse.ArgumentParser = subparser.add_parser(
-        "ui", help="Run an instance of the MLTE user interface."
+        "ui", help="Run an instance of the MLTE frontend user interface."
     )
     parser.set_defaults(func=frontend.run_frontend)
 

@@ -6,7 +6,6 @@ Unit tests for Spec functionality.
 
 from __future__ import annotations
 
-from test.spec.extended_property import ExtendedProperty
 from typing import Tuple
 
 import pytest
@@ -16,8 +15,8 @@ from mlte.measurement.storage import LocalObjectSize
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
-
-from ..fixture.store import store_with_context  # noqa
+from test.spec.extended_property import ExtendedProperty
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa

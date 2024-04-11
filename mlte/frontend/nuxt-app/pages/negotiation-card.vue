@@ -431,7 +431,7 @@
       </div>
     </div>
 
-    <div style="text-align: right; margin-top: 1em">
+    <div class="margin-button" style="text-align: right">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
         Cancel
       </UsaButton>
@@ -442,6 +442,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
 const path = ref([
   {
     href: "/",
@@ -582,6 +583,9 @@ if (useRoute().query.artifactId !== undefined) {
     {
       retry: 0,
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
       onRequestError() {
         requestErrorAlert();
       },
@@ -658,6 +662,9 @@ async function submit() {
         {
           retry: 0,
           method: "POST",
+          headers: {
+            Authorization: "Bearer " + token.value,
+          },
           body: {
             artifact,
             force: forceSaveParam.value,

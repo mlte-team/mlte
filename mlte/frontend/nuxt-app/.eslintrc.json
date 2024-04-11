@@ -12,6 +12,7 @@
     "$fetch": true,
     "useFetch": true,
     "useCookie": true,
+    "navigateTo": true,
     "useRuntimeConfig": true,
     "isValidNegotiation": true,
     "isValidSpec": true,

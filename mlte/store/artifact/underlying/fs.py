@@ -3,11 +3,10 @@ mlte/store/artifact/underlying/fs.py
 
 Implementation of local file system artifact store.
 """
+from __future__ import annotations
 
-import json
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import List
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
@@ -16,61 +15,32 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
+from mlte.store.common.fs import JsonFileStorage, parse_root_path
 
-# The prefix that indicates a local filesystem directory is used
-LOCAL_URI_PREFIX = "local://"
-FS_URI_PREFIX = "fs://"
-
-
-def _parse_root_path(uristr: str) -> Path:
-    """
-    Parse the root path for the backend from the URI.
-    :param uri: The URI
-    :type uri: str
-    :return: The parsed path
-    :rtype: Path
-    """
-    assert uristr.startswith(FS_URI_PREFIX) or uristr.startswith(
-        LOCAL_URI_PREFIX
-    ), "Broken precondition."
-    prefix = (
-        FS_URI_PREFIX if uristr.startswith(FS_URI_PREFIX) else LOCAL_URI_PREFIX
-    )
-    return Path(uristr[len(prefix) :])
+BASE_MODELS_FOLDER = "models"
+"""Base fodler to store models in."""
 
 
-class JsonFileStorage:
-    """A simple JSON storage wrapper for the file system store."""
+# -----------------------------------------------------------------------------
+# LocalFileSystemStore
+# -----------------------------------------------------------------------------
 
-    def create_folder(self, path: Path) -> None:
-        Path.mkdir(path, parents=True)
 
-    def list_folders(self, path: Path) -> List[Path]:
-        return [x for x in sorted(path.iterdir()) if x.is_dir()]
+class LocalFileSystemStore(ArtifactStore):
+    """A local file system implementation of the MLTE artifact store."""
 
-    def delete_folder(self, path: Path) -> None:
-        shutil.rmtree(path)
+    def __init__(self, uri: StoreURI) -> None:
+        super().__init__(uri=uri)
 
-    def list_json_files(self, path: Path) -> List[Path]:
-        return [
-            x
-            for x in sorted(path.iterdir())
-            if x.is_file() and x.suffix == ".json"
-        ]
+        self.storage = JsonFileStorage()
+        """The underlying storage for the store."""
 
-    def read_json_file(self, path: Path) -> Dict[str, Any]:
-        with path.open("r") as f:
-            data: Dict[str, Any] = json.load(f)
-        return data
-
-    def write_json_to_file(self, path: Path, data: Dict[str, Any]) -> None:
-        with path.open("w") as f:
-            json.dump(data, f, indent=4)
-
-    def delete_file(self, path: Path) -> None:
-        if not path.exists():
-            raise RuntimeError(f"Path {path} does not exist.")
-        path.unlink()
+    def session(self) -> LocalFileSystemStoreSession:
+        """
+        Return a session handle for the store instance.
+        :return: The session handle
+        """
+        return LocalFileSystemStoreSession(self.uri.uri, storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -85,13 +55,19 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self.storage = storage
         """A reference to underlying storage."""
 
-        self.root = _parse_root_path(uri)
+        self.root = parse_root_path(uri)
         """The remote artifact store URL."""
 
         if not self.root.exists():
             raise FileNotFoundError(
                 f"Root data storage location does not exist: {self.root}."
             )
+
+        try:
+            self.storage.create_folder(self._base_path())
+        except FileExistsError:
+            # If it already existed, we just ignore warning.
+            pass
 
     def close(self) -> None:
         """Close the session."""
@@ -104,7 +80,9 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def create_model(self, model: ModelCreate) -> Model:
         try:
-            self.storage.create_folder(Path(self.root, model.identifier))
+            self.storage.create_folder(
+                Path(self._base_path(), model.identifier)
+            )
         except FileExistsError:
             raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
 
@@ -116,14 +94,14 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def list_models(self) -> List[str]:
         return [
-            str(model_path.relative_to(self.root))
-            for model_path in self.storage.list_folders(Path(self.root))
+            str(model_path.relative_to(self._base_path()))
+            for model_path in self.storage.list_folders(self._base_path())
         ]
 
     def delete_model(self, model_id: str) -> Model:
         self._ensure_model_exists(model_id)
         model = self._read_model(model_id)
-        self.storage.delete_folder(Path(self.root, model_id))
+        self.storage.delete_folder(Path(self._base_path(), model_id))
         return model
 
     def create_version(self, model_id: str, version: VersionCreate) -> Version:
@@ -131,7 +109,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
         try:
             self.storage.create_folder(
-                Path(self.root, model_id, version.identifier)
+                Path(self._base_path(), model_id, version.identifier)
             )
         except FileExistsError:
             raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
@@ -146,7 +124,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def list_versions(self, model_id: str) -> List[str]:
         self._ensure_model_exists(model_id)
 
-        model_path = Path(self.root, model_id)
+        model_path = Path(self._base_path(), model_id)
         return [
             str(version_path.relative_to(model_path))
             for version_path in self.storage.list_folders(model_path)
@@ -157,17 +135,27 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self._ensure_version_exists(model_id, version_id)
 
         version = self._read_version(model_id, version_id)
-        self.storage.delete_folder(Path(self.root, model_id, version_id))
+        self.storage.delete_folder(
+            Path(self._base_path(), model_id, version_id)
+        )
         return version
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _base_path(self) -> Path:
+        """Returns the base path for storing."""
+        return Path(self.root, BASE_MODELS_FOLDER)
 
     def _ensure_model_exists(self, model_id: str) -> None:
         """Throws an ErrorNotFound if the given model  does not exist."""
-        if not Path(self.root, model_id).exists():
+        if not Path(self._base_path(), model_id).exists():
             raise errors.ErrorNotFound(f"Model {model_id}")
 
     def _ensure_version_exists(self, model_id: str, version_id: str) -> None:
         """Throws an ErrorNotFound if the given version of the given model does not exist."""
-        if not Path(self.root, model_id, version_id).exists():
+        if not Path(self._base_path(), model_id, version_id).exists():
             raise errors.ErrorNotFound(
                 f"Version {version_id} in model {model_id}"
             )
@@ -285,6 +273,10 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         )
         return artifact
 
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
     def _ensure_artifact_exists(
         self, artifact_id: str, artifacts: List[str]
     ) -> None:
@@ -308,18 +300,18 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         return [
             a.stem
             for a in self.storage.list_json_files(
-                self._base_path(model_id, version_id)
+                self._base_artifact_path(model_id, version_id)
             )
         ]
 
-    def _base_path(self, model_id: str, version_id: str) -> Path:
+    def _base_artifact_path(self, model_id: str, version_id: str) -> Path:
         """
         Format a local FS path to a version of a model .
         :param model_id: The model identifier
         :param version_id: The version identifier
         :return: The formatted path
         """
-        return Path(self.root, model_id, version_id)
+        return Path(self._base_path(), model_id, version_id)
 
     def _artifact_path(
         self,
@@ -335,23 +327,6 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         :return: The formatted path
         """
         return Path(
-            self._base_path(model_id, version_id),
-            artifact_id + ".json",
+            self._base_artifact_path(model_id, version_id),
+            self.storage.add_extension(artifact_id),
         )
-
-
-class LocalFileSystemStore(ArtifactStore):
-    """A local file system implementation of the MLTE artifact store."""
-
-    def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
-
-        self.storage = JsonFileStorage()
-        """The underlying storage for the store."""
-
-    def session(self) -> LocalFileSystemStoreSession:  # type: ignore[override]
-        """
-        Return a session handle for the store instance.
-        :return: The session handle
-        """
-        return LocalFileSystemStoreSession(self.uri.uri, storage=self.storage)

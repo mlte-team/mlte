@@ -87,6 +87,9 @@ class StoreURI:
             return StoreURI(uri, StoreType.RELATIONAL_DB)
         raise RuntimeError(f"Unrecognized backend URI: {uri}.")
 
+    def __str__(self) -> str:
+        return f"{self.type}:{self.uri}"
+
 
 # -----------------------------------------------------------------------------
 # StoreSession

@@ -24,13 +24,30 @@
       </div>
 
       <div class="body-div">
+        <div v-if="token" class="logout-header">
+          <div class="centered-container">
+            Welcome, {{ user }}
+            <UsaButton
+              class="secondary-button"
+              style="margin-left: 0.5em"
+              @click.prevent="confirmLogout()"
+            >
+              Logout
+            </UsaButton>
+            <NuxtLink :to="{ path: 'user-management' }">
+              <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                Manage Users
+              </UsaButton>
+            </NuxtLink>
+          </div>
+        </div>
         <slot name="default" />
       </div>
     </div>
 
     <footer>
       <p class="footer-text-left">
-        <b>MLTE - 2023</b>
+        <b>MLTE - 2024</b>
       </p>
       <div class="footer-text-right">
         <a
@@ -59,6 +76,8 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
+const user = useCookie("user");
 const version = config.public.version;
 </script>
 
@@ -87,6 +106,12 @@ header {
 .header-link {
   color: white;
   text-decoration: none;
+}
+
+.logout-header {
+  display: flex;
+  align-items: right;
+  justify-content: right;
 }
 
 .flex-container {

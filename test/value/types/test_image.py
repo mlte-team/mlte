@@ -15,8 +15,7 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.artifact.store import ArtifactStore
 from mlte.value.types.image import Image
-
-from ...fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 # A cute image for testing purposes
 IMAGE_URL = "https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8Y3V0ZSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80"  # noqa

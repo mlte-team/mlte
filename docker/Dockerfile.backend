@@ -1,0 +1,24 @@
+# Dockerfile.backend
+#
+# Image definition for MLTE backend container.
+
+FROM python:3.10-alpine
+
+WORKDIR /mnt/lib
+COPY pyproject.toml /mnt/lib
+COPY src /mnt/lib/src
+
+# Install mlte and dependencies
+RUN ["pip", "install", "."]
+
+# Create the default storage location
+RUN ["mkdir", "/mnt/store"]
+
+# Default environment
+ENV APP_HOST=0.0.0.0
+ENV APP_PORT=8080
+
+# Run the mlte backend server
+ENTRYPOINT ["mlte", "backend"]
+# By default, run a local filesystem backend
+CMD ["--backend-uri", "fs:///mnt/store"]

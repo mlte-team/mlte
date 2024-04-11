@@ -411,6 +411,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
 const path = ref([
   {
     href: "/",
@@ -554,6 +555,9 @@ if (useRoute().query.artifactId !== undefined) {
     {
       retry: 0,
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
       onRequestError() {
         requestErrorAlert();
       },
@@ -587,6 +591,7 @@ if (useRoute().query.artifactId !== undefined) {
             form.value.performance.validated_spec_id =
               response._data.body.performance.validated_spec_id;
             const validatedSpec = await fetchArtifact(
+              token.value,
               model,
               version,
               form.value.performance.validated_spec_id,
@@ -634,6 +639,9 @@ async function submit() {
         {
           retry: 0,
           method: "POST",
+          headers: {
+            Authorization: "Bearer " + token.value,
+          },
           body: {
             artifact,
             force: forceSaveParam.value,
