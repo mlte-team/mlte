@@ -27,6 +27,7 @@ from mlte.model.shared import (
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
+    QASDescriptor,
     RiskDescriptor,
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
@@ -253,6 +254,16 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 ),
             ),
         ),
+        system_requirements=[
+            QASDescriptor(
+                quality="fairness",
+                stimulus="new data arrives",
+                source="from new area",
+                environment="normal time",
+                response="results are fair",
+                measure="less than 1 percent difference",
+            )
+        ],
     )
 
 

@@ -23,6 +23,7 @@ from mlte.model.shared import (
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
+    QASDescriptor,
     RiskDescriptor,
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
@@ -36,6 +37,7 @@ from mlte.report.model import (
 )
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    DBQAS,
     DBCommentDescriptor,
     DBDataDescriptor,
     DBFieldDescriptor,
@@ -106,6 +108,7 @@ def create_negotiation_db_from_model(
         model_prod_interface_input_desc=model_input_desc_obj,
         model_prod_interface_output_desc=model_output_desc_obj,
         data_descriptors=[],
+        system_requirements=[],
     )
 
     # Create list of system goal objects.
@@ -117,6 +120,18 @@ def create_negotiation_db_from_model(
     for data_descriptor in negotiation_card.data:
         data_obj = _build_data_descriptor_obj(data_descriptor, session)
         negotiation_card_obj.data_descriptors.append(data_obj)
+
+    # Create list of QAS objects.
+    for qas in negotiation_card.system_requirements:
+        qas_obj = DBQAS(
+            quality=qas.quality,
+            stimulus=qas.stimulus,
+            source=qas.source,
+            environment=qas.environment,
+            response=qas.response,
+            measure=qas.measure,
+        )
+        negotiation_card_obj.system_requirements.append(qas_obj)
 
     return negotiation_card_obj
 
@@ -152,6 +167,17 @@ def create_negotiation_model_from_db(
                 negotiation_obj.model_prod_resources,
             ),
         ),
+        system_requirements=[
+            QASDescriptor(
+                quality=qas.quality,
+                stimulus=qas.stimulus,
+                source=qas.source,
+                environment=qas.environment,
+                response=qas.response,
+                measure=qas.measure,
+            )
+            for qas in negotiation_obj.system_requirements
+        ],
     )
     return body
 

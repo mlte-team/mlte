@@ -228,3 +228,25 @@ class DataDescriptor(BaseModel):
 
     policies: Optional[str] = None
     """A description of the policies that govern use of this data."""
+
+
+class QASDescriptor(BaseModel):
+    """Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario."""
+
+    quality: Optional[str] = None
+    """System property that is being evaluated."""
+
+    stimulus: Optional[str] = None
+    """The condition that triggers this scenario."""
+
+    source: Optional[str] = None
+    """Where the stimulus comes from."""
+
+    environment: Optional[str] = None
+    """Set of circumnstances in which the scenario takes place."""
+
+    response: Optional[str] = None
+    """Activity that ocurrs as the result of the stimulus."""
+
+    measure: Optional[str] = None
+    """Used to determine if the goals of the responses of the scenario have been achieved."""
