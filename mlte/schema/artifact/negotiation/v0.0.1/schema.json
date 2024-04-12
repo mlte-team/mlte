@@ -578,6 +578,85 @@
       "title": "ProblemType",
       "type": "string"
     },
+    "QASDescriptor": {
+      "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
+      "properties": {
+        "quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "stimulus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stimulus"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response"
+        },
+        "measure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measure"
+        }
+      },
+      "title": "QASDescriptor",
+      "type": "object"
+    },
     "RiskDescriptor": {
       "description": "A description of system-level risks.",
       "properties": {
@@ -755,6 +834,14 @@
           }
         }
       }
+    },
+    "system_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QASDescriptor"
+      },
+      "title": "System Requirements",
+      "type": "array"
     }
   },
   "title": "NegotiationCardModel",
