@@ -15,7 +15,9 @@ def test_negotiation_card_header() -> None:
     """A negotiation header body model can be serialized and deserialized."""
     objects = [
         ArtifactHeaderModel(
-            identifier="identifier", type=ArtifactType.NEGOTIATION_CARD
+            identifier="identifier",
+            type=ArtifactType.NEGOTIATION_CARD,
+            creator="user1",
         )
     ]
     for object in objects:
@@ -28,3 +30,6 @@ def test_negotiation_card_header() -> None:
 
     with pytest.raises(pydantic.ValidationError):
         _ = ArtifactHeaderModel(type=ArtifactType.NEGOTIATION_CARD)  # type: ignore
+
+    with pytest.raises(pydantic.ValidationError):
+        _ = ArtifactHeaderModel(creator="user1")  # type: ignore

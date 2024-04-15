@@ -15,6 +15,7 @@ from mlte.store.artifact.store import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
+from test.backend.fixture.api import TEST_API_USER
 from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory
@@ -137,10 +138,11 @@ def check_artifact_writing(
     version_id: str,
     artifact_id: str,
     artifact: ArtifactModel,
+    user: str,
 ):
     """Helper function that writes an artifact, and then reads it and check they are the same."""
     # First write it.
-    handle.write_artifact_with_timestamp(model_id, version_id, artifact)
+    handle.write_artifact_with_header(model_id, version_id, artifact, user=user)
 
     # Then read it from storage.
     read = handle.read_artifact(model_id, version_id, artifact_id)
@@ -171,8 +173,8 @@ def test_search(
         handle.create_model(ModelCreate(identifier=model_id))
         handle.create_version(model_id, VersionCreate(identifier=version_id))
 
-        a0 = ArtifactFactory.make(artifact_type, "id0", complete)
-        a1 = ArtifactFactory.make(artifact_type, "id1", complete)
+        a0 = ArtifactFactory.make(artifact_type, "id0", complete=complete)
+        a1 = ArtifactFactory.make(artifact_type, "id1", complete=complete)
 
         for artifact in [a0, a1]:
             handle.write_artifact(model_id, version_id, artifact)
@@ -196,16 +198,19 @@ def test_artifact(
     model_id = "model0"
     version_id = "version0"
     artifact_id = "myid"
+    user = TEST_API_USER
 
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(ModelCreate(identifier=model_id))
         handle.create_version(model_id, VersionCreate(identifier=version_id))
 
-        artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
+        artifact = ArtifactFactory.make(
+            artifact_type, artifact_id, complete=complete
+        )
 
         # First check we can write and load an artifact.
         check_artifact_writing(
-            handle, model_id, version_id, artifact_id, artifact
+            handle, model_id, version_id, artifact_id, artifact, user
         )
 
         # Second check that we can delete the artifact, and that it is really deleted.
@@ -216,7 +221,7 @@ def test_artifact(
 
         # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
         check_artifact_writing(
-            handle, model_id, version_id, artifact_id, artifact
+            handle, model_id, version_id, artifact_id, artifact, user
         )
 
 
@@ -236,7 +241,9 @@ def test_artifact_without_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
+    artifact = ArtifactFactory.make(
+        artifact_type, artifact_id, complete=complete
+    )
 
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
@@ -260,7 +267,9 @@ def test_artifact_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
+    artifact = ArtifactFactory.make(
+        artifact_type, artifact_id, complete=complete
+    )
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
@@ -295,7 +304,9 @@ def test_artifact_overwrite(
         handle.create_model(ModelCreate(identifier=model_id))
         handle.create_version(model_id, VersionCreate(identifier=version_id))
 
-        artifact = ArtifactFactory.make(artifact_type, artifact_id, complete)
+        artifact = ArtifactFactory.make(
+            artifact_type, artifact_id, complete=complete
+        )
 
         # The initial write succeeds
         _ = handle.write_artifact(

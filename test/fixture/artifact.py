@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import random
 import string
-from typing import Generator, List, Union
+from typing import Generator, List, Optional, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -65,7 +65,10 @@ class ArtifactFactory:
 
     @staticmethod
     def make(
-        type: ArtifactType, id: str = _random_id(), complete: bool = False
+        type: ArtifactType,
+        id: str = _random_id(),
+        user: Optional[str] = None,
+        complete: bool = False,
     ) -> ArtifactModel:
         """
         Construct an artifact model of the given type.
@@ -75,7 +78,7 @@ class ArtifactFactory:
         :return: The artifact model
         """
         return ArtifactModel(
-            header=ArtifactHeaderModel(identifier=id, type=type),
+            header=ArtifactHeaderModel(identifier=id, type=type, creator=user),
             body=_make_body(type, id, complete),
         )
 

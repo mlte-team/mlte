@@ -63,6 +63,7 @@ def create_db_artifact(
         identifier=artifact.header.identifier,
         type=artifact_type_obj,
         timestamp=artifact.header.timestamp,
+        username=artifact.header.creator,
         version_id=version_id,
     )
 
@@ -115,6 +116,7 @@ def create_artifact_from_db(
         identifier=artifact_header_obj.identifier,
         type=ArtifactType(artifact_header_obj.type.name),
         timestamp=artifact_header_obj.timestamp,
+        creator=artifact_header_obj.username,
     )
 
     body: typing.Union[

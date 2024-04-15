@@ -7,7 +7,7 @@ MLTE artifact store interface implementation.
 from __future__ import annotations
 
 import time
-from typing import List, cast
+from typing import List, Optional, cast
 
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
@@ -133,7 +133,7 @@ class ArtifactStoreSession(StoreSession):
     # Interface: Artifact
     # -------------------------------------------------------------------------
 
-    def write_artifact_with_timestamp(
+    def write_artifact_with_header(
         self,
         model_id: str,
         version_id: str,
@@ -141,9 +141,10 @@ class ArtifactStoreSession(StoreSession):
         *,
         force: bool = False,
         parents: bool = False,
+        user: Optional[str] = None,
     ) -> ArtifactModel:
         """
-        Write an artifact, generating the timestamp. Internally calls the actual write_artifact implementation.
+        Write an artifact, generating the timestamp and adding creator. Internally calls the actual write_artifact implementation.
         :param model_id: The identifier for the model
         :param version_id: The identifier for the model version
         :param artifact: The artifact
@@ -152,6 +153,7 @@ class ArtifactStoreSession(StoreSession):
         for artifact should be implictly created (default: False)
         """
         artifact.header.timestamp = int(time.time())
+        artifact.header.creator = user
         return self.write_artifact(
             model_id,
             version_id,
