@@ -64,8 +64,18 @@
         </InfoIcon>
       </template>
     </UsaTextInput>
+    
+    <UsaTextInput
+      v-else
+      v-model="form.creator"
+      disabled
+    >
+      <template #label>
+        Creator
+      </template>
+    </UsaTextInput>
 
-    <h2 class="section-header">System Requirements</h2>
+    <h2 class="section-header">System Information</h2>
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
@@ -330,7 +340,7 @@
       </AddButton>
     </div>
 
-    <h2 class="section-header">Model</h2>
+    <h2 class="section-header">Model Information</h2>
     <div class="input-group">
       <h3>Development Compute Resources</h3>
       <p>
@@ -458,6 +468,7 @@ const UserInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
 const form = ref({
+  creator: "",
   system: {
     goals: [
       {
@@ -591,6 +602,7 @@ if (useRoute().query.artifactId !== undefined) {
       },
       onResponse({ response }) {
         if (isValidNegotiation(response._data)) {
+          form.value.creator = response._data.creator;
           form.value.system = response._data.body.system;
           form.value.data = response._data.body.data;
           form.value.model = response._data.body.model;
