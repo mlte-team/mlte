@@ -184,7 +184,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>.
+We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repo, to trigger and Integration effect on ReadTheDocs when certain changes to the repo are made.
 
 We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
 
