@@ -46,7 +46,7 @@
           <template #label> Goal Description </template>
         </UsaTextInput>
 
-        <h3 class="no-margin-section-header">Metrics</h3>
+        <h3 class="no-margin-sub-header">Metrics</h3>
         <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
@@ -292,7 +292,7 @@
             v-for="(field, schema_index) in dataItem.fields"
             :key="schema_index"
           >
-            <h3 class="no-margin-section-header">
+            <h3 class="no-margin-sub-header">
               Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
             </h3>
             <div>

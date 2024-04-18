@@ -2,7 +2,7 @@
     color: #d8ac16;
 }
 
-.no-margin-section-header {
+.no-margin-sub-header {
     margin-bottom: 0px;
 }
 
@@ -16,12 +16,12 @@
 .inline-input-left {
     display: inline-block;
     margin-right: 1em;
-    width: 29ch;
+    width: 28ch;
 }
 
 .inline-input-right {
     display: inline-block;
-    width: 29ch;
+    width: 28ch;
 }
 
 .primary-button {   
