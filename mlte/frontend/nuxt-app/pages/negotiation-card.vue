@@ -706,7 +706,7 @@
         <h3>Requirement {{ requirementIndex + 1 }}</h3>
         <div>
           <div class="inline-input-left">
-            <UsaTextInput v-model="requirement.system_quality">
+            <UsaTextInput v-model="requirement.quality">
               <template #label>
                 System Quality
                 <InfoIcon>
@@ -740,7 +740,7 @@
           </div>
 
           <div class="inline-input-right">
-            <UsaTextInput v-model="requirement.source_of_stimulus">
+            <UsaTextInput v-model="requirement.source">
               <template #label>
                 Source of Stimulus
                 <InfoIcon>
@@ -759,7 +759,7 @@
 
         <div>
           <div class="inline-input-left">
-            <UsaTextInput v-model="requirement.normal_operations">
+            <UsaTextInput v-model="requirement.environment">
               <template #label>
                 Environment
                 <InfoIcon>
@@ -792,7 +792,7 @@
           </div>
 
           <div class="inline-input-right">
-            <UsaTextInput v-model="requirement.response_measure">
+            <UsaTextInput v-model="requirement.measure">
               <template #label>
                 Response Measure
                 <InfoIcon>
@@ -934,12 +934,12 @@ const form = ref({
   },
   system_requirements: [
     {
-      system_quality: "",
+      quality: "",
       stimulus: "",
-      source_of_stimulus: "",
+      source: "",
       environment: "",
       response: "",
-      response_measure: "",
+      measure: "",
     },
   ],
 });
@@ -1007,6 +1007,8 @@ if (useRoute().query.artifactId !== undefined) {
           form.value.system = response._data.body.system;
           form.value.data = response._data.body.data;
           form.value.model = response._data.body.model;
+          form.value.system_requirements =
+            response._data.body.system_requirements;
 
           const problemType = response._data.body.system.problem_type;
           if (
@@ -1055,6 +1057,7 @@ async function submit() {
       identifier,
       type: "negotiation_card",
       timestamp: -1,
+      creator: "",
     },
     body: {
       artifact_type: "negotiation_card",

@@ -20,6 +20,7 @@
     "isValidValue": true,
     "isValidReport": true,
     "isValidArtifact": true,
+    "alert400Error": true,
     "successfulSubmission": true,
     "cancelFormSubmission": true,
     "requestErrorAlert": true,

@@ -623,6 +623,7 @@ async function submit() {
       identifier,
       type: "report",
       timestamp: -1,
+      creator: "",
     },
     body: form.value,
   };
