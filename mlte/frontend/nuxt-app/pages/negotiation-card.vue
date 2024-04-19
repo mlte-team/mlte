@@ -285,7 +285,15 @@
           v-model="dataItem.classification"
           :options="classificationOptions"
         >
-          <template #label> Data Classification </template>
+          <template #label>
+            Data Classification
+            <InfoIcon>
+              What classification is the data
+              <br />
+              <br />
+              Example: Classified
+            </InfoIcon>
+          </template>
         </UsaSelect>
 
         <UsaTextInput v-model="dataItem.access">
