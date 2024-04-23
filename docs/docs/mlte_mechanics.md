@@ -168,7 +168,7 @@ $ mlte ui
 To run the back end: 
 
 ```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+$ mlte store --store-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 This allows the front end to be able to communicate with the store by allowing the requisite origin. The front end is hosted at `http://localhost:8000`.

@@ -160,7 +160,7 @@ $ npm run dev
 This will run the front end at `http://localhost:3000` so be sure to specify that as an allowed origin when running the backend. The backend can be run with a command like this one (using a file system store, in the local ./store folder):
 
 ```bash
-$ mlte backend --backend-uri fs://store --allowed-origins http://localhost:3000
+$ mlte backend --store-uri fs://store --allowed-origins http://localhost:3000
 ```
 
 ### Front End Formatting and Linting

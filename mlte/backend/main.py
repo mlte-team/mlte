@@ -37,7 +37,7 @@ def _validate_origins(allowed_origins: List[str]) -> List[HttpUrl]:
 def run(
     host: str,
     port: int,
-    backend_uri: str,
+    store_uri: str,
     allowed_origins: List[str],
     jwt_secret: str,
 ) -> int:
@@ -45,7 +45,7 @@ def run(
     Run the artifact store application.
     :param host: The application host
     :param port: The application port
-    :param backend_uri: The backend URI string
+    :param store_uri: The store URI string
     :param allowed_origins: A list of allowed CORS origins
     :param jwt_secret: A secret random string key used to sign tokens
     :return: Return code
@@ -58,16 +58,14 @@ def run(
     app = app_factory.create(allowed_origins)
 
     # Initialize the backing artifact store instance
-    store = artifact_store_factory.create_store(backend_uri)
+    store = artifact_store_factory.create_store(store_uri)
     if store.uri.type == StoreType.REMOTE_HTTP:
-        raise RuntimeError(
-            "Cannot run artifact store server with remote HTTP backend."
-        )
+        raise RuntimeError("Cannot run backend with remote HTTP store.")
     state.set_artifact_store(store)
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
-    user_store = user_store_factory.create_store(backend_uri)
+    user_store = user_store_factory.create_store(store_uri)
     state.set_user_store(user_store)
 
     # Set the token signing key.
@@ -84,7 +82,7 @@ def main() -> int:
     return run(
         settings.APP_HOST,
         int(settings.APP_PORT),
-        settings.BACKEND_URI,
+        settings.STORE_URI,
         settings.ALLOWED_ORIGINS,
         settings.JWT_SECRET_KEY,
     )

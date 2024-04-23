@@ -61,10 +61,10 @@ def _attach_backend_parser(
         help=f"The port on which the server listens (default: {settings.APP_PORT})",
     )
     parser.add_argument(
-        "--backend-uri",
+        "--store-uri",
         type=str,
-        default=settings.BACKEND_URI,
-        help=f"The URI for the backend store (default: {settings.BACKEND_URI}).",
+        default=settings.STORE_URI,
+        help=f"The URI for the backend store (default: {settings.STORE_URI}).",
     )
     parser.add_argument(
         "--allowed-origins",

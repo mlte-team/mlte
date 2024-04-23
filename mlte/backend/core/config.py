@@ -47,8 +47,8 @@ class Settings(BaseSettings):
             ) from None
         return v
 
-    BACKEND_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
-    """The backend URI string; defaults to in-memory backend."""
+    STORE_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
+    """The store URI string; defaults to in-memory store."""
 
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""

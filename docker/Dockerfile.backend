@@ -20,5 +20,6 @@ ENV APP_PORT=8080
 
 # Run the mlte backend server
 ENTRYPOINT ["mlte", "backend"]
-# By default, run a local filesystem backend
-CMD ["--backend-uri", "fs:///mnt/store"]
+
+# By default, run a local filesystem store
+CMD ["--store-uri", "fs:///mnt/store"]

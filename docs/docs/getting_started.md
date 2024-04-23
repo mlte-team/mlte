@@ -56,7 +56,7 @@ This can be done by specifying the `--allowed-origins` flag when running the bac
 When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the backend command will look something like this:
 
 ```bash
-$ mlte backend --backend-uri fs://store --allowed-origins http://localhost:8000
+$ mlte backend --store-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 In real deployments, you should define a new secret to be used for token signing, instead of the default one. This can be done by either creating and .env file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`, or passing it as a command line argument with `--jwt-secret`.
@@ -87,7 +87,7 @@ Then, you can just pass the URI for the DB store when running the MLTE backend, 
 Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte`:
 
 ```bash
-$ mlte backend --backend-uri postgresql://mlte_user:mlte_pass@localhost/mlte --allowed-origins http://localhost:8000
+$ mlte backend --store-uri postgresql://mlte_user:mlte_pass@localhost/mlte --allowed-origins http://localhost:8000
 ```
 
 Example for setting the store inside code when you are using MLTE as a library:
