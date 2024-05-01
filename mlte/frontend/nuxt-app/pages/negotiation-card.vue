@@ -54,7 +54,7 @@
 
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
-      v-model="UserInputArtifactId"
+      v-model="userInputArtifactId"
     >
       <template #label>
         Artifact ID
@@ -71,14 +71,15 @@
 
     <h2 class="section-header">System Information</h2>
     <div class="input-group">
-      <h3>Goals</h3>
-      <p>
-        Goals or objectives that the model is going to help satisfy as part of
-        the system
-      </p>
+      <SubHeader :render-example="false">
+        Goals
+        <template #info>
+          Goals or objectives that the model is going to help satisfy as part of
+          the system
+        </template>
+      </SubHeader>
       <div v-for="(goal, goalIndex) in form.system.goals" :key="goalIndex">
-        <h3>Goal {{ goalIndex + 1 }}</h3>
-
+        <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
         <UsaTextInput v-model="goal.description">
           <template #label>
             Goal Description
@@ -92,14 +93,8 @@
           </template>
         </UsaTextInput>
 
-        <SubHeader>
+        <SubHeader :render-example="false" :render-info="false">
           Metrics
-          <template #info>
-            Metric that captures the system's ability to accomplish that goal,
-            e.g., <br />
-            acceptance criteria for determining that the model is performing
-            correctly
-          </template>
         </SubHeader>
         <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
@@ -239,11 +234,14 @@
     </UsaTextInput>
 
     <h2 class="section-header">Data</h2>
-    <p>
-      Details of the data that will influence development efforts; fill out all
-      that are known
-    </p>
     <div class="input-group">
+      <SubHeader :render-example="false">
+        Data
+        <template #info>
+          Details of the data that will influence development efforts; fill out
+          all that are known
+        </template>
+      </SubHeader>
       <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
         <h3 class="no-margin-sub-header">Data Item {{ dataItemIndex + 1 }}</h3>
         <div>
@@ -310,7 +308,17 @@
         </UsaTextInput>
 
         <div class="input-group" style="margin-top: 1em">
-          <h3 class="no-margin-sub-header">Labels and Distribution</h3>
+          <SubHeader :render-info="false">
+            Labels and Distribution
+            <template #example>
+              <UsaTable
+                :headers="labelModalHeaders"
+                :rows="labelModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+          </SubHeader>
           <UsaTextInput v-model="dataItem.labeling_method">
             <template #label>
               Labeling Method
@@ -365,6 +373,21 @@
         </div>
 
         <div class="input-group" style="margin-top: 1em">
+          <SubHeader>
+            Data Schema
+            <template #example>
+              <UsaTable
+                :headers="dataModalHeaders"
+                :rows="dataModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+            <template #info>
+              Include relevant information that is known about the data; fill
+              out all sections below for each data field
+            </template>
+          </SubHeader>
           <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
             <h3 class="no-margin-sub-header">
               Data Schema {{ dataItemIndex + 1 }} - {{ fieldIndex + 1 }}
@@ -501,8 +524,8 @@
     <div class="input-group">
       <SubHeader>
         Development Compute Resources
-        <template #info>
-          Example: GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
+        <template #example>
+          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
         </template>
       </SubHeader>
       <p>
@@ -570,9 +593,17 @@
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
         Input Specification
+        <template #example>
+          <UsaTable
+            :headers="inputModalHeaders"
+            :rows="inputModalRows"
+            borderless
+            class="table"
+          />
+        </template>
         <template #info>
-          Describe the input data type and format needed for model to <br />
-          conduct inference
+          Describe the input data type and format needed for model to conduct
+          inference
         </template>
       </SubHeader>
       <UsaTextInput v-model="form.model.production.interface.input.name">
@@ -615,9 +646,17 @@
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
         Output Specification
+        <template #example>
+          <UsaTable
+            :headers="outputModalHeaders"
+            :rows="outputModalRows"
+            borderless
+            class="table"
+          />
+        </template>
         <template #info>
-          Describe the output format and specification needed for the <br />
-          system to ingest model results
+          Describe the output format and specification needed for the system to
+          ingest model results
         </template>
       </SubHeader>
       <UsaTextInput v-model="form.model.production.interface.input.name">
@@ -661,14 +700,14 @@
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
         Production Compute Resources
-        <template #info>
+        <template #example>
           Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
         </template>
+        <template #info>
+          Describe the hardware and software requirements including amount of
+          compute resources needed for inference.
+        </template>
       </SubHeader>
-      <p>
-        Describe the hardware and software requirements including amount of
-        compute resources needed for inference.
-      </p>
       <div>
         <div class="inline-input-left">
           <UsaTextInput v-model="form.model.production.resources.gpu">
@@ -707,11 +746,24 @@
     </p>
 
     <div class="input-group">
+      <SubHeader :render-info="false">
+        Requirements
+        <template #example>
+          <UsaTable
+            :headers="systemModalHeaders"
+            :rows="systemModalRows"
+            borderless
+            class="table"
+          />
+        </template>
+      </SubHeader>
       <div
         v-for="(requirement, requirementIndex) in form.system_requirements"
         :key="requirementIndex"
       >
-        <h3>Requirement {{ requirementIndex + 1 }}</h3>
+        <h3 class="no-margin-sub-header">
+          Requirement {{ requirementIndex + 1 }}
+        </h3>
         <div>
           <div class="inline-input-left">
             <UsaTextInput v-model="requirement.quality">
@@ -853,8 +905,176 @@ const path = ref([
   },
 ]);
 
-const UserInputArtifactId = ref("");
+const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
+
+const labelModalHeaders = ref([
+  { id: "labelName", label: "Label Name", sortable: false },
+  { id: "labelDescription", label: "Label Description", sortable: false },
+  { id: "percentage", label: "Percentage", sortable: false },
+]);
+const labelModalRows = ref([
+  {
+    id: "rock",
+    labelName: "Rock",
+    labelDescription: "Includes all rock genres",
+    percentage: 24,
+  },
+  {
+    id: "classical",
+    labelName: "Classical",
+    labelDescription: "Includes traditional and crossover",
+    percentage: 7,
+  },
+  {
+    id: "pop",
+    labelName: "Pop",
+    labelDescription: "Pop genre",
+    percentage: 28,
+  },
+  {
+    id: "jazz",
+    labelName: "Jazz",
+    labelDescription: "Includes classical, latin and other forms of jazz",
+    percentage: 16,
+  },
+  {
+    id: "rap",
+    labelName: "Rap",
+    labelDescription: "Rap genre (not R&B)",
+    percentage: 9,
+  },
+  {
+    id: "dance",
+    labelName: "Dance",
+    labelDescription: "Includes all dance variants (e.g., house, techno)",
+    percentage: 10,
+  },
+  {
+    id: "other",
+    labelName: "Other",
+    labelDescription: "Any genre not covered by the above labels",
+    percentage: 6,
+  },
+]);
+
+const dataModalHeaders = ref([
+  { id: "fieldName", label: "Field Name", sortable: false },
+  { id: "fieldDescription", label: "Field Description", sortable: false },
+  { id: "fieldType", label: "Field Type", sortable: false },
+  { id: "expectedValues", label: "Expected Values", sortable: false },
+  { id: "missingValues", label: "Missing Values", sortable: false },
+  { id: "specialValues", label: "Special Values", sortable: false },
+]);
+const dataModalRows = ref([
+  {
+    id: "idRecording",
+    fieldName: "ID Recording",
+    fieldDescription: "Unique ID for audio recording",
+    fieldType: "String",
+    expectedValues: "Alphanumeric string",
+    missingValues: "If ID is missing it should be discarded",
+    specialValues: "No special values",
+  },
+  {
+    id: "audioRecording",
+    fieldName: "Audio Recording",
+    fieldDescription: "Audio recording file",
+    fieldType: "Audio",
+    expectedValues: "Non-empty audio file",
+    missingValues: "If audio file is missing it should be discarded",
+    specialValues: "No special values",
+  },
+  {
+    id: "dateRecording",
+    fieldName: "Date Recording",
+    fieldDescription: "Date audio was recorded",
+    fieldType: "Date",
+    expectedValues: "Between <date1> and <date2>",
+    missingValues:
+      "If date is null or empty attempt to find date. If not possible then change to 00/00/0000 to simply use as a data point",
+    specialValues:
+      "00/00/0000 would indicate that the file did not have an associated date",
+  },
+]);
+
+const inputModalHeaders = ref([
+  { id: "inputName", label: "Input Name", sortable: false },
+  { id: "inputDescription", label: "Input Description", sortable: false },
+  { id: "inputType", label: "Input Type", sortable: false },
+]);
+const inputModalRows = ref([
+  {
+    id: "audio",
+    inputName: "Audio Recording",
+    inputDescription: "Audio recording file for matching",
+    inputType: "Audio",
+  },
+]);
+
+const outputModalHeaders = ref([
+  { id: "outputName", label: "Output Name", sortable: false },
+  { id: "outputDescription", label: "Output Description", sortable: false },
+  { id: "outputType", label: "Output Type", sortable: false },
+]);
+const outputModalRows = ref([
+  {
+    id: "recording",
+    outputName: "Matching Recordings",
+    outputDescription: "Set of matching recording from the database",
+    outputType:
+      "Vector of Strings with IDs of matching recordings — an empty vector means that there were no matches",
+  },
+]);
+
+const systemModalHeaders = ref([
+  { id: "systemQuality", label: "System Quality", sortable: false },
+  { id: "stimulus", label: "Stimulus", sortable: false },
+  { id: "source", label: "Source of Stimulus", sortable: false },
+  { id: "environment", label: "Environment", sortable: false },
+  { id: "response", label: "Response", sortable: false },
+  { id: "measure", label: "Response Measure", sortable: false },
+]);
+const systemModalRows = ref([
+  {
+    id: "responseTime",
+    systemQuality: "Response Time",
+    stimulus: "Model Receives an audio recording",
+    source: "Intel analyst application",
+    environment: "Normal operations",
+    response: "Inference time",
+    measure: "At most 5 seconds",
+  },
+  {
+    id: "fairness",
+    systemQuality: "Fairness - Model Impartial to Photo Location",
+    stimulus: "Model receives a picture taken at the garden",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response: "Correct identification of flowers regardless of garden location",
+    measure: "At least 90% of the time",
+  },
+  {
+    id: "robustness",
+    systemQuality: "Robustness - Model Robust to Noise (Image Blur)",
+    stimulus:
+      "Model receives a picture taken at a gardan and it is a bit blurry",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response: "Correct identification of flowers",
+    measure: "Same rate as non-blurry images",
+  },
+  {
+    id: "performance",
+    systemQuality: "Performance on Operational Platform",
+    stimulus: "Model receives a picture taken at a garden",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response:
+      "Model will need to run on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
+    measure: "No errors due to unavailable resources",
+  },
+]);
 
 const form = ref({
   creator: "",
@@ -1054,7 +1274,7 @@ async function submit() {
 
   let identifier = "";
   if (useRoute().query.artifactId === undefined) {
-    identifier = UserInputArtifactId.value;
+    identifier = userInputArtifactId.value;
   } else {
     identifier = useRoute().query.artifactId?.toString();
   }
