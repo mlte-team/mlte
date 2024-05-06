@@ -10,6 +10,10 @@ from typing import List, Optional
 
 from mlte.model import BaseModel
 
+# -----------------------------------------------------------------------------
+# User model (and sub-models)
+# -----------------------------------------------------------------------------
+
 
 class RoleType(str, Enum):
     """Roles for users."""
@@ -57,6 +61,21 @@ class UserCreate(BasicUser):
     """The plain password of the user."""
 
 
+# -----------------------------------------------------------------------------
+# Group model (and sub-models)
+# -----------------------------------------------------------------------------
+
+
+class Group(BaseModel):
+    """A user group to which permissions are associated."""
+
+    name: str
+    """The name of the group."""
+
+    permissions: List[PermissionType] = []
+    """The permissions associated to the group."""
+
+
 class PermissionType(str, Enum):
     """Enumerates all supported permission types."""
 
@@ -75,13 +94,3 @@ class Permission(BaseModel):
 
     model_identifier: str
     """The model to give permissions to."""
-
-
-class Group(BaseModel):
-    """A user group to which permissions are associated."""
-
-    name: str
-    """The name of the group."""
-
-    permissions: List[PermissionType] = []
-    """The permissions associated to the group."""
