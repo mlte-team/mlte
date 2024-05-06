@@ -1,5 +1,5 @@
 """
-mlte/context/model/model.py
+mlte/context/model.py
 
 Model implementation for MLTE context information.
 """

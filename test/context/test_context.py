@@ -4,7 +4,7 @@ test/context/test_context.py
 Unit tests for MLTE context.
 """
 
-from mlte.context import Context
+from mlte.context.context import Context
 
 
 def test_complete() -> None:

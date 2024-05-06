@@ -12,7 +12,7 @@ import pytest
 
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.context.model.model import ModelCreate, VersionCreate
+from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
