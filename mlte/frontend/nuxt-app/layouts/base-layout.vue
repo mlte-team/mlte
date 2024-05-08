@@ -5,7 +5,6 @@
       <a href="/" class="header-link">
         <img
           src="~/assets/img/MLTE_Logo_Color.svg"
-          alt=""
           height="75px"
           width="75px"
         />
