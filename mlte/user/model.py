@@ -10,6 +10,9 @@ from typing import List, Optional
 
 from mlte.model import BaseModel
 
+RESOURCE_ALL_VALUES = "*"
+"""Special character used to identify all values of a certain permission."""
+
 # -----------------------------------------------------------------------------
 # User model (and sub-models)
 # -----------------------------------------------------------------------------
@@ -72,25 +75,18 @@ class Group(BaseModel):
     name: str
     """The name of the group."""
 
-    permissions: List[PermissionType] = []
+    permissions: List[ResourceAction] = []
     """The permissions associated to the group."""
 
 
-class PermissionType(str, Enum):
-    """Enumerates all supported permission types."""
+class ResourceAction(BaseModel):
+    """Resources to be given permissions."""
 
-    READ = "read"
-    """Permission to read a specific model and its artifacts."""
-
-    WRITE = "write"
-    """Permission to write artifacts for a specific model."""
-
-
-class Permission(BaseModel):
-    """Permissions for specific artifacts."""
-
-    permission_type: PermissionType = PermissionType.READ
-    """The type of permisison granted."""
-
-    model_identifier: str
+    model_identifier: Optional[str] = None
     """The model to give permissions to."""
+
+    url: str = RESOURCE_ALL_VALUES
+    """The URL of the endpoint for the resource."""
+
+    method: str = RESOURCE_ALL_VALUES
+    """The HTTP method applied on the resource."""

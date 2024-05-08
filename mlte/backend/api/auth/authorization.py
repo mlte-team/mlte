@@ -14,23 +14,25 @@ from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.user.model import BasicUser
+from mlte.user.model import BasicUser, ResourceAction
 
 # -----------------------------------------------------------------------------
 # Helper functions.
 # -----------------------------------------------------------------------------
 
 
-async def get_resource(request: Request) -> str:
+async def get_resource(request: Request, model_id: str) -> ResourceAction:
     """Gets a resource description for the current method and URL."""
     method = request.method
     url = request.url.path
-
-    # TODO: define better way to encapsulate this.
     resource_url = url.replace(settings.API_PREFIX, "")
-    resource = f"{resource_url}-{method}"
-    print(f"Resource: {resource}")
-    return resource
+
+    # Build and return the ResourceAction
+    resource_action = ResourceAction(
+        model_identifier=model_id, url=resource_url, method=method
+    )
+    print(f"Resource action: {resource_action}")
+    return resource_action
 
 
 def get_username_from_token(token: str, key: str) -> str:
@@ -40,18 +42,18 @@ def get_username_from_token(token: str, key: str) -> str:
     return decoded_token.username
 
 
-def is_authorized(current_user: BasicUser, resource: str) -> bool:
+def is_authorized(current_user: BasicUser, resource: ResourceAction) -> bool:
     """Checks if the current user is authorized to access the current resource."""
-    # TODO: define resource names/actions as enum or similar
-    # TODO: define where permissions will be stored
-    # TODO: check that users have correct permissions, and return accordingly.
-    # TODO: define if roles will be used for this.
-
-    # For now any authenticated user is authorized to everything.
     print(
         f"Checking authorization for user {current_user.username} to resource {resource}"
     )
-    return True
+
+    # If the resource is not associated to a model, give access.
+    if resource.model_identifier is None:
+        return True
+    else:
+        # TODO: Check URL and method against DB of permisisons.
+        return True
 
 
 # -----------------------------------------------------------------------------
@@ -68,12 +70,13 @@ oauth2_scheme = OAuth2PasswordBearer(
 
 async def get_authorized_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    resource: Annotated[str, Depends(get_resource)],
+    resource: Annotated[ResourceAction, Depends(get_resource)],
 ) -> BasicUser:
     """
     Given a token, gets the authenticated user and checks if it has access to resources.
 
     :param token: A JWT bearer access token with user information.
+    :param resource: A ResourceAction object indicating the resource and actions we are checking for.
     :return: A User data structure, with a User that has access to the resources.
     """
     # Validate token and get username.
