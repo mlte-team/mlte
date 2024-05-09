@@ -31,6 +31,19 @@
       <h3>Overview</h3>
     </div>
 
+    <div v-for="(goal, goalIndex) in page_data.performance.goals" :key="goalIndex">
+      <div class="info-box-row">
+        <div class="info-box-third rounded-border">
+          Goal {{ goalIndex + 1 }}<br />
+          {{ goal.description }}
+        </div>
+        <div class="info-box-two-third rounded-border">
+          Metrics and Baselines <br />
+          <!-- {{ goal }} -->
+        </div>
+      </div>
+    </div>
+
     <div class="rounded-border">
       <h3>Results</h3>
     </div>
@@ -77,30 +90,30 @@
       <h3>System Information</h3>
     </div>
     <div class="info-box-row">
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         ML Problem Type <br />
         {{ page_data.summary.problem_type }}
       </div>
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         ML Task <br />
         {{ page_data.summary.task }}
       </div>
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         Usage Context <br />
         {{ page_data.intended_use.usage_context }}
       </div>
     </div>
 
     <div class="info-box-row">
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         FP Risk <br />
         {{ page_data.risks.fp }}
       </div>
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         FN Risk <br />
         {{ page_data.risks.fn }}
       </div>
-      <div class="info-box rounded-border">
+      <div class="info-box-third rounded-border">
         Other Risks <br />
         {{ page_data.risks.other }}
       </div>
@@ -231,7 +244,11 @@ function loadFindings(proxyObject: any) {
   justify-content: space-evenly;
 }
 
-.info-box {
+.info-box-third {
   width: 35ch;
+}
+
+.info-box-two-third {
+  width: 70ch;
 }
 </style>
