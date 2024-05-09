@@ -75,18 +75,15 @@ class Group(BaseModel):
     name: str
     """The name of the group."""
 
-    permissions: List[ResourceAction] = []
+    permissions: List[Permission] = []
     """The permissions associated to the group."""
 
 
-class ResourceAction(BaseModel):
-    """Resources to be given permissions."""
+class Permission(BaseModel):
+    """Permissions for manipulating model artifacts."""
 
     model_identifier: Optional[str] = None
     """The model to give permissions to."""
-
-    url: str = RESOURCE_ALL_VALUES
-    """The URL of the endpoint for the resource."""
 
     method: str = RESOURCE_ALL_VALUES
     """The HTTP method applied on the resource."""

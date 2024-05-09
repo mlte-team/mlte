@@ -14,23 +14,19 @@ from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.user.model import BasicUser, ResourceAction
+from mlte.user.model import BasicUser, Permission
 
 # -----------------------------------------------------------------------------
 # Helper functions.
 # -----------------------------------------------------------------------------
 
 
-async def get_resource(request: Request, model_id: str) -> ResourceAction:
-    """Gets a resource description for the current method and URL."""
+async def get_action(request: Request, model_id: str) -> Permission:
+    """Gets a resource description for the current method and model."""
     method = request.method
-    url = request.url.path
-    resource_url = url.replace(settings.API_PREFIX, "")
 
     # Build and return the ResourceAction
-    resource_action = ResourceAction(
-        model_identifier=model_id, url=resource_url, method=method
-    )
+    resource_action = Permission(model_identifier=model_id, method=method)
     print(f"Resource action: {resource_action}")
     return resource_action
 
@@ -42,14 +38,14 @@ def get_username_from_token(token: str, key: str) -> str:
     return decoded_token.username
 
 
-def is_authorized(current_user: BasicUser, resource: ResourceAction) -> bool:
+def is_authorized(current_user: BasicUser, action: Permission) -> bool:
     """Checks if the current user is authorized to access the current resource."""
     print(
-        f"Checking authorization for user {current_user.username} to resource {resource}"
+        f"Checking authorization for user {current_user.username} to resource {action}"
     )
 
     # If the resource is not associated to a model, give access.
-    if resource.model_identifier is None:
+    if action.model_identifier is None:
         return True
     else:
         # TODO: Check URL and method against DB of permisisons.
@@ -70,7 +66,7 @@ oauth2_scheme = OAuth2PasswordBearer(
 
 async def get_authorized_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    resource: Annotated[ResourceAction, Depends(get_resource)],
+    resource: Annotated[Permission, Depends(get_action)],
 ) -> BasicUser:
     """
     Given a token, gets the authenticated user and checks if it has access to resources.
