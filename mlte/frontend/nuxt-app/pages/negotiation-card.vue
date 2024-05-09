@@ -245,38 +245,34 @@
       <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
         <h3 class="no-margin-sub-header">Data Item {{ dataItemIndex + 1 }}</h3>
         <div>
-          <div class="inline-input-left">
-            <UsaTextInput v-model="dataItem.description">
-              <template #label>
-                Data Description
-                <InfoIcon>
-                  Short description of the data set that will be used for
-                  training
-                  <br />
-                  <br />
-                  Example: Dataset of voice recordings from phone calls to
-                  number &lt;number>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
+          <UsaTextInput v-model="dataItem.description">
+            <template #label>
+              Data Description
+              <InfoIcon>
+                Short description of the data set that will be used for
+                training
+                <br />
+                <br />
+                Example: Dataset of voice recordings from phone calls to
+                number &lt;number>
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
 
-          <div class="inline-input-right">
-            <UsaTextInput v-model="dataItem.source">
-              <template #label>
-                Source
-                <InfoIcon>
-                  Where is the data coming from, e.g., Enterprise Data, Public
-                  Data Source, <br />
-                  Synthetic Data
-                  <br />
-                  <br />
-                  Example: Historical data collected between &lt;date> and
-                  &lt;date>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
+          <UsaTextInput v-model="dataItem.source">
+            <template #label>
+              Source
+              <InfoIcon>
+                Where is the data coming from, e.g., Enterprise Data, Public
+                Data Source, <br />
+                Synthetic Data
+                <br />
+                <br />
+                Example: Historical data collected between &lt;date> and
+                &lt;date>
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
         </div>
 
         <UsaSelect
