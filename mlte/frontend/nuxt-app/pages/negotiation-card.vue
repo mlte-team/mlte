@@ -730,7 +730,6 @@
       System-dependent requirements and constraints placed on the model under
       development. The fields below correspond to parts of a quality attribute
       scenario, which is a construct used to clearly define system requirements.
-      More information on quality attribute scenarios is available at [link].
     </p>
 
     <div class="input-group">
