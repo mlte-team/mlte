@@ -69,6 +69,25 @@ class UserCreate(BasicUser):
 # -----------------------------------------------------------------------------
 
 
+class MethodType(str, Enum):
+    """Types of methods for permissions."""
+
+    GET = "get"
+    """Get or read action."""
+
+    POST = "post"
+    """Creation action."""
+
+    PUT = "put"
+    """Action to edit."""
+
+    DELETE = "delete"
+    """Deletion action."""
+
+    ALL = "all"
+    """Special action to represnt all/any of them."""
+
+
 class Group(BaseModel):
     """A user group to which permissions are associated."""
 
@@ -85,5 +104,20 @@ class Permission(BaseModel):
     model_identifier: Optional[str] = None
     """The model to give permissions to."""
 
-    method: str = RESOURCE_ALL_VALUES
+    method: MethodType = MethodType.ALL
     """The HTTP method applied on the resource."""
+
+
+#TODO
+# - When a Model is created:
+#    * Create permissions for all 4 actions for model
+#    * Create a group with read permissions (GET)
+#    * Create a group with edit permissions (POST, PUT, DELETE)
+#    * Add both groups to the current user
+
+# - When a Model is deleted:
+#    * Cascade delete all permissions and groups
+
+# Store functions needed
+# - read/write/delete groups
+# - read/write/delete permissions
