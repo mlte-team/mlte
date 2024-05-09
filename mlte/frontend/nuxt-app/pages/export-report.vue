@@ -1,6 +1,6 @@
 <template>
   <div class="report-body">
-    <div class="report-header rounded-border">
+    <div class="report-header rounded-border section-margin">
       <div class="header-img">
         <img
           src="~/assets/img/MLTE_Black.svg"
@@ -21,33 +21,37 @@
       <div class="spacer"></div>
 
       <div class="header-authors">
-        author 1 <br />
-        author 2 <br />
-        author 3
+        author details <br />
+        author details <br />
+        author details
       </div>      
     </div>
 
-    <div class="rounded-border">
-      <h3>Overview</h3>
-    </div>
-
-    <div v-for="(goal, goalIndex) in page_data.performance.goals" :key="goalIndex">
-      <div class="info-box-row">
-        <div class="info-box-third rounded-border">
-          Goal {{ goalIndex + 1 }}<br />
-          {{ goal.description }}
-        </div>
-        <div class="info-box-two-third rounded-border">
-          Metrics and Baselines <br />
-          <!-- {{ goal }} -->
+    <div class="rounded-border section-margin">
+      <h3 class="insection-margin">
+        Overview
+      </h3>
+      <hr/>
+      <div v-for="(goal, goalIndex) in page_data.performance.goals" :key="goalIndex">
+        <div class="info-box-row insection-margin">
+          <div class="info-box-third rounded-border">
+            Goal {{ goalIndex + 1 }}:<br />
+            {{ goal.description }}
+          </div>
+          <div class="info-box-two-third rounded-border">
+            Metrics and Baselines: <br />
+            <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
+              {{ metricIndex +1 }}. {{ metric.description }} - {{ metric.baseline }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="rounded-border">
+    <div class="rounded-border insection-margin">
       <h3>Results</h3>
     </div>
-    <table class="table usa-table usa-table--borderless">
+    <table class="table usa-table usa-table--borderless section-margin" style="margin-top: 0px;">
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
@@ -88,34 +92,35 @@
 
     <div class="rounded-border">
       <h3>System Information</h3>
-    </div>
-    <div class="info-box-row">
-      <div class="info-box-third rounded-border">
-        ML Problem Type <br />
-        {{ page_data.summary.problem_type }}
+      <hr />
+      <div class="info-box-row insection-margin">
+        <div class="info-box-third rounded-border">
+          ML Problem Type: <br />
+          {{ page_data.summary.problem_type }}
+        </div>
+        <div class="info-box-third rounded-border">
+          ML Task: <br />
+          {{ page_data.summary.task }}
+        </div>
+        <div class="info-box-third rounded-border">
+          Usage Context: <br />
+          {{ page_data.intended_use.usage_context }}
+        </div>
       </div>
-      <div class="info-box-third rounded-border">
-        ML Task <br />
-        {{ page_data.summary.task }}
-      </div>
-      <div class="info-box-third rounded-border">
-        Usage Context <br />
-        {{ page_data.intended_use.usage_context }}
-      </div>
-    </div>
 
-    <div class="info-box-row">
-      <div class="info-box-third rounded-border">
-        FP Risk <br />
-        {{ page_data.risks.fp }}
-      </div>
-      <div class="info-box-third rounded-border">
-        FN Risk <br />
-        {{ page_data.risks.fn }}
-      </div>
-      <div class="info-box-third rounded-border">
-        Other Risks <br />
-        {{ page_data.risks.other }}
+      <div class="info-box-row">
+        <div class="info-box-third rounded-border">
+          FP Risk: <br />
+          {{ page_data.risks.fp }}
+        </div>
+        <div class="info-box-third rounded-border">
+          FN Risk: <br />
+          {{ page_data.risks.fn }}
+        </div>
+        <div class="info-box-third rounded-border">
+          Other Risks: <br />
+          {{ page_data.risks.other }}
+        </div>
       </div>
     </div>
   </div>
@@ -208,6 +213,15 @@ function loadFindings(proxyObject: any) {
 .rounded-border {
   border: 1px solid black;
   border-radius: 15px;
+  padding: 1ch 1ch 1ch 1ch;
+}
+
+.section-margin {
+  margin-bottom: 3ch;
+}
+
+.insection-margin {
+  margin-bottom: 2ch;
 }
 
 .report-header {
@@ -217,16 +231,13 @@ function loadFindings(proxyObject: any) {
 
 .header-img {
   width: 25ch;
-  border: 1px solid purple;
 }
 
 .spacer {
   width: 25ch;
-  border: 1px solid orange;
 }
 
 .header-title {
-  border: 1px solid red;
   text-align: center;
   width: 30ch;
 }
@@ -236,7 +247,6 @@ function loadFindings(proxyObject: any) {
   display: flex;
   align-items: center;
   
-  border: 1px solid purple;
 }
 
 .info-box-row {
