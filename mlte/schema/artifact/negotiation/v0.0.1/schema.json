@@ -7,6 +7,7 @@
         "cui",
         "pii",
         "phi",
+        "classified",
         "other"
       ],
       "title": "DataClassification",

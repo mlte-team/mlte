@@ -1,10 +1,7 @@
 <template>
-  <button type="button">
-    <img
-      src="~/assets/uswds/img/usa-icons/help_outline.svg"
-      class="inline-icon usa-icon--size-3"
-    />
-  </button>
+  <UsaButton class="secondary-button">
+    Example
+  </UsaButton>
 </template>
 
 <style>
@@ -13,6 +10,7 @@ button {
   cursor: pointer;
   appearance: none;
   background-color: inherit;
-  vertical-align: bottom;
+  vertical-align: middle;
+  margin-left: 1ch;
 }
 </style>

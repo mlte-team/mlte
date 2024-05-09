@@ -161,6 +161,7 @@ class DataClassification(str, Enum):
     CUI = "cui"
     PII = "pii"
     PHI = "phi"
+    CLASSIFIED = "classified"
     OTHER = "other"
 
 
