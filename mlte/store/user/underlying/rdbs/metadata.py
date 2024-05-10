@@ -41,7 +41,7 @@ class DBUser(DBBase):
     role_type: Mapped[Optional[DBRoleType]] = relationship()
 
     groups: Mapped[List[DBGroup]] = relationship(
-        "DBGroup", secondary="user_group"
+        "DBGroup", secondary="user_group", back_populates="users"
     )
 
     __table_args__ = (UniqueConstraint("username", name="_username"),)
@@ -67,9 +67,9 @@ class DBGroup(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    users: Mapped[List[DBUser]] = relationship(DBUser, secondary="user_group")
+    users: Mapped[List[DBUser]] = relationship(DBUser, secondary="user_group", back_populates="groups")
     permissions: Mapped[List[DBPermission]] = relationship(
-        "DBPermission", secondary="group_permission"
+        "DBPermission", secondary="group_permission", back_populates="groups"
     )
 
     def __repr__(self) -> str:
@@ -99,7 +99,7 @@ class DBPermission(DBBase):
     method_type: Mapped[Optional[DBMethodType]] = relationship()
 
     groups: Mapped[List[DBGroup]] = relationship(
-        DBGroup, secondary="group_permission"
+        DBGroup, secondary="group_permission", back_populates="permissions"
     )
 
     def __repr__(self) -> str:
