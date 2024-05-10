@@ -116,9 +116,10 @@ class Permission(BaseModel):
 #    * Add both groups to the current user
 
 # - When a Model is deleted:
-#    * Cascade delete all permissions and groups
+#    * Cascade delete all permissions for those models
 
 # Store functions needed
-# - read/write/delete groups
-# - read/write/delete permissions
-# - DB factory for users/groups/permissions
+# - read/write/delete groups for DB
+# - implicit permission writes for DB
+
+# Add endpoints for groups

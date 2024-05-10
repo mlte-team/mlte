@@ -5,14 +5,18 @@ Implementation of local file system artifact store.
 """
 from __future__ import annotations
 
-from pathlib import Path
 from typing import List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.fs import FileSystemStorage
-from mlte.store.user.store import UserMapper, UserStore, UserStoreSession
-from mlte.user.model import BasicUser, User, UserCreate
+from mlte.store.user.store import (
+    GroupMapper,
+    UserMapper,
+    UserStore,
+    UserStoreSession,
+)
+from mlte.user.model import BasicUser, Group, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -57,6 +61,9 @@ class FileSystemUserStoreSession(UserStoreSession):
         self.user_mapper = FileSystemUserMappper(storage)
         """The mapper to user CRUD."""
 
+        self.group_mapper = FileSystemGroupMappper(storage)
+        """The mapper to group CRUD."""
+
     def close(self) -> None:
         """Close the session."""
         # Closing a local FS session is a no-op.
@@ -71,14 +78,14 @@ class FileSystemUserMappper(UserMapper):
         """A reference to underlying storage."""
 
     def create(self, user: UserCreate) -> User:
-        if self._user_path(user.username).exists():
+        if self.storage._resource_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
 
         new_user = convert_to_hashed_user(user)
         return self._write_user(new_user)
 
     def edit(self, user: Union[UserCreate, BasicUser]) -> User:
-        if not self._user_path(user.username).exists():
+        if not self.storage._resource_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 
         updated_user = update_user(self._read_user(user.username), user)
@@ -96,19 +103,14 @@ class FileSystemUserMappper(UserMapper):
         ]
 
     def delete(self, username: str) -> User:
-        self._ensure_user_exists(username)
+        self.storage._ensure_resource_exists(username)
         user = self._read_user(username)
-        self.storage.delete_file(self._user_path(username))
+        self.storage.delete_file(self.storage._resource_path(username))
         return user
 
     # -------------------------------------------------------------------------
     # Internal helpers.
     # -------------------------------------------------------------------------
-
-    def _ensure_user_exists(self, username: str) -> None:
-        """Throws an ErrorNotFound if the given user does not exist."""
-        if not self._user_path(username).exists():
-            raise errors.ErrorNotFound(f"User {username}")
 
     def _read_user(self, username: str) -> User:
         """
@@ -116,31 +118,75 @@ class FileSystemUserMappper(UserMapper):
         :param username: The username
         :return: The user object
         """
-        self._ensure_user_exists(username)
-        return User(**self.storage.read_json_file(self._user_path(username)))
+        self.storage._ensure_resource_exists(username)
+        return User(
+            **self.storage.read_json_file(self.storage._resource_path(username))
+        )
 
     def _write_user(self, user: User) -> User:
         """Writes a user to storage."""
         self.storage.write_json_to_file(
-            self._user_path(user.username),
+            self.storage._resource_path(user.username),
             user.model_dump(),
         )
         return user
 
-    def _user_path(self, username: str) -> Path:
+
+class FileSystemGroupMappper(GroupMapper):
+    """FS mapper for the group resource."""
+
+    def __init__(self, storage: FileSystemStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, group: Group) -> Group:
+        if self.storage._resource_path(group.name).exists():
+            raise errors.ErrorAlreadyExists(f"Group '{group.name}'")
+        return self._write_group(group)
+
+    def edit(self, group: Group) -> Group:
+        if not self.storage._resource_path(group.name).exists():
+            raise errors.ErrorNotFound(f"Group '{group.name}'")
+        return self._write_group(group)
+
+    def read(self, group_name: str) -> Group:
+        return self._read_group(group_name)
+
+    def list(self) -> List[str]:
+        return [
+            self.storage.get_just_filename(group_path)
+            for group_path in self.storage.list_json_files(
+                self.storage.base_path
+            )
+        ]
+
+    def delete(self, group_name: str) -> Group:
+        self.storage._ensure_resource_exists(group_name)
+        group = self._read_group(group_name)
+        self.storage.delete_file(self.storage._resource_path(group_name))
+        return group
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _read_group(self, group_name: str) -> Group:
         """
-        Gets the full filepath for a stored user.
-        :param username: The user identifier
-        :return: The formatted path
+        Lazily construct a Group object on read.
+        :param group_name: The group name
+        :return: The group object
         """
-        return Path(
-            self.storage.base_path, self.storage.add_extension(username)
+        self.storage._ensure_resource_exists(group_name)
+        return Group(
+            **self.storage.read_json_file(
+                self.storage._resource_path(group_name)
+            )
         )
 
-    def _user_name(self, user_path: Path) -> str:
-        """
-        Gets the name of a user given a full filepath.
-        :param username: The full path
-        :return: The username
-        """
-        return self.storage.get_just_filename(user_path)
+    def _write_group(self, group: Group) -> Group:
+        """Writes a Group to storage."""
+        self.storage.write_json_to_file(
+            self.storage._resource_path(group.name),
+            group.model_dump(),
+        )
+        return group

@@ -74,6 +74,8 @@ class DBGroup(DBBase):
         "DBPermission", secondary="group_permission", back_populates="groups"
     )
 
+    __table_args__ = (UniqueConstraint("name", name="_group_name"),)
+
     def __repr__(self) -> str:
         return f"Group(id={self.id!r}, name={self.name!r})"
 
@@ -95,13 +97,14 @@ class DBPermission(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     model_id: Mapped[str]
 
-    method_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("method_type.id")
-    )
-    method_type: Mapped[Optional[DBMethodType]] = relationship()
+    method_type_id: Mapped[int] = mapped_column(ForeignKey("method_type.id"))
+    method_type: Mapped[DBMethodType] = relationship()
 
     groups: Mapped[List[DBGroup]] = relationship(
-        DBGroup, secondary="group_permission", back_populates="permissions"
+        DBGroup,
+        secondary="group_permission",
+        back_populates="permissions",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

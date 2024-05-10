@@ -10,6 +10,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List
 
+import mlte.store.error as errors
 from mlte.store.base import StoreURI, StoreURIPrefix
 
 
@@ -90,3 +91,28 @@ class FileSystemStorage(JsonFileStorage):
         except FileExistsError:
             # If it already existed, we just ignore warning.
             pass
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _ensure_resource_exists(self, resource_id: str) -> None:
+        """Throws an ErrorNotFound if the given resource does not exist."""
+        if not self._resource_path(resource_id).exists():
+            raise errors.ErrorNotFound(f"Not found: {resource_id}")
+
+    def _resource_path(self, resource_id: str) -> Path:
+        """
+        Gets the full filepath for a stored resource.
+        :param resource_id: The resource identifier
+        :return: The formatted path
+        """
+        return Path(self.base_path, self.add_extension(resource_id))
+
+    def _resource_id(self, resource_path: Path) -> str:
+        """
+        Gets the name of a resource given a full filepath.
+        :param resource_path: The full path
+        :return: The resource id
+        """
+        return self.get_just_filename(resource_path)

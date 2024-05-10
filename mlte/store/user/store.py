@@ -10,7 +10,7 @@ from typing import List, Union, cast
 
 from mlte.store import error
 from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
-from mlte.user.model import BasicUser, User, UserCreate
+from mlte.user.model import BasicUser, Group, User, UserCreate
 
 DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = "admin1234"
@@ -57,6 +57,9 @@ class UserStoreSession(StoreSession):
         self.user_mapper = UserMapper()
         """Mapper for the user resource."""
 
+        self.group_mapper = GroupMapper()
+        """Mapper for the group resource."""
+
 
 class ManagedUserSession(ManagedSession):
     """A simple context manager for store sessions."""
@@ -81,4 +84,23 @@ class UserMapper(ResourceMapper):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, user_id: str) -> User:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+
+class GroupMapper(ResourceMapper):
+    """A interface for mapping CRUD actions to store groups."""
+
+    def create(self, new_group: Group) -> Group:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def edit(self, updated_group: Group) -> Group:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def read(self, group_id: str) -> Group:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list(self) -> List[str]:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def delete(self, group_id: str) -> Group:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)

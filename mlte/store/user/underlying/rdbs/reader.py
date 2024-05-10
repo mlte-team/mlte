@@ -5,18 +5,20 @@ DB utils for getting user related data from the DB.
 """
 from __future__ import annotations
 
-from typing import Tuple
+from typing import List, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
 from mlte.store.user.underlying.rdbs.metadata import (
+    DBGroup,
     DBMethodType,
+    DBPermission,
     DBRoleType,
     DBUser,
 )
-from mlte.user.model import MethodType, RoleType, User
+from mlte.user.model import Group, MethodType, Permission, RoleType, User
 
 
 class DBReader:
@@ -45,6 +47,51 @@ class DBReader:
                 ),
                 user_obj,
             )
+
+    @staticmethod
+    def get_group(group_name: str, session: Session) -> Tuple[Group, DBGroup]:
+        """Reads the group with the given name using the provided session, and returns a Group and DBGroup object."""
+        group_obj = session.scalar(
+            select(DBGroup).where(DBGroup.name == group_name)
+        )
+
+        if group_obj is None:
+            raise errors.ErrorNotFound(
+                f"Group with name {group_name} was not found in the user store."
+            )
+        else:
+            all_permissions, all_permissions_db = DBReader.get_permissions(
+                session
+            )
+            return (
+                Group(
+                    name=group_obj.name,
+                    permissions=[
+                        all_permissions[i]
+                        for i, permission_obj in enumerate(all_permissions_db)
+                        if group_obj in permission_obj.groups
+                    ],
+                ),
+                group_obj,
+            )
+
+    @staticmethod
+    def get_permissions(
+        session: Session,
+    ) -> Tuple[List[Permission], List[DBPermission]]:
+        """Reads all permissions in the DB, and returns a list of Permission and DBPermission objects."""
+        permissions_obj = list(
+            session.execute(select(DBPermission)).scalars().all()
+        )
+        permissions: List[Permission] = []
+        for permission_obj in permissions_obj:
+            permission = Permission(
+                artifact_model_identifier=permission_obj.model_id,
+                method=MethodType(permission_obj.method_type.name),
+            )
+            permissions.append(permission)
+
+        return permissions, permissions_obj
 
     @staticmethod
     def get_role_type(type: RoleType, session: Session) -> DBRoleType:

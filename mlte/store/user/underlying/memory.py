@@ -10,8 +10,13 @@ from typing import Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.store import UserMapper, UserStore, UserStoreSession
-from mlte.user.model import BasicUser, User, UserCreate
+from mlte.store.user.store import (
+    GroupMapper,
+    UserMapper,
+    UserStore,
+    UserStoreSession,
+)
+from mlte.user.model import BasicUser, Group, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -44,6 +49,7 @@ class MemoryUserStorage:
 
     def __init__(self) -> None:
         self.users: Dict[str, User] = {}
+        self.groups: Dict[str, Group] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -57,6 +63,9 @@ class InMemoryUserStoreSession(UserStoreSession):
     def __init__(self, *, storage: MemoryUserStorage) -> None:
         self.user_mapper = InMemoryUserMapper(storage=storage)
         """The mapper to user CRUD."""
+
+        self.group_mapper = InMemoryGroupMapper(storage=storage)
+        """The mapper to group CRUD."""
 
     def close(self) -> None:
         """Close the session."""
@@ -103,4 +112,41 @@ class InMemoryUserMapper(UserMapper):
 
         popped = self.storage.users[username]
         del self.storage.users[username]
+        return popped
+
+
+class InMemoryGroupMapper(GroupMapper):
+    """In-memory mapper for the group resource."""
+
+    def __init__(self, *, storage: MemoryUserStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, group: Group) -> Group:
+        if group.name in self.storage.groups:
+            raise errors.ErrorAlreadyExists(f"Group {group.name}")
+        self.storage.groups[group.name] = group
+        return group
+
+    def edit(self, updated_group: Group) -> Group:
+        if updated_group.name not in self.storage.groups:
+            raise errors.ErrorNotFound(f"Group {updated_group.name}")
+
+        self.storage.groups[updated_group.name] = updated_group
+        return updated_group
+
+    def read(self, group_name: str) -> Group:
+        if group_name not in self.storage.groups:
+            raise errors.ErrorNotFound(f"Group {group_name}")
+        return self.storage.groups[group_name]
+
+    def list(self) -> List[str]:
+        return [group_name for group_name in self.storage.groups.keys()]
+
+    def delete(self, group_name: str) -> Group:
+        if group_name not in self.storage.groups:
+            raise errors.ErrorNotFound(f"Group {group_name}")
+
+        popped = self.storage.groups[group_name]
+        del self.storage.groups[group_name]
         return popped
