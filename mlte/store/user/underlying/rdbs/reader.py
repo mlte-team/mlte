@@ -41,7 +41,7 @@ class DBReader:
                     full_name=user_obj.full_name,
                     disabled=user_obj.disabled,
                     hashed_password=user_obj.hashed_password,
-                    role=RoleType(user_obj.role_type),
+                    role=RoleType(user_obj.role_type.name),
                 ),
                 user_obj,
             )

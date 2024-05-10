@@ -38,7 +38,7 @@ class DBUser(DBBase):
     role_type_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("role_type.id")
     )
-    role_type: Mapped[Optional[DBRoleType]] = relationship()
+    role_type: Mapped[DBRoleType] = relationship("DBRoleType")
 
     groups: Mapped[List[DBGroup]] = relationship(
         "DBGroup", secondary="user_group", back_populates="users"
@@ -67,7 +67,9 @@ class DBGroup(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    users: Mapped[List[DBUser]] = relationship(DBUser, secondary="user_group", back_populates="groups")
+    users: Mapped[List[DBUser]] = relationship(
+        DBUser, secondary="user_group", back_populates="groups"
+    )
     permissions: Mapped[List[DBPermission]] = relationship(
         "DBPermission", secondary="group_permission", back_populates="groups"
     )
