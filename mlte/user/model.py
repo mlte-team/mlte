@@ -121,3 +121,4 @@ class Permission(BaseModel):
 # Store functions needed
 # - read/write/delete groups
 # - read/write/delete permissions
+# - DB factory for users/groups/permissions

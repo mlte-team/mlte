@@ -109,6 +109,7 @@ class RelationalDBUserMapper(UserMapper):
                     full_name=hashed_user.full_name,
                     disabled=hashed_user.disabled,
                     hashed_password=hashed_user.hashed_password,
+                    role_type=DBReader.get_role_type(user.role, session),
                 )
                 session.add(user_obj)
                 session.commit()
@@ -124,6 +125,9 @@ class RelationalDBUserMapper(UserMapper):
             user_obj.email = updated_user.email
             user_obj.full_name = updated_user.full_name
             user_obj.disabled = updated_user.disabled
+            user_obj.role_type = DBReader.get_role_type(
+                updated_user.role, session
+            )
             user_obj.hashed_password = updated_user.hashed_password
             session.commit()
 
