@@ -14,7 +14,7 @@ from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.user.model import BasicUser, MethodType, Permission
+from mlte.user.model import BasicUser, MethodType, Permission, RoleType
 
 # -----------------------------------------------------------------------------
 # Helper functions.
@@ -48,8 +48,11 @@ def is_authorized(current_user: BasicUser, action: Permission) -> bool:
         f"Checking authorization for user {current_user.username} to resource {action}"
     )
 
-    # If the resource is not associated to a model, give access.
+    if current_user.role == RoleType.ADMIN:
+        # If having admin role, always get access.
+        return True
     if action.artifact_model_identifier is None:
+        # If the resource is not associated to a model, give access.
         return True
     else:
         # TODO: Check URL and method against DB of permisisons.
