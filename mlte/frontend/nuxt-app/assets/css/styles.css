@@ -58,3 +58,16 @@
 hr {
     margin-top: 1em;
 }
+
+.submit-footer {
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    position: sticky;
+    bottom: 5px;
+    width: 100%;
+    height: 7ch;
+    text-align: right;
+    padding: 8px 0 20px 0;
+    margin-top: 1em;
+}

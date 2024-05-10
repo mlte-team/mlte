@@ -44,13 +44,13 @@
 
     <h1 class="section-header">How to use the Negotiation Card</h1>
     <p>
-      Teams should work through as many of the following items before starting model
-      development. The Negotiation Card can and should be revisited at any negotiation 
-      point. Teams should refer to this Negotiation Card during development to ensure they
-      capture all relevant critical aspects of the model and system.
-
-      Hover over the black information icons next to each field to get more information about
-      that field. Click on the Example button to see specific examples for a section.
+      Teams should work through as many of the following items before starting
+      model development. The Negotiation Card can and should be revisited at any
+      negotiation point. Teams should refer to this Negotiation Card during
+      development to ensure they capture all relevant critical aspects of the
+      model and system. Hover over the black information icons next to each
+      field to get more information about that field. Click on the Example
+      button to see specific examples for a section.
     </p>
 
     <UsaTextInput
@@ -88,8 +88,10 @@
               Short description for the goal.
               <br />
               <br />
-              <i>Example: Identify voice recordings that belong to a given person
-              of interest.</i>
+              <i
+                >Example: Identify voice recordings that belong to a given
+                person of interest.</i
+              >
             </InfoIcon>
           </template>
         </UsaTextInput>
@@ -103,8 +105,10 @@
               <template #label>
                 Description
                 <InfoIcon>
-                  Performance metric that captures the system's ability to accomplish the goal,<br />
-                  i.e., acceptance criteria for determining that the model is performing correctly.
+                  Performance metric that captures the system's ability to
+                  accomplish the goal,<br />
+                  i.e., acceptance criteria for determining that the model is
+                  performing correctly.
                   <br />
                   <br />
                   <i>Example: Accuracy > 90%</i>
@@ -118,12 +122,16 @@
               <template #label>
                 Baseline Source
                 <InfoIcon>
-                  Indicates where the performance metric goal comes from, or why it is <br/>
-                  believed to be achievable. 
+                  Indicates where the performance metric goal comes from, or why
+                  it is <br />
+                  believed to be achievable.
                   <br />
                   <br />
-                  <i>Example: Human accuracy for matching voices is ~60% as stated in the paper<br />
-                  by Smith et al.</i><br />
+                  <i
+                    >Example: Human accuracy for matching voices is ~60% as
+                    stated in the paper<br />
+                    by Smith et al.</i
+                  ><br />
                 </InfoIcon>
               </template>
             </UsaTextInput>
@@ -153,7 +161,10 @@
           Type of ML problem that the model is intended to solve.
           <br />
           <br />
-          <i>Example: Classification, Clustering, Detection, and others in drop-down list.</i>
+          <i
+            >Example: Classification, Clustering, Detection, and others in
+            drop-down list.</i
+          >
         </InfoIcon>
       </template>
     </UsaSelect>
@@ -180,9 +191,12 @@
           going to be used by end users or in the context of a larger system.
           <br />
           <br />
-          <i>Example: Model results are consumed by a system component that shows
-          <br />
-          an intel analyst a list of matching voice recordings.</i>
+          <i
+            >Example: Model results are consumed by a system component that
+            shows
+            <br />
+            an intel analyst a list of matching voice recordings.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextInput>
@@ -194,9 +208,12 @@
           What is the risk of producing a false positive?
           <br />
           <br />
-          <i>Example: Incorrect positive results will cause extra work for the <br />
-          intel analyst that needs to analyze every recording flagged by the
-          model.</i>
+          <i
+            >Example: Incorrect positive results will cause extra work for the
+            <br />
+            intel analyst that needs to analyze every recording flagged by the
+            model.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextInput>
@@ -208,9 +225,13 @@
           What is the risk of producing a false negative?
           <br />
           <br />
-          <i>Example: Incorrect negative results means that the model will <br />
-          not flag suspicious recordings, which means that intel analysts <br />
-          might miss information that is crucial to an investigation.</i>
+          <i
+            >Example: Incorrect negative results means that the model will
+            <br />
+            not flag suspicious recordings, which means that intel analysts
+            <br />
+            might miss information that is crucial to an investigation.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextInput>
@@ -239,11 +260,14 @@
             <template #label>
               Dataset Description
               <InfoIcon>
-                Short description of the data set that will be used for
-                model development.
+                Short description of the data set that will be used for model
+                development.
                 <br />
                 <br />
-                <i>Example: Voice recordings from phone calls made to numbers in the 412 area code.</i>
+                <i
+                  >Example: Voice recordings from phone calls made to numbers in
+                  the 412 area code.</i
+                >
               </InfoIcon>
             </template>
           </UsaTextInput>
@@ -257,7 +281,10 @@
                 Synthetic Data?
                 <br />
                 <br />
-                <i>Example: Company log data collected between 2023/01/01 and 2023/12/31.</i>
+                <i
+                  >Example: Company log data collected between 2023/01/01 and
+                  2023/12/31.</i
+                >
               </InfoIcon>
             </template>
           </UsaTextInput>
@@ -285,8 +312,10 @@
               How will the data be accessed? What accounts are needed?
               <br />
               <br />
-              <i>Example: Data is stored on the "blue" server that requires an
-              account on the "solid" network.</i>
+              <i
+                >Example: Data is stored on the "blue" server that requires an
+                account on the "solid" network.</i
+              >
             </InfoIcon>
           </template>
         </UsaTextInput>
@@ -303,8 +332,8 @@
               />
             </template>
             <template #info>
-              If data is labeled, include information about labels and their distribution 
-              in the dataset.
+              If data is labeled, include information about labels and their
+              distribution in the dataset.
             </template>
           </SubHeader>
           <UsaTextInput v-model="dataItem.labeling_method">
@@ -466,14 +495,16 @@
           <template #label>
             Data Rights
             <InfoIcon>
-              Are there particular ways in which the data can or cannot be
-              used?
+              Are there particular ways in which the data can or cannot be used?
               <br />
               <br />
-              <i>Example: Given that data is classified it should be treated as
-              <br />
-              such, e.g., not uploaded to any public servers or stored on <br />
-              any non-authorized equipment.</i>
+              <i
+                >Example: Given that data is classified it should be treated as
+                <br />
+                such, e.g., not uploaded to any public servers or stored on
+                <br />
+                any non-authorized equipment.</i
+              >
             </InfoIcon>
           </template>
         </UsaTextInput>
@@ -487,10 +518,12 @@
               Personally Identifiable Information [PII]?
               <br />
               <br />
-              <i>Example: Although the audio recordings are not associated to a
-              <br />
-              person, post-analysis may associate them to a person and <br />
-              therefore become PII.</i>
+              <i
+                >Example: Although the audio recordings are not associated to a
+                <br />
+                person, post-analysis may associate them to a person and <br />
+                therefore become PII.</i
+              >
             </InfoIcon>
           </template>
         </UsaTextInput>
@@ -572,8 +605,11 @@
           e.g., API, user facing, data feed.
           <br />
           <br />
-          <i>Example: The model will expose an API so that it can be called <br />
-          from the intel analyst UI.</i>
+          <i
+            >Example: The model will expose an API so that it can be called
+            <br />
+            from the intel analyst UI.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextarea>
@@ -678,8 +714,11 @@
             Field type, e.g., number, string, Boolean, data, image, audio.
             <br />
             <br />
-            <i>Example: Vector of Strings with IDs of matching recordings — an empty <br />
-            vector means that there were no matches.</i>
+            <i
+              >Example: Vector of Strings with IDs of matching recordings — an
+              empty <br />
+              vector means that there were no matches.</i
+            >
           </InfoIcon>
         </template>
       </UsaTextInput>
@@ -692,8 +731,8 @@
           Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
         </template>
         <template #info>
-          Describe the amount and type of
-          compute resources needed for inference.
+          Describe the amount and type of compute resources needed for
+          inference.
         </template>
       </SubHeader>
       <div>
@@ -730,8 +769,8 @@
       System-dependent requirements and constraints placed on the model under
       development. The fields below correspond to parts of a quality attribute
       scenario, which is a construct used to clearly define system requirements.
-      As parts of the scenario are filled in, the corresponding text for the scenario
-      will be generated for your validation. 
+      As parts of the scenario are filled in, the corresponding text for the
+      scenario will be generated for your validation.
     </p>
 
     <div class="input-group">
@@ -753,9 +792,10 @@
         <h3 class="no-margin-sub-header">
           Requirement {{ requirementIndex + 1 }}
         </h3>
-        <p class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
-          <b>Scenario for {{ requirement.quality }}: </b>{{ requirement.stimulus }} from {{ requirement.source }} during
-          {{ requirement.environment }}. {{ requirement.response }} 
+        <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
+          <b>Scenario for {{ requirement.quality }}: </b
+          >{{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
         </p>
         <UsaTextInput v-model="requirement.quality">
@@ -798,7 +838,7 @@
               sensor).
               <br />
               <br />
-            <i>Example: Intel analyst application.</i>
+              <i>Example: Intel analyst application.</i>
             </InfoIcon>
           </template>
         </UsaTextInput>
@@ -808,8 +848,8 @@
             Environment
             <InfoIcon>
               Set of circumstances in which the scenario takes place <br />
-              (e.g., normal operations, overload condition, startup,
-              development time).
+              (e.g., normal operations, overload condition, startup, development
+              time).
               <br />
               <br />
               <i>Example: Normal operations.</i>
@@ -860,8 +900,8 @@
       </AddButton>
     </div>
 
-    <div class="margin-button" style="text-align: right">
-      <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
+    <div class="submit-footer">
+      <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
         Cancel
       </UsaButton>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
