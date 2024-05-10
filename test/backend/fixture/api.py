@@ -28,7 +28,7 @@ def setup_api_with_mem_stores() -> FastAPI:
     """Setup API, configure to use memory artifact store and create app itself."""
     # Set up user store with test user.
     user_store = user_store_fixture.create_memory_store()
-    user_store.session().create_user(
+    user_store.session().user_mapper.create(
         UserCreate(username=TEST_API_USER, password=TEST_API_PASS)
     )
 

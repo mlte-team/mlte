@@ -10,7 +10,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List
 
-from mlte.store.base import StoreURIPrefix
+from mlte.store.base import StoreURI, StoreURIPrefix
 
 
 def parse_root_path(uristr: str) -> Path:
@@ -70,3 +70,23 @@ class JsonFileStorage:
 
     def get_just_filename(self, path: Path) -> str:
         return path.stem
+
+
+class FileSystemStorage(JsonFileStorage):
+    """A local file system implementation of a storage."""
+
+    def __init__(self, uri: StoreURI, sub_folder: str) -> None:
+        root = parse_root_path(uri.uri)
+        if not root.exists():
+            raise FileNotFoundError(
+                f"Root data storage location does not exist: {root}."
+            )
+
+        self.base_path = Path(root, sub_folder)
+        """The the base folder for the file store."""
+
+        try:
+            self.create_folder(self.base_path)
+        except FileExistsError:
+            # If it already existed, we just ignore warning.
+            pass

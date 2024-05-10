@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.store import UserStore, UserStoreSession
+from mlte.store.user.store import UserMapper, UserStore, UserStoreSession
 from mlte.store.user.underlying.rdbs.metadata import DBBase, DBUser
 from mlte.store.user.underlying.rdbs.reader import DBReader
 from mlte.user.model import BasicUser, User, UserCreate
@@ -65,17 +65,22 @@ class RelationalDBUserStoreSession(UserStoreSession):
 
     def __init__(self, engine: Engine) -> None:
         self.engine = engine
+        self.user_mapper = RelationalDBUserMapper(engine)
         """A reference to underlying storage."""
 
     def close(self) -> None:
         """Close the session."""
         self.engine.dispose()
 
-    # -------------------------------------------------------------------------
-    # User CRUD Elements
-    # -------------------------------------------------------------------------
 
-    def create_user(self, user: UserCreate) -> User:
+class RelationalDBUserMapper(UserMapper):
+    """RDB mapper for the user resource."""
+
+    def __init__(self, engine: Engine) -> None:
+        self.engine = engine
+        """A reference to underlying storage."""
+
+    def create(self, user: UserCreate) -> User:
         with Session(self.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -97,7 +102,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 session.commit()
                 return hashed_user
 
-    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, user: Union[UserCreate, BasicUser]) -> User:
         with Session(self.engine) as session:
             curr_user, user_obj = DBReader.get_user(user.username, session)
             updated_user = update_user(curr_user, user)
@@ -112,12 +117,12 @@ class RelationalDBUserStoreSession(UserStoreSession):
 
             return updated_user
 
-    def read_user(self, username: str) -> User:
+    def read(self, username: str) -> User:
         with Session(self.engine) as session:
             user, _ = DBReader.get_user(username, session)
             return user
 
-    def list_users(self) -> List[str]:
+    def list(self) -> List[str]:
         users: List[str] = []
         with Session(self.engine) as session:
             user_objs = session.scalars(select(DBUser))
@@ -125,7 +130,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
                 users.append(user_obj.username)
         return users
 
-    def delete_user(self, username: str) -> User:
+    def delete(self, username: str) -> User:
         with Session(self.engine) as session:
             user, user_obj = DBReader.get_user(username, session)
             session.delete(user_obj)

@@ -7,6 +7,7 @@ MLTE general store interface.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any, List
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -92,34 +93,13 @@ class StoreURI:
 
 
 # -----------------------------------------------------------------------------
-# StoreSession
-# -----------------------------------------------------------------------------
-
-
-class StoreSession:
-    """The base class for all implementations of the MLTE store session."""
-
-    def __init__(self):
-        """Initialize a session instance."""
-        pass
-
-    def close(self) -> None:
-        """Close the session."""
-        raise NotImplementedError(
-            "Cannot invoke method on abstract StoreSession."
-        )
-
-
-# -----------------------------------------------------------------------------
 # Store
 # -----------------------------------------------------------------------------
 
 
 class Store:
     """
-    An abstract store.
-
-    A Store instance is the "static" part of a store configuration.
+    An abstract store. A Store instance is the "static" part of a store configuration.
     In contrast, a StoreSession represents an active session with the store.
     """
 
@@ -140,6 +120,28 @@ class Store:
         raise NotImplementedError("Cannot get handle to abstract Store.")
 
 
+# -----------------------------------------------------------------------------
+# StoreSession
+# -----------------------------------------------------------------------------
+
+
+class StoreSession:
+    """The base class for all implementations of the MLTE store session."""
+
+    resource_mappers: List[ResourceMapper] = []
+    """A list of resource mappers for all resources in this store."""
+
+    def __init__(self):
+        """Initialize a session instance."""
+        pass
+
+    def close(self) -> None:
+        """Close the session."""
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+
 class ManagedSession:
     """A simple context manager for store sessions."""
 
@@ -152,3 +154,51 @@ class ManagedSession:
 
     def __exit__(self, exc_type, exc_value, exc_tb) -> None:
         self.session.close()
+
+
+class ResourceMapper:
+    """A generic interface for mapping CRUD actions to store specific resources."""
+
+    NOT_IMPLEMENTED_ERROR_MSG = (
+        "Cannot invoke method on abstract resource mapper."
+    )
+    """Default error message for this abstract class."""
+
+    def create(self, new_resource: Any) -> Any:
+        """
+        Create a new resource.
+        :param new_resource: The data to create the resource
+        :return: The created resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def edit(self, updated_resource: Any) -> Any:
+        """
+        Edit an existing resource.
+        :param updated_resource: The data to edit the resource
+        :return: The edited resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def read(self, resource_identifier: str) -> Any:
+        """
+        Read a resource.
+        :param resource_identifier: The identifier for the resource
+        :return: The resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list(self) -> List[str]:
+        """
+        List all resources of this type in the store.
+        :return: A collection of identifiers for all resources of this type
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def delete(self, resource_identifier: str) -> Any:
+        """
+        Delete a resource.
+        :param resource_identifier: The identifier for the resource
+        :return: The deleted resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)

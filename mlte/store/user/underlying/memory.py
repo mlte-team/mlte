@@ -10,7 +10,7 @@ from typing import Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.store import UserStore, UserStoreSession
+from mlte.store.user.store import UserMapper, UserStore, UserStoreSession
 from mlte.user.model import BasicUser, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
@@ -55,19 +55,24 @@ class InMemoryUserStoreSession(UserStoreSession):
     """An in-memory implementation of the MLTE user store."""
 
     def __init__(self, *, storage: MemoryUserStorage) -> None:
-        self.storage = storage
-        """A reference to underlying storage."""
+        self.user_mapper = InMemoryUserMapper(storage=storage)
+        """The mapper to user CRUD."""
 
     def close(self) -> None:
         """Close the session."""
         # Closing an in-memory session is a no-op.
         pass
 
-    # -------------------------------------------------------------------------
-    # Structural Elements
-    # -------------------------------------------------------------------------
 
-    def create_user(self, user: UserCreate) -> User:
+class InMemoryUserMapper(UserMapper):
+    """In-memory mapper for the user resource."""
+
+    def __init__(self, *, storage: MemoryUserStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, user: UserCreate) -> User:
+        print(f"In memory store creating {user}")
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
@@ -76,7 +81,7 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.storage.users[user.username] = stored_user
         return stored_user
 
-    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, user: Union[UserCreate, BasicUser]) -> User:
         if user.username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {user.username}")
 
@@ -85,15 +90,15 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.storage.users[user.username] = updated_user
         return updated_user
 
-    def read_user(self, username: str) -> User:
+    def read(self, username: str) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
         return self.storage.users[username]
 
-    def list_users(self) -> List[str]:
+    def list(self) -> List[str]:
         return [username for username in self.storage.users.keys()]
 
-    def delete_user(self, username: str) -> User:
+    def delete(self, username: str) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
 

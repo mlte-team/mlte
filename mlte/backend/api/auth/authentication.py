@@ -14,7 +14,7 @@ def authenticate_user(
     """Validates the credentials."""
     user = None
     try:
-        user = user_store_session.read_user(username)
+        user = user_store_session.user_mapper.read(username)
     except Exception:
         # Assume any exception means we couldn't load user it.
         # print(f"Error reading user: {ex}")

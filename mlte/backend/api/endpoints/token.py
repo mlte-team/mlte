@@ -69,7 +69,7 @@ async def login_for_access_token(
                     error="invalid_grant",
                     error_decription="Incorrect username or password.",
                 )
-            user = user_store_session.read_user(form_data.username)
+            user = user_store_session.user_mapper.read(form_data.username)
     else:
         raise HTTPTokenException(
             error="unsupported_grant_type",

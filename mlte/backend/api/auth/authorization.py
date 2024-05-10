@@ -14,19 +14,22 @@ from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.user.model import BasicUser, Permission
+from mlte.user.model import BasicUser, MethodType, Permission
 
 # -----------------------------------------------------------------------------
 # Helper functions.
 # -----------------------------------------------------------------------------
 
 
-async def get_action(request: Request, model_id: str) -> Permission:
+async def get_action(request: Request) -> Permission:
     """Gets a resource description for the current method and model."""
     method = request.method
 
     # Build and return the ResourceAction
-    resource_action = Permission(model_identifier=model_id, method=method)
+    model_id = "1"
+    resource_action = Permission(
+        artifact_model_identifier=model_id, method=MethodType[method]
+    )
     print(f"Resource action: {resource_action}")
     return resource_action
 
@@ -45,7 +48,7 @@ def is_authorized(current_user: BasicUser, action: Permission) -> bool:
     )
 
     # If the resource is not associated to a model, give access.
-    if action.model_identifier is None:
+    if action.artifact_model_identifier is None:
         return True
     else:
         # TODO: Check URL and method against DB of permisisons.
@@ -76,6 +79,7 @@ async def get_authorized_user(
     :return: A User data structure, with a User that has access to the resources.
     """
     # Validate token and get username.
+    print(f"Get authorized user token {token}, resource {resource}")
     try:
         username = get_username_from_token(token, state.token_key)
     except Exception as ex:
@@ -86,8 +90,8 @@ async def get_authorized_user(
 
     # Check if user in token exists.
     user = None
-    with dependencies.user_store_session() as handle:
-        user = handle.read_user(username)
+    with dependencies.user_store_session() as user_store:
+        user = user_store.user_mapper.read(username)
     if user is None:
         raise HTTPAuthException(
             error="invalid_token",

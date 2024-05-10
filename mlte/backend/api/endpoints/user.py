@@ -40,7 +40,7 @@ def create_user(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.create_user(user)
+            return user_store.user_mapper.create(user)
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
@@ -65,7 +65,7 @@ def edit_user(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.edit_user(user)
+            return user_store.user_mapper.edit(user)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -90,7 +90,7 @@ def read_user(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.read_user(username)
+            return user_store.user_mapper.read(username)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -112,7 +112,7 @@ def list_users(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.list_users()
+            return user_store.user_mapper.list()
         except Exception:
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
@@ -131,10 +131,10 @@ def list_users_details(
     with dependencies.user_store_session() as user_store:
         try:
             detailed_users = []
-            usernames = user_store.list_users()
+            usernames = user_store.user_mapper.list()
             for username in usernames:
                 user_details = BasicUser(
-                    **user_store.read_user(username).model_dump()
+                    **user_store.user_mapper.read(username).model_dump()
                 )
                 detailed_users.append(user_details)
             return detailed_users
@@ -158,7 +158,7 @@ def delete_user(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.delete_user(username)
+            return user_store.user_mapper.delete(username)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

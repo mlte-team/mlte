@@ -29,7 +29,7 @@ def set_test_user(
         username=username,
         password=password,
     )
-    user_store_session.create_user(user)
+    user_store_session.user_mapper.create(user)
 
 
 @pytest.fixture(autouse=True)

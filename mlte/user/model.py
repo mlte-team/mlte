@@ -101,14 +101,14 @@ class Group(BaseModel):
 class Permission(BaseModel):
     """Permissions for manipulating model artifacts."""
 
-    model_identifier: Optional[str] = None
+    artifact_model_identifier: Optional[str] = None
     """The model to give permissions to."""
 
     method: MethodType = MethodType.ALL
     """The HTTP method applied on the resource."""
 
 
-#TODO
+# TODO
 # - When a Model is created:
 #    * Create permissions for all 4 actions for model
 #    * Create a group with read permissions (GET)
