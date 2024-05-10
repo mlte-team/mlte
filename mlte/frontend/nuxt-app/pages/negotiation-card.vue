@@ -751,6 +751,11 @@
         <h3 class="no-margin-sub-header">
           Requirement {{ requirementIndex + 1 }}
         </h3>
+        <p class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
+          <b>Scenario: </b>{{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.environment }}, {{ requirement.response }} at/with
+          {{ requirement.measure }}
+        </p>
         <UsaTextInput v-model="requirement.quality">
           <template #label>
             System Quality
