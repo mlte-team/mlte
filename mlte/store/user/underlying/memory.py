@@ -72,7 +72,6 @@ class InMemoryUserMapper(UserMapper):
         """A reference to underlying storage."""
 
     def create(self, user: UserCreate) -> User:
-        print(f"In memory store creating {user}")
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 

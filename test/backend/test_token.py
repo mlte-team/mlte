@@ -51,6 +51,8 @@ def test_valid_user(
     res = client.post(
         f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
     )
+    print(res.content)
+    assert res.status_code == codes.OK
 
     # Set up form data to get token.
     form_data = client._format_oauth_password_payload(

@@ -23,12 +23,13 @@ from mlte.user.model import BasicUser, MethodType, Permission
 
 async def get_action(request: Request) -> Permission:
     """Gets a resource description for the current method and model."""
-    method = request.method
+    # print(f"Params: {request.query_params}")
+    model_id = request.query_params.get("model_id")
+    method = MethodType[request.method]
 
     # Build and return the ResourceAction
-    model_id = "1"
     resource_action = Permission(
-        artifact_model_identifier=model_id, method=MethodType[method]
+        artifact_model_identifier=model_id, method=method
     )
     print(f"Resource action: {resource_action}")
     return resource_action
