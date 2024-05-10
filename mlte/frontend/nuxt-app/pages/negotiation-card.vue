@@ -730,6 +730,8 @@
       System-dependent requirements and constraints placed on the model under
       development. The fields below correspond to parts of a quality attribute
       scenario, which is a construct used to clearly define system requirements.
+      As parts of the scenario are filled in, the corresponding text for the scenario
+      will be generated for your validation. 
     </p>
 
     <div class="input-group">
@@ -752,9 +754,9 @@
           Requirement {{ requirementIndex + 1 }}
         </h3>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px;">
-          <b>Scenario: </b>{{ requirement.stimulus }} from {{ requirement.source }} during
-          {{ requirement.environment }}, {{ requirement.response }} at/with
-          {{ requirement.measure }}
+          <b>Scenario for {{ requirement.quality }}: </b>{{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.environment }}. {{ requirement.response }} 
+          {{ requirement.measure }}.
         </p>
         <UsaTextInput v-model="requirement.quality">
           <template #label>
