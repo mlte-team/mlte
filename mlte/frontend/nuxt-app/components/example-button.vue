@@ -1,7 +1,5 @@
 <template>
-  <UsaButton class="secondary-button">
-    Example
-  </UsaButton>
+  <UsaButton class="secondary-button"> Example </UsaButton>
 </template>
 
 <style>
