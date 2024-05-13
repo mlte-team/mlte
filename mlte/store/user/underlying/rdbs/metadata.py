@@ -104,7 +104,7 @@ class DBPermission(DBBase):
         DBGroup,
         secondary="group_permission",
         back_populates="permissions",
-        cascade="all, delete-orphan",
+        cascade="all",
     )
 
     def __repr__(self) -> str:
