@@ -1180,12 +1180,12 @@ const form = ref({
   },
   system_requirements: [
     {
-      quality: "",
+      quality: "<System Quality>",
       stimulus: "<Stimulus>",
       source: "<Source>",
-      environment: "",
-      response: "",
-      measure: "",
+      environment: "<Environment>",
+      response: "<Response>",
+      measure: "<Response Measure>",
     },
   ],
 });
@@ -1613,12 +1613,12 @@ function deleteField(dataItemIndex: number, fieldIndex: number) {
 
 function addRequirement() {
   form.value.system_requirements.push({
-    quality: "",
+    quality: "<System Quality>",
     stimulus: "<Stimulus>",
     source: "<Source>",
-    environment: "",
-    response: "",
-    measure: "",
+    environment: "<Environment>",
+    response: "<Response>",
+    measure: "<Response Measure>",
   });
 }
 
