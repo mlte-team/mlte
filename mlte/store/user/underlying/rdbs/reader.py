@@ -43,7 +43,11 @@ class DBReader:
                     full_name=user_obj.full_name,
                     disabled=user_obj.disabled,
                     hashed_password=user_obj.hashed_password,
-                    role=RoleType(user_obj.role_type.name),
+                    role=RoleType[user_obj.role_type.name],
+                    groups=[
+                        DBReader._build_group(group_obj, session)
+                        for group_obj in user_obj.groups
+                    ],
                 ),
                 user_obj,
             )
@@ -60,20 +64,23 @@ class DBReader:
                 f"Group with name {group_name} was not found in the user store."
             )
         else:
-            all_permissions, all_permissions_db = DBReader.get_permissions(
-                session
-            )
-            return (
-                Group(
-                    name=group_obj.name,
-                    permissions=[
-                        all_permissions[i]
-                        for i, permission_obj in enumerate(all_permissions_db)
-                        if group_obj in permission_obj.groups
-                    ],
-                ),
-                group_obj,
-            )
+            return (DBReader._build_group(group_obj, session), group_obj)
+
+    @staticmethod
+    def _build_group(
+        group_obj: DBGroup,
+        session: Session,
+    ) -> Group:
+        """Builds a Group object out of its DB model."""
+        all_permissions, all_permissions_db = DBReader.get_permissions(session)
+        return Group(
+            name=group_obj.name,
+            permissions=[
+                all_permissions[i]
+                for i, permission_obj in enumerate(all_permissions_db)
+                if group_obj in permission_obj.groups
+            ],
+        )
 
     @staticmethod
     def get_permissions(
