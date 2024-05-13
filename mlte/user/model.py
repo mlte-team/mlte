@@ -120,5 +120,6 @@ class Permission(BaseModel):
 
 # Store functions needed
 # - implicit permission writes for DB
+# - unit tests for groups
 
 # Add endpoints for groups
