@@ -47,6 +47,9 @@ class Artifact(metaclass=abc.ABCMeta):
         self.timestamp = -1
         """The Unix timestamp of when the artifact was saved to a store."""
 
+        self.creator = None
+        """The user that created this artifact."""
+
     @abc.abstractmethod
     def to_model(self) -> ArtifactModel:
         """Serialize an artifact to its corresponding model."""
@@ -137,7 +140,7 @@ class Artifact(metaclass=abc.ABCMeta):
 
         artifact_model = self.to_model()
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact_with_timestamp(
+            handle.write_artifact_with_header(
                 context.model,
                 context.version,
                 artifact_model,
@@ -220,5 +223,8 @@ class Artifact(metaclass=abc.ABCMeta):
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""
         return ArtifactHeaderModel(
-            identifier=self.identifier, type=self.type, timestamp=self.timestamp
+            identifier=self.identifier,
+            type=self.type,
+            timestamp=self.timestamp,
+            creator=self.creator,
         )

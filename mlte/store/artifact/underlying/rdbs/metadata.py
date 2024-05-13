@@ -100,6 +100,8 @@ class DBArtifactHeader(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
     timestamp: Mapped[int] = mapped_column(BigInteger)
+    username: Mapped[Optional[str]]
+
     type_id: Mapped[int] = mapped_column(ForeignKey("artifact_type.id"))
     version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
 

@@ -2,7 +2,7 @@
     color: #d8ac16;
 }
 
-.no-margin-section-header {
+.no-margin-sub-header {
     margin-bottom: 0px;
 }
 
@@ -16,12 +16,12 @@
 .inline-input-left {
     display: inline-block;
     margin-right: 1em;
-    width: 29ch;
+    width: 28ch;
 }
 
 .inline-input-right {
     display: inline-block;
-    width: 29ch;
+    width: 28ch;
 }
 
 .primary-button {   
@@ -56,5 +56,18 @@
 }
 
 hr {
+    margin-top: 1em;
+}
+
+.submit-footer {
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    position: sticky;
+    bottom: 5px;
+    width: 100%;
+    height: 7ch;
+    text-align: right;
+    padding: 8px 0 20px 0;
     margin-top: 1em;
 }

@@ -39,14 +39,15 @@ def write_artifact(
     :param request: The artifact write request
     :return: The created artifact
     """
-    with dependencies.artifact_store_session() as handle:
+    with dependencies.artifact_store_session() as artifact_store:
         try:
-            artifact = handle.write_artifact_with_timestamp(
+            artifact = artifact_store.write_artifact_with_header(
                 model_id,
                 version_id,
                 request.artifact,
                 force=request.force,
                 parents=request.parents,
+                user=current_user.username,
             )
             return WriteArtifactResponse(artifact=artifact)
         except errors.ErrorNotFound as e:

@@ -15,6 +15,7 @@ from mlte.model.shared import (
     GoalDescriptor,
     ModelDescriptor,
     ProblemType,
+    QASDescriptor,
     RiskDescriptor,
 )
 
@@ -64,3 +65,6 @@ class NegotiationCardModel(BaseModel):
 
     model: ModelDescriptor = ModelDescriptor()
     """The descriptor for the model."""
+
+    system_requirements: List[QASDescriptor] = []
+    """The descriptor of the system-level quality requirements."""

@@ -18,12 +18,12 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
     ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
+    QASDescriptor,
     RiskDescriptor,
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
@@ -37,12 +37,14 @@ from mlte.report.model import (
 )
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    DBQAS,
     DBCommentDescriptor,
     DBDataDescriptor,
     DBFieldDescriptor,
     DBGoalDescriptor,
     DBLabelDescriptor,
     DBMetricDescriptor,
+    DBModelIODescriptor,
     DBModelResourcesDescriptor,
     DBNegotiationCard,
     DBReport,
@@ -78,6 +80,16 @@ def create_negotiation_db_from_model(
         memory=negotiation_card.model.production.resources.memory,
         storage=negotiation_card.model.production.resources.storage,
     )
+    model_input_desc_obj = DBModelIODescriptor(
+        name=negotiation_card.model.production.interface.input.name,
+        description=negotiation_card.model.production.interface.input.description,
+        type=negotiation_card.model.production.interface.input.type,
+    )
+    model_output_desc_obj = DBModelIODescriptor(
+        name=negotiation_card.model.production.interface.output.name,
+        description=negotiation_card.model.production.interface.output.description,
+        type=negotiation_card.model.production.interface.output.type,
+    )
 
     # Create the actual object.
     negotiation_card_obj = DBNegotiationCard(
@@ -91,10 +103,12 @@ def create_negotiation_db_from_model(
         sys_risks_other=negotiation_card.system.risks.other,
         model_dev_resources=model_dev_resources_obj,
         model_prod_resources=model_prod_resources_obj,
-        model_prod_integration=negotiation_card.model.production.integration,
-        model_prod_interface_input_desc=negotiation_card.model.production.interface.input.description,
-        model_prod_interface_output_desc=negotiation_card.model.production.interface.output.description,
+        model_prod_deployment_platform=negotiation_card.model.production.deployment_platform,
+        model_prod_capability_deployment_mechanism=negotiation_card.model.production.capability_deployment_mechanism,
+        model_prod_interface_input_desc=model_input_desc_obj,
+        model_prod_interface_output_desc=model_output_desc_obj,
         data_descriptors=[],
+        system_requirements=[],
     )
 
     # Create list of system goal objects.
@@ -106,6 +120,18 @@ def create_negotiation_db_from_model(
     for data_descriptor in negotiation_card.data:
         data_obj = _build_data_descriptor_obj(data_descriptor, session)
         negotiation_card_obj.data_descriptors.append(data_obj)
+
+    # Create list of QAS objects.
+    for qas in negotiation_card.system_requirements:
+        qas_obj = DBQAS(
+            quality=qas.quality,
+            stimulus=qas.stimulus,
+            source=qas.source,
+            environment=qas.environment,
+            response=qas.response,
+            measure=qas.measure,
+        )
+        negotiation_card_obj.system_requirements.append(qas_obj)
 
     return negotiation_card_obj
 
@@ -134,12 +160,24 @@ def create_negotiation_model_from_db(
                 resources=_build_resources(negotiation_obj.model_dev_resources)
             ),
             production=_build_model_prod_descriptor(
-                negotiation_obj.model_prod_integration,
+                negotiation_obj.model_prod_deployment_platform,
+                negotiation_obj.model_prod_capability_deployment_mechanism,
                 negotiation_obj.model_prod_interface_input_desc,
                 negotiation_obj.model_prod_interface_output_desc,
                 negotiation_obj.model_prod_resources,
             ),
         ),
+        system_requirements=[
+            QASDescriptor(
+                quality=qas.quality,
+                stimulus=qas.stimulus,
+                source=qas.source,
+                environment=qas.environment,
+                response=qas.response,
+                measure=qas.measure,
+            )
+            for qas in negotiation_obj.system_requirements
+        ],
     )
     return body
 
@@ -167,6 +205,16 @@ def create_report_db_from_model(
         memory=report.intended_use.production_requirements.resources.memory,
         storage=report.intended_use.production_requirements.resources.storage,
     )
+    model_input_desc_obj = DBModelIODescriptor(
+        name=report.intended_use.production_requirements.interface.input.name,
+        description=report.intended_use.production_requirements.interface.input.description,
+        type=report.intended_use.production_requirements.interface.input.type,
+    )
+    model_output_desc_obj = DBModelIODescriptor(
+        name=report.intended_use.production_requirements.interface.output.name,
+        description=report.intended_use.production_requirements.interface.output.description,
+        type=report.intended_use.production_requirements.interface.output.type,
+    )
 
     # Create the actual object.
     report_obj = DBReport(
@@ -182,9 +230,10 @@ def create_report_db_from_model(
         else None,
         performance_goals=[],
         intended_usage_context=report.intended_use.usage_context,
-        intended_reqs_model_prod_integration=report.intended_use.production_requirements.integration,
-        intended_reqs_model_prod_interface_input_desc=report.intended_use.production_requirements.interface.input.description,
-        intended_reqs_model_prod_interface_output_desc=report.intended_use.production_requirements.interface.output.description,
+        intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
+        intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
+        intended_reqs_model_prod_interface_input_desc=model_input_desc_obj,
+        intended_reqs_model_prod_interface_output_desc=model_output_desc_obj,
         intended_reqs_model_prod_resources=model_prod_resources_obj,
         risks_fp=report.risks.fp,
         risks_fn=report.risks.fn,
@@ -230,7 +279,8 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
         intended_use=IntendedUseDescriptor(
             usage_context=report_obj.intended_usage_context,
             production_requirements=_build_model_prod_descriptor(
-                report_obj.intended_reqs_model_prod_integration,
+                report_obj.intended_reqs_model_prod_deployment_platform,
+                report_obj.intended_reqs_model_prod_capability_deployment_mechanism,
                 report_obj.intended_reqs_model_prod_interface_input_desc,
                 report_obj.intended_reqs_model_prod_interface_output_desc,
                 report_obj.intended_reqs_model_prod_resources,
@@ -285,16 +335,18 @@ def _build_data_descriptor_obj(
         description=data_descriptor.description,
         source=data_descriptor.source,
         access=data_descriptor.access,
+        labeling_method=data_descriptor.labeling_method,
         rights=data_descriptor.rights,
         policies=data_descriptor.policies,
-        identifiable_information=data_descriptor.identifiable_information,
         classification=class_obj,
         labels=[],
         fields=[],
     )
     for label in data_descriptor.labels:
         label_obj = DBLabelDescriptor(
-            description=label.description, percentage=label.percentage
+            name=label.name,
+            description=label.description,
+            percentage=label.percentage,
         )
         data_obj.labels.append(label_obj)
     for field in data_descriptor.fields:
@@ -346,11 +398,12 @@ def _build_data_descriptors(
                 data_descriptor.classification.name
             ),
             access=data_descriptor.access,
+            labeling_method=data_descriptor.labeling_method,
             rights=data_descriptor.rights,
             policies=data_descriptor.policies,
-            identifiable_information=data_descriptor.identifiable_information,
             labels=[
                 LabelDescriptor(
+                    name=label.name,
                     description=label.description,
                     percentage=label.percentage,
                 )
@@ -373,16 +426,28 @@ def _build_data_descriptors(
 
 
 def _build_model_prod_descriptor(
-    integration: Optional[str],
-    input: Optional[str],
-    output: Optional[str],
+    deployment_platform: Optional[str],
+    capability_deployment_mechanism: Optional[str],
+    input: Optional[DBModelIODescriptor],
+    output: Optional[DBModelIODescriptor],
     resources: Optional[DBModelResourcesDescriptor],
 ) -> ModelProductionDescriptor:
     return ModelProductionDescriptor(
-        integration=integration,
+        deployment_platform=deployment_platform,
+        capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            input=ModelInputDescriptor(description=input),
-            output=ModelOutputDescriptor(description=output),
+            input=ModelIODescriptor(
+                name=input.name, description=input.description, type=input.type
+            )
+            if input is not None
+            else ModelIODescriptor(),
+            output=ModelIODescriptor(
+                name=output.name,
+                description=output.description,
+                type=output.type,
+            )
+            if output is not None
+            else ModelIODescriptor(),
         ),
         resources=_build_resources(resources),
     )

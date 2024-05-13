@@ -86,7 +86,7 @@ header {
   display: inline-block;
   margin-bottom: 8px;
   padding: 25px;
-  background-color: #2d2f30;
+  background-color: #000000;
 }
 
 .header-main {

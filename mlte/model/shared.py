@@ -93,27 +93,26 @@ class ModelResourcesDescriptor(BaseModel):
     """A description of model storage requirements."""
 
 
-class ModelInputDescriptor(BaseModel):
-    """A description of the model input specification."""
+class ModelIODescriptor(BaseModel):
+    """A description of the model input or output specification."""
+
+    name: Optional[str] = None
+    """A name for the input or output."""
 
     description: Optional[str] = None
-    """A textual description of the input specification."""
+    """A textual description of the input or output."""
 
-
-class ModelOutputDescriptor(BaseModel):
-    """A description of the model output specification."""
-
-    description: Optional[str] = None
-    """A textual description of the output specification."""
+    type: Optional[str] = None
+    """A description of the type of data for this input or output."""
 
 
 class ModelInterfaceDescriptor(BaseModel):
     """A description of the model interface."""
 
-    input: ModelInputDescriptor = ModelInputDescriptor()
+    input: ModelIODescriptor = ModelIODescriptor()
     """The model input specification."""
 
-    output: ModelOutputDescriptor = ModelOutputDescriptor()
+    output: ModelIODescriptor = ModelIODescriptor()
     """The model output specification."""
 
 
@@ -127,8 +126,11 @@ class ModelDevelopmentDescriptor(BaseModel):
 class ModelProductionDescriptor(BaseModel):
     """A descriptor for model production considerations."""
 
-    integration: Optional[str] = None
-    """A description of the manner in which the model is integrated with the system."""
+    deployment_platform: Optional[str] = None
+    """A description of the platform used to deploy the model into the system."""
+
+    capability_deployment_mechanism: Optional[str] = None
+    """A description of how the model capabilities will be made available."""
 
     interface: ModelInterfaceDescriptor = ModelInterfaceDescriptor()
     """A description of the model interface."""
@@ -159,11 +161,15 @@ class DataClassification(str, Enum):
     CUI = "cui"
     PII = "pii"
     PHI = "phi"
+    CLASSIFIED = "classified"
     OTHER = "other"
 
 
 class LabelDescriptor(BaseModel):
     """Describes a dataset label."""
+
+    name: Optional[str] = None
+    """The name of the label."""
 
     description: Optional[str] = None
     """A description of the label."""
@@ -209,6 +215,9 @@ class DataDescriptor(BaseModel):
     access: Optional[str] = None
     """A description of the manner in which this data is accessed."""
 
+    labeling_method: Optional[str] = None
+    """A description of how the data was labeled."""
+
     labels: List[LabelDescriptor] = []
     """A description of the labels that appear in the dataset."""
 
@@ -221,5 +230,24 @@ class DataDescriptor(BaseModel):
     policies: Optional[str] = None
     """A description of the policies that govern use of this data."""
 
-    identifiable_information: Optional[str] = None
-    """A description of personaly-identifiable information considerations for this dataset."""
+
+class QASDescriptor(BaseModel):
+    """Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario."""
+
+    quality: Optional[str] = None
+    """System property that is being evaluated."""
+
+    stimulus: Optional[str] = None
+    """The condition that triggers this scenario."""
+
+    source: Optional[str] = None
+    """Where the stimulus comes from."""
+
+    environment: Optional[str] = None
+    """Set of circumnstances in which the scenario takes place."""
+
+    response: Optional[str] = None
+    """Activity that ocurrs as the result of the stimulus."""
+
+    measure: Optional[str] = None
+    """Used to determine if the goals of the responses of the scenario have been achieved."""

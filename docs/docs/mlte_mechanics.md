@@ -168,7 +168,7 @@ $ mlte ui
 To run the back end: 
 
 ```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+$ mlte store --store-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 This allows the front end to be able to communicate with the store by allowing the requisite origin. The front end is hosted at `http://localhost:8000`.
@@ -776,8 +776,7 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelProductionDescriptor,
     ModelInterfaceDescriptor,
-    ModelInputDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelResourcesDescriptor,
     RiskDescriptor,
     DataDescriptor,
@@ -814,10 +813,11 @@ report = Report(
     intended_use=IntendedUseDescriptor(
         usage_context="A handheld flower identification device.",
         production_requirements=ModelProductionDescriptor(
-            integration="integration",
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
-                input=ModelInputDescriptor(description="Vector[150]"),
-                output=ModelOutputDescriptor(description="Vector[3]"),
+                input=ModelIODescriptor(description="Vector[150]"),
+                output=ModelIODescriptor(description="Vector[3]"),
             ),
             resources=ModelResourcesDescriptor(
                 cpu="1", gpu="0", memory="6MiB", storage="2KiB"
@@ -834,6 +834,7 @@ report = Report(
             description="Flower dataset.",
             classification=DataClassification.UNCLASSIFIED,
             access="None",
+            labeling_method="by hand",
             fields=[
                 FieldDescriptor(
                     name="Sepal length",
@@ -852,7 +853,6 @@ report = Report(
             policies="N/A",
             rights="N/A",
             source="https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
-            identifiable_information="N/A",
         )
     ],
     comments=[

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import random
 import string
-from typing import Generator, List, Union
+from typing import Generator, List, Optional, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -22,12 +22,12 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInputDescriptor,
     ModelInterfaceDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
+    QASDescriptor,
     RiskDescriptor,
 )
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
@@ -65,7 +65,10 @@ class ArtifactFactory:
 
     @staticmethod
     def make(
-        type: ArtifactType, id: str = _random_id(), complete: bool = False
+        type: ArtifactType,
+        id: str = _random_id(),
+        user: Optional[str] = None,
+        complete: bool = False,
     ) -> ArtifactModel:
         """
         Construct an artifact model of the given type.
@@ -75,7 +78,7 @@ class ArtifactFactory:
         :return: The artifact model
         """
         return ArtifactModel(
-            header=ArtifactHeaderModel(identifier=id, type=type),
+            header=ArtifactHeaderModel(identifier=id, type=type, creator=user),
             body=_make_body(type, id, complete),
         )
 
@@ -206,6 +209,7 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 description="description",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
+                labeling_method="by hand",
                 fields=[
                     FieldDescriptor(
                         name="name",
@@ -217,12 +221,15 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                     )
                 ],
                 labels=[
-                    LabelDescriptor(description="description", percentage=95.0)
+                    LabelDescriptor(
+                        name="label1",
+                        description="description",
+                        percentage=95.0,
+                    )
                 ],
                 policies="policies",
                 rights="rights",
                 source="source",
-                identifiable_information="identifiable_information",
             )
         ],
         model=ModelDescriptor(
@@ -232,10 +239,15 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 )
             ),
             production=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelInputDescriptor(description="description"),
-                    output=ModelOutputDescriptor(description="description"),
+                    input=ModelIODescriptor(
+                        name="i1", description="description", type="string"
+                    ),
+                    output=ModelIODescriptor(
+                        name="o1", description="description", type="string"
+                    ),
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu",
@@ -245,6 +257,16 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 ),
             ),
         ),
+        system_requirements=[
+            QASDescriptor(
+                quality="fairness",
+                stimulus="new data arrives",
+                source="from new area",
+                environment="normal time",
+                response="results are fair",
+                measure="less than 1 percent difference",
+            )
+        ],
     )
 
 
@@ -321,10 +343,15 @@ def make_complete_report() -> ReportModel:
         intended_use=IntendedUseDescriptor(
             usage_context="context",
             production_requirements=ModelProductionDescriptor(
-                integration="integration",
+                deployment_platform="local server",
+                capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelInputDescriptor(description="description"),
-                    output=ModelOutputDescriptor(description="output"),
+                    input=ModelIODescriptor(
+                        name="i1", description="description", type="string"
+                    ),
+                    output=ModelIODescriptor(
+                        name="o1", description="description", type="string"
+                    ),
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"
@@ -337,6 +364,7 @@ def make_complete_report() -> ReportModel:
                 description="description",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
+                labeling_method="by hand",
                 fields=[
                     FieldDescriptor(
                         name="name",
@@ -348,12 +376,15 @@ def make_complete_report() -> ReportModel:
                     )
                 ],
                 labels=[
-                    LabelDescriptor(description="description", percentage=95.0)
+                    LabelDescriptor(
+                        name="label1",
+                        description="description",
+                        percentage=95.0,
+                    )
                 ],
                 policies="policies",
                 rights="rights",
                 source="source",
-                identifiable_information="identifiable_information",
             )
         ],
         comments=[CommentDescriptor(content="content")],

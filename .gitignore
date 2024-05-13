@@ -42,3 +42,6 @@ token.txt
 
 # docs
 docs/site
+
+# Pyenv conf
+.python-version

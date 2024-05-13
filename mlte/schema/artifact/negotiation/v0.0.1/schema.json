@@ -7,6 +7,7 @@
         "cui",
         "pii",
         "phi",
+        "classified",
         "other"
       ],
       "title": "DataClassification",
@@ -62,6 +63,18 @@
           "default": null,
           "title": "Access"
         },
+        "labeling_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labeling Method"
+        },
         "labels": {
           "default": [],
           "items": {
@@ -101,18 +114,6 @@
           ],
           "default": null,
           "title": "Policies"
-        },
-        "identifiable_information": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Identifiable Information"
         }
       },
       "title": "DataDescriptor",
@@ -227,6 +228,18 @@
     "LabelDescriptor": {
       "description": "Describes a dataset label.",
       "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
         "description": {
           "anyOf": [
             {
@@ -311,13 +324,18 @@
             }
           ],
           "default": {
-            "integration": null,
+            "deployment_platform": null,
+            "capability_deployment_mechanism": null,
             "interface": {
               "input": {
-                "description": null
+                "description": null,
+                "name": null,
+                "type": null
               },
               "output": {
-                "description": null
+                "description": null,
+                "name": null,
+                "type": null
               }
             },
             "resources": {
@@ -352,9 +370,21 @@
       "title": "ModelDevelopmentDescriptor",
       "type": "object"
     },
-    "ModelInputDescriptor": {
-      "description": "A description of the model input specification.",
+    "ModelIODescriptor": {
+      "description": "A description of the model input or output specification.",
       "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
         "description": {
           "anyOf": [
             {
@@ -366,9 +396,21 @@
           ],
           "default": null,
           "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
         }
       },
-      "title": "ModelInputDescriptor",
+      "title": "ModelIODescriptor",
       "type": "object"
     },
     "ModelInterfaceDescriptor": {
@@ -377,50 +419,35 @@
         "input": {
           "allOf": [
             {
-              "$ref": "#/$defs/ModelInputDescriptor"
+              "$ref": "#/$defs/ModelIODescriptor"
             }
           ],
           "default": {
-            "description": null
+            "name": null,
+            "description": null,
+            "type": null
           }
         },
         "output": {
           "allOf": [
             {
-              "$ref": "#/$defs/ModelOutputDescriptor"
+              "$ref": "#/$defs/ModelIODescriptor"
             }
           ],
           "default": {
-            "description": null
+            "name": null,
+            "description": null,
+            "type": null
           }
         }
       },
       "title": "ModelInterfaceDescriptor",
       "type": "object"
     },
-    "ModelOutputDescriptor": {
-      "description": "A description of the model output specification.",
-      "properties": {
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
-        }
-      },
-      "title": "ModelOutputDescriptor",
-      "type": "object"
-    },
     "ModelProductionDescriptor": {
       "description": "A descriptor for model production considerations.",
       "properties": {
-        "integration": {
+        "deployment_platform": {
           "anyOf": [
             {
               "type": "string"
@@ -430,7 +457,19 @@
             }
           ],
           "default": null,
-          "title": "Integration"
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
         },
         "interface": {
           "allOf": [
@@ -440,10 +479,14 @@
           ],
           "default": {
             "input": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             },
             "output": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             }
           }
         },
@@ -535,6 +578,85 @@
       ],
       "title": "ProblemType",
       "type": "string"
+    },
+    "QASDescriptor": {
+      "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
+      "properties": {
+        "quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "stimulus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stimulus"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response"
+        },
+        "measure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measure"
+        }
+      },
+      "title": "QASDescriptor",
+      "type": "object"
     },
     "RiskDescriptor": {
       "description": "A description of system-level risks.",
@@ -691,13 +813,18 @@
           }
         },
         "production": {
-          "integration": null,
+          "capability_deployment_mechanism": null,
+          "deployment_platform": null,
           "interface": {
             "input": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             },
             "output": {
-              "description": null
+              "description": null,
+              "name": null,
+              "type": null
             }
           },
           "resources": {
@@ -708,6 +835,14 @@
           }
         }
       }
+    },
+    "system_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QASDescriptor"
+      },
+      "title": "System Requirements",
+      "type": "array"
     }
   },
   "title": "NegotiationCardModel",

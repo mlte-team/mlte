@@ -29,6 +29,9 @@ class ArtifactHeaderModel(BaseModel):
     timestamp: Optional[int] = -1
     """The timestamp of creation of this artifact, as Unix time."""
 
+    creator: Optional[str]
+    """The user that created this artifact."""
+
     model_config = ConfigDict(use_enum_values=True)
 
 

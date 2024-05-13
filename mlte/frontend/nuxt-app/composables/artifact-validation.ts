@@ -39,6 +39,8 @@ function isValidArtifact(artifact: object, schema: object): boolean {
   if (validation.errors.length === 0) {
     return true;
   } else {
+    console.log("Errors found in validation check.");
+    console.log(validation.errors);
     return false;
   }
 }
