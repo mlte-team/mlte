@@ -1181,8 +1181,8 @@ const form = ref({
   system_requirements: [
     {
       quality: "",
-      stimulus: "",
-      source: "",
+      stimulus: "<Stimulus>",
+      source: "<Source>",
       environment: "",
       response: "",
       measure: "",
@@ -1613,12 +1613,12 @@ function deleteField(dataItemIndex: number, fieldIndex: number) {
 
 function addRequirement() {
   form.value.system_requirements.push({
-    system_quality: "",
-    stimulus: "",
-    source_of_stimulus: "",
+    quality: "",
+    stimulus: "<Stimulus>",
+    source: "<Source>",
     environment: "",
     response: "",
-    response_measure: "",
+    measure: "",
   });
 }
 
