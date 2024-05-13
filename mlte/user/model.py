@@ -119,7 +119,6 @@ class Permission(BaseModel):
 #    * Cascade delete all permissions for those models
 
 # Store functions needed
-# - read/write/delete groups for DB
 # - implicit permission writes for DB
 
 # Add endpoints for groups

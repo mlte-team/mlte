@@ -43,7 +43,7 @@ class DBReader:
                     full_name=user_obj.full_name,
                     disabled=user_obj.disabled,
                     hashed_password=user_obj.hashed_password,
-                    role=RoleType[user_obj.role_type.name],
+                    role=RoleType(user_obj.role_type.name),
                     groups=[
                         DBReader._build_group(group_obj, session)
                         for group_obj in user_obj.groups
