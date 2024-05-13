@@ -793,7 +793,7 @@
           Requirement {{ requirementIndex + 1 }}
         </h3>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
-          <b>Scenario for {{ requirement.quality }}: </b
+          <b>Scenario for {{ requirement.quality }}: </b>
           >{{ requirement.stimulus }} from {{ requirement.source }} during
           {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
@@ -1180,12 +1180,12 @@ const form = ref({
   },
   system_requirements: [
     {
-      quality: "",
-      stimulus: "",
-      source: "",
-      environment: "",
-      response: "",
-      measure: "",
+      quality: "<System Quality>",
+      stimulus: "<Stimulus>",
+      source: "<Source>",
+      environment: "<Environment>",
+      response: "<Response>",
+      measure: "<Response Measure>",
     },
   ],
 });
@@ -1613,12 +1613,12 @@ function deleteField(dataItemIndex: number, fieldIndex: number) {
 
 function addRequirement() {
   form.value.system_requirements.push({
-    system_quality: "",
-    stimulus: "",
-    source_of_stimulus: "",
-    environment: "",
-    response: "",
-    response_measure: "",
+    quality: "<System Quality>",
+    stimulus: "<Stimulus>",
+    source: "<Source>",
+    environment: "<Environment>",
+    response: "<Response>",
+    measure: "<Response Measure>",
   });
 }
 
