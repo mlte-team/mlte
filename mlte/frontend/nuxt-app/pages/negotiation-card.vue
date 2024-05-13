@@ -793,7 +793,7 @@
           Requirement {{ requirementIndex + 1 }}
         </h3>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
-          <b>Scenario for {{ requirement.quality }}: </b
+          <b>Scenario for {{ requirement.quality }}: </b>
           >{{ requirement.stimulus }} from {{ requirement.source }} during
           {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
