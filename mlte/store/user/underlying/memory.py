@@ -12,11 +12,12 @@ import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import (
     GroupMapper,
+    PermissionMapper,
     UserMapper,
     UserStore,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -50,6 +51,7 @@ class MemoryUserStorage:
     def __init__(self) -> None:
         self.users: Dict[str, User] = {}
         self.groups: Dict[str, Group] = {}
+        self.permissions: Dict[str, Permission] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -66,6 +68,9 @@ class InMemoryUserStoreSession(UserStoreSession):
 
         self.group_mapper = InMemoryGroupMapper(storage=storage)
         """The mapper to group CRUD."""
+
+        self.permission_mapper = InMemoryPermissionMapper(storage=storage)
+        """The mapper to permission CRUD."""
 
     def close(self) -> None:
         """Close the session."""
@@ -149,4 +154,36 @@ class InMemoryGroupMapper(GroupMapper):
 
         popped = self.storage.groups[group_name]
         del self.storage.groups[group_name]
+        return popped
+
+
+class InMemoryPermissionMapper(PermissionMapper):
+    """In-memory mapper for the permission resource."""
+
+    def __init__(self, *, storage: MemoryUserStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, permission: Permission) -> Permission:
+        if permission.to_str() in self.storage.permissions:
+            raise errors.ErrorAlreadyExists(f"Permission {permission.to_str()}")
+        self.storage.permissions[permission.to_str()] = permission
+        return permission
+
+    def read(self, permission_str: str) -> Permission:
+        if permission_str not in self.storage.permissions:
+            raise errors.ErrorNotFound(f"Permission {permission_str}")
+        return self.storage.permissions[permission_str]
+
+    def list(self) -> List[str]:
+        return [
+            permission_str for permission_str in self.storage.permissions.keys()
+        ]
+
+    def delete(self, permission_str: str) -> Permission:
+        if permission_str not in self.storage.permissions:
+            raise errors.ErrorNotFound(f"Permission {permission_str}")
+
+        popped = self.storage.permissions[permission_str]
+        del self.storage.permissions[permission_str]
         return popped

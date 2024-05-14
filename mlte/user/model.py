@@ -107,6 +107,18 @@ class Permission(BaseModel):
     method: MethodType = MethodType.ALL
     """The HTTP method applied on the resource."""
 
+    def to_str(self) -> str:
+        """Serialize the permission to a string"""
+        return f"{self.artifact_model_identifier}-{self.method}"
+
+    @staticmethod
+    def from_str(permission_str: str) -> Permission:
+        """Creates a permission from its string serialization."""
+        model_id, method = permission_str.split("-")
+        return Permission(
+            artifact_model_identifier=model_id, method=MethodType(method)
+        )
+
 
 # TODO
 # - When a Model is created:
@@ -119,7 +131,6 @@ class Permission(BaseModel):
 #    * Cascade delete all permissions for those models
 
 # Store functions needed
-# - implicit permission writes for DB
 # - unit tests for groups
 
 # Add endpoints for groups

@@ -83,6 +83,27 @@ class DBReader:
         )
 
     @staticmethod
+    def get_permission(
+        permission: Permission,
+        session: Session,
+    ) -> Tuple[Permission, DBPermission]:
+        """Reads a permission from the DB, and returns a Permission and DBPermission objects."""
+        permissions_obj = session.scalar(
+            select(DBPermission)
+            .where(
+                DBPermission.model_id == permission.artifact_model_identifier
+            )
+            .where(DBPermission.method_type == permission.method.name)
+        )
+
+        if permissions_obj is None:
+            raise errors.ErrorNotFound(
+                f"{permission} was not found in the user store."
+            )
+        else:
+            return permission, permissions_obj
+
+    @staticmethod
     def get_permissions(
         session: Session,
     ) -> Tuple[List[Permission], List[DBPermission]]:

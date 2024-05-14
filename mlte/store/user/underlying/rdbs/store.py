@@ -17,6 +17,7 @@ import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.user.store import (
     GroupMapper,
+    PermissionMapper,
     UserMapper,
     UserStore,
     UserStoreSession,
@@ -24,12 +25,13 @@ from mlte.store.user.store import (
 from mlte.store.user.underlying.rdbs.metadata import (
     DBBase,
     DBGroup,
+    DBPermission,
     DBUser,
     init_method_types,
     init_role_types,
 )
 from mlte.store.user.underlying.rdbs.reader import DBReader
-from mlte.user.model import BasicUser, Group, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -251,3 +253,56 @@ class RDBGroupMapper(GroupMapper):
         ]
 
         return group_obj
+
+
+# -----------------------------------------------------------------------------
+# RDBPermissionMapper
+# -----------------------------------------------------------------------------
+
+
+class RDBPermissionMapper(PermissionMapper):
+    """A interface for mapping CRUD actions to store permissions."""
+
+    def __init__(self, engine: Engine) -> None:
+        self.engine = engine
+        """A reference to underlying storage."""
+
+    def create(self, new_permission: Permission) -> Permission:
+        with Session(self.engine) as session:
+            try:
+                _, _ = DBReader.get_permission(new_permission, session)
+                raise errors.ErrorAlreadyExists(
+                    f"{new_permission} already exists."
+                )
+            except errors.ErrorNotFound:
+                # If it was not found, it means we can create it.
+                permission_obj = DBPermission(
+                    model_id=new_permission.artifact_model_identifier,
+                    method_type=DBReader.get_method_type(
+                        new_permission.method, session
+                    ),
+                )
+                session.add(permission_obj)
+                session.commit()
+                return new_permission
+
+    def read(self, permission: str) -> Permission:
+        with Session(self.engine) as session:
+            perm, _ = DBReader.get_permission(
+                Permission.from_str(permission), session
+            )
+            return perm
+
+    def list(self) -> List[str]:
+        with Session(self.engine) as session:
+            permissions, _ = DBReader.get_permissions(session)
+            return [permission.to_str() for permission in permissions]
+
+    def delete(self, permission: str) -> Permission:
+        with Session(self.engine) as session:
+            perm, permission_obj = DBReader.get_permission(
+                Permission.from_str(permission), session
+            )
+            session.delete(permission_obj)
+            session.commit()
+            return perm

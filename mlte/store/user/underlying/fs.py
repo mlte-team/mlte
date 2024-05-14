@@ -12,11 +12,12 @@ from mlte.store.base import StoreURI
 from mlte.store.common.fs import FileSystemStorage
 from mlte.store.user.store import (
     GroupMapper,
+    PermissionMapper,
     UserMapper,
     UserStore,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -64,10 +65,18 @@ class FileSystemUserStoreSession(UserStoreSession):
         self.group_mapper = FileSystemGroupMappper(storage)
         """The mapper to group CRUD."""
 
+        self.permission_mapper = FileSystemPermissionMappper(storage)
+        """The mapper to permisison CRUD."""
+
     def close(self) -> None:
         """Close the session."""
         # Closing a local FS session is a no-op.
         pass
+
+
+# -----------------------------------------------------------------------------
+# FileSystemUserMappper
+# -----------------------------------------------------------------------------
 
 
 class FileSystemUserMappper(UserMapper):
@@ -108,10 +117,6 @@ class FileSystemUserMappper(UserMapper):
         self.storage.delete_file(self.storage._resource_path(username))
         return user
 
-    # -------------------------------------------------------------------------
-    # Internal helpers.
-    # -------------------------------------------------------------------------
-
     def _read_user(self, username: str) -> User:
         """
         Lazily construct a User object on read.
@@ -130,6 +135,11 @@ class FileSystemUserMappper(UserMapper):
             user.model_dump(),
         )
         return user
+
+
+# -------------------------------------------------------------------------
+# FileSystemGroupMappper
+# -------------------------------------------------------------------------
 
 
 class FileSystemGroupMappper(GroupMapper):
@@ -166,10 +176,6 @@ class FileSystemGroupMappper(GroupMapper):
         self.storage.delete_file(self.storage._resource_path(group_name))
         return group
 
-    # -------------------------------------------------------------------------
-    # Internal helpers.
-    # -------------------------------------------------------------------------
-
     def _read_group(self, group_name: str) -> Group:
         """
         Lazily construct a Group object on read.
@@ -190,3 +196,66 @@ class FileSystemGroupMappper(GroupMapper):
             group.model_dump(),
         )
         return group
+
+
+# -------------------------------------------------------------------------
+# FileSystemPermissionMappper
+# -------------------------------------------------------------------------
+
+
+class FileSystemPermissionMappper(PermissionMapper):
+    """FS mapper for the permission resource."""
+
+    def __init__(self, storage: FileSystemStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, permission: Permission) -> Permission:
+        if self.storage._resource_path(permission.to_str()).exists():
+            raise errors.ErrorAlreadyExists(
+                f"Permission '{permission.to_str()}'"
+            )
+        return self._write_permission(permission)
+
+    def edit(self, permission: Permission) -> Permission:
+        if not self.storage._resource_path(permission.to_str()).exists():
+            raise errors.ErrorNotFound(f"Permission '{permission.to_str()}'")
+        return self._write_permission(permission)
+
+    def read(self, permission_str: str) -> Permission:
+        return self._read_permission(permission_str)
+
+    def list(self) -> List[str]:
+        return [
+            self.storage.get_just_filename(perm_path)
+            for perm_path in self.storage.list_json_files(
+                self.storage.base_path
+            )
+        ]
+
+    def delete(self, permission_str: str) -> Permission:
+        self.storage._ensure_resource_exists(permission_str)
+        permission = self._read_permission(permission_str)
+        self.storage.delete_file(self.storage._resource_path(permission_str))
+        return permission
+
+    def _read_permission(self, permission_str: str) -> Permission:
+        """
+        Lazily construct a Permission object on read.
+        :param permission_str: The permission str
+        :return: The permission object
+        """
+        self.storage._ensure_resource_exists(permission_str)
+        return Permission(
+            **self.storage.read_json_file(
+                self.storage._resource_path(permission_str)
+            )
+        )
+
+    def _write_permission(self, permission: Permission) -> Permission:
+        """Writes a Permission to storage."""
+        self.storage.write_json_to_file(
+            self.storage._resource_path(permission.to_str()),
+            permission.model_dump(),
+        )
+        return permission
