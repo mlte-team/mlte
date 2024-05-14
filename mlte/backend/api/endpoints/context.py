@@ -15,6 +15,7 @@ import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.user.model import Group, MethodType, Permission
 
 # The router exported by this submodule
 router = APIRouter()
@@ -31,9 +32,11 @@ def create_model(
     :param model: The model create model
     :return: The created model
     """
+    # First create model.
+    created_model: Model
     with dependencies.artifact_store_session() as handle:
         try:
-            return handle.create_model(model)
+            created_model = handle.create_model(model)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -47,6 +50,58 @@ def create_model(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
             )
+
+    # Now create permissions and groups associated to it.
+    with dependencies.user_store_session() as user_store:
+        try:
+            # Create a permission for each method type and this model.
+            for method in MethodType:
+                user_store.permission_mapper.create(
+                    Permission(
+                        artifact_model_identifier=created_model.identifier,
+                        method=method,
+                    )
+                )
+
+            # Create a group with read permissions.
+            read_group = Group(
+                name=f"read-{created_model.identifier}",
+                permissions=[
+                    Permission(
+                        artifact_model_identifier=created_model.identifier,
+                        method=MethodType.GET,
+                    )
+                ],
+            )
+            user_store.group_mapper.create(read_group)
+
+            # Create a group with write/delete permissions.
+            write_group = Group(
+                name=f"write-{created_model.identifier}",
+                permissions=[
+                    Permission(
+                        artifact_model_identifier=created_model.identifier,
+                        method=MethodType.POST,
+                    ),
+                    Permission(
+                        artifact_model_identifier=created_model.identifier,
+                        method=MethodType.DELETE,
+                    ),
+                ],
+            )
+            user_store.group_mapper.create(write_group)
+
+            # Add current user to both groups.
+            current_user.groups.append(read_group)
+            current_user.groups.append(write_group)
+            user_store.user_mapper.edit(current_user)
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+    return created_model
 
 
 @router.get("/model/{model_id}")
@@ -107,9 +162,10 @@ def delete_model(
     :param model_id: The model identifier
     :return: The deleted model
     """
+    deleted_model: Model
     with dependencies.artifact_store_session() as handle:
         try:
-            return handle.delete_model(model_id)
+            deleted_model = handle.delete_model(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -119,6 +175,21 @@ def delete_model(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
             )
+
+    # Now delete related permissions and groups.
+    with dependencies.user_store_session() as user_store:
+        user_store.group_mapper.delete(f"read-{deleted_model.identifier}")
+        user_store.group_mapper.delete(f"write-{deleted_model.identifier}")
+
+        for method in MethodType:
+            user_store.permission_mapper.delete(
+                Permission(
+                    artifact_model_identifier=deleted_model.identifier,
+                    method=method,
+                ).to_str()
+            )
+
+    return deleted_model
 
 
 @router.post("/model/{model_id}/version")

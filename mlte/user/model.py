@@ -121,16 +121,5 @@ class Permission(BaseModel):
 
 
 # TODO
-# - When a Model is created:
-#    * Create permissions for all 4 actions for model
-#    * Create a group with read permissions (GET)
-#    * Create a group with edit permissions (POST, PUT, DELETE)
-#    * Add both groups to the current user
-
-# - When a Model is deleted:
-#    * Cascade delete all permissions for those models
-
-# Store functions needed
-# - unit tests for groups
-
+# Unit tests for groups and permissions
 # Add endpoints for groups
