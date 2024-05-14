@@ -55,8 +55,14 @@ def is_authorized(current_user: BasicUser, action: Permission) -> bool:
         # If the resource is not associated to a model, give access.
         return True
     else:
-        # TODO: Check URL and method against DB of permisisons.
-        return True
+        # Check to find if the current user has permissions through any of its groups.
+        for group in current_user.groups:
+            for permission in group.permissions:
+                if permission.to_str() == action.to_str():
+                    return True
+
+    # If none of the above are true, deny access.
+    return False
 
 
 # -----------------------------------------------------------------------------
