@@ -9,7 +9,11 @@ from typing import List
 import pytest
 
 import mlte.store.error as errors
-from mlte.store.user.store import ManagedUserSession, UserStore
+from mlte.store.user.store import (
+    ManagedUserSession,
+    UserStore,
+    UserStoreSession,
+)
 from mlte.user.model import BasicUser, Group, MethodType, Permission, UserCreate
 from mlte.user.model_logic import are_users_equal
 
@@ -46,7 +50,12 @@ def get_test_user() -> UserCreate:
     username = "user1"
     email = "email@server.com"
     password = "1234"
-    test_user = UserCreate(username=username, email=email, password=password)
+    test_user = UserCreate(
+        username=username,
+        email=email,
+        password=password,
+        groups=[get_test_group()],
+    )
     return test_user
 
 
@@ -55,6 +64,19 @@ def get_test_group() -> Group:
     group_name = "g1"
     test_user = Group(name=group_name, permissions=get_test_permissions())
     return test_user
+
+
+def setup_user_groups(user: UserCreate, user_store: UserStoreSession):
+    """Helper to set up groups."""
+    for group in user.groups:
+        setup_group_permisisons(group, user_store)
+        user_store.group_mapper.create(group)
+
+
+def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
+    """Helper to set up permissions."""
+    for permission in test_group.permissions:
+        user_store.permission_mapper.create(permission)
 
 
 def get_test_permissions() -> List[Permission]:
@@ -75,6 +97,9 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
     with ManagedUserSession(store.session()) as user_store:
         original_users = user_store.user_mapper.list()
+
+        # Set up dependent groups.
+        setup_user_groups(test_user, user_store)
 
         # Test creating a user.
         user_store.user_mapper.create(test_user)
@@ -119,8 +144,7 @@ def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
         original_groups = user_store.group_mapper.list()
 
         # Set up needed permissions.
-        for permission in test_group.permissions:
-            user_store.permission_mapper.create(permission)
+        setup_group_permisisons(test_group, user_store)
         user_store.permission_mapper.create(p3)
 
         # Test creating a group.
