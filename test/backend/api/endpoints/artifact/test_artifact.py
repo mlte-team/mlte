@@ -13,13 +13,12 @@ from mlte.backend.api.model import WriteArtifactRequest
 from mlte.backend.core.config import settings
 from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
-
-from ...fixture.artifact import ArtifactFactory
-from ..fixture.http import (  # noqa
+from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients_and_types,
     mem_store_and_test_http_client,
 )
+from test.fixture.artifact import ArtifactFactory
 
 
 @pytest.mark.parametrize("client_fixture,artifact_type", clients_and_types())

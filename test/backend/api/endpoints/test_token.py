@@ -9,9 +9,8 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.user.model import UserCreate
-from test.backend.test_user import USER_ENDPOINT
-
-from .fixture.http import (  # noqa
+from test.backend.api.endpoints.test_user import USER_ENDPOINT
+from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients,
     mem_store_and_test_http_client,

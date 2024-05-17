@@ -9,8 +9,7 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.context.model import ModelCreate, Version, VersionCreate
-
-from ..fixture.http import (  # noqa
+from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients,
     mem_store_and_test_http_client,

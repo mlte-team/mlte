@@ -11,14 +11,13 @@ from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
 from mlte.store.user.store import UserStoreSession
 from mlte.user.model import UserCreate
+from test.backend.fixture import api as api_setup
 from test.store.user.fixture import (  # noqa
     fs_store,
     memory_store,
     rdbs_store,
     user_stores,
 )
-
-from ..fixture import api as api_setup
 
 
 def set_test_user(
