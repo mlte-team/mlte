@@ -94,12 +94,12 @@ class DBReader:
                 DBPermission.model_id == permission.artifact_model_identifier
             )
             .where(DBPermission.method_type_id == DBMethodType.id)
-            .where(DBMethodType.name == permission.method.name)
+            .where(DBMethodType.name == permission.method.value)
         )
 
         if permissions_obj is None:
             raise errors.ErrorNotFound(
-                f"{permission} was not found in the user store."
+                f"{permission.to_str()} was not found in the user store."
             )
         else:
             return permission, permissions_obj
