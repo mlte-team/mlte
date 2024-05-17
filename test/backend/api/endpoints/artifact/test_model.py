@@ -8,7 +8,9 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
+from mlte.backend.state import state
 from mlte.context.model import Model, ModelCreate
+from mlte.store.user.store import ManagedUserSession
 from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients,
@@ -37,11 +39,27 @@ def test_create(
     """Models can be created."""
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
+    original_perms = []
+    original_groups = []
+    with ManagedUserSession(state.user_store.session()) as user_store:
+        original_perms = user_store.permission_mapper.list()
+        original_groups = user_store.group_mapper.list()
+
     model = ModelCreate(identifier="model")
 
     res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
     assert res.status_code == codes.OK
     _ = Model(**res.json())
+
+    # Also test that permissions and groups were created.
+    new_perms = []
+    new_groups = []
+    with ManagedUserSession(state.user_store.session()) as user_store:
+        new_perms = user_store.permission_mapper.list()
+        new_groups = user_store.group_mapper.list()
+
+    assert len(original_perms) + 5 == len(new_perms)
+    assert len(original_groups) + 2 == len(new_groups)
 
 
 @pytest.mark.parametrize("client_fixture", clients())
@@ -95,6 +113,12 @@ def test_delete(
     res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
     assert res.status_code == codes.OK
 
+    num_original_perms = 0
+    num_original_groups = 0
+    with ManagedUserSession(state.user_store.session()) as user_store:
+        num_original_perms = len(user_store.permission_mapper.list())
+        num_original_groups = len(user_store.group_mapper.list())
+
     res = client.get(f"{settings.API_PREFIX}/model")
     assert res.status_code == codes.OK
     assert len(res.json()) == 1
@@ -105,3 +129,13 @@ def test_delete(
     res = client.get(f"{settings.API_PREFIX}/model")
     assert res.status_code == codes.OK
     assert len(res.json()) == 0
+
+    # Also test that permissions and groups were delete.
+    num_new_perms = 0
+    num_new_groups = 0
+    with ManagedUserSession(state.user_store.session()) as user_store:
+        num_new_perms = len(user_store.permission_mapper.list())
+        num_new_groups = len(user_store.group_mapper.list())
+
+    assert num_original_perms - 5 == num_new_perms
+    assert num_original_groups - 2 == num_new_groups
