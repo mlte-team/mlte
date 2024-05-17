@@ -118,8 +118,3 @@ class Permission(BaseModel):
         return Permission(
             artifact_model_identifier=model_id, method=MethodType(method)
         )
-
-
-# TODO
-# Unit tests for groups and permissions
-# Add endpoints for groups

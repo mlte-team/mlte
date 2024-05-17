@@ -5,6 +5,7 @@ Implementation of local file system artifact store.
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import List, Union
 
 import mlte.store.error as errors
@@ -82,9 +83,17 @@ class FileSystemUserStoreSession(UserStoreSession):
 class FileSystemUserMappper(UserMapper):
     """FS mapper for the user resource."""
 
+    USERS_FOLDER = "users"
+    """Subfolder for users."""
+
     def __init__(self, storage: FileSystemStorage) -> None:
-        self.storage = storage
+        self.storage = storage.clone()
         """A reference to underlying storage."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
 
     def create(self, user: UserCreate) -> User:
         if self.storage._resource_path(user.username).exists():
@@ -145,9 +154,17 @@ class FileSystemUserMappper(UserMapper):
 class FileSystemGroupMappper(GroupMapper):
     """FS mapper for the group resource."""
 
+    GROUPS_FOLDER = "groups"
+    """Subfolder for groups."""
+
     def __init__(self, storage: FileSystemStorage) -> None:
-        self.storage = storage
+        self.storage = storage.clone()
         """A reference to underlying storage."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.GROUPS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
 
     def create(self, group: Group) -> Group:
         if self.storage._resource_path(group.name).exists():
@@ -206,9 +223,17 @@ class FileSystemGroupMappper(GroupMapper):
 class FileSystemPermissionMappper(PermissionMapper):
     """FS mapper for the permission resource."""
 
+    PERMISSIONS_FOLDER = "permissions"
+    """Subfolder for permissions."""
+
     def __init__(self, storage: FileSystemStorage) -> None:
-        self.storage = storage
+        self.storage = storage.clone()
         """A reference to underlying storage."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.PERMISSIONS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
 
     def create(self, permission: Permission) -> Permission:
         if self.storage._resource_path(permission.to_str()).exists():

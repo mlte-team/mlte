@@ -77,13 +77,26 @@ class FileSystemStorage(JsonFileStorage):
     """A local file system implementation of a storage."""
 
     def __init__(self, uri: StoreURI, sub_folder: str) -> None:
-        root = parse_root_path(uri.uri)
-        if not root.exists():
+        self.uri = uri
+        """The base URI"""
+
+        self.root = parse_root_path(uri.uri)
+        """Root folder, that exists, where the storage will be located."""
+
+        if not self.root.exists():
             raise FileNotFoundError(
-                f"Root data storage location does not exist: {root}."
+                f"Root data storage location does not exist: {self.root}."
             )
 
-        self.base_path = Path(root, sub_folder)
+        self.sub_folder = sub_folder
+        """The specific folder for this storage."""
+
+        self.set_base_path(Path(sub_folder))
+
+    def set_base_path(self, sub_folder: Path):
+        """Sets a base path for this storage based on the root and the given Path"""
+
+        self.base_path = Path(self.root, sub_folder)
         """The the base folder for the file store."""
 
         try:
@@ -91,6 +104,10 @@ class FileSystemStorage(JsonFileStorage):
         except FileExistsError:
             # If it already existed, we just ignore warning.
             pass
+
+    def clone(self) -> FileSystemStorage:
+        clone = FileSystemStorage(self.uri, self.sub_folder)
+        return clone
 
     # -------------------------------------------------------------------------
     # Internal helpers.
