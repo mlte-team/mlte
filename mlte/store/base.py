@@ -160,7 +160,7 @@ class ResourceMapper:
     """A generic interface for mapping CRUD actions to store specific resources."""
 
     NOT_IMPLEMENTED_ERROR_MSG = (
-        "Cannot invoke method on abstract resource mapper."
+        "Cannot invoke method that has not been implemented for this mapper."
     )
     """Default error message for this abstract class."""
 

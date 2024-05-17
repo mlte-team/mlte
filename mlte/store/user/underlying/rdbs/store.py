@@ -93,6 +93,9 @@ class RelationalDBUserStoreSession(UserStoreSession):
         self.group_mapper = RDBGroupMapper(engine)
         """The mapper to group CRUD."""
 
+        self.permission_mapper = RDBPermissionMapper(engine)
+        """The mapper to group CRUD."""
+
     def close(self) -> None:
         """Close the session."""
         self.engine.dispose()
