@@ -93,7 +93,8 @@ class DBReader:
             .where(
                 DBPermission.model_id == permission.artifact_model_identifier
             )
-            .where(DBPermission.method_type == permission.method.name)
+            .where(DBPermission.method_type_id == DBMethodType.id)
+            .where(DBMethodType.name == permission.method.name)
         )
 
         if permissions_obj is None:
