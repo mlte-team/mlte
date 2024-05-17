@@ -112,7 +112,7 @@ def list_groups(
             )
 
 
-@router.get("/group/details")
+@router.get("/groups/details")
 def list_group_details(
     current_user: AuthorizedUser,
 ) -> List[Group]:
