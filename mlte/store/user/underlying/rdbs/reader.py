@@ -18,7 +18,14 @@ from mlte.store.user.underlying.rdbs.metadata import (
     DBRoleType,
     DBUser,
 )
-from mlte.user.model import Group, MethodType, Permission, RoleType, User
+from mlte.user.model import (
+    Group,
+    MethodType,
+    Permission,
+    ResourceType,
+    RoleType,
+    User,
+)
 
 
 class DBReader:
@@ -90,9 +97,8 @@ class DBReader:
         """Reads a permission from the DB, and returns a Permission and DBPermission objects."""
         permissions_obj = session.scalar(
             select(DBPermission)
-            .where(
-                DBPermission.model_id == permission.artifact_model_identifier
-            )
+            .where(DBPermission.resource_id == permission.resource_id)
+            .where(DBPermission.resource_type == permission.resource_type)
             .where(DBPermission.method_type_id == DBMethodType.id)
             .where(DBMethodType.name == permission.method.value)
         )
@@ -115,7 +121,8 @@ class DBReader:
         permissions: List[Permission] = []
         for permission_obj in permissions_obj:
             permission = Permission(
-                artifact_model_identifier=permission_obj.model_id,
+                resource_type=ResourceType(permission_obj.resource_type),
+                resource_id=permission_obj.resource_id,
                 method=MethodType(permission_obj.method_type.name),
             )
             permissions.append(permission)

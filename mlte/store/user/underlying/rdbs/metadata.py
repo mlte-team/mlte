@@ -95,7 +95,8 @@ class DBPermission(DBBase):
     __tablename__ = "permission"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    model_id: Mapped[str]
+    resource_type: Mapped[str]
+    resource_id: Mapped[str]
 
     method_type_id: Mapped[int] = mapped_column(ForeignKey("method_type.id"))
     method_type: Mapped[DBMethodType] = relationship()
@@ -108,7 +109,7 @@ class DBPermission(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"Permission(id={self.id!r}, model_id={self.model_id!r}, method={self.method_type})"
+        return f"Permission(id={self.id!r}, resource_type={self.resource_type}, resource_id={self.resource_id!r}, method={self.method_type})"
 
 
 class DBRoleType(DBBase):

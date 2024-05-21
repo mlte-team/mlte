@@ -88,6 +88,29 @@ class MethodType(str, Enum):
     """Special action to represnt all/any of them."""
 
 
+class ResourceType(str, Enum):
+    """Supported resource types."""
+
+    MODEL = "/model"
+    """Model and all related artifacts."""
+
+    USER = "/user"
+    """User resources."""
+
+    GROUP = "/group"
+    """Group resources."""
+
+    @staticmethod
+    def get_type_from_url(url: str) -> Optional[ResourceType]:
+        """Returns the resource type for the given URL."""
+        for resource_type in ResourceType:
+            if url.startswith(resource_type.value):
+                return resource_type
+
+        # Return none if the URL did not match any known resource type.
+        return None
+
+
 class Group(BaseModel):
     """A user group to which permissions are associated."""
 
@@ -99,22 +122,36 @@ class Group(BaseModel):
 
 
 class Permission(BaseModel):
-    """Permissions for manipulating model artifacts."""
+    """Permissions for manipulating resources."""
 
-    artifact_model_identifier: Optional[str] = None
-    """The model to give permissions to."""
+    resource_type: Optional[ResourceType]
+    """The type of resource resource."""
+
+    resource_id: Optional[str] = None
+    """The specific resource id to give permissions to, if any."""
 
     method: MethodType = MethodType.ALL
     """The HTTP method applied on the resource."""
 
     def to_str(self) -> str:
         """Serialize the permission to a string"""
-        return f"{self.artifact_model_identifier}-{self.method}"
+        return f"{self.resource_type}-{self.resource_id}-{self.method}"
 
     @staticmethod
     def from_str(permission_str: str) -> Permission:
         """Creates a permission from its string serialization."""
-        model_id, method = permission_str.split("-")
+        type, model_id, method = permission_str.split("-")
         return Permission(
-            artifact_model_identifier=model_id, method=MethodType(method)
+            resource_type=ResourceType(type),
+            resource_id=model_id,
+            method=MethodType(method),
         )
+
+
+# TODO
+#
+# 1. Models are not created in the frontend, and even if they are, sometimes they may not. How to trigger policy creation?
+# 2. Add default permissions/groups for User and Group resources, and maybe general Model resource access
+# 3. Add special check for having access to a resource when there is no id, in is_authorized
+# 4.
+#

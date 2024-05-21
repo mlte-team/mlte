@@ -14,25 +14,42 @@ from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.user.model import BasicUser, MethodType, Permission, RoleType
+from mlte.user.model import (
+    BasicUser,
+    MethodType,
+    Permission,
+    ResourceType,
+    RoleType,
+)
 
 # -----------------------------------------------------------------------------
 # Helper functions.
 # -----------------------------------------------------------------------------
 
 
-async def get_action(request: Request) -> Permission:
-    """Gets a resource description for the current method and model."""
-    # print(f"Params: {request.query_params}")
-    model_id = request.query_params.get("model_id")
+async def get_current_resource(request: Request) -> Permission:
+    """Gets a resource permission description for the current resource, method and model."""
+    # Parse URL for resource type.
+    url = request.url.path
+    resource_url = url.replace(settings.API_PREFIX, "")
+    resource_type = ResourceType.get_type_from_url(resource_url)
+
+    # Parse URL for resource id, if any.
+    resource_id = None
+    if resource_type is not None:
+        url_parts = resource_url.split("/")
+        if len(url_parts) > 2:
+            resource_id = url_parts[2]
+
+    # Get method.
     method = MethodType[request.method]
 
-    # Build and return the ResourceAction
-    resource_action = Permission(
-        artifact_model_identifier=model_id, method=method
+    # Build and return the resource permission description
+    resource = Permission(
+        resource_type=resource_type, resource_id=resource_id, method=method
     )
-    print(f"Resource action: {resource_action}")
-    return resource_action
+    print(f"Resource: {resource}")
+    return resource
 
 
 def get_username_from_token(token: str, key: str) -> str:
@@ -42,26 +59,29 @@ def get_username_from_token(token: str, key: str) -> str:
     return decoded_token.username
 
 
-def is_authorized(current_user: BasicUser, action: Permission) -> bool:
+def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
     """Checks if the current user is authorized to access the current resource."""
     print(
-        f"Checking authorization for user {current_user.username} to resource {action}"
+        f"Checking authorization for user {current_user.username} to resource {resource}"
     )
 
     if current_user.role == RoleType.ADMIN:
         # If having admin role, always get access.
-        return True
-    if action.artifact_model_identifier is None:
-        # If the resource is not associated to a model, give access.
+        print("User is admin")
         return True
     else:
         # Check to find if the current user has permissions through any of its groups.
+        print(current_user.groups)
         for group in current_user.groups:
+            print(group)
             for permission in group.permissions:
-                if permission.to_str() == action.to_str():
+                print(permission.method)
+                if permission.to_str() == resource.to_str():
+                    print("Permission for this model found")
                     return True
 
     # If none of the above are true, deny access.
+    print("Permission not granted.")
     return False
 
 
@@ -79,7 +99,7 @@ oauth2_scheme = OAuth2PasswordBearer(
 
 async def get_authorized_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    resource: Annotated[Permission, Depends(get_action)],
+    resource: Annotated[Permission, Depends(get_current_resource)],
 ) -> BasicUser:
     """
     Given a token, gets the authenticated user and checks if it has access to resources.

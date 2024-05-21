@@ -14,7 +14,14 @@ from mlte.store.user.store import (
     UserStore,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, MethodType, Permission, UserCreate
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    MethodType,
+    Permission,
+    ResourceType,
+    UserCreate,
+)
 from mlte.user.model_logic import are_users_equal
 
 from .fixture import (  # noqa
@@ -81,8 +88,16 @@ def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
 
 def get_test_permissions() -> List[Permission]:
     """Helper to get a group structure."""
-    p1 = Permission(artifact_model_identifier="mod1", method=MethodType.GET)
-    p2 = Permission(artifact_model_identifier="mod1", method=MethodType.POST)
+    p1 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.GET,
+    )
+    p2 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.POST,
+    )
     return [p1, p2]
 
 
@@ -138,7 +153,11 @@ def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     store: UserStore = request.getfixturevalue(store_fixture_name)
 
     test_group = get_test_group()
-    p3 = Permission(artifact_model_identifier="mod1", method=MethodType.DELETE)
+    p3 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.DELETE,
+    )
 
     with ManagedUserSession(store.session()) as user_store:
         original_groups = user_store.group_mapper.list()

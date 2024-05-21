@@ -13,7 +13,7 @@ from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.user.store import ManagedUserSession, UserStoreSession
-from mlte.user.model import Group, MethodType, Permission
+from mlte.user.model import Group, MethodType, Permission, ResourceType
 from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
     clients,
@@ -32,8 +32,16 @@ def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
 
 def get_test_permissions() -> List[Permission]:
     """Helper to get a group structure."""
-    p1 = Permission(artifact_model_identifier="mod1", method=MethodType.GET)
-    p2 = Permission(artifact_model_identifier="mod1", method=MethodType.POST)
+    p1 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.GET,
+    )
+    p2 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.POST,
+    )
     return [p1, p2]
 
 
@@ -75,7 +83,11 @@ def test_edit(
     client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
 
     group = get_test_group()
-    p3 = Permission(artifact_model_identifier="mod1", method=MethodType.DELETE)
+    p3 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.DELETE,
+    )
     with ManagedUserSession(state.user_store.session()) as user_store:
         user_store.permission_mapper.create(p3)
 

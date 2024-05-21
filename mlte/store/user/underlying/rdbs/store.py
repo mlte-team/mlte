@@ -280,7 +280,8 @@ class RDBPermissionMapper(PermissionMapper):
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
                 permission_obj = DBPermission(
-                    model_id=new_permission.artifact_model_identifier,
+                    resource_type=new_permission.resource_type,
+                    resource_id=new_permission.resource_id,
                     method_type=DBReader.get_method_type(
                         new_permission.method, session
                     ),
