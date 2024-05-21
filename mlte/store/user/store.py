@@ -10,7 +10,14 @@ from typing import List, Union, cast
 
 from mlte.store import error
 from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
-from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    RoleType,
+    User,
+    UserCreate,
+)
 
 DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = "admin1234"
@@ -38,7 +45,11 @@ class UserStore(Store):
         """Adds the default user."""
         try:
             self.session().user_mapper.create(
-                UserCreate(username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD)
+                UserCreate(
+                    username=DEFAULT_USERNAME,
+                    password=DEFAULT_PASSWORD,
+                    role=RoleType.ADMIN,
+                )
             )
         except error.ErrorAlreadyExists:
             # If default user was already there, ignore warning, we don't want to overrwite any changes on it.
