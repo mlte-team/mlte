@@ -7,7 +7,7 @@ Class to define group and permission policies.
 from typing import Any, Optional
 
 import mlte.store.error as errors
-from mlte.store.user.store import UserStoreSession
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -23,23 +23,29 @@ class Policy:
     # Group naming.
     # -----------------------------------------------------------------------------
 
-    WRITE_GROUP_PREFIX = "write-"
-    READ_GROUP_PREFIX = "read-"
+    WRITE_GROUP_PREFIX = "write"
+    READ_GROUP_PREFIX = "read"
 
     @staticmethod
-    def _build_read_group_name(resource_id: Any):
+    def _build_read_group_name(resource_type: ResourceType, resource_id: Any):
         """Builds group name for readers."""
-        return Policy._build_group_name(Policy.READ_GROUP_PREFIX, resource_id)
+        return Policy._build_group_name(
+            Policy.READ_GROUP_PREFIX, resource_type, resource_id
+        )
 
     @staticmethod
-    def _build_write_group_name(resource_id: Any):
+    def _build_write_group_name(resource_type: ResourceType, resource_id: Any):
         """Builds group name for writers."""
-        return Policy._build_group_name(Policy.WRITE_GROUP_PREFIX, resource_id)
+        return Policy._build_group_name(
+            Policy.WRITE_GROUP_PREFIX, resource_type, resource_id
+        )
 
     @staticmethod
-    def _build_group_name(prefix: str, resource_id: Any):
+    def _build_group_name(
+        prefix: str, resource_type: ResourceType, resource_id: Any
+    ):
         """Builds group ids for the given prefix and resource id."""
-        return f"{prefix}{resource_id}"
+        return f"{prefix}-{resource_type}-{resource_id}"
 
     # -----------------------------------------------------------------------------
     # Policy handling.
@@ -65,10 +71,10 @@ class Policy:
 
                 # Try to read all groups.
                 _ = user_store.group_mapper.read(
-                    Policy._build_read_group_name(resource_id)
+                    Policy._build_read_group_name(resource_type, resource_id)
                 )
                 _ = user_store.group_mapper.read(
-                    Policy._build_write_group_name(resource_id)
+                    Policy._build_write_group_name(resource_type, resource_id)
                 )
         except errors.ErrorNotFound:
             # At least one permission or group is missing.
@@ -98,7 +104,7 @@ class Policy:
 
         # Create a group with read permissions.
         read_group = Group(
-            name=Policy._build_write_group_name(resource_id),
+            name=Policy._build_write_group_name(resource_type, resource_id),
             permissions=[
                 Permission(
                     resource_type=resource_type,
@@ -111,7 +117,7 @@ class Policy:
 
         # Create a group with write/delete permissions.
         write_group = Group(
-            name=Policy._build_read_group_name(resource_id),
+            name=Policy._build_read_group_name(resource_type, resource_id),
             permissions=[
                 Permission(
                     resource_type=resource_type,
@@ -143,10 +149,10 @@ class Policy:
 
         # TODO: This is not atomic. Error deleting one part may leave the rest dangling.
         user_store.group_mapper.delete(
-            Policy._build_read_group_name(resource_id)
+            Policy._build_read_group_name(resource_type, resource_id)
         )
         user_store.group_mapper.delete(
-            Policy._build_write_group_name(resource_id)
+            Policy._build_write_group_name(resource_type, resource_id)
         )
 
         for method in MethodType:

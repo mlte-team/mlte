@@ -4,7 +4,7 @@ mlte/backend/api/auth/authentication.py
 Authentication handling.
 """
 
-from mlte.store.user.store import UserStoreSession
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user import passwords
 
 

@@ -11,11 +11,11 @@ from typing import List, Union
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.fs import FileSystemStorage
-from mlte.store.user.store import (
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStore,
     UserStoreSession,
 )
 from mlte.user.model import BasicUser, Group, Permission, User, UserCreate

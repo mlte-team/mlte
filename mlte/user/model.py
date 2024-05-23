@@ -91,20 +91,20 @@ class MethodType(str, Enum):
 class ResourceType(str, Enum):
     """Supported resource types."""
 
-    MODEL = "/model"
+    MODEL = "model"
     """Model and all related artifacts."""
 
-    USER = "/user"
+    USER = "user"
     """User resources."""
 
-    GROUP = "/group"
+    GROUP = "group"
     """Group resources."""
 
     @staticmethod
     def get_type_from_url(url: str) -> Optional[ResourceType]:
         """Returns the resource type for the given URL."""
         for resource_type in ResourceType:
-            if url.startswith(resource_type.value):
+            if url.startswith(f"/{resource_type.value}"):
                 return resource_type
 
         # Return none if the URL did not match any known resource type.
@@ -135,14 +135,14 @@ class Permission(BaseModel):
 
     def to_str(self) -> str:
         """Serialize the permission to a string"""
-        return f"{self.resource_type.value.replace('/', '')}-{self.resource_id}-{self.method}"
+        return f"{self.resource_type}-{self.resource_id}-{self.method}"
 
     @staticmethod
     def from_str(permission_str: str) -> Permission:
         """Creates a permission from its string serialization."""
         type, model_id, method = permission_str.split("-")
         return Permission(
-            resource_type=ResourceType(f"/{type}"),
+            resource_type=ResourceType(type),
             resource_id=model_id,
             method=MethodType(method),
         )
@@ -153,4 +153,4 @@ class Permission(BaseModel):
 # 2. Add default permissions/groups for User and Group resources, and maybe general Model resource access
 # 3. Add special check for having access to a resource when there is no id, in is_authorized
 # 4. Add separate unit tests for admin/user with permissions/user without permissions
-#
+# 5. Fix circular dependency between policy and userstoresession

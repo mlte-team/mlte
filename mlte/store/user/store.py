@@ -6,26 +6,11 @@ MLTE user store interface implementation.
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, Union, cast
-
 from mlte.store import error
-from mlte.store.base import (
-    ManagedSession,
-    ResourceMapper,
-    Store,
-    StoreSession,
-    StoreURI,
-)
-from mlte.user.model import (
-    BasicUser,
-    Group,
-    MethodType,
-    Permission,
-    ResourceType,
-    RoleType,
-    User,
-    UserCreate,
-)
+from mlte.store.base import Store, StoreURI
+from mlte.store.user.policy import Policy
+from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
+from mlte.user.model import ResourceType, RoleType, UserCreate
 
 DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = "admin1234"
@@ -73,101 +58,11 @@ class UserStore(Store):
 
     def _init_default_permissions(self):
         """Create all default permissions."""
-        for resource_type in ResourceType:
-            self._create_all_method_permissions(resource_type)
-
-    def _create_all_method_permissions(
-        self, resource_type: ResourceType, resource_id: Optional[Any] = None
-    ):
-        """Create a permission for each method type and the given resource."""
-        for method in MethodType:
-            self.session().permission_mapper.create(
-                Permission(
-                    resource_type=resource_type,
-                    resource_id=resource_id,
-                    method=method,
-                )
-            )
-
-
-# -----------------------------------------------------------------------------
-# UserStoreSession
-# -----------------------------------------------------------------------------
-
-
-class UserStoreSession(StoreSession):
-    """The base class for all implementations of the MLTE user store session."""
-
-    def __init__(self):
-        self.user_mapper = UserMapper()
-        """Mapper for the user resource."""
-
-        self.group_mapper = GroupMapper()
-        """Mapper for the group resource."""
-
-        self.permission_mapper = PermissionMapper()
-        """Mapper for the permission resource."""
-
-
-class ManagedUserSession(ManagedSession):
-    """A simple context manager for store sessions."""
-
-    def __enter__(self) -> UserStoreSession:
-        return cast(UserStoreSession, self.session)
-
-
-class UserMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store users."""
-
-    def create(self, new_user: UserCreate) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(self, updated_user: Union[UserCreate, BasicUser]) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, user_id: str) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, user_id: str) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-
-class GroupMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store groups."""
-
-    def create(self, new_group: Group) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(self, updated_group: Group) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, group_id: str) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, group_id: str) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-
-class PermissionMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store permissions."""
-
-    def create(self, new_permission: Permission) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(self, updated_permission: Permission) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, permission: str) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, permission: str) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+        with ManagedUserSession(self.session()) as user_store:
+            for resource_type in ResourceType:
+                if not Policy.exists(
+                    resource_type, resource_id=None, user_store=user_store
+                ):
+                    Policy.create(
+                        resource_type, resource_id=None, user_store=user_store
+                    )
