@@ -13,7 +13,7 @@ import mlte.backend.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.state import state
 from mlte.store.user.store import UserStore
-from mlte.user.model import UserCreate
+from mlte.user.model import RoleType, UserCreate
 from test.store.artifact import artifact_store_creators
 
 TEST_API_USER = "api_user"
@@ -29,7 +29,9 @@ def setup_api_with_mem_stores() -> FastAPI:
     # Set up user store with test user.
     user_store = user_store_fixture.create_memory_store()
     user_store.session().user_mapper.create(
-        UserCreate(username=TEST_API_USER, password=TEST_API_PASS)
+        UserCreate(
+            username=TEST_API_USER, password=TEST_API_PASS, role=RoleType.ADMIN
+        )
     )
 
     # Set the API state and app.
