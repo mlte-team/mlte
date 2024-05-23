@@ -6,14 +6,22 @@ MLTE user store interface implementation.
 
 from __future__ import annotations
 
-from typing import List, Union, cast
+from typing import Any, List, Optional, Union, cast
 
 from mlte.store import error
-from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
+from mlte.store.base import (
+    ManagedSession,
+    ResourceMapper,
+    Store,
+    StoreSession,
+    StoreURI,
+)
 from mlte.user.model import (
     BasicUser,
     Group,
+    MethodType,
     Permission,
+    ResourceType,
     RoleType,
     User,
     UserCreate,
@@ -33,6 +41,14 @@ class UserStore(Store):
     """
     An abstract user store.
     """
+
+    def __init__(self, uri: StoreURI):
+        """Base constructor."""
+        super().__init__(uri=uri)
+
+        # Sets up default user and permissions.
+        self._init_default_user()
+        self._init_default_permissions()
 
     def session(self) -> UserStoreSession:
         """
@@ -54,6 +70,24 @@ class UserStore(Store):
         except error.ErrorAlreadyExists:
             # If default user was already there, ignore warning, we don't want to overrwite any changes on it.
             pass
+
+    def _init_default_permissions(self):
+        """Create all default permissions."""
+        for resource_type in ResourceType:
+            self._create_all_method_permissions(resource_type)
+
+    def _create_all_method_permissions(
+        self, resource_type: ResourceType, resource_id: Optional[Any] = None
+    ):
+        """Create a permission for each method type and the given resource."""
+        for method in MethodType:
+            self.session().permission_mapper.create(
+                Permission(
+                    resource_type=resource_type,
+                    resource_id=resource_id,
+                    method=method,
+                )
+            )
 
 
 # -----------------------------------------------------------------------------

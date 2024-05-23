@@ -76,7 +76,14 @@ def read_model(
     """
     with dependencies.artifact_store_session() as handle:
         try:
-            return handle.read_model(model_id)
+            model = handle.read_model(model_id)
+
+            # Check if it doesn't have a policy, and create it in that case.
+            # This is for cases where the model may have been created without the API.
+            if not policy.model_has_policy(model):
+                policy.define_policy_for_model(model)
+
+            return model
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

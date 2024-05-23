@@ -43,8 +43,6 @@ class RelationalDBUserStore(UserStore):
     """A DB implementation of the MLTE user store."""
 
     def __init__(self, uri: StoreURI, **kwargs) -> None:
-        super().__init__(uri=uri)
-
         self.engine = sqlalchemy.create_engine(uri.uri, **kwargs)
         """The underlying storage for the store."""
 
@@ -55,7 +53,9 @@ class RelationalDBUserStore(UserStore):
         # Creates the DB items if they don't exist already.
         self._create_tables()
         self._init_tables()
-        self._init_default_user()
+
+        # Intialize base defaults.
+        super().__init__(uri=uri)
 
     def session(self) -> RelationalDBUserStoreSession:  # type: ignore[override]
         """

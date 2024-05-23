@@ -150,7 +150,6 @@ class Permission(BaseModel):
 
 # TODO
 #
-# 1. Models are not created in the frontend, and even if they are, sometimes they may not. How to trigger policy creation?
 # 2. Add default permissions/groups for User and Group resources, and maybe general Model resource access
 # 3. Add special check for having access to a resource when there is no id, in is_authorized
 # 4.

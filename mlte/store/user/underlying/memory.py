@@ -29,13 +29,11 @@ class InMemoryUserStore(UserStore):
     """An in-memory implementation of the MLTE user store."""
 
     def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
-
         self.storage = MemoryUserStorage()
         """The underlying storage for the store."""
 
-        # Initialize default user.
-        self._init_default_user()
+        # Initialize defaults.
+        super().__init__(uri=uri)
 
     def session(self) -> InMemoryUserStoreSession:  # type: ignore[override]
         """

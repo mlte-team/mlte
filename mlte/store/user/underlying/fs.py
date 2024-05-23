@@ -33,15 +33,13 @@ class FileSystemUserStore(UserStore):
     """Base fodler to store users store in."""
 
     def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
-
         self.storage = FileSystemStorage(
             uri=uri, sub_folder=self.BASE_USERS_FOLDER
         )
         """Underlying storage."""
 
-        # Initialize default user.
-        self._init_default_user()
+        # Initialize defaults.
+        super().__init__(uri=uri)
 
     def session(self) -> FileSystemUserStoreSession:
         """
