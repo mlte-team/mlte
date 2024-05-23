@@ -124,7 +124,7 @@ class Group(BaseModel):
 class Permission(BaseModel):
     """Permissions for manipulating resources."""
 
-    resource_type: Optional[ResourceType]
+    resource_type: ResourceType
     """The type of resource resource."""
 
     resource_id: Optional[str] = None
@@ -135,7 +135,7 @@ class Permission(BaseModel):
 
     def to_str(self) -> str:
         """Serialize the permission to a string"""
-        return f"{self.resource_type.value.replace('/', '') if self.resource_type is not None else None}-{self.resource_id}-{self.method}"
+        return f"{self.resource_type.value.replace('/', '')}-{self.resource_id}-{self.method}"
 
     @staticmethod
     def from_str(permission_str: str) -> Permission:
