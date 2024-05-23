@@ -13,9 +13,10 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
-from mlte.backend.api.auth import policy
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.store.user.policy import Policy
+from mlte.user.model import ResourceType
 
 # The router exported by this submodule
 router = APIRouter()
@@ -51,14 +52,20 @@ def create_model(
                 detail="Internal server error.",
             )
 
-    # Now create permissions and groups associated to it.
-    try:
-        policy.define_policy_for_model(created_model, current_user)
-    except Exception:
-        raise HTTPException(
-            status_code=codes.INTERNAL_ERROR,
-            detail="Internal server error.",
-        )
+    with dependencies.user_store_session() as handle:
+        # Now create permissions and groups associated to it.
+        try:
+            Policy.create(
+                ResourceType.MODEL,
+                created_model.identifier,
+                handle,
+                current_user,
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
 
     return created_model
 
@@ -74,25 +81,26 @@ def read_model(
     :param model_id: The model identifier
     :return: The read model
     """
-    with dependencies.artifact_store_session() as handle:
-        try:
+    try:
+        with dependencies.artifact_store_session() as handle:
             model = handle.read_model(model_id)
 
-            # Check if it doesn't have a policy, and create it in that case.
-            # This is for cases where the model may have been created without the API.
-            if not policy.model_has_policy(model):
-                policy.define_policy_for_model(model)
+        # Check if it doesn't have a policy, and create it in that case.
+        # This is for cases where the model may have been created without the API.
+        with dependencies.user_store_session() as handle:
+            if not Policy.exists(ResourceType.MODEL, model.identifier, handle):
+                Policy.create(ResourceType.MODEL, model.identifier, handle)
 
-            return model
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        return model
+    except errors.ErrorNotFound as e:
+        raise HTTPException(
+            status_code=codes.NOT_FOUND, detail=f"{e} not found."
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=codes.INTERNAL_ERROR,
+            detail="Internal server error.",
+        )
 
 
 @router.get("/model")
@@ -142,14 +150,15 @@ def delete_model(
                 detail="Internal server error.",
             )
 
-    # Now delete related permissions and groups.
-    try:
-        policy.remove_policy_for_model(deleted_model)
-    except Exception:
-        raise HTTPException(
-            status_code=codes.INTERNAL_ERROR,
-            detail="Internal server error.",
-        )
+    with dependencies.user_store_session() as handle:
+        # Now delete related permissions and groups.
+        try:
+            Policy.remove(ResourceType.MODEL, model_id, handle)
+        except Exception:
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
 
     return deleted_model
 

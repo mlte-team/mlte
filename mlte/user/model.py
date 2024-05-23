@@ -152,5 +152,5 @@ class Permission(BaseModel):
 #
 # 2. Add default permissions/groups for User and Group resources, and maybe general Model resource access
 # 3. Add special check for having access to a resource when there is no id, in is_authorized
-# 4.
+# 4. Add separate unit tests for admin/user with permissions/user without permissions
 #
