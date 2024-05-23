@@ -142,7 +142,7 @@ class Permission(BaseModel):
         """Creates a permission from its string serialization."""
         type, model_id, method = permission_str.split("-")
         return Permission(
-            resource_type=ResourceType(type),
+            resource_type=ResourceType(f"/{type}"),
             resource_id=model_id,
             method=MethodType(method),
         )
