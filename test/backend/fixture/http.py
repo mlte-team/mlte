@@ -16,6 +16,7 @@ import test.backend.fixture.api as api_helpers
 from mlte.artifact.type import ArtifactType
 from mlte.backend.core.config import settings
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
+from mlte.user.model import RoleType, UserCreate
 
 """
 This list contains the global collection of test clients.
@@ -82,7 +83,13 @@ def setup_API_and_test_client() -> FastAPITestHttpClient:
     :return: The client
     """
     # Setup API, configure to use memory artifact store and create app itself.
-    app = api_helpers.setup_api_with_mem_stores()
+    app = api_helpers.setup_api_with_mem_stores(
+        UserCreate(
+            username=api_helpers.TEST_API_USER,
+            password=api_helpers.TEST_API_PASS,
+            role=RoleType.ADMIN,
+        )
+    )
 
     # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
