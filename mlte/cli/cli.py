@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import sys
 import traceback
+from importlib.metadata import PackageNotFoundError, version
 
 import mlte.backend.main as backend
 import mlte.frontend as frontend
@@ -20,9 +21,20 @@ EXIT_FAILURE = 1
 # The global name of the program
 _PROGRAM_NAME = "mlte"
 
+# The name of the package.
+_PACKAGE_NAME = "mlte-python"
+
 # -----------------------------------------------------------------------------
 # Parsing Setup
 # -----------------------------------------------------------------------------
+
+
+def _get_version() -> str:
+    """Gets the version of the currently installed MLTE."""
+    try:
+        return version(_PACKAGE_NAME)
+    except PackageNotFoundError:
+        return "<mlte is not installed as a package.>"
 
 
 def _prepare_parser():
@@ -30,6 +42,14 @@ def _prepare_parser():
 
     # The base parser
     base_parser = argparse.ArgumentParser(prog=_PROGRAM_NAME)
+
+    # Version flag.
+    base_parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {_get_version()}",
+    )
 
     # Attach subparsers
     subparser = base_parser.add_subparsers(help="Subcommands:")
