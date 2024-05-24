@@ -45,3 +45,5 @@ docs/site
 
 # Pyenv conf
 .python-version
+
+store/
