@@ -85,12 +85,6 @@ def read_model(
         with dependencies.artifact_store_session() as handle:
             model = handle.read_model(model_id)
 
-        # Check if it doesn't have a policy, and create it in that case.
-        # This is for cases where the model may have been created without the API.
-        with dependencies.user_store_session() as handle:
-            if not Policy.exists(ResourceType.MODEL, model.identifier, handle):
-                Policy.create(ResourceType.MODEL, model.identifier, handle)
-
         return model
     except errors.ErrorNotFound as e:
         raise HTTPException(

@@ -13,6 +13,7 @@ from mlte.backend.api.auth import authentication, jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPTokenException
 from mlte.backend.state import state
 from mlte.model.base_model import BaseModel
+from mlte.store.user import policy
 
 GRANT_TYPE_PASSWORD = "password"
 """Grant type name used in token requests."""
@@ -89,6 +90,12 @@ async def login_for_access_token(
             error="invalid_request",
             error_decription="User is inactive.",
         )
+
+    # Create policies for models if needed.
+    # TODO: this is terribly not efficient. This is checked every time anybody logins.
+    with dependencies.artifact_store_session() as artifact_store:
+        with dependencies.user_store_session() as user_store:
+            policy.create_model_policies_if_needed(artifact_store, user_store)
 
     # Create and return token using username as data.
     access_token = jwt.create_user_token(user.username, state.token_key)

@@ -7,6 +7,7 @@ Class to define group and permission policies.
 from typing import Any, Optional
 
 import mlte.store.error as errors
+from mlte.store.artifact.store import ArtifactStoreSession
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
@@ -16,6 +17,17 @@ from mlte.user.model import (
     ResourceType,
     RoleType,
 )
+
+
+def create_model_policies_if_needed(artifact_store: ArtifactStoreSession, user_store: UserStoreSession):
+    """
+    Function that checks, for all models, if policies have not been created.
+    This is for cases where the model may have been created without the API.
+    """
+    models = artifact_store.list_models()
+    for model_id in models:
+        if not Policy.exists(ResourceType.MODEL, model_id, user_store):
+            Policy.create(ResourceType.MODEL, model_id, user_store)
 
 
 class Policy:
