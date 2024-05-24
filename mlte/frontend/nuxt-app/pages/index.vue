@@ -125,6 +125,18 @@
                   >
                     <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
+                  <NuxtLink
+                    :to="{
+                      path: 'export-report',
+                      query: {
+                        model: report.model,
+                        version: report.version,
+                        artifactId: report.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> Export </UsaButton>
+                  </NuxtLink>
                 </td>
               </tr>
             </tbody>
