@@ -16,6 +16,9 @@ from mlte.store.base import StoreURIPrefix
 # An enumeration of supported log levels
 _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
 
+# Default address for Frontend.
+DEFAULT_FRONTEND_ADDRESS = "http://localhost:8000"
+
 
 class Settings(BaseSettings):
     """
@@ -60,7 +63,7 @@ class Settings(BaseSettings):
             raise ValueError(f"Unsupported log level: {v}.")
         return v
 
-    ALLOWED_ORIGINS: List[str] = []
+    ALLOWED_ORIGINS: List[str] = [DEFAULT_FRONTEND_ADDRESS]
     """A list of allowed CORS origins."""
 
     JWT_SECRET_KEY: str = (
