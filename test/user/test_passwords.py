@@ -1,7 +1,7 @@
 """
-test/backend/auth/test_auth.py
+test/user/test_auth.py
 
-Test the authentication operations
+Test the password operations.
 """
 
 

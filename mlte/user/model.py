@@ -84,8 +84,8 @@ class MethodType(str, Enum):
     DELETE = "delete"
     """Deletion action."""
 
-    ALL = "all"
-    """Special action to represnt all/any of them."""
+    ANY = "any"
+    """Special action to represent all/any of them."""
 
 
 class ResourceType(str, Enum):
@@ -130,7 +130,7 @@ class Permission(BaseModel):
     resource_id: Optional[str] = None
     """The specific resource id to give permissions to, if any."""
 
-    method: MethodType = MethodType.ALL
+    method: MethodType = MethodType.ANY
     """The HTTP method applied on the resource."""
 
     def to_str(self) -> str:
@@ -143,6 +143,7 @@ class Permission(BaseModel):
     @staticmethod
     def from_str(permission_str: str) -> Permission:
         """Creates a permission from its string serialization."""
+        # Source str can have 2 or 3 parts, depending if resource id was None.
         parts = permission_str.split("-")
         type = parts[0]
         method = parts[1]
@@ -157,7 +158,35 @@ class Permission(BaseModel):
             method=MethodType(method),
         )
 
+    def grants_access(self, request: Permission):
+        """Checks if this permission grants access to the recieved request."""
+        if self.to_str() == request.to_str():
+            # If both are exactly the same, they match.
+            return True
+
+        if self.resource_type != request.resource_type:
+            # If they point to different resource types, they will never match.
+            return False
+        else:
+            if (
+                self.method == request.method
+                or self.method == MethodType.ANY
+                or request.method == MethodType.ANY
+            ):
+                # If methods match, or either refer to any method, check resource id.
+                if self.resource_id is None:
+                    # "None" means all, that means we apply to any request resource id.
+                    return True
+                elif self.resource_id == request.resource_id:
+                    # If the resource ids are the same, we match.
+                    return True
+                else:
+                    # If we have a specific resource id, and they have a different one or "all", we don't match.
+                    return False
+            else:
+                # The methods don't match in some way.
+                return False
+
 
 # TODO
-# 3. Add special check for having access to a resource when there is no id, in is_authorized
-# 4. Add separate unit tests for admin/user with permissions/user without permissions
+# 5. Add unit tests for users with different groups/roles

@@ -77,8 +77,7 @@ def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
         for group in current_user.groups:
             print(group)
             for permission in group.permissions:
-                print(permission.method)
-                if permission.to_str() == resource.to_str():
+                if permission.grants_access(resource):
                     print("Permission for this model found")
                     return True
 
