@@ -45,7 +45,10 @@ class Policy:
         prefix: str, resource_type: ResourceType, resource_id: Any
     ):
         """Builds group ids for the given prefix and resource id."""
-        return f"{prefix}-{resource_type}-{resource_id}"
+        name = f"{prefix}-{resource_type}"
+        if resource_id is not None:
+            name = f"{name}-{resource_id}"
+        return name
 
     # -----------------------------------------------------------------------------
     # Policy handling.

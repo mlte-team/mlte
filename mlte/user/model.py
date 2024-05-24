@@ -135,22 +135,29 @@ class Permission(BaseModel):
 
     def to_str(self) -> str:
         """Serialize the permission to a string"""
-        return f"{self.resource_type}-{self.resource_id}-{self.method}"
+        serialized = f"{self.resource_type}-{self.method}"
+        if self.resource_id is not None:
+            serialized = f"{serialized}-{self.resource_id}"
+        return serialized
 
     @staticmethod
     def from_str(permission_str: str) -> Permission:
         """Creates a permission from its string serialization."""
-        type, model_id, method = permission_str.split("-")
+        parts = permission_str.split("-")
+        type = parts[0]
+        method = parts[1]
+        if len(parts) > 2:
+            resource_id = parts[2]
+        else:
+            resource_id = None
+
         return Permission(
             resource_type=ResourceType(type),
-            resource_id=model_id,
+            resource_id=resource_id,
             method=MethodType(method),
         )
 
 
 # TODO
-# 1. Fix bug no user or permission table, random
-# 2. Add default permissions/groups for User and Group resources, and maybe general Model resource access
 # 3. Add special check for having access to a resource when there is no id, in is_authorized
 # 4. Add separate unit tests for admin/user with permissions/user without permissions
-# 5. Fix circular dependency between policy and userstoresession
