@@ -9,7 +9,7 @@ from __future__ import annotations
 from mlte.store import error
 from mlte.store.base import Store, StoreURI
 from mlte.store.user.policy import Policy
-from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import ResourceType, RoleType, UserCreate
 
 DEFAULT_USERNAME = "admin"
@@ -58,11 +58,11 @@ class UserStore(Store):
 
     def _init_default_permissions(self):
         """Create all default permissions."""
-        with ManagedUserSession(self.session()) as user_store:
-            for resource_type in ResourceType:
-                if not Policy.exists(
+        user_store = self.session()
+        for resource_type in ResourceType:
+            if not Policy.exists(
+                resource_type, resource_id=None, user_store=user_store
+            ):
+                Policy.create(
                     resource_type, resource_id=None, user_store=user_store
-                ):
-                    Policy.create(
-                        resource_type, resource_id=None, user_store=user_store
-                    )
+                )
