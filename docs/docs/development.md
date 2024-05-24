@@ -231,12 +231,6 @@ Build the static distribution for the front end; the command below assumes that 
 $ cd mlte/frontend/nuxt-app && npm run build
 ```
 
-If publishing on MacOS, you'll need to remove the node_modules directory before building the package (they can be reinstalled afterwards using `npm install`):
-
-```bash
-$ rm -rf mlte/frontend/nuxt-app/node_modules
-```
-
 Create the source distribution and wheel:
 
 ```bash

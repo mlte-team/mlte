@@ -46,23 +46,25 @@ from mlte.report ... #importing from report subpackage
 
 ## Running the User Interface
 
-To run the user interface (UI), run the following in your command line:
+To run the user interface (UI or frontend), first you need to start the backend server. Running the backend can be done with the following command:
+
+```bash
+$ mlte backend
+```
+
+However, by default this will store any artifacts in a non-persistent, in-memory store. You also have the option to use a folder to store artifacts, or a relational database, using the `--store-uri` flag. For the latter, see the appropriate section below. For the former, you have to specify a relative or absolute folder path with the `fs://` prefix. For example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
+
+```bash
+$ mlte backend --store-uri fs://store
+```
+
+Once the backend is running, you can run the frontend with the following command:
+
 ```bash
 $ mlte ui
 ```
 
-In order for the frontend to be able to communicate with the backend you will need to allow the frontend as an origin.
-This can be done by specifying the `--allowed-origins` flag when running the backend. 
-When ran through the mlte package, the frontend will be hosted at `http://localhost:8000` so the backend command will look something like this:
-
-```bash
-$ mlte backend --store-uri fs://store --allowed-origins http://localhost:8000
-```
-
-In real deployments, you should define a new secret to be used for token signing, instead of the default one. This can be done by either creating and .env file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`, or passing it as a command line argument with `--jwt-secret`.
-
-Once you run it, go to the hosted address to view the `MLTE` UI homepage. You will need to log in to access the functionality in the UI. To start with you can
-use the default user. You can later use the UI to set up new users as well.
+After this, go to the hosted address (defaults to `http://localhost:8000`) to view the `MLTE` UI homepage. You will need to log in to access the functionality in the UI. You can start using the default user. You can later use the UI to set up new users as well.
 
 NOTE: you should change the default user's password as soon as you can, if you are not on a local setup.
 
@@ -70,6 +72,13 @@ NOTE: you should change the default user's password as soon as you can, if you a
 * Default password: admin1234
 
 For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
+
+## Backend Considerations
+
+The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing, instead of the default one. This can be done by either creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`, or passing it as a command line argument with the `--jwt-secret` flag.
+
+In order for the frontend to be able to communicate with the backend the frontend need to be allowed as an origin. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address, this flag needs to be set with the correct address.
+
 
 ## Using a Relational DB Engine Backend
 
