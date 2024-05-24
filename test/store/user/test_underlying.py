@@ -9,11 +9,8 @@ from typing import List
 import pytest
 
 import mlte.store.error as errors
-from mlte.store.user.store import (
-    ManagedUserSession,
-    UserStore,
-    UserStoreSession,
-)
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,

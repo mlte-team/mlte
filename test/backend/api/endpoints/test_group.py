@@ -12,7 +12,7 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.store.user.store import ManagedUserSession, UserStoreSession
+from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import Group, MethodType, Permission, ResourceType
 from test.backend.fixture.http import (  # noqa
     FastAPITestHttpClient,
