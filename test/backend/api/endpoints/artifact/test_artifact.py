@@ -1,7 +1,7 @@
 """
-test/backend/artifcat/test_negotiation_card.py
+test/backend/api/endpoints/artifact/test_artifact.py
 
-Test the HTTP interface for negotiation card operations.
+Test the API for artifacts.
 """
 
 import pytest
@@ -15,6 +15,32 @@ from mlte.context.model import ModelCreate, VersionCreate
 from mlte.store.artifact.query import Query
 from test.backend.fixture.http import FastAPITestHttpClient
 from test.fixture.artifact import ArtifactFactory
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
+def create_context(
+    model_id: str, version_id: str, test_client: FastAPITestHttpClient
+) -> None:
+    """Create context for artifacts.."""
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model",
+        json=ModelCreate(identifier=model_id).model_dump(),
+    )
+    assert res.status_code == codes.OK
+
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model/{model_id}/version",
+        json=VersionCreate(identifier=version_id).model_dump(),
+    )
+    assert res.status_code == codes.OK
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 def test_init(
@@ -136,20 +162,3 @@ def test_delete(
         f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
     )
     assert res.status_code == 404
-
-
-def create_context(
-    model_id: str, version_id: str, test_client: FastAPITestHttpClient
-) -> None:
-    """Create context for artifacts.."""
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model",
-        json=ModelCreate(identifier=model_id).model_dump(),
-    )
-    assert res.status_code == codes.OK
-
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
-        json=VersionCreate(identifier=version_id).model_dump(),
-    )
-    assert res.status_code == codes.OK

@@ -1,7 +1,7 @@
 """
-test/backend/test_token.py
+test/backend/api/endpoint/test_token.py
 
-Test the token endpoint
+Test the API for token endpoint
 """
 
 from mlte.backend.api import codes

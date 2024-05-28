@@ -1,13 +1,31 @@
 """
-test/backend/context/test_version.py
+test/backend/api/endpoints/artifact/test_version.py
 
-Test the HTTP interface for version operations.
+Test the API for version operations.
 """
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.context.model import ModelCreate, Version, VersionCreate
 from test.backend.fixture.http import FastAPITestHttpClient
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
+def create_model(model_id: str, client: FastAPITestHttpClient) -> None:
+    """Create a model with the given identifier."""
+    res = client.post(
+        f"{settings.API_PREFIX}/model",
+        json=ModelCreate(identifier=model_id).model_dump(),
+    )
+    assert res.status_code == codes.OK
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 def test_init(test_client: FastAPITestHttpClient) -> None:
@@ -96,12 +114,3 @@ def test_delete(test_client: FastAPITestHttpClient) -> None:
     res = test_client.get(f"{settings.API_PREFIX}/model/{model_id}/version")
     assert res.status_code == codes.OK
     assert len(res.json()) == 0
-
-
-def create_model(model_id: str, client: FastAPITestHttpClient) -> None:
-    """Create a model with the given identifier."""
-    res = client.post(
-        f"{settings.API_PREFIX}/model",
-        json=ModelCreate(identifier=model_id).model_dump(),
-    )
-    assert res.status_code == codes.OK

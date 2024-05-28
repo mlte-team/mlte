@@ -1,7 +1,7 @@
 """
-test/backend/contex/test_model.py
+test/backend/api/endpoints/artifact/test_model.py
 
-Test the HTTP interface for model operations.
+Test the API for model operations.
 """
 
 from mlte.backend.api import codes

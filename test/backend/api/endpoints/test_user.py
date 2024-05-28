@@ -1,7 +1,7 @@
 """
-test/backend/test_user.py
+test/backend/api/endpoints/test_user.py
 
-Test the HTTP interface for user operations.
+Test the API for user operations.
 """
 from __future__ import annotations
 
@@ -15,6 +15,11 @@ from test.backend.fixture.http import FastAPITestHttpClient
 USER_ENDPOINT = "/user"
 
 
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
 def get_test_user() -> UserCreate:
     """Creates a simple test user."""
     username = "user1"
@@ -24,11 +29,16 @@ def get_test_user() -> UserCreate:
 
 
 def create_user(test_client: FastAPITestHttpClient, user: UserCreate):
-    # Create test user.
+    """Create test user."""
     res = test_client.post(
         f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
     )
     assert res.status_code == codes.OK
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 def test_create(test_client: FastAPITestHttpClient) -> None:  # noqa

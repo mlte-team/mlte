@@ -1,5 +1,5 @@
 """
-test/backend/api/endpoint/conftest.py
+test/backend/api/endpoints/conftest.py
 
 Loading common fixtures used in tests in this and child folders.
 """

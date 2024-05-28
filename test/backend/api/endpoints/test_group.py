@@ -1,7 +1,7 @@
 """
-test/backend/test_group.py
+test/backend/api/endpoints/test_group.py
 
-Test the HTTP interface for group operations.
+Test the API for group operations.
 """
 from __future__ import annotations
 
@@ -16,6 +16,11 @@ from test.backend.fixture.http import FastAPITestHttpClient
 
 GROUP_ENDPOINT = "/group"
 GROUP_URI = f"{settings.API_PREFIX}{GROUP_ENDPOINT}"
+
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
 
 
 def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
@@ -53,6 +58,11 @@ def create_group(test_client: FastAPITestHttpClient, group: Group):
 
     res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
     assert res.status_code == codes.OK
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 def test_create(test_client: FastAPITestHttpClient) -> None:  # noqa

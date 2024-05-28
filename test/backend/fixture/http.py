@@ -17,14 +17,6 @@ from mlte.backend.core.config import settings
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.user.model import UserCreate
 
-"""
-This list contains the global collection of test clients.
-However, because we cannot directly parametrize a test with
-a fixture function, we specify via strings and then use the
-`request` fixture to translate this into the actual fixture.
-"""
-_CLIENTS = ["mem_store_and_test_http_client"]
-
 # -----------------------------------------------------------------------------
 # Test HTTP client based on FastAPI's TestClient.
 # -----------------------------------------------------------------------------
