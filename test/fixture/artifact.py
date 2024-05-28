@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import random
 import string
-from typing import Generator, List, Optional, Union
+from typing import List, Optional, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -52,12 +52,6 @@ def _random_id(length: int = 5) -> str:
     :return: The identifier
     """
     return "".join(random.choices(string.ascii_lowercase, k=length))
-
-
-def artifact_types() -> Generator[ArtifactType, None, None]:
-    """A generator over artifact types."""
-    for type in ArtifactType:
-        yield type
 
 
 class ArtifactFactory:

@@ -4,41 +4,22 @@ test/backend/contex/test_model.py
 Test the HTTP interface for model operations.
 """
 
-import pytest
-
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.context.model import Model, ModelCreate
 from mlte.store.user.store_session import ManagedUserSession
-from test.backend.fixture.http import (  # noqa
-    FastAPITestHttpClient,
-    clients,
-    mem_store_and_test_http_client,
-)
-
-# -----------------------------------------------------------------------------
-# Tests: Model
-# -----------------------------------------------------------------------------
+from test.backend.fixture.http import FastAPITestHttpClient
 
 
-@pytest.mark.parametrize("client_fixture", clients())
-def test_init(
-    client_fixture: str, request: pytest.FixtureRequest
-) -> None:  # noqa
+def test_init(test_client: FastAPITestHttpClient) -> None:
     """The server can initialize."""
-    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-    res = client.get(f"{settings.API_PREFIX}/healthz")
+    res = test_client.get(f"{settings.API_PREFIX}/healthz")
     assert res.status_code == codes.OK
 
 
-@pytest.mark.parametrize("client_fixture", clients())
-def test_create(
-    client_fixture: str, request: pytest.FixtureRequest
-) -> None:  # noqa
+def test_create(test_client: FastAPITestHttpClient) -> None:
     """Models can be created."""
-    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-
     original_perms = []
     original_groups = []
     with ManagedUserSession(state.user_store.session()) as user_store:
@@ -47,7 +28,9 @@ def test_create(
 
     model = ModelCreate(identifier="model")
 
-    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model", json=model.model_dump()
+    )
     assert res.status_code == codes.OK
     _ = Model(**res.json())
 
@@ -62,55 +45,50 @@ def test_create(
     assert len(original_groups) + 2 == len(new_groups)
 
 
-@pytest.mark.parametrize("client_fixture", clients())
-def test_read(
-    client_fixture: str, request: pytest.FixtureRequest
-) -> None:  # noqa
+def test_read(test_client: FastAPITestHttpClient) -> None:
     """Models can be read."""
-    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-
     model_id = "0"
     model = ModelCreate(identifier=model_id)
-    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model", json=model.model_dump()
+    )
     assert res.status_code == codes.OK
 
     created = Model(**res.json())
 
-    res = client.get(f"{settings.API_PREFIX}/model/{model_id}")
+    res = test_client.get(f"{settings.API_PREFIX}/model/{model_id}")
     assert res.status_code == codes.OK
     read = Model(**res.json())
     assert read == created
 
 
-@pytest.mark.parametrize("client_fixture", clients())
 def test_list(
-    client_fixture: str, request: pytest.FixtureRequest
-) -> None:  # noqa
+    test_client: FastAPITestHttpClient,
+) -> None:
     """Models can be listed."""
-    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-
     model_id = "0"
     model = ModelCreate(identifier=model_id)
 
-    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model", json=model.model_dump()
+    )
     assert res.status_code == codes.OK
 
-    res = client.get(f"{settings.API_PREFIX}/model")
+    res = test_client.get(f"{settings.API_PREFIX}/model")
     assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
 
-@pytest.mark.parametrize("client_fixture", clients())
 def test_delete(
-    client_fixture: str, request: pytest.FixtureRequest
-) -> None:  # noqa
+    test_client: FastAPITestHttpClient,
+) -> None:
     """Models can be deleted."""
-    client: FastAPITestHttpClient = request.getfixturevalue(client_fixture)
-
     model_id = "0"
     model = ModelCreate(identifier=model_id)
 
-    res = client.post(f"{settings.API_PREFIX}/model", json=model.model_dump())
+    res = test_client.post(
+        f"{settings.API_PREFIX}/model", json=model.model_dump()
+    )
     assert res.status_code == codes.OK
 
     num_original_perms = 0
@@ -119,14 +97,14 @@ def test_delete(
         num_original_perms = len(user_store.permission_mapper.list())
         num_original_groups = len(user_store.group_mapper.list())
 
-    res = client.get(f"{settings.API_PREFIX}/model")
+    res = test_client.get(f"{settings.API_PREFIX}/model")
     assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
-    res = client.delete(f"{settings.API_PREFIX}/model/{model_id}")
+    res = test_client.delete(f"{settings.API_PREFIX}/model/{model_id}")
     assert res.status_code == codes.OK
 
-    res = client.get(f"{settings.API_PREFIX}/model")
+    res = test_client.get(f"{settings.API_PREFIX}/model")
     assert res.status_code == codes.OK
     assert len(res.json()) == 0
 

@@ -6,14 +6,13 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
-from typing import Any, Generator, Optional, Tuple
+from typing import Any, Optional
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
 
 import test.backend.fixture.api as api_helpers
-from mlte.artifact.type import ArtifactType
 from mlte.backend.core.config import settings
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.user.model import UserCreate
@@ -95,22 +94,3 @@ def setup_API_and_test_client(
     client.password = api_helpers.TEST_API_PASS
     client.authenticate(f"{settings.API_PREFIX}")
     return client
-
-
-def clients() -> Generator[str, None, None]:
-    """
-    Yield test clients.
-    :return: A test client configured for backend
-    """
-    for client in _CLIENTS:
-        yield client
-
-
-def clients_and_types() -> Generator[Tuple[str, ArtifactType], None, None]:
-    """
-    Yield test clients and artifact types to produce all combinations.
-    :return: (test client configured for backend, artifact type)
-    """
-    for client in _CLIENTS:
-        for type in ArtifactType:
-            yield client, type
