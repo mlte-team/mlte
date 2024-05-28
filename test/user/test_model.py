@@ -167,7 +167,7 @@ def test_permission_not_granted_id_vs_all(
 def test_permission_granted_id_any(
     permission: Permission, requested: Permission
 ) -> None:
-    """Checks that permissions are not granted for requests with different resource types."""
+    """Checks that permissions are granted for any method type."""
 
     permission_granted = permission.grants_access(requested)
 
@@ -207,7 +207,7 @@ def test_permission_granted_id_any(
 def test_permission_granted_id_method(
     permission: Permission, requested: Permission
 ) -> None:
-    """Checks that permissions are not granted for requests with different resource types."""
+    """Checks that permissions are granted for same id but figgerent methods"""
 
     permission_granted = permission.grants_access(requested)
 

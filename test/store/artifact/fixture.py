@@ -6,7 +6,7 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
-from typing import Generator, Tuple
+from typing import Generator, Optional, Tuple
 
 import pytest
 
@@ -18,6 +18,7 @@ from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
+from mlte.user.model import UserCreate
 from test.backend.fixture.http import setup_API_and_test_client
 from test.store.artifact import artifact_store_creators
 
@@ -25,13 +26,13 @@ _STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
 @pytest.fixture(scope="function")
-def http_store() -> HttpArtifactStore:
+def http_store(user: Optional[UserCreate] = None) -> HttpArtifactStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
     # Set an in memory store and get a test http client, configured for the app.
-    client = setup_API_and_test_client()
+    client = setup_API_and_test_client(user)
     return artifact_store_creators.create_http_store(
         username=client.username,
         password=client.password,

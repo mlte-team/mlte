@@ -6,6 +6,8 @@ Set up for store fixtures in API state.
 
 from __future__ import annotations
 
+from typing import Optional
+
 import pytest
 from fastapi import FastAPI
 
@@ -13,19 +15,25 @@ import mlte.backend.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.state import state
 from mlte.store.user.store import UserStore
-from mlte.user.model import UserCreate
+from mlte.user.model import RoleType, UserCreate
 from test.store.artifact import artifact_store_creators
 
 TEST_API_USER = "api_user"
 TEST_API_PASS = "api_pass"
+TEST_ADMIN_USER = UserCreate(
+    username=TEST_API_USER, password=TEST_API_PASS, role=RoleType.ADMIN
+)
 """User and passwords added to test the API."""
 
 TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
 """JWT token secret used for signing tokens."""
 
 
-def setup_api_with_mem_stores(user: UserCreate) -> FastAPI:
+def setup_api_with_mem_stores(user: Optional[UserCreate]) -> FastAPI:
     """Setup API, configure to use memory artifact store and create app itself."""
+    if user is None:
+        user = TEST_ADMIN_USER
+
     # Set up user store with test user.
     user_store = user_store_fixture.create_memory_store()
     user_store.session().user_mapper.create(user)
