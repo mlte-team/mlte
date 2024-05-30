@@ -28,12 +28,12 @@ from mlte.user.model_logic import convert_to_hashed_user, update_user
 class InMemoryUserStore(UserStore):
     """An in-memory implementation of the MLTE user store."""
 
-    def __init__(self, uri: StoreURI) -> None:
+    def __init__(self, uri: StoreURI, add_default_data: bool = True) -> None:
         self.storage = MemoryUserStorage()
         """The underlying storage for the store."""
 
         # Initialize defaults.
-        super().__init__(uri=uri)
+        super().__init__(uri=uri, add_default_data=add_default_data)
 
     def session(self) -> InMemoryUserStoreSession:  # type: ignore[override]
         """
@@ -41,6 +41,17 @@ class InMemoryUserStore(UserStore):
         :return: The session handle
         """
         return InMemoryUserStoreSession(storage=self.storage)
+
+    def clone(self) -> InMemoryUserStore:
+        """
+        Clones the store. Shallow clone.
+        :return: The cloned store
+        """
+        clone = InMemoryUserStore(self.uri, add_default_data=False)
+        clone.storage.users = self.storage.users.copy()
+        clone.storage.groups = self.storage.groups.copy()
+        clone.storage.permissions = self.storage.permissions.copy()
+        return clone
 
 
 class MemoryUserStorage:

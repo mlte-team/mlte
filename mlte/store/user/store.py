@@ -27,13 +27,14 @@ class UserStore(Store):
     An abstract user store.
     """
 
-    def __init__(self, uri: StoreURI):
+    def __init__(self, uri: StoreURI, add_default_data: bool = True):
         """Base constructor."""
         super().__init__(uri=uri)
 
         # Sets up default user and permissions.
-        self._init_default_user()
-        self._init_default_permissions()
+        if add_default_data:
+            self._init_default_user()
+            self._init_default_permissions()
 
     def session(self) -> UserStoreSession:
         """
