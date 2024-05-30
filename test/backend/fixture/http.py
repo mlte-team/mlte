@@ -6,14 +6,17 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
+import typing
 from typing import Any, Callable, Optional
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-import test.backend.fixture.api as api_helpers
+import test.backend.fixture.api_helper as api_helpers
+from mlte.backend.api import codes
 from mlte.backend.core.config import settings
+from mlte.model.base_model import BaseModel
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.user.model import UserCreate
 
@@ -96,12 +99,31 @@ def setup_API_and_test_client(
 
 
 def get_client_for_admin(
-    client: FastAPITestHttpClient,
+    test_client: FastAPITestHttpClient,
 ) -> FastAPITestHttpClient:
     """Gets a client for the same app as the given one, but with an admin user."""
     admin_user = api_helpers.build_admin_user()
-    admin_client = FastAPITestHttpClient(TestClient(client.client.app))
+    admin_client = FastAPITestHttpClient(TestClient(test_client.client.app))
     admin_client.username = admin_user.username
     admin_client.password = admin_user.password
     admin_client.authenticate(f"{settings.API_PREFIX}")
     return admin_client
+
+
+def admin_create_entity(
+    entity: BaseModel, uri: str, test_client: FastAPITestHttpClient
+) -> None:
+    """Create the given entity using an admin."""
+    admin_client = get_client_for_admin(test_client)
+    res = admin_client.post(f"{uri}", json=entity.model_dump())
+    assert res.status_code == codes.OK
+
+
+def admin_read_entity(
+    entity_id: str, uri: str, test_client: FastAPITestHttpClient
+) -> dict[str, Any]:
+    """Get the given entity using an admin."""
+    admin_client = get_client_for_admin(test_client)
+    res = admin_client.get(f"{uri}/{entity_id}")
+    assert res.status_code == codes.OK
+    return typing.cast(dict[str, Any], res.json())

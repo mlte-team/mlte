@@ -14,8 +14,9 @@ from fastapi import FastAPI
 import mlte.backend.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.state import state
+from mlte.store.user.policy import Policy
 from mlte.store.user.store import UserStore
-from mlte.user.model import Group, RoleType, UserCreate
+from mlte.user.model import Group, ResourceType, RoleType, UserCreate
 from test.store.artifact import artifact_store_creators
 
 TEST_ADMIN_USERNAME = "admin_user"
@@ -77,3 +78,61 @@ def clear_state():
     """Clears the the backend state."""
     state._artifact_store = None
     state._user_store = None
+
+
+def get_test_users_with_read_permissions(
+    resource_type: ResourceType,
+) -> List[UserCreate]:
+    """Get a list of users that have permissions to read from different sources."""
+    users = [
+        build_test_user(role=RoleType.ADMIN),
+        build_test_user(groups=Policy.build_groups(resource_type)),
+        build_test_user(
+            groups=Policy.build_groups(resource_type, build_write_group=False)
+        ),
+    ]
+
+    return users
+
+
+def get_test_users_with_write_permissions(
+    resource_type: ResourceType,
+) -> List[UserCreate]:
+    """Get a list of users that have permissions to write from different sources."""
+    users = [
+        build_test_user(role=RoleType.ADMIN),
+        build_test_user(groups=Policy.build_groups(resource_type)),
+        build_test_user(
+            groups=Policy.build_groups(resource_type, build_read_group=False)
+        ),
+    ]
+
+    return users
+
+
+def get_test_users_with_no_read_permissions(
+    resource_type: ResourceType,
+) -> List[UserCreate]:
+    """Get a list of users that do not have permissions to read from different sources."""
+    users = [
+        build_test_user(),
+        build_test_user(
+            groups=Policy.build_groups(resource_type, build_read_group=False)
+        ),
+    ]
+
+    return users
+
+
+def get_test_users_with_no_write_permissions(
+    resource_type: ResourceType,
+) -> List[UserCreate]:
+    """Get a list of users that do not have permissions to write from different sources."""
+    users = [
+        build_test_user(),
+        build_test_user(
+            groups=Policy.build_groups(resource_type, build_write_group=False)
+        ),
+    ]
+
+    return users

@@ -11,7 +11,7 @@ from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import UserCreate
-from test.backend.fixture import api as api_setup
+from test.backend.fixture import api_helper as api_setup
 from test.store.user.fixture import (  # noqa
     fs_store,
     memory_store,

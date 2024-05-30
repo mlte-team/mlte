@@ -7,8 +7,10 @@ Test the API for token endpoint
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.user.model import UserCreate
-from test.backend.api.endpoints.test_user import USER_ENDPOINT
-from test.backend.fixture.http import FastAPITestHttpClient, get_client_for_admin
+from test.backend.fixture.http import (
+    FastAPITestHttpClient,
+    get_client_for_admin,
+)
 
 TOKEN_ENDPOINT = "/token"
 TOKEN_URI = f"{settings.API_PREFIX}{TOKEN_ENDPOINT}"
@@ -31,7 +33,9 @@ def create_sample_user(test_client: FastAPITestHttpClient) -> None:
     admin_client = get_client_for_admin(test_client)
 
     sample_user = get_sample_user()
-    res = admin_client.post(f"{settings.API_PREFIX}/user", json=sample_user.model_dump())
+    res = admin_client.post(
+        f"{settings.API_PREFIX}/user", json=sample_user.model_dump()
+    )
     assert res.status_code == codes.OK
 
 
@@ -60,9 +64,7 @@ def test_valid_user(test_client_fix) -> None:
     )
 
     # Request token.
-    res = test_client.post(
-        f"{TOKEN_URI}", data=form_data
-    )
+    res = test_client.post(f"{TOKEN_URI}", data=form_data)
 
     # Check result.
     assert res.status_code == codes.OK
@@ -81,9 +83,7 @@ def test_invalid_user(test_client_fix) -> None:
     )
 
     # Request token.
-    res = test_client.post(
-        f"{TOKEN_URI}", data=form_data
-    )
+    res = test_client.post(f"{TOKEN_URI}", data=form_data)
 
     # Check result.
     assert res.status_code == codes.BAD_REQUEST
