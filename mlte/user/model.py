@@ -186,7 +186,3 @@ class Permission(BaseModel):
             else:
                 # The methods don't match in some way.
                 return False
-
-
-# TODO
-# 5. Add unit tests for users with different groups/roles

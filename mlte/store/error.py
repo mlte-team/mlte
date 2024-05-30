@@ -27,3 +27,9 @@ class UnauthenticatedError(RuntimeError):
     """No authentication for operation that requires it."""
 
     pass
+
+
+class ForbiddenError(RuntimeError):
+    """User without permissions for the operation."""
+
+    pass

@@ -7,12 +7,26 @@ from __future__ import annotations
 
 from typing import Any, List
 
+import pytest
+
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
+from mlte.store.user.policy import Policy
 from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
-from mlte.user.model import Group, MethodType, Permission, ResourceType
-from test.backend.fixture.http import FastAPITestHttpClient
+from mlte.user.model import (
+    Group,
+    MethodType,
+    Permission,
+    ResourceType,
+    RoleType,
+    UserCreate,
+)
+from test.backend.fixture import api as api_helper
+from test.backend.fixture.http import (
+    FastAPITestHttpClient,
+    get_client_for_admin,
+)
 
 GROUP_ENDPOINT = "/group"
 GROUP_URI = f"{settings.API_PREFIX}{GROUP_ENDPOINT}"
@@ -51,12 +65,15 @@ def get_test_group() -> Group:
     return test_group
 
 
-def create_group(test_client: FastAPITestHttpClient, group: Group):
+def create_group(test_client: FastAPITestHttpClient):
     """Create test group."""
+    group = get_test_group()
     with ManagedUserSession(state.user_store.session()) as user_store:
         setup_group_permisisons(group, user_store)
 
-    res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
+    admin_client = get_client_for_admin(test_client)
+
+    res = admin_client.post(f"{GROUP_URI}", json=group.model_dump())
     assert res.status_code == codes.OK
 
 
@@ -65,8 +82,23 @@ def create_group(test_client: FastAPITestHttpClient, group: Group):
 # -----------------------------------------------------------------------------
 
 
-def test_create(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_create(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be created."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
 
     res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
@@ -74,8 +106,18 @@ def test_create(test_client: FastAPITestHttpClient) -> None:  # noqa
     _ = Group(**res.json())
 
 
-def test_edit(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+    ],
+)
+def test_edit(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be edited."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
     p3 = Permission(
         resource_type=ResourceType.MODEL,
@@ -86,7 +128,7 @@ def test_edit(test_client: FastAPITestHttpClient) -> None:  # noqa
         user_store.permission_mapper.create(p3)
 
     # Create test group.
-    create_group(test_client, group)
+    create_group(test_client)
 
     # Edit group.
     group.permissions.append(p3)
@@ -101,11 +143,26 @@ def test_edit(test_client: FastAPITestHttpClient) -> None:  # noqa
     assert edited_group.permissions == group.permissions
 
 
-def test_read(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_read(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be read."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
 
-    create_group(test_client, group)
+    create_group(test_client)
 
     res = test_client.get(f"{GROUP_URI}/{group.name}")
     assert res.status_code == codes.OK
@@ -113,22 +170,52 @@ def test_read(test_client: FastAPITestHttpClient) -> None:  # noqa
     assert read == group
 
 
-def test_list(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be listed."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
     original_groups = test_client.get(f"{GROUP_URI}")
 
-    create_group(test_client, group)
+    create_group(test_client)
 
     res = test_client.get(f"{GROUP_URI}")
     assert res.status_code == codes.OK
     assert len(res.json()) == len(original_groups.json()) + 1
 
 
-def test_list_detailed(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be listed in detail."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
-    create_group(test_client, group)
+    create_group(test_client)
 
     res = test_client.get(f"{GROUP_URI}s/details")
     assert res.status_code == codes.OK
@@ -139,20 +226,50 @@ def test_list_detailed(test_client: FastAPITestHttpClient) -> None:  # noqa
         _ = Group(**curr_group)
 
 
-def test_delete(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.GROUP)
+        ),
+    ],
+)
+def test_delete(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be deleted."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
-    original_groups = test_client.get(f"{GROUP_URI}")
 
-    create_group(test_client, group)
-
-    res = test_client.get(f"{GROUP_URI}")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == len(original_groups.json()) + 1
+    create_group(test_client)
 
     res = test_client.delete(f"{GROUP_URI}/{group.name}")
     assert res.status_code == codes.OK
 
-    res = test_client.get(f"{GROUP_URI}")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == len(original_groups.json())
+    res = test_client.get(f"{GROUP_URI}/{group.name}")
+    assert res.status_code == codes.NOT_FOUND
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permission to delete."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    group = get_test_group()
+    create_group(test_client)
+
+    print(state.user_store.session().group_mapper.list())
+
+    res = test_client.delete(
+        f"{settings.API_PREFIX}{GROUP_URI}/{group.name}"
+    )
+    assert res.status_code == codes.FORBIDDEN

@@ -15,7 +15,7 @@ from mlte.store.artifact.store import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
-from test.backend.fixture.api import TEST_API_USER
+from test.backend.fixture.api import TEST_API_USERNAME
 from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory
@@ -198,7 +198,7 @@ def test_artifact(
     model_id = "model0"
     version_id = "version0"
     artifact_id = "myid"
-    user = TEST_API_USER
+    user = TEST_API_USERNAME
 
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(ModelCreate(identifier=model_id))

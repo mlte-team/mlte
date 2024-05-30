@@ -69,6 +69,8 @@ class HttpClient:
             raise errors.ErrorAlreadyExists(f"{response.json()}")
         if response.status_code == codes.UNAUTHORIZED:
             raise errors.UnauthenticatedError(f"{response.json()}")
+        if response.status_code == codes.FORBIDDEN:
+            raise errors.ForbiddenError(f"{response.json()}")
         else:
             raise errors.InternalError(f"{response.json()}")
 

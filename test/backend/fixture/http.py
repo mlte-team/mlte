@@ -6,7 +6,7 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 import httpx
 import pytest
@@ -63,11 +63,15 @@ class FastAPITestHttpClient(OAuthHttpClient):
 
 
 @pytest.fixture(scope="function")
-def mem_store_and_test_http_client(
-    user: Optional[UserCreate] = None,
-) -> FastAPITestHttpClient:
+def mem_store_and_test_http_client() -> (
+    Callable[[Optional[UserCreate]], FastAPITestHttpClient]
+):
     """Sets up memory based store for the API and gets an associated client."""
-    return setup_API_and_test_client(user)
+
+    def wrapper(api_user: Optional[UserCreate] = None) -> FastAPITestHttpClient:
+        return setup_API_and_test_client(api_user)
+
+    return wrapper
 
 
 def setup_API_and_test_client(
@@ -77,12 +81,27 @@ def setup_API_and_test_client(
     Configure API for memory stores and return a test HTTP client.
     :return: The client
     """
+    if user is None:
+        user = api_helpers.build_test_user()
+
     # Setup API, configure to use memory artifact store and create app itself.
     app = api_helpers.setup_api_with_mem_stores(user)
 
     # Create the test client, and authenticate to get token and allow protected endpoints to work.
     client = FastAPITestHttpClient(TestClient(app))
-    client.username = api_helpers.TEST_API_USER
-    client.password = api_helpers.TEST_API_PASS
+    client.username = user.username
+    client.password = user.password
     client.authenticate(f"{settings.API_PREFIX}")
     return client
+
+
+def get_client_for_admin(
+    client: FastAPITestHttpClient,
+) -> FastAPITestHttpClient:
+    """Gets a client for the same app as the given one, but with an admin user."""
+    admin_user = api_helpers.build_admin_user()
+    admin_client = FastAPITestHttpClient(TestClient(client.client.app))
+    admin_client.username = admin_user.username
+    admin_client.password = admin_user.password
+    admin_client.authenticate(f"{settings.API_PREFIX}")
+    return admin_client

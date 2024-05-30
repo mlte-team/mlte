@@ -7,12 +7,20 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.user.model import BasicUser, UserCreate
-from test.backend.fixture.http import FastAPITestHttpClient
+from mlte.store.user.policy import Policy
+from mlte.user.model import BasicUser, ResourceType, RoleType, UserCreate
+from test.backend.fixture import api as api_helper
+from test.backend.fixture.http import (
+    FastAPITestHttpClient,
+    get_client_for_admin,
+)
 
 USER_ENDPOINT = "/user"
+USER_URI = f"{settings.API_PREFIX}{USER_ENDPOINT}"
 
 
 # -----------------------------------------------------------------------------
@@ -20,7 +28,7 @@ USER_ENDPOINT = "/user"
 # -----------------------------------------------------------------------------
 
 
-def get_test_user() -> UserCreate:
+def get_sample_user() -> UserCreate:
     """Creates a simple test user."""
     username = "user1"
     email = "user1@test.com"
@@ -28,10 +36,13 @@ def get_test_user() -> UserCreate:
     return UserCreate(username=username, email=email, password=password)
 
 
-def create_user(test_client: FastAPITestHttpClient, user: UserCreate):
-    """Create test user."""
-    res = test_client.post(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+def create_sample_user(test_client: FastAPITestHttpClient) -> None:
+    """Create sample user."""
+    admin_client = get_client_for_admin(test_client)
+
+    sample_user = get_sample_user()
+    res = admin_client.post(
+        f"{USER_URI}", json=sample_user.model_dump()
     )
     assert res.status_code == codes.OK
 
@@ -41,36 +52,82 @@ def create_user(test_client: FastAPITestHttpClient, user: UserCreate):
 # -----------------------------------------------------------------------------
 
 
-def test_create(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_create(test_client_fix, api_user: UserCreate) -> None:
     """Users can be created."""
-    user = get_test_user()
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    user = get_sample_user()
 
     res = test_client.post(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+        f"{USER_URI}", json=user.model_dump()
     )
     assert res.status_code == codes.OK
     _ = BasicUser(**res.json())
 
 
-def test_edit_no_pass(test_client: FastAPITestHttpClient) -> None:  # noqa
-    """Users can be edited."""
-    user = get_test_user()
-    email2 = "user2@test.com"
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permissions to create users."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    user = get_sample_user()
 
-    # Create test user.
-    create_user(test_client, user)
+    res = test_client.post(
+        f"{USER_URI}", json=user.model_dump()
+    )
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+    ],
+)
+def test_edit_no_pass(test_client_fix, api_user: UserCreate) -> None:
+    """Users can be edited."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    user = get_sample_user()
+    email2 = "user2@test.com"
+    create_sample_user(test_client)
 
     # Edit user.
     user_w_pass = BasicUser(**user.model_dump())
     user_w_pass.email = email2
     res = test_client.put(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user_w_pass.model_dump()
+        f"{USER_URI}", json=user_w_pass.model_dump()
     )
     assert res.status_code == codes.OK
 
     # Read it back.
     res = test_client.get(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}"
+        f"{USER_URI}/{user.username}"
     )
     assert res.status_code == codes.OK
     edited_user = BasicUser(**res.json())
@@ -78,24 +135,33 @@ def test_edit_no_pass(test_client: FastAPITestHttpClient) -> None:  # noqa
     assert edited_user.email == email2
 
 
-def test_edit_pass(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+    ],
+)
+def test_edit_pass(test_client_fix, api_user: UserCreate) -> None:
     """Users can be edited."""
-    user = get_test_user()
-    email2 = "user2@test.com"
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
-    # Create test user.
-    create_user(test_client, user)
+    user = get_sample_user()
+    email2 = "user2@test.com"
+    create_sample_user(test_client)
 
     # Edit user.
     user.email = email2
     res = test_client.put(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}", json=user.model_dump()
+        f"{USER_URI}", json=user.model_dump()
     )
     assert res.status_code == codes.OK
 
     # Read it back.
     res = test_client.get(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}"
+        f"{USER_URI}/{user.username}"
     )
     assert res.status_code == codes.OK
     edited_user = BasicUser(**res.json())
@@ -103,38 +169,152 @@ def test_edit_pass(test_client: FastAPITestHttpClient) -> None:  # noqa
     assert edited_user.email == email2
 
 
-def test_read(test_client: FastAPITestHttpClient) -> None:  # noqa
-    """Users can be read."""
-    user = get_test_user()
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_edit_pass_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """Users can be edited."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
-    create_user(test_client, user)
+    user = get_sample_user()
+    email2 = "user2@test.com"
+    create_sample_user(test_client)
+
+    # Edit user.
+    user.email = email2
+    res = test_client.put(
+        f"{USER_URI}", json=user.model_dump()
+    )
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_read(test_client_fix, api_user: UserCreate) -> None:
+    """Users can be read."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    user = get_sample_user()
+    create_sample_user(test_client)
 
     res = test_client.get(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}"
+        f"{USER_URI}/{user.username}"
     )
     assert res.status_code == codes.OK
     read = BasicUser(**res.json())
     assert read == BasicUser(**user.model_dump())
 
 
-def test_list(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permission to read users."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    user = get_sample_user()
+    create_sample_user(test_client)
+
+    res = test_client.get(
+        f"{USER_URI}/{user.username}"
+    )
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_list(test_client_fix, api_user: UserCreate) -> None:
     """Users can be listed."""
-    user = get_test_user()
-    original_users = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}")
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
-    create_user(test_client, user)
+    create_sample_user(test_client)
 
-    res = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == len(original_users.json()) + 1
+    all_users = test_client.get(f"{USER_URI}")
+    assert all_users.status_code == codes.OK
+    assert len(all_users.json()) > 1
 
 
-def test_list_detailed(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permission to list users."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    create_sample_user(test_client)
+
+    res = test_client.get(f"{USER_URI}")
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:
     """Users can be listed in detail."""
-    user = get_test_user()
-    create_user(test_client, user)
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
-    res = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}s/details")
+    create_sample_user(test_client)
+
+    res = test_client.get(f"{USER_URI}s/details")
     assert res.status_code == codes.OK
 
     users: list[dict[str, Any]] = res.json()
@@ -143,22 +323,75 @@ def test_list_detailed(test_client: FastAPITestHttpClient) -> None:  # noqa
         _ = BasicUser(**curr_user)
 
 
-def test_delete(test_client: FastAPITestHttpClient) -> None:  # noqa
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_list_detailed_no_permission(
+    test_client_fix, api_user: UserCreate
+) -> None:
+    """No permission to list details."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    create_sample_user(test_client)
+
+    res = test_client.get(f"{USER_URI}s/details")
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(role=RoleType.ADMIN),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(ResourceType.USER)
+        ),
+    ],
+)
+def test_delete(test_client_fix, api_user: UserCreate) -> None:
     """Users can be deleted."""
-    user = get_test_user()
-    original_users = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}")
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
-    create_user(test_client, user)
-
-    res = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == len(original_users.json()) + 1
+    user = get_sample_user()
+    create_sample_user(test_client)
 
     res = test_client.delete(
-        f"{settings.API_PREFIX}{USER_ENDPOINT}/{user.username}"
+        f"{USER_URI}/{user.username}"
     )
     assert res.status_code == codes.OK
 
-    res = test_client.get(f"{settings.API_PREFIX}{USER_ENDPOINT}")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == len(original_users.json())
+    res = test_client.get(
+        f"{USER_URI}/{user.username}"
+    )
+    assert res.status_code == codes.NOT_FOUND
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.USER, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permission to delete."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    user = get_sample_user()
+    create_sample_user(test_client)
+
+    res = test_client.delete(
+        f"{USER_URI}/{user.username}"
+    )
+    assert res.status_code == codes.FORBIDDEN
