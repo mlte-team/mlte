@@ -7,7 +7,7 @@ Fixtures for artifact store HTTP unit tests.
 from __future__ import annotations
 
 import typing
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional
 
 import httpx
 import pytest
@@ -117,7 +117,7 @@ def admin_create_entity(
     admin_client = get_client_for_admin(test_client)
     res = admin_client.post(f"{uri}", json=entity.model_dump())
     assert res.status_code == codes.OK
-    return typing.cast(dict[str, Any], res.json())
+    return typing.cast(Dict[str, Any], res.json())
 
 
 def admin_read_entity(
@@ -127,4 +127,4 @@ def admin_read_entity(
     admin_client = get_client_for_admin(test_client)
     res = admin_client.get(f"{uri}/{entity_id}")
     assert res.status_code == codes.OK
-    return typing.cast(dict[str, Any], res.json())
+    return typing.cast(Dict[str, Any], res.json())
