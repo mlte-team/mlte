@@ -81,7 +81,7 @@ def clear_state():
 
 
 def get_test_users_with_read_permissions(
-    resource_type: ResourceType,
+    resource_type: ResourceType, resource_id: Optional[str] = None
 ) -> List[UserCreate]:
     """Get a list of users that have permissions to read from different sources."""
     users = [
@@ -92,11 +92,26 @@ def get_test_users_with_read_permissions(
         ),
     ]
 
+    # Add user with all permissions for this type/id, and one with only read permissions.
+    if resource_id is not None:
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(resource_type, resource_id)
+            )
+        )
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(
+                    resource_type, resource_id, build_write_group=False
+                )
+            )
+        )
+
     return users
 
 
 def get_test_users_with_write_permissions(
-    resource_type: ResourceType,
+    resource_type: ResourceType, resource_id: Optional[str] = None
 ) -> List[UserCreate]:
     """Get a list of users that have permissions to write from different sources."""
     users = [
@@ -107,11 +122,25 @@ def get_test_users_with_write_permissions(
         ),
     ]
 
+    if resource_id is not None:
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(resource_type, resource_id)
+            )
+        )
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(
+                    resource_type, resource_id, build_read_group=False
+                )
+            )
+        )
+
     return users
 
 
 def get_test_users_with_no_read_permissions(
-    resource_type: ResourceType,
+    resource_type: ResourceType, resource_id: Optional[str] = None
 ) -> List[UserCreate]:
     """Get a list of users that do not have permissions to read from different sources."""
     users = [
@@ -121,11 +150,27 @@ def get_test_users_with_no_read_permissions(
         ),
     ]
 
+    # Add user with the opposite permission, and with appropriate ones but for wrong id.
+    fake_id = "fake_id"
+    if resource_id is not None:
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(
+                    resource_type, resource_id, build_read_group=False
+                )
+            )
+        )
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(resource_type, resource_id=fake_id)
+            )
+        )
+
     return users
 
 
 def get_test_users_with_no_write_permissions(
-    resource_type: ResourceType,
+    resource_type: ResourceType, resource_id: Optional[str] = None
 ) -> List[UserCreate]:
     """Get a list of users that do not have permissions to write from different sources."""
     users = [
@@ -134,5 +179,20 @@ def get_test_users_with_no_write_permissions(
             groups=Policy.build_groups(resource_type, build_write_group=False)
         ),
     ]
+
+    fake_id = "fake_id"
+    if resource_id is not None:
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(
+                    resource_type, resource_id, build_write_group=False
+                )
+            )
+        )
+        users.append(
+            build_test_user(
+                groups=Policy.build_groups(resource_type, resource_id=fake_id)
+            )
+        )
 
     return users

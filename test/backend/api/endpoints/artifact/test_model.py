@@ -87,7 +87,9 @@ def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_read(test_client_fix, api_user: UserCreate) -> None:
     """Models can be read."""
@@ -104,7 +106,9 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
     """No permissions to read models."""
@@ -148,7 +152,9 @@ def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_delete(test_client_fix, api_user: UserCreate) -> None:
     """Models can be deleted."""
@@ -173,7 +179,9 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
     """No permissions to delete model."""

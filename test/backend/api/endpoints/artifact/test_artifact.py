@@ -4,121 +4,188 @@ test/backend/api/endpoints/artifact/test_artifact.py
 Test the API for artifacts.
 """
 
+import typing
+from typing import Any
+
 import pytest
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.backend.api import codes
 from mlte.backend.api.model import WriteArtifactRequest
-from mlte.backend.core.config import settings
-from mlte.context.model import ModelCreate, VersionCreate
+from mlte.model.base_model import BaseModel
 from mlte.store.artifact.query import Query
+from mlte.user.model import ResourceType, UserCreate
+from test.backend.api.endpoints.artifact.test_model import (
+    create_sample_model_using_admin,
+    get_sample_model,
+)
+from test.backend.api.endpoints.artifact.test_version import (
+    VERSION_URI,
+    create_sample_version_using_admin,
+    get_sample_version,
+)
+from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
 from test.fixture.artifact import ArtifactFactory
+
+ARTIFACT_ENDPOINT = "/artifact"
+ARTIFACT_URI = f"{VERSION_URI}" + "/{}" + f"{ARTIFACT_ENDPOINT}"
+DEFAULT_ARTIFACT_ID = "id0"
+
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
 
 
-def create_context(
-    model_id: str, version_id: str, test_client: FastAPITestHttpClient
-) -> None:
+def create_context(test_client: FastAPITestHttpClient) -> None:
     """Create context for artifacts.."""
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model",
-        json=ModelCreate(identifier=model_id).model_dump(),
-    )
-    assert res.status_code == codes.OK
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
 
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
-        json=VersionCreate(identifier=version_id).model_dump(),
+
+def create_artifact_using_admin(
+    artifact: ArtifactModel,
+    test_client: FastAPITestHttpClient,
+) -> dict[str, Any]:
+    """Create aftifact."""
+    request = WriteArtifactRequest(artifact=artifact)
+    return http.admin_create_entity(
+        typing.cast(BaseModel, request),
+        ARTIFACT_URI.format(
+            get_sample_model().identifier, get_sample_version().identifier
+        ),
+        test_client,
     )
-    assert res.status_code == codes.OK
 
 
 # -----------------------------------------------------------------------------
 # Tests
+# TODO: We should add versions to test that lack of permissions are working properly
+# but that would increase the number of tests too much.
 # -----------------------------------------------------------------------------
 
 
-def test_init(
-    test_client: FastAPITestHttpClient,
-) -> None:
-    """The server can initialize."""
-    res = test_client.get(f"{settings.API_PREFIX}/healthz")
-    assert res.status_code == codes.OK
-
-
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
+)
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_write(
-    test_client: FastAPITestHttpClient,
+    test_client_fix,
+    api_user: UserCreate,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be written."""
-
-    model_id, version_id = "0", "0"
-    create_context(model_id, version_id, test_client)
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+    create_context(test_client)
 
     a = ArtifactFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
+        ARTIFACT_URI.format(model.identifier, version.identifier),
         json=r.model_dump(),
     )
     assert res.status_code == codes.OK
 
 
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
+)
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_read(
-    test_client: FastAPITestHttpClient,
+    test_client_fix,
+    api_user: UserCreate,
     artifact_type: ArtifactType,
 ) -> None:
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
     """Artifacts can be read."""
+    model = get_sample_model()
+    version = get_sample_version()
+    create_context(test_client)
 
-    model_id, version_id = "0", "0"
-    create_context(model_id, version_id, test_client)
-
-    a = ArtifactFactory.make(artifact_type, id="id0")
-    r = WriteArtifactRequest(artifact=a)
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
-        json=r.model_dump(),
-    )
-    assert res.status_code == codes.OK
-    artifact = res.json()["artifact"]
+    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_json = create_artifact_using_admin(art_model, test_client)
+    artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)
 
     res = test_client.get(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+        f"{ARTIFACT_URI.format(model.identifier, version.identifier)}/{created.header.identifier}"
     )
     assert res.status_code == codes.OK
     read = ArtifactModel(**res.json())
     assert read == created
 
 
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
+)
 @pytest.mark.parametrize("artifact_type", ArtifactType)
-def test_search(
-    test_client: FastAPITestHttpClient,
+def test_list(
+    test_client_fix,
+    api_user: UserCreate,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be searched."""
-    model_id, version_id = "0", "0"
-    create_context(model_id, version_id, test_client)
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+    create_context(test_client)
 
-    a = ArtifactFactory.make(artifact_type)
-    r = WriteArtifactRequest(artifact=a)
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
-        json=r.model_dump(),
+    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_json = create_artifact_using_admin(art_model, test_client)
+    artifact = art_json["artifact"]
+    created = ArtifactModel(**artifact)
+
+    res = test_client.get(
+        f"{ARTIFACT_URI.format(model.identifier, version.identifier)}"
     )
     assert res.status_code == codes.OK
-    artifact = res.json()["artifact"]
+
+    collection = res.json()
+    assert len(collection) == 1
+
+    read = ArtifactModel(**collection[0])
+    assert read == created
+
+
+# TODO: note that this is tested with write permissions, since search uses post, and that is interperted as write.
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
+)
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_search(
+    test_client_fix,
+    api_user: UserCreate,
+    artifact_type: ArtifactType,
+) -> None:
+    """Artifacts can be searched."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+    create_context(test_client)
+
+    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_json = create_artifact_using_admin(art_model, test_client)
+    artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)
 
     res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/search",
+        f"{ARTIFACT_URI.format(model.identifier, version.identifier)}/search",
         json=Query().model_dump(),
     )
     assert res.status_code == codes.OK
@@ -130,35 +197,36 @@ def test_search(
     assert read == created
 
 
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
+)
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_delete(
-    test_client: FastAPITestHttpClient,
+    test_client_fix,
+    api_user: UserCreate,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be deleted."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+    create_context(test_client)
 
-    model_id, version_id = "0", "0"
-    create_context(model_id, version_id, test_client)
-
-    a = ArtifactFactory.make(artifact_type, "id0")
-    r = WriteArtifactRequest(artifact=a)
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact",
-        json=r.model_dump(),
-    )
-    assert res.status_code == codes.OK
-
-    res = test_client.get(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
-    )
-    assert res.status_code == codes.OK
+    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_json = create_artifact_using_admin(art_model, test_client)
+    artifact = art_json["artifact"]
+    created = ArtifactModel(**artifact)
 
     res = test_client.delete(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+        f"{ARTIFACT_URI.format(model.identifier, version.identifier)}/{created.header.identifier}"
     )
     assert res.status_code == codes.OK
 
-    res = test_client.get(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}/artifact/id0"
+    admin_client = http.get_client_for_admin(test_client)
+    res = admin_client.get(
+        f"{ARTIFACT_URI.format(model.identifier, version.identifier)}/{created.header.identifier}"
     )
-    assert res.status_code == 404
+    assert res.status_code == codes.NOT_FOUND

@@ -112,11 +112,12 @@ def get_client_for_admin(
 
 def admin_create_entity(
     entity: BaseModel, uri: str, test_client: FastAPITestHttpClient
-) -> None:
+) -> dict[str, Any]:
     """Create the given entity using an admin."""
     admin_client = get_client_for_admin(test_client)
     res = admin_client.post(f"{uri}", json=entity.model_dump())
     assert res.status_code == codes.OK
+    return typing.cast(dict[str, Any], res.json())
 
 
 def admin_read_entity(

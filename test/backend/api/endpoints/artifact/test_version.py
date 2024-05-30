@@ -7,11 +7,10 @@ Test the API for version operations.
 import pytest
 
 from mlte.backend.api import codes
-from mlte.backend.core.config import settings
 from mlte.context.model import Version, VersionCreate
 from mlte.user.model import ResourceType, UserCreate
 from test.backend.api.endpoints.artifact.test_model import (
-    MODEL_ENDPOINT,
+    MODEL_URI,
     create_sample_model_using_admin,
     get_sample_model,
 )
@@ -19,9 +18,7 @@ from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
 
 VERSION_ENDPOINT = "/version"
-VERSION_URI = (
-    f"{settings.API_PREFIX}{MODEL_ENDPOINT}" + "/{}" + f"{VERSION_ENDPOINT}"
-)
+VERSION_URI = f"{MODEL_URI}" + "/{}" + f"{VERSION_ENDPOINT}"
 
 
 # -----------------------------------------------------------------------------
@@ -53,7 +50,9 @@ def create_sample_version_using_admin(
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_create(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be created."""
@@ -73,7 +72,9 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
     """No permission to create version."""
@@ -92,7 +93,9 @@ def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_read(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be read."""
@@ -113,7 +116,9 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
     """No permissions to read versions."""
@@ -132,7 +137,9 @@ def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_list(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be listed."""
@@ -149,7 +156,9 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_read_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_read_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
     """No permissions to list versions."""
@@ -165,7 +174,9 @@ def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_delete(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be deleted."""
@@ -190,7 +201,9 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    api_helper.get_test_users_with_no_write_permissions(ResourceType.MODEL),
+    api_helper.get_test_users_with_no_write_permissions(
+        ResourceType.MODEL, resource_id=get_sample_model().identifier
+    ),
 )
 def test_delete_no_permissions(test_client_fix, api_user: UserCreate) -> None:
     """No permissions to delete versions."""

@@ -120,6 +120,8 @@ def read_artifacts(
             )
 
 
+# TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
+# and it forces us to use write permissions to reach this endpoint. This should be fixed.
 @router.post("/search")
 def search_artifacts(
     model_id: str,
