@@ -41,9 +41,7 @@ def create_sample_user(test_client: FastAPITestHttpClient) -> None:
     admin_client = get_client_for_admin(test_client)
 
     sample_user = get_sample_user()
-    res = admin_client.post(
-        f"{USER_URI}", json=sample_user.model_dump()
-    )
+    res = admin_client.post(f"{USER_URI}", json=sample_user.model_dump())
     assert res.status_code == codes.OK
 
 
@@ -71,9 +69,7 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     user = get_sample_user()
 
-    res = test_client.post(
-        f"{USER_URI}", json=user.model_dump()
-    )
+    res = test_client.post(f"{USER_URI}", json=user.model_dump())
     assert res.status_code == codes.OK
     _ = BasicUser(**res.json())
 
@@ -94,9 +90,7 @@ def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     user = get_sample_user()
 
-    res = test_client.post(
-        f"{USER_URI}", json=user.model_dump()
-    )
+    res = test_client.post(f"{USER_URI}", json=user.model_dump())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -120,15 +114,11 @@ def test_edit_no_pass(test_client_fix, api_user: UserCreate) -> None:
     # Edit user.
     user_w_pass = BasicUser(**user.model_dump())
     user_w_pass.email = email2
-    res = test_client.put(
-        f"{USER_URI}", json=user_w_pass.model_dump()
-    )
+    res = test_client.put(f"{USER_URI}", json=user_w_pass.model_dump())
     assert res.status_code == codes.OK
 
     # Read it back.
-    res = test_client.get(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.OK
     edited_user = BasicUser(**res.json())
 
@@ -154,15 +144,11 @@ def test_edit_pass(test_client_fix, api_user: UserCreate) -> None:
 
     # Edit user.
     user.email = email2
-    res = test_client.put(
-        f"{USER_URI}", json=user.model_dump()
-    )
+    res = test_client.put(f"{USER_URI}", json=user.model_dump())
     assert res.status_code == codes.OK
 
     # Read it back.
-    res = test_client.get(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.OK
     edited_user = BasicUser(**res.json())
 
@@ -189,9 +175,7 @@ def test_edit_pass_no_permission(test_client_fix, api_user: UserCreate) -> None:
 
     # Edit user.
     user.email = email2
-    res = test_client.put(
-        f"{USER_URI}", json=user.model_dump()
-    )
+    res = test_client.put(f"{USER_URI}", json=user.model_dump())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -216,9 +200,7 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:
     user = get_sample_user()
     create_sample_user(test_client)
 
-    res = test_client.get(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.OK
     read = BasicUser(**res.json())
     assert read == BasicUser(**user.model_dump())
@@ -242,9 +224,7 @@ def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
     user = get_sample_user()
     create_sample_user(test_client)
 
-    res = test_client.get(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -362,14 +342,10 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:
     user = get_sample_user()
     create_sample_user(test_client)
 
-    res = test_client.delete(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.delete(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.OK
 
-    res = test_client.get(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.NOT_FOUND
 
 
@@ -391,7 +367,5 @@ def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
     user = get_sample_user()
     create_sample_user(test_client)
 
-    res = test_client.delete(
-        f"{USER_URI}/{user.username}"
-    )
+    res = test_client.delete(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.FORBIDDEN

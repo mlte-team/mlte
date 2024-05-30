@@ -187,7 +187,6 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:  # noqa
 def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be listed."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
-    group = get_test_group()
     original_groups = test_client.get(f"{GROUP_URI}")
 
     create_group(test_client)
@@ -214,7 +213,6 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
 def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:  # noqa
     """Groups can be listed in detail."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
-    group = get_test_group()
     create_group(test_client)
 
     res = test_client.get(f"{GROUP_URI}s/details")
@@ -267,9 +265,5 @@ def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
     group = get_test_group()
     create_group(test_client)
 
-    print(state.user_store.session().group_mapper.list())
-
-    res = test_client.delete(
-        f"{settings.API_PREFIX}{GROUP_URI}/{group.name}"
-    )
+    res = test_client.delete(f"{GROUP_URI}/{group.name}")
     assert res.status_code == codes.FORBIDDEN
