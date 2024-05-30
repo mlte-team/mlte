@@ -7,10 +7,8 @@ Test the API for token endpoint
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.user.model import UserCreate
-from test.backend.fixture.http import (
-    FastAPITestHttpClient,
-    get_client_for_admin,
-)
+from test.backend.fixture import http
+from test.backend.fixture.http import FastAPITestHttpClient
 
 TOKEN_ENDPOINT = "/token"
 TOKEN_URI = f"{settings.API_PREFIX}{TOKEN_ENDPOINT}"
@@ -30,13 +28,9 @@ def get_sample_user() -> UserCreate:
 
 def create_sample_user(test_client: FastAPITestHttpClient) -> None:
     """Create sample user."""
-    admin_client = get_client_for_admin(test_client)
-
-    sample_user = get_sample_user()
-    res = admin_client.post(
-        f"{settings.API_PREFIX}/user", json=sample_user.model_dump()
+    http.admin_create_entity(
+        get_sample_user(), f"{settings.API_PREFIX}/user", test_client
     )
-    assert res.status_code == codes.OK
 
 
 # -----------------------------------------------------------------------------
