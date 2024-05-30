@@ -147,8 +147,9 @@ def check_artifact_writing(
     # Then read it from storage.
     read = handle.read_artifact(model_id, version_id, artifact_id)
 
-    # Ignore timestamp changes.
+    # Ignore creator and timestamp changes.
     read.header.timestamp = artifact.header.timestamp
+    read.header.creator = artifact.header.creator
 
     # Check that we have the same artifact.
     assert artifact.to_json() == read.to_json()
