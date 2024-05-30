@@ -109,6 +109,28 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:  # noqa
 @pytest.mark.parametrize(
     "api_user",
     [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_create_no_permissions(
+    test_client_fix, api_user: UserCreate
+) -> None:  # noqa
+    """No permissions to create."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    group = get_test_group()
+
+    res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
         api_helper.build_test_user(role=RoleType.ADMIN),
         api_helper.build_test_user(
             groups=Policy.build_groups(ResourceType.GROUP)
@@ -146,6 +168,39 @@ def test_edit(test_client_fix, api_user: UserCreate) -> None:  # noqa
 @pytest.mark.parametrize(
     "api_user",
     [
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_write_group=False
+            )
+        ),
+    ],
+)
+def test_edit_no_permission(
+    test_client_fix, api_user: UserCreate
+) -> None:  # noqa
+    """No permissions to edit."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    group = get_test_group()
+    p3 = Permission(
+        resource_type=ResourceType.MODEL,
+        resource_id="mod1",
+        method=MethodType.DELETE,
+    )
+    with ManagedUserSession(state.user_store.session()) as user_store:
+        user_store.permission_mapper.create(p3)
+
+    # Create test group.
+    create_group(test_client)
+
+    # Edit group.
+    group.permissions.append(p3)
+    res = test_client.put(f"{GROUP_URI}", json=group.model_dump())
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
         api_helper.build_test_user(role=RoleType.ADMIN),
         api_helper.build_test_user(
             groups=Policy.build_groups(ResourceType.GROUP)
@@ -168,6 +223,30 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:  # noqa
     assert res.status_code == codes.OK
     read = Group(**res.json())
     assert read == group
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_read_no_permission(
+    test_client_fix, api_user: UserCreate
+) -> None:  # noqa
+    """No permission to read group"""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    group = get_test_group()
+
+    create_group(test_client)
+
+    res = test_client.get(f"{GROUP_URI}/{group.name}")
+    assert res.status_code == codes.FORBIDDEN
 
 
 @pytest.mark.parametrize(
@@ -199,6 +278,29 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
 @pytest.mark.parametrize(
     "api_user",
     [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_list_no_permission(
+    test_client_fix, api_user: UserCreate
+) -> None:  # noqa
+    """No permission to list."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    create_group(test_client)
+
+    res = test_client.get(f"{GROUP_URI}")
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
         api_helper.build_test_user(role=RoleType.ADMIN),
         api_helper.build_test_user(
             groups=Policy.build_groups(ResourceType.GROUP)
@@ -222,6 +324,28 @@ def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:  # noqa
     print(groups)
     for curr_group in groups:
         _ = Group(**curr_group)
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    [
+        api_helper.build_test_user(),
+        api_helper.build_test_user(
+            groups=Policy.build_groups(
+                ResourceType.GROUP, build_read_group=False
+            )
+        ),
+    ],
+)
+def test_list_detailed_no_permission(
+    test_client_fix, api_user: UserCreate
+) -> None:  # noqa
+    """No permissions to list details."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    create_group(test_client)
+
+    res = test_client.get(f"{GROUP_URI}s/details")
+    assert res.status_code == codes.FORBIDDEN
 
 
 @pytest.mark.parametrize(
