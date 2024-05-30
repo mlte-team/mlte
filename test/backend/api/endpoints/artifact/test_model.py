@@ -27,7 +27,7 @@ MODEL_URI = f"{settings.API_PREFIX}{MODEL_ENDPOINT}"
 
 def get_sample_model() -> ModelCreate:
     """Creates a simple test model."""
-    model_id = "0"
+    model_id = "m0"
     return ModelCreate(identifier=model_id)
 
 

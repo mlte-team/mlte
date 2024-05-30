@@ -6,31 +6,14 @@ Test the API for token endpoint
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.user.model import UserCreate
-from test.backend.fixture import http
+from test.backend.api.endpoints.test_user import (
+    create_sample_user_using_admin,
+    get_sample_user,
+)
 from test.backend.fixture.http import FastAPITestHttpClient
 
 TOKEN_ENDPOINT = "/token"
 TOKEN_URI = f"{settings.API_PREFIX}{TOKEN_ENDPOINT}"
-
-# -----------------------------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------------------------
-
-
-def get_sample_user() -> UserCreate:
-    """Creates a simple test user."""
-    username = "user1"
-    email = "user1@test.com"
-    password = "pass1"
-    return UserCreate(username=username, email=email, password=password)
-
-
-def create_sample_user(test_client: FastAPITestHttpClient) -> None:
-    """Create sample user."""
-    http.admin_create_entity(
-        get_sample_user(), f"{settings.API_PREFIX}/user", test_client
-    )
 
 
 # -----------------------------------------------------------------------------
@@ -50,7 +33,7 @@ def test_valid_user(test_client_fix) -> None:
     # Create user to use in test.
     test_client: FastAPITestHttpClient = test_client_fix(None)
     user = get_sample_user()
-    create_sample_user(test_client)
+    create_sample_user_using_admin(test_client)
 
     # Set up form data to get token.
     form_data = test_client._format_oauth_password_payload(

@@ -4,23 +4,46 @@ test/backend/api/endpoints/artifact/test_version.py
 Test the API for version operations.
 """
 
+import pytest
+
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.context.model import ModelCreate, Version, VersionCreate
+from mlte.context.model import Version, VersionCreate
+from mlte.user.model import ResourceType, UserCreate
+from test.backend.api.endpoints.artifact.test_model import (
+    MODEL_ENDPOINT,
+    create_sample_model_using_admin,
+    get_sample_model,
+)
+from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
+
+VERSION_ENDPOINT = "/version"
+VERSION_URI = (
+    f"{settings.API_PREFIX}{MODEL_ENDPOINT}" + "/{}" + f"{VERSION_ENDPOINT}"
+)
+
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
 
 
-def create_model(model_id: str, client: FastAPITestHttpClient) -> None:
-    """Create a model with the given identifier."""
-    res = client.post(
-        f"{settings.API_PREFIX}/model",
-        json=ModelCreate(identifier=model_id).model_dump(),
+def get_sample_version() -> VersionCreate:
+    """Creates a simple test version."""
+    version_id = "1.1"
+    return VersionCreate(identifier=version_id)
+
+
+def create_sample_version_using_admin(
+    test_client: FastAPITestHttpClient,
+) -> None:
+    """Create sample model."""
+    http.admin_create_entity(
+        get_sample_version(),
+        VERSION_URI.format(get_sample_model().identifier),
+        test_client,
     )
-    assert res.status_code == codes.OK
 
 
 # -----------------------------------------------------------------------------
@@ -28,89 +51,157 @@ def create_model(model_id: str, client: FastAPITestHttpClient) -> None:
 # -----------------------------------------------------------------------------
 
 
-def test_init(test_client: FastAPITestHttpClient) -> None:
-    """The server can initialize."""
-    res = test_client.get(f"{settings.API_PREFIX}/healthz")
-    assert res.status_code == codes.OK
-
-
-def test_create(test_client: FastAPITestHttpClient) -> None:
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_write_permissions(ResourceType.MODEL),
+)
+def test_create(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be created."""
-    model_id = "0"
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
     version_id = "0"
-    create_model(model_id, test_client)
+    create_sample_model_using_admin(test_client)
 
     version = VersionCreate(identifier=version_id)
-
     res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
+        VERSION_URI.format(model.identifier),
         json=version.model_dump(),
     )
     assert res.status_code == codes.OK
     _ = Version(**res.json())
 
 
-def test_read(test_client: FastAPITestHttpClient) -> None:
-    """Versions can be read."""
-    model_id = "0"
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_no_write_permissions(ResourceType.MODEL),
+)
+def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permission to create version."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
     version_id = "0"
-    create_model(model_id, test_client)
+    create_sample_model_using_admin(test_client)
 
     version = VersionCreate(identifier=version_id)
     res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
+        VERSION_URI.format(model.identifier),
         json=version.model_dump(),
     )
-    assert res.status_code == codes.OK
+    assert res.status_code == codes.FORBIDDEN
 
-    created = Version(**res.json())
 
-    res = test_client.get(f"{settings.API_PREFIX}/model/0/version/0")
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_read_permissions(ResourceType.MODEL),
+)
+def test_read(test_client_fix, api_user: UserCreate) -> None:
+    """Versions can be read."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
+
+    res = test_client.get(
+        f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
+    )
     assert res.status_code == codes.OK
     read = Version(**res.json())
-    assert read == created
+    assert read == Version(**version.model_dump())
 
 
-def test_list(test_client: FastAPITestHttpClient) -> None:
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_no_read_permissions(ResourceType.MODEL),
+)
+def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permissions to read versions."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
+
+    res = test_client.get(
+        f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
+    )
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_read_permissions(ResourceType.MODEL),
+)
+def test_list(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be listed."""
-    model_id = "0"
-    version_id = "0"
-    create_model(model_id, test_client)
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
 
-    version = VersionCreate(identifier=version_id)
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
-        json=version.model_dump(),
-    )
-    assert res.status_code == codes.OK
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
 
-    res = test_client.get(f"{settings.API_PREFIX}/model/{model_id}/version")
+    res = test_client.get(VERSION_URI.format(model.identifier))
     assert res.status_code == codes.OK
     assert len(res.json()) == 1
 
 
-def test_delete(test_client: FastAPITestHttpClient) -> None:
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_no_read_permissions(ResourceType.MODEL),
+)
+def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
+    """No permissions to list versions."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
+
+    res = test_client.get(VERSION_URI.format(model.identifier))
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_write_permissions(ResourceType.MODEL),
+)
+def test_delete(test_client_fix, api_user: UserCreate) -> None:
     """Versions can be deleted."""
-    model_id = "0"
-    version_id = "0"
-    create_model(model_id, test_client)
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
 
-    version = VersionCreate(identifier=version_id)
-    res = test_client.post(
-        f"{settings.API_PREFIX}/model/{model_id}/version",
-        json=version.model_dump(),
-    )
-    assert res.status_code == codes.OK
-
-    res = test_client.get(f"{settings.API_PREFIX}/model/{model_id}/version")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == 1
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
 
     res = test_client.delete(
-        f"{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
+        f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
     )
     assert res.status_code == codes.OK
 
-    res = test_client.get(f"{settings.API_PREFIX}/model/{model_id}/version")
-    assert res.status_code == codes.OK
-    assert len(res.json()) == 0
+    admin_client = http.get_client_for_admin(test_client)
+    res = admin_client.get(
+        f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
+    )
+    assert res.status_code == codes.NOT_FOUND
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_no_write_permissions(ResourceType.MODEL),
+)
+def test_delete_no_permissions(test_client_fix, api_user: UserCreate) -> None:
+    """No permissions to delete versions."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+    model = get_sample_model()
+    version = get_sample_version()
+
+    create_sample_model_using_admin(test_client)
+    create_sample_version_using_admin(test_client)
+
+    res = test_client.delete(
+        f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
+    )
+    assert res.status_code == codes.FORBIDDEN
