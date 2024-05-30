@@ -12,6 +12,7 @@ import pytest
 from fastapi import FastAPI
 
 import mlte.backend.app_factory as app_factory
+import mlte.store.error as errors
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.state import state
 from mlte.store.user.policy import Policy
@@ -56,7 +57,11 @@ def setup_api_with_mem_stores(user: UserCreate) -> FastAPI:
 
     # Always add an internal admin user.
     admin_user = build_admin_user()
-    user_store.session().user_mapper.create(admin_user)
+    try:
+        user_store.session().user_mapper.create(admin_user)
+    except errors.ErrorAlreadyExists:
+        # Ignore if we had already created the admin user.
+        pass
 
     # Set the API state and app.
     state.set_user_store(user_store)
