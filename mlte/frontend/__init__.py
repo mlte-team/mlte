@@ -4,6 +4,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from mlte.frontend.config import settings
+
 
 def run_frontend():
     app = FastAPI()
@@ -15,7 +17,7 @@ def run_frontend():
         app.mount(
             "/", StaticFiles(directory=static_dir, html=True), name="static"
         )
-        uvicorn.run(app)
+        uvicorn.run(app, host=settings.APP_HOST, port=int(settings.APP_PORT))
     else:
         print(
             "Unable to run frontend. This is likely due to an issue with this distribution of the package."
