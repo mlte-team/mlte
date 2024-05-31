@@ -71,7 +71,9 @@ class Settings(BaseSettings):
     )
     """The secret key used to encode/decode JWT tokens."""
 
-    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
+    model_config = SettingsConfigDict(
+        case_sensitive=True, env_file=".env.backend"
+    )
 
 
 # The exported settings object
