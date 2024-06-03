@@ -1,0 +1,4 @@
+pgdata
+.env*
+Dockerfile*
+*.yaml

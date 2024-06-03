@@ -28,7 +28,7 @@ __pycache__/
 src/mlte_python.egg-info/
 
 # Packaging artifacts
-dist/
+/dist/
 build/
 
 # OSX artifacts
@@ -47,3 +47,5 @@ docs/site
 .python-version
 
 store/
+pgdata/
+*.whl

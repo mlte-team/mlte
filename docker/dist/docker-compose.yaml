@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.wheel
+    image: mlte-python
+    container_name: mlte_backend
+    restart: unless-stopped
+    networks:
+     - mlte-network
+    command: ["backend"]
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    env_file:
+     - ./.env.backend
+  frontend:
+    image: mlte-python
+    container_name: mlte_ui
+    restart: unless-stopped
+    networks:
+     - mlte-network
+    command: ["ui"]
+    ports:
+      - "80:${FRONTEND_PORT}"
+    env_file:
+     - ./.env.frontend
+  postgres:
+    image: postgres:16.3
+    container_name: mlte_postgres
+    restart: unless-stopped
+    networks:
+     - mlte-network
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data    
+    env_file:
+      - ./.env.postgres
+volumes:
+  pgdata:
+networks:
+  mlte-network:
+    name: mlte-network
