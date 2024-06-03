@@ -6,7 +6,7 @@ Entry point for MLTE artifact store server.
 
 import logging
 import sys
-from typing import List
+from typing import Any, List
 
 import uvicorn
 from pydantic.networks import HttpUrl
@@ -23,15 +23,18 @@ from mlte.store.user import factory as user_store_factory
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
+# Wildcard for any URL.
+ANY_URL = "*"
 
-def _validate_origins(allowed_origins: List[str]) -> List[HttpUrl]:
+
+def _validate_origins(allowed_origins: List[str]) -> List[Any]:
     """
     Validate allowed origins.
     :param allowed_origins: The collection of allowed origins, as strings
     :raises ValidationError: If validation fails
     :return: The parsed allowed origins
     """
-    return [HttpUrl(url) for url in allowed_origins]
+    return [HttpUrl(url) if url != ANY_URL else url for url in allowed_origins]
 
 
 def run(
