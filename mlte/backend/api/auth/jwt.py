@@ -15,7 +15,7 @@ from mlte.model.base_model import BaseModel
 ALGORITHM = "HS256"
 """Token hashing algorithm."""
 
-DEFAULT_EXPIRATION_MINS = 30
+DEFAULT_EXPIRATION_MINS = 120
 """Default token expiration time."""
 
 SUBJECT_CLAIM_KEY = "sub"
