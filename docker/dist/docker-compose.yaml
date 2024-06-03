@@ -21,7 +21,7 @@ services:
      - mlte-network
     command: ["ui"]
     ports:
-      - "80:${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     env_file:
      - ./.env.frontend
   postgres:
