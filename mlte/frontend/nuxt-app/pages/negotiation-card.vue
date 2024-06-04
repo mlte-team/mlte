@@ -1318,7 +1318,8 @@ async function submit() {
   if (isValidNegotiation(artifact)) {
     try {
       await $fetch(
-        "http://localhost:8080/api/model/" +
+        config.public.apiPath +
+          "/model/" +
           model +
           "/version/" +
           version +

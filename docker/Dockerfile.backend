@@ -4,19 +4,20 @@
 
 FROM python:3.10-alpine
 
+# Setup poetry to handle dependencies.
+RUN pip install poetry
+
+# Copy deps and source files.
 WORKDIR /mnt/lib
 COPY pyproject.toml /mnt/lib
-COPY src /mnt/lib/src
+COPY poetry.lock /mnt/lib
+COPY mlte /mnt/lib/mlte
 
 # Install mlte and dependencies
-RUN ["pip", "install", "."]
+RUN ["poetry", "install"]
 
 # Create the default storage location
 RUN ["mkdir", "/mnt/store"]
-
-# Default environment
-ENV APP_HOST=0.0.0.0
-ENV APP_PORT=8080
 
 # Run the mlte backend server
 ENTRYPOINT ["mlte", "backend"]

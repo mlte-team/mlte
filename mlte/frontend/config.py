@@ -1,23 +1,16 @@
 """
-mlte/backend/core/config.py
+mlte/frontend/config.py
 
-Configuration management for FastAPI application.
+Configuration management for the frontend.
 """
 
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from mlte.store.base import StoreURIPrefix
-
 # An enumeration of supported log levels
 _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
-
-# Default address for Frontend.
-DEFAULT_FRONTEND_ADDRESS = "http://localhost:8000"
 
 
 class Settings(BaseSettings):
@@ -30,14 +23,11 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "default"
     """Used to check the type of settings being used."""
 
-    API_PREFIX: str = "/api"
-    """The global API prefix."""
-
     APP_HOST: str = "localhost"
-    """The host to which the server binds."""
+    """The host to which the frontend server binds."""
 
-    APP_PORT: str = "8080"
-    """The port to which the server binds."""
+    APP_PORT: str = "8000"
+    """The port to which the frontend server binds."""
 
     @field_validator("APP_PORT", mode="before")
     @classmethod
@@ -50,9 +40,6 @@ class Settings(BaseSettings):
             ) from None
         return v
 
-    STORE_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
-    """The store URI string; defaults to in-memory store."""
-
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""
 
@@ -63,16 +50,8 @@ class Settings(BaseSettings):
             raise ValueError(f"Unsupported log level: {v}.")
         return v
 
-    ALLOWED_ORIGINS: List[str] = [DEFAULT_FRONTEND_ADDRESS]
-    """A list of allowed CORS origins."""
-
-    JWT_SECRET_KEY: str = (
-        "399fd92f61c99e35d7f2f6fdb9d65293c4047f9ac500af1886b8868b495f20b3"
-    )
-    """The secret key used to encode/decode JWT tokens."""
-
     model_config = SettingsConfigDict(
-        case_sensitive=True, env_file=".env.backend"
+        case_sensitive=True, env_file=".env.frontend"
     )
 
 

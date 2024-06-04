@@ -12,7 +12,8 @@ from importlib.metadata import PackageNotFoundError, version
 
 import mlte.backend.main as backend
 import mlte.frontend as frontend
-from mlte.backend.core.config import settings
+from mlte.backend.core.config import settings as backend_settings
+from mlte.frontend.config import settings as frontend_settings
 
 # CLI exit codes
 EXIT_SUCCESS = 0
@@ -71,31 +72,31 @@ def _attach_backend_parser(
     parser.add_argument(
         "--host",
         type=str,
-        default=settings.APP_HOST,
-        help=f"The host address to which the server binds (default: {settings.APP_HOST})",
+        default=backend_settings.APP_HOST,
+        help=f"The host address to which the server binds (default: {backend_settings.APP_HOST})",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=int(settings.APP_PORT),
-        help=f"The port on which the server listens (default: {settings.APP_PORT})",
+        default=int(backend_settings.APP_PORT),
+        help=f"The port on which the server listens (default: {backend_settings.APP_PORT})",
     )
     parser.add_argument(
         "--store-uri",
         type=str,
-        default=settings.STORE_URI,
-        help=f"The URI for the backend store (default: {settings.STORE_URI}).",
+        default=backend_settings.STORE_URI,
+        help=f"The URI for the backend store (default: {backend_settings.STORE_URI}).",
     )
     parser.add_argument(
         "--allowed-origins",
         nargs="*",
-        default=settings.ALLOWED_ORIGINS,
-        help=f"A list of allowed CORS origins (default: {settings.ALLOWED_ORIGINS})",
+        default=backend_settings.ALLOWED_ORIGINS,
+        help=f"A list of allowed CORS origins (default: {backend_settings.ALLOWED_ORIGINS})",
     )
     parser.add_argument(
         "--jwt-secret",
         type=str,
-        default=settings.JWT_SECRET_KEY,
+        default=backend_settings.JWT_SECRET_KEY,
         help="A secret random string key used to sign tokens",
     )
 
@@ -108,6 +109,20 @@ def _attach_frontend_parser(
         "ui", help="Run an instance of the MLTE frontend user interface."
     )
     parser.set_defaults(func=frontend.run_frontend)
+
+    # Additional arguments.
+    parser.add_argument(
+        "--host",
+        type=str,
+        default=frontend_settings.APP_HOST,
+        help=f"The host address to which the frontend server binds (default: {frontend_settings.APP_HOST})",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(frontend_settings.APP_PORT),
+        help=f"The port on which the frontend server listens (default: {frontend_settings.APP_PORT})",
+    )
 
 
 # -----------------------------------------------------------------------------
