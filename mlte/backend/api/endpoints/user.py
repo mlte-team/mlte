@@ -6,6 +6,7 @@ which automatically removes the hashed password from the model returned.
 """
 from __future__ import annotations
 
+import traceback as tb
 from typing import List, Union
 
 from fastapi import APIRouter, HTTPException
@@ -14,7 +15,8 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
-from mlte.user.model import BasicUser, UserCreate
+from mlte.store.user.policy import Policy
+from mlte.user.model import BasicUser, ResourceType, UserCreate
 
 # The router exported by this submodule
 router = APIRouter()
@@ -38,14 +40,27 @@ def create_user(
     :param user: The user to create
     :return: The created user
     """
+    new_user: BasicUser
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.user_mapper.create(user)
+            new_user = user_store.user_mapper.create(user)
+
+            # Now create permissions and groups associated to it.
+            Policy.create(
+                ResourceType.USER,
+                new_user.username,
+                user_store,
+                BasicUser(**new_user.model_dump()),
+            )
+
+            return new_user
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error: {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -70,7 +85,9 @@ def edit_user(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -95,7 +112,9 @@ def read_user(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -113,7 +132,9 @@ def list_users(
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.user_mapper.list()
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -138,7 +159,9 @@ def list_users_details(
                 )
                 detailed_users.append(user_details)
             return detailed_users
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -158,12 +181,19 @@ def delete_user(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            return user_store.user_mapper.delete(username)
+            deleted_user = user_store.user_mapper.delete(username)
+
+            # Now delete related permissions and groups.
+            Policy.remove(ResourceType.USER, username, user_store)
+
+            return deleted_user
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",

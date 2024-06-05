@@ -33,10 +33,14 @@ def update_user(
     if type(new_user_data) is UserCreate:
         # In this case, new user fully overwrites existing one.
         updated_user = convert_to_hashed_user(new_user_data)
-    else:
+    elif type(new_user_data) is BasicUser:
         # In this case, all data overwrites the current one, except for the hashed password, which is kept.
         updated_user = User(
             **new_user_data.model_dump(),
             hashed_password=curr_user.hashed_password,
+        )
+    else:
+        raise Exception(
+            f"Invalid user type received when updating user type: {type(new_user_data)}"
         )
     return updated_user

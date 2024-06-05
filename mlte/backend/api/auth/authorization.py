@@ -50,7 +50,7 @@ async def get_current_resource(request: Request) -> Permission:
     resource = Permission(
         resource_type=resource_type, resource_id=resource_id, method=method
     )
-    print(f"Resource: {resource}")
+    # print(f"Resource: {resource}")
     return resource
 
 
@@ -63,26 +63,26 @@ def get_username_from_token(token: str, key: str) -> str:
 
 def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
     """Checks if the current user is authorized to access the current resource."""
-    print(
-        f"Checking authorization for user {current_user.username} to resource {resource}"
-    )
+    # print(
+    #    f"Checking authorization for user {current_user.username} to resource {resource}"
+    # )
 
     if current_user.role == RoleType.ADMIN:
         # If having admin role, always get access.
-        print("User is admin")
+        # print("User is admin")
         return True
     else:
         # Check to find if the current user has permissions through any of its groups.
-        print(current_user.groups)
+        # print(current_user.groups)
         for group in current_user.groups:
             print(group)
             for permission in group.permissions:
                 if permission.grants_access(resource):
-                    print("Permission for this model found")
+                    # print("Permission for this model found")
                     return True
 
     # If none of the above are true, deny access.
-    print("Permission not granted.")
+    # print("Permission not granted.")
     return False
 
 
@@ -110,7 +110,7 @@ async def get_authorized_user(
     :return: A User data structure, with a User that has access to the resources.
     """
     # Validate token and get username.
-    print(f"Get authorized user token {token}, resource {resource}")
+    # print(f"Get authorized user token {token}, resource {resource}")
     try:
         username = get_username_from_token(token, state.token_key)
     except Exception as ex:
