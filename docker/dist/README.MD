@@ -17,7 +17,7 @@ This readme briefly explains how to use this set of dockerfiles for a Docker-bas
        -  Usually ``APP_HOST`` will need to be ``0.0.0.0``, and ``APP_PORT`` has to match the one in ``.env``
        - ``ALLOWED_ORIGINS`` will likely need to be ``["*"]`` to allow broad access from any web browser.
        - ``JWT_SECRET_KEY`` should be configured to a deployment-specific secret.
-       - ``BACKEND_URI`` should have the ``postgresql://`` prefix, and the rest should match the user, password and DB name in the ``.env.postgres`` file.
+       - ``STORE_URI`` should have the ``postgresql://`` prefix, and the rest should match the user, password and DB name in the ``.env.postgres`` file.
     1. Create a ``.env.frontend`` file based on the one at ``mlte/cli/.env.frontend`` file with the proper config for the deployed Frontend (usually ``APP_HOST`` will need to be ``0.0.0.0``, and ``APP_PORT`` has to match the one in ``.env``).
 1. Copy all files in this folder, including the new ``.env`` configurations and the created wheel (if applicable), to the server to be deployed.
 1. Run ``bash start.sh`` to run the system. You can "CTRL+C" and it will continue running in the background.
