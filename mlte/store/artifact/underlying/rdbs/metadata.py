@@ -73,7 +73,7 @@ class DBVersion(DBBase):
 
     model: Mapped[DBModel] = relationship(back_populates="versions")
 
-    __table_args__ = (UniqueConstraint("name", name="_version_identifier"),)
+    __table_args__ = (UniqueConstraint("name", "model_id", name="_version_model_ids_uc"),)
 
     def __repr__(self) -> str:
         return f"Version(id={self.id!r}, name={self.name!r})"
