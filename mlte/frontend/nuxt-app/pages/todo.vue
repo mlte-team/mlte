@@ -1,12 +1,13 @@
 <script setup lang="ts">
+const config = useRuntimeConfig();
+
 // TODO(Kyle): Add this functionality back. Decide where in the UI it should go.
 async function deleteModel(entry: { model: string; selected: boolean }) {
   if (
     confirm("Are you sure you want to delete the model: " + entry.model + "?")
   ) {
     await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
+      config.public.apiPath + 
         "/model/" +
         entry.model,
       {
@@ -49,8 +50,7 @@ async function deleteVersion(entry: {
     )
   ) {
     await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        selectedNamespace.value +
+      config.public.apiPath + 
         "/model/" +
         entry.model +
         "/version/" +

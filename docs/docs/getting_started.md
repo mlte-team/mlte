@@ -20,7 +20,9 @@ $ conda install mlte-python
 ```
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
-## Subpackages
+## Using MLTE as a library
+
+### Subpackages
 
 `MLTE` contains the following subpackages:
 
@@ -32,8 +34,7 @@ If you are new to Python and haven't installed it, we recommend starting with <a
 
 - **Report**: A *`MLTE`* report encapsulates all of the knowledge gained about the model and the system as a consequence of the evaluation process. The report renders as a web page and is opened automatically in an available window of the default browser. 
 
-
-## Import
+### Import
 
 *`MLTE`* can be imported like any Python pacakge using the standard conventions.
 
@@ -43,6 +44,23 @@ from mlte.measurement ... #importing from measurement subpackage
 from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
 ```
+
+### Setting a MLTE session
+
+Before most operations can be done on MLTE, a context and store need to be set. When using MLTE as a library, there are two commands that can be executed once on a script to set this global state. They can be imported like so:
+
+```python
+from mlte.session import set_context, set_store
+```
+
+They are used in the following way:
+ * ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
+ * ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the following URI structure:
+    * **In Memory Store** (``memory://``): a temporary, in memory store, useful for quick tests. Artifacts stored here are not permanent. The URI for this store is simply the given string, without any parameters.
+    * **File System Store** (``fs://<store_path>``): a local file system artifact store. The  ``<store_path>`` parameter has to be a path to an existing folder in your local system. The store will be created in subfolders inside it. This makes it easy to review the artifacts by just opening the JSON files with their information.
+    * **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): a store in a relational database engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this page for details on supported drivers: https://docs.sqlalchemy.org/en/20/dialects/index.html . See section below on Using a Relational DB for more details on the other parameters on this URI.
+    * **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote MLTE backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the MLTE frontend. The ``<host>`` and ``<port>`` point to the server where the MLTE backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the MLTE backend and frontend.
+
 
 ## Running the User Interface
 
@@ -80,7 +98,7 @@ The backend comes with a default secret for signing authentication tokens. In re
 In order for the frontend to be able to communicate with the backend the frontend need to be allowed as an origin. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address, this flag needs to be set with the correct address.
 
 
-## Using a Relational DB Engine Backend
+### Using a Relational DB Engine Backend
 
 To use a relational DB engine as a store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
