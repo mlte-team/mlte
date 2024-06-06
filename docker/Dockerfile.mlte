@@ -4,6 +4,9 @@
 
 FROM python:3.10-alpine
 
+# Base deps for compiling wheels.
+RUN apk add --update-cache gcc musl-dev libffi-dev
+
 # Setup poetry to handle dependencies.
 RUN pip install poetry
 

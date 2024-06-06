@@ -8,7 +8,7 @@ FROM mlte-base
 RUN mkdir /mnt/store
 
 # Run the mlte backend server
-ENTRYPOINT ["mlte", "backend"]
+ENTRYPOINT ["poetry", "run", "mlte", "backend"]
 
 # By default, run a local filesystem store
 CMD ["--store-uri", "fs:///mnt/store"]

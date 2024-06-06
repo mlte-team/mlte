@@ -5,4 +5,4 @@
 FROM mlte-base
 
 # Run the mlte frontend server
-ENTRYPOINT ["mlte", "ui"]
+ENTRYPOINT ["poetry", "run", "mlte", "ui"]

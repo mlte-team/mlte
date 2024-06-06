@@ -3,4 +3,3 @@ pgdata
 Dockerfile*
 *.yaml
 *.sh
-*.pem
