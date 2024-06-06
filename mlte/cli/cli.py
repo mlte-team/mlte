@@ -72,14 +72,14 @@ def _attach_backend_parser(
     parser.add_argument(
         "--host",
         type=str,
-        default=backend_settings.APP_HOST,
-        help=f"The host address to which the server binds (default: {backend_settings.APP_HOST})",
+        default=backend_settings.BACKEND_HOST,
+        help=f"The host address to which the server binds (default: {backend_settings.BACKEND_HOST})",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=int(backend_settings.APP_PORT),
-        help=f"The port on which the server listens (default: {backend_settings.APP_PORT})",
+        default=int(backend_settings.BACKEND_PORT),
+        help=f"The port on which the server listens (default: {backend_settings.BACKEND_PORT})",
     )
     parser.add_argument(
         "--store-uri",
@@ -114,14 +114,14 @@ def _attach_frontend_parser(
     parser.add_argument(
         "--host",
         type=str,
-        default=frontend_settings.APP_HOST,
-        help=f"The host address to which the frontend server binds (default: {frontend_settings.APP_HOST})",
+        default=frontend_settings.FRONTEND_HOST,
+        help=f"The host address to which the frontend server binds (default: {frontend_settings.FRONTEND_HOST})",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=int(frontend_settings.APP_PORT),
-        help=f"The port on which the frontend server listens (default: {frontend_settings.APP_PORT})",
+        default=int(frontend_settings.FRONTEND_PORT),
+        help=f"The port on which the frontend server listens (default: {frontend_settings.FRONTEND_PORT})",
     )
 
 

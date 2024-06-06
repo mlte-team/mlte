@@ -83,8 +83,8 @@ def main() -> int:
     # TODO(Kyle): use log level.
     logging.basicConfig(level=logging.INFO)
     return run(
-        settings.APP_HOST,
-        int(settings.APP_PORT),
+        settings.BACKEND_HOST,
+        int(settings.BACKEND_PORT),
         settings.STORE_URI,
         settings.ALLOWED_ORIGINS,
         settings.JWT_SECRET_KEY,
