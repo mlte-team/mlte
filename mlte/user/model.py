@@ -5,8 +5,9 @@ Model implementation for a User.
 """
 from __future__ import annotations
 
-from enum import Enum
 from typing import List, Optional
+
+from strenum import StrEnum
 
 from mlte.model import BaseModel
 
@@ -18,7 +19,7 @@ RESOURCE_ALL_VALUES = "*"
 # -----------------------------------------------------------------------------
 
 
-class RoleType(str, Enum):
+class RoleType(StrEnum):
     """Roles for users."""
 
     ADMIN = "admin"
@@ -69,7 +70,7 @@ class UserWithPassword(BasicUser):
 # -----------------------------------------------------------------------------
 
 
-class MethodType(str, Enum):
+class MethodType(StrEnum):
     """Types of methods for permissions."""
 
     GET = "get"
@@ -88,7 +89,7 @@ class MethodType(str, Enum):
     """Special action to represent all/any of them."""
 
 
-class ResourceType(str, Enum):
+class ResourceType(StrEnum):
     """Supported resource types."""
 
     MODEL = "model"

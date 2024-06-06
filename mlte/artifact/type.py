@@ -8,10 +8,10 @@ implementation because it allows us to avoid a circular dependency amongst
 the artifact base model, individual artifact models, and the type enum.
 """
 
-from enum import Enum
+from strenum import StrEnum
 
 
-class ArtifactType(str, Enum):
+class ArtifactType(StrEnum):
     """Enumerates all supported artifact types."""
 
     NEGOTIATION_CARD = "negotiation_card"
