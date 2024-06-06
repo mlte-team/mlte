@@ -1,0 +1,8 @@
+# Dockerfile.frontend
+#
+# Image definition for MLTE frontend container.
+
+FROM mlte-base
+
+# Run the mlte frontend server
+ENTRYPOINT ["mlte", "ui"]

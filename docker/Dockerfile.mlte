@@ -1,0 +1,17 @@
+# Dockerfile.mlte
+#
+# Image definition for MLTE base container.
+
+FROM python:3.10-alpine
+
+# Setup poetry to handle dependencies.
+RUN pip install poetry
+
+# Copy deps and source files.
+WORKDIR /mnt/app
+COPY pyproject.toml /mnt/app
+COPY poetry.lock /mnt/app
+COPY mlte /mnt/app/mlte
+
+# Install mlte and dependencies
+RUN poetry install

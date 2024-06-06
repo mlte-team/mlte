@@ -2,22 +2,10 @@
 #
 # Image definition for MLTE backend container.
 
-FROM python:3.10-alpine
-
-# Setup poetry to handle dependencies.
-RUN pip install poetry
-
-# Copy deps and source files.
-WORKDIR /mnt/lib
-COPY pyproject.toml /mnt/lib
-COPY poetry.lock /mnt/lib
-COPY mlte /mnt/lib/mlte
-
-# Install mlte and dependencies
-RUN ["poetry", "install"]
+FROM mlte-base
 
 # Create the default storage location
-RUN ["mkdir", "/mnt/store"]
+RUN mkdir /mnt/store
 
 # Run the mlte backend server
 ENTRYPOINT ["mlte", "backend"]
