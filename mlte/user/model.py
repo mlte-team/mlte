@@ -57,7 +57,7 @@ class User(BasicUser):
     """The hashed password of the user."""
 
 
-class UserCreate(BasicUser):
+class UserWithPassword(BasicUser):
     """User with additional information only used when creating a user."""
 
     password: str

@@ -8,10 +8,10 @@ User model conversions and comparisons.
 from typing import Union
 
 from mlte.user import passwords
-from mlte.user.model import BasicUser, User, UserCreate
+from mlte.user.model import BasicUser, User, UserWithPassword
 
 
-def convert_to_hashed_user(user_create: UserCreate) -> User:
+def convert_to_hashed_user(user_create: UserWithPassword) -> User:
     """Converts a UserCreate model with plain password into a User with a hashed one."""
     # Hash password and create a user with hashed passwords to be stored.
     hashed_password = passwords.hash_password(user_create.password)
@@ -19,7 +19,7 @@ def convert_to_hashed_user(user_create: UserCreate) -> User:
     return user
 
 
-def are_users_equal(user_create: UserCreate, user: User) -> bool:
+def are_users_equal(user_create: UserWithPassword, user: User) -> bool:
     """Compares a UserCreate model with a User, ignoring passwords."""
     return BasicUser(**user_create.model_dump()) == BasicUser(
         **user.model_dump()
@@ -27,10 +27,10 @@ def are_users_equal(user_create: UserCreate, user: User) -> bool:
 
 
 def update_user(
-    curr_user: User, new_user_data: Union[UserCreate, BasicUser]
+    curr_user: User, new_user_data: Union[UserWithPassword, BasicUser]
 ) -> User:
     """Returns up updated version of the given user with new data, with or without password, depending on the user type."""
-    if type(new_user_data) is UserCreate:
+    if type(new_user_data) is UserWithPassword:
         # In this case, new user fully overwrites existing one.
         updated_user = convert_to_hashed_user(new_user_data)
     elif type(new_user_data) is BasicUser:

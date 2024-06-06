@@ -16,7 +16,7 @@ import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.store.user.policy import Policy
-from mlte.user.model import BasicUser, ResourceType, UserCreate
+from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 
 # The router exported by this submodule
 router = APIRouter()
@@ -32,7 +32,7 @@ def read_users_me(
 @router.post("/user")
 def create_user(
     *,
-    user: UserCreate,
+    user: UserWithPassword,
     current_user: AuthorizedUser,
 ) -> BasicUser:
     """
@@ -70,7 +70,7 @@ def create_user(
 @router.put("/user")
 def edit_user(
     *,
-    user: Union[UserCreate, BasicUser],
+    user: Union[UserWithPassword, BasicUser],
     current_user: AuthorizedUser,
 ) -> BasicUser:
     """

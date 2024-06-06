@@ -8,7 +8,7 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.context.model import Version, VersionCreate
-from mlte.user.model import ResourceType, UserCreate
+from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     MODEL_URI,
     create_sample_model_using_admin,
@@ -54,7 +54,7 @@ def create_sample_version_using_admin(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_create(test_client_fix, api_user: UserCreate) -> None:
+def test_create(test_client_fix, api_user: UserWithPassword) -> None:
     """Versions can be created."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -76,7 +76,7 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_create_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permission to create version."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -97,7 +97,7 @@ def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_read(test_client_fix, api_user: UserCreate) -> None:
+def test_read(test_client_fix, api_user: UserWithPassword) -> None:
     """Versions can be read."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -120,7 +120,7 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_read_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permissions to read versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -141,7 +141,7 @@ def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_list(test_client_fix, api_user: UserCreate) -> None:
+def test_list(test_client_fix, api_user: UserWithPassword) -> None:
     """Versions can be listed."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -160,7 +160,7 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_list_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permissions to list versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -178,7 +178,7 @@ def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_delete(test_client_fix, api_user: UserCreate) -> None:
+def test_delete(test_client_fix, api_user: UserWithPassword) -> None:
     """Versions can be deleted."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -205,7 +205,7 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_delete_no_permissions(test_client_fix, api_user: UserCreate) -> None:
+def test_delete_no_permissions(test_client_fix, api_user: UserWithPassword) -> None:
     """No permissions to delete versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()

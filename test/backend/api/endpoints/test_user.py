@@ -9,9 +9,11 @@ from typing import Any
 
 import pytest
 
+from mlte.backend import state
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.user.model import BasicUser, ResourceType, UserCreate
+from mlte.store.user.policy import Policy
+from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
 
@@ -24,7 +26,7 @@ USER_URI = f"{settings.API_PREFIX}{USER_ENDPOINT}"
 # -----------------------------------------------------------------------------
 
 
-def get_sample_user() -> UserCreate:
+def get_sample_user() -> UserWithPassword:
     """Creates a simple test user."""
     username = "user1"
     email = "user1@test.com"
@@ -53,7 +55,7 @@ def get_user_using_admin(
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.USER),
 )
-def test_create(test_client_fix, api_user: UserCreate) -> None:
+def test_create(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be created."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     user = get_sample_user()
@@ -70,7 +72,7 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_create_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permissions to create users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     user = get_sample_user()
@@ -83,7 +85,7 @@ def test_create_no_permission(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.USER),
 )
-def test_edit_no_pass(test_client_fix, api_user: UserCreate) -> None:
+def test_edit_no_pass(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be edited."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -106,7 +108,7 @@ def test_edit_no_pass(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.USER),
 )
-def test_edit_pass(test_client_fix, api_user: UserCreate) -> None:
+def test_edit_pass(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be edited."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -128,7 +130,7 @@ def test_edit_pass(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_edit_pass_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_edit_pass_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be edited."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -146,7 +148,7 @@ def test_edit_pass_no_permission(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.USER),
 )
-def test_read(test_client_fix, api_user: UserCreate) -> None:
+def test_read(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be read."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -163,7 +165,7 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
-def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_read_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permission to read users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -178,7 +180,7 @@ def test_read_no_permission(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.USER),
 )
-def test_list(test_client_fix, api_user: UserCreate) -> None:
+def test_list(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be listed."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -193,7 +195,7 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
-def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_list_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permission to list users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -207,7 +209,7 @@ def test_list_no_permission(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.USER),
 )
-def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:
+def test_list_detailed(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be listed in detail."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -227,7 +229,7 @@ def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:
     api_helper.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
 def test_list_detailed_no_permission(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:
     """No permission to list details."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -242,7 +244,7 @@ def test_list_detailed_no_permission(
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.USER),
 )
-def test_delete(test_client_fix, api_user: UserCreate) -> None:
+def test_delete(test_client_fix, api_user: UserWithPassword) -> None:
     """Users can be deleted."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -261,7 +263,7 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_delete_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permission to delete."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 

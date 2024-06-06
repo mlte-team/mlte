@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import List, Union, cast
 
 from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
-from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 
 # -----------------------------------------------------------------------------
 # UserStoreSession
@@ -40,10 +40,10 @@ class ManagedUserSession(ManagedSession):
 class UserMapper(ResourceMapper):
     """A interface for mapping CRUD actions to store users."""
 
-    def create(self, new_user: UserCreate) -> User:
+    def create(self, new_user: UserWithPassword) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def edit(self, updated_user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, updated_user: Union[UserWithPassword, BasicUser]) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def read(self, user_id: str) -> User:

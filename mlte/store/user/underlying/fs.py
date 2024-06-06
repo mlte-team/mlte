@@ -18,7 +18,7 @@ from mlte.store.user.store_session import (
     UserMapper,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -93,14 +93,14 @@ class FileSystemUserMappper(UserMapper):
         )
         """Set the subfodler for this resrouce."""
 
-    def create(self, user: UserCreate) -> User:
+    def create(self, user: UserWithPassword) -> User:
         if self.storage._resource_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
 
         new_user = convert_to_hashed_user(user)
         return self._write_user(new_user)
 
-    def edit(self, user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         if not self.storage._resource_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 

@@ -18,7 +18,7 @@ from mlte.user.model import (
     MethodType,
     Permission,
     ResourceType,
-    UserCreate,
+    UserWithPassword,
 )
 from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
@@ -85,7 +85,7 @@ def get_group_using_admin(
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_create(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_create(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be created."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
@@ -102,7 +102,7 @@ def test_create(test_client_fix, api_user: UserCreate) -> None:  # noqa
     api_helper.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
 def test_create_no_permissions(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permissions to create."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -116,7 +116,7 @@ def test_create_no_permissions(
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_edit(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_edit(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be edited."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
@@ -146,7 +146,7 @@ def test_edit(test_client_fix, api_user: UserCreate) -> None:  # noqa
     api_helper.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
 def test_edit_no_permission(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permissions to edit."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -172,7 +172,7 @@ def test_edit_no_permission(
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_read(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_read(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be read."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
@@ -190,7 +190,7 @@ def test_read(test_client_fix, api_user: UserCreate) -> None:  # noqa
     api_helper.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_read_no_permission(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permission to read group"""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -206,7 +206,7 @@ def test_read_no_permission(
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_list(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be listed."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     original_groups = test_client.get(f"{GROUP_URI}")
@@ -223,7 +223,7 @@ def test_list(test_client_fix, api_user: UserCreate) -> None:  # noqa
     api_helper.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_list_no_permission(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permission to list."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -238,7 +238,7 @@ def test_list_no_permission(
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_list_detailed(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be listed in detail."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     create_group_using_admin(test_client)
@@ -257,7 +257,7 @@ def test_list_detailed(test_client_fix, api_user: UserCreate) -> None:  # noqa
     api_helper.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_list_detailed_no_permission(
-    test_client_fix, api_user: UserCreate
+    test_client_fix, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permissions to list details."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -271,7 +271,7 @@ def test_list_detailed_no_permission(
     "api_user",
     api_helper.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_delete(test_client_fix, api_user: UserCreate) -> None:  # noqa
+def test_delete(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be deleted."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     group = get_test_group()
@@ -290,7 +290,7 @@ def test_delete(test_client_fix, api_user: UserCreate) -> None:  # noqa
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
-def test_delete_no_permission(test_client_fix, api_user: UserCreate) -> None:
+def test_delete_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
     """No permission to delete."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 

@@ -17,7 +17,7 @@ from mlte.user.model import (
     MethodType,
     Permission,
     ResourceType,
-    UserCreate,
+    UserWithPassword,
 )
 from mlte.user.model_logic import are_users_equal
 
@@ -49,12 +49,12 @@ def test_init_fs(tmp_path) -> None:
     _ = create_fs_store(tmp_path)
 
 
-def get_test_user() -> UserCreate:
+def get_test_user() -> UserWithPassword:
     """Helper to get a user structure."""
     username = "user1"
     email = "email@server.com"
     password = "1234"
-    test_user = UserCreate(
+    test_user = UserWithPassword(
         username=username,
         email=email,
         password=password,
@@ -70,7 +70,7 @@ def get_test_group() -> Group:
     return test_user
 
 
-def setup_user_groups(user: UserCreate, user_store: UserStoreSession):
+def setup_user_groups(user: UserWithPassword, user_store: UserStoreSession):
     """Helper to set up groups."""
     for group in user.groups:
         setup_group_permisisons(group, user_store)

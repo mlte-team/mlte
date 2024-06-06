@@ -16,7 +16,7 @@ from mlte.backend.api import codes
 from mlte.backend.api.model import WriteArtifactRequest
 from mlte.model.base_model import BaseModel
 from mlte.store.artifact.query import Query
-from mlte.user.model import ResourceType, UserCreate
+from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     create_sample_model_using_admin,
     get_sample_model,
@@ -77,7 +77,7 @@ def create_artifact_using_admin(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_write(
     test_client_fix,
-    api_user: UserCreate,
+    api_user: UserWithPassword,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be written."""
@@ -104,7 +104,7 @@ def test_write(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_read(
     test_client_fix,
-    api_user: UserCreate,
+    api_user: UserWithPassword,
     artifact_type: ArtifactType,
 ) -> None:
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
@@ -135,7 +135,7 @@ def test_read(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_list(
     test_client_fix,
-    api_user: UserCreate,
+    api_user: UserWithPassword,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be searched."""
@@ -171,7 +171,7 @@ def test_list(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_search(
     test_client_fix,
-    api_user: UserCreate,
+    api_user: UserWithPassword,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be searched."""
@@ -207,7 +207,7 @@ def test_search(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_delete(
     test_client_fix,
-    api_user: UserCreate,
+    api_user: UserWithPassword,
     artifact_type: ArtifactType,
 ) -> None:
     """Artifacts can be deleted."""

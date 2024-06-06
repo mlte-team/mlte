@@ -17,7 +17,7 @@ from mlte.store.user.store_session import (
     UserMapper,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ class InMemoryUserMapper(UserMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, user: UserCreate) -> User:
+    def create(self, user: UserWithPassword) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
@@ -103,7 +103,7 @@ class InMemoryUserMapper(UserMapper):
         self.storage.users[user.username] = stored_user
         return stored_user
 
-    def edit(self, user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         if user.username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {user.username}")
 

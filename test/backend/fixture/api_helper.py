@@ -19,7 +19,7 @@ from mlte.store.user.policy import Policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.underlying.memory import InMemoryUserMapper
 from mlte.user import passwords
-from mlte.user.model import Group, ResourceType, RoleType, User, UserCreate
+from mlte.user.model import Group, ResourceType, RoleType, User, UserWithPassword
 from test.store.artifact import artifact_store_creators
 
 TEST_ADMIN_USERNAME = "admin_user"
@@ -32,7 +32,7 @@ TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
 """JWT token secret used for signing tokens."""
 
 
-def build_admin_user() -> UserCreate:
+def build_admin_user() -> UserWithPassword:
     """The default admin user."""
     return build_test_user(username=TEST_ADMIN_USERNAME, role=RoleType.ADMIN)
 
@@ -42,9 +42,9 @@ def build_test_user(
     password: str = TEST_API_PASS,
     role: Optional[RoleType] = None,
     groups: Optional[List[Group]] = None,
-) -> UserCreate:
+) -> UserWithPassword:
     """Creaters a test user."""
-    test_user = UserCreate(username=username, password=password)
+    test_user = UserWithPassword(username=username, password=password)
     if role:
         test_user.role = role
     if groups:
@@ -52,7 +52,7 @@ def build_test_user(
     return test_user
 
 
-def setup_api_with_mem_stores(user: UserCreate) -> FastAPI:
+def setup_api_with_mem_stores(user: UserWithPassword) -> FastAPI:
     """Setup API, configure to use memory artifact store and create app itself."""
     # Set up user store with test user.
     user_store = user_store_fixture.create_memory_store()
@@ -99,7 +99,7 @@ def clear_state():
 
 def get_test_users_with_read_permissions(
     resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserCreate]:
+) -> List[UserWithPassword]:
     """Get a list of users that have permissions to read from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
@@ -129,7 +129,7 @@ def get_test_users_with_read_permissions(
 
 def get_test_users_with_write_permissions(
     resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserCreate]:
+) -> List[UserWithPassword]:
     """Get a list of users that have permissions to write from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
@@ -158,7 +158,7 @@ def get_test_users_with_write_permissions(
 
 def get_test_users_with_no_read_permissions(
     resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserCreate]:
+) -> List[UserWithPassword]:
     """Get a list of users that do not have permissions to read from different sources."""
     users = [
         build_test_user(),
@@ -188,7 +188,7 @@ def get_test_users_with_no_read_permissions(
 
 def get_test_users_with_no_write_permissions(
     resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserCreate]:
+) -> List[UserWithPassword]:
     """Get a list of users that do not have permissions to write from different sources."""
     users = [
         build_test_user(),

@@ -18,7 +18,7 @@ from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
-from mlte.user.model import UserCreate
+from mlte.user.model import UserWithPassword
 from test.backend.fixture import api_helper
 from test.backend.fixture.http import setup_API_and_test_client
 from test.store.artifact import artifact_store_creators
@@ -27,7 +27,7 @@ _STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
 
 @pytest.fixture(scope="function")
-def http_store(user: Optional[UserCreate] = None) -> HttpArtifactStore:
+def http_store(user: Optional[UserWithPassword] = None) -> HttpArtifactStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store

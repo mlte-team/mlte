@@ -10,7 +10,7 @@ from mlte.store import error
 from mlte.store.base import Store, StoreURI
 from mlte.store.user.policy import Policy
 from mlte.store.user.store_session import UserStoreSession
-from mlte.user.model import ResourceType, RoleType, UserCreate
+from mlte.user.model import ResourceType, RoleType, UserWithPassword
 
 DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = "admin1234"
@@ -47,7 +47,7 @@ class UserStore(Store):
         """Adds the default user."""
         try:
             self.session().user_mapper.create(
-                UserCreate(
+                UserWithPassword(
                     username=DEFAULT_USERNAME,
                     password=DEFAULT_PASSWORD,
                     role=RoleType.ADMIN,

@@ -31,7 +31,7 @@ from mlte.store.user.underlying.rdbs.metadata import (
     init_role_types,
 )
 from mlte.store.user.underlying.rdbs.reader import DBReader
-from mlte.user.model import BasicUser, Group, Permission, User, UserCreate
+from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 from mlte.user.model_logic import convert_to_hashed_user, update_user
 
 # -----------------------------------------------------------------------------
@@ -113,7 +113,7 @@ class RDBUserMapper(UserMapper):
         self.engine = engine
         """A reference to underlying storage."""
 
-    def create(self, user: UserCreate) -> User:
+    def create(self, user: UserWithPassword) -> User:
         with Session(self.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -129,7 +129,7 @@ class RDBUserMapper(UserMapper):
                 session.commit()
                 return hashed_user
 
-    def edit(self, user: Union[UserCreate, BasicUser]) -> User:
+    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         with Session(self.engine) as session:
             curr_user, user_obj = DBReader.get_user(user.username, session)
             updated_user = update_user(curr_user, user)

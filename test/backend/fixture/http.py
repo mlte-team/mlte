@@ -18,7 +18,7 @@ from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.model.base_model import BaseModel
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
-from mlte.user.model import UserCreate
+from mlte.user.model import UserWithPassword
 
 # -----------------------------------------------------------------------------
 # Test HTTP client based on FastAPI's TestClient.
@@ -67,18 +67,18 @@ class FastAPITestHttpClient(OAuthHttpClient):
 
 @pytest.fixture(scope="function")
 def mem_store_and_test_http_client() -> (
-    Callable[[Optional[UserCreate]], FastAPITestHttpClient]
+    Callable[[Optional[UserWithPassword]], FastAPITestHttpClient]
 ):
     """Sets up memory based store for the API and gets an associated client."""
 
-    def wrapper(api_user: Optional[UserCreate] = None) -> FastAPITestHttpClient:
+    def wrapper(api_user: Optional[UserWithPassword] = None) -> FastAPITestHttpClient:
         return setup_API_and_test_client(api_user)
 
     return wrapper
 
 
 def setup_API_and_test_client(
-    user: Optional[UserCreate] = None,
+    user: Optional[UserWithPassword] = None,
 ) -> FastAPITestHttpClient:
     """
     Configure API for memory stores and return a test HTTP client.
