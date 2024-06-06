@@ -271,6 +271,7 @@ Currently, `MLTE` supports the following Python versions:
 - `3.8`
 - `3.9`
 - `3.10`
+- `3.11`
 
 <a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
 
