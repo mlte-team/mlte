@@ -9,9 +9,9 @@ from typing import Any
 
 import pytest
 
-from mlte.backend import state
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
+from mlte.backend.state import state
 from mlte.store.user.policy import Policy
 from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 from test.backend.fixture import api_helper, http
@@ -31,7 +31,7 @@ def get_sample_user() -> UserWithPassword:
     username = "user1"
     email = "user1@test.com"
     password = "pass1"
-    return UserCreate(username=username, email=email, password=password)
+    return UserWithPassword(username=username, email=email, password=password)
 
 
 def create_sample_user_using_admin(test_client: FastAPITestHttpClient) -> None:
@@ -64,15 +64,22 @@ def test_create(test_client_fix, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
     _ = BasicUser(**res.json())
 
+    # Update user with the groups that are automatically created.
+    user.groups = Policy.build_groups(ResourceType.USER, user.username)
+
     # Read it back.
-    _ = BasicUser(**get_user_using_admin(user.username, test_client))
+    assert BasicUser(**user.model_dump()) == BasicUser(
+        **get_user_using_admin(user.username, test_client)
+    )
 
 
 @pytest.mark.parametrize(
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_create_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_create_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permissions to create users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     user = get_sample_user()
@@ -130,7 +137,9 @@ def test_edit_pass(test_client_fix, api_user: UserWithPassword) -> None:
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_edit_pass_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_edit_pass_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """Users can be edited."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -158,6 +167,10 @@ def test_read(test_client_fix, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.OK
     read = BasicUser(**res.json())
+
+    # Update user with the groups that are automatically created.
+    user.groups = Policy.build_groups(ResourceType.USER, user.username)
+
     assert read == BasicUser(**user.model_dump())
 
 
@@ -165,7 +178,9 @@ def test_read(test_client_fix, api_user: UserWithPassword) -> None:
     "api_user",
     api_helper.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
-def test_read_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_read_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permission to read users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -195,7 +210,9 @@ def test_list(test_client_fix, api_user: UserWithPassword) -> None:
     "api_user",
     api_helper.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
-def test_list_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_list_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permission to list users."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 
@@ -258,12 +275,18 @@ def test_delete(test_client_fix, api_user: UserWithPassword) -> None:
     res = admin_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.NOT_FOUND
 
+    assert not Policy.is_stored(
+        ResourceType.USER, user.username, state.user_store.session()
+    )
+
 
 @pytest.mark.parametrize(
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
-def test_delete_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_delete_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permission to delete."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 

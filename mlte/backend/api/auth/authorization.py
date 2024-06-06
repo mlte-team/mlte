@@ -75,7 +75,7 @@ def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
         # Check to find if the current user has permissions through any of its groups.
         # print(current_user.groups)
         for group in current_user.groups:
-            print(group)
+            # print(group)
             for permission in group.permissions:
                 if permission.grants_access(resource):
                     # print("Permission for this model found")

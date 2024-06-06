@@ -19,7 +19,13 @@ from mlte.store.user.policy import Policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.underlying.memory import InMemoryUserMapper
 from mlte.user import passwords
-from mlte.user.model import Group, ResourceType, RoleType, User, UserWithPassword
+from mlte.user.model import (
+    Group,
+    ResourceType,
+    RoleType,
+    User,
+    UserWithPassword,
+)
 from test.store.artifact import artifact_store_creators
 
 TEST_ADMIN_USERNAME = "admin_user"

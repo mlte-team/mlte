@@ -238,7 +238,9 @@ def test_list_no_permission(
     "api_user",
     api_helper.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_list_detailed(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
+def test_list_detailed(
+    test_client_fix, api_user: UserWithPassword
+) -> None:  # noqa
     """Groups can be listed in detail."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     create_group_using_admin(test_client)
@@ -290,7 +292,9 @@ def test_delete(test_client_fix, api_user: UserWithPassword) -> None:  # noqa
     "api_user",
     api_helper.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
-def test_delete_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_delete_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permission to delete."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
 

@@ -71,7 +71,9 @@ def mem_store_and_test_http_client() -> (
 ):
     """Sets up memory based store for the API and gets an associated client."""
 
-    def wrapper(api_user: Optional[UserWithPassword] = None) -> FastAPITestHttpClient:
+    def wrapper(
+        api_user: Optional[UserWithPassword] = None,
+    ) -> FastAPITestHttpClient:
         return setup_API_and_test_client(api_user)
 
     return wrapper

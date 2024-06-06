@@ -76,7 +76,9 @@ def test_create(test_client_fix, api_user: UserWithPassword) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_create_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_create_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permission to create version."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -120,7 +122,9 @@ def test_read(test_client_fix, api_user: UserWithPassword) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_read_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_read_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permissions to read versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -160,7 +164,9 @@ def test_list(test_client_fix, api_user: UserWithPassword) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_list_no_permission(test_client_fix, api_user: UserWithPassword) -> None:
+def test_list_no_permission(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permissions to list versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
@@ -205,7 +211,9 @@ def test_delete(test_client_fix, api_user: UserWithPassword) -> None:
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
-def test_delete_no_permissions(test_client_fix, api_user: UserWithPassword) -> None:
+def test_delete_no_permissions(
+    test_client_fix, api_user: UserWithPassword
+) -> None:
     """No permissions to delete versions."""
     test_client: FastAPITestHttpClient = test_client_fix(api_user)
     model = get_sample_model()
