@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker-compose down
+docker-compose --env-file .env --env-file .env.backend --env-file .env.frontend --env-file .env.postgres down

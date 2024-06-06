@@ -1,6 +1,7 @@
 # Dockerfile
 #
 # Image definition for MLTE container.
+
 FROM python:3.10-alpine
 
 # Install dependencies to build wheels.
@@ -12,4 +13,8 @@ COPY mlte_python-*.whl ./
 RUN pip install mlte_python-*.whl
 #RUN pip install mlte-python
 
-ENTRYPOINT ["mlte"]
+# Get the command from an arg.
+ARG MLTE_COMMAND
+ENV MLTE_COMMAND=${MLTE_COMMAND}
+
+ENTRYPOINT mlte ${MLTE_COMMAND}
