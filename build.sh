@@ -2,4 +2,6 @@
 cd mlte/frontend/nuxt-app && npm run build
 cd ../../../
 poetry build
-cp dist/mlte_python-*.whl docker/dist
+
+rm docker/deployment/mlte_python-*.whl
+cp dist/mlte_python-*.whl docker/deployment/

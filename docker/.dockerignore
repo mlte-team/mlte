@@ -1,5 +1,3 @@
-pgdata
-.env*
+deployment
 Dockerfile*
-*.yaml
 *.sh
