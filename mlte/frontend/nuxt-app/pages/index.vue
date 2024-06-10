@@ -126,6 +126,7 @@
                     <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
                   <NuxtLink
+                    target="_blank"
                     :to="{
                       path: 'export-report',
                       query: {
