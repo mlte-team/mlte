@@ -1,20 +1,31 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template #sidebar>
+      <div style="padding-top:80px">
+        <div v-if="!editFlag">
+          <UsaButton
+            class="secondary-button"
+            @click="addUser"
+          >
+            Add User
+          </UsaButton>
+        </div>
+      </div>
+    </template>
+
     <div v-if="!editFlag">
-      <AdminUserManagementUserList 
+      <AdminUserList 
         v-model="userList"
-        @addUser="addUser"
         @editUser="editUser"
         @deleteUser="deleteUser"
       />
     </div>
     <div v-if="editFlag">
-      <AdminUserManagementEditUser
+      <AdminEditUser
         v-model="selectedUser"
         :newUserFlag="newUserFlag"
         @cancel="cancelEdit"
         @submit="saveUser"
-        @updateUserGroups="updateUserGroups"
       />
     </div>
   </NuxtLayout>
@@ -23,7 +34,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const authUser = useCookie("user")
+const authUser = useCookie("user");
 
 const editFlag = ref(false);
 const newUserFlag = ref(false);
@@ -119,10 +130,6 @@ function cancelEdit() {
     editFlag.value = false;
     resetSelectedUser();
   }
-}
-
-function updateUserGroups(groupList: Array<object>){
-  selectedUser.value.groups = groupList;
 }
 
 async function saveUser(user: any) {

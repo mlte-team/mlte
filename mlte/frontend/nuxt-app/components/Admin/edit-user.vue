@@ -195,11 +195,12 @@ function groupChange(selected: boolean, groupName: string){
     tempGroupList.push({name: groupName})
   }
   else{
-    let index = props.modelValue.groups.indexOf({name: groupName});
+    let objForRemoval = tempGroupList.find(x => x.name === groupName)
+    let index = tempGroupList.indexOf(objForRemoval);
     tempGroupList.splice(index, 1);
   }
 
-  emit("updateUserGroups", tempGroupList);  
+  props.modelValue.groups = tempGroupList;
 }
 
 function submit(){

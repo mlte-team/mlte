@@ -43,12 +43,6 @@
       </tr>
     </tbody>
   </table>
-  <UsaButton
-    class="primary-button"
-    @click="$emit('addUser')"
-  >
-    Add User
-  </UsaButton>
 </template>
 
 <script setup lang="ts">

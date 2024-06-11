@@ -33,9 +33,14 @@
             >
               Logout
             </UsaButton>
-            <NuxtLink :to="{ path: 'admin-user-management' }">
+            <NuxtLink :to="{ path: '/admin/user-management' }">
               <UsaButton class="secondary-button" style="margin-left: 0.5em">
                 Manage Users
+              </UsaButton>
+            </NuxtLink>
+            <NuxtLink :to="{ path: '/admin/group-management' }">
+              <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                Manage Groups
               </UsaButton>
             </NuxtLink>
           </div>

@@ -54,7 +54,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'negotiation-card',
+                      path: '/negotiation-card',
                       query: {
                         model: card.model,
                         version: card.version,
@@ -70,7 +70,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'negotiation-card',
+              path: '/negotiation-card',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
@@ -115,7 +115,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'report',
+                      path: '/report',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -128,7 +128,7 @@
                   <NuxtLink
                     target="_blank"
                     :to="{
-                      path: 'export-report',
+                      path: '/export-report',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -144,7 +144,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'report',
+              path: '/report',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
