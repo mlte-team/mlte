@@ -4,5 +4,22 @@
 
 FROM mlte-base
 
+# Set up node.
+RUN apt-get install -y npm
+
+# Remove lock and node_modules that may have come from local install to avoid bug in npm
+WORKDIR /mnt/app/mlte/frontend/nuxt-app
+RUN rm -rf package-lock.json
+RUN rm -rf node_modules
+
+# Install Node dependencies.
+RUN npm install
+RUN npx gulp compile
+RUN npx gulp init
+
+# Create static server.
+RUN npm run build
+
 # Run the mlte frontend server
+WORKDIR /mnt/app
 ENTRYPOINT ["poetry", "run", "mlte", "ui"]

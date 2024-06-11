@@ -145,7 +145,7 @@ $ npx gulp init
 If there are issues with `npm install`, try this instead:
 
 ```bash
-$ npm i --ignore-scripts
+$ npm install --ignore-scripts
 $ npm install
 $ npx gulp compile
 $ npx gulp init
