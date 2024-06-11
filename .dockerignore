@@ -19,7 +19,7 @@ tools
 .gitignore
 .python-version
 .readthedocs.yaml
+build.sh
 LICENSE
 Makefile
 README.md
-pgdata
