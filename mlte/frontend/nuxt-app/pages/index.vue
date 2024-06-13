@@ -391,6 +391,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
     },
     onResponse({ response }) {
       if (response._data) {
+        clearArtifacts();
         selectedModel.value = modelName;
         versionOptions.value = [];
         response._data.forEach((version: string) => {
@@ -468,6 +469,7 @@ function populateArtifacts(
   version: string,
   artifactList: Array<object>,
 ) {
+  clearArtifacts();
   artifactList.forEach((artifact: object) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
