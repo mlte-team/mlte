@@ -5,6 +5,7 @@ Group CRUD endpoint.
 """
 from __future__ import annotations
 
+import traceback as tb
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -37,7 +38,9 @@ def create_group(
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -62,7 +65,9 @@ def edit_group(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -87,7 +92,9 @@ def read_group(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -105,7 +112,9 @@ def list_groups(
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.group_mapper.list()
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -130,7 +139,9 @@ def list_group_details(
                 )
                 detailed_groups.append(group_details)
             return detailed_groups
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
@@ -155,7 +166,29 @@ def delete_user(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+
+@router.get("/groups/permissions")
+def list_permissions(
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    List MLTE permissions.
+    :return: A collection of permissions
+    """
+    with dependencies.user_store_session() as user_store:
+        try:
+            return user_store.permission_mapper.list()
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
