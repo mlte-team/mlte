@@ -50,7 +50,10 @@
   "rules": {
     "vue/multi-word-component-names": [
       "error", {"ignores": ["index"]}
-    ]
+    ],
+    "vue/no-mutating-props": ["error", {
+      "shallowOnly": true
+    }]
   },
   "ignorePatterns": [
     ".nuxt/**",

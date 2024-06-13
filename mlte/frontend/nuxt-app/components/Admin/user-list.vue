@@ -26,10 +26,7 @@
           </div>
         </td>
         <td>
-          <UsaButton
-            class="secondary-button"
-            @click="$emit('editUser', user)"
-          >
+          <UsaButton class="secondary-button" @click="$emit('editUser', user)">
             Edit
           </UsaButton>
 
@@ -46,17 +43,12 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits([
-  "addUser",
-  "editUser",
-  "deleteUser"
-])
-
+const emit = defineEmits(["addUser", "editUser", "deleteUser"]);
 const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: []
-  }
-})
+    default: [],
+  },
+});
 </script>
