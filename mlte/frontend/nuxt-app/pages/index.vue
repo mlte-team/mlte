@@ -115,7 +115,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/report',
+                      path: '/report-form',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -128,7 +128,7 @@
                   <NuxtLink
                     target="_blank"
                     :to="{
-                      path: '/export-report',
+                      path: '/report-export',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -426,8 +426,12 @@ async function selectVersion(versionName: string) {
 
 // Populate artifacts for a given model and version.
 // TODO : Do better typing on the artifactList and artifact
-function populateArtifacts(model: string, version: string, artifactList: any) {
-  artifactList.forEach((artifact: any) => {
+function populateArtifacts(
+  model: string,
+  version: string,
+  artifactList: Array<object>,
+) {
+  artifactList.forEach((artifact: object) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
     ).toLocaleString("en-US");

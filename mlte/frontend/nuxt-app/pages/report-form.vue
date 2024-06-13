@@ -672,7 +672,7 @@ async function submit() {
 }
 
 // Load findings from a validated specication.
-function loadFindings(proxyObject: any) {
+function loadFindings(proxyObject: object) {
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));

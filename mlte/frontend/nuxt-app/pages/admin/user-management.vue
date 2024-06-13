@@ -1,12 +1,9 @@
 <template>
   <NuxtLayout name="base-layout">
     <template #sidebar>
-      <div style="padding-top:80px">
+      <div style="padding-top: 80px">
         <div v-if="!editFlag">
-          <UsaButton
-            class="secondary-button"
-            @click="addUser"
-          >
+          <UsaButton class="secondary-button" @click="addUser">
             Add User
           </UsaButton>
         </div>
@@ -14,7 +11,7 @@
     </template>
 
     <div v-if="!editFlag">
-      <AdminUserList 
+      <AdminUserList
         v-model="userList"
         @editUser="editUser"
         @deleteUser="deleteUser"
@@ -23,7 +20,7 @@
     <div v-if="editFlag">
       <AdminEditUser
         v-model="selectedUser"
-        :newUserFlag="newUserFlag"
+        :new-user-flag="newUserFlag"
         @cancel="cancelEdit"
         @submit="saveUser"
       />
@@ -73,7 +70,7 @@ async function updateUserList() {
   });
 }
 
-function resetSelectedUser(){
+function resetSelectedUser() {
   selectedUser.value = {
     username: "",
     email: "",
@@ -82,57 +79,58 @@ function resetSelectedUser(){
     role: "",
     groups: [],
     password: "",
-  }
+  };
 }
 
-function addUser(){
+function addUser() {
   resetSelectedUser();
   editFlag.value = true;
   newUserFlag.value = true;
 }
 
-function editUser(user: any){
+function editUser(user: object) {
   selectedUser.value = user;
   editFlag.value = true;
   newUserFlag.value = false;
 }
 
-async function deleteUser(usernameToDelete: string){
-  console.log(authUser.value);
-  console.log(usernameToDelete)
-
+async function deleteUser(usernameToDelete: string) {
   if (authUser.value === usernameToDelete) {
     alert("Cannot delete the active user.");
-  } else if (
-    confirm("Are you sure you want to delete user, " + usernameToDelete + "?")
-  ) {
-    await $fetch(config.public.apiPath + "/user/" + usernameToDelete, {
-      retry: 0,
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        updateUserList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
+    return;
   }
+  if (
+    !confirm("Are you sure you want to delete user, " + usernameToDelete + "?")
+  ) {
+    return;
+  }
+
+  await $fetch(config.public.apiPath + "/user/" + usernameToDelete, {
+    retry: 0,
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse() {
+      updateUserList();
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
 }
 
 function cancelEdit() {
-  if (confirm("Are you sure you want to cancel? All changes will be lost.")){
+  if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
     resetSelectedUser();
   }
 }
 
-async function saveUser(user: any) {
+async function saveUser(user: object) {
   if (newUserFlag.value) {
     if (user.username === "" || user.password === "") {
       alert("Username and password are required.");
@@ -157,14 +155,13 @@ async function saveUser(user: any) {
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }) {
+      onResponse() {
         updateUserList();
       },
       onResponseError() {
         responseErrorAlert();
       },
     });
-
   } else {
     await $fetch(config.public.apiPath + "/user", {
       retry: 0,
@@ -184,7 +181,7 @@ async function saveUser(user: any) {
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }) {
+      onResponse() {
         updateUserList();
       },
       onResponseError() {
@@ -197,9 +194,3 @@ async function saveUser(user: any) {
   editFlag.value = false;
 }
 </script>
-
-<style>
-.input-box {
-  max-width: 7rem;
-}
-</style>
