@@ -1,5 +1,32 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template #sidebar>
+      <div style="padding-top:60px">
+        <UsaTextInput
+          v-model="newModelIdentifier"
+        >
+          <template #label>
+            New Model
+          </template>
+        </UsaTextInput>
+        <UsaButton class="secondary-button margin-button" @click="submitNewModel(newModelIdentifier)">
+          Create Model
+        </UsaButton>
+
+        <UsaTextInput
+          v-model="newVersionIdentifier"
+          :disabled="selectedModel === ''"
+        >
+          <template #label>
+            New Version
+          </template>
+        </UsaTextInput>
+        <UsaButton class="secondary-button margin-button" @click="submitNewVersion(selectedModel, newVersionIdentifier)">
+          Create Version
+        </UsaButton>
+      </div>
+    </template>
+
     <UsaBreadcrumb :items="path" />
     <div style="display: flex">
       <div class="split-div">
@@ -7,7 +34,7 @@
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="selectModel($event, false)"
+          @update:modelValue="selectModel($event, true)"
         />
         <br />
       </div>
@@ -144,7 +171,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: '/report',
+              path: '/report-form',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
@@ -199,18 +226,6 @@
         </div>
       </UsaAccordionItem>
 
-      <!-- <UsaAccordionItem label="Results">
-        <div class="scrollable-table-div">
-          <p>
-            Results encode whether or not the values generated during evidence
-            collection pass their corresponding validation threshold. They are
-            produced by feeding values through the relevant condition callbacks
-            provided in the MLTE specification.
-          </p>
-          <UsaTable :headers="resultsHeaders" borderless class="table" />
-        </div>
-      </UsaAccordionItem> -->
-
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
           <p>
@@ -240,26 +255,18 @@ const path = ref([
   },
 ]);
 
+const newModelIdentifier = ref("");
+const newVersionIdentifier = ref("");
+
 const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
-const { data: modelList } = await useFetch<string[]>(
-  config.public.apiPath + "/model",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
-if (modelList.value) {
-  modelList.value.forEach((modelName: string) => {
-    modelOptions.value.push({ value: modelName, text: modelName });
-  });
-}
+const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel");
 selectedModel.value = selectedModel.value || "";
-const selectedVersion = useCookie("selectedVersion");
+const selectedVersion = useCookie("selectedVersion", {
+  decode: false
+});
 selectedVersion.value = selectedVersion.value || "";
 
 const cardSpecReportHeaders = ref([
@@ -309,6 +316,7 @@ const values = ref<
   }[]
 >([]);
 
+await populateModelVersionLists();
 if (modelOptions.value !== null && modelOptions.value.length > 0) {
   const modelList = modelOptions.value.map((model) => {
     return model.value;
@@ -318,7 +326,7 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
     selectedVersion.value = "";
   }
   if (selectedModel.value !== "") {
-    await selectModel(selectedModel.value, true);
+    await selectModel(selectedModel.value, false);
     const versionList = versionOptions.value.map((version) => {
       return version.value;
     });
@@ -331,10 +339,39 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
   }
 }
 
+async function populateModelVersionLists(){
+  await $fetch(
+    config.public.apiPath + "/model/",
+    {
+      retry: 0,
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        modelList.value = response._data;
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
+
+  modelOptions.value = [];
+  if (modelList.value) {
+    modelList.value.forEach((modelName: string) => {
+      modelOptions.value.push({ value: modelName, text: modelName });
+    });
+  }
+}
+
 // Update the selected model for the artifact store.
-async function selectModel(modelName: string, initialPageLoad: boolean) {
+async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   selectedModel.value = modelName;
-  if (!initialPageLoad) {
+  if (resetSelectedVersion) {
     selectedVersion.value = "";
   }
   if (modelName === "") {
@@ -503,6 +540,56 @@ function clearArtifacts() {
   specifications.value = [];
   validatedSpecs.value = [];
   values.value = [];
+}
+
+async function submitNewModel(modelName: string){
+  await $fetch(
+    config.public.apiPath + "/model/",
+    {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: modelName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse() {
+        populateModelVersionLists();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
+}
+
+async function submitNewVersion(modelName: string, versionName: string){
+  await $fetch(
+    config.public.apiPath + "/model/" + modelName + "/version",
+    {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: versionName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse() {
+        selectModel(modelName, false);
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    },
+  );
 }
 </script>
 
