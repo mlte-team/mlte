@@ -20,12 +20,12 @@ from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Failure, Success
+from test.store.artifact.fixture import store_with_context  # noqa
 
-from ...fixture.store import store_with_context  # noqa
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
-SPIN_DURATION = 5
+SPIN_DURATION = 3
 
 
 def spin_for(seconds: int):
@@ -43,7 +43,7 @@ def spin_for(seconds: int):
 def test_cpu_nix_evaluate() -> None:
     start = time.time()
 
-    p = spin_for(5)
+    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
@@ -60,7 +60,7 @@ def test_cpu_nix_evaluate() -> None:
 def test_cpu_nix_evaluate_async() -> None:
     start = time.time()
 
-    p = spin_for(5)
+    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
@@ -76,7 +76,7 @@ def test_cpu_nix_evaluate_async() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_success() -> None:
-    p = spin_for(5)
+    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     stats = m.evaluate(p.pid)
@@ -93,7 +93,7 @@ def test_cpu_nix_validate_success() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_failure() -> None:
-    p = spin_for(5)
+    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     stats = m.evaluate(p.pid)
@@ -107,7 +107,8 @@ def test_cpu_nix_validate_failure() -> None:
 
 
 @pytest.mark.skipif(
-    is_nix(), reason="LocalProcessCPUUtilization not supported on Windows."
+    is_nix(),
+    reason="This test is only to identify lack of support in Windows systems.",
 )
 def test_cpu_windows_evaluate() -> None:
     with pytest.raises(RuntimeError):

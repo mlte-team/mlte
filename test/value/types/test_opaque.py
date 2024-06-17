@@ -15,8 +15,7 @@ from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from mlte.value.types.opaque import Opaque
-
-from ...fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class DummyMeasurementOpaque(Measurement):

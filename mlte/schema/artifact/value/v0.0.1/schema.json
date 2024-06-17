@@ -5,7 +5,12 @@
       "properties": {
         "value_type": {
           "const": "array",
-          "title": "Value Type"
+          "default": "array",
+          "enum": [
+            "array"
+          ],
+          "title": "Value Type",
+          "type": "string"
         },
         "data": {
           "items": {},
@@ -14,7 +19,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "ArrayValueModel",
@@ -69,7 +73,12 @@
       "properties": {
         "value_type": {
           "const": "image",
-          "title": "Value Type"
+          "default": "image",
+          "enum": [
+            "image"
+          ],
+          "title": "Value Type",
+          "type": "string"
         },
         "data": {
           "title": "Data",
@@ -77,7 +86,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "ImageValueModel",
@@ -88,7 +96,12 @@
       "properties": {
         "value_type": {
           "const": "integer",
-          "title": "Value Type"
+          "default": "integer",
+          "enum": [
+            "integer"
+          ],
+          "title": "Value Type",
+          "type": "string"
         },
         "integer": {
           "title": "Integer",
@@ -96,7 +109,6 @@
         }
       },
       "required": [
-        "value_type",
         "integer"
       ],
       "title": "IntegerValueModel",
@@ -107,7 +119,12 @@
       "properties": {
         "value_type": {
           "const": "opaque",
-          "title": "Value Type"
+          "default": "opaque",
+          "enum": [
+            "opaque"
+          ],
+          "title": "Value Type",
+          "type": "string"
         },
         "data": {
           "title": "Data",
@@ -115,7 +132,6 @@
         }
       },
       "required": [
-        "value_type",
         "data"
       ],
       "title": "OpaqueValueModel",
@@ -126,7 +142,12 @@
       "properties": {
         "value_type": {
           "const": "real",
-          "title": "Value Type"
+          "default": "real",
+          "enum": [
+            "real"
+          ],
+          "title": "Value Type",
+          "type": "string"
         },
         "real": {
           "title": "Real",
@@ -134,7 +155,6 @@
         }
       },
       "required": [
-        "value_type",
         "real"
       ],
       "title": "RealValueModel",
@@ -145,7 +165,12 @@
   "properties": {
     "artifact_type": {
       "const": "value",
-      "title": "Artifact Type"
+      "default": "value",
+      "enum": [
+        "value"
+      ],
+      "title": "Artifact Type",
+      "type": "string"
     },
     "metadata": {
       "$ref": "#/$defs/EvidenceMetadata"
@@ -186,7 +211,6 @@
     }
   },
   "required": [
-    "artifact_type",
     "metadata",
     "value_class",
     "value"

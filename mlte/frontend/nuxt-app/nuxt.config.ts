@@ -1,3 +1,5 @@
+import pkg from "./package.json";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   typescript: {
@@ -8,6 +10,12 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       "/api/**": { proxy: "http://localhost:8080/api/**" },
+    },
+  },
+  runtimeConfig: {
+    public: {
+      apiPath: "http://localhost:8080/api",
+      version: pkg.version,
     },
   },
 });

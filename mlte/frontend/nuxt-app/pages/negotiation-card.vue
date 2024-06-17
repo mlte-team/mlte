@@ -44,17 +44,18 @@
 
     <h1 class="section-header">How to use the Negotiation Card</h1>
     <p>
-      Teams should work through as many of the following items as they can at
-      the IMT negotiation point, using the answers to inform initial model
-      development. At the SDMT negotiation point, answers should be
-      modified/updated according to the results of IMT. As the Specification is
-      created, teams should refer to this negotiation card to ensure they
-      capture all relevant critical aspects of the model and system.
+      Teams should work through as many of the following items before starting
+      model development. The Negotiation Card can and should be revisited at any
+      negotiation point. Teams should refer to this Negotiation Card during
+      development to ensure they capture all relevant critical aspects of the
+      model and system. Hover over the black information icons next to each
+      field to get more information about that field. Click on the Example
+      button to see specific examples for a section.
     </p>
 
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
-      v-model="userInputArifactId"
+      v-model="userInputArtifactId"
     >
       <template #label>
         Artifact ID
@@ -64,30 +65,53 @@
         </InfoIcon>
       </template>
     </UsaTextInput>
+    <div v-else>
+      <h3>Last Modified by:</h3>
+      {{ form.creator }} - {{ form.timestamp }}
+    </div>
 
-    <h2 class="section-header">System Requirements</h2>
+    <h2 class="section-header">System Information</h2>
     <div class="input-group">
-      <h3>Goals</h3>
-      <p>Goals or objectives that the model is going to help satisfy.</p>
+      <SubHeader :render-example="false">
+        Goals
+        <template #info>
+          Goals or objectives that the model is going to help satisfy as part of
+          the system.
+        </template>
+      </SubHeader>
       <div v-for="(goal, goalIndex) in form.system.goals" :key="goalIndex">
-        <h3>Goal {{ goalIndex + 1 }}</h3>
-
+        <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
         <UsaTextInput v-model="goal.description">
-          <template #label> Goal Description </template>
+          <template #label>
+            Goal Description
+            <InfoIcon>
+              Short description for the goal.
+              <br />
+              <br />
+              <i
+                >Example: Identify voice recordings that belong to a given
+                person of interest.</i
+              >
+            </InfoIcon>
+          </template>
         </UsaTextInput>
 
-        <h3 class="no-margin-section-header">Metrics</h3>
+        <SubHeader :render-example="false" :render-info="false">
+          Metrics
+        </SubHeader>
         <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
               <template #label>
                 Description
                 <InfoIcon>
-                  For each goal, select a performance metric that captures the
-                  system's <br />
-                  ability to accomplish that goal; e.g., acceptance criteria for
-                  determining <br />
-                  that the model is performing correctly.
+                  Performance metric that captures the system's ability to
+                  accomplish the goal,<br />
+                  i.e., acceptance criteria for determining that the model is
+                  performing correctly.
+                  <br />
+                  <br />
+                  <i>Example: Accuracy > 90%</i>
                 </InfoIcon>
               </template>
             </UsaTextInput>
@@ -96,16 +120,18 @@
           <div class="inline-input-right">
             <UsaTextInput v-model="metric.baseline">
               <template #label>
-                Baseline
+                Baseline Source
                 <InfoIcon>
-                  Select a baseline for each performance metric, which means a
-                  measurement that <br />
-                  evaluates whether or not the model will/can achieve the main
-                  goal for which it is being created. <br />
-                  If the goal cannot be measured directly, select a reasonable
-                  proxy and justify how that will <br />
-                  reliably predict the model’s performance in achieving its
-                  goal.
+                  Indicates where the performance metric goal comes from, or why
+                  it is <br />
+                  believed to be achievable.
+                  <br />
+                  <br />
+                  <i
+                    >Example: Human accuracy for matching voices is ~60% as
+                    stated in the paper<br />
+                    by Smith et al.</i
+                  ><br />
                 </InfoIcon>
               </template>
             </UsaTextInput>
@@ -120,12 +146,12 @@
           Add Metric
         </AddButton>
         <DeleteButton @click="deleteGoal(goalIndex)">
-          Delete goal
+          Delete Goal
         </DeleteButton>
         <hr />
       </div>
 
-      <AddButton class="margin-button" @click="addGoal()"> Add goal </AddButton>
+      <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
     </div>
 
     <UsaSelect v-model="form.system.problem_type" :options="problemTypeOptions">
@@ -133,6 +159,12 @@
         ML Problem Type
         <InfoIcon>
           Type of ML problem that the model is intended to solve.
+          <br />
+          <br />
+          <i
+            >Example: Classification, Clustering, Detection, and others in
+            drop-down list.</i
+          >
         </InfoIcon>
       </template>
     </UsaSelect>
@@ -143,6 +175,9 @@
         <InfoIcon>
           Well-defined task that model is expected to perform, or problem that
           the model is expected to solve.
+          <br />
+          <br />
+          <i>Example: Match voice recordings spoken by the same person.</i>
         </InfoIcon>
       </template>
     </UsaTextInput>
@@ -154,71 +189,192 @@
           Who is intended to utilize the system/model; how the results of the
           model are <br />
           going to be used by end users or in the context of a larger system.
+          <br />
+          <br />
+          <i
+            >Example: Model results are consumed by a system component that
+            shows
+            <br />
+            an intel analyst a list of matching voice recordings.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.risks.fp">
-      <template #label> False Positive Risk </template>
+      <template #label>
+        False Positive Risk
+        <InfoIcon>
+          What is the risk of producing a false positive?
+          <br />
+          <br />
+          <i
+            >Example: Incorrect positive results will cause extra work for the
+            <br />
+            intel analyst that needs to analyze every recording flagged by the
+            model.</i
+          >
+        </InfoIcon>
+      </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.risks.fn">
-      <template #label> False Negative Risk </template>
+      <template #label>
+        False Negative Risk
+        <InfoIcon>
+          What is the risk of producing a false negative?
+          <br />
+          <br />
+          <i
+            >Example: Incorrect negative results means that the model will
+            <br />
+            not flag suspicious recordings, which means that intel analysts
+            <br />
+            might miss information that is crucial to an investigation.</i
+          >
+        </InfoIcon>
+      </template>
     </UsaTextInput>
 
     <UsaTextInput v-model="form.system.risks.other">
-      <template #label> Other risks of producing incorrect results </template>
+      <template #label>
+        Other Risks of Producing Incorrect Results
+        <InfoIcon>
+          What are other risks of producing incorrect results?
+        </InfoIcon>
+      </template>
     </UsaTextInput>
 
     <h2 class="section-header">Data</h2>
-    <p>
-      Details of the data that will influence development efforts; fill out all
-      that are known. For access / availability, record what needs to happen to
-      access the data, such as accounts that need to be created or methods for
-      data transportation.
-    </p>
     <div class="input-group">
-      <div v-for="(data_item, dataItemIndex) in form.data" :key="dataItemIndex">
-        <h3>Data Item {{ dataItemIndex + 1 }}</h3>
-        <UsaTextInput v-model="data_item.access">
-          <template #label> Account Access / Account Availability </template>
-        </UsaTextInput>
-
+      <SubHeader :render-example="false">
+        Data
+        <template #info>
+          Details of the data that will influence model development efforts.
+        </template>
+      </SubHeader>
+      <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
+        <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
         <div>
-          <div class="inline-input-left">
-            <UsaTextInput v-model="data_item.description">
-              <template #label> Data Description </template>
-            </UsaTextInput>
-          </div>
+          <UsaTextInput v-model="dataItem.description">
+            <template #label>
+              Dataset Description
+              <InfoIcon>
+                Short description of the data set that will be used for model
+                development.
+                <br />
+                <br />
+                <i
+                  >Example: Voice recordings from phone calls made to numbers in
+                  the 412 area code.</i
+                >
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
 
-          <div class="inline-input-right">
-            <UsaTextInput v-model="data_item.source">
-              <template #label> Source Data Location </template>
-            </UsaTextInput>
-          </div>
+          <UsaTextInput v-model="dataItem.source">
+            <template #label>
+              Source
+              <InfoIcon>
+                Where is the data coming from, e.g., Enterprise Data, Public
+                Data Source, <br />
+                Synthetic Data?
+                <br />
+                <br />
+                <i
+                  >Example: Company log data collected between 2023/01/01 and
+                  2023/12/31.</i
+                >
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
         </div>
 
         <UsaSelect
-          v-model="data_item.classification"
+          v-model="dataItem.classification"
           :options="classificationOptions"
         >
-          <template #label> Data Classification </template>
+          <template #label>
+            Data Classification
+            <InfoIcon>
+              What is the classification of the data?
+              <br />
+              <br />
+              <i>Example: Classified, Unclassified, PHI, etc.</i>
+            </InfoIcon>
+          </template>
         </UsaSelect>
 
+        <UsaTextInput v-model="dataItem.access">
+          <template #label>
+            Requirements and Constraints for Data Access
+            <InfoIcon>
+              How will the data be accessed? What accounts are needed?
+              <br />
+              <br />
+              <i
+                >Example: Data is stored on the "blue" server that requires an
+                account on the "solid" network.</i
+              >
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
         <div class="input-group" style="margin-top: 1em">
-          <div
-            v-for="(label, labelIndex) in data_item.labels"
-            :key="labelIndex"
-          >
+          <SubHeader>
+            Labels and Distribution
+            <template #example>
+              <UsaTable
+                :headers="labelModalHeaders"
+                :rows="labelModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+            <template #info>
+              If data is labeled, include information about labels and their
+              distribution in the dataset.
+            </template>
+          </SubHeader>
+          <UsaTextInput v-model="dataItem.labeling_method">
+            <template #label>
+              Labeling Method
+              <InfoIcon>
+                How data was labeled, e.g., hand labeled by expert, <br />
+                labeled by automated process.
+                <br />
+                <br />
+                <i>Example: Hand labeled by single domain expert.</i>
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
+          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
+            <div class="inline-input-left">
+              <UsaTextInput v-model="label.name">
+                <template #label>
+                  Label Name
+                  <InfoIcon> Label in data set. </InfoIcon>
+                </template>
+              </UsaTextInput>
+            </div>
+
             <div class="inline-input-left">
               <UsaTextInput v-model="label.description">
-                <template #label> Label Description </template>
+                <template #label>
+                  Label Description
+                  <InfoIcon> Short description of label. </InfoIcon>
+                </template>
               </UsaTextInput>
             </div>
 
             <div class="inline-input-right">
               <UsaTextInput v-model="label.percentage" type="number">
-                <template #label> Percentage </template>
+                <template #label>
+                  Percentage
+                  <InfoIcon>
+                    Percentage of data elements with that label.
+                  </InfoIcon>
+                </template>
               </UsaTextInput>
             </div>
             <div class="inline-button">
@@ -229,116 +385,173 @@
           </div>
 
           <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
-            Add additional label
+            Add Additional Label
           </AddButton>
         </div>
 
         <div class="input-group" style="margin-top: 1em">
-          <div
-            v-for="(schema, schema_index) in data_item.schema"
-            :key="schema_index"
-          >
-            <h3 class="no-margin-section-header">
-              Data Schema {{ dataItemIndex + 1 }} - {{ schema_index + 1 }}
+          <SubHeader>
+            Data Schema
+            <template #example>
+              <UsaTable
+                :headers="dataModalHeaders"
+                :rows="dataModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+            <template #info>
+              Include relevant information that is known about the data; fill
+              out all sections below for each data field.
+            </template>
+          </SubHeader>
+          <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
+            <h3 class="no-margin-sub-header">
+              Data Schema {{ dataItemIndex + 1 }} - {{ fieldIndex + 1 }}
             </h3>
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="schema.name">
-                  <template #label> Field Name </template>
+                <UsaTextInput v-model="field.name">
+                  <template #label>
+                    Field Name
+                    <InfoIcon> Field name. </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="schema.description">
-                  <template #label> Field Description </template>
+                <UsaTextInput v-model="field.description">
+                  <template #label>
+                    Field Description
+                    <InfoIcon> Short field description. </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
             </div>
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="schema.type">
-                  <template #label> Field Type </template>
+                <UsaTextInput v-model="field.type">
+                  <template #label>
+                    Field Type
+                    <InfoIcon>
+                      Field type, e.g., number, string, Boolean, data, image,
+                      audio.
+                    </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="schema.expected_values">
-                  <template #label> Expected Values </template>
+                <UsaTextInput v-model="field.expected_values">
+                  <template #label>
+                    Expected Values
+                    <InfoIcon>
+                      Expected values for field, e.g., any, range, enumeration.
+                    </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
             </div>
 
             <div>
               <div class="inline-input-left">
-                <UsaTextInput v-model="schema.missing_values">
-                  <template #label> Missing Values </template>
+                <UsaTextInput v-model="field.missing_values">
+                  <template #label>
+                    Handling Missing Values
+                    <InfoIcon>
+                      How to interpret missing values, e.g., null, empty string.
+                    </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
 
               <div class="inline-input-right">
-                <UsaTextInput v-model="schema.special_values">
-                  <template #label> Special Values </template>
+                <UsaTextInput v-model="field.special_values">
+                  <template #label>
+                    Handling Special Values
+                    <InfoIcon>
+                      How to interpret special values, e.g., 999, N/A.
+                    </InfoIcon>
+                  </template>
                 </UsaTextInput>
               </div>
             </div>
             <DeleteButton
               class="margin-button"
-              @click="deleteSchema(dataItemIndex, schema_index)"
+              @click="deleteField(dataItemIndex, fieldIndex)"
             >
-              Delete schema
+              Delete Field
             </DeleteButton>
             <hr />
           </div>
 
-          <AddButton class="margin-button" @click="addSchema(dataItemIndex)">
-            Add additional schema
+          <AddButton class="margin-button" @click="addField(dataItemIndex)">
+            Add Additional Field
           </AddButton>
         </div>
 
-        <UsaTextInput v-model="data_item.rights">
+        <UsaTextInput v-model="dataItem.rights">
           <template #label>
             Data Rights
             <InfoIcon>
-              Are there particular ways in which the data can and cannot be
-              used?
+              Are there particular ways in which the data can or cannot be used?
+              <br />
+              <br />
+              <i
+                >Example: Given that data is classified it should be treated as
+                <br />
+                such, e.g., not uploaded to any public servers or stored on
+                <br />
+                any non-authorized equipment.</i
+              >
             </InfoIcon>
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="data_item.policies">
+        <UsaTextInput v-model="dataItem.policies">
           <template #label>
             Data Policies
             <InfoIcon>
               Are there policies that govern the data and its use, such as
+              <br />
               Personally Identifiable Information [PII]?
+              <br />
+              <br />
+              <i
+                >Example: Although the audio recordings are not associated to a
+                <br />
+                person, post-analysis may associate them to a person and <br />
+                therefore become PII.</i
+              >
             </InfoIcon>
           </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="data_item.identifiable_information">
-          <template #label> Identifiable Information </template>
         </UsaTextInput>
 
         <DeleteButton
           class="margin-button"
           @click="deleteDataItem(dataItemIndex)"
         >
-          Delete data item
+          Delete Dataset
         </DeleteButton>
         <hr />
       </div>
       <AddButton class="margin-button" @click="addDataItem()">
-        Add data item
+        Add Dataset
       </AddButton>
     </div>
 
-    <h2 class="section-header">Model</h2>
+    <h2 class="section-header">Model Information</h2>
     <div class="input-group">
-      <h3>Development Compute Resources</h3>
-      <p>
-        Describe the amount and type of compute resources needed for training.
-      </p>
+      <SubHeader>
+        Development Compute Resources
+        <template #example>
+          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
+        </template>
+        <template #info>
+          Describe the amount and type of compute resources needed for training.
+        </template>
+      </SubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput v-model="form.model.development.resources.gpu">
@@ -368,43 +581,160 @@
       </div>
     </div>
 
-    <UsaTextarea v-model="form.model.production.integration">
+    <UsaTextarea v-model="form.model.production.deployment_platform">
       <template #label>
-        Integration
+        Deployment Platform
         <InfoIcon>
-          Describe how the model will be integrated into the system; this likely
+          Describe the deployment platform for the model, e.g., local server,
           <br />
-          includes descriptions of model deployment, application hosting, etc.
+          cloud server, embedded platform.
+          <br />
+          <br />
+          <i>Example: Local server due to data classification issues.</i>
         </InfoIcon>
       </template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="form.model.production.interface.input.description">
+    <UsaTextarea
+      v-model="form.model.production.capability_deployment_mechanism"
+    >
       <template #label>
-        Input
+        Capability Deployment Mechanism
         <InfoIcon>
-          Describe the input data type and format needed for the model to
-          conduct inference.
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
-
-    <UsaTextarea v-model="form.model.production.interface.output.description">
-      <template #label>
-        Output
-        <InfoIcon>
-          Describe the output format and specification needed for the system to
-          ingest model results.
+          Describe how the model capabilities will be made available, <br />
+          e.g., API, user facing, data feed.
+          <br />
+          <br />
+          <i
+            >Example: The model will expose an API so that it can be called
+            <br />
+            from the intel analyst UI.</i
+          >
         </InfoIcon>
       </template>
     </UsaTextarea>
 
     <div class="input-group" style="margin-top: 1em">
-      <h3>Production Compute Resources</h3>
-      <p>
-        Describe the hardware and software requirements including amount of
-        compute resources needed for inference.
-      </p>
+      <SubHeader>
+        Input Specification
+        <template #example>
+          <UsaTable
+            :headers="inputModalHeaders"
+            :rows="inputModalRows"
+            borderless
+            class="table"
+          />
+        </template>
+        <template #info>
+          Describe the input data type and format needed for model to conduct
+          inference.
+        </template>
+      </SubHeader>
+      <UsaTextInput v-model="form.model.production.interface.input.name">
+        <template #label>
+          Input Name
+          <InfoIcon>
+            Input name.
+            <br />
+            <br />
+            <i>Example: Audio Recording.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
+
+      <UsaTextarea v-model="form.model.production.interface.input.description">
+        <template #label>
+          Input Description
+          <InfoIcon>
+            Short input description.
+            <br />
+            <br />
+            <i>Example: Audio recording file for matching.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextarea>
+
+      <UsaTextInput v-model="form.model.production.interface.input.type">
+        <template #label>
+          Input Type
+          <InfoIcon>
+            Field type, e.g., number, string, Boolean, data, image, audio.
+            <br />
+            <br />
+            <i>Example: Audio.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
+    </div>
+
+    <div class="input-group" style="margin-top: 1em">
+      <SubHeader>
+        Output Specification
+        <template #example>
+          <UsaTable
+            :headers="outputModalHeaders"
+            :rows="outputModalRows"
+            borderless
+            class="table"
+          />
+        </template>
+        <template #info>
+          Describe the output format and specification needed for the system to
+          ingest model results.
+        </template>
+      </SubHeader>
+      <UsaTextInput v-model="form.model.production.interface.output.name">
+        <template #label>
+          Output Name
+          <InfoIcon>
+            Output name.
+            <br />
+            <br />
+            <i>Example: Matching recordings.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
+
+      <UsaTextarea v-model="form.model.production.interface.output.description">
+        <template #label>
+          Output Description
+          <InfoIcon>
+            Short output description.
+            <br />
+            <br />
+            <i>Example: Set of matching recordings from the database.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextarea>
+
+      <UsaTextInput v-model="form.model.production.interface.output.type">
+        <template #label>
+          Output Type
+          <InfoIcon>
+            Field type, e.g., number, string, Boolean, data, image, audio.
+            <br />
+            <br />
+            <i
+              >Example: Vector of Strings with IDs of matching recordings — an
+              empty <br />
+              vector means that there were no matches.</i
+            >
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
+    </div>
+
+    <div class="input-group" style="margin-top: 1em">
+      <SubHeader>
+        Production Compute Resources
+        <template #example>
+          Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
+        </template>
+        <template #info>
+          Describe the amount and type of compute resources needed for
+          inference.
+        </template>
+      </SubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput v-model="form.model.production.resources.gpu">
@@ -434,16 +764,154 @@
       </div>
     </div>
 
-    <div style="text-align: right; margin-top: 1em">
-      <UsaButton class="secondary-button" @click="cancel()"> Cancel </UsaButton>
+    <h2 class="section-header">System Requirements</h2>
+    <p>
+      System-dependent requirements and constraints placed on the model under
+      development. The fields below correspond to parts of a quality attribute
+      scenario, which is a construct used to clearly define system requirements.
+      As parts of the scenario are filled in, the corresponding text for the
+      scenario will be generated for your validation.
+    </p>
+
+    <div class="input-group">
+      <SubHeader :render-info="false">
+        Requirements
+        <template #example>
+          <UsaTable
+            :headers="systemModalHeaders"
+            :rows="systemModalRows"
+            borderless
+            class="table"
+          />
+        </template>
+      </SubHeader>
+      <div
+        v-for="(requirement, requirementIndex) in form.system_requirements"
+        :key="requirementIndex"
+      >
+        <h3 class="no-margin-sub-header">
+          Requirement {{ requirementIndex + 1 }}
+        </h3>
+        <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
+          <b>Scenario for {{ requirement.quality }}: </b>
+          >{{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.environment }}. {{ requirement.response }}
+          {{ requirement.measure }}.
+        </p>
+        <UsaTextInput v-model="requirement.quality">
+          <template #label>
+            System Quality
+            <InfoIcon>
+              System property by which the model will be evaluated <br />
+              (e.g., Accuracy, Performance, Robustness, Fairness, Resource
+              Consumption).
+              <br />
+              <br />
+              <i>Example: Response time.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="requirement.stimulus">
+          <template #label>
+            Stimulus
+            <InfoIcon>
+              A condition arriving at the system/model (e.g., data,
+              <br />
+              event, user operation, attack, request for modification,
+              <br />
+              completion of a unit of development).
+              <br />
+              <br />
+              <i>Example: Model receives an audio recording.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="requirement.source">
+          <template #label>
+            Source of Stimulus
+            <InfoIcon>
+              Where the stimulus comes from (e.g., data source, <br />
+              internal/external user, internal/external computer system,
+              <br />
+              sensor).
+              <br />
+              <br />
+              <i>Example: Intel analyst application.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="requirement.environment">
+          <template #label>
+            Environment
+            <InfoIcon>
+              Set of circumstances in which the scenario takes place <br />
+              (e.g., normal operations, overload condition, startup, development
+              time).
+              <br />
+              <br />
+              <i>Example: Normal operations.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="requirement.response">
+          <template #label>
+            Response
+            <InfoIcon>
+              Activity that occurs as the result of the arrival of the
+              <br />
+              stimulus (e.g., inference, process event, deny access, <br />
+              implement modification, test).
+              <br />
+              <br />
+              <i>Example: Inference time.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+
+        <UsaTextInput v-model="requirement.measure">
+          <template #label>
+            Response Measure
+            <InfoIcon>
+              Measures used to determine that the responses enumerated for
+              <br />
+              the scenario have been achieved (e.g., statistical property,
+              <br />
+              latency, throughput, execution time, effort).
+              <br />
+              <br />
+              <i>Example: At most 5 seconds.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+        <DeleteButton
+          class="margin-button"
+          @click="deleteRequirement(requirementIndex)"
+        >
+          Delete Requirement
+        </DeleteButton>
+        <hr />
+      </div>
+      <AddButton class="margin-button" @click="addRequirement()">
+        Add Requirement
+      </AddButton>
+    </div>
+
+    <div class="submit-footer">
+      <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
+        Cancel
+      </UsaButton>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-import { isValidNegotiation } from "../composables/artifact-validation.ts";
-
+const config = useRuntimeConfig();
+const token = useCookie("token");
 const path = ref([
   {
     href: "/",
@@ -455,9 +923,180 @@ const path = ref([
   },
 ]);
 
-const userInputArifactId = ref("");
+const userInputArtifactId = ref("");
+const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
+
+const labelModalHeaders = ref([
+  { id: "labelName", label: "Label Name", sortable: false },
+  { id: "labelDescription", label: "Label Description", sortable: false },
+  { id: "percentage", label: "Percentage", sortable: false },
+]);
+const labelModalRows = ref([
+  {
+    id: "rock",
+    labelName: "Rock",
+    labelDescription: "Includes all rock genres",
+    percentage: 24,
+  },
+  {
+    id: "classical",
+    labelName: "Classical",
+    labelDescription: "Includes traditional and crossover",
+    percentage: 7,
+  },
+  {
+    id: "pop",
+    labelName: "Pop",
+    labelDescription: "Pop genre",
+    percentage: 28,
+  },
+  {
+    id: "jazz",
+    labelName: "Jazz",
+    labelDescription: "Includes classical, latin, and other forms of jazz",
+    percentage: 16,
+  },
+  {
+    id: "rap",
+    labelName: "Rap",
+    labelDescription: "Rap genre (not R&B)",
+    percentage: 9,
+  },
+  {
+    id: "dance",
+    labelName: "Dance",
+    labelDescription: "Includes all dance variants (e.g., house, techno)",
+    percentage: 10,
+  },
+  {
+    id: "other",
+    labelName: "Other",
+    labelDescription: "Any genre not covered by the above labels",
+    percentage: 6,
+  },
+]);
+
+const dataModalHeaders = ref([
+  { id: "fieldName", label: "Field Name", sortable: false },
+  { id: "fieldDescription", label: "Field Description", sortable: false },
+  { id: "fieldType", label: "Field Type", sortable: false },
+  { id: "expectedValues", label: "Expected Values", sortable: false },
+  { id: "missingValues", label: "Handling Missing Values", sortable: false },
+  { id: "specialValues", label: "Handling Special Values", sortable: false },
+]);
+const dataModalRows = ref([
+  {
+    id: "idRecording",
+    fieldName: "ID Recording",
+    fieldDescription: "Unique ID for audio recording",
+    fieldType: "String",
+    expectedValues: "Alphanumeric string",
+    missingValues: "If ID is missing it should be discarded",
+    specialValues: "No special values",
+  },
+  {
+    id: "audioRecording",
+    fieldName: "Audio Recording",
+    fieldDescription: "Audio recording file",
+    fieldType: "Audio",
+    expectedValues: "Non-empty audio file",
+    missingValues: "If audio file is missing it should be discarded",
+    specialValues: "No special values",
+  },
+  {
+    id: "dateRecording",
+    fieldName: "Date Recording",
+    fieldDescription: "Date audio was recorded",
+    fieldType: "Date",
+    expectedValues: "Between 2023/01/01 and 2023/12/31",
+    missingValues:
+      "If date is null or empty attempt to find date. If not possible then change to 00/00/0000 to simply use as a data point",
+    specialValues:
+      "00/00/0000 would indicate that the file did not have an associated date",
+  },
+]);
+
+const inputModalHeaders = ref([
+  { id: "inputName", label: "Input Name", sortable: false },
+  { id: "inputDescription", label: "Input Description", sortable: false },
+  { id: "inputType", label: "Input Type", sortable: false },
+]);
+const inputModalRows = ref([
+  {
+    id: "audio",
+    inputName: "Audio Recording",
+    inputDescription: "Audio recording file for matching",
+    inputType: "Audio",
+  },
+]);
+
+const outputModalHeaders = ref([
+  { id: "outputName", label: "Output Name", sortable: false },
+  { id: "outputDescription", label: "Output Description", sortable: false },
+  { id: "outputType", label: "Output Type", sortable: false },
+]);
+const outputModalRows = ref([
+  {
+    id: "recording",
+    outputName: "Matching Recordings",
+    outputDescription: "Set of matching recordings from the database",
+    outputType:
+      "Vector of Strings with IDs of matching recordings — an empty vector means that there were no matches",
+  },
+]);
+
+const systemModalHeaders = ref([
+  { id: "systemQuality", label: "System Quality", sortable: false },
+  { id: "stimulus", label: "Stimulus", sortable: false },
+  { id: "source", label: "Source of Stimulus", sortable: false },
+  { id: "environment", label: "Environment", sortable: false },
+  { id: "response", label: "Response", sortable: false },
+  { id: "measure", label: "Response Measure", sortable: false },
+]);
+const systemModalRows = ref([
+  {
+    id: "responseTime",
+    systemQuality: "Response Time",
+    stimulus: "Model receives an audio recording",
+    source: "Intel analyst application",
+    environment: "Normal operations",
+    response: "Inference time",
+    measure: "At most 5 seconds",
+  },
+  {
+    id: "fairness",
+    systemQuality: "Fairness - Model Impartial to Photo Location",
+    stimulus: "Model receives a picture taken at the garden",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response: "Correct identification of flowers regardless of garden location",
+    measure: "At least 90% of the time",
+  },
+  {
+    id: "robustness",
+    systemQuality: "Robustness - Model Robust to Noise (Image Blur)",
+    stimulus:
+      "Model receives a picture taken at the garden and it is a bit blurry",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response: "Correct identification of flowers",
+    measure: "Same rate as non-blurry images",
+  },
+  {
+    id: "performance",
+    systemQuality: "Performance on Operational Platform",
+    stimulus: "Model receives a picture taken at a garden",
+    source: "Flower identification application",
+    environment: "Normal operations",
+    response:
+      "Model will need to run on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
+    measure: "No errors due to unavailable resources",
+  },
+]);
 
 const form = ref({
+  creator: "",
+  timestamp: "",
   system: {
     goals: [
       {
@@ -481,17 +1120,19 @@ const form = ref({
   },
   data: [
     {
-      access: "",
       description: "",
       source: "",
       classification: "unclassified",
+      access: "",
+      labeling_method: "",
       labels: [
         {
+          name: "",
           description: "",
           percentage: 0,
         },
       ],
-      schema: [
+      fields: [
         {
           name: "",
           description: "",
@@ -503,7 +1144,6 @@ const form = ref({
       ],
       rights: "",
       policies: "",
-      identifiable_information: "",
     },
   ],
   model: {
@@ -516,13 +1156,18 @@ const form = ref({
       },
     },
     production: {
-      integration: "",
+      deployment_platform: "",
+      capability_deployment_mechanism: "",
       interface: {
         input: {
+          name: "",
           description: "",
+          type: "",
         },
         output: {
+          name: "",
           description: "",
+          type: "",
         },
       },
       resources: {
@@ -533,28 +1178,40 @@ const form = ref({
       },
     },
   },
+  system_requirements: [
+    {
+      quality: "<System Quality>",
+      stimulus: "<Stimulus>",
+      source: "<Source>",
+      environment: "<Environment>",
+      response: "<Response>",
+      measure: "<Response Measure>",
+    },
+  ],
 });
 
+// TODO: Pull these from the schema
 const problemTypeOptions = [
   { value: "classification", text: "Classification" },
   { value: "clustering", text: "Clustering" },
-  { value: "content_generation", text: "Content Generation" },
   { value: "detection", text: "Detection" },
   { value: "trend", text: "Trend" },
   { value: "alert", text: "Alert" },
   { value: "forecasting", text: "Forecasting" },
-  // { value: "Summarization", text: "Summarization" },
+  { value: "content_generation", text: "Content Generation" },
   { value: "benchmarking", text: "Benchmarking" },
   { value: "goals", text: "Goals" },
   { value: "other", text: "Other" },
 ];
 
+// TODO: Pull these from the schema
 const classificationOptions = [
   { value: "unclassified", text: "Unclassified" },
   {
     value: "cui",
     text: "Controlled Unclassified Information (CUI)",
   },
+  { value: "classified", text: "Classified" },
   {
     value: "pii",
     text: "Personally Identifiable Information (PII)",
@@ -567,14 +1224,12 @@ const classificationOptions = [
 ];
 
 if (useRoute().query.artifactId !== undefined) {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
   await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      namespace +
+    config.public.apiPath +
       "/model/" +
       model +
       "/version/" +
@@ -584,14 +1239,23 @@ if (useRoute().query.artifactId !== undefined) {
     {
       retry: 0,
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
       onRequestError() {
         requestErrorAlert();
       },
       onResponse({ response }) {
         if (isValidNegotiation(response._data)) {
+          form.value.creator = response._data.header.creator;
+          form.value.timestamp = new Date(
+            response._data.header.timestamp * 1000,
+          ).toLocaleString("en-US");
           form.value.system = response._data.body.system;
           form.value.data = response._data.body.data;
           form.value.model = response._data.body.model;
+          form.value.system_requirements =
+            response._data.body.system_requirements;
 
           const problemType = response._data.body.system.problem_type;
           if (
@@ -624,13 +1288,12 @@ if (useRoute().query.artifactId !== undefined) {
 }
 
 async function submit() {
-  const namespace = useRoute().query.namespace;
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
   let identifier = "";
   if (useRoute().query.artifactId === undefined) {
-    identifier = userInputArifactId.value;
+    identifier = userInputArtifactId.value;
   } else {
     identifier = useRoute().query.artifactId?.toString();
   }
@@ -640,48 +1303,58 @@ async function submit() {
     header: {
       identifier,
       type: "negotiation_card",
-      timestamp: Date.now(),
+      timestamp: -1,
+      creator: "",
     },
     body: {
       artifact_type: "negotiation_card",
       system: form.value.system,
       data: form.value.data,
       model: form.value.model,
+      system_requirements: form.value.system_requirements,
     },
   };
 
   if (isValidNegotiation(artifact)) {
-    await useFetch(
-      "http://localhost:8080/api/namespace/" +
-        namespace +
-        "/model/" +
-        model +
-        "/version/" +
-        version +
-        "/artifact",
-      {
-        retry: 0,
-        method: "POST",
-        body: {
-          artifact,
-          // TODO Find out what these values should be
-          force: false,
-          parents: false,
+    try {
+      await $fetch(
+        config.public.apiPath +
+          "/model/" +
+          model +
+          "/version/" +
+          version +
+          "/artifact",
+        {
+          retry: 0,
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token.value,
+          },
+          body: {
+            artifact,
+            force: forceSaveParam.value,
+            parents: false,
+          },
+          onRequestError() {
+            requestErrorAlert();
+          },
+          onResponseError({ response }) {
+            if (response.status === 409) {
+              conflictErrorAlert();
+            } else {
+              responseErrorAlert();
+            }
+          },
         },
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          // TODO : If anything needs to happen after the artifact is successfully saved, do it here
-          // For example, redirect back to the homepage.
-          // Can check any data that is contained within response,
-          console.log(response);
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
+      );
+      successfulSubmission("negotiation card", identifier);
+      forceSaveParam.value = true;
+    } catch (error) {
+      console.log("Error in fetch.");
+      console.log(error);
+    }
+  } else {
+    console.log("Invalid document attempting to be submitted.");
   }
 }
 
@@ -754,10 +1427,10 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.data[lastDataIndex].rights = document.data_rights;
           form.value.data[lastDataIndex].policies = document.data_policies;
 
-          form.value.data[lastDataIndex].schema.splice(0, 1);
-          document.schema.forEach(
+          form.value.data[lastDataIndex].fields.splice(0, 1);
+          document.fields.forEach(
             (
-              schema: {
+              fields: {
                 field_name: string;
                 field_description: string;
                 field_type: string;
@@ -767,17 +1440,17 @@ function descriptorUpload(event: Event, descriptorName: string) {
               },
               i: number,
             ) => {
-              addSchema(lastDataIndex);
-              form.value.data[lastDataIndex].schema[i].name = schema.field_name;
-              form.value.data[lastDataIndex].schema[i].description =
-                schema.field_description;
-              form.value.data[lastDataIndex].schema[i].type = schema.field_type;
-              form.value.data[lastDataIndex].schema[i].expected_values =
-                schema.expected_values;
-              form.value.data[lastDataIndex].schema[i].missing_values =
-                schema.interpret_missing;
-              form.value.data[lastDataIndex].schema[i].special_values =
-                schema.interpret_special;
+              addField(lastDataIndex);
+              form.value.data[lastDataIndex].fields[i].name = fields.field_name;
+              form.value.data[lastDataIndex].fields[i].description =
+                fields.field_description;
+              form.value.data[lastDataIndex].fields[i].type = fields.field_type;
+              form.value.data[lastDataIndex].fields[i].expected_values =
+                fields.expected_values;
+              form.value.data[lastDataIndex].fields[i].missing_values =
+                fields.interpret_missing;
+              form.value.data[lastDataIndex].fields[i].special_values =
+                fields.interpret_special;
             },
           );
         } else if (descriptorName === "Development Environment") {
@@ -847,16 +1520,6 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
-function cancel() {
-  if (
-    confirm(
-      "Are you sure you want to leave this page? All changes will be lost.",
-    )
-  ) {
-    location.href = "/";
-  }
-}
-
 function addGoal() {
   form.value.system.goals.push({
     description: "",
@@ -885,17 +1548,19 @@ function deleteMetric(goalIndex: number, metricIndex: number) {
 
 function addDataItem() {
   form.value.data.push({
-    access: "",
     description: "",
     source: "",
     classification: "unclassified",
+    access: "",
+    labeling_method: "",
     labels: [
       {
+        name: "",
         description: "",
         percentage: 0,
       },
     ],
-    schema: [
+    fields: [
       {
         name: "",
         description: "",
@@ -907,7 +1572,6 @@ function addDataItem() {
     ],
     rights: "",
     policies: "",
-    identifiable_information: "",
   });
 }
 
@@ -919,6 +1583,7 @@ function deleteDataItem(dataItemIndex: number) {
 
 function addLabel(dataItemIndex: number) {
   form.value.data[dataItemIndex].labels.push({
+    name: "",
     description: "",
     percentage: 0,
   });
@@ -930,8 +1595,8 @@ function deleteLabel(dataItemIndex: number, labelIndex: number) {
   }
 }
 
-function addSchema(dataItemIndex: number) {
-  form.value.data[dataItemIndex].schema.push({
+function addField(dataItemIndex: number) {
+  form.value.data[dataItemIndex].fields.push({
     name: "",
     description: "",
     type: "",
@@ -941,9 +1606,26 @@ function addSchema(dataItemIndex: number) {
   });
 }
 
-function deleteSchema(dataItemIndex: number, fieldIndex: number) {
+function deleteField(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
-    form.value.data[dataItemIndex].schema.splice(fieldIndex, 1);
+    form.value.data[dataItemIndex].fields.splice(fieldIndex, 1);
+  }
+}
+
+function addRequirement() {
+  form.value.system_requirements.push({
+    quality: "<System Quality>",
+    stimulus: "<Stimulus>",
+    source: "<Source>",
+    environment: "<Environment>",
+    response: "<Response>",
+    measure: "<Response Measure>",
+  });
+}
+
+function deleteRequirement(requirementIndex: number) {
+  if (confirm("Are you sure you want to delete this requirement?")) {
+    form.value.system_requirements.splice(requirementIndex, 1);
   }
 }
 </script>

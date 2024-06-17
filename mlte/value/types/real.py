@@ -43,11 +43,9 @@ class Real(Value):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=RealValueModel(
-                    value_type=ValueType.REAL,
                     real=self.value,
                 ),
             ),
@@ -77,11 +75,7 @@ class Real(Value):
         """Comparison between Real values."""
         if not isinstance(other, Real):
             return False
-        return self.value == other.value
-
-    def __neq__(self, other: Real) -> bool:
-        """Comparison between Real values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     @classmethod
     def less_than(cls, value: float) -> Condition:
@@ -89,10 +83,7 @@ class Real(Value):
         Determine if real is strictly less than `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -111,10 +102,7 @@ class Real(Value):
         Determine if real is less than or equal to `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -134,10 +122,7 @@ class Real(Value):
         Determine if real is strictly greater than `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -156,10 +141,7 @@ class Real(Value):
         Determine if real is greater than or equal to `value`.
 
         :param value: The threshold value
-        :type value: float
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda real: Success(

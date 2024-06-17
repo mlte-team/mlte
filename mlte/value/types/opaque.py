@@ -9,8 +9,6 @@ from __future__ import annotations
 import typing
 from typing import Any, Dict
 
-import deepdiff
-
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
@@ -26,7 +24,7 @@ class Opaque(Value):
     def __init__(self, metadata: EvidenceMetadata, data: Dict[str, Any]):
         """
         Initialize an Opaque instance.
-        :param evidence_metadata: The generating measurement's metadata
+        :param metadata: The generating measurement's metadata
         :param data: The output of the measurement
         """
         super().__init__(self, metadata)
@@ -42,11 +40,9 @@ class Opaque(Value):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=OpaqueValueModel(
-                    value_type=ValueType.OPAQUE,
                     data=self.data,
                 ),
             ),
@@ -87,11 +83,4 @@ class Opaque(Value):
         """Compare Opaque instances for equality."""
         if not isinstance(other, Opaque):
             return False
-        return (
-            self.metadata == other.metadata
-            and len(deepdiff.DeepDiff(self.data, other.data)) == 0
-        )
-
-    def __neq__(self, other: object) -> bool:
-        """Compare Opaque instances for inequality."""
-        return not self.__eq__(other)
+        return self._equal(other)

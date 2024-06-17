@@ -35,6 +35,7 @@ nav:
     - 'MLTE Framework': 'mlte_framework.md'
     - 'MLTE Properties': 'properties.md'
     - 'MLTE Measurements': 'mlte_measurements.md'
+    - 'MLTE Negotiation Card': 'negotiation_card.md'
     - API Reference: reference/
   - 'Explanations':
     - 'MLTE Process Resources': 'mlte_process_resources.md'

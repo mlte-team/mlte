@@ -47,7 +47,7 @@ class ModelImport:
 
 
 class Config:
-    """A configuration for a shchema task."""
+    """A configuration for a schema task."""
 
     def __init__(self, *, model: ModelImport, output_path: str) -> None:
         self.model = model

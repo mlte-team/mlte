@@ -21,3 +21,15 @@ class InternalError(RuntimeError):
     """A logic error in our implementation."""
 
     pass
+
+
+class UnauthenticatedError(RuntimeError):
+    """No authentication for operation that requires it."""
+
+    pass
+
+
+class ForbiddenError(RuntimeError):
+    """User without permissions for the operation."""
+
+    pass

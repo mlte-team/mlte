@@ -86,7 +86,12 @@
   "properties": {
     "artifact_type": {
       "const": "spec",
-      "title": "Artifact Type"
+      "default": "spec",
+      "enum": [
+        "spec"
+      ],
+      "title": "Artifact Type",
+      "type": "string"
     },
     "properties": {
       "type": "array",
@@ -97,9 +102,6 @@
       "title": "Properties"
     }
   },
-  "required": [
-    "artifact_type"
-  ],
   "title": "SpecModel",
   "type": "object"
 }

@@ -7,6 +7,7 @@ MLTE general store interface.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any, List
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -24,6 +25,30 @@ class StoreType(Enum):
 
     REMOTE_HTTP = "remote_http"
     """A remote HTTP implementation."""
+
+    RELATIONAL_DB = "relational_db"
+    """A relational database system implementation."""
+
+
+# -----------------------------------------------------------------------------
+# StoreURIPrefix
+# -----------------------------------------------------------------------------
+
+
+class StoreURIPrefix:
+    """Represents the valid prefixes for a MLTE store URI."""
+
+    LOCAL_MEMORY = ["memory://"]
+    """The in-memory store prefix."""
+
+    LOCAL_FILESYSTEM = ["fs://", "local://"]
+    """The local filesystem prefixes."""
+
+    REMOTE_HTTP = ["http://"]
+    """The remote HTTP prefix."""
+
+    RELATIONAL_DB = ["sqlite", "mysql", "postgresql", "oracle", "mssql"]
+    """The relational database system prefixes."""
 
 
 # -----------------------------------------------------------------------------
@@ -53,32 +78,18 @@ class StoreURI:
         :param uri: The URI
         :return: The parsed StoreURI
         """
-        if uri.startswith("memory://"):
+        if uri.startswith(tuple(StoreURIPrefix.LOCAL_MEMORY)):
             return StoreURI(uri, StoreType.LOCAL_MEMORY)
-        if uri.startswith("fs://") or uri.startswith("local://"):
+        if uri.startswith(tuple(StoreURIPrefix.LOCAL_FILESYSTEM)):
             return StoreURI(uri, StoreType.LOCAL_FILESYSTEM)
-        if uri.startswith("http://"):
+        if uri.startswith(tuple(StoreURIPrefix.REMOTE_HTTP)):
             return StoreURI(uri, StoreType.REMOTE_HTTP)
+        if uri.startswith(tuple(StoreURIPrefix.RELATIONAL_DB)):
+            return StoreURI(uri, StoreType.RELATIONAL_DB)
         raise RuntimeError(f"Unrecognized backend URI: {uri}.")
 
-
-# -----------------------------------------------------------------------------
-# StoreSession
-# -----------------------------------------------------------------------------
-
-
-class StoreSession:
-    """The base class for all implementations of the MLTE store session."""
-
-    def __init__(self):
-        """Initialize a session instance."""
-        pass
-
-    def close(self) -> None:
-        """Close the session."""
-        raise NotImplementedError(
-            "Cannot invoke method on abstract StoreSession."
-        )
+    def __str__(self) -> str:
+        return f"{self.type}:{self.uri}"
 
 
 # -----------------------------------------------------------------------------
@@ -88,9 +99,7 @@ class StoreSession:
 
 class Store:
     """
-    An abstract store.
-
-    A Store instance is the "static" part of a store configuration.
+    An abstract store. A Store instance is the "static" part of a store configuration.
     In contrast, a StoreSession represents an active session with the store.
     """
 
@@ -111,6 +120,28 @@ class Store:
         raise NotImplementedError("Cannot get handle to abstract Store.")
 
 
+# -----------------------------------------------------------------------------
+# StoreSession
+# -----------------------------------------------------------------------------
+
+
+class StoreSession:
+    """The base class for all implementations of the MLTE store session."""
+
+    resource_mappers: List[ResourceMapper] = []
+    """A list of resource mappers for all resources in this store."""
+
+    def __init__(self):
+        """Initialize a session instance."""
+        pass
+
+    def close(self) -> None:
+        """Close the session."""
+        raise NotImplementedError(
+            "Cannot invoke method on abstract StoreSession."
+        )
+
+
 class ManagedSession:
     """A simple context manager for store sessions."""
 
@@ -123,3 +154,51 @@ class ManagedSession:
 
     def __exit__(self, exc_type, exc_value, exc_tb) -> None:
         self.session.close()
+
+
+class ResourceMapper:
+    """A generic interface for mapping CRUD actions to store specific resources."""
+
+    NOT_IMPLEMENTED_ERROR_MSG = (
+        "Cannot invoke method that has not been implemented for this mapper."
+    )
+    """Default error message for this abstract class."""
+
+    def create(self, new_resource: Any) -> Any:
+        """
+        Create a new resource.
+        :param new_resource: The data to create the resource
+        :return: The created resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def edit(self, updated_resource: Any) -> Any:
+        """
+        Edit an existing resource.
+        :param updated_resource: The data to edit the resource
+        :return: The edited resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def read(self, resource_identifier: str) -> Any:
+        """
+        Read a resource.
+        :param resource_identifier: The identifier for the resource
+        :return: The resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list(self) -> List[str]:
+        """
+        List all resources of this type in the store.
+        :return: A collection of identifiers for all resources of this type
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def delete(self, resource_identifier: str) -> Any:
+        """
+        Delete a resource.
+        :param resource_identifier: The identifier for the resource
+        :return: The deleted resource
+        """
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)

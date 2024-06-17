@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: ../../
+      args:
+        MLTE_COMMAND: backend
+      dockerfile: ${BACKEND_DOCKERFILE}
+    image: mlte-backend
+    container_name: mlte_backend
+    restart: unless-stopped
+    networks:
+      - mlte-network
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./.env.backend
+  frontend:
+    build:
+      context: ../../
+      args:
+        MLTE_COMMAND: ui      
+      dockerfile: ${FRONTEND_DOCKERFILE}
+    image: mlte-frontend
+    container_name: mlte_ui
+    restart: unless-stopped
+    networks:
+      - mlte-network
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    env_file:
+      - ./.env.frontend
+  postgres:
+    image: postgres:16.3
+    container_name: mlte_postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}"]
+      interval: 2s
+      timeout: 15s
+      retries: 5
+      start_period: 15s
+    networks:
+      - mlte-network
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data    
+    env_file:
+      - ./.env.postgres
+volumes:
+  pgdata:
+networks:
+  mlte-network:
+    name: mlte-network

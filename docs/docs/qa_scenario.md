@@ -20,7 +20,7 @@ store_path = os.path.join(os.getcwd(), "store")
 # Ensure we are creating the folder if it is not there.
 os.makedirs(store_path, exist_ok=True) 
 
-set_context("ns", "OxfordFlower", "0.0.1")
+set_context("OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
 ```
 

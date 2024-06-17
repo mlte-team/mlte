@@ -25,7 +25,7 @@ class Integer(Value):
     def __init__(self, metadata: EvidenceMetadata, value: int):
         """
         Initialize an Integer instance.
-        :param identifier: An identifier for the value
+        :param metadata: The generating measurement's metadata
         :param value: The integer value
         """
         assert isinstance(value, int), "Argument must be `int`."
@@ -42,11 +42,9 @@ class Integer(Value):
         a = ArtifactModel(
             header=self.build_artifact_header(),
             body=ValueModel(
-                artifact_type=ArtifactType.VALUE,
                 metadata=self.metadata,
                 value_class=self.get_class_path(),
                 value=IntegerValueModel(
-                    value_type=ValueType.INTEGER,
                     integer=self.value,
                 ),
             ),
@@ -75,11 +73,7 @@ class Integer(Value):
         """Comparison between Integer values."""
         if not isinstance(other, Integer):
             return False
-        return self.value == other.value
-
-    def __neq__(self, other: Integer) -> bool:
-        """Comparison between Integer values."""
-        return not self.__eq__(other)
+        return self._equal(other)
 
     def __str__(self) -> str:
         """Return a string representation of the Integer."""
@@ -91,10 +85,7 @@ class Integer(Value):
         Determine if integer is strictly less than `value`.
 
         :param value: The threshold value
-        :type value: int
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda integer: Success(
@@ -113,10 +104,7 @@ class Integer(Value):
         Determine if integer is less than or equal to `value`.
 
         :param value: The threshold value
-        :type value: int
-
         :return: The Condition that can be used to validate a Value.
-        :rtype: Condition
         """
         condition: Condition = Condition.build_condition(
             lambda integer: Success(

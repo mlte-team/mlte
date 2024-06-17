@@ -29,3 +29,23 @@ class BaseModel(pydantic.BaseModel):
         :return: A deserialized model instance
         """
         return cls(**data)
+
+    def _equal(a: BaseModel, b: BaseModel) -> bool:
+        """
+        Compare model instances for equality.
+
+        :param a: Input instance
+        :param b: Input instance
+        :return: `True` if `a` and `b` are equal, `False` otherwise
+        """
+        return a.to_json() == b.to_json()
+
+    def __eq__(self, other: object) -> bool:
+        """Test instance for equality."""
+        if not isinstance(other, BaseModel):
+            return False
+        return self._equal(other)
+
+    def __neq__(self, other: object) -> bool:
+        """Test instance for inequality."""
+        return not self.__eq__(other)

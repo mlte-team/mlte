@@ -26,11 +26,7 @@ class Identifier(BaseModel):
         """Compare two Identifier instances for equality."""
         if not isinstance(other, Identifier):
             return False
-        return self.name == other.name
-
-    def __neq__(self, other: object) -> bool:
-        """Compare two Identifier instances for inequality."""
-        return not self.__eq__(other)
+        return super().__eq__(other)
 
     def __str__(self) -> str:
         """Return a string representation of Identifier."""
@@ -64,8 +60,4 @@ class EvidenceMetadata(BaseModel):
         """Compare instances for equality."""
         if not isinstance(other, EvidenceMetadata):
             return False
-        return (
-            self.measurement_type == other.measurement_type
-            and self.identifier == other.identifier
-            and self.info == other.info
-        )
+        return super().__eq__(other)

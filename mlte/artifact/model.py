@@ -6,7 +6,7 @@ Model implementation for MLTE artifacts.
 
 from typing import Optional, Union
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
@@ -29,8 +29,10 @@ class ArtifactHeaderModel(BaseModel):
     timestamp: Optional[int] = -1
     """The timestamp of creation of this artifact, as Unix time."""
 
-    class Config:
-        use_enum_values = True
+    creator: Optional[str]
+    """The user that created this artifact."""
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class ArtifactModel(BaseModel):

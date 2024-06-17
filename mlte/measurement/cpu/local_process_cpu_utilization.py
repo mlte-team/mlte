@@ -73,7 +73,7 @@ class CPUStatistics(ValueBase):
         Deserialize an CPUStatistics from a JSON object.
 
         :param evidence_metadata: The generating measurement's metadata
-        :param json: The JSON object
+        :param data: The JSON object
 
         :return: The deserialized instance
         """

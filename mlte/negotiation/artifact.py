@@ -9,12 +9,10 @@ from __future__ import annotations
 import typing
 from typing import List
 
-from deepdiff import DeepDiff
-
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.model.shared import DataDescriptor, ModelDescriptor
+from mlte.model.shared import DataDescriptor, ModelDescriptor, QASDescriptor
 from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
@@ -29,6 +27,7 @@ class NegotiationCard(Artifact):
         system: SystemDescriptor = SystemDescriptor(),
         data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
+        qas: List[QASDescriptor] = [],
     ) -> None:
         super().__init__(identifier, ArtifactType.NEGOTIATION_CARD)
 
@@ -41,15 +40,18 @@ class NegotiationCard(Artifact):
         self.model = model
         """A descriptor for the model."""
 
+        self.qas = qas
+        """A list of quality attribute scenarios."""
+
     def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=NegotiationCardModel(
-                artifact_type=ArtifactType.NEGOTIATION_CARD,
                 system=self.system,
                 data=self.data,
                 model=self.model,
+                system_requirements=self.qas,
             ),
         )
 
@@ -65,6 +67,7 @@ class NegotiationCard(Artifact):
             system=body.system,
             data=body.data,
             model=body.model,
+            qas=body.system_requirements,
         )
 
     @staticmethod
@@ -75,4 +78,4 @@ class NegotiationCard(Artifact):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, NegotiationCard):
             return False
-        return len(DeepDiff(self, other)) == 0
+        return self._equal(other)

@@ -28,7 +28,6 @@ class SpecValidator:
         Initialize a SpecValidator instance.
 
         :param spec: The specification to be validated
-        :type spec: Spec
         """
 
         self.spec = spec

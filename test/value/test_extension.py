@@ -14,8 +14,7 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.artifact.store import ArtifactStore
 from mlte.value.base import ValueBase
-
-from ..fixture.store import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class ConfusionMatrix(ValueBase):
@@ -39,7 +38,7 @@ class ConfusionMatrix(ValueBase):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ConfusionMatrix):
             return False
-        return self.matrix == other.matrix
+        return self._equal(other)
 
 
 class BadInteger(ValueBase):

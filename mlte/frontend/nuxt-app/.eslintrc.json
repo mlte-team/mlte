@@ -9,9 +9,24 @@
     "defineNuxtPlugin": true,
     "useRoute": true,
     "ref": true,
+    "$fetch": true,
     "useFetch": true,
+    "useCookie": true,
+    "navigateTo": true,
+    "useRuntimeConfig": true,
+    "isValidNegotiation": true,
+    "isValidSpec": true,
+    "isValidValidatedSpec": true,
+    "isValidValue": true,
+    "isValidReport": true,
+    "isValidArtifact": true,
+    "alert400Error": true,
+    "successfulSubmission": true,
+    "cancelFormSubmission": true,
     "requestErrorAlert": true,
-    "responseErrorAlert": true
+    "responseErrorAlert": true,
+    "conflictErrorAlert": true,
+    "fetchArtifact": true
   },
   "extends": [
     "standard",
@@ -35,7 +50,10 @@
   "rules": {
     "vue/multi-word-component-names": [
       "error", {"ignores": ["index"]}
-    ]
+    ],
+    "vue/no-mutating-props": ["error", {
+      "shallowOnly": true
+    }]
   },
   "ignorePatterns": [
     ".nuxt/**",

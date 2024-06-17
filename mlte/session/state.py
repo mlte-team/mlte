@@ -6,7 +6,8 @@ Session state management for the MLTE library.
 
 from typing import Optional
 
-from mlte.context import Context
+import mlte.store.artifact.util as storeutil
+from mlte.context.context import Context
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.store import ArtifactStore
 
@@ -53,6 +54,14 @@ class Session:
         """Set the session store."""
         self._store = store
 
+    def create_context(self):
+        """Creates the currently configured context in the currently configured session. Fails if either is not set. Does nothing if already created."""
+        store = self.store
+        context = self.context
+        storeutil.create_parents(
+            store.session(), context.model, context.version
+        )
+
 
 # Singleton session state
 g_session = Session()
@@ -63,15 +72,17 @@ def session() -> Session:
     return g_session
 
 
-def set_context(namespace_id: str, model_id: str, version_id: str):
+def set_context(model_id: str, version_id: str, lazy: bool = True):
     """
     Set the global MLTE context.
-    :param namespace_id: The namespace identifier
     :param model_id: The model identifier
     :param version_id: The version identifier
+    :param lazy: Whether to wait to create the context until an artifact is written (True), or to eagerly create it immediately (False).
     """
     global g_session
-    g_session._set_context(Context(namespace_id, model_id, version_id))
+    g_session._set_context(Context(model_id, version_id))
+    if not lazy:
+        g_session.create_context()
 
 
 def set_store(artifact_store_uri: str):

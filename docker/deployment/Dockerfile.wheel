@@ -1,0 +1,19 @@
+# Dockerfile
+#
+# Image definition for MLTE container.
+
+FROM python:3.10-slim
+
+# Base deps for compiling wheels.
+RUN apt-get update && apt-get install -y build-essential
+
+# Setup MLTE and dependencies.
+COPY mlte_python-*.whl ./
+RUN pip install mlte_python-*.whl
+#RUN pip install mlte-python
+
+# Get the command from an arg.
+ARG MLTE_COMMAND
+ENV MLTE_COMMAND=${MLTE_COMMAND}
+
+ENTRYPOINT mlte ${MLTE_COMMAND}

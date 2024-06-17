@@ -54,10 +54,7 @@ class Result(metaclass=abc.ABCMeta):
 
         :param evidence_metadata: The evidence metadata of the
         Value from which was this instance was generated.
-        :type evidence_metadata: EvidenceMetadata
-
         :return: The Result instance (`self`)
-        :rtype: Result
         """
         self.metadata = evidence_metadata
         return self
@@ -67,7 +64,6 @@ class Result(metaclass=abc.ABCMeta):
         Returns this object as a model
 
         :return: The model.
-        :rtype: ResultModel
         """
         return ResultModel(
             type=f"{self}", message=self.message, metadata=self.metadata
@@ -78,11 +74,8 @@ class Result(metaclass=abc.ABCMeta):
         """
         Returns a result from a model.
 
-        :param json: The model
-        :type json: ResultModel
-
+        :param model: The model
         :return: The deserialized object.
-        :rtype: Result
         """
         result_type = model.type
         results_module = sys.modules[__name__]
@@ -98,7 +91,7 @@ class Result(metaclass=abc.ABCMeta):
         assert self.metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
-        return self.metadata.identifier == other.metadata.identifier  # type: ignore
+        return self.to_model() == other.to_model()
 
     def __neq__(self, other: object) -> bool:
         """Inequality comparison."""
@@ -113,7 +106,6 @@ class Success(Result):
         Initialize a Success validation result instance.
 
         :param message: Optional message
-        :type message: str
         """
         super().__init__(message)
 
@@ -134,7 +126,6 @@ class Failure(Result):
         Initialize a Failure validation result instance.
 
         :param message: Optional message
-        :type message: str
         """
         super().__init__(message)
 
@@ -155,7 +146,6 @@ class Ignore(Result):
         Initialize an Ignore validatation result instance.
 
         :param message: Message indicating the reason validation is ignored
-        :type message: str
         """
         super().__init__(message)
 

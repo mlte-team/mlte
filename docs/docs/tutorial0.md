@@ -29,7 +29,7 @@ from mlte.session import set_context, set_store
 store_path = os.path.join(os.getcwd(), "store")
 os.makedirs(store_path, exist_ok=True)   # Ensure we are creating the folder if it is not there.
 
-set_context("ns", "IrisClassifier", "0.0.1")
+set_context("IrisClassifier", "0.0.1")
 set_store(f"local://{store_path}")
 ```
 

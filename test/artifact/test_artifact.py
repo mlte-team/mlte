@@ -16,12 +16,12 @@ from mlte.report.artifact import Report
 from mlte.session.state import set_context, set_store
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreURIPrefix
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
-
-from ..fixture.store import store_with_context  # noqa
-from ..fixture.store import FX_MODEL_ID, FX_NAMESPACE_ID, FX_VERSION_ID
+from test.store.artifact.fixture import store_with_context  # noqa
+from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
 
 
 def test_save_load_session() -> None:
@@ -31,8 +31,8 @@ def test_save_load_session() -> None:
     TODO(Kyle): Can we make this parametric over artifact types?
     """
 
-    set_context(FX_NAMESPACE_ID, FX_MODEL_ID, FX_VERSION_ID)
-    set_store("memory://")
+    set_context(FX_MODEL_ID, FX_VERSION_ID)
+    set_store(StoreURIPrefix.LOCAL_MEMORY[0])
 
     a = NegotiationCard("my-card")
 

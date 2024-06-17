@@ -1,0 +1,18 @@
+# Dockerfile.backend
+#
+# Image definition for MLTE backend container.
+
+FROM mlte-base
+
+# Copy and install mlte
+COPY mlte /mnt/app/mlte
+RUN poetry install
+
+# Create the default storage location
+RUN mkdir /mnt/store
+
+# Run the mlte backend server
+ENTRYPOINT ["poetry", "run", "mlte", "backend"]
+
+# By default, run a local filesystem store
+CMD ["--store-uri", "fs:///mnt/store"]

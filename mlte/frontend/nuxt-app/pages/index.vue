@@ -1,40 +1,40 @@
 <template>
   <NuxtLayout name="base-layout">
     <template #sidebar>
-      <div style="padding-top: 115px">
-        Namespaces
-        <hr />
-        <div v-for="namespaceName in namespaceOptions" :key="namespaceName">
-          <SidebarItem
-            @select="selectNamespace(namespaceName)"
-            @delete="deleteNamespace(namespaceName)"
-          >
-            {{ namespaceName }}
-          </SidebarItem>
-        </div>
+      <div style="padding-top: 60px">
+        <UsaTextInput v-model="newModelIdentifier">
+          <template #label> New Model </template>
+        </UsaTextInput>
+        <UsaButton
+          class="secondary-button margin-button"
+          @click="submitNewModel(newModelIdentifier)"
+        >
+          Create Model
+        </UsaButton>
 
-        <AddButton v-if="!newNamespaceFlag" @click="newNamespaceFlag = true" />
         <UsaTextInput
-          v-if="newNamespaceFlag"
-          v-model="newNamespaceInput"
-          @keyup.enter="addNamespace(newNamespaceInput)"
-          @keyup.escape="newNamespaceFlag = false"
-        />
+          v-model="newVersionIdentifier"
+          :disabled="selectedModel === ''"
+        >
+          <template #label> New Version </template>
+        </UsaTextInput>
+        <UsaButton
+          class="secondary-button margin-button"
+          @click="submitNewVersion(selectedModel, newVersionIdentifier)"
+        >
+          Create Version
+        </UsaButton>
       </div>
     </template>
 
     <UsaBreadcrumb :items="path" />
-
-    <h1>{{ selectedNamespace }}</h1>
-    <hr />
-
     <div style="display: flex">
       <div class="split-div">
         <b>Model</b>
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="updateSelectedModel($event)"
+          @update:modelValue="selectModel($event, true)"
         />
         <br />
       </div>
@@ -44,7 +44,7 @@
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
-          @update:modelValue="updateSelectedVersion($event)"
+          @update:modelValue="selectVersion($event)"
         />
         <br />
       </div>
@@ -81,9 +81,8 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'negotiation-card',
+                      path: '/negotiation-card',
                       query: {
-                        namespace: selectedNamespace,
                         model: card.model,
                         version: card.version,
                         artifactId: card.id,
@@ -98,9 +97,8 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'negotiation-card',
+              path: '/negotiation-card',
               query: {
-                namespace: selectedNamespace,
                 model: selectedModel,
                 version: selectedVersion,
               },
@@ -144,33 +142,28 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'report',
+                      path: '/report-form',
                       query: {
-                        namespace: selectedNamespace,
                         model: report.model,
                         version: report.version,
                         artifactId: report.id,
                       },
                     }"
                   >
-                    <UsaButton :disabled="true" class="primary-button">
-                      Edit
-                    </UsaButton>
+                    <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
-                </td>
-                <td>
                   <NuxtLink
+                    target="_blank"
                     :to="{
-                      path: 'report',
+                      path: '/report-export',
                       query: {
-                        namespace: selectedNamespace,
                         model: report.model,
                         version: report.version,
                         artifactId: report.id,
                       },
                     }"
                   >
-                    <UsaButton class="primary-button"> View </UsaButton>
+                    <UsaButton class="primary-button"> Export </UsaButton>
                   </NuxtLink>
                 </td>
               </tr>
@@ -178,9 +171,8 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'report',
+              path: '/report-form',
               query: {
-                namespace: selectedNamespace,
                 model: selectedModel,
                 version: selectedVersion,
               },
@@ -234,18 +226,6 @@
         </div>
       </UsaAccordionItem>
 
-      <!-- <UsaAccordionItem label="Results">
-        <div class="scrollable-table-div">
-          <p>
-            Results encode whether or not the values generated during evidence
-            collection pass their corresponding validation threshold. They are
-            produced by feeding values through the relevant condition callbacks
-            provided in the MLTE specification.
-          </p>
-          <UsaTable :headers="resultsHeaders" borderless class="table" />
-        </div>
-      </UsaAccordionItem> -->
-
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
           <p>
@@ -266,14 +246,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  isValidNegotiation,
-  isValidReport,
-  isValidSpec,
-  isValidValidatedSpec,
-  isValidValue,
-} from "../composables/artifact-validation.ts";
-
+const config = useRuntimeConfig();
+const token = useCookie("token");
 const path = ref([
   {
     href: "/",
@@ -281,28 +255,19 @@ const path = ref([
   },
 ]);
 
-const { data: namespaceOptions } = await useFetch<string[]>(
-  "http://localhost:8080/api/namespace",
-  { method: "GET" },
-);
+const newModelIdentifier = ref("");
+const newVersionIdentifier = ref("");
 
-// The selected namespace
-const selectedNamespace = ref("");
-// The selected model
-const selectedModel = ref("");
-// The selected model version
-const selectedVersion = ref("");
-
-if (namespaceOptions.value !== null && namespaceOptions.value.length > 0) {
-  selectNamespace(namespaceOptions.value[0]);
-}
-const newNamespaceFlag = ref(false);
-const newNamespaceInput = ref("");
-
-// The models in the namespace
 const modelOptions = ref<{ value: string; text: string }[]>([]);
-// The versions available for the model
 const versionOptions = ref<{ value: string; text: string }[]>([]);
+const modelList = ref<string[]>([]);
+
+const selectedModel = useCookie("selectedModel");
+selectedModel.value = selectedModel.value || "";
+const selectedVersion = useCookie("selectedVersion", {
+  decode: false,
+});
+selectedVersion.value = selectedVersion.value || "";
 
 const cardSpecReportHeaders = ref([
   { id: "id", label: "ID", sortable: true },
@@ -322,7 +287,6 @@ const valuesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-// TODO(Kyle): Is there a better way we can manage this state?
 const negotiationCards = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
@@ -352,166 +316,93 @@ const values = ref<
   }[]
 >([]);
 
-async function selectNamespace(namespace: string) {
-  await useFetch(
-    "http://localhost:8080/api/namespace/" + namespace + "/model",
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (selectedNamespace.value !== namespace) {
-          selectedNamespace.value = namespace;
-          modelOptions.value = [];
-          versionOptions.value = [];
-        }
-
-        response._data.forEach((modelName: string) => {
-          if (!modelOptions.value.some((item) => item.model === modelName)) {
-            modelOptions.value.push({ value: modelName, text: modelName });
-          }
-        });
-
-        modelOptions.value.sort((a, b) => a.text.localeCompare(b.text));
-
-        negotiationCards.value = [];
-        reports.value = [];
-        specifications.value = [];
-        validatedSpecs.value = [];
-        values.value = [];
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    },
-  );
-}
-
-async function addNamespace(namespace: string) {
-  if (namespace !== "") {
-    const { error } = await useFetch("http://localhost:8080/api/namespace", {
-      retry: 0,
-      method: "POST",
-      body: {
-        identifier: namespace,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
+await populateModelVersionLists();
+if (modelOptions.value !== null && modelOptions.value.length > 0) {
+  const modelList = modelOptions.value.map((model) => {
+    return model.value;
+  });
+  if (!modelList.includes(selectedModel.value)) {
+    selectedModel.value = "";
+    selectedVersion.value = "";
+  }
+  if (selectedModel.value !== "") {
+    await selectModel(selectedModel.value, false);
+    const versionList = versionOptions.value.map((version) => {
+      return version.value;
     });
-
-    if (error.value === null) {
-      await useFetch("http://localhost:8080/api/namespace", {
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          namespaceOptions.value =
-            response._data !== null ? response._data : [];
-          newNamespaceFlag.value = false;
-          newNamespaceInput.value = "";
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      });
+    if (!versionList.includes(selectedVersion.value)) {
+      selectedVersion.value = "";
+    }
+    if (selectedVersion.value !== "") {
+      await selectVersion(selectedVersion.value);
     }
   }
 }
 
-async function deleteNamespace(namespace: string) {
-  if (
-    confirm("Are you sure you want to delete the namespace: " + namespace + "?")
-  ) {
-    const { error } = await useFetch(
-      "http://localhost:8080/api/namespace/" + namespace,
-      {
-        retry: 0,
-        method: "DELETE",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse() {
-          clearArtifacts();
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      },
-    );
+async function populateModelVersionLists() {
+  await $fetch(config.public.apiPath + "/model/", {
+    retry: 0,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse({ response }) {
+      modelList.value = response._data;
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
 
-    if (error.value === null) {
-      await useFetch("http://localhost:8080/api/namespace", {
-        retry: 0,
-        method: "GET",
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          namespaceOptions.value =
-            response._data !== null ? response._data : [];
-        },
-        onResponseError() {
-          responseErrorAlert();
-        },
-      });
-    }
-  }
-
-  // Reselecting the top listed namespace if the one that was selected is the one that is being deleted
-  if (selectedNamespace.value === namespace) {
-    selectedNamespace.value =
-      namespaceOptions.value !== null ? namespaceOptions.value[0] : "";
-    if (selectedNamespace.value !== "") {
-      selectNamespace(selectedNamespace.value);
-    }
+  modelOptions.value = [];
+  if (modelList.value) {
+    modelList.value.forEach((modelName: string) => {
+      modelOptions.value.push({ value: modelName, text: modelName });
+    });
   }
 }
 
 // Update the selected model for the artifact store.
-async function updateSelectedModel(modelName: string) {
+async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   selectedModel.value = modelName;
-
-  selectedVersion.value = "";
+  if (resetSelectedVersion) {
+    selectedVersion.value = "";
+  }
   if (modelName === "") {
+    versionOptions.value = [];
     clearArtifacts();
     return;
   }
 
-  await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      selectedNamespace.value +
-      "/model/" +
-      modelName +
-      "/version",
-    {
-      retry: 0,
-      method: "GET",
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response._data) {
-          selectedModel.value = modelName;
-          response._data.forEach((version: string) => {
-            versionOptions.value.push({
-              value: version,
-              text: version,
-            });
-          });
-        }
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
+  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
+    retry: 0,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
     },
-  );
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse({ response }) {
+      if (response._data) {
+        clearArtifacts();
+        selectedModel.value = modelName;
+        versionOptions.value = [];
+        response._data.forEach((version: string) => {
+          versionOptions.value.push({
+            value: version,
+            text: version,
+          });
+        });
+      }
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
 
   versionOptions.value.sort(function (
     a: { value: string; text: string },
@@ -528,17 +419,15 @@ async function updateSelectedModel(modelName: string) {
 }
 
 // Update the selected version for the artifact store.
-async function updateSelectedVersion(versionName: string) {
+async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
-
   if (versionName === "") {
     clearArtifacts();
     return;
   }
 
-  await useFetch(
-    "http://localhost:8080/api/namespace/" +
-      selectedNamespace.value +
+  await $fetch(
+    config.public.apiPath +
       "/model/" +
       selectedModel.value +
       "/version/" +
@@ -547,6 +436,9 @@ async function updateSelectedVersion(versionName: string) {
     {
       retry: 0,
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
       onRequestError() {
         requestErrorAlert();
       },
@@ -569,14 +461,22 @@ async function updateSelectedVersion(versionName: string) {
 
 // Populate artifacts for a given model and version.
 // TODO : Do better typing on the artifactList and artifact
-function populateArtifacts(model: string, version: string, artifactList: any) {
-  artifactList.forEach((artifact: any) => {
+function populateArtifacts(
+  model: string,
+  version: string,
+  artifactList: Array<object>,
+) {
+  clearArtifacts();
+  artifactList.forEach((artifact: object) => {
+    artifact.header.timestamp = new Date(
+      artifact.header.timestamp * 1000,
+    ).toLocaleString("en-US");
     // Negotiation card
     if (artifact.header.type === "negotiation_card") {
       if (isValidNegotiation(artifact)) {
         negotiationCards.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: artifact.header.timestamp,
           model,
           version,
         });
@@ -587,7 +487,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidReport(artifact)) {
         reports.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: artifact.header.timestamp,
           model,
           version,
         });
@@ -598,7 +498,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
       if (isValidSpec(artifact)) {
         specifications.value.push({
           id: artifact.header.identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: artifact.header.timestamp,
           model,
           version,
         });
@@ -610,7 +510,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
         validatedSpecs.value.push({
           id: artifact.header.identifier,
           specid: artifact.body.spec_identifier,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: artifact.header.timestamp,
           model,
           version,
         });
@@ -623,7 +523,7 @@ function populateArtifacts(model: string, version: string, artifactList: any) {
           id: artifact.header.identifier.slice(0, -6),
           measurement: artifact.body.metadata.measurement_type,
           type: artifact.body.value.value_type,
-          timestamp: new Date(artifact.header.timestamp * 1000).toString(),
+          timestamp: artifact.header.timestamp,
           model,
           version,
         });
@@ -639,6 +539,50 @@ function clearArtifacts() {
   specifications.value = [];
   validatedSpecs.value = [];
   values.value = [];
+}
+
+async function submitNewModel(modelName: string) {
+  await $fetch(config.public.apiPath + "/model/", {
+    retry: 0,
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    body: {
+      identifier: modelName,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse() {
+      populateModelVersionLists();
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
+}
+
+async function submitNewVersion(modelName: string, versionName: string) {
+  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
+    retry: 0,
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    body: {
+      identifier: versionName,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse() {
+      selectModel(modelName, false);
+    },
+    onResponseError() {
+      responseErrorAlert();
+    },
+  });
 }
 </script>
 

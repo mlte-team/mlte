@@ -7,7 +7,6 @@ Artifact protocol implementation.
 from __future__ import annotations
 
 import abc
-import time
 from typing import Optional
 
 import mlte._private.meta as meta
@@ -39,7 +38,7 @@ class Artifact(metaclass=abc.ABCMeta):
         """
         The identifier for the artifact.
         An artifact identifier is unique within a MLTE context
-        (namespace, model, version) and for a given artifact type.
+        (model, version) and for a given artifact type.
         """
 
         self.type = type
@@ -47,6 +46,9 @@ class Artifact(metaclass=abc.ABCMeta):
 
         self.timestamp = -1
         """The Unix timestamp of when the artifact was saved to a store."""
+
+        self.creator = None
+        """The user that created this artifact."""
 
     @abc.abstractmethod
     def to_model(self) -> ArtifactModel:
@@ -62,6 +64,26 @@ class Artifact(metaclass=abc.ABCMeta):
         raise NotImplementedError(
             "Artifact.from_model() not implemented for abstract Artifact."
         )
+
+    def _equal(a: Artifact, b: Artifact) -> bool:
+        """
+        Compare Artifact instances for equality.
+
+        :param a: Input instance
+        :param b: Input instance
+        :return: `True` if `a` and `b` are equal, `False` otherwise
+        """
+        return a.to_model() == b.to_model()
+
+    def __eq__(self, other: object) -> bool:
+        """Test instance for equality."""
+        if not isinstance(other, Artifact):
+            return False
+        return self._equal(other)
+
+    def __neq__(self, other: object) -> bool:
+        """Test instance for inequality."""
+        return not self.__eq__(other)
 
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
@@ -117,10 +139,8 @@ class Artifact(metaclass=abc.ABCMeta):
         self.pre_save_hook(context, store)
 
         artifact_model = self.to_model()
-        artifact_model.header.timestamp = int(time.time())
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact(
-                context.namespace,
+            handle.write_artifact_with_header(
                 context.model,
                 context.version,
                 artifact_model,
@@ -161,7 +181,6 @@ class Artifact(metaclass=abc.ABCMeta):
         with ManagedArtifactSession(store.session()) as handle:
             artifact = cls.from_model(
                 handle.read_artifact(
-                    context.namespace,
                     context.model,
                     context.version,
                     identifier,
@@ -190,7 +209,6 @@ class Artifact(metaclass=abc.ABCMeta):
                 )
             )
             artifact_models = handle.search_artifacts(
-                context.namespace,
                 context.model,
                 context.version,
                 query_instance,
@@ -205,5 +223,8 @@ class Artifact(metaclass=abc.ABCMeta):
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""
         return ArtifactHeaderModel(
-            identifier=self.identifier, type=self.type, timestamp=self.timestamp
+            identifier=self.identifier,
+            type=self.type,
+            timestamp=self.timestamp,
+            creator=self.creator,
         )

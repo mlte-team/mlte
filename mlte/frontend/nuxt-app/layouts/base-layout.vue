@@ -5,7 +5,6 @@
       <a href="/" class="header-link">
         <img
           src="~/assets/img/MLTE_Logo_Color.svg"
-          alt=""
           height="75px"
           width="75px"
         />
@@ -24,13 +23,35 @@
       </div>
 
       <div class="body-div">
+        <div v-if="token" class="logout-header">
+          <div class="centered-container">
+            Welcome, {{ user }}
+            <UsaButton
+              class="secondary-button"
+              style="margin-left: 0.5em"
+              @click.prevent="confirmLogout()"
+            >
+              Logout
+            </UsaButton>
+            <NuxtLink :to="{ path: '/admin/user-management' }">
+              <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                Manage Users
+              </UsaButton>
+            </NuxtLink>
+            <NuxtLink :to="{ path: '/admin/group-management' }">
+              <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                Manage Groups
+              </UsaButton>
+            </NuxtLink>
+          </div>
+        </div>
         <slot name="default" />
       </div>
     </div>
 
     <footer>
       <p class="footer-text-left">
-        <b>MLTE - 2023</b>
+        <b>MLTE - 2024</b>
       </p>
       <div class="footer-text-right">
         <a
@@ -49,19 +70,27 @@
           target="_blank"
           rel="noopener noreferrer"
           href="https://mlte.readthedocs.io/en/latest/using_mlte/"
-          >User Guide</a>
-        <span>v0.2.2</span>
+          >User Guide</a
+        >
+        <span>v{{ version }}</span>
       </div>
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+const config = useRuntimeConfig();
+const token = useCookie("token");
+const user = useCookie("user");
+const version = config.public.version;
+</script>
 
 <style>
 header {
   display: inline-block;
   margin-bottom: 8px;
   padding: 25px;
-  background-color: #2d2f30;
+  background-color: #000000;
 }
 
 .header-main {
@@ -81,6 +110,12 @@ header {
 .header-link {
   color: white;
   text-decoration: none;
+}
+
+.logout-header {
+  display: flex;
+  align-items: right;
+  justify-content: right;
 }
 
 .flex-container {

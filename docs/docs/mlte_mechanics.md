@@ -46,12 +46,12 @@ os.makedirs(
 )
 
 # Initialize the context
-set_context("ns", "OxfordFlower", "0.0.1")
+set_context("OxfordFlower", "0.0.1")
 # Set the artifact storage path
 set_store(f"local://{store_path}")
 ```
 
-Note that running this code merely sets the context, it does *NOT* establish a namespace. To do so, we have to save our first artifact. When you save an artifact, `MLTE` draws on the context you set and then creates the namespace, which will allow you to then view your arifacts in the MLTE user interface (UI).
+Note that running this code merely sets the context, it does *NOT* establish a model. To do so, we have to save our first artifact. When you save an artifact, `MLTE` draws on the context you set and then creates the model, which will allow you to then view your arifacts in the MLTE user interface (UI).
 
 ## 2. Define a Specification
 
@@ -168,12 +168,12 @@ $ mlte ui
 To run the back end: 
 
 ```bash
-$ mlte store --backend-uri fs://store --allowed-origins http://localhost:8000
+$ mlte store --store-uri fs://store --allowed-origins http://localhost:8000
 ```
 
 This allows the front end to be able to communicate with the store by allowing the requisite origin. The front end is hosted at `http://localhost:8000`.
 
-Once you are running both the front and back ends in two shells, you can go to the hosted address to view the `MLTE` UI homepage. You should see the namespace you created on the lefthand side, and you should see the `Spec` we created above under the Specifications section of the artifacts.
+Once you are running both the front and back ends in two shells, you can go to the hosted address to view the `MLTE` UI homepage. You should see the model you created on the lefthand side, and you should see the `Spec` we created above under the Specifications section of the artifacts.
 
 ## 3. Collect Evidence
 
@@ -776,8 +776,7 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelProductionDescriptor,
     ModelInterfaceDescriptor,
-    ModelInputDescriptor,
-    ModelOutputDescriptor,
+    ModelIODescriptor,
     ModelResourcesDescriptor,
     RiskDescriptor,
     DataDescriptor,
@@ -814,10 +813,11 @@ report = Report(
     intended_use=IntendedUseDescriptor(
         usage_context="A handheld flower identification device.",
         production_requirements=ModelProductionDescriptor(
-            integration="integration",
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
-                input=ModelInputDescriptor(description="Vector[150]"),
-                output=ModelOutputDescriptor(description="Vector[3]"),
+                input=ModelIODescriptor(description="Vector[150]"),
+                output=ModelIODescriptor(description="Vector[3]"),
             ),
             resources=ModelResourcesDescriptor(
                 cpu="1", gpu="0", memory="6MiB", storage="2KiB"
@@ -834,6 +834,7 @@ report = Report(
             description="Flower dataset.",
             classification=DataClassification.UNCLASSIFIED,
             access="None",
+            labeling_method="by hand",
             fields=[
                 FieldDescriptor(
                     name="Sepal length",
@@ -852,7 +853,6 @@ report = Report(
             policies="N/A",
             rights="N/A",
             source="https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
-            identifiable_information="N/A",
         )
     ],
     comments=[

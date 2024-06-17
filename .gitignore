@@ -17,6 +17,7 @@ mlte.egg-info
 .coverage.*
 *.coverage
 .pytest_cache/
+htmlcov/
 
 # sphinx artifacts
 build/
@@ -27,7 +28,7 @@ __pycache__/
 src/mlte_python.egg-info/
 
 # Packaging artifacts
-dist/
+/dist/
 build/
 
 # OSX artifacts
@@ -38,3 +39,15 @@ build/
 
 # credentials
 token.txt
+
+# docs
+docs/site
+
+# Pyenv conf
+.python-version
+
+store/
+pgdata/
+*.whl
+
+certs/
