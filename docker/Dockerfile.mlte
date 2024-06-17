@@ -2,22 +2,10 @@
 #
 # Image definition for MLTE base container.
 
-FROM python:3.10-slim
+FROM python:3.10.14-slim-bookworm
 
 # Base deps for compiling wheels.
 RUN apt-get update && apt-get install -y build-essential
-
-# Setup poetry to handle dependencies.
-RUN pip install poetry
-
-# Copy deps and source files.
-WORKDIR /mnt/app
-COPY pyproject.toml /mnt/app
-COPY poetry.lock /mnt/app
-COPY mlte /mnt/app/mlte
-
-# Install mlte and dependencies
-RUN poetry install
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
@@ -29,3 +17,14 @@ RUN if [ -n "$(ls -A /certs/*.crt)" ]; then \
       cp -rf /certs/*.crt /usr/local/share/ca-certificates/; \
       update-ca-certificates; \
     fi
+
+# Setup poetry to handle dependencies.
+RUN pip install poetry
+
+# Install deps.
+WORKDIR /mnt/app
+COPY pyproject.toml /mnt/app
+COPY poetry.lock /mnt/app
+RUN poetry install --no-root
+
+# NOTE: MLTE code is not copied and left for the specific sub dockerfiles to do, to allow caching their specific dependncies.

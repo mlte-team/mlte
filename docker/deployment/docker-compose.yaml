@@ -1,7 +1,7 @@
 services:
   backend:
     build:
-      context: .
+      context: ../../
       args:
         MLTE_COMMAND: backend
       dockerfile: ${BACKEND_DOCKERFILE}
@@ -19,7 +19,7 @@ services:
       - ./.env.backend
   frontend:
     build:
-      context: .
+      context: ../../
       args:
         MLTE_COMMAND: ui      
       dockerfile: ${FRONTEND_DOCKERFILE}

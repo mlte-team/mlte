@@ -7,17 +7,25 @@ FROM mlte-base
 # Set up node.
 RUN apt-get install -y npm
 
-# Remove lock and node_modules that may have come from local install to avoid bug in npm
+# Set up dependencies.
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
-RUN rm -rf package-lock.json
-RUN rm -rf node_modules
+COPY mlte/frontend/nuxt-app/package.json /mnt/app/mlte/frontend/nuxt-app/package.json
+#RUN npm i --package-lock-only
+RUN npm install && npm cache clean --force
 
-# Install Node dependencies.
-RUN npm install
+# Setup USWDS design dependencies.
+COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
+COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
 RUN npx gulp compile
 RUN npx gulp init
 
+# Copy and install rest of MLTE.
+WORKDIR /mnt/app/
+COPY mlte /mnt/app/mlte
+RUN poetry install
+
 # Create static server.
+WORKDIR /mnt/app/mlte/frontend/nuxt-app
 RUN npm run build
 
 # Run the mlte frontend server

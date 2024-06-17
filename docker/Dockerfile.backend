@@ -4,6 +4,10 @@
 
 FROM mlte-base
 
+# Copy and install mlte
+COPY mlte /mnt/app/mlte
+RUN poetry install
+
 # Create the default storage location
 RUN mkdir /mnt/store
 
