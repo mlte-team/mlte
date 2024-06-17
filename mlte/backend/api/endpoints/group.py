@@ -14,7 +14,7 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
-from mlte.user.model import Group
+from mlte.user.model import Group, Permission
 
 # The router exported by this submodule
 router = APIRouter()
@@ -186,6 +186,31 @@ def list_permissions(
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.permission_mapper.list()
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+
+@router.get("/groups/permissions/details")
+def list_permission_details(
+    current_user: AuthorizedUser,
+) -> List[Permission]:
+    """
+    List MLTE permissions, with details.
+    :return: A collection of permissions, with details.
+    """
+    with dependencies.user_store_session() as user_store:
+        try:
+            detailed_permissions = []
+            permissions = user_store.permission_mapper.list()
+            for permission_id in permissions:
+                permission_details = Permission.from_str(permission_id)
+                detailed_permissions.append(permission_details)
+            return detailed_permissions
         except Exception as e:
             print(f"Internal server error. {e}")
             print(tb.format_exc())
