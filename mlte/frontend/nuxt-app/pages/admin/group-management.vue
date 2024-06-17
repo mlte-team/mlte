@@ -2,9 +2,11 @@
   <NuxtLayout name="base-layout">
     <template #sidebar>
       <div style="padding-top: 80px">
-        <UsaButton class="secondary-button margin-button" @click="addGroup">
-          Add Group
-        </UsaButton>
+        <div v-if="!editFlag">
+          <UsaButton class="secondary-button margin-button" @click="addGroup">
+            Add Group
+          </UsaButton>
+        </div>
       </div>
     </template>
 
@@ -16,7 +18,7 @@
       />
     </div>
     <div v-if="editFlag">
-      <AdminEditGroup
+      <AdminGroupEdit
         v-model="selectedGroup"
         :new-group-flag="newGroupFlag"
         @cancel="cancelEdit"
@@ -110,67 +112,46 @@ function cancelEdit() {
   }
 }
 
-// async function saveGroup(group: object) {
-//   if (newGroupFlag.value) {
-//     if (user.username === "" || user.password === "") {
-//       alert("Username and password are required.");
-//       return;
-//     }
+async function saveGroup(group: object) {
+  if (newGroupFlag.value) {
+    await $fetch(config.public.apiPath + "/group", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: group,
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse() {
+        updateGroupList();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    });
+  } else {
+    await $fetch(config.public.apiPath + "/group", {
+      retry: 0,
+      method: "PUT",
+      body: group,
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse() {
+        updateGroupList();
+      },
+      onResponseError() {
+        responseErrorAlert();
+      },
+    });
+  }
 
-//     await $fetch(config.public.apiPath + "/user", {
-//       retry: 0,
-//       method: "POST",
-//       headers: {
-//         Authorization: "Bearer " + token.value,
-//       },
-//       body: {
-//         username: user.username,
-//         email: user.email,
-//         full_name: user.full_name,
-//         disabled: user.disabled,
-//         role: user.role,
-//         groups: user.groups,
-//         password: user.password,
-//       },
-//       onRequestError() {
-//         requestErrorAlert();
-//       },
-//       onResponse({ response }) {
-//         updateUserList();
-//       },
-//       onResponseError() {
-//         responseErrorAlert();
-//       },
-//     });
-//   } else {
-//     await $fetch(config.public.apiPath + "/user", {
-//       retry: 0,
-//       method: "PUT",
-//       body: {
-//         username: user.username,
-//         email: user.email,
-//         full_name: user.full_name,
-//         disabled: user.disabled,
-//         role: user.role,
-//         groups: user.groups,
-//         password: user.password,
-//       },
-//       headers: {
-//         Authorization: "Bearer " + token.value,
-//       },
-//       onRequestError() {
-//         requestErrorAlert();
-//       },
-//       onResponse({ response }) {
-//         updateUserList();
-//       },
-//       onResponseError() {
-//         responseErrorAlert();
-//       },
-//     });
-//   }
-
-//   resetSelectedUser();
-//   editFlag.value = false;
-// }
+  resetSelectedGroup();
+  editFlag.value = false;
+}
 </script>

@@ -15,7 +15,7 @@
       <UsaCheckbox
         v-model="permissionOption.selected"
         @update:modelValue="
-          permissionChange(permissionOption.selected, permission)
+          permissionChange(permissionOption.selected, permissionOption)
         "
       >
         <template #default>
@@ -30,6 +30,13 @@
           </span>
         </template>
       </UsaCheckbox>
+    </div>
+
+    <div class="submit-footer">
+      <UsaButton class="primary-button" @click="$emit('cancel')">
+        Cancel
+      </UsaButton>
+      <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
     </div>
   </div>
 </template>
@@ -52,6 +59,9 @@ const props = defineProps({
   },
 });
 
+const formErrors = ref({
+  name: false,
+})
 const permissionOptions = ref<
   {
     resource_type: string;
@@ -59,46 +69,39 @@ const permissionOptions = ref<
     method: string;
     selected: boolean;
   }[]
->([
+>([]);
+const { data: permissionList } = await useFetch<string[]>(
+  config.public.apiPath + "/groups/permissions/details",
   {
-    resource_id: "blah",
-    resource_type: "model",
-    method: "get",
-    selected: false,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
   },
-  {
-    resource_id: "blah",
-    resource_type: "model",
-    method: "post",
-    selected: false,
-  },
-  {
-    resource_id: "blah",
-    resource_type: "model",
-    method: "delete",
-    selected: false,
-  },
-]);
-// const { data: permissionList } = await useFetch<string[]>(
-//   config.public.apiPath + "/TBD",
-//   {
-//     method: "GET",
-//     headers: {
-//       Authorization: "Bearer " + token.value,
-//     },
-//   },
-// );
-// if (permissionList.value) {
-//   permissionList.value.forEach((permission: object) => {
-//     permissionOptions.value.push({ resource_id: permission.resource_id, resource_type: permission.resource_type, method: permission.method, selected: false });
-//   });
-// }
+);
+if (permissionList.value) {
+  permissionList.value.forEach((permission: object) => {
+    permissionOptions.value.push({
+      resource_id: permission.resource_id,
+      resource_type: permission.resource_type,
+      method: permission.method,
+      selected: false,
+    });
+  });
+}
 
-// permissionOptions.value.forEach((permissionOption) => {
-//   if (props.modelValue.permissions.find((x) => x === permissionOption)) {
-//     permissionOption.selected = true;
-//   }
-// })
+permissionOptions.value.forEach((permissionOption) => {
+  if (
+    props.modelValue.permissions.find(
+      (x) =>
+        x.resource_id === permissionOption.resource_id &&
+        x.resource_type === permissionOption.resource_type &&
+        x.method === permissionOption.method,
+    )
+  ) {
+    permissionOption.selected = true;
+  }
+});
 
 function permissionChange(selected: boolean, permissionOption: object) {
   if (selected) {
@@ -109,10 +112,33 @@ function permissionChange(selected: boolean, permissionOption: object) {
     });
   } else {
     const objForRemoval = props.modelValue.permissions.find(
-      (x) => x.name === permissionOption.name,
+      (x) => 
+        x.name === permissionOption.name &&
+        x.resource_type === permissionOption.resource_type &&
+        x.method === permissionOption.method,
     );
     const index = props.modelValue.permissions.indexOf(objForRemoval);
     props.modelValue.permissions.splice(index, 1);
   }
+}
+
+function submit(){
+  resetFormErrors();
+  let submitError = false;
+
+  if(props.newGroupFlag){
+    if(props.modelValue.name.trim() === ""){
+      formErrors.value.name = true;
+      submitError = true;
+    }
+  }
+
+  if(!submitError){
+    emit("submit", props.modelValue);
+  }
+}
+
+function resetFormErrors(){
+  formErrors.value.name = false;
 }
 </script>

@@ -87,7 +87,7 @@
       <UsaButton class="primary-button" @click="$emit('cancel')">
         Cancel
       </UsaButton>
-      <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
+      <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
     </div>
   </div>
 </template>

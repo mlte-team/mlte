@@ -18,7 +18,7 @@
       />
     </div>
     <div v-if="editFlag">
-      <AdminEditUser
+      <AdminUserEdit
         v-model="selectedUser"
         :new-user-flag="newUserFlag"
         @cancel="cancelEdit"
@@ -132,26 +132,13 @@ function cancelEdit() {
 
 async function saveUser(user: object) {
   if (newUserFlag.value) {
-    if (user.username === "" || user.password === "") {
-      alert("Username and password are required.");
-      return;
-    }
-
     await $fetch(config.public.apiPath + "/user", {
       retry: 0,
       method: "POST",
       headers: {
         Authorization: "Bearer " + token.value,
       },
-      body: {
-        username: user.username,
-        email: user.email,
-        full_name: user.full_name,
-        disabled: user.disabled,
-        role: user.role,
-        groups: user.groups,
-        password: user.password,
-      },
+      body: user,
       onRequestError() {
         requestErrorAlert();
       },
@@ -166,15 +153,7 @@ async function saveUser(user: object) {
     await $fetch(config.public.apiPath + "/user", {
       retry: 0,
       method: "PUT",
-      body: {
-        username: user.username,
-        email: user.email,
-        full_name: user.full_name,
-        disabled: user.disabled,
-        role: user.role,
-        groups: user.groups,
-        password: user.password,
-      },
+      body: user,
       headers: {
         Authorization: "Bearer " + token.value,
       },
