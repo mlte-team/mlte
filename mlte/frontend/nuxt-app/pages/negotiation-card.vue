@@ -71,7 +71,7 @@
     </div>
 
     <h2 class="section-header">System Information</h2>
-    <UsaTextarea v-model="form.system.usage_context" style="margin-bottom: 1em;">
+    <UsaTextarea v-model="form.system.usage_context" style="margin-bottom: 1em">
       <template #label>
         Usage Context for the Model
         <InfoIcon>
@@ -1280,8 +1280,8 @@ if (useRoute().query.artifactId !== undefined) {
           });
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -1339,19 +1339,17 @@ async function submit() {
             requestErrorAlert();
           },
           onResponseError({ response }) {
-            if (response.status === 409) {
-              conflictErrorAlert();
-            } else {
-              responseErrorAlert();
-            }
+            handleHttpError(
+              response.status,
+              response._data.error_description,
+            );
           },
         },
       );
-      successfulSubmission("negotiation card", identifier);
+      successfulArtifactSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
-    } catch (error) {
-      console.log("Error in fetch.");
-      console.log(error);
+    } catch {
+      return;
     }
   } else {
     console.log("Invalid document attempting to be submitted.");

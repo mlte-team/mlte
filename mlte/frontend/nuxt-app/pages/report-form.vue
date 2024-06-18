@@ -600,8 +600,8 @@ if (useRoute().query.artifactId !== undefined) {
           }
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -655,16 +655,18 @@ async function submit() {
             if (response.status === 409) {
               conflictErrorAlert();
             } else {
-              responseErrorAlert();
+              handleHttpError(
+                response.status,
+                response._data.error_description,
+              );
             }
           },
         },
       );
-      successfulSubmission("report", identifier);
+      successfulArtifactSubmission("report", identifier);
       forceSaveParam.value = true;
-    } catch (error) {
-      console.log("Error in fetch.");
-      console.log(error);
+    } catch {
+      return;
     }
   } else {
     console.log("Invalid report.");

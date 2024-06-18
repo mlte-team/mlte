@@ -175,8 +175,8 @@ await useFetch(
         }
       }
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   },
 );

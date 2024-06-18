@@ -64,8 +64,8 @@ async function updateUserList() {
     onResponse({ response }) {
       userList.value = response._data;
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
@@ -117,8 +117,8 @@ async function deleteUser(usernameToDelete: string) {
     onResponse() {
       updateUserList();
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
@@ -131,42 +131,46 @@ function cancelEdit() {
 }
 
 async function saveUser(user: object) {
-  if (newUserFlag.value) {
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: user,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateUserList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
-  } else {
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "PUT",
-      body: user,
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateUserList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
+  try {
+    if (newUserFlag.value) {
+      await $fetch(config.public.apiPath + "/user", {
+        retry: 0,
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        body: user,
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateUserList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    } else {
+      await $fetch(config.public.apiPath + "/user", {
+        retry: 0,
+        method: "PUT",
+        body: user,
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateUserList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    }
+  } catch {
+    return;
   }
 
   resetSelectedUser();

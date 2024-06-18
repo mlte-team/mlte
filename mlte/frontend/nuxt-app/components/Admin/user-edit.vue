@@ -175,8 +175,8 @@ function groupChange(selected: boolean, groupOption: object) {
   }
 }
 
-function submit() {
-  resetFormErrors();
+async function submit() {
+  formErrors.value = resetFormErrors(formErrors.value);
   let submitError = false;
 
   if (props.newUserFlag) {
@@ -207,15 +207,10 @@ function submit() {
     submitError = true;
   }
 
-  if (!submitError) {
-    emit("submit", props.modelValue);
+  if (submitError) {
+    return;
   }
-}
 
-function resetFormErrors() {
-  formErrors.value.username = false;
-  formErrors.value.role = false;
-  formErrors.value.password = false;
-  formErrors.value.confirmPassword = false;
+  emit("submit", props.modelValue);
 }
 </script>

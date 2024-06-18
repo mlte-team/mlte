@@ -352,8 +352,8 @@ async function populateModelVersionLists() {
     onResponse({ response }) {
       modelList.value = response._data;
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 
@@ -399,8 +399,8 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
         });
       }
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 
@@ -452,8 +452,8 @@ async function selectVersion(versionName: string) {
           );
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -557,8 +557,8 @@ async function submitNewModel(modelName: string) {
     onResponse() {
       populateModelVersionLists();
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
@@ -579,8 +579,8 @@ async function submitNewVersion(modelName: string, versionName: string) {
     onResponse() {
       selectModel(modelName, false);
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
