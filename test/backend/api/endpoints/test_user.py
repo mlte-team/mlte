@@ -5,15 +5,17 @@ Test the API for user operations.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, List
 
 import pytest
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
+from mlte.context.model import ModelCreate
 from mlte.store.user.policy import Policy
-from mlte.user.model import BasicUser, ResourceType, UserWithPassword
+from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
+from test.backend.api.endpoints.artifact.test_model import MODEL_URI
 from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
 
@@ -295,3 +297,47 @@ def test_delete_no_permission(
 
     res = test_client.delete(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    api_helper.get_test_users_with_read_permissions(ResourceType.USER),
+)
+def test_list_user_groups(test_client_fix, api_user: UserWithPassword) -> None:
+    """Properly get models the user has permission to read."""
+    test_client: FastAPITestHttpClient = test_client_fix(api_user)
+
+    user = get_sample_user()
+    create_sample_user_using_admin(test_client)
+
+    # Create test models.
+    m1_id = "m1"
+    http.admin_create_entity(
+        ModelCreate(identifier=m1_id), MODEL_URI, test_client
+    )
+    m2_id = "m2"
+    http.admin_create_entity(
+        ModelCreate(identifier=m2_id), MODEL_URI, test_client
+    )
+    m3_id = "m3"
+    http.admin_create_entity(
+        ModelCreate(identifier=m3_id), MODEL_URI, test_client
+    )
+
+    # Give user permissions to some models.
+    api_user.groups.extend(
+        Policy.build_groups(ResourceType.MODEL, resource_id=m1_id)
+    )
+    api_user.groups.extend(
+        Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
+    )
+    user_store = state.user_store.session()
+    user_store.user_mapper.edit(api_user)
+
+    res = test_client.get(f"{USER_URI}/{user.username}/models")
+    assert res.status_code == codes.OK
+
+    model_list: List[str] = res.json()
+    assert m1_id in model_list
+    assert m2_id in model_list
+    assert api_user.role == RoleType.ADMIN or m3_id not in model_list

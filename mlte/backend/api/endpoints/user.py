@@ -14,9 +14,16 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
+from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.store.user.policy import Policy
-from mlte.user.model import BasicUser, ResourceType, UserWithPassword
+from mlte.user.model import (
+    BasicUser,
+    MethodType,
+    Permission,
+    ResourceType,
+    UserWithPassword,
+)
 
 # The router exported by this submodule
 router = APIRouter()
@@ -187,6 +194,45 @@ def delete_user(
             Policy.remove(ResourceType.USER, username, user_store)
 
             return deleted_user
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception as e:
+            print(f"Internal server error. {e}")
+            print(tb.format_exc())
+            raise HTTPException(
+                status_code=codes.INTERNAL_ERROR,
+                detail="Internal server error.",
+            )
+
+
+@router.get("/user/{username}/models")
+def list_user_models(
+    *,
+    username: str,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    Gets a list of models a user is authorized to read.
+    :param username: The username
+    :return: The list of model ids
+    """
+    with dependencies.artifact_store_session() as artifact_store:
+        try:
+            # Get all models, and filter out only the ones the user has read permissions for.
+            user_models: List[str] = []
+            all_models = artifact_store.list_models()
+            for model_id in all_models:
+                permission = Permission(
+                    resource_type=ResourceType.MODEL,
+                    resource_id=model_id,
+                    method=MethodType.GET,
+                )
+                if authorization.is_authorized(current_user, permission):
+                    user_models.append(model_id)
+            return user_models
+
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
