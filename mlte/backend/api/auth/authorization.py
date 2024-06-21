@@ -64,7 +64,7 @@ async def get_current_resource(request: Request) -> Permission:
     resource = Permission(
         resource_type=resource_type, resource_id=resource_id, method=method
     )
-    print(f"Resource: {resource}")
+    # print(f"Resource: {resource}")
     return resource
 
 
@@ -86,8 +86,16 @@ def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
         # print("User is admin")
         return True
     else:
+        # Handle special resource cases.
+        if (
+            resource.resource_type == ResourceType.USER
+            and resource.resource_id == USER_ME_ID
+        ):
+            resource.resource_id = current_user.username
+
         # Check to find if the current user has permissions through any of its groups.
         # print(current_user.groups)
+        print(f"Resource: {resource}")
         for group in current_user.groups:
             # print(group)
             for permission in group.permissions:
@@ -132,13 +140,6 @@ async def get_authorized_user(
             error="invalid_token",
             error_decription=f"Could not decode token: {ex}",
         )
-
-    # Handle special cases.
-    if (
-        resource.resource_type == ResourceType.USER
-        and resource.resource_id == USER_ME_ID
-    ):
-        resource.resource_id = username
 
     # Check if user in token exists.
     user = None
