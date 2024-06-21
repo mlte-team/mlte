@@ -23,6 +23,7 @@ from mlte.user.model import (
     MethodType,
     Permission,
     ResourceType,
+    RoleType,
     UserWithPassword,
 )
 
@@ -123,13 +124,19 @@ def edit_user(
     :return: The edited user
     """
     if user.username == USER_ME_ID:
-        raise HTTPException(
-            status_code=codes.BAD_REQUEST,
-            detail="'me' is reserved and can't be used as a username.",
-        )
+        user.username = current_user.username
 
     with dependencies.user_store_session() as user_store:
         try:
+            # We only want to allow admins to edit a user's groups.
+            if current_user.role != RoleType.ADMIN:
+                # If not admin, keep current groups and ignore the new ones, if any.
+                current_groups = user_store.user_mapper.read(
+                    user.username
+                ).groups
+                user.groups = current_groups
+
+            # Edit the user.
             return user_store.user_mapper.edit(user)
         except errors.ErrorNotFound as e:
             raise HTTPException(
