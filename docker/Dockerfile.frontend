@@ -19,6 +19,12 @@ COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
 RUN npx gulp compile
 RUN npx gulp init
 
+# Install Python deps.
+WORKDIR /mnt/app
+COPY pyproject.toml /mnt/app
+COPY poetry.lock /mnt/app
+RUN poetry install --no-root
+
 # Copy and install rest of MLTE.
 WORKDIR /mnt/app/
 COPY mlte /mnt/app/mlte

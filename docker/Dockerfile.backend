@@ -4,6 +4,12 @@
 
 FROM mlte-base
 
+# Install deps.
+WORKDIR /mnt/app
+COPY pyproject.toml /mnt/app
+COPY poetry.lock /mnt/app
+RUN poetry install --no-root
+
 # Copy and install mlte
 COPY mlte /mnt/app/mlte
 RUN poetry install
