@@ -127,7 +127,8 @@ class RDBUserMapper(UserMapper):
                 user_obj = self._build_user(hashed_user, session)
                 session.add(user_obj)
                 session.commit()
-                return hashed_user
+                stored_user, _ = DBReader.get_user(user.username, session)
+                return stored_user
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         with Session(self.engine) as session:
