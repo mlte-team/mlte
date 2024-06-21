@@ -31,6 +31,38 @@ router = APIRouter()
 
 
 # -----------------------------------------------------------------------------
+# User/me endopoints
+# -----------------------------------------------------------------------------
+
+
+@router.get("/user/me")
+def read_user_me(
+    current_user: AuthorizedUser,
+) -> BasicUser:
+    """
+    Returns the currently logged in user.
+    :return: The user info
+    """
+    parameters = locals().copy()
+    parameters["username"] = USER_ME_ID
+    return read_user(**parameters)
+
+
+@router.get("/user/me/models")
+def list_user_models_me(
+    *,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    Gets a list of models the currently logged-in user is authorized to read.
+    :return: The list of model ids
+    """
+    parameters = locals().copy()
+    parameters["username"] = USER_ME_ID
+    return list_user_models(**parameters)
+
+
+# -----------------------------------------------------------------------------
 # User endopoints
 # -----------------------------------------------------------------------------
 
@@ -265,33 +297,3 @@ def list_user_models(
                     status_code=codes.INTERNAL_ERROR,
                     detail="Internal server error.",
                 )
-
-
-# -----------------------------------------------------------------------------
-# User/me endopoints
-# -----------------------------------------------------------------------------
-
-
-@router.get("/user/me")
-def read_user_me(
-    current_user: AuthorizedUser,
-) -> BasicUser:
-    """
-    Returns the currently logged in user.
-    :return: The user info
-    """
-    parameters = locals().copy()
-    return read_user(**parameters)
-
-
-@router.get("/user/me/models")
-def list_user_models_me(
-    *,
-    current_user: AuthorizedUser,
-) -> List[str]:
-    """
-    Gets a list of models the currently logged-in user is authorized to read.
-    :return: The list of model ids
-    """
-    parameters = locals().copy()
-    return list_user_models(**parameters)
