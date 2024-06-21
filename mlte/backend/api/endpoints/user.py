@@ -16,6 +16,7 @@ import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.model import USER_ME_ID
 from mlte.store.user.policy import Policy
 from mlte.user.model import (
     BasicUser,
@@ -29,11 +30,9 @@ from mlte.user.model import (
 router = APIRouter()
 
 
-@router.get("/user/me")
-def read_users_me(
-    current_user: AuthorizedUser,
-) -> BasicUser:
-    return current_user
+# -----------------------------------------------------------------------------
+# User endopoints
+# -----------------------------------------------------------------------------
 
 
 @router.post("/user")
@@ -47,6 +46,12 @@ def create_user(
     :param user: The user to create
     :return: The created user
     """
+    if user.username == USER_ME_ID:
+        raise HTTPException(
+            status_code=codes.BAD_REQUEST,
+            detail="'me' is reserved and can't be used as a username.",
+        )
+
     new_user: BasicUser
     with dependencies.user_store_session() as user_store:
         try:
@@ -85,6 +90,12 @@ def edit_user(
     :param user: The user to edit
     :return: The edited user
     """
+    if user.username == USER_ME_ID:
+        raise HTTPException(
+            status_code=codes.BAD_REQUEST,
+            detail="'me' is reserved and can't be used as a username.",
+        )
+
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.user_mapper.edit(user)
@@ -112,6 +123,9 @@ def read_user(
     :param username: The username
     :return: The read user
     """
+    if username == USER_ME_ID:
+        return current_user
+
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.user_mapper.read(username)
@@ -218,6 +232,9 @@ def list_user_models(
     :param username: The username
     :return: The list of model ids
     """
+    if username == USER_ME_ID:
+        username = current_user.username
+
     with dependencies.artifact_store_session() as artifact_store:
         with dependencies.user_store_session() as user_store:
             try:
@@ -248,3 +265,33 @@ def list_user_models(
                     status_code=codes.INTERNAL_ERROR,
                     detail="Internal server error.",
                 )
+
+
+# -----------------------------------------------------------------------------
+# User/me endopoints
+# -----------------------------------------------------------------------------
+
+
+@router.get("/user/me")
+def read_user_me(
+    current_user: AuthorizedUser,
+) -> BasicUser:
+    """
+    Returns the currently logged in user.
+    :return: The user info
+    """
+    parameters = locals().copy()
+    return read_user(**parameters)
+
+
+@router.get("/user/me/models")
+def list_user_models_me(
+    *,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    Gets a list of models the currently logged-in user is authorized to read.
+    :return: The list of model ids
+    """
+    parameters = locals().copy()
+    return list_user_models(**parameters)

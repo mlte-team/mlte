@@ -12,6 +12,7 @@ from mlte.backend.api import codes, dependencies
 from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
+from mlte.backend.api.model import USER_ME_ID
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.user.model import (
@@ -118,6 +119,13 @@ async def get_authorized_user(
             error="invalid_token",
             error_decription=f"Could not decode token: {ex}",
         )
+
+    # Handle special cases.
+    if (
+        resource.resource_type == ResourceType.USER
+        and resource.resource_id == USER_ME_ID
+    ):
+        resource.resource_id = username
 
     # Check if user in token exists.
     user = None

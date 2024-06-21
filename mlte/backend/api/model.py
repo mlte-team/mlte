@@ -12,6 +12,9 @@ from pydantic import BaseModel
 
 from mlte.artifact.model import ArtifactModel
 
+USER_ME_ID = "me"
+"""Special ID used to identify the currently logged in user."""
+
 
 class WriteArtifactRequest(BaseModel):
     """Defines the data in a POST request to write an artifact."""
