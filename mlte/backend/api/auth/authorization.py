@@ -5,6 +5,7 @@ Setup of OAuth based authorization checks.
 """
 
 from json import JSONDecodeError
+
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated

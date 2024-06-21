@@ -139,7 +139,8 @@ class RDBUserMapper(UserMapper):
             user_obj = self._build_user(updated_user, session, user_obj)
             session.commit()
 
-            return updated_user
+            stored_user, _ = DBReader.get_user(user.username, session)
+            return stored_user
 
     def read(self, username: str) -> User:
         with Session(self.engine) as session:
