@@ -14,7 +14,7 @@ from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.context.model import ModelCreate
 from mlte.store.user.policy import Policy
-from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
+from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import MODEL_URI
 from test.backend.fixture import api_helper, http
 from test.backend.fixture.http import FastAPITestHttpClient
@@ -325,14 +325,14 @@ def test_list_user_groups(test_client_fix, api_user: UserWithPassword) -> None:
     )
 
     # Give user permissions to some models.
-    api_user.groups.extend(
+    user.groups.extend(
         Policy.build_groups(ResourceType.MODEL, resource_id=m1_id)
     )
-    api_user.groups.extend(
+    user.groups.extend(
         Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
     )
     user_store = state.user_store.session()
-    user_store.user_mapper.edit(api_user)
+    user_store.user_mapper.edit(user)
 
     res = test_client.get(f"{USER_URI}/{user.username}/models")
     assert res.status_code == codes.OK
@@ -340,4 +340,4 @@ def test_list_user_groups(test_client_fix, api_user: UserWithPassword) -> None:
     model_list: List[str] = res.json()
     assert m1_id in model_list
     assert m2_id in model_list
-    assert api_user.role == RoleType.ADMIN or m3_id not in model_list
+    assert m3_id not in model_list

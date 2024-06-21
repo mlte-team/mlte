@@ -219,28 +219,32 @@ def list_user_models(
     :return: The list of model ids
     """
     with dependencies.artifact_store_session() as artifact_store:
-        try:
-            # Get all models, and filter out only the ones the user has read permissions for.
-            user_models: List[str] = []
-            all_models = artifact_store.list_models()
-            for model_id in all_models:
-                permission = Permission(
-                    resource_type=ResourceType.MODEL,
-                    resource_id=model_id,
-                    method=MethodType.GET,
+        with dependencies.user_store_session() as user_store:
+            try:
+                # Get all models, and filter out only the ones the user has read permissions for.
+                user_models: List[str] = []
+                user = BasicUser(
+                    **user_store.user_mapper.read(username).model_dump()
                 )
-                if authorization.is_authorized(current_user, permission):
-                    user_models.append(model_id)
-            return user_models
+                all_models = artifact_store.list_models()
+                for model_id in all_models:
+                    permission = Permission(
+                        resource_type=ResourceType.MODEL,
+                        resource_id=model_id,
+                        method=MethodType.GET,
+                    )
+                    if authorization.is_authorized(user, permission):
+                        user_models.append(model_id)
+                return user_models
 
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
-        except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            except errors.ErrorNotFound as e:
+                raise HTTPException(
+                    status_code=codes.NOT_FOUND, detail=f"{e} not found."
+                )
+            except Exception as e:
+                print(f"Internal server error. {e}")
+                print(tb.format_exc())
+                raise HTTPException(
+                    status_code=codes.INTERNAL_ERROR,
+                    detail="Internal server error.",
+                )
