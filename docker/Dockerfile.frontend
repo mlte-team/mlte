@@ -25,14 +25,15 @@ COPY pyproject.toml /mnt/app
 COPY poetry.lock /mnt/app
 RUN poetry install --no-root
 
-# Copy and install rest of MLTE.
-WORKDIR /mnt/app/
-COPY mlte /mnt/app/mlte
-RUN poetry install
-
 # Create static server.
+COPY mlte/frontend/nuxt-app /mnt/app/mlte/frontend/nuxt-app
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
 RUN npm run build
+
+# Copy and install rest of MLTE.
+COPY mlte /mnt/app/mlte
+WORKDIR /mnt/app/
+RUN poetry install
 
 # Run the mlte frontend server
 WORKDIR /mnt/app
