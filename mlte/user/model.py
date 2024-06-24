@@ -5,11 +5,12 @@ Model implementation for a User.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from strenum import StrEnum
 
 from mlte.model import BaseModel
+from mlte.user import passwords
 
 RESOURCE_ALL_VALUES = "*"
 """Special character used to identify all values of a certain permission."""
@@ -50,6 +51,10 @@ class BasicUser(BaseModel):
     groups: List[Group] = []
     """The groups the user is in."""
 
+    def is_equal_to(self, user: BasicUser) -> bool:
+        """Compares users at the BasicUser level."""
+        return BasicUser(**self.model_dump()) == BasicUser(**user.model_dump())
+
 
 class User(BasicUser):
     """User with additional information only used locally when stored."""
@@ -57,12 +62,40 @@ class User(BasicUser):
     hashed_password: str
     """The hashed password of the user."""
 
+    def update_user_data(self, new_user_data: BasicUser) -> User:
+        """Update this user, but keeping existing hashed password."""
+        hashed_password = self.hashed_password
+        updated_user = User(
+            **new_user_data.model_dump(),
+            hashed_password=hashed_password,
+        )
+        return updated_user
+
 
 class UserWithPassword(BasicUser):
     """User with additional information only used when creating a user."""
 
     password: str
     """The plain password of the user."""
+
+    def to_hashed_user(self) -> User:
+        """Converts a UserWithPassword model with plain password into a User with a hashed one."""
+        # Hash password and create a user with hashed passwords.
+        hashed_password = passwords.hash_password(self.password)
+        user = User(hashed_password=hashed_password, **self.model_dump())
+        return user
+
+
+def update_user_data(
+    curr_user: User, new_user_data: Union[UserWithPassword, BasicUser]
+) -> User:
+    """Get updated user depending on the type, keeping hashed password if no new password is received."""
+    if type(new_user_data) is UserWithPassword:
+        return new_user_data.to_hashed_user()
+    elif type(new_user_data) is BasicUser:
+        return curr_user.update_user_data(new_user_data)
+    else:
+        raise Exception(f"Invalid user type received: {type(new_user_data)}")
 
 
 # -----------------------------------------------------------------------------

@@ -17,8 +17,14 @@ from mlte.store.user.store_session import (
     UserMapper,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
-from mlte.user.model_logic import convert_to_hashed_user, update_user
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    User,
+    UserWithPassword,
+    update_user_data,
+)
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -99,7 +105,7 @@ class InMemoryUserMapper(UserMapper):
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
         # Create user with hashed passwords.
-        stored_user = convert_to_hashed_user(user)
+        stored_user = user.to_hashed_user()
         self.storage.users[user.username] = stored_user
         return stored_user
 
@@ -108,9 +114,9 @@ class InMemoryUserMapper(UserMapper):
             raise errors.ErrorNotFound(f"User {user.username}")
 
         curr_user = self.storage.users[user.username]
-        updated_user = update_user(curr_user, user)
+        updated_user = update_user_data(curr_user, user)
         self.storage.users[user.username] = updated_user
-        return updated_user
+        return curr_user
 
     def read(self, username: str) -> User:
         if username not in self.storage.users:

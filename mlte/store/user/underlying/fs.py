@@ -18,8 +18,14 @@ from mlte.store.user.store_session import (
     UserMapper,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
-from mlte.user.model_logic import convert_to_hashed_user, update_user
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    User,
+    UserWithPassword,
+    update_user_data,
+)
 
 # -----------------------------------------------------------------------------
 # FileSystemUserStore
@@ -97,14 +103,15 @@ class FileSystemUserMappper(UserMapper):
         if self.storage._resource_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
 
-        new_user = convert_to_hashed_user(user)
+        new_user = user.to_hashed_user()
         return self._write_user(new_user)
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         if not self.storage._resource_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 
-        updated_user = update_user(self._read_user(user.username), user)
+        curr_user = self._read_user(user.username)
+        updated_user = update_user_data(curr_user, user)
         return self._write_user(updated_user)
 
     def read(self, username: str) -> User:

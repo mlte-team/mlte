@@ -43,9 +43,9 @@ def create_sample_user_using_admin(test_client: FastAPITestHttpClient) -> None:
 
 def get_user_using_admin(
     user_id: str, test_client: FastAPITestHttpClient
-) -> dict[str, Any]:
+) -> BasicUser:
     """Gets a user using admin."""
-    return http.admin_read_entity(user_id, USER_URI, test_client)
+    return BasicUser(**http.admin_read_entity(user_id, USER_URI, test_client))
 
 
 # -----------------------------------------------------------------------------
@@ -70,9 +70,7 @@ def test_create(test_client_fix, api_user: UserWithPassword) -> None:
     user.groups = Policy.build_groups(ResourceType.USER, user.username)
 
     # Read it back.
-    assert BasicUser(**user.model_dump()) == BasicUser(
-        **get_user_using_admin(user.username, test_client)
-    )
+    assert user.is_equal_to(get_user_using_admin(user.username, test_client))
 
 
 @pytest.mark.parametrize(
@@ -109,7 +107,7 @@ def test_edit_no_pass(test_client_fix, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
 
     # Read it back.
-    edited_user = BasicUser(**get_user_using_admin(user.username, test_client))
+    edited_user = get_user_using_admin(user.username, test_client)
     assert edited_user.email == email2
 
 
@@ -131,7 +129,7 @@ def test_edit_pass(test_client_fix, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
 
     # Read it back.
-    edited_user = BasicUser(**get_user_using_admin(user.username, test_client))
+    edited_user = get_user_using_admin(user.username, test_client)
     assert edited_user.email == email2
 
 
@@ -173,7 +171,7 @@ def test_read(test_client_fix, api_user: UserWithPassword) -> None:
     # Update user with the groups that are automatically created.
     user.groups = Policy.build_groups(ResourceType.USER, user.username)
 
-    assert read == BasicUser(**user.model_dump())
+    assert read.is_equal_to(user)
 
 
 @pytest.mark.parametrize(
@@ -188,7 +186,7 @@ def test_read_me(test_client_fix, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
     read = BasicUser(**res.json())
 
-    assert read == BasicUser(**api_user.model_dump())
+    assert read.is_equal_to(api_user)
 
 
 @pytest.mark.parametrize(

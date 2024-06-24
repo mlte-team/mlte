@@ -19,7 +19,6 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-from mlte.user.model_logic import are_users_equal
 
 from .fixture import (  # noqa
     create_fs_store,
@@ -34,19 +33,9 @@ from .fixture import (  # noqa
 TEST_MOD_ID = "mod1"
 
 
-def test_init_memory() -> None:
-    """An in-memory store can be initialized."""
-    _ = create_memory_store()
-
-
-def test_init_rdbs() -> None:
-    """A relational DB store can be initialized."""
-    _ = create_rdbs_store()
-
-
-def test_init_fs(tmp_path) -> None:
-    """A FSstore can be initialized."""
-    _ = create_fs_store(tmp_path)
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
 
 
 def get_test_user() -> UserWithPassword:
@@ -98,6 +87,26 @@ def get_test_permissions() -> List[Permission]:
     return [p1, p2]
 
 
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+
+
+def test_init_memory() -> None:
+    """An in-memory store can be initialized."""
+    _ = create_memory_store()
+
+
+def test_init_rdbs() -> None:
+    """A relational DB store can be initialized."""
+    _ = create_rdbs_store()
+
+
+def test_init_fs(tmp_path) -> None:
+    """A FSstore can be initialized."""
+    _ = create_fs_store(tmp_path)
+
+
 @pytest.mark.parametrize("store_fixture_name", user_stores())
 def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     """An artifact store supports user operations."""
@@ -116,7 +125,7 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
         # Test creating a user.
         user_store.user_mapper.create(test_user)
         read_user = user_store.user_mapper.read(test_user.username)
-        assert are_users_equal(test_user, read_user)
+        assert test_user.is_equal_to(read_user)
 
         # Test listing users.
         users = user_store.user_mapper.list()
