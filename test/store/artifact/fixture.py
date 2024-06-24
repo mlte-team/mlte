@@ -19,7 +19,7 @@ from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
 from mlte.user.model import UserWithPassword
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 from test.store.artifact import artifact_store_creators
 
@@ -34,7 +34,7 @@ def http_store(user: Optional[UserWithPassword] = None) -> HttpArtifactStore:
     """
     # Set an in memory store and get a test http client, configured for the app.
     if user is None:
-        user = test_users.build_admin_user()
+        user = user_generator.build_admin_user()
     test_api = TestAPI()
     test_api.set_users(user)
     client = test_api.get_test_client()

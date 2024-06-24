@@ -11,10 +11,11 @@ from mlte.context.model import Version, VersionCreate
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     MODEL_URI,
+    create_fake_model_using_admin,
     create_sample_model_using_admin,
     get_sample_model,
 )
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 
 VERSION_ENDPOINT = "/version"
@@ -46,17 +47,18 @@ def create_sample_version_using_admin(test_api: TestAPI) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
 def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     """Versions can be created."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version_id = "0"
     create_sample_model_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     version = VersionCreate(identifier=version_id)
     res = test_client.post(
@@ -69,7 +71,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(
+    user_generator.get_test_users_with_no_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -78,10 +80,11 @@ def test_create_no_permission(
 ) -> None:
     """No permission to create version."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version_id = "0"
     create_sample_model_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     version = VersionCreate(identifier=version_id)
     res = test_client.post(
@@ -93,19 +96,20 @@ def test_create_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
 def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     """Versions can be read."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version = get_sample_version()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.get(
         f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
@@ -117,7 +121,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(
+    user_generator.get_test_users_with_no_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -126,12 +130,13 @@ def test_read_no_permission(
 ) -> None:
     """No permissions to read versions."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version = get_sample_version()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.get(
         f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
@@ -141,18 +146,19 @@ def test_read_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
 def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
     """Versions can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.get(VERSION_URI.format(model.identifier))
     assert res.status_code == codes.OK
@@ -161,7 +167,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(
+    user_generator.get_test_users_with_no_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -170,11 +176,12 @@ def test_list_no_permission(
 ) -> None:
     """No permissions to list versions."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.get(VERSION_URI.format(model.identifier))
     assert res.status_code == codes.FORBIDDEN
@@ -182,19 +189,20 @@ def test_list_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
 def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     """Versions can be deleted."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version = get_sample_version()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.delete(
         f"{VERSION_URI.format(model.identifier)}/{version.identifier}"
@@ -210,7 +218,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(
+    user_generator.get_test_users_with_no_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -219,12 +227,13 @@ def test_delete_no_permissions(
 ) -> None:
     """No permissions to delete versions."""
     test_api: TestAPI = test_api_fixture(api_user)
-    test_client = test_api.get_test_client()
     model = get_sample_model()
     version = get_sample_version()
 
     create_sample_model_using_admin(test_api)
     create_sample_version_using_admin(test_api)
+    create_fake_model_using_admin(test_api)
+    test_client = test_api.get_test_client()
 
     res = test_client.delete(
         f"{VERSION_URI.format(model.identifier)}/{version.identifier}"

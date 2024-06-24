@@ -26,7 +26,7 @@ from test.backend.api.endpoints.artifact.test_version import (
     create_sample_version_using_admin,
     get_sample_version,
 )
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 from test.fixture.artifact import ArtifactFactory
 
@@ -68,7 +68,7 @@ def create_artifact_using_admin(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -96,7 +96,7 @@ def test_write(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -128,7 +128,7 @@ def test_read(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -165,7 +165,7 @@ def test_list(
 # TODO: note that this is tested with write permissions, since search uses post, and that is interperted as write.
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
@@ -202,7 +202,7 @@ def test_search(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_write_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )

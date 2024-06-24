@@ -16,7 +16,7 @@ from mlte.context.model import ModelCreate
 from mlte.store.user.policy import Policy
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import MODEL_URI
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 
 USER_ENDPOINT = "/user"
@@ -53,7 +53,7 @@ def get_user_using_admin(user_id: str, test_api: TestAPI) -> BasicUser:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_write_permissions(ResourceType.USER),
 )
 def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be created."""
@@ -74,7 +74,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
 def test_create_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -90,7 +90,7 @@ def test_create_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_write_permissions(ResourceType.USER),
 )
 def test_edit_no_pass(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be edited."""
@@ -114,7 +114,7 @@ def test_edit_no_pass(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_write_permissions(ResourceType.USER),
 )
 def test_edit_pass(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be edited."""
@@ -137,7 +137,7 @@ def test_edit_pass(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
 def test_edit_pass_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -158,7 +158,7 @@ def test_edit_pass_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be read."""
@@ -180,7 +180,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_read_me(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can read its own info."""
@@ -196,7 +196,7 @@ def test_read_me(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
 def test_read_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -214,7 +214,7 @@ def test_read_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be listed."""
@@ -230,7 +230,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
 def test_list_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -247,7 +247,7 @@ def test_list_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_list_detailed(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be listed in detail."""
@@ -267,7 +267,7 @@ def test_list_detailed(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.USER),
 )
 def test_list_detailed_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -284,7 +284,7 @@ def test_list_detailed_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_write_permissions(ResourceType.USER),
 )
 def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     """Users can be deleted."""
@@ -308,7 +308,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.USER),
 )
 def test_delete_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -326,7 +326,7 @@ def test_delete_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
     """Properly get models the user has permission to read."""
@@ -365,7 +365,7 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.USER),
+    user_generator.get_test_users_with_read_permissions(ResourceType.USER),
 )
 def test_list_user_groups_me(
     test_api_fixture, api_user: UserWithPassword

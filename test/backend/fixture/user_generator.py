@@ -18,6 +18,9 @@ TEST_API_PASS = "api_pass"
 TEST_API_HASHED_PASS = passwords.hash_password(TEST_API_PASS)
 """User and passwords added to test the API."""
 
+FAKE_ID = "fake_id"
+"""A fake id used for testing resources without permissions."""
+
 
 def build_admin_user() -> UserWithPassword:
     """The default admin user."""
@@ -110,7 +113,7 @@ def get_test_users_with_no_read_permissions(
     ]
 
     # Add user with the opposite permission, and with appropriate ones but for wrong id.
-    fake_id = "fake_id"
+    fake_id = FAKE_ID
     if resource_id is not None:
         users.append(
             build_test_user(
@@ -139,7 +142,7 @@ def get_test_users_with_no_write_permissions(
         ),
     ]
 
-    fake_id = "fake_id"
+    fake_id = FAKE_ID
     if resource_id is not None:
         users.append(
             build_test_user(

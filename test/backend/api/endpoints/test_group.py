@@ -20,7 +20,7 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 
 GROUP_ENDPOINT = "/group"
@@ -81,7 +81,7 @@ def get_group_using_admin(group_id: str, api: TestAPI) -> dict[str, Any]:
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
 def test_create(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be created."""
@@ -98,7 +98,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
 def test_create_no_permissions(
     test_api_fixture, api_user: UserWithPassword
@@ -114,7 +114,7 @@ def test_create_no_permissions(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
 def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be edited."""
@@ -144,7 +144,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
 def test_edit_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -172,7 +172,7 @@ def test_edit_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
 def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be read."""
@@ -190,7 +190,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_read_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -208,7 +208,7 @@ def test_read_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
 def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be listed."""
@@ -225,7 +225,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_list_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -242,7 +242,7 @@ def test_list_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
 def test_list_detailed(
     test_api_fixture, api_user: UserWithPassword
@@ -263,7 +263,7 @@ def test_list_detailed(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_read_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_read_permissions(ResourceType.GROUP),
 )
 def test_list_detailed_no_permission(
     test_api_fixture, api_user: UserWithPassword
@@ -279,7 +279,7 @@ def test_list_detailed_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
 def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Groups can be deleted."""
@@ -299,7 +299,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
 @pytest.mark.parametrize(
     "api_user",
-    test_users.get_test_users_with_no_write_permissions(ResourceType.GROUP),
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.GROUP),
 )
 def test_delete_no_permission(
     test_api_fixture, api_user: UserWithPassword

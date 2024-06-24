@@ -21,7 +21,7 @@ from mlte.model.base_model import BaseModel
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
-from test.backend.fixture import test_users
+from test.backend.fixture import user_generator
 from test.store.artifact import artifact_store_creators
 
 TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
@@ -95,7 +95,9 @@ class TestAPI:
         self.user = user
         if user is not None:
             self._set_user_in_mem_store(user, user_store)
-        self._set_user_in_mem_store(test_users.build_admin_user(), user_store)
+        self._set_user_in_mem_store(
+            user_generator.build_admin_user(), user_store
+        )
 
     @staticmethod
     def _set_user_in_mem_store(
@@ -105,7 +107,8 @@ class TestAPI:
         # Then edits it to ensure groups are up to date as expected.
         # NOTE: Assumes user is using default test password.
         user_store.storage.users[user.username] = User(
-            hashed_password=test_users.TEST_API_HASHED_PASS, **user.model_dump()
+            hashed_password=user_generator.TEST_API_HASHED_PASS,
+            **user.model_dump(),
         )
         basic_user = BasicUser(
             **user_store.storage.users[user.username].model_dump()
@@ -117,8 +120,6 @@ class TestAPI:
         Return a test HTTP client.
         :return: The client
         """
-        if self.user is None:
-            self.user = test_users.build_test_user()
         return self._get_authenticated_client(self.user)
 
     def get_test_client_for_admin(self) -> FastAPITestHttpClient:
@@ -126,17 +127,18 @@ class TestAPI:
         Return a test HTTP client for admin user
         :return: The client
         """
-        return self._get_authenticated_client(test_users.build_admin_user())
+        return self._get_authenticated_client(user_generator.build_admin_user())
 
     def _get_authenticated_client(
-        self, user: UserWithPassword
+        self, user: Optional[UserWithPassword]
     ) -> FastAPITestHttpClient:
-        """Returns a client configured for test and authenticated."""
+        """Returns a client configured for test and authenticated (if provided user is valid)."""
         # Create the test client, and authenticate to get token and allow protected endpoints to work.
         admin_client = FastAPITestHttpClient(TestClient(self.app))
-        admin_client.username = user.username
-        admin_client.password = user.password
-        admin_client.authenticate(f"{settings.API_PREFIX}")
+        if user is not None:
+            admin_client.username = user.username
+            admin_client.password = user.password
+            admin_client.authenticate(f"{settings.API_PREFIX}")
         return admin_client
 
     def admin_create_entity(
