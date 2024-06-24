@@ -9,15 +9,34 @@ import pytest
 
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
+from mlte.backend.state import state
+from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import UserWithPassword
-from test.backend.fixture import api_helper as api_setup
 from test.store.user.fixture import (  # noqa
     fs_store,
     memory_store,
     rdbs_store,
     user_stores,
 )
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
+def set_user_store_in_state(
+    store_fixture_name: str, request: pytest.FixtureRequest
+):
+    """Sets an provided fixture user store in the backend state."""
+    user_store: UserStore = request.getfixturevalue(store_fixture_name)
+    state.set_user_store(user_store)
+
+
+def clear_state():
+    """Clears the the backend state."""
+    state._artifact_store = None
+    state._user_store = None
 
 
 def set_test_user(
@@ -35,7 +54,12 @@ def set_test_user(
 def state_prep():
     yield
     # Reset state after every test.
-    api_setup.clear_state()
+    clear_state()
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("store_fixture_name", user_stores())
@@ -47,7 +71,7 @@ def test_authenticate_valid_user(
     password = "mypassword"
 
     # Set user store in state before each test.
-    api_setup.set_user_store_in_state(store_fixture_name, request)
+    set_user_store_in_state(store_fixture_name, request)
 
     with dependencies.user_store_session() as user_store_sesion:
         set_test_user(username, password, user_store_sesion)
@@ -68,7 +92,7 @@ def test_authenticate_inexistent_user(
     password = "mypassword"
 
     # Set user store in state before each test.
-    api_setup.set_user_store_in_state(store_fixture_name, request)
+    set_user_store_in_state(store_fixture_name, request)
 
     with dependencies.user_store_session() as user_store_sesion:
         success = authentication.authenticate_user(
@@ -87,7 +111,7 @@ def test_authenticate_wrong_password(
     password = "mypassword"
 
     # Set user store in state before each test.
-    api_setup.set_user_store_in_state(store_fixture_name, request)
+    set_user_store_in_state(store_fixture_name, request)
 
     with dependencies.user_store_session() as user_store_sesion:
         set_test_user(username, password, user_store_sesion)

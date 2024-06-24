@@ -6,36 +6,17 @@ Set up for store fixtures in API state.
 
 from __future__ import annotations
 
-import typing
 from typing import List, Optional
 
-import pytest
-from fastapi import FastAPI
-
-import mlte.backend.app_factory as app_factory
-import test.store.user.fixture as user_store_fixture
-from mlte.backend.state import state
 from mlte.store.user.policy import Policy
-from mlte.store.user.store import UserStore
-from mlte.store.user.underlying.memory import InMemoryUserMapper
 from mlte.user import passwords
-from mlte.user.model import (
-    Group,
-    ResourceType,
-    RoleType,
-    User,
-    UserWithPassword,
-)
-from test.store.artifact import artifact_store_creators
+from mlte.user.model import Group, ResourceType, RoleType, UserWithPassword
 
 TEST_ADMIN_USERNAME = "admin_user"
 TEST_API_USERNAME = "api_user"
 TEST_API_PASS = "api_pass"
 TEST_API_HASHED_PASS = passwords.hash_password(TEST_API_PASS)
 """User and passwords added to test the API."""
-
-TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
-"""JWT token secret used for signing tokens."""
 
 
 def build_admin_user() -> UserWithPassword:
@@ -56,51 +37,6 @@ def build_test_user(
     if groups:
         test_user.groups = groups
     return test_user
-
-
-def setup_api_with_mem_stores(user: UserWithPassword) -> FastAPI:
-    """Setup API, configure to use memory artifact store and create app itself."""
-    # Set up user store with test user.
-    user_store = user_store_fixture.create_memory_store()
-    # NOTE: Totally ignores interface and does this directly to avoid hashing password each time, to speed up tests.
-    # This assumes the user received will have the default API password.
-    typing.cast(
-        InMemoryUserMapper, user_store.session().user_mapper
-    ).storage.users[user.username] = User(
-        hashed_password=TEST_API_HASHED_PASS, **user.model_dump()
-    )
-
-    # Always add an internal admin user.
-    admin_user = build_admin_user()
-    # NOTE: same as above.
-    typing.cast(
-        InMemoryUserMapper, user_store.session().user_mapper
-    ).storage.users[admin_user.username] = User(
-        hashed_password=TEST_API_HASHED_PASS, **admin_user.model_dump()
-    )
-
-    # Set the API state and app.
-    state.set_user_store(user_store)
-    state.set_artifact_store(artifact_store_creators.create_memory_store())
-    state.set_token_key(TEST_JWT_TOKEN_SECRET)
-
-    app = app_factory.create()
-
-    return app
-
-
-def set_user_store_in_state(
-    store_fixture_name: str, request: pytest.FixtureRequest
-):
-    """Sets an provided fixture user store in the backend state."""
-    user_store: UserStore = request.getfixturevalue(store_fixture_name)
-    state.set_user_store(user_store)
-
-
-def clear_state():
-    """Clears the the backend state."""
-    state._artifact_store = None
-    state._user_store = None
 
 
 def get_test_users_with_read_permissions(
