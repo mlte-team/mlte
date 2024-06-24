@@ -76,6 +76,9 @@ class FastAPITestHttpClient(OAuthHttpClient):
 class TestAPI:
     """An API to be used for testing, using memory stores."""
 
+    __test__ = False
+    """Avoid PyTest thinking this is a test class."""
+
     def __init__(self) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
         # Set up API global state.

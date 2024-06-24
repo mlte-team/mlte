@@ -151,7 +151,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
 
     res = test_client.get(f"{MODEL_URI}")
     assert res.status_code == codes.OK
-    assert len(res.json()) == 1
+    assert len(res.json()) == 2
 
 
 @pytest.mark.parametrize(
