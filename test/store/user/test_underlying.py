@@ -154,6 +154,32 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
 
 @pytest.mark.parametrize("store_fixture_name", user_stores())
+def test_user_group_change(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+    """Test proper syncchronization between users and groups."""
+    store: UserStore = request.getfixturevalue(store_fixture_name)
+
+    test_user = get_test_user()
+
+    with ManagedUserSession(store.session()) as user_store:
+        # Set up dependent groups.
+        setup_user_groups(test_user, user_store)
+
+        # Create a user.
+        user_store.user_mapper.create(test_user)
+        read_user = user_store.user_mapper.read(test_user.username)
+        assert test_user.is_equal_to(read_user)
+
+        # Edit group info, revmoving a permission.
+        group = get_test_group()
+        group.permissions.pop(1)
+        updated_group = user_store.group_mapper.edit(group)
+
+        # Ensure user has updated group info.
+        read_user = user_store.user_mapper.read(test_user.username)
+        assert read_user.groups[0] == updated_group
+
+
+@pytest.mark.parametrize("store_fixture_name", user_stores())
 def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     """An artifact store supports group operations."""
     store: UserStore = request.getfixturevalue(store_fixture_name)

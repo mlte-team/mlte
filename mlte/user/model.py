@@ -51,9 +51,18 @@ class BasicUser(BaseModel):
     groups: List[Group] = []
     """The groups the user is in."""
 
-    def is_equal_to(self, user: BasicUser) -> bool:
+    def is_equal_to(
+        self, user: BasicUser, only_group_names: bool = True
+    ) -> bool:
         """Compares users at the BasicUser level."""
-        return BasicUser(**self.model_dump()) == BasicUser(**user.model_dump())
+        user1 = BasicUser(**self.model_dump())
+        user2 = BasicUser(**user.model_dump())
+
+        if only_group_names:
+            user1.groups = Group.get_group_names(user1.groups)
+            user2.groups = Group.get_group_names(user2.groups)
+
+        return user1 == user2
 
 
 class User(BasicUser):
@@ -153,6 +162,14 @@ class Group(BaseModel):
 
     permissions: List[Permission] = []
     """The permissions associated to the group."""
+
+    @staticmethod
+    def get_group_names(groups: List[Group]) -> List[Group]:
+        """Given a list of groups, returns a similar list with groups that only contain their names."""
+        group_names: List[Group] = []
+        for group in groups:
+            group_names.append(Group(name=group.name))
+        return group_names
 
 
 class Permission(BaseModel):

@@ -78,14 +78,14 @@ class InMemoryUserStoreSession(UserStoreSession):
     """An in-memory implementation of the MLTE user store."""
 
     def __init__(self, *, storage: MemoryUserStorage) -> None:
-        self.user_mapper = InMemoryUserMapper(storage=storage)
-        """The mapper to user CRUD."""
+        self.permission_mapper = InMemoryPermissionMapper(storage=storage)
+        """The mapper to permission CRUD."""
 
         self.group_mapper = InMemoryGroupMapper(storage=storage)
         """The mapper to group CRUD."""
 
-        self.permission_mapper = InMemoryPermissionMapper(storage=storage)
-        """The mapper to permission CRUD."""
+        self.user_mapper = InMemoryUserMapper(storage=storage, group_mapper=self.group_mapper)
+        """The mapper to user CRUD."""
 
     def close(self) -> None:
         """Close the session."""
@@ -96,9 +96,12 @@ class InMemoryUserStoreSession(UserStoreSession):
 class InMemoryUserMapper(UserMapper):
     """In-memory mapper for the user resource."""
 
-    def __init__(self, *, storage: MemoryUserStorage) -> None:
+    def __init__(self, *, storage: MemoryUserStorage, group_mapper: InMemoryGroupMapper) -> None:
         self.storage = storage
         """A reference to underlying storage."""
+
+        self.group_mapper = group_mapper
+        """A reference to the group mapper, to get updated group info if needed."""
 
     def create(self, user: UserWithPassword) -> User:
         if user.username in self.storage.users:
@@ -106,6 +109,10 @@ class InMemoryUserMapper(UserMapper):
 
         # Create user with hashed passwords.
         stored_user = user.to_hashed_user()
+
+        # Only store group names for consistency.
+        user.groups = Group.get_group_names(user.groups)
+
         self.storage.users[user.username] = stored_user
         return stored_user
 
@@ -115,13 +122,25 @@ class InMemoryUserMapper(UserMapper):
 
         curr_user = self.storage.users[user.username]
         updated_user = update_user_data(curr_user, user)
+
+        # Only store group names for consistency.
+        user.groups = Group.get_group_names(user.groups)
+
         self.storage.users[user.username] = updated_user
         return curr_user
 
     def read(self, username: str) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
-        return self.storage.users[username]
+        user = self.storage.users[username]
+
+        # Now get updated info for each group.
+        up_to_date_groups: List[Group] = []
+        for group in user.groups:
+            up_to_date_groups.append(self.group_mapper.read(group.name))
+        user.groups = up_to_date_groups
+
+        return user
 
     def list(self) -> List[str]:
         return [username for username in self.storage.users.keys()]
@@ -153,7 +172,7 @@ class InMemoryGroupMapper(GroupMapper):
             raise errors.ErrorNotFound(f"Group {updated_group.name}")
 
         self.storage.groups[updated_group.name] = updated_group
-        return updated_group
+        return self.read(updated_group.name)
 
     def read(self, group_name: str) -> Group:
         if group_name not in self.storage.groups:
