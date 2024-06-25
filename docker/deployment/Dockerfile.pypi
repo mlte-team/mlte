@@ -1,6 +1,6 @@
 # Dockerfile
 #
-# Image definition for MLTE container, built from a wheel.
+# Image definition for MLTE container, built from a PyPi package.
 
 FROM python:3.10.14-slim-bookworm
 
@@ -8,8 +8,7 @@ FROM python:3.10.14-slim-bookworm
 RUN apt-get update && apt-get install -y build-essential
 
 # Setup MLTE and dependencies.
-COPY dist/mlte_python-*.whl ./
-RUN pip install mlte_python-*.whl
+RUN pip install mlte-python
 
 # Get the command from an arg.
 ARG MLTE_COMMAND
