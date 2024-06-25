@@ -36,7 +36,7 @@ class Policy:
     # -----------------------------------------------------------------------------
 
     CREATE_GROUP_PREFIX = "create"
-    EDIT_GROUP_PREFIX = "write"
+    EDIT_GROUP_PREFIX = "edit"
     READ_GROUP_PREFIX = "read"
 
     @staticmethod

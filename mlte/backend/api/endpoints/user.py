@@ -108,7 +108,8 @@ def create_user(
                 BasicUser(**new_user.model_dump()),
             )
 
-            return new_user
+            stored_user = user_store.user_mapper.read(new_user.username)
+            return stored_user
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
