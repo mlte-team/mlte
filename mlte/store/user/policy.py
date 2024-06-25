@@ -105,6 +105,17 @@ class Policy:
                     ),
                 ],
             )
+
+            # Creating/editing items inside the major resources will happen with a POST and an id of the major resource.
+            if resource_id is not None:
+                write_group.permissions.append(
+                    Permission(
+                        resource_type=resource_type,
+                        resource_id=resource_id,
+                        method=MethodType.POST,
+                    ),
+                )
+
             groups.append(write_group)
 
         return groups

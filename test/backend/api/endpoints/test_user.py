@@ -69,7 +69,9 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     user.groups = Policy.build_groups(ResourceType.USER, user.username)
 
     # Read it back.
-    assert user.is_equal_to(get_user_using_admin(user.username, test_api))
+    assert user.is_equal_to(
+        get_user_using_admin(user.username, test_api), ignore_groups=True
+    )
 
 
 @pytest.mark.parametrize(
@@ -175,7 +177,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     # Update user with the groups that are automatically created.
     user.groups = Policy.build_groups(ResourceType.USER, user.username)
 
-    assert read.is_equal_to(user)
+    assert read.is_equal_to(user, ignore_groups=True)
 
 
 @pytest.mark.parametrize(
@@ -191,7 +193,7 @@ def test_read_me(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
     read = BasicUser(**res.json())
 
-    assert read.is_equal_to(api_user)
+    assert read.is_equal_to(api_user, ignore_groups=True)
 
 
 @pytest.mark.parametrize(

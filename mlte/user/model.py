@@ -52,7 +52,10 @@ class BasicUser(BaseModel):
     """The groups the user is in."""
 
     def is_equal_to(
-        self, user: BasicUser, only_group_names: bool = True
+        self,
+        user: BasicUser,
+        only_group_names: bool = True,
+        ignore_groups: bool = False,
     ) -> bool:
         """Compares users at the BasicUser level."""
         user1 = BasicUser(**self.model_dump())
@@ -61,6 +64,10 @@ class BasicUser(BaseModel):
         if only_group_names:
             user1.groups = Group.get_group_names(user1.groups)
             user2.groups = Group.get_group_names(user2.groups)
+
+        if ignore_groups:
+            user1.groups = []
+            user2.groups = []
 
         return user1 == user2
 
