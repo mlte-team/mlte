@@ -50,7 +50,9 @@ def get_test_users_with_read_permissions(
         build_test_user(role=RoleType.ADMIN),
         build_test_user(groups=Policy.build_groups(resource_type)),
         build_test_user(
-            groups=Policy.build_groups(resource_type, build_write_group=False)
+            groups=Policy.build_groups(
+                resource_type, build_edit_group=False, build_create_group=False
+            )
         ),
     ]
 
@@ -64,7 +66,10 @@ def get_test_users_with_read_permissions(
         users.append(
             build_test_user(
                 groups=Policy.build_groups(
-                    resource_type, resource_id, build_write_group=False
+                    resource_type,
+                    resource_id,
+                    build_edit_group=False,
+                    build_create_group=False,
                 )
             )
         )
@@ -138,7 +143,9 @@ def get_test_users_with_no_write_permissions(
     users = [
         build_test_user(),
         build_test_user(
-            groups=Policy.build_groups(resource_type, build_write_group=False)
+            groups=Policy.build_groups(
+                resource_type, build_edit_group=False, build_create_group=False
+            )
         ),
     ]
 
@@ -147,7 +154,10 @@ def get_test_users_with_no_write_permissions(
         users.append(
             build_test_user(
                 groups=Policy.build_groups(
-                    resource_type, resource_id, build_write_group=False
+                    resource_type,
+                    resource_id,
+                    build_edit_group=False,
+                    build_create_group=False,
                 )
             )
         )

@@ -35,22 +35,9 @@ class Policy:
     # Group naming.
     # -----------------------------------------------------------------------------
 
-    WRITE_GROUP_PREFIX = "write"
+    CREATE_GROUP_PREFIX = "create"
+    EDIT_GROUP_PREFIX = "write"
     READ_GROUP_PREFIX = "read"
-
-    @staticmethod
-    def _build_read_group_name(resource_type: ResourceType, resource_id: Any = None):
-        """Builds group name for readers."""
-        return Policy._build_group_name(
-            Policy.READ_GROUP_PREFIX, resource_type, resource_id
-        )
-
-    @staticmethod
-    def _build_write_group_name(resource_type: ResourceType, resource_id: Any = None):
-        """Builds group name for writers."""
-        return Policy._build_group_name(
-            Policy.WRITE_GROUP_PREFIX, resource_type, resource_id
-        )
 
     @staticmethod
     def _build_group_name(
@@ -67,14 +54,14 @@ class Policy:
     # -----------------------------------------------------------------------------
 
     @staticmethod
-    def build_groups(resource_type: ResourceType, resource_id: Any = None, build_read_group: bool = True, build_write_group: bool = True) -> List[Group]:
+    def build_groups(resource_type: ResourceType, resource_id: Any = None, build_read_group: bool = True, build_edit_group: bool = True, build_create_group: bool = True) -> List[Group]:
         """Generates in memory representations of read and write groups for the given resource."""
         groups: List[Group] = []
 
         # Group with read permissions.
         if build_read_group:
             read_group = Group(
-                name=Policy._build_read_group_name(resource_type, resource_id),
+                name=Policy._build_group_name(Policy.READ_GROUP_PREFIX, resource_type, resource_id),
                 permissions=[
                     Permission(
                         resource_type=resource_type,
@@ -85,16 +72,27 @@ class Policy:
             )
             groups.append(read_group)
 
-        # Group with write/delete permissions.
-        if build_write_group:
+        # Group with create permissions.
+        if build_create_group:
+            # Create group is only created for non-resource-id related groups, create is always general, never associated to an id.
+            if resource_id is None:
+                create_group = Group(
+                    name=Policy._build_group_name(Policy.CREATE_GROUP_PREFIX, resource_type, None),
+                    permissions=[
+                        Permission(
+                            resource_type=resource_type,
+                            resource_id=resource_id,
+                            method=MethodType.POST,
+                        ),
+                    ],
+                )
+                groups.append(create_group)
+
+        # Group with edit/delete permissions.
+        if build_edit_group:
             write_group = Group(
-                name=Policy._build_write_group_name(resource_type, resource_id),
+                name=Policy._build_group_name(Policy.EDIT_GROUP_PREFIX, resource_type, resource_id),
                 permissions=[
-                    Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
-                        method=MethodType.POST,
-                    ),
                     Permission(
                         resource_type=resource_type,
                         resource_id=resource_id,
@@ -163,7 +161,7 @@ class Policy:
         for group in policy_groups:
             user_store.group_mapper.create(group)
 
-        # Add current user, if any, to both groups.
+        # Add current user, if any, to all groups.
         if user and not user.role == RoleType.ADMIN:
             for group in policy_groups:
                 user.groups.append(group)
