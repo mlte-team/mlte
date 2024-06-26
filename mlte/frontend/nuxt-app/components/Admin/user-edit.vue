@@ -75,6 +75,10 @@
     </UsaSelect>
 
     <label class="usa-label">Groups</label>
+    <div v-if="newUserFlag">
+      User will automatically be added to the <b>create-model</b> group
+      upon submission. 
+    </div>
     <div v-for="groupOption in groupOptions" :key="groupOption.name">
       <UsaCheckbox
         v-model="groupOption.selected"
