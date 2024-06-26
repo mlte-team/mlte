@@ -2,7 +2,7 @@ export function successfulArtifactSubmission(
   artifactType: string,
   artifactName: string,
 ) {
-  alert(`Your ${artifactType}, ${artifactName}, has been saved successfully.`);
+  alert(`${artifactType}, ${artifactName}, has been saved successfully.`);
 }
 
 export function cancelFormSubmission(redirect: string) {

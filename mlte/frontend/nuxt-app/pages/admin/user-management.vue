@@ -1,5 +1,8 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout
+    name="base-layout"
+    @manageUsers="manageUserClick"  
+  >
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -121,6 +124,12 @@ async function deleteUser(usernameToDelete: string) {
       handleHttpError(response.status, response._data.error_description);
     },
   });
+}
+
+function manageUserClick(){
+  if(editFlag.value){
+    cancelEdit();
+  }
 }
 
 function cancelEdit() {

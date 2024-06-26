@@ -7,19 +7,19 @@
           class="centered-container"
           style="vertical-align: bottom; padding-left: 38ch"
         >
-          <div v-if="!resetPasswordFlag">
+          <div v-if="!changePasswordFlag">
             <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Reset Password
+              Change Password
             </UsaButton>
           </div>
-          <div v-if="resetPasswordFlag">
+          <div v-if="changePasswordFlag">
             <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Reset
+              Cancel Change
             </UsaButton>
           </div>
         </div>
       </div>
-      <div v-if="resetPasswordFlag">
+      <div v-if="changePasswordFlag">
         <UsaTextInput
           v-model="modelValue.password"
           :error="formErrors.password"
@@ -114,7 +114,7 @@ const props = defineProps({
   },
 });
 
-const resetPasswordFlag = ref(false);
+const changePasswordFlag = ref(false);
 const confirmPassword = ref("");
 const roleOptions = ref([
   { value: "admin", text: "admin" },
@@ -156,12 +156,12 @@ groupOptions.value.forEach((groupOption) => {
 });
 
 function enablePasswordReset() {
-  resetPasswordFlag.value = true;
+  changePasswordFlag.value = true;
   props.modelValue.password = "";
 }
 
 function disablePasswordReset() {
-  resetPasswordFlag.value = false;
+  changePasswordFlag.value = false;
   delete props.modelValue.password;
 }
 
@@ -196,7 +196,7 @@ async function submit() {
     }
   }
 
-  if (resetPasswordFlag.value) {
+  if (changePasswordFlag.value) {
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       submitError = true;

@@ -1,5 +1,8 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout 
+    name="base-layout"
+    @manageGroups="manageGroupClick"
+  >
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -103,6 +106,12 @@ async function deleteGroup(groupName: string) {
       handleHttpError(response.status, response._data.error_description);
     },
   });
+}
+
+function manageGroupClick(){
+  if(editFlag.value){
+    cancelEdit();
+  }
 }
 
 function cancelEdit() {
