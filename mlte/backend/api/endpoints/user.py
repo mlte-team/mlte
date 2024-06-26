@@ -89,13 +89,21 @@ def create_user(
     with dependencies.user_store_session() as user_store:
         try:
             # Give every new user permissions to create models.
+            # Check first if the group was not manually added in the received user data.
             create_model_group = Policy.build_groups(
                 ResourceType.MODEL,
                 resource_id=None,
                 build_edit_group=False,
                 build_read_group=False,
             )[0]
-            user.groups.append(create_model_group)
+            user_has_create_group = False
+            for group in user.groups:
+                if create_model_group.name == group.name:
+                    user_has_create_group = True
+                    break
+
+            if not user_has_create_group:
+                user.groups.append(create_model_group)
 
             # Store the user.
             new_user = user_store.user_mapper.create(user)
