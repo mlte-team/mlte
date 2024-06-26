@@ -5,7 +5,7 @@
         <h1 class="section-header">{{ modelValue.username }}</h1>
         <div
           class="centered-container"
-          style="vertical-align: bottom; padding-left: 33ch"
+          style="vertical-align: bottom; padding-left: 38ch"
         >
           <div v-if="!resetPasswordFlag">
             <UsaButton class="secondary-button" @click="enablePasswordReset">
@@ -128,6 +128,7 @@ const groupOptions = ref<
 const { data: groupList } = await useFetch<string[]>(
   config.public.apiPath + "/groups/details",
   {
+    retry: 0,
     method: "GET",
     headers: {
       Authorization: "Bearer " + token.value,

@@ -31,7 +31,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const authUser = useCookie("user");
+const userCookie = useCookie("user");
 
 const editFlag = ref(false);
 const newUserFlag = ref(false);
@@ -95,7 +95,7 @@ function editUser(user: object) {
 }
 
 async function deleteUser(usernameToDelete: string) {
-  if (authUser.value === usernameToDelete) {
+  if (userCookie.value === usernameToDelete) {
     alert("Cannot delete the active user.");
     return;
   }

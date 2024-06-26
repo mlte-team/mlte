@@ -340,7 +340,7 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
 }
 
 async function populateModelVersionLists() {
-  await $fetch(config.public.apiPath + "/model/", {
+  await $fetch(config.public.apiPath + "/user/me/models/", {
     retry: 0,
     method: "GET",
     headers: {

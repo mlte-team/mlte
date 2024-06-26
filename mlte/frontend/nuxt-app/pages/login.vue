@@ -32,6 +32,9 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
+const user = useCookie("user")
+const userRole = useCookie("userRole");
 
 const username = ref("");
 const password = ref("");
@@ -83,22 +86,45 @@ async function submit() {
       body: formBody,
       onRequestError() {
         requestErrorAlert();
+        return;
       },
       onResponse({ response }) {
         const token = useCookie("token", {
-          Secure: true,
+          secure: true,
           maxAge: response?._data?.expires_in,
         });
         const user = useCookie("user", { maxAge: response?._data?.expires_in });
         token.value = response?._data?.access_token;
         user.value = username.value;
-        navigateTo("/");
       },
       onResponseError({ response }) {
-        console.log(response);
         handleHttpError(response.status, response._data.error_description);
+        return;
       },
     });
+
+    const token = useCookie("token");
+    await $fetch(config.public.apiPath + "/user/me", {
+      retry: 0,
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      onRequestError() {
+        requestErrorAlert();
+        return;
+      },
+      onResponse({ response }) {
+        const userRole = useCookie("userRole");
+        userRole.value = response._data.role;
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+        return;
+      },
+    });
+
+    navigateTo("/");
   } catch {
     return;
   }
