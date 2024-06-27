@@ -105,7 +105,15 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
-    default: {},
+    default: {
+      username: "",
+      password: "",
+      email: "",
+      full_name: "",
+      disabled: false,
+      role: "regular",
+      groups: [],
+    },
   },
   newUserFlag: {
     type: Boolean,
@@ -154,6 +162,10 @@ groupOptions.value.forEach((groupOption) => {
     groupOption.selected = true;
   }
 });
+
+if(props.newUserFlag){
+  props.modelValue.role = "regular";
+}
 
 function enablePasswordReset() {
   changePasswordFlag.value = true;

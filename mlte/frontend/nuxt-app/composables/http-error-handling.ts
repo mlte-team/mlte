@@ -38,8 +38,8 @@ function http401() {
 }
 
 function http403() {
+  location.href = "/";
   alert("HTTP 403 Access to requested resource is forbidden.");
-  location.href = "/login";
 }
 
 function http409() {
