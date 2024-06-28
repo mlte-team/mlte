@@ -14,19 +14,58 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
+from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.model import USER_ME_ID
 from mlte.store.user.policy import Policy
-from mlte.user.model import BasicUser, ResourceType, UserWithPassword
+from mlte.user.model import (
+    BasicUser,
+    MethodType,
+    Permission,
+    ResourceType,
+    RoleType,
+    UserWithPassword,
+)
 
 # The router exported by this submodule
 router = APIRouter()
 
 
+# -----------------------------------------------------------------------------
+# User/me endopoints
+# -----------------------------------------------------------------------------
+
+
 @router.get("/user/me")
-def read_users_me(
+def read_user_me(
     current_user: AuthorizedUser,
 ) -> BasicUser:
-    return current_user
+    """
+    Returns the currently logged in user.
+    :return: The user info
+    """
+    parameters = locals().copy()
+    parameters["username"] = USER_ME_ID
+    return read_user(**parameters)
+
+
+@router.get("/user/me/models")
+def list_user_models_me(
+    *,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    Gets a list of models the currently logged-in user is authorized to read.
+    :return: The list of model ids
+    """
+    parameters = locals().copy()
+    parameters["username"] = USER_ME_ID
+    return list_user_models(**parameters)
+
+
+# -----------------------------------------------------------------------------
+# User endopoints
+# -----------------------------------------------------------------------------
 
 
 @router.post("/user")
@@ -40,9 +79,33 @@ def create_user(
     :param user: The user to create
     :return: The created user
     """
+    if user.username == USER_ME_ID:
+        raise HTTPException(
+            status_code=codes.BAD_REQUEST,
+            detail="'me' is reserved and can't be used as a username.",
+        )
+
     new_user: BasicUser
     with dependencies.user_store_session() as user_store:
         try:
+            # Give every new user permissions to create models.
+            # Check first if the group was not manually added in the received user data.
+            create_model_group = Policy.build_groups(
+                ResourceType.MODEL,
+                resource_id=None,
+                build_edit_group=False,
+                build_read_group=False,
+            )[0]
+            user_has_create_group = False
+            for group in user.groups:
+                if create_model_group.name == group.name:
+                    user_has_create_group = True
+                    break
+
+            if not user_has_create_group:
+                user.groups.append(create_model_group)
+
+            # Store the user.
             new_user = user_store.user_mapper.create(user)
 
             # Now create permissions and groups associated to it.
@@ -53,7 +116,8 @@ def create_user(
                 BasicUser(**new_user.model_dump()),
             )
 
-            return new_user
+            stored_user = user_store.user_mapper.read(new_user.username)
+            return stored_user
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
@@ -78,8 +142,20 @@ def edit_user(
     :param user: The user to edit
     :return: The edited user
     """
+    if user.username == USER_ME_ID:
+        user.username = current_user.username
+
     with dependencies.user_store_session() as user_store:
         try:
+            # We only want to allow admins to edit a user's groups.
+            if current_user.role != RoleType.ADMIN:
+                # If not admin, keep current groups and ignore the new ones, if any.
+                current_groups = user_store.user_mapper.read(
+                    user.username
+                ).groups
+                user.groups = current_groups
+
+            # Edit the user.
             return user_store.user_mapper.edit(user)
         except errors.ErrorNotFound as e:
             raise HTTPException(
@@ -105,6 +181,9 @@ def read_user(
     :param username: The username
     :return: The read user
     """
+    if username == USER_ME_ID:
+        return current_user
+
     with dependencies.user_store_session() as user_store:
         try:
             return user_store.user_mapper.read(username)
@@ -198,3 +277,49 @@ def delete_user(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
             )
+
+
+@router.get("/user/{username}/models")
+def list_user_models(
+    *,
+    username: str,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    Gets a list of models a user is authorized to read.
+    :param username: The username
+    :return: The list of model ids
+    """
+    if username == USER_ME_ID:
+        username = current_user.username
+
+    with dependencies.artifact_store_session() as artifact_store:
+        with dependencies.user_store_session() as user_store:
+            try:
+                # Get all models, and filter out only the ones the user has read permissions for.
+                user_models: List[str] = []
+                user = BasicUser(
+                    **user_store.user_mapper.read(username).model_dump()
+                )
+                all_models = artifact_store.list_models()
+                for model_id in all_models:
+                    permission = Permission(
+                        resource_type=ResourceType.MODEL,
+                        resource_id=model_id,
+                        method=MethodType.GET,
+                    )
+                    if authorization.is_authorized(user, permission):
+                        user_models.append(model_id)
+                return user_models
+
+            except errors.ErrorNotFound as e:
+                raise HTTPException(
+                    status_code=codes.NOT_FOUND, detail=f"{e} not found."
+                )
+            except Exception as e:
+                print(f"Internal server error. {e}")
+                print(tb.format_exc())
+                raise HTTPException(
+                    status_code=codes.INTERNAL_ERROR,
+                    detail="Internal server error.",
+                )

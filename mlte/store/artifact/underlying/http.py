@@ -18,6 +18,9 @@ from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
 
+API_PREFIX = settings.API_PREFIX
+"""API URL prefix."""
+
 # -----------------------------------------------------------------------------
 # HttpArtifactStore
 # -----------------------------------------------------------------------------
@@ -61,7 +64,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
         # Authenticate.
         self.client.authenticate(
-            f"{self.url}{settings.API_PREFIX}",
+            f"{self.url}{API_PREFIX}",
         )
 
     def close(self) -> None:
@@ -74,56 +77,56 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     # -------------------------------------------------------------------------
 
     def create_model(self, model: ModelCreate) -> Model:
-        url = f"{self.url}{settings.API_PREFIX}/model"
+        url = f"{self.url}{API_PREFIX}/model"
         res = self.client.post(url, json=model.model_dump())
         self.client.raise_for_response(res)
 
         return Model(**res.json())
 
     def read_model(self, model_id: str) -> Model:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return Model(**res.json())
 
     def list_models(self) -> List[str]:
-        url = f"{self.url}{settings.API_PREFIX}/model"
+        url = f"{self.url}{API_PREFIX}/model"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return typing.cast(List[str], res.json())
 
     def delete_model(self, model_id: str) -> Model:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}"
         res = self.client.delete(url)
         self.client.raise_for_response(res)
 
         return Model(**res.json())
 
     def create_version(self, model_id: str, version: VersionCreate) -> Version:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}/version"
         res = self.client.post(url, json=version.model_dump())
         self.client.raise_for_response(res)
 
         return Version(**res.json())
 
     def read_version(self, model_id: str, version_id: str) -> Version:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}/version/{version_id}"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return Version(**res.json())
 
     def list_versions(self, model_id: str) -> List[str]:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}/version"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return typing.cast(List[str], res.json())
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
-        url = f"{self.url}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
+        url = f"{self.url}{API_PREFIX}/model/{model_id}/version/{version_id}"
         res = self.client.delete(url)
         self.client.raise_for_response(res)
 
@@ -212,4 +215,4 @@ def _url(base: str, model_id: str, version_id: str) -> str:
     :param version_id: The version identifier
     :return: The formatted URL
     """
-    return f"{base}{settings.API_PREFIX}/model/{model_id}/version/{version_id}"
+    return f"{base}{API_PREFIX}/model/{model_id}/version/{version_id}"

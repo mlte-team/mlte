@@ -61,7 +61,7 @@ const props = defineProps({
 
 const formErrors = ref({
   name: false,
-})
+});
 const permissionOptions = ref<
   {
     resource_type: string;
@@ -112,7 +112,7 @@ function permissionChange(selected: boolean, permissionOption: object) {
     });
   } else {
     const objForRemoval = props.modelValue.permissions.find(
-      (x) => 
+      (x) =>
         x.name === permissionOption.name &&
         x.resource_type === permissionOption.resource_type &&
         x.method === permissionOption.method,
@@ -122,23 +122,21 @@ function permissionChange(selected: boolean, permissionOption: object) {
   }
 }
 
-function submit(){
-  resetFormErrors();
+function submit() {
+  formErrors.value = resetFormErrors(formErrors.value);
   let submitError = false;
 
-  if(props.newGroupFlag){
-    if(props.modelValue.name.trim() === ""){
+  if (props.newGroupFlag) {
+    if (props.modelValue.name.trim() === "") {
       formErrors.value.name = true;
       submitError = true;
     }
   }
 
-  if(!submitError){
-    emit("submit", props.modelValue);
+  if (submitError) {
+    return;
   }
-}
 
-function resetFormErrors(){
-  formErrors.value.name = false;
+  emit("submit", props.modelValue);
 }
 </script>

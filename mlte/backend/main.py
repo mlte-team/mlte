@@ -16,7 +16,7 @@ import mlte.backend.util.origins as util
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
 from mlte.store.artifact import factory as artifact_store_factory
-from mlte.store.base import StoreType
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.user import factory as user_store_factory
 
 # Application exit codes
@@ -53,6 +53,9 @@ def run(
     :param jwt_secret: A secret random string key used to sign tokens
     :return: Return code
     """
+    # TODO(Kyle): use log level from arguments.
+    logging.basicConfig(level=logging.INFO)
+
     # Resolve hosts and validate resolved origins.
     allowed_origins = util.resolve_hosts(allowed_origins)
     _ = _validate_origins(allowed_origins)
@@ -68,6 +71,9 @@ def run(
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
+    logging.info(
+        f"Backend using store URI of type: {StoreURI.from_string(store_uri).type}"
+    )
     user_store = user_store_factory.create_store(store_uri)
     state.set_user_store(user_store)
 
@@ -80,8 +86,6 @@ def run(
 
 
 def main() -> int:
-    # TODO(Kyle): use log level.
-    logging.basicConfig(level=logging.INFO)
     return run(
         settings.BACKEND_HOST,
         int(settings.BACKEND_PORT),

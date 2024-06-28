@@ -18,8 +18,14 @@ from mlte.store.user.store_session import (
     UserMapper,
     UserStoreSession,
 )
-from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
-from mlte.user.model_logic import convert_to_hashed_user, update_user
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    User,
+    UserWithPassword,
+    update_user_data,
+)
 
 # -----------------------------------------------------------------------------
 # FileSystemUserStore
@@ -58,14 +64,14 @@ class FileSystemUserStoreSession(UserStoreSession):
     """A local file-system implementation of the MLTE user store."""
 
     def __init__(self, storage: FileSystemStorage) -> None:
-        self.user_mapper = FileSystemUserMappper(storage)
-        """The mapper to user CRUD."""
+        self.permission_mapper = FileSystemPermissionMappper(storage)
+        """The mapper to permisison CRUD."""
 
         self.group_mapper = FileSystemGroupMappper(storage)
         """The mapper to group CRUD."""
 
-        self.permission_mapper = FileSystemPermissionMappper(storage)
-        """The mapper to permisison CRUD."""
+        self.user_mapper = FileSystemUserMappper(storage, self.group_mapper)
+        """The mapper to user CRUD."""
 
     def close(self) -> None:
         """Close the session."""
@@ -84,9 +90,12 @@ class FileSystemUserMappper(UserMapper):
     USERS_FOLDER = "users"
     """Subfolder for users."""
 
-    def __init__(self, storage: FileSystemStorage) -> None:
+    def __init__(self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
+
+        self.group_mapper = group_mapper
+        """Refernce to group mapper, to get updated groups when needed."""
 
         self.storage.set_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
@@ -97,18 +106,36 @@ class FileSystemUserMappper(UserMapper):
         if self.storage._resource_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
 
-        new_user = convert_to_hashed_user(user)
+        new_user = user.to_hashed_user()
+
+        # Only store group names for consistency.
+        new_user.groups = Group.get_group_names(new_user.groups)
+
         return self._write_user(new_user)
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
+        # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
         if not self.storage._resource_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 
-        updated_user = update_user(self._read_user(user.username), user)
+        curr_user = self._read_user(user.username)
+        updated_user = update_user_data(curr_user, user)
+
+        # Only store group names for consistency.
+        updated_user.groups = Group.get_group_names(updated_user.groups)
+
         return self._write_user(updated_user)
 
     def read(self, username: str) -> User:
-        return self._read_user(username)
+        user = self._read_user(username)
+
+        # Now get updated info for each group.
+        up_to_date_groups: List[Group] = []
+        for group in user.groups:
+            up_to_date_groups.append(self.group_mapper.read(group.name))
+        user.groups = up_to_date_groups
+
+        return user
 
     def list(self) -> List[str]:
         return [
@@ -210,7 +237,7 @@ class FileSystemGroupMappper(GroupMapper):
             self.storage._resource_path(group.name),
             group.model_dump(),
         )
-        return group
+        return self._read_group(group.name)
 
 
 # -------------------------------------------------------------------------
@@ -281,4 +308,4 @@ class FileSystemPermissionMappper(PermissionMapper):
             self.storage._resource_path(permission.to_str()),
             permission.model_dump(),
         )
-        return permission
+        return self._read_permission(permission.to_str())

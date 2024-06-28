@@ -33,16 +33,25 @@
             >
               Logout
             </UsaButton>
-            <NuxtLink :to="{ path: '/admin/user-management' }">
-              <UsaButton class="secondary-button" style="margin-left: 0.5em">
-                Manage Users
-              </UsaButton>
-            </NuxtLink>
-            <NuxtLink :to="{ path: '/admin/group-management' }">
-              <UsaButton class="secondary-button" style="margin-left: 0.5em">
-                Manage Groups
-              </UsaButton>
-            </NuxtLink>
+            <div v-if="userRole === 'admin'">
+              <NuxtLink :to="{ path: '/admin/user-management' }">
+                <UsaButton class="secondary-button" style="margin-left: 0.5em" @click="$emit('manageUsers')">
+                  Manage Users
+                </UsaButton>
+              </NuxtLink>
+              <NuxtLink :to="{ path: '/admin/group-management' }">
+                <UsaButton class="secondary-button" style="margin-left: 0.5em" @click="$emit('manageGroups')">
+                  Manage Groups
+                </UsaButton>
+              </NuxtLink>
+            </div>
+            <div v-else>
+              <NuxtLink :to="{ path: '/regular/profile-edit' }">
+                <UsaButton class="secondary-button" style="margin-left: 0.5em">
+                  Edit Profile
+                </UsaButton>
+              </NuxtLink>
+            </div>
           </div>
         </div>
         <slot name="default" />
@@ -82,7 +91,10 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 const user = useCookie("user");
+const userRole = useCookie("userRole");
 const version = config.public.version;
+
+const emits = defineEmits(["manageUsers", "manageGroups"]);
 </script>
 
 <style>

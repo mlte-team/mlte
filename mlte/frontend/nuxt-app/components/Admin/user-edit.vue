@@ -5,21 +5,21 @@
         <h1 class="section-header">{{ modelValue.username }}</h1>
         <div
           class="centered-container"
-          style="vertical-align: bottom; padding-left: 33ch"
+          style="vertical-align: bottom; padding-left: 38ch"
         >
-          <div v-if="!resetPasswordFlag">
+          <div v-if="!changePasswordFlag">
             <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Reset Password
+              Change Password
             </UsaButton>
           </div>
-          <div v-if="resetPasswordFlag">
+          <div v-if="changePasswordFlag">
             <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Reset
+              Cancel Change
             </UsaButton>
           </div>
         </div>
       </div>
-      <div v-if="resetPasswordFlag">
+      <div v-if="changePasswordFlag">
         <UsaTextInput
           v-model="modelValue.password"
           :error="formErrors.password"
@@ -75,6 +75,10 @@
     </UsaSelect>
 
     <label class="usa-label">Groups</label>
+    <div v-if="newUserFlag">
+      User will automatically be added to the <b>create-model</b> group
+      upon submission. 
+    </div>
     <div v-for="groupOption in groupOptions" :key="groupOption.name">
       <UsaCheckbox
         v-model="groupOption.selected"
@@ -101,7 +105,15 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
-    default: {},
+    default: {
+      username: "",
+      password: "",
+      email: "",
+      full_name: "",
+      disabled: false,
+      role: "regular",
+      groups: [],
+    },
   },
   newUserFlag: {
     type: Boolean,
@@ -110,7 +122,7 @@ const props = defineProps({
   },
 });
 
-const resetPasswordFlag = ref(false);
+const changePasswordFlag = ref(false);
 const confirmPassword = ref("");
 const roleOptions = ref([
   { value: "admin", text: "admin" },
@@ -128,6 +140,7 @@ const groupOptions = ref<
 const { data: groupList } = await useFetch<string[]>(
   config.public.apiPath + "/groups/details",
   {
+    retry: 0,
     method: "GET",
     headers: {
       Authorization: "Bearer " + token.value,
@@ -150,13 +163,17 @@ groupOptions.value.forEach((groupOption) => {
   }
 });
 
+if(props.newUserFlag){
+  props.modelValue.role = "regular";
+}
+
 function enablePasswordReset() {
-  resetPasswordFlag.value = true;
+  changePasswordFlag.value = true;
   props.modelValue.password = "";
 }
 
 function disablePasswordReset() {
-  resetPasswordFlag.value = false;
+  changePasswordFlag.value = false;
   delete props.modelValue.password;
 }
 
@@ -175,8 +192,8 @@ function groupChange(selected: boolean, groupOption: object) {
   }
 }
 
-function submit() {
-  resetFormErrors();
+async function submit() {
+  formErrors.value = resetFormErrors(formErrors.value);
   let submitError = false;
 
   if (props.newUserFlag) {
@@ -191,7 +208,7 @@ function submit() {
     }
   }
 
-  if (resetPasswordFlag.value) {
+  if (changePasswordFlag.value) {
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       submitError = true;
@@ -207,15 +224,10 @@ function submit() {
     submitError = true;
   }
 
-  if (!submitError) {
-    emit("submit", props.modelValue);
+  if (submitError) {
+    return;
   }
-}
 
-function resetFormErrors() {
-  formErrors.value.username = false;
-  formErrors.value.role = false;
-  formErrors.value.password = false;
-  formErrors.value.confirmPassword = false;
+  emit("submit", props.modelValue);
 }
 </script>

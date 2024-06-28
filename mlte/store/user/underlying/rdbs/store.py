@@ -31,8 +31,14 @@ from mlte.store.user.underlying.rdbs.metadata import (
     init_role_types,
 )
 from mlte.store.user.underlying.rdbs.reader import DBReader
-from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
-from mlte.user.model_logic import convert_to_hashed_user, update_user
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    User,
+    UserWithPassword,
+    update_user_data,
+)
 
 # -----------------------------------------------------------------------------
 # RelationalDBUserStore
@@ -123,22 +129,24 @@ class RDBUserMapper(UserMapper):
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
                 # Hash password and create a user with hashed passwords to be stored.
-                hashed_user = convert_to_hashed_user(user)
+                hashed_user = user.to_hashed_user()
                 user_obj = self._build_user(hashed_user, session)
                 session.add(user_obj)
                 session.commit()
-                return hashed_user
+                stored_user, _ = DBReader.get_user(user.username, session)
+                return stored_user
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         with Session(self.engine) as session:
             curr_user, user_obj = DBReader.get_user(user.username, session)
-            updated_user = update_user(curr_user, user)
+            updated_user = update_user_data(curr_user, user)
 
             # Update existing user.
             user_obj = self._build_user(updated_user, session, user_obj)
             session.commit()
 
-            return updated_user
+            stored_user, _ = DBReader.get_user(user.username, session)
+            return stored_user
 
     def read(self, username: str) -> User:
         with Session(self.engine) as session:

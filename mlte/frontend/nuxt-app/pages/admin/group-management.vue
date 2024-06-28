@@ -1,5 +1,8 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout 
+    name="base-layout"
+    @manageGroups="manageGroupClick"
+  >
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -55,8 +58,8 @@ async function updateGroupList() {
     onResponse({ response }) {
       groupList.value = response._data;
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
@@ -99,10 +102,16 @@ async function deleteGroup(groupName: string) {
     onResponse() {
       updateGroupList();
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
+}
+
+function manageGroupClick(){
+  if(editFlag.value){
+    cancelEdit();
+  }
 }
 
 function cancelEdit() {
@@ -113,42 +122,46 @@ function cancelEdit() {
 }
 
 async function saveGroup(group: object) {
-  if (newGroupFlag.value) {
-    await $fetch(config.public.apiPath + "/group", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: group,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateGroupList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
-  } else {
-    await $fetch(config.public.apiPath + "/group", {
-      retry: 0,
-      method: "PUT",
-      body: group,
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateGroupList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
+  try {
+    if (newGroupFlag.value) {
+      await $fetch(config.public.apiPath + "/group", {
+        retry: 0,
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        body: group,
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateGroupList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    } else {
+      await $fetch(config.public.apiPath + "/group", {
+        retry: 0,
+        method: "PUT",
+        body: group,
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateGroupList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    }
+  } catch {
+    return;
   }
 
   resetSelectedGroup();

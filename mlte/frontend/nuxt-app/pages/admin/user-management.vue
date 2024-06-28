@@ -1,5 +1,8 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout
+    name="base-layout"
+    @manageUsers="manageUserClick"  
+  >
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -31,7 +34,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const authUser = useCookie("user");
+const userCookie = useCookie("user");
 
 const editFlag = ref(false);
 const newUserFlag = ref(false);
@@ -64,8 +67,8 @@ async function updateUserList() {
     onResponse({ response }) {
       userList.value = response._data;
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 }
@@ -95,7 +98,7 @@ function editUser(user: object) {
 }
 
 async function deleteUser(usernameToDelete: string) {
-  if (authUser.value === usernameToDelete) {
+  if (userCookie.value === usernameToDelete) {
     alert("Cannot delete the active user.");
     return;
   }
@@ -117,10 +120,16 @@ async function deleteUser(usernameToDelete: string) {
     onResponse() {
       updateUserList();
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
+}
+
+function manageUserClick(){
+  if(editFlag.value){
+    cancelEdit();
+  }
 }
 
 function cancelEdit() {
@@ -131,42 +140,46 @@ function cancelEdit() {
 }
 
 async function saveUser(user: object) {
-  if (newUserFlag.value) {
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: user,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateUserList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
-  } else {
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "PUT",
-      body: user,
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse() {
-        updateUserList();
-      },
-      onResponseError() {
-        responseErrorAlert();
-      },
-    });
+  try {
+    if (newUserFlag.value) {
+      await $fetch(config.public.apiPath + "/user", {
+        retry: 0,
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        body: user,
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateUserList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    } else {
+      await $fetch(config.public.apiPath + "/user", {
+        retry: 0,
+        method: "PUT",
+        body: user,
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse() {
+          updateUserList();
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    }
+  } catch {
+    return;
   }
 
   resetSelectedUser();

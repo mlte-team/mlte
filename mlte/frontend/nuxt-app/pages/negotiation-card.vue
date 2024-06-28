@@ -71,6 +71,25 @@
     </div>
 
     <h2 class="section-header">System Information</h2>
+    <UsaTextarea v-model="form.system.usage_context" style="margin-bottom: 1em">
+      <template #label>
+        Usage Context for the Model
+        <InfoIcon>
+          Who is intended to utilize the system/model; how the results of the
+          model are <br />
+          going to be used by end users or in the context of a larger system.
+          <br />
+          <br />
+          <i
+            >Example: Model results are consumed by a system component that
+            shows
+            <br />
+            an intel analyst a list of matching voice recordings.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
     <div class="input-group">
       <SubHeader :render-example="false">
         Goals
@@ -178,25 +197,6 @@
           <br />
           <br />
           <i>Example: Match voice recordings spoken by the same person.</i>
-        </InfoIcon>
-      </template>
-    </UsaTextInput>
-
-    <UsaTextInput v-model="form.system.usage_context">
-      <template #label>
-        Usage Context
-        <InfoIcon>
-          Who is intended to utilize the system/model; how the results of the
-          model are <br />
-          going to be used by end users or in the context of a larger system.
-          <br />
-          <br />
-          <i
-            >Example: Model results are consumed by a system component that
-            shows
-            <br />
-            an intel analyst a list of matching voice recordings.</i
-          >
         </InfoIcon>
       </template>
     </UsaTextInput>
@@ -1280,8 +1280,8 @@ if (useRoute().query.artifactId !== undefined) {
           });
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -1339,19 +1339,17 @@ async function submit() {
             requestErrorAlert();
           },
           onResponseError({ response }) {
-            if (response.status === 409) {
-              conflictErrorAlert();
-            } else {
-              responseErrorAlert();
-            }
+            handleHttpError(
+              response.status,
+              response._data.error_description,
+            );
           },
         },
       );
-      successfulSubmission("negotiation card", identifier);
+      successfulArtifactSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
-    } catch (error) {
-      console.log("Error in fetch.");
-      console.log(error);
+    } catch {
+      return;
     }
   } else {
     console.log("Invalid document attempting to be submitted.");

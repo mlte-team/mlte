@@ -1,5 +1,13 @@
 const config = useRuntimeConfig();
 
+export function resetFormErrors(formErrors: object) {
+  for (const key in formErrors) {
+    formErrors[key] = false;
+  }
+
+  return formErrors;
+}
+
 // Fetch a artifact by ID.
 export async function fetchArtifact(
   token: string,
@@ -27,8 +35,8 @@ export async function fetchArtifact(
       onResponse({ response }) {
         return response._data;
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );

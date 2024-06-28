@@ -15,7 +15,7 @@ from mlte.store.artifact.store import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
-from test.backend.fixture.api_helper import TEST_API_USERNAME
+from test.backend.fixture.user_generator import TEST_API_USERNAME
 from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory

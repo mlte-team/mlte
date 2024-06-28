@@ -16,7 +16,7 @@
           v-model="newVersionIdentifier"
           :disabled="selectedModel === ''"
         >
-          <template #label> New Version </template>
+          <template #label> New Version for: {{ selectedModel }} </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
@@ -340,7 +340,7 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
 }
 
 async function populateModelVersionLists() {
-  await $fetch(config.public.apiPath + "/model/", {
+  await $fetch(config.public.apiPath + "/user/me/models/", {
     retry: 0,
     method: "GET",
     headers: {
@@ -352,8 +352,8 @@ async function populateModelVersionLists() {
     onResponse({ response }) {
       modelList.value = response._data;
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 
@@ -399,8 +399,8 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
         });
       }
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 
@@ -452,8 +452,8 @@ async function selectVersion(versionName: string) {
           );
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -542,47 +542,65 @@ function clearArtifacts() {
 }
 
 async function submitNewModel(modelName: string) {
-  await $fetch(config.public.apiPath + "/model/", {
-    retry: 0,
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    body: {
-      identifier: modelName,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse() {
-      populateModelVersionLists();
-    },
-    onResponseError() {
-      responseErrorAlert();
-    },
-  });
+  try {
+    await $fetch(config.public.apiPath + "/model/", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: modelName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if(response.ok){
+          populateModelVersionLists();
+          alert(`Model, ${modelName} has been created.`)
+          newModelIdentifier.value = "";
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
+  catch{
+    return;
+  }
 }
 
 async function submitNewVersion(modelName: string, versionName: string) {
-  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
-    retry: 0,
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    body: {
-      identifier: versionName,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse() {
-      selectModel(modelName, false);
-    },
-    onResponseError() {
-      responseErrorAlert();
-    },
-  });
+  try{
+    await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: versionName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if(response.ok){
+          selectModel(modelName, false);
+          alert(`Version, ${versionName} for model, ${modelName} has been created`);
+          newVersionIdentifier.value = "";
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
+  catch{
+    return;
+  }
 }
 </script>
 

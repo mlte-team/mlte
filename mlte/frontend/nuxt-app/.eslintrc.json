@@ -20,12 +20,10 @@
     "isValidValue": true,
     "isValidReport": true,
     "isValidArtifact": true,
-    "alert400Error": true,
-    "successfulSubmission": true,
+    "successfulArtifactSubmission": true,
     "cancelFormSubmission": true,
     "requestErrorAlert": true,
-    "responseErrorAlert": true,
-    "conflictErrorAlert": true,
+    "handleHttpError": true,
     "fetchArtifact": true
   },
   "extends": [
