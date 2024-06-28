@@ -8,16 +8,13 @@ from __future__ import annotations
 
 from typing import List, cast
 
-from mlte.catalog.model import CatalogEntryModel
-from mlte.store.base import ManagedSession, Store, StoreSession
+from mlte.catalog.model import CatalogEntry
+from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
 
 
 class CatalogStore(Store):
     """
     An abstract store.
-
-    A Store instance is the "static" part of a store configuration.
-    In contrast, a StoreSession represents an active session with the store.
     """
 
     def session(self) -> CatalogStoreSession:
@@ -31,43 +28,16 @@ class CatalogStore(Store):
 class CatalogStoreSession(StoreSession):
     """The base class for all implementations of the MLTE catalog store session."""
 
-    def write_entry(
-        self,
-        catalog_id: str,
-        entry: CatalogEntryModel,
-        *,
-        force: bool = False,
-    ) -> CatalogEntryModel:
-        """
-        Write an catalog entry.
-        :param catalog_id: The identifier of the catalog to store this to.
-        :param entry: The catalog entry
-        :param force: Overwrite an entry if it already exists
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
-    def read_entry(
-        self,
-        entry_id: str,
-    ) -> CatalogEntryModel:
-        """
-        Read a catalog entry.
-        :param catalog_id: The identifier of the catalog to read from.
-        :param entry_id: The catalog entry identifier
-        :return: The entry
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
+    def __init__(self):
+        self.entry_mapper = CatalogEntryMapper()
+        """Mapper for the entry resource."""
 
     def read_entries(
         self,
         catalog_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CatalogEntryModel]:
+    ) -> List[CatalogEntry]:
         """
         Read entries within limit and offset.
         :param catalog_id: The identifier of the catalog to read from.
@@ -83,7 +53,7 @@ class CatalogStoreSession(StoreSession):
         self,
         catalog_id: str,
         # query: Query = Query(),
-    ) -> List[CatalogEntryModel]:
+    ) -> List[CatalogEntry]:
         """
          Read a collection of entries, optionally filtered.
          :param catalog_id: The identifier of the catalog to read from.
@@ -94,20 +64,24 @@ class CatalogStoreSession(StoreSession):
             "Cannot invoke method on abstract CatalogStoreSession."
         )
 
-    def delete_entry(
-        self,
-        catalog_id: str,
-        entry_id: str,
-    ) -> CatalogEntryModel:
-        """
-        Delete an entry.
-        :param catalog_id: The identifier of the catalog to delete this from.
-        :param entry_id: The catalog entry identifier
-        :return: The deleted entry
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract ArtifactStoreSession."
-        )
+
+class CatalogEntryMapper(ResourceMapper):
+    """A interface for mapping CRUD actions to store entries."""
+
+    def create(self, entry: CatalogEntry) -> CatalogEntry:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def read(self, entry_id: str) -> CatalogEntry:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list(self) -> List[str]:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def delete(self, entry_id: str) -> CatalogEntry:
+        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
 
 class ManagedCatalogSession(ManagedSession):

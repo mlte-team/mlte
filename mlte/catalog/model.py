@@ -4,7 +4,7 @@ mlte/catalog/entry/model.py
 Model implementation for MLTE catalog entries.
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from strenum import StrEnum
 
@@ -27,7 +27,7 @@ class CatalogEntryHeader(BaseModel):
     identifier: str
     """The unique identifier for the entry."""
 
-    author: str
+    creator: Optional[str] = None
     """The author for the entry."""
 
     created: Optional[int] = -1
@@ -43,16 +43,16 @@ class CatalogEntry(BaseModel):
     header: CatalogEntryHeader
     """The header."""
 
-    problem_type: str
+    problem_type: List[str] = []
     """Tags for the problem type for the entry."""
 
-    problem_domain: str
+    problem_domain: List[str] = []
     """Tags for the problem type for the entry."""
 
-    property_category: str
+    property_category: Optional[str] = None
     """The property category or QA for the entry."""
 
-    property: str
+    property: Optional[str] = None
     """The property for the entry."""
 
     code_type: CatalogEntryType
@@ -61,11 +61,11 @@ class CatalogEntry(BaseModel):
     code: str
     """The actual code for the entry."""
 
-    description: str
+    description: Optional[str] = None
     """The description of the code for the entry."""
 
-    inputs: str
+    inputs: Optional[str] = None
     """The input for the entry."""
 
-    output: str
+    output: Optional[str] = None
     """The output for the entry."""
