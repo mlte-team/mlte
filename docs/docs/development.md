@@ -225,19 +225,25 @@ $ bumpversion --allow-dirty patch
 
 We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in Versioning above.
 
-Build the static distribution for the front end; the command below assumes that you have the dependencies for front end builds installed:
+To build the frontend and then the whole package, it is enough to execute the following command from the main repo folder:
+```bash
+$ bash build.sh
+```
+
+You can also do this manually:
+1. Build the static distribution for the front end; the command below assumes that you have the dependencies for frontend builds installed:
 
 ```bash
 $ cd mlte/frontend/nuxt-app && npm run build
 ```
 
-Create the source distribution and wheel:
+2. Create the source distribution and wheel from the main repo folder:
 
 ```bash
 $ poetry build
 ```
 
-Publish the package to `PyPi` using a PyPi API token:
+Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
 ```bash
 $ poetry publish --username __token__ --password <TOKEN>
