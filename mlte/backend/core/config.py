@@ -33,20 +33,20 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
     """The global API prefix."""
 
-    APP_HOST: str = "localhost"
+    BACKEND_HOST: str = "localhost"
     """The host to which the server binds."""
 
-    APP_PORT: str = "8080"
+    BACKEND_PORT: str = "8080"
     """The port to which the server binds."""
 
-    @field_validator("APP_PORT", mode="before")
+    @field_validator("BACKEND_PORT", mode="before")
     @classmethod
     def validate_app_port(cls, v: str) -> str:
         try:
             int(v)
         except ValueError:
             raise ValueError(
-                f"Failed to parse int from APP_PORT: {v}."
+                f"Failed to parse int from BACKEND_PORT: {v}."
             ) from None
         return v
 

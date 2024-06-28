@@ -5,73 +5,12 @@ on:
   - pull_request
 
 jobs:
-  test_3-8:
-    runs-on: ${{ matrix.os }}
+  test:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8']
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install poetry
-      run: curl -sSL https://install.python-poetry.org | python -
-    - name: Install dependencies
-      run: poetry install
-    - name: Sort imports with isort
-      run: make check-isort
-    - name: Format with black
-      run: make check-format
-    - name: Lint with flake8
-      run: make check-lint
-    - name: Typecheck with mypy
-      run: make check-typecheck
-    - name: Execute unit tests
-      run: make test
-    - name: Vet schemas
-      run: make vet
-
-  test_3-9:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.9']
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install poetry
-      run: curl -sSL https://install.python-poetry.org | python -
-    - name: Install dependencies
-      run: poetry install
-    - name: Sort imports with isort
-      run: make check-isort
-    - name: Format with black
-      run: make check-format
-    - name: Lint with flake8
-      run: make check-lint
-    - name: Typecheck with mypy
-      run: make check-typecheck
-    - name: Execute unit tests
-      run: make test
-    - name: Vet schemas
-      run: make vet
-
-  test_3-10:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.10']
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}

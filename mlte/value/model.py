@@ -6,17 +6,17 @@ Model implementation for MLTE value types.
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Any, Dict, List, Literal, Union
 
 from pydantic import Field
+from strenum import StrEnum
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
 
 
-class ValueType(str, Enum):
+class ValueType(StrEnum):
     """An enumeration over supported value types."""
 
     INTEGER = "integer"

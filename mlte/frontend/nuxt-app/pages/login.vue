@@ -3,11 +3,17 @@
     <form>
       <div style="max-width: 30rem">
         <h1 class="section-header">Login to MLTE</h1>
-        <UsaTextInput v-model="username" required type="text">
+        <UsaTextInput v-model="username" :error="formErrors.username">
           <template #label> Username </template>
+          <template #error-message> Enter a username </template>
         </UsaTextInput>
-        <UsaTextInput v-model="password" required type="password">
+        <UsaTextInput
+          v-model="password"
+          :error="formErrors.password"
+          type="password"
+        >
           <template #label> Password </template>
+          <template #error-message> Enter a password </template>
         </UsaTextInput>
 
         <div class="margin-button centered-container">
@@ -26,11 +32,35 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
+const token = useCookie("token");
+const user = useCookie("user")
+const userRole = useCookie("userRole");
 
 const username = ref("");
 const password = ref("");
 
+const formErrors = ref({
+  username: false,
+  password: false,
+});
+
 async function submit() {
+  formErrors.value = resetFormErrors(formErrors.value);
+  let submitError = false;
+
+  if (username.value.trim() === "") {
+    formErrors.value.username = true;
+    submitError = true;
+  }
+  if (password.value.trim() === "") {
+    formErrors.value.password = true;
+    submitError = true;
+  }
+
+  if (submitError) {
+    return;
+  }
+
   const details = {
     grant_type: "password",
     username: username.value,
@@ -54,33 +84,49 @@ async function submit() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: formBody,
-      onRequestError({ request }) {
-        console.log(request);
+      onRequestError() {
         requestErrorAlert();
+        return;
       },
       onResponse({ response }) {
         const token = useCookie("token", {
-          Secure: true,
+          secure: true,
           maxAge: response?._data?.expires_in,
         });
         const user = useCookie("user", { maxAge: response?._data?.expires_in });
         token.value = response?._data?.access_token;
         user.value = username.value;
-        navigateTo("/");
       },
       onResponseError({ response }) {
-        if (response.status === 400) {
-          alert400Error(response._data.error_description);
-        } else if (response.status === 409) {
-          conflictErrorAlert();
-        } else {
-          responseErrorAlert();
-        }
+        handleHttpError(response.status, response._data.error_description);
+        return;
       },
     });
-  } catch (error) {
-    console.log("Error in fetch.");
-    console.log(error);
+
+    const token = useCookie("token");
+    await $fetch(config.public.apiPath + "/user/me", {
+      retry: 0,
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      onRequestError() {
+        requestErrorAlert();
+        return;
+      },
+      onResponse({ response }) {
+        const userRole = useCookie("userRole");
+        userRole.value = response._data.role;
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+        return;
+      },
+    });
+
+    navigateTo("/");
+  } catch {
+    return;
   }
 }
 </script>

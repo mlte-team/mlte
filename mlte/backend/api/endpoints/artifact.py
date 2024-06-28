@@ -9,17 +9,15 @@ from __future__ import annotations
 import traceback
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-from typing_extensions import Annotated
+from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api import dependencies
-from mlte.backend.api.auth.authorization import get_authorized_user
+from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
 from mlte.store.artifact.query import Query
-from mlte.user.model import BasicUser
 
 # The router exported by this submodule
 router = APIRouter()
@@ -30,7 +28,7 @@ def write_artifact(
     model_id: str,
     version_id: str,
     request: WriteArtifactRequest,
-    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
+    current_user: AuthorizedUser,
 ) -> WriteArtifactResponse:
     """
     Write an artifact.
@@ -71,7 +69,7 @@ def read_artifact(
     model_id: str,
     version_id: str,
     artifact_id: str,
-    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
+    current_user: AuthorizedUser,
 ) -> ArtifactModel:
     """
     Read an artifact by identifier.
@@ -98,7 +96,7 @@ def read_artifact(
 def read_artifacts(
     model_id: str,
     version_id: str,
-    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
+    current_user: AuthorizedUser,
     limit: int = 100,
     offset: int = 0,
 ) -> List[ArtifactModel]:
@@ -120,12 +118,14 @@ def read_artifacts(
             )
 
 
+# TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
+# and it forces us to use write permissions to reach this endpoint. This should be fixed.
 @router.post("/search")
 def search_artifacts(
     model_id: str,
     version_id: str,
     query: Query,
-    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
+    current_user: AuthorizedUser,
 ) -> List[ArtifactModel]:
     """
     Search artifacts.
@@ -150,7 +150,7 @@ def delete_artifact(
     model_id: str,
     version_id: str,
     artifact_id: str,
-    current_user: Annotated[BasicUser, Depends(get_authorized_user)],
+    current_user: AuthorizedUser,
 ) -> ArtifactModel:
     """
     Delete an artifact by identifier.

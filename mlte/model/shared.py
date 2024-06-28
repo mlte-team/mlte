@@ -4,8 +4,9 @@ mlte/model/shared.py
 Shared model implementation.
 """
 
-from enum import Enum
 from typing import List, Optional
+
+from strenum import StrEnum
 
 from mlte.model.base_model import BaseModel
 
@@ -14,7 +15,7 @@ from mlte.model.base_model import BaseModel
 # -----------------------------------------------------------------------------
 
 
-class ProblemType(str, Enum):
+class ProblemType(StrEnum):
     """An enumeration over machine learning problem types."""
 
     CLASSIFICATION = "classification"
@@ -154,7 +155,7 @@ class ModelDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class DataClassification(str, Enum):
+class DataClassification(StrEnum):
     """An enumeration of data classification levels."""
 
     UNCLASSIFIED = "unclassified"

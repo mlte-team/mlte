@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.model.model import Model, Version
+from mlte.context.model import Model, Version
 from mlte.model.shared import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (

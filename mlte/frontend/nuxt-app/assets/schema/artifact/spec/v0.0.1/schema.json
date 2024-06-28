@@ -87,7 +87,11 @@
     "artifact_type": {
       "const": "spec",
       "default": "spec",
-      "title": "Artifact Type"
+      "enum": [
+        "spec"
+      ],
+      "title": "Artifact Type",
+      "type": "string"
     },
     "properties": {
       "type": "array",

@@ -1,0 +1,26 @@
+# Dockerfile.mlte
+#
+# Image definition for MLTE base container.
+
+FROM python:3.10.14-slim-bookworm
+
+# Base deps for compiling wheels.
+RUN apt-get update && apt-get install -y build-essential
+
+# Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
+# NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
+# but with a .crt extensions, so they can be loaded into the container and used for SSL connections properly.
+RUN apt-get install -y ca-certificates
+RUN mkdir /certs
+COPY ./certs/ /certs/
+RUN if [ -n "$(ls -A /certs/*.crt)" ]; then \
+      cp -rf /certs/*.crt /usr/local/share/ca-certificates/; \
+      update-ca-certificates; \
+    fi
+
+# Setup poetry to handle dependencies.
+RUN pip install poetry
+
+ENV PYTHONUNBUFFERED 1
+
+# NOTE: MLTE code is not copied and left for the specific sub dockerfiles to do, to allow caching their specific dependencies.

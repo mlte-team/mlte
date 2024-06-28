@@ -23,20 +23,20 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "default"
     """Used to check the type of settings being used."""
 
-    APP_HOST: str = "localhost"
+    FRONTEND_HOST: str = "localhost"
     """The host to which the frontend server binds."""
 
-    APP_PORT: str = "8000"
+    FRONTEND_PORT: str = "8000"
     """The port to which the frontend server binds."""
 
-    @field_validator("APP_PORT", mode="before")
+    @field_validator("FRONTEND_PORT", mode="before")
     @classmethod
     def validate_app_port(cls, v: str) -> str:
         try:
             int(v)
         except ValueError:
             raise ValueError(
-                f"Failed to parse int from APP_PORT: {v}."
+                f"Failed to parse int from FRONTEND_PORT: {v}."
             ) from None
         return v
 

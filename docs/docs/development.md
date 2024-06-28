@@ -145,7 +145,7 @@ $ npx gulp init
 If there are issues with `npm install`, try this instead:
 
 ```bash
-$ npm i --ignore-scripts
+$ npm install --ignore-scripts
 $ npm install
 $ npx gulp compile
 $ npx gulp init
@@ -245,23 +245,34 @@ $ poetry publish --username __token__ --password <TOKEN>
 
 ## Docker Integration
 
-We package the `MLTE` backend as a Docker container image. To build the image from the source repository, run:
+We package the `MLTE` backend as a set of Docker container images. To build the image from the source repository, run:
 
 ```bash
-# From the repository root
-docker build . -f docker/Dockerfile.backend -t mlte-backend
+# From inside the docker/ folder
+bash build.sh
 ```
 
-Run the container with:
+Run the containers with:
 
 ```bash
-docker run --rm -p 8080:8080 mlte-backend
+# From inside the docker/deployment folder
+bash start.sh
 ```
 
-This binds the backend to the address `0.0.0.0:8080` within the container, and exposes it on the host at `localhost:8080`. By default, a local filesystem backend is used for storage. The store implementation writes data to `/mnt/store` within the container. We can utilize a <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">bind mount</a> to extend the life of this data beyond the life of the container:
+This exposes the backend on the host at `localhost:8080`, and the frontend at `localhost:8080`. By default, PostgreSQL database is used in a container, and the data is mapped to the local `./pgdata` folder.
+
+You can CTRL+C to stop seeing the output in the console, but the containers will continue running. You can check back the current logs at any time with:
 
 ```bash
-docker run --rm -p 8080:8080 -v /host/path/to/store:/mnts/store mlte-backend
+# From inside the docker/deployment folder
+bash logs.sh
+```
+
+Stop the containers with:
+
+```bash
+# From inside the docker/deployment folder
+bash stop.sh
 ```
 
 ## Python Version Support
@@ -271,6 +282,7 @@ Currently, `MLTE` supports the following Python versions:
 - `3.8`
 - `3.9`
 - `3.10`
+- `3.11`
 
 <a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
 

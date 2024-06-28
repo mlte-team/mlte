@@ -695,7 +695,11 @@
     "artifact_type": {
       "const": "report",
       "default": "report",
-      "title": "Artifact Type"
+      "enum": [
+        "report"
+      ],
+      "title": "Artifact Type",
+      "type": "string"
     },
     "summary": {
       "allOf": [

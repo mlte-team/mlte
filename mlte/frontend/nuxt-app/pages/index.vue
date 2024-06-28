@@ -1,5 +1,32 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template #sidebar>
+      <div style="padding-top: 60px">
+        <UsaTextInput v-model="newModelIdentifier">
+          <template #label> New Model </template>
+        </UsaTextInput>
+        <UsaButton
+          class="secondary-button margin-button"
+          @click="submitNewModel(newModelIdentifier)"
+        >
+          Create Model
+        </UsaButton>
+
+        <UsaTextInput
+          v-model="newVersionIdentifier"
+          :disabled="selectedModel === ''"
+        >
+          <template #label> New Version for: {{ selectedModel }} </template>
+        </UsaTextInput>
+        <UsaButton
+          class="secondary-button margin-button"
+          @click="submitNewVersion(selectedModel, newVersionIdentifier)"
+        >
+          Create Version
+        </UsaButton>
+      </div>
+    </template>
+
     <UsaBreadcrumb :items="path" />
     <div style="display: flex">
       <div class="split-div">
@@ -7,7 +34,7 @@
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="selectModel($event, false)"
+          @update:modelValue="selectModel($event, true)"
         />
         <br />
       </div>
@@ -54,7 +81,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'negotiation-card',
+                      path: '/negotiation-card',
                       query: {
                         model: card.model,
                         version: card.version,
@@ -70,7 +97,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'negotiation-card',
+              path: '/negotiation-card',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
@@ -115,7 +142,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: 'report',
+                      path: '/report-form',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -126,8 +153,9 @@
                     <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
                   <NuxtLink
+                    target="_blank"
                     :to="{
-                      path: 'export-report',
+                      path: '/report-export',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -143,7 +171,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: 'report',
+              path: '/report-form',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
@@ -198,18 +226,6 @@
         </div>
       </UsaAccordionItem>
 
-      <!-- <UsaAccordionItem label="Results">
-        <div class="scrollable-table-div">
-          <p>
-            Results encode whether or not the values generated during evidence
-            collection pass their corresponding validation threshold. They are
-            produced by feeding values through the relevant condition callbacks
-            provided in the MLTE specification.
-          </p>
-          <UsaTable :headers="resultsHeaders" borderless class="table" />
-        </div>
-      </UsaAccordionItem> -->
-
       <UsaAccordionItem label="Values">
         <div class="scrollable-table-div">
           <p>
@@ -239,26 +255,18 @@ const path = ref([
   },
 ]);
 
+const newModelIdentifier = ref("");
+const newVersionIdentifier = ref("");
+
 const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
-const { data: modelList } = await useFetch<string[]>(
-  config.public.apiPath + "/model",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
-if (modelList.value) {
-  modelList.value.forEach((modelName: string) => {
-    modelOptions.value.push({ value: modelName, text: modelName });
-  });
-}
+const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel");
 selectedModel.value = selectedModel.value || "";
-const selectedVersion = useCookie("selectedVersion");
+const selectedVersion = useCookie("selectedVersion", {
+  decode: false,
+});
 selectedVersion.value = selectedVersion.value || "";
 
 const cardSpecReportHeaders = ref([
@@ -308,6 +316,7 @@ const values = ref<
   }[]
 >([]);
 
+await populateModelVersionLists();
 if (modelOptions.value !== null && modelOptions.value.length > 0) {
   const modelList = modelOptions.value.map((model) => {
     return model.value;
@@ -317,7 +326,7 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
     selectedVersion.value = "";
   }
   if (selectedModel.value !== "") {
-    await selectModel(selectedModel.value, true);
+    await selectModel(selectedModel.value, false);
     const versionList = versionOptions.value.map((version) => {
       return version.value;
     });
@@ -330,10 +339,36 @@ if (modelOptions.value !== null && modelOptions.value.length > 0) {
   }
 }
 
+async function populateModelVersionLists() {
+  await $fetch(config.public.apiPath + "/user/me/models/", {
+    retry: 0,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+    onRequestError() {
+      requestErrorAlert();
+    },
+    onResponse({ response }) {
+      modelList.value = response._data;
+    },
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
+    },
+  });
+
+  modelOptions.value = [];
+  if (modelList.value) {
+    modelList.value.forEach((modelName: string) => {
+      modelOptions.value.push({ value: modelName, text: modelName });
+    });
+  }
+}
+
 // Update the selected model for the artifact store.
-async function selectModel(modelName: string, initialPageLoad: boolean) {
+async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   selectedModel.value = modelName;
-  if (!initialPageLoad) {
+  if (resetSelectedVersion) {
     selectedVersion.value = "";
   }
   if (modelName === "") {
@@ -353,6 +388,7 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
     },
     onResponse({ response }) {
       if (response._data) {
+        clearArtifacts();
         selectedModel.value = modelName;
         versionOptions.value = [];
         response._data.forEach((version: string) => {
@@ -363,8 +399,8 @@ async function selectModel(modelName: string, initialPageLoad: boolean) {
         });
       }
     },
-    onResponseError() {
-      responseErrorAlert();
+    onResponseError({ response }) {
+      handleHttpError(response.status, response._data.error_description);
     },
   });
 
@@ -416,8 +452,8 @@ async function selectVersion(versionName: string) {
           );
         }
       },
-      onResponseError() {
-        responseErrorAlert();
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
       },
     },
   );
@@ -425,8 +461,13 @@ async function selectVersion(versionName: string) {
 
 // Populate artifacts for a given model and version.
 // TODO : Do better typing on the artifactList and artifact
-function populateArtifacts(model: string, version: string, artifactList: any) {
-  artifactList.forEach((artifact: any) => {
+function populateArtifacts(
+  model: string,
+  version: string,
+  artifactList: Array<object>,
+) {
+  clearArtifacts();
+  artifactList.forEach((artifact: object) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
     ).toLocaleString("en-US");
@@ -498,6 +539,68 @@ function clearArtifacts() {
   specifications.value = [];
   validatedSpecs.value = [];
   values.value = [];
+}
+
+async function submitNewModel(modelName: string) {
+  try {
+    await $fetch(config.public.apiPath + "/model/", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: modelName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if(response.ok){
+          populateModelVersionLists();
+          alert(`Model, ${modelName} has been created.`)
+          newModelIdentifier.value = "";
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
+  catch{
+    return;
+  }
+}
+
+async function submitNewVersion(modelName: string, versionName: string) {
+  try{
+    await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        identifier: versionName,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if(response.ok){
+          selectModel(modelName, false);
+          alert(`Version, ${versionName} for model, ${modelName} has been created`);
+          newVersionIdentifier.value = "";
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
+  catch{
+    return;
+  }
 }
 </script>
 

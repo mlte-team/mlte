@@ -69,8 +69,6 @@ class RelationalDBStore(ArtifactStore):
 
     def _init_tables(self):
         """Pre-populate tables."""
-
-        # Pre-populate artifact types.
         with Session(self.engine) as session:
             init_artifact_types(session)
             init_problem_types(session)

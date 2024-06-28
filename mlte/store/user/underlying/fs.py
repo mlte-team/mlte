@@ -10,14 +10,22 @@ from typing import List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.common.fs import JsonFileStorage, parse_root_path
-from mlte.store.user.store import UserStore, UserStoreSession
-from mlte.user.model import BasicUser, User, UserCreate
-from mlte.user.model_logic import convert_to_hashed_user, update_user
-
-BASE_USERS_FOLDER = "users"
-"""Base fodler to store users in."""
-
+from mlte.store.common.fs import FileSystemStorage
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import (
+    GroupMapper,
+    PermissionMapper,
+    UserMapper,
+    UserStoreSession,
+)
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    Permission,
+    User,
+    UserWithPassword,
+    update_user_data,
+)
 
 # -----------------------------------------------------------------------------
 # FileSystemUserStore
@@ -27,21 +35,24 @@ BASE_USERS_FOLDER = "users"
 class FileSystemUserStore(UserStore):
     """A local file system implementation of the MLTE user store."""
 
+    BASE_USERS_FOLDER = "users"
+    """Base fodler to store users store in."""
+
     def __init__(self, uri: StoreURI) -> None:
+        self.storage = FileSystemStorage(
+            uri=uri, sub_folder=self.BASE_USERS_FOLDER
+        )
+        """Underlying storage."""
+
+        # Initialize defaults.
         super().__init__(uri=uri)
-
-        self.storage = JsonFileStorage()
-        """The underlying storage for the store."""
-
-        # Initialize default user.
-        self._init_default_user()
 
     def session(self) -> FileSystemUserStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return FileSystemUserStoreSession(self.uri.uri, storage=self.storage)
+        return FileSystemUserStoreSession(storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -52,74 +63,93 @@ class FileSystemUserStore(UserStore):
 class FileSystemUserStoreSession(UserStoreSession):
     """A local file-system implementation of the MLTE user store."""
 
-    def __init__(self, uri: str, storage: JsonFileStorage) -> None:
-        self.storage = storage
-        """A reference to underlying storage."""
+    def __init__(self, storage: FileSystemStorage) -> None:
+        self.permission_mapper = FileSystemPermissionMappper(storage)
+        """The mapper to permisison CRUD."""
 
-        self.root = parse_root_path(uri)
-        """The remote artifact store URL."""
+        self.group_mapper = FileSystemGroupMappper(storage)
+        """The mapper to group CRUD."""
 
-        if not self.root.exists():
-            raise FileNotFoundError(
-                f"Root data storage location does not exist: {self.root}."
-            )
-
-        try:
-            self.storage.create_folder(self._base_path())
-        except FileExistsError:
-            # If it already existed, we just ignore warning.
-            pass
+        self.user_mapper = FileSystemUserMappper(storage, self.group_mapper)
+        """The mapper to user CRUD."""
 
     def close(self) -> None:
         """Close the session."""
         # Closing a local FS session is a no-op.
         pass
 
-    # -------------------------------------------------------------------------
-    # CRUD Elements
-    # -------------------------------------------------------------------------
 
-    def create_user(self, user: UserCreate) -> User:
-        if self._user_path(user.username).exists():
+# -----------------------------------------------------------------------------
+# FileSystemUserMappper
+# -----------------------------------------------------------------------------
+
+
+class FileSystemUserMappper(UserMapper):
+    """FS mapper for the user resource."""
+
+    USERS_FOLDER = "users"
+    """Subfolder for users."""
+
+    def __init__(self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper) -> None:
+        self.storage = storage.clone()
+        """A reference to underlying storage."""
+
+        self.group_mapper = group_mapper
+        """Refernce to group mapper, to get updated groups when needed."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
+
+    def create(self, user: UserWithPassword) -> User:
+        if self.storage._resource_path(user.username).exists():
             raise errors.ErrorAlreadyExists(f"User '{user.username}'")
 
-        new_user = convert_to_hashed_user(user)
+        new_user = user.to_hashed_user()
+
+        # Only store group names for consistency.
+        new_user.groups = Group.get_group_names(new_user.groups)
+
         return self._write_user(new_user)
 
-    def edit_user(self, user: Union[UserCreate, BasicUser]) -> User:
-        if not self._user_path(user.username).exists():
+    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
+        # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
+        if not self.storage._resource_path(user.username).exists():
             raise errors.ErrorNotFound(f"User '{user.username}'")
 
-        updated_user = update_user(self._read_user(user.username), user)
+        curr_user = self._read_user(user.username)
+        updated_user = update_user_data(curr_user, user)
+
+        # Only store group names for consistency.
+        updated_user.groups = Group.get_group_names(updated_user.groups)
+
         return self._write_user(updated_user)
 
-    def read_user(self, username: str) -> User:
-        return self._read_user(username)
-
-    def list_users(self) -> List[str]:
-        return [
-            self.storage.get_just_filename(user_path)
-            for user_path in self.storage.list_json_files(self._base_path())
-        ]
-
-    def delete_user(self, username: str) -> User:
-        self._ensure_user_exists(username)
+    def read(self, username: str) -> User:
         user = self._read_user(username)
-        self.storage.delete_file(self._user_path(username))
+
+        # Now get updated info for each group.
+        up_to_date_groups: List[Group] = []
+        for group in user.groups:
+            up_to_date_groups.append(self.group_mapper.read(group.name))
+        user.groups = up_to_date_groups
+
         return user
 
-    # -------------------------------------------------------------------------
-    # Internal helpers.
-    # -------------------------------------------------------------------------
+    def list(self) -> List[str]:
+        return [
+            self.storage.get_just_filename(user_path)
+            for user_path in self.storage.list_json_files(
+                self.storage.base_path
+            )
+        ]
 
-    def _base_path(self) -> Path:
-        """Returns the base path for storing."""
-        return Path(self.root, BASE_USERS_FOLDER)
-
-    def _ensure_user_exists(self, username: str) -> None:
-        """Throws an ErrorNotFound if the given user does not exist."""
-        if not self._user_path(username).exists():
-            raise errors.ErrorNotFound(f"User {username}")
+    def delete(self, username: str) -> User:
+        self.storage._ensure_resource_exists(username)
+        user = self._read_user(username)
+        self.storage.delete_file(self.storage._resource_path(username))
+        return user
 
     def _read_user(self, username: str) -> User:
         """
@@ -127,29 +157,155 @@ class FileSystemUserStoreSession(UserStoreSession):
         :param username: The username
         :return: The user object
         """
-        self._ensure_user_exists(username)
-        return User(**self.storage.read_json_file(self._user_path(username)))
+        self.storage._ensure_resource_exists(username)
+        return User(
+            **self.storage.read_json_file(self.storage._resource_path(username))
+        )
 
     def _write_user(self, user: User) -> User:
         """Writes a user to storage."""
         self.storage.write_json_to_file(
-            self._user_path(user.username),
+            self.storage._resource_path(user.username),
             user.model_dump(),
         )
         return user
 
-    def _user_path(self, username: str) -> Path:
-        """
-        Gets the full filepath for a stored user.
-        :param username: The user identifier
-        :return: The formatted path
-        """
-        return Path(self._base_path(), self.storage.add_extension(username))
 
-    def _user_name(self, user_path: Path) -> str:
+# -------------------------------------------------------------------------
+# FileSystemGroupMappper
+# -------------------------------------------------------------------------
+
+
+class FileSystemGroupMappper(GroupMapper):
+    """FS mapper for the group resource."""
+
+    GROUPS_FOLDER = "groups"
+    """Subfolder for groups."""
+
+    def __init__(self, storage: FileSystemStorage) -> None:
+        self.storage = storage.clone()
+        """A reference to underlying storage."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.GROUPS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
+
+    def create(self, group: Group) -> Group:
+        if self.storage._resource_path(group.name).exists():
+            raise errors.ErrorAlreadyExists(f"Group '{group.name}'")
+        return self._write_group(group)
+
+    def edit(self, group: Group) -> Group:
+        if not self.storage._resource_path(group.name).exists():
+            raise errors.ErrorNotFound(f"Group '{group.name}'")
+        return self._write_group(group)
+
+    def read(self, group_name: str) -> Group:
+        return self._read_group(group_name)
+
+    def list(self) -> List[str]:
+        return [
+            self.storage.get_just_filename(group_path)
+            for group_path in self.storage.list_json_files(
+                self.storage.base_path
+            )
+        ]
+
+    def delete(self, group_name: str) -> Group:
+        self.storage._ensure_resource_exists(group_name)
+        group = self._read_group(group_name)
+        self.storage.delete_file(self.storage._resource_path(group_name))
+        return group
+
+    def _read_group(self, group_name: str) -> Group:
         """
-        Gets the name of a user given a full filepath.
-        :param username: The full path
-        :return: The username
+        Lazily construct a Group object on read.
+        :param group_name: The group name
+        :return: The group object
         """
-        return self.storage.get_just_filename(user_path)
+        self.storage._ensure_resource_exists(group_name)
+        return Group(
+            **self.storage.read_json_file(
+                self.storage._resource_path(group_name)
+            )
+        )
+
+    def _write_group(self, group: Group) -> Group:
+        """Writes a Group to storage."""
+        self.storage.write_json_to_file(
+            self.storage._resource_path(group.name),
+            group.model_dump(),
+        )
+        return self._read_group(group.name)
+
+
+# -------------------------------------------------------------------------
+# FileSystemPermissionMappper
+# -------------------------------------------------------------------------
+
+
+class FileSystemPermissionMappper(PermissionMapper):
+    """FS mapper for the permission resource."""
+
+    PERMISSIONS_FOLDER = "permissions"
+    """Subfolder for permissions."""
+
+    def __init__(self, storage: FileSystemStorage) -> None:
+        self.storage = storage.clone()
+        """A reference to underlying storage."""
+
+        self.storage.set_base_path(
+            Path(FileSystemUserStore.BASE_USERS_FOLDER, self.PERMISSIONS_FOLDER)
+        )
+        """Set the subfodler for this resrouce."""
+
+    def create(self, permission: Permission) -> Permission:
+        if self.storage._resource_path(permission.to_str()).exists():
+            raise errors.ErrorAlreadyExists(
+                f"Permission '{permission.to_str()}'"
+            )
+        return self._write_permission(permission)
+
+    def edit(self, permission: Permission) -> Permission:
+        if not self.storage._resource_path(permission.to_str()).exists():
+            raise errors.ErrorNotFound(f"Permission '{permission.to_str()}'")
+        return self._write_permission(permission)
+
+    def read(self, permission_str: str) -> Permission:
+        return self._read_permission(permission_str)
+
+    def list(self) -> List[str]:
+        return [
+            self.storage.get_just_filename(perm_path)
+            for perm_path in self.storage.list_json_files(
+                self.storage.base_path
+            )
+        ]
+
+    def delete(self, permission_str: str) -> Permission:
+        self.storage._ensure_resource_exists(permission_str)
+        permission = self._read_permission(permission_str)
+        self.storage.delete_file(self.storage._resource_path(permission_str))
+        return permission
+
+    def _read_permission(self, permission_str: str) -> Permission:
+        """
+        Lazily construct a Permission object on read.
+        :param permission_str: The permission str
+        :return: The permission object
+        """
+        self.storage._ensure_resource_exists(permission_str)
+        return Permission(
+            **self.storage.read_json_file(
+                self.storage._resource_path(permission_str)
+            )
+        )
+
+    def _write_permission(self, permission: Permission) -> Permission:
+        """Writes a Permission to storage."""
+        self.storage.write_json_to_file(
+            self.storage._resource_path(permission.to_str()),
+            permission.model_dump(),
+        )
+        return self._read_permission(permission.to_str())

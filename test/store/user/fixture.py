@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Optional
 
 import pytest
 from sqlalchemy.pool import StaticPool
@@ -21,11 +21,19 @@ from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 
 _STORE_FIXTURE_NAMES = ["memory_store", "rdbs_store", "fs_store"]
 
+CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryUserStore] = None
+"""Global, initial, in memory store, cached for faster testing."""
+
 
 def create_memory_store() -> InMemoryUserStore:
-    return typing.cast(
-        InMemoryUserStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
-    )
+    """Returns an in-memory store. Caches an initialized one to make testing faster."""
+    global CACHED_DEFAULT_MEMORY_STORE
+    if CACHED_DEFAULT_MEMORY_STORE is None:
+        CACHED_DEFAULT_MEMORY_STORE = typing.cast(
+            InMemoryUserStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+        )
+
+    return CACHED_DEFAULT_MEMORY_STORE.clone()
 
 
 @pytest.fixture(scope="function")

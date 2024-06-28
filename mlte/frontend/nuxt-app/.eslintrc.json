@@ -20,12 +20,10 @@
     "isValidValue": true,
     "isValidReport": true,
     "isValidArtifact": true,
-    "alert400Error": true,
-    "successfulSubmission": true,
+    "successfulArtifactSubmission": true,
     "cancelFormSubmission": true,
     "requestErrorAlert": true,
-    "responseErrorAlert": true,
-    "conflictErrorAlert": true,
+    "handleHttpError": true,
     "fetchArtifact": true
   },
   "extends": [
@@ -50,7 +48,10 @@
   "rules": {
     "vue/multi-word-component-names": [
       "error", {"ignores": ["index"]}
-    ]
+    ],
+    "vue/no-mutating-props": ["error", {
+      "shallowOnly": true
+    }]
   },
   "ignorePatterns": [
     ".nuxt/**",

@@ -15,7 +15,7 @@ from mlte.store.artifact.store import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
-from test.backend.fixture.api import TEST_API_USER
+from test.backend.fixture.user_generator import TEST_API_USERNAME
 from test.store.artifact import artifact_store_creators
 
 from ...fixture.artifact import ArtifactFactory
@@ -114,6 +114,44 @@ def test_version(
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
+def test_two_versions_same_id_same_model(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """An artifact store does't allow creating two versions with same id if they are in the same model."""
+    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+
+    model_id = "model0"
+    version_id = "version0"
+
+    with ManagedArtifactSession(store.session()) as handle:
+        handle.create_model(ModelCreate(identifier=model_id))
+        handle.create_version(model_id, VersionCreate(identifier=version_id))
+
+        with pytest.raises(errors.ErrorAlreadyExists):
+            handle.create_version(model_id, VersionCreate(identifier=version_id))
+
+
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+def test_two_versions_same_id_different_model(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """An artifact store can create two versions with same id if they are in different models."""
+    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+
+    model_id = "model1"
+    model2_id = "model2"
+    version_id = "version0"
+
+    with ManagedArtifactSession(store.session()) as handle:
+        handle.create_model(ModelCreate(identifier=model_id))
+        handle.create_model(ModelCreate(identifier=model2_id))
+        handle.create_version(model_id, VersionCreate(identifier=version_id))
+
+        # No assert needed, just ensure that this doesn't throw an exception.
+        handle.create_version(model2_id, VersionCreate(identifier=version_id))
+
+
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_version_list(
     store_fixture_name: str, request: pytest.FixtureRequest
 ) -> None:
@@ -147,8 +185,9 @@ def check_artifact_writing(
     # Then read it from storage.
     read = handle.read_artifact(model_id, version_id, artifact_id)
 
-    # Ignore timestamp changes.
+    # Ignore creator and timestamp changes.
     read.header.timestamp = artifact.header.timestamp
+    read.header.creator = artifact.header.creator
 
     # Check that we have the same artifact.
     assert artifact.to_json() == read.to_json()
@@ -198,7 +237,7 @@ def test_artifact(
     model_id = "model0"
     version_id = "version0"
     artifact_id = "myid"
-    user = TEST_API_USER
+    user = TEST_API_USERNAME
 
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(ModelCreate(identifier=model_id))
