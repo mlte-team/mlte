@@ -82,7 +82,7 @@ def read_group(
 ) -> Group:
     """
     Read a MLTE group.
-    :param group name: The group name
+    :param group group_name: The group name
     :return: The read group
     """
     with dependencies.user_store_session() as user_store:
@@ -156,7 +156,7 @@ def delete_user(
 ) -> Group:
     """
     Delete a MLTE group.
-    :param group name: The group name
+    :param group_name: The group name
     :return: The deleted group
     """
     with dependencies.user_store_session() as user_store:
