@@ -46,8 +46,8 @@ docs/site
 # Pyenv conf
 .python-version
 
-store/
+/store/
 pgdata/
 *.whl
 
-certs/
+/certs/
