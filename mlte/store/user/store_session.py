@@ -26,9 +26,11 @@ from mlte.user.model import (
 class UserStoreSession(StoreSession):
     """The base class for all implementations of the MLTE user store session."""
 
-    ID_MAP = {ResourceType.USER: "username",
-              ResourceType.MODEL: "identifier",
-              ResourceType.GROUP: "name"}
+    ID_MAP = {
+        ResourceType.USER: "username",
+        ResourceType.MODEL: "identifier",
+        ResourceType.GROUP: "name",
+    }
     """Map of ids used for each resource."""
 
     def __init__(self):

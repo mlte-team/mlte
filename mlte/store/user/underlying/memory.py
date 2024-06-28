@@ -84,7 +84,9 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.group_mapper = InMemoryGroupMapper(storage=storage)
         """The mapper to group CRUD."""
 
-        self.user_mapper = InMemoryUserMapper(storage=storage, group_mapper=self.group_mapper)
+        self.user_mapper = InMemoryUserMapper(
+            storage=storage, group_mapper=self.group_mapper
+        )
         """The mapper to user CRUD."""
 
     def close(self) -> None:
@@ -96,7 +98,9 @@ class InMemoryUserStoreSession(UserStoreSession):
 class InMemoryUserMapper(UserMapper):
     """In-memory mapper for the user resource."""
 
-    def __init__(self, *, storage: MemoryUserStorage, group_mapper: InMemoryGroupMapper) -> None:
+    def __init__(
+        self, *, storage: MemoryUserStorage, group_mapper: InMemoryGroupMapper
+    ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 

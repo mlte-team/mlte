@@ -128,7 +128,9 @@ def test_two_versions_same_id_same_model(
         handle.create_version(model_id, VersionCreate(identifier=version_id))
 
         with pytest.raises(errors.ErrorAlreadyExists):
-            handle.create_version(model_id, VersionCreate(identifier=version_id))
+            handle.create_version(
+                model_id, VersionCreate(identifier=version_id)
+            )
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())

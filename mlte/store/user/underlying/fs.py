@@ -90,7 +90,9 @@ class FileSystemUserMappper(UserMapper):
     USERS_FOLDER = "users"
     """Subfolder for users."""
 
-    def __init__(self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper
+    ) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
 

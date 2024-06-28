@@ -6,7 +6,19 @@ Model implementation for MLTE catalog entries.
 
 from typing import Optional
 
+from strenum import StrEnum
+
 from mlte.model import BaseModel
+
+
+class CatalogEntryType(StrEnum):
+    """Types of catalog entries."""
+
+    MEASUREMENT = "measurement"
+    """Classes that calculate a metric."""
+
+    VALIDATION = "validation"
+    """Validator method or class that compare measuremets to conditions."""
 
 
 class CatalogEntryHeader(BaseModel):
@@ -25,7 +37,7 @@ class CatalogEntryHeader(BaseModel):
     """The timestamp of last update of this entry, as Unix time."""
 
 
-class CatalogEntryModel(BaseModel):
+class CatalogEntry(BaseModel):
     """The base model for MLTE catalog entries."""
 
     header: CatalogEntryHeader
@@ -43,9 +55,8 @@ class CatalogEntryModel(BaseModel):
     property: str
     """The property for the entry."""
 
-    code_type: str
+    code_type: CatalogEntryType
     """The code type the entry."""
-    # TODO: change to type, Validaor or Measurement method
 
     code: str
     """The actual code for the entry."""
