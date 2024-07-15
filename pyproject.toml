@@ -55,6 +55,10 @@ jsonschema = "^4.19.0"
 [tool.poetry.group.build.dependencies]
 bump2version = "^1.0.1"
 
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
 [tool.isort]
 profile="black"
 line_length = 80
