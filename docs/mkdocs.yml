@@ -29,8 +29,6 @@ nav:
     - 'Using MLTE': 'using_mlte.md'
     - 'Quality Attribute Scenarios': 'qa_scenario.md'
     - 'Development': 'development.md'
-  - 'Tutorials':
-    - 'Testing a Model with MLTE': 'tutorial0.md'
   - 'References':
     - 'MLTE Framework': 'mlte_framework.md'
     - 'MLTE Properties': 'properties.md'
