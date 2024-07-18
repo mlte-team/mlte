@@ -6,59 +6,75 @@
 
 Goals or objectives that the model is going to help satisfy. For each goal, there can be one or more metrics to measure that goal, and every metric has a corresponding baseline.
 
-Example: Match voice recordings that belong to the same person 
+*Example: Match voice recordings that belong to the same person*
 
 #### Metric
 
 For each goal, select a performance metric that captures the system's ability to accomplish that goal.
 
-Example: Accuracy on matching voices from the same person
+*Example: Accuracy on matching voices from the same person*
 
 #### Baseline 
 
 Select a baseline for each performance metric, which means a measurement that evaluates whether or not the model will/can achieve the main goal for which it is being created. If the goal cannot be measured directly, select a reasonable proxy and justify how that will reliably predict the model’s performance in achieving its goal.
 
-Example: Human accuracy for matching voices is ~60%
+*Example: Human accuracy for matching voices is ~60%*
 
 ### ML Problem Type 
 
 Type of ML problem that the model is intended to solve.
 
-Example: Classification
+*Example: Classification*
 
 ### ML Task 
 
 Well-defined task that model is expected to perform, or problem that the model is expected to solve.
 
-Example: Identifying which voice recordings were spoken by the same person
+*Example: Identifying which voice recordings were spoken by the same person*
 
 ### Usage Context
 
 Who is intended to utilize the system/model; how the results of the model are going to be used by end users or in the context of a larger system.
 
-Example: Analyzing many recordings to determine which ones include a specific person of interest
+*Example: Analyzing many recordings to determine which ones include a specific person of interest*
 
-### Risk of Producing a False Positive
+### False Positive Risk 
 
-### Risk of Producing a False Negative
+What is the risk of producing a false positive?
+
+*Example: Incorrect positive results will cause extra work for the analyts that needs to examine every recording flagged by the model.*
+
+### False Negative Risk
+
+What is the risk of producing a false negative?
+
+*Example: Incorrect negative results means that the model will not flag suspicious recordings, so the analysts might miss information that is crucial to an investigation.*
 
 ### Other Risks of Producing Incorrect Results
 
+What are the other risks of producing incorrect results?
+
 ## Data
 
-Details of the data that will influence development efforts; fill out all that are known.
+Details of the data that will influence development efforts. Fill out the following fields for each dataset being used.
 
-### Data Description
+### Dataset Description
 
-Describe the data generally.
+Short description of the dataset that will be used for model development.
 
-### Data Source
+*Example: Voice recordings from phone calls made to numbers in the 412 area code.*
 
-Where is the data coming from?
+### Source
 
-### Data Classification
+Where is the data coming from, e.g., Enterprise Data, Public Data Source, Synthetic Data?
 
-What classification is the data?
+*Example: Company log data collected between Jan 1, 2023 and Dec 31, 2023.*
+
+### Classification
+
+What is the classification of the data?
+
+*Example: Classified, Unclassified, Personal Health Information, etc.*
 
 ### Data Access / Availability
 
