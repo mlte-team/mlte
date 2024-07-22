@@ -773,9 +773,27 @@
       scenario will be generated for your validation.
     </p>
 
+          <!-- Priority Legend  -->
+
+      <div class="horizontal-legend">
+      <div class="legend-item">
+        <span class="circle top-priority"></span>
+        <p>Top Priority</p>
+      </div>
+    
+      <div class="legend-item">
+        <span class="circle mild-priority"></span>
+        <p>Mild Priority</p>
+      </div>
+    <div class="legend-item">
+      <span class="circle low-priority"></span>
+      <p>Low Priority</p>
+    </div>
+      </div>
+      <br/>
+
     <div class="input-group">
       <QualityCard>
-
       </QualityCard>
     </div>
 
