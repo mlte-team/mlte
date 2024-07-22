@@ -3,6 +3,7 @@ env/
 .venv/
 env-dev/
 env-test/
+.env
 
 # tox artifacts
 .tox/

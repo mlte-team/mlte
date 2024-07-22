@@ -1,4 +1,6 @@
 import pkg from "./package.json";
+import { defineNuxtConfig } from 'nuxt/config';
+
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -18,4 +20,7 @@ export default defineNuxtConfig({
       version: pkg.version,
     },
   },
+  modules: ["nuxt-chatgpt"],
+ 
 });
+

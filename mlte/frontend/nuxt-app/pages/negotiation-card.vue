@@ -774,6 +774,14 @@
     </p>
 
     <div class="input-group">
+      <QualityCard>
+
+      </QualityCard>
+    </div>
+
+    <br/>
+
+    <div class="input-group">
       <SubHeader :render-info="false">
         Requirements
         <template #example>
@@ -1628,4 +1636,7 @@ function deleteRequirement(requirementIndex: number) {
     form.value.system_requirements.splice(requirementIndex, 1);
   }
 }
+
 </script>
+
+
