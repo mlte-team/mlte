@@ -3,11 +3,11 @@
 ![MLTE Diagram](img/MLTE_Diagram_Dark.png)
 *Note: This diagram will be updated in Fall 2024*
 
-## ➀ Negotiate Model Quality Requirements (IMT Negotiation)
+## Negotiate Model Quality Requirements (IMT Negotiation)
 
 Before development begins, the model development team and project stakeholders (including software engineers and system experts) negotiate model goals and suitable evaluation metrics. In `MLTE`, requirements definition directly informs how a model is evaluated. To guide this negotiation, `MLTE` provides a Negotiation Card, which can be accessed and persisted via the `MLTE` UI. After this negotiation, development ensues in accordance with the agreed-upon considerations.
 
-## ➁ Internal Model Testing (IMT)
+## Internal Model Testing (IMT)
 
 Internal Model Testing (IMT) is the process of evaluating a model with regard to the negotiated requirements. Teams use IMT tests after initial model development has been completed. The `MLTE` process assumes that ML development is an iterative process, so teams are encouraged to repeat IMT until they verify that model performance exceeds the baseline.
 
@@ -19,7 +19,7 @@ Internal Model Testing (IMT) is the process of evaluating a model with regard to
     
     - NO: If performance does not exceed the baseline, revisit the `MLTE` Negotiation Card to see if any of the items defined there need to change. After verifying model qualities via the Negotiation Card, retrain the model and then repeat IMT.
 
-## ➂ Negotiate Model Requirements Beyond Task Efficacy (SDMT Negotiation)
+## Negotiate Model Requirements Beyond Task Efficacy (SDMT Negotiation)
 
 Model developers and stakeholders (including software engineers and system experts) negotiate again, this time regarding model requirements with respect to the system into which the model will be integrated (e.g., robustness, fairness, inference latency, etc). 
 
@@ -34,11 +34,11 @@ Model developers and stakeholders (including software engineers and system exper
     * Measurement selection ensures that the proper evidence is collected to show that the ML system will function as intended in its proper context.
     * Measurements correspond to properties; a list of current `MLTE` measurement offerings can be found in the References [section](mlte_measurements.md).
 
-## ➃ System Dependent Model Testing (SDMT)
+## System Dependent Model Testing (SDMT)
 
 Model developers and software engineers evaluate the specification defined during the SDMT negotiation (`MLTE` step ➂) using measurements. By evaluating the properties using measurements, teams are able to collect evidence against the project's requirements. 
 
-## ➄ Communicate ML Evaluation Results
+## Communicate ML Evaluation Results
 
 Teams use the `MLTE` automated report functionality to encapsulate all knowledge gained about the model and the system as a consequence of the evaluation process. This facilitates the team's ability to communicate results from the evidence collected against previously-agreed-upon requirements. 
 

@@ -87,6 +87,7 @@ How will the data be accessed? What accounts are needed?
 List out all the labels for the data, along with the percentage of data they account for.
 
 *Example:*
+
 ![Label Example](img/label_example.png)
 
 #### Labeling Method
@@ -107,6 +108,7 @@ Include relevant information that is known about the data; fill out all sections
 #### Special Values: 
 
 *Example:*
+
 ![Schema Example](img/schema_example.png)
 
 ### Data Rights
