@@ -1,6 +1,6 @@
 # Using MLTE
 
-After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements. However, if your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the XYZ section for a description of testing a model with `MLTE`.
+After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements. However, if your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`.
 
 ## Negotiate Model Quality Requirements
 
@@ -40,7 +40,7 @@ set_store(f"local://{store_path}")
 
 ### 2. Define a Preliminary `Specification`
 
-A `Specification` (or `Spec`) represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#4-system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
+A `Specification` (or `Spec`) represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
 
 ```python
 from mlte.spec.spec import Spec
