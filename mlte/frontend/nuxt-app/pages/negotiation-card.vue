@@ -201,6 +201,22 @@
       </template>
     </UsaTextInput>
 
+    <UsaTextInput v-model="form.system.target_audience">
+      <template #label>
+        Target Audience
+        <InfoIcon>
+          Who is intended to utilize the system/model?
+          <br />
+          <br />
+          <i
+            >Example: health care providers, etc.
+            <br />
+            </i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextInput>
+
     <UsaTextInput v-model="form.system.risks.fp">
       <template #label>
         False Positive Risk
@@ -765,14 +781,6 @@
     </div>
 
     <h2 class="section-header">System Requirements</h2>
-    <p>
-      System-dependent requirements and constraints placed on the model under
-      development. The fields below correspond to parts of a quality attribute
-      scenario, which is a construct used to clearly define system requirements.
-      As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation.
-    </p>
-
           <!-- Priority Legend  -->
 
       <div class="horizontal-legend">
@@ -793,9 +801,12 @@
       <br/>
 
     <div class="input-group">
-      <QualityCard>
-      </QualityCard>
+      
+      <Latency></Latency>
+
     </div>
+
+
 
     <br/>
 
