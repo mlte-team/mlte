@@ -20,7 +20,6 @@ export default defineNuxtConfig({
       version: pkg.version,
     },
   },
-  modules: ["nuxt-chatgpt"],
+  modules: ["nuxt-chatgpt", "@nuxt/ui"],
   
 });
-
