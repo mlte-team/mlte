@@ -1,6 +1,8 @@
 # Using MLTE
 
-After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements. However, if your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`.
+After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements definition. 
+
+If your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`.
 
 ## Negotiate Model Quality Requirements
 
@@ -13,7 +15,7 @@ To begin the `MLTE` process, teams hold a negotiation - a discussion about requi
 
 ## Internal Model Testing (IMT)
 
-After initial model development has been completed, the team will have a model that is ready for a first round of testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in `MLTE` follows this process:
+After initial model development has been completed, the team should have a model that is ready for preliminary testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in `MLTE` follows this process:
 
 1. Initialize the `MLTE` context.
 2. Define a preliminary specification.
@@ -173,7 +175,7 @@ IMT is an iterative process - the development team will likely repeat it several
 
 After completing IMT, development teams should have a sense of how their model performs on the core project performance metric against the chosen baseline. Step 3 is another negotiation amongst everyone involved in the project: stakeholders, software engineers, data scientists, and anyone else involved such as a project manager.
 
-- The emphasis of this negotiation is to review the discussion in [step 1](#1-negotiate-model-quality-requirements) and update it based on the intial evaluation that was performed in [step 2](#2-internal-model-testing-imt).
+- The emphasis of this negotiation is to review the discussion from [requirements negotiation](#negotiate-model-quality-requirements) and update it based on the intial evaluation that was performed in [IMT](#internal-model-testing-imt).
 - It is also important to ensure that the development team has all the information they need to build out a `Specification` (`Spec`) after this negotiation.
 - To conduct the negotiation, ensure the facilitator has the negotiation card for the project and that they are comfortable with the `MLTE` user interface.
 
