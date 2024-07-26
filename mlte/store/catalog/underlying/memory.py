@@ -75,25 +75,6 @@ class InMemoryCatalogStoreSession(CatalogStoreSession):
         # Closing an in-memory session is a no-op.
         pass
 
-    def search_entries(
-        self,
-        catalog_id: str,
-        # query: Query = Query(),
-    ) -> List[CatalogEntry]:
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
-    def read_entries(
-        self,
-        catalog_id: str,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[CatalogEntry]:
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
 
 class InMemoryCatalogEntryMapper(CatalogEntryMapper):
     """In-memory mapper for the catalog resource."""
