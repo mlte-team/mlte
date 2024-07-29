@@ -8,41 +8,33 @@ If your team has an existing project you'd like to test using the `MLTE` infrast
 
 To begin the `MLTE` process, teams hold a negotiation - a discussion about requirements - amongst stakeholders, software engineers, data scientists, and anyone else involved in the project. 
 
-- Determine who is facilitating the negotiation and ensure they have reviewed the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. (If they have not yet set up `MLTE`, send them to our [Getting Started](getting_started.md) page.) They can also reference the [page](negotiation_card.md) in our documentation that shows the content of the Negotiation Card.
-    - The most important portion of the negotiation is determining the system goals and their corresponding performance metrics and baseline. This ensures you will be able to evaluate if your model is adding value. 
-- The negotiation is meant to be a collaborative discussion where all involved parties can agree on project requirements and can discuss some of the technical details that are important.
-- Once the negotiation is complete and the negotiation card is filled in as much as possible, development can begin. The negotiation card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
+- The negotiation facilitator should review the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Getting Started](getting_started.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
+- The negotiation is a collaborative discussion where all involved parties can agree on project requirements and discuss technical details.
+- Once the negotiation is complete and the negotiation card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The negotiation card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
 
 ## Internal Model Testing (IMT)
 
 After initial model development has been completed, the team should have a model that is ready for preliminary testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in `MLTE` follows this process:
 
 1. Initialize the `MLTE` context.
-2. Define a preliminary specification.
+2. Define a specification.
 3. Collect evidence.
 4. Validate results.
 5. Examine findings.
 
 ### 1. Initialize the MLTE Context
 
-`MLTE` contains a global context that manages the currently active session. Initializing the context tells `MLTE` how to store all of the artifacts that it produces.
+`MLTE` contains a global context that manages the currently active session. Initializing the context tells `MLTE` how to store all of the artifacts that it produces. 
 
 ```python
-import os
-from mlte.session import set_context, set_store
-
-store_path = os.path.join(os.getcwd(), "store")
-os.makedirs(
-    store_path, exist_ok=True
-)   # Ensure we are creating the folder if it is not there.
-
 set_context("OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
 ```
+*Note that this code is demonstrative and does not include all imports and context; for a comprehensive example of `MLTE` code, see the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
 
-### 2. Define a Preliminary `Specification`
+### 2. Define a `Specification`
 
-A `Specification` (or `Spec`) represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
+A `Specification` (or `Spec`) represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. However, the process is the same for both stages. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
 
 ```python
 from mlte.spec.spec import Spec
@@ -60,7 +52,7 @@ spec.save(parents=True, force=True)
 
 ### 3. Collect Evidence
 
-After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). 
 
 ```python
 from sklearn.metrics import accuracy_score
@@ -79,6 +71,8 @@ print(accuracy)
 accuracy.save(parents=True)
 ```
 
+*Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
+
 ### 4. Validate Results
 
 Now that we have evidence and a `Spec`, we can create a `SpecValidator` and add all the `Value`s we have. With that we can generate a `ValidatedSpec` which contains validated results or *findings*.
@@ -86,8 +80,6 @@ Now that we have evidence and a `Spec`, we can create a `SpecValidator` and add 
 ```python
 from mlte.spec import Spec, SpecValidator
 from mlte.value.types.real import Real
-from confusion_matrix import ConfusionMatrix
-from mlte.value.types.image import Image
 
 # Load the specification
 spec = Spec.load()
@@ -95,8 +87,7 @@ spec = Spec.load()
 # Add values to the validator.
 spec_validator = SpecValidator(spec)
 spec_validator.add_value(Real.load("accuracy"))
-spec_validator.add_value(ConfusionMatrix.load("confusion matrix"))
-spec_validator.add_value(Image.load("class distribution"))
+
 
 # Validate requirements and get validated details.
 validated_spec = spec_validator.validate()
@@ -107,7 +98,7 @@ validated_spec.save()
 
 ### 5. Examine Findings
 
-To communicate results and examine findings, `MLTE` produces a report. While IMT is intended to be an initial and preliminary evaluation, the report is an artifact that will aid in the second [negotiation point](#3-negotiate-model-requirements-beyond-task-efficacy). You can import content from your negotiation card using the `MLTE` UI, and the fields can be customized as needed.
+To communicate results and examine findings, `MLTE` produces a report. While IMT is intended to be an initial and preliminary evaluation, the report is an artifact that will aid in the second [negotiation point](#negotiate-model-requirements-beyond-task-efficacy). You can import content from your negotiation card using the `MLTE` UI, and the fields can be customized as needed. The report is most easily generated using the UI, but can also be produced via code as demonstrated below.
 
 ```python
 import time
@@ -120,18 +111,11 @@ def build_report() -> Report:
     report = Report()
     report.metadata.project_name = "Your Project"
     report.metadata.authors = ["Jane Doe", "Joe Smith"]
-    report.metadata.source_url = "https://github.com/mlte-team"
-    report.metadata.artifact_url = "https://github.com/mlte-team"
     report.metadata.timestamp = unix_timestamp()
 
     report.model_details.name = "IrisClassifier"
-    report.model_details.overview = "A model that distinguishes among three (3) types of irises."
-    report.model_details.documentation = "This is a simple model that can distinguish between the setosa, versicolour, and virginica species of Iris based on physical characteristics."
 
     report.model_specification.domain = "Classification"
-    report.model_specification.architecture = "Decision Tree"
-    report.model_specification.input = "Vector[4]"
-    report.model_specification.output = "Binary"
     report.model_specification.data = [
         Dataset("Dataset0", "https://github.com/mlte-team", "This is one training dataset."),
         Dataset("Dataset1", "https://github.com/mlte-team", "This is the other one we used."),
@@ -141,19 +125,9 @@ def build_report() -> Report:
         User("Botanist", "A professional botanist."),
         User("Explorer", "A weekend-warrior outdoor explorer."),
     ]
-    report.considerations.use_cases = [
-        UseCase("Personal Edification", "Quench your curiosity: what species of iris IS that? Wonder no longer.")
-    ]
-    report.considerations.limitations = [
-        Limitation(
-            "Low Training Data Volume",
-            """
-            This model was trained on a low volume of training data.
-            """,
-        ),
-    ]
     return report
 ```
+*Note that this example only includes a few of the report fields; a full `MLTE` report in code can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
 
 Once the descriptive portions of the report are defined, you can render the report to examine your findings.
 
@@ -173,13 +147,13 @@ IMT is an iterative process - the development team will likely repeat it several
 
 ## Negotiate Model Requirements Beyond Task Efficacy
 
-After completing IMT, development teams should have a sense of how their model performs on the core project performance metric against the chosen baseline. Step 3 is another negotiation amongst everyone involved in the project: stakeholders, software engineers, data scientists, and anyone else involved such as a project manager.
+After completing IMT, development teams should have a sense of how their model performs on the core project performance metric against the chosen baseline. After they have this additional information, the team conducts another negotiation amongst everyone involved in the project: stakeholders, software engineers, data scientists, and anyone else involved such as a project manager.
 
 - The emphasis of this negotiation is to review the discussion from [requirements negotiation](#negotiate-model-quality-requirements) and update it based on the intial evaluation that was performed in [IMT](#internal-model-testing-imt).
 - It is also important to ensure that the development team has all the information they need to build out a `Specification` (`Spec`) after this negotiation.
-- To conduct the negotiation, ensure the facilitator has the negotiation card for the project and that they are comfortable with the `MLTE` user interface.
+- It is likely that the first negotiation only resulted in some sections of the negotiation card being filled out, and a goal of this second negotiation should be to complete more of the sections and have a better picture of what project success will be.
 
-Once the negotiation is complete and the contents of the negotiation card have been updated, the development team will conduct a comprehensive round of testing as part of System Dependent Model Testing, step 4.
+Once the negotiation is complete and the contents of the negotiation card have been updated, the development team will conduct a comprehensive round of testing as part of System Dependent Model Testing.
 
 ## System Dependent Model Testing (SDMT)
 
@@ -227,7 +201,7 @@ spec.save(parents=True, force=True)
 
 ### Collecting Evidence
 
-After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
+After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that these examples do not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
 
 #### Evidence: MLTE Measurements
 
@@ -340,7 +314,7 @@ img.save()
 
 ## Communicate ML Evaluation Results
 
-To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the negotiation card using the `MLTE` UI, and the fields can be customized as needed. Similar to the process during IMT, we start by defining the descriptive portions of the report.
+To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the negotiation card using the `MLTE` UI, and the fields can be customized as needed. The report is most easily generated using the UI, but can also be defined via code as demonstrated below.
 
 ```python
 import time
@@ -353,18 +327,11 @@ def build_report() -> Report:
     report = Report()
     report.metadata.project_name = "Your Project"
     report.metadata.authors = ["Jane Doe", "Joe Smith"]
-    report.metadata.source_url = "https://github.com/mlte-team"
-    report.metadata.artifact_url = "https://github.com/mlte-team"
     report.metadata.timestamp = unix_timestamp()
 
     report.model_details.name = "IrisClassifier"
-    report.model_details.overview = "A model that distinguishes among three (3) types of irises."
-    report.model_details.documentation = "This is a simple model that can distinguish between the setosa, versicolour, and virginica species of Iris based on physical characteristics."
 
     report.model_specification.domain = "Classification"
-    report.model_specification.architecture = "Decision Tree"
-    report.model_specification.input = "Vector[4]"
-    report.model_specification.output = "Binary"
     report.model_specification.data = [
         Dataset("Dataset0", "https://github.com/mlte-team", "This is one training dataset."),
         Dataset("Dataset1", "https://github.com/mlte-team", "This is the other one we used."),
@@ -374,21 +341,11 @@ def build_report() -> Report:
         User("Botanist", "A professional botanist."),
         User("Explorer", "A weekend-warrior outdoor explorer."),
     ]
-    report.considerations.use_cases = [
-        UseCase("Personal Edification", "Quench your curiosity: what species of iris IS that? Wonder no longer.")
-    ]
-    report.considerations.limitations = [
-        Limitation(
-            "Low Training Data Volume",
-            """
-            This model was trained on a low volume of training data.
-            """,
-        ),
-    ]
     return report
 ```
+*Note that this example only includes a few of the report fields; a full `MLTE` report in code can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
 
-Once the descriptive portions of the report are defined, you can render the report to examine your findings and communicate them to the rest of the team.
+Once the descriptive portions of the report are defined, you can render the report to examine your findings.
 
 ```python
 from mlte.report import render
