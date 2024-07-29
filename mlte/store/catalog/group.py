@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 from mlte.catalog.model import CatalogEntry
+from mlte.store.base import StoreSession
 from mlte.store.catalog.factory import create_store
 from mlte.store.catalog.store import CatalogStore, CatalogStoreSession
 from mlte.store.error import ErrorAlreadyExists, ErrorNotFound
@@ -79,7 +80,7 @@ class CatalogStoreGroup:
         )
 
 
-class CatalogStoreGroupSession:
+class CatalogStoreGroupSession(StoreSession):
     """Sessions for all catalogs in a group."""
 
     sessions: Dict[str, CatalogStoreSession] = {}
