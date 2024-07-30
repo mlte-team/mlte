@@ -1426,7 +1426,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.data[lastDataIndex].policies = document.data_policies;
 
           form.value.data[lastDataIndex].fields.splice(0, 1);
-          document.fields.forEach(
+          document.schema.forEach(
             (
               fields: {
                 field_name: string;
@@ -1512,6 +1512,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
         }
       } catch (err) {
         console.error("Invalid JSON or error in parsing file.");
+        console.log(err);
       }
     };
     reader.readAsText(file);
