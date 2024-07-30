@@ -35,12 +35,20 @@
             </UsaButton>
             <div v-if="userRole === 'admin'">
               <NuxtLink :to="{ path: '/admin/user-management' }">
-                <UsaButton class="secondary-button" style="margin-left: 0.5em" @click="$emit('manageUsers')">
+                <UsaButton
+                  class="secondary-button"
+                  style="margin-left: 0.5em"
+                  @click="$emit('manageUsers')"
+                >
                   Manage Users
                 </UsaButton>
               </NuxtLink>
               <NuxtLink :to="{ path: '/admin/group-management' }">
-                <UsaButton class="secondary-button" style="margin-left: 0.5em" @click="$emit('manageGroups')">
+                <UsaButton
+                  class="secondary-button"
+                  style="margin-left: 0.5em"
+                  @click="$emit('manageGroups')"
+                >
                   Manage Groups
                 </UsaButton>
               </NuxtLink>
