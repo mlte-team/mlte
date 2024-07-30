@@ -262,7 +262,9 @@ const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
 const modelList = ref<string[]>([]);
 
-const selectedModel = useCookie("selectedModel");
+const selectedModel = useCookie("selectedModel", {
+  decode: false,
+});
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
   decode: false,
