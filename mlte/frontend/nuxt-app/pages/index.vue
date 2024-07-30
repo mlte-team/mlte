@@ -317,10 +317,11 @@ const values = ref<
 >([]);
 
 await populateModelVersionLists();
-if (modelOptions.value !== null && modelOptions.value.length > 0) {
+if (modelOptions.value !== null) {
   const modelList = modelOptions.value.map((model) => {
     return model.value;
   });
+
   if (!modelList.includes(selectedModel.value)) {
     selectedModel.value = "";
     selectedVersion.value = "";
