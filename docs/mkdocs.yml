@@ -23,20 +23,13 @@ plugins:
       nav_file: SUMMARY.md
 nav:
   - Home: 'index.md'
-  - 'How-to Guides':
-    - 'Getting Started': 'getting_started.md'
-    - 'MLTE Mechanics': 'mlte_mechanics.md'
-    - 'Using MLTE': 'using_mlte.md'
-    - 'Quality Attribute Scenarios': 'qa_scenario.md'
-    - 'Development': 'development.md'
-  - 'Tutorials':
-    - 'Testing a Model with MLTE': 'tutorial0.md'
+  - 'Getting Started': 'getting_started.md'
+  - 'Using MLTE': 'using_mlte.md'
+  - 'Development': 'development.md'
   - 'References':
     - 'MLTE Framework': 'mlte_framework.md'
     - 'MLTE Properties': 'properties.md'
     - 'MLTE Measurements': 'mlte_measurements.md'
     - 'MLTE Negotiation Card': 'negotiation_card.md'
+    - 'Resources': 'resources.md'
     - API Reference: reference/
-  - 'Explanations':
-    - 'MLTE Process Resources': 'mlte_process_resources.md'
-    - 'MLTE Property Resources': 'mlte_property_resources.md'
