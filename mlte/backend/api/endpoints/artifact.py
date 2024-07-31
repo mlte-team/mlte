@@ -17,7 +17,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
-from mlte.store.artifact.query import Query
+from mlte.store.common.query import Query
 
 # The router exported by this submodule
 router = APIRouter()

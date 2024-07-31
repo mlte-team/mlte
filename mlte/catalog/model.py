@@ -36,6 +36,9 @@ class CatalogEntryHeader(BaseModel):
     updated: Optional[int] = -1
     """The timestamp of last update of this entry, as Unix time."""
 
+    catalog_id: Optional[str] = None
+    """The id of the catalog this entry came from."""
+
 
 class CatalogEntry(BaseModel):
     """The base model for MLTE catalog entries."""

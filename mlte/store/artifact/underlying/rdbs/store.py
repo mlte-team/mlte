@@ -17,7 +17,6 @@ import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
@@ -33,6 +32,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
 from mlte.store.artifact.underlying.rdbs.metadata_value import init_value_types
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.base import StoreURI
+from mlte.store.common.query import Query
 
 # -----------------------------------------------------------------------------
 # RelationalDBStore

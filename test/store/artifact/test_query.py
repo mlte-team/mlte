@@ -8,10 +8,12 @@ import pytest
 
 from mlte.artifact.type import ArtifactType
 from mlte.store.artifact.query import (
-    AllFilter,
-    AndFilter,
     ArtifactIdentifierFilter,
     ArtifactTypeFilter,
+)
+from mlte.store.common.query import (
+    AllFilter,
+    AndFilter,
     FilterType,
     NoneFilter,
     OrFilter,

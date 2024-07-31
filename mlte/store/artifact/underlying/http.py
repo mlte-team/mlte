@@ -13,10 +13,10 @@ from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.model import WriteArtifactRequest
 from mlte.backend.core.config import settings
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
+from mlte.store.common.query import Query
 
 API_PREFIX = settings.API_PREFIX
 """API URL prefix."""

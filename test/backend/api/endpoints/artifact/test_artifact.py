@@ -15,7 +15,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.backend.api import codes
 from mlte.backend.api.model import WriteArtifactRequest
 from mlte.model.base_model import BaseModel
-from mlte.store.artifact.query import Query
+from mlte.store.common.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     create_sample_model_using_admin,

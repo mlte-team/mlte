@@ -47,38 +47,6 @@ class CatalogStoreGroup:
         """
         return CatalogStoreGroupSession(self.catalogs)
 
-    def read_entries(
-        self,
-        catalog_id: Optional[str] = None,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[CatalogEntry]:
-        """
-        Read entries within limit and offset.
-        :param catalog_id: The identifier of the catalog to read from.
-        :param limit: The limit on entries to read
-        :param offset: The offset on entries to read
-        :return: The read entries
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
-    def search_entries(
-        self,
-        catalog_id: Optional[str] = None,
-        # query: Query = Query(),
-    ) -> List[CatalogEntry]:
-        """
-         Read a collection of entries, optionally filtered.
-         :param catalog_id: The identifier of the catalog to read from.
-        # :param query: The entry query to apply
-         :return: A collection of entries that satisfy the filter
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
 
 class CatalogStoreGroupSession(StoreSession):
     """Sessions for all catalogs in a group."""
@@ -95,3 +63,60 @@ class CatalogStoreGroupSession(StoreSession):
         """Close all sessions."""
         for _, session in self.sessions.items():
             session.close()
+
+    def read_entries(
+        self,
+        catalog_id: Optional[str] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[CatalogEntry]:
+        """
+        Read entries within limit and offset.
+        :param catalog_id: The identifier of the catalog to read from; if not given, read from all catalogs.
+        :param limit: The limit on entries to read
+        :param offset: The offset on entries to read
+        :return: The read entries
+        """
+        if catalog_id is not None:
+            if catalog_id not in self.sessions:
+                raise ErrorNotFound(
+                    f"Catalog id {catalog_id} was not found in list of catalogs."
+                )
+
+            catalog_session = self.sessions[catalog_id]
+            return catalog_session.read_entries(limit, offset)
+        else:
+            # Go over all catalogs, reading from each one, and grouping results.
+            results: List[CatalogEntry] = []
+            for catalog_id, session in self.sessions.items():
+                partial_results = session.read_entries(limit, offset)
+                results.extend(partial_results)
+            return results[offset : offset + limit]
+
+    def search_entries(
+        self,
+        catalog_id: Optional[str] = None,
+        # query: Query = Query(),
+    ) -> List[CatalogEntry]:
+        """
+         Read a collection of entries, optionally filtered.
+         :param catalog_id: The identifier of the catalog to read from; if not given, search on all catalogs.
+        # :param query: The entry query to apply
+         :return: A collection of entries that satisfy the filter
+        """
+        # TODO: actually implement and use query.
+        if catalog_id is not None:
+            if catalog_id not in self.sessions:
+                raise ErrorNotFound(
+                    f"Catalog id {catalog_id} was not found in list of catalogs."
+                )
+
+            catalog_session = self.sessions[catalog_id]
+            return catalog_session.search_entries()
+        else:
+            # Go over all catalogs, reading from each one, and grouping results.
+            results: List[CatalogEntry] = []
+            for catalog_id, session in self.sessions.items():
+                partial_results = session.search_entries()
+                results.extend(partial_results)
+            return results

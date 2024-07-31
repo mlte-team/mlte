@@ -87,9 +87,8 @@ def test_catalog_entry(
             catalog_store.entry_mapper.read(test_entry.header.identifier)
 
 
-@pytest.mark.parametrize("store_fixture_name", catalog_stores())
-def test_catalog_group(
-    store_fixture_name: str, request: pytest.FixtureRequest
-) -> None:
-    """An artifact store supports catalog group operations."""
-    
+# @pytest.mark.parametrize("store_fixture_name", catalog_stores())
+# def test_catalog_group(
+#    store_fixture_name: str, request: pytest.FixtureRequest
+# ) -> None:
+#    """An artifact store supports catalog group operations."""

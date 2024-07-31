@@ -11,8 +11,8 @@ from typing import List, Optional, cast
 
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.base import ManagedSession, Store, StoreSession
+from mlte.store.common.query import Query
 
 # -----------------------------------------------------------------------------
 # ArtifactStore

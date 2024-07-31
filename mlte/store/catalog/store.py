@@ -10,6 +10,7 @@ from typing import List, cast
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
+from mlte.store.common.query import Query
 
 
 class CatalogStore(Store):
@@ -34,13 +35,11 @@ class CatalogStoreSession(StoreSession):
 
     def read_entries(
         self,
-        catalog_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> List[CatalogEntry]:
         """
         Read entries within limit and offset.
-        :param catalog_id: The identifier of the catalog to read from.
         :param limit: The limit on entries to read
         :param offset: The offset on entries to read
         :return: The read entries
@@ -51,12 +50,10 @@ class CatalogStoreSession(StoreSession):
 
     def search_entries(
         self,
-        catalog_id: str,
-        # query: Query = Query(),
+        query: Query = Query(),
     ) -> List[CatalogEntry]:
         """
          Read a collection of entries, optionally filtered.
-         :param catalog_id: The identifier of the catalog to read from.
         # :param query: The entry query to apply
          :return: A collection of entries that satisfy the filter
         """
