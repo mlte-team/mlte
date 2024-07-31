@@ -61,16 +61,13 @@ const config = useRuntimeConfig();
 const token = useCookie("token");
 const userCookie = useCookie("user");
 
-const { data: user } = await useFetch(
-  config.public.apiPath + "/user/me",
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
+const { data: user } = await useFetch(config.public.apiPath + "/user/me", {
+  retry: 0,
+  method: "GET",
+  headers: {
+    Authorization: "Bearer " + token.value,
   },
-);
+});
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -91,11 +88,11 @@ function disablePasswordReset() {
   confirmPassword.value = "";
 }
 
-async function submit(){
+async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let submitError = false;
 
-  if (resetPasswordFlag.value){
+  if (resetPasswordFlag.value) {
     if (newPassword.value.trim() === "") {
       formErrors.value.password = true;
       submitError = true;
@@ -106,20 +103,20 @@ async function submit(){
     }
   }
 
-  if(submitError){
+  if (submitError) {
     return;
   }
 
-  try{
-    let requestBody = {
+  try {
+    const requestBody = {
       username: user.value.username,
-        email: user.value.email,
-        full_name: user.value.full_name,
-        disabled: false,
-        role: user.value.role,
-    }
+      email: user.value.email,
+      full_name: user.value.full_name,
+      disabled: false,
+      role: user.value.role,
+    };
 
-    if(resetPasswordFlag.value){
+    if (resetPasswordFlag.value) {
       requestBody.password = newPassword.value;
     }
 
@@ -133,16 +130,15 @@ async function submit(){
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse() {
-        navigateTo("/");
+      onResponse({ response }) {
+        if (response.ok) {
+          navigateTo("/");
+        }
       },
       onResponseError({ response }) {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  }
-  catch {
-    return;
-  }
+  } catch {}
 }
 </script>

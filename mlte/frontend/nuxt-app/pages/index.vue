@@ -353,7 +353,9 @@ async function populateModelVersionLists() {
       requestErrorAlert();
     },
     onResponse({ response }) {
-      modelList.value = response._data;
+      if (response.ok) {
+        modelList.value = response._data;
+      }
     },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
@@ -390,7 +392,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
       requestErrorAlert();
     },
     onResponse({ response }) {
-      if (response._data) {
+      if (response.ok && response._data) {
         clearArtifacts();
         selectedModel.value = modelName;
         versionOptions.value = [];
@@ -446,7 +448,7 @@ async function selectVersion(versionName: string) {
         requestErrorAlert();
       },
       onResponse({ response }) {
-        if (response._data) {
+        if (response.ok && response._data) {
           selectedVersion.value = versionName;
           populateArtifacts(
             selectedModel.value,
@@ -559,9 +561,9 @@ async function submitNewModel(modelName: string) {
         requestErrorAlert();
       },
       onResponse({ response }) {
-        if(response.ok){
+        if (response.ok) {
           populateModelVersionLists();
-          alert(`Model, ${modelName} has been created.`)
+          alert(`Model, ${modelName} has been created.`);
           newModelIdentifier.value = "";
         }
       },
@@ -569,14 +571,11 @@ async function submitNewModel(modelName: string) {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  }
-  catch{
-    return;
-  }
+  } catch {}
 }
 
 async function submitNewVersion(modelName: string, versionName: string) {
-  try{
+  try {
     await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
       retry: 0,
       method: "POST",
@@ -590,9 +589,11 @@ async function submitNewVersion(modelName: string, versionName: string) {
         requestErrorAlert();
       },
       onResponse({ response }) {
-        if(response.ok){
+        if (response.ok) {
           selectModel(modelName, false);
-          alert(`Version, ${versionName} for model, ${modelName} has been created`);
+          alert(
+            `Version, ${versionName} for model, ${modelName} has been created`,
+          );
           newVersionIdentifier.value = "";
         }
       },
@@ -600,10 +601,7 @@ async function submitNewVersion(modelName: string, versionName: string) {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  }
-  catch{
-    return;
-  }
+  } catch {}
 }
 </script>
 

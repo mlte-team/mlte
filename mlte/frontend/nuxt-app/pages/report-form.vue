@@ -562,41 +562,43 @@ if (useRoute().query.artifactId !== undefined) {
         requestErrorAlert();
       },
       async onResponse({ response }) {
-        if (isValidReport(response._data)) {
-          form.value = response._data.body;
-          const problemType = response._data.body.summary.problem_type;
-          if (
-            problemTypeOptions.find((x) => x.value === problemType)?.value !==
-            undefined
-          ) {
-            form.value.summary.problem_type = problemTypeOptions.find(
-              (x) => x.value === problemType,
-            )?.value;
-          }
-
-          // Setting .value for each classification item to work in the select
-          response._data.body.data.forEach((item) => {
-            const classification = item.classification;
+        if (response.ok) {
+          if (isValidReport(response._data)) {
+            form.value = response._data.body;
+            const problemType = response._data.body.summary.problem_type;
             if (
-              classificationOptions.find((x) => x.value === classification)
-                ?.value !== undefined
+              problemTypeOptions.find((x) => x.value === problemType)?.value !==
+              undefined
             ) {
-              item.classification = classificationOptions.find(
-                (x) => x.value === classification,
+              form.value.summary.problem_type = problemTypeOptions.find(
+                (x) => x.value === problemType,
               )?.value;
             }
-          });
 
-          if (response._data.body.performance.validated_spec_id) {
-            form.value.performance.validated_spec_id =
-              response._data.body.performance.validated_spec_id;
-            const validatedSpec = await fetchArtifact(
-              token.value,
-              model,
-              version,
-              form.value.performance.validated_spec_id,
-            );
-            findings.value = loadFindings(validatedSpec);
+            // Setting .value for each classification item to work in the select
+            response._data.body.data.forEach((item) => {
+              const classification = item.classification;
+              if (
+                classificationOptions.find((x) => x.value === classification)
+                  ?.value !== undefined
+              ) {
+                item.classification = classificationOptions.find(
+                  (x) => x.value === classification,
+                )?.value;
+              }
+            });
+
+            if (response._data.body.performance.validated_spec_id) {
+              form.value.performance.validated_spec_id =
+                response._data.body.performance.validated_spec_id;
+              const validatedSpec = await fetchArtifact(
+                token.value,
+                model,
+                version,
+                form.value.performance.validated_spec_id,
+              );
+              findings.value = loadFindings(validatedSpec);
+            }
           }
         }
       },
@@ -665,9 +667,7 @@ async function submit() {
       );
       successfulArtifactSubmission("report", identifier);
       forceSaveParam.value = true;
-    } catch {
-      return;
-    }
+    } catch {}
   } else {
     console.log("Invalid report.");
   }

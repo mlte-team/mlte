@@ -1,8 +1,5 @@
 <template>
-  <NuxtLayout 
-    name="base-layout"
-    @manageGroups="manageGroupClick"
-  >
+  <NuxtLayout name="base-layout" @manageGroups="manageGroupClick">
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -56,7 +53,9 @@ async function updateGroupList() {
       requestErrorAlert();
     },
     onResponse({ response }) {
-      groupList.value = response._data;
+      if (response.ok) {
+        groupList.value = response._data;
+      }
     },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
@@ -99,8 +98,10 @@ async function deleteGroup(groupName: string) {
     onRequestError() {
       requestErrorAlert();
     },
-    onResponse() {
-      updateGroupList();
+    onResponse({ response }) {
+      if (response.ok) {
+        updateGroupList();
+      }
     },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
@@ -108,8 +109,8 @@ async function deleteGroup(groupName: string) {
   });
 }
 
-function manageGroupClick(){
-  if(editFlag.value){
+function manageGroupClick() {
+  if (editFlag.value) {
     cancelEdit();
   }
 }
@@ -134,8 +135,10 @@ async function saveGroup(group: object) {
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse() {
-          updateGroupList();
+        onResponse({ response }) {
+          if (response.ok) {
+            updateGroupList();
+          }
         },
         onResponseError({ response }) {
           handleHttpError(response.status, response._data.error_description);
@@ -152,8 +155,10 @@ async function saveGroup(group: object) {
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse() {
-          updateGroupList();
+        onResponse({ response }) {
+          if (response.ok) {
+            updateGroupList();
+          }
         },
         onResponseError({ response }) {
           handleHttpError(response.status, response._data.error_description);
