@@ -4,7 +4,7 @@ This document describes some of the development practices used within `MLTE`.
 
 ## Quickstart
 
-Use Poetry to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first. Once it is installed, you can set up your environment like this:
+Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first. Once it is installed, you can set up your environment like this:
 
 ```bash
 $ python -m venv .venv
@@ -120,7 +120,7 @@ Alternatively, you can run this manually from the project root:
 $ poetry run python tools/schema.py generate mlte --verbose
 ```
 
-Unit tests failures result in build failures in CI.
+Unit test failures result in build failures in CI.
 
 ### Make Shorthand Commands
 
@@ -184,7 +184,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repo, to trigger and Integration effect on ReadTheDocs when certain changes to the repo are made.
+We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
 We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
 
@@ -223,7 +223,7 @@ $ bumpversion --allow-dirty patch
 
 ### Publishing
 
-We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in Versioning above.
+We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in [Versioning](#versioning).
 
 To build the frontend and then the whole package, it is enough to execute the following command from the main repo folder:
 ```bash
@@ -292,7 +292,7 @@ Currently, `MLTE` supports the following Python versions:
 
 <a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
 
-**Establishing Depdencies for a Particular Python Version**
+### Establishing Depdencies for a Particular Python Version
 
 Install the desired version with:
 
@@ -308,7 +308,7 @@ python --version
 Python 3.8.16
 ```
 
-With the proper version activated, use `poetry` as described in the QuickStart section to create a virtual environment and install dependencies.
+With the proper version activated, use `poetry` as described in [QuickStart](#quickstart) to create a virtual environment and install dependencies.
 
 ```bash
 # Check QA mechanisms

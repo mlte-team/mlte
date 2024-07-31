@@ -1246,38 +1246,40 @@ if (useRoute().query.artifactId !== undefined) {
         requestErrorAlert();
       },
       onResponse({ response }) {
-        if (isValidNegotiation(response._data)) {
-          form.value.creator = response._data.header.creator;
-          form.value.timestamp = new Date(
-            response._data.header.timestamp * 1000,
-          ).toLocaleString("en-US");
-          form.value.system = response._data.body.system;
-          form.value.data = response._data.body.data;
-          form.value.model = response._data.body.model;
-          form.value.system_requirements =
-            response._data.body.system_requirements;
+        if (response.ok) {
+          if (isValidNegotiation(response._data)) {
+            form.value.creator = response._data.header.creator;
+            form.value.timestamp = new Date(
+              response._data.header.timestamp * 1000,
+            ).toLocaleString("en-US");
+            form.value.system = response._data.body.system;
+            form.value.data = response._data.body.data;
+            form.value.model = response._data.body.model;
+            form.value.system_requirements =
+              response._data.body.system_requirements;
 
-          const problemType = response._data.body.system.problem_type;
-          if (
-            problemTypeOptions.find((x) => x.value === problemType)?.value !==
-            undefined
-          ) {
-            form.value.system.problem_type = problemTypeOptions.find(
-              (x) => x.value === problemType,
-            )?.value;
-          }
-
-          response._data.data.forEach((item) => {
-            const classification = item.classification;
+            const problemType = response._data.body.system.problem_type;
             if (
-              classificationOptions.find((x) => x.value === classification)
-                ?.value !== undefined
+              problemTypeOptions.find((x) => x.value === problemType)?.value !==
+              undefined
             ) {
-              item.classification = classificationOptions.find(
-                (x) => x.value === classification,
+              form.value.system.problem_type = problemTypeOptions.find(
+                (x) => x.value === problemType,
               )?.value;
             }
-          });
+
+            response._data.data.forEach((item) => {
+              const classification = item.classification;
+              if (
+                classificationOptions.find((x) => x.value === classification)
+                  ?.value !== undefined
+              ) {
+                item.classification = classificationOptions.find(
+                  (x) => x.value === classification,
+                )?.value;
+              }
+            });
+          }
         }
       },
       onResponseError({ response }) {
@@ -1339,18 +1341,13 @@ async function submit() {
             requestErrorAlert();
           },
           onResponseError({ response }) {
-            handleHttpError(
-              response.status,
-              response._data.error_description,
-            );
+            handleHttpError(response.status, response._data.error_description);
           },
         },
       );
       successfulArtifactSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
-    } catch {
-      return;
-    }
+    } catch {}
   } else {
     console.log("Invalid document attempting to be submitted.");
   }
