@@ -59,3 +59,8 @@ class CatalogEntryOrFilter(OrFilter):
     """OrFilter subclass for catalog entry filters."""
 
     filters: List[CatalogEntryFilter]  # type: ignore
+
+
+# Necessary for pydantic to resolve forward references
+CatalogEntryAndFilter.model_rebuild()
+CatalogEntryOrFilter.model_rebuild()

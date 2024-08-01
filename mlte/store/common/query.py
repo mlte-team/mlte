@@ -52,7 +52,7 @@ class FilterType(str, Enum):
 class IdentifierFilter(BaseModel, ABC):
     """A filter that matches an catalog entry identifier."""
 
-    type: Literal[FilterType.IDENTIFIER]
+    type: Literal[FilterType.IDENTIFIER] = FilterType.IDENTIFIER
     """An identifier for the filter type."""
 
     @abstractmethod
@@ -65,7 +65,7 @@ class IdentifierFilter(BaseModel, ABC):
 class TypeFilter(BaseModel, ABC):
     """A filter that matches an catalog entry type."""
 
-    type: Literal[FilterType.TYPE]
+    type: Literal[FilterType.TYPE] = FilterType.TYPE
     """An identifier for the filter type."""
 
     @abstractmethod
@@ -76,7 +76,7 @@ class TypeFilter(BaseModel, ABC):
 class AllFilter(BaseModel):
     """A filter that matches all entries."""
 
-    type: Literal[FilterType.ALL]
+    type: Literal[FilterType.ALL] = FilterType.ALL
     """An identifier for the filter type."""
 
     def match(self, _: BaseModel) -> bool:
@@ -86,7 +86,7 @@ class AllFilter(BaseModel):
 class NoneFilter(BaseModel):
     """A filter that matches no entries."""
 
-    type: Literal[FilterType.NONE]
+    type: Literal[FilterType.NONE] = FilterType.NONE
     """An identifier for the filter type."""
 
     def match(self, _: BaseModel) -> bool:
@@ -96,7 +96,7 @@ class NoneFilter(BaseModel):
 class AndFilter(BaseModel):
     """A generic filter that implements a logical AND of filters."""
 
-    type: Literal[FilterType.AND]
+    type: Literal[FilterType.AND] = FilterType.AND
     """An identifier for the filter type."""
 
     filters: List[Filter]
@@ -109,7 +109,7 @@ class AndFilter(BaseModel):
 class OrFilter(BaseModel):
     """A generic filter that implements a logical OR of filters."""
 
-    type: Literal[FilterType.OR]
+    type: Literal[FilterType.OR] = FilterType.OR
     """An identifier for the filter type."""
 
     filters: List[Filter]
