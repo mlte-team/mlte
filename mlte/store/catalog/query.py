@@ -6,8 +6,27 @@ Query and filtering functionality for catalog store operations.
 
 from __future__ import annotations
 
+from typing import List, Union
+
 from mlte.catalog.model import CatalogEntry, CatalogEntryType
-from mlte.store.common.query import IdentifierFilter, TypeFilter
+from mlte.store.common.query import (
+    AllFilter,
+    AndFilter,
+    IdentifierFilter,
+    NoneFilter,
+    OrFilter,
+    TypeFilter,
+)
+
+# A type alias
+CatalogEntryFilter = Union[
+    AllFilter,
+    NoneFilter,
+    "CatalogEntryIdentifierFilter",
+    "CatalogEntryTypeFilter",
+    "CatalogEntryAndFilter",
+    "CatalogEntryOrFilter",
+]
 
 
 class CatalogEntryIdentifierFilter(IdentifierFilter):
@@ -28,3 +47,15 @@ class CatalogEntryTypeFilter(TypeFilter):
 
     def match(self, catalog_entry: CatalogEntry) -> bool:  # type: ignore
         return catalog_entry.code_type == self.catalog_entry_type
+
+
+class CatalogEntryAndFilter(AndFilter):
+    """AndFilter subclass for catalog entry filters."""
+
+    filters: List[CatalogEntryFilter]  # type: ignore
+
+
+class CatalogEntryOrFilter(OrFilter):
+    """OrFilter subclass for catalog entry filters."""
+
+    filters: List[CatalogEntryFilter]  # type: ignore

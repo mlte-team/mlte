@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from mlte.store.common.query import Query
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -17,6 +16,7 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
+from mlte.store.common.query import Query
 
 # -----------------------------------------------------------------------------
 # Memory Store

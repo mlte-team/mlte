@@ -8,16 +8,12 @@ import pytest
 
 from mlte.artifact.type import ArtifactType
 from mlte.store.artifact.query import (
+    ArtifactAndFilter,
     ArtifactIdentifierFilter,
+    ArtifactOrFilter,
     ArtifactTypeFilter,
 )
-from mlte.store.common.query import (
-    AllFilter,
-    AndFilter,
-    FilterType,
-    NoneFilter,
-    OrFilter,
-)
+from mlte.store.common.query import AllFilter, FilterType, NoneFilter
 
 from ...fixture.artifact import ArtifactFactory, TypeUtil
 
@@ -92,26 +88,11 @@ def test_type_match(artifact_type: ArtifactType) -> None:
 
 def test_and() -> None:
     """The AND filter can be serialized and deserialized."""
-    f = AndFilter(
+    f = ArtifactAndFilter(
         type=FilterType.AND,
         filters=[
             AllFilter(type=FilterType.ALL),
             NoneFilter(type=FilterType.NONE),
-        ],
-    )
-    assert AndFilter(**f.model_dump()) == f
-
-
-@pytest.mark.skip("Implement.")
-def test_and_match() -> None:
-    assert True
-
-
-def test_or() -> None:
-    """The OR filter can be serialized and deserialized."""
-    f = OrFilter(
-        type=FilterType.OR,
-        filters=[
             ArtifactIdentifierFilter(
                 type=FilterType.IDENTIFIER, artifact_id="id0"
             ),
@@ -121,9 +102,37 @@ def test_or() -> None:
             ),
         ],
     )
-    assert OrFilter(**f.model_dump()) == f
+    assert ArtifactAndFilter(**f.model_dump()) == f
+
+
+@pytest.mark.skip("Implement.")
+def test_and_match() -> None:
+    # TODO: Implement AND filter match test
+    assert True
+
+
+def test_or() -> None:
+    """The OR filter can be serialized and deserialized."""
+    f = ArtifactOrFilter(
+        type=FilterType.OR,
+        filters=[
+            AllFilter(type=FilterType.ALL),
+            NoneFilter(type=FilterType.NONE),
+            ArtifactIdentifierFilter(
+                type=FilterType.IDENTIFIER, artifact_id="id0"
+            ),
+            ArtifactTypeFilter(
+                type=FilterType.TYPE,
+                artifact_type=ArtifactType.NEGOTIATION_CARD,
+            ),
+        ],
+    )
+    print(f)
+    print(f.model_dump())
+    assert ArtifactOrFilter(**f.model_dump()) == f
 
 
 @pytest.mark.skip("Implement.")
 def test_or_match() -> None:
+    # TODO: Implement AND filter match test
     assert True
