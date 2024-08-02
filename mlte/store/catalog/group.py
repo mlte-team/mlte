@@ -12,6 +12,7 @@ from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreSession
 from mlte.store.catalog.factory import create_store
 from mlte.store.catalog.store import CatalogStore, CatalogStoreSession
+from mlte.store.common.query import Query
 from mlte.store.error import ErrorAlreadyExists, ErrorNotFound
 
 
@@ -96,15 +97,14 @@ class CatalogStoreGroupSession(StoreSession):
     def search_entries(
         self,
         catalog_id: Optional[str] = None,
-        # query: Query = Query(),
+        query: Query = Query(),
     ) -> List[CatalogEntry]:
         """
          Read a collection of entries, optionally filtered.
          :param catalog_id: The identifier of the catalog to read from; if not given, search on all catalogs.
-        # :param query: The entry query to apply
+         :param query: The entry query to apply
          :return: A collection of entries that satisfy the filter
         """
-        # TODO: actually implement and use query.
         if catalog_id is not None:
             if catalog_id not in self.sessions:
                 raise ErrorNotFound(
@@ -112,7 +112,7 @@ class CatalogStoreGroupSession(StoreSession):
                 )
 
             catalog_session = self.sessions[catalog_id]
-            return catalog_session.search_entries()
+            return catalog_session.search_entries(query)
         else:
             # Go over all catalogs, reading from each one, and grouping results.
             results: List[CatalogEntry] = []
