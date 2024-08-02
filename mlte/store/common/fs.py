@@ -110,13 +110,45 @@ class FileSystemStorage(JsonFileStorage):
         return clone
 
     # -------------------------------------------------------------------------
-    # Internal helpers.
+    # Resource methods.
     # -------------------------------------------------------------------------
 
-    def _ensure_resource_exists(self, resource_id: str) -> None:
+    def list_resources(self) -> List[str]:
+        """Returns a list of resource ids in this storage."""
+        return [
+            self._resource_id(resource_path)
+            for resource_path in self.list_json_files(self.base_path)
+        ]
+
+    def read_resource(self, resource_id: str) -> Dict[str, Any]:
+        """Reads the given resource as a dict."""
+        return self.read_json_file(self._resource_path(resource_id))
+
+    def write_resource(
+        self, resource_id: str, resource_data: Dict[str, Any]
+    ) -> None:
+        """Writes the given resource to storage."""
+        self.write_json_to_file(self._resource_path(resource_id), resource_data)
+
+    def delete_resource(self, resource_id: str) -> None:
+        """Deletes the file for the associated resource id."""
+        self.delete_file(self._resource_path(resource_id))
+
+    def ensure_resource_does_not_exist(self, resource_id: str) -> None:
+        """Throws an ErrorAlreadyExists if the given resource does exist."""
+        if self._resource_path(resource_id).exists():
+            raise errors.ErrorAlreadyExists(
+                f"Resource already exists: {resource_id}"
+            )
+
+    def ensure_resource_exists(self, resource_id: str) -> None:
         """Throws an ErrorNotFound if the given resource does not exist."""
         if not self._resource_path(resource_id).exists():
-            raise errors.ErrorNotFound(f"Not found: {resource_id}")
+            raise errors.ErrorNotFound(f"Resource not found: {resource_id}")
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
 
     def _resource_path(self, resource_id: str) -> Path:
         """

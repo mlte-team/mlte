@@ -100,10 +100,10 @@ class CatalogStoreGroupSession(StoreSession):
         query: Query = Query(),
     ) -> List[CatalogEntry]:
         """
-         Read a collection of entries, optionally filtered.
-         :param catalog_id: The identifier of the catalog to read from; if not given, search on all catalogs.
-         :param query: The entry query to apply
-         :return: A collection of entries that satisfy the filter
+        Read a collection of entries, optionally filtered.
+        :param catalog_id: The identifier of the catalog to read from; if not given, search on all catalogs.
+        :param query: The entry query to apply
+        :return: A collection of entries that satisfy the filter
         """
         if catalog_id is not None:
             if catalog_id not in self.sessions:

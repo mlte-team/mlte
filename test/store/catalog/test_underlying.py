@@ -14,7 +14,13 @@ from mlte.catalog.model import (
 )
 from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
 
-from .fixture import catalog_stores, create_memory_store, memory_store  # noqa
+from .fixture import (  # noqa
+    catalog_stores,
+    create_fs_store,
+    create_memory_store,
+    fs_store,
+    memory_store,
+)
 
 TEST_MOD_ID = "mod1"
 
@@ -47,6 +53,11 @@ def get_test_entry() -> CatalogEntry:
 def test_init_memory() -> None:
     """An in-memory store can be initialized."""
     _ = create_memory_store()
+
+
+def test_init_fs(tmp_path) -> None:
+    """An local FS store can be initialized."""
+    _ = create_fs_store(tmp_path)
 
 
 @pytest.mark.parametrize("store_fixture_name", catalog_stores())

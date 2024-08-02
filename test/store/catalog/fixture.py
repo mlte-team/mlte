@@ -7,15 +7,17 @@ Fixtures for MLTE catalog store unit tests.
 from __future__ import annotations
 
 import typing
+from pathlib import Path
 from typing import Generator, Optional
 
 import pytest
 
 from mlte.store.base import StoreURIPrefix
 from mlte.store.catalog.factory import create_store
+from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 
-_STORE_FIXTURE_NAMES = ["memory_store"]
+_STORE_FIXTURE_NAMES = ["memory_store", "fs_store"]
 
 CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryCatalogStore] = None
 """Global, initial, in memory store, cached for faster testing."""
@@ -32,10 +34,24 @@ def create_memory_store() -> InMemoryCatalogStore:
     return CACHED_DEFAULT_MEMORY_STORE.clone()
 
 
+def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
+    """Creates a file system store."""
+    return typing.cast(
+        FileSystemCatalogStore,
+        create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
+    )
+
+
 @pytest.fixture(scope="function")
 def memory_store() -> InMemoryCatalogStore:
     """A fixture for an in-memory store."""
     return create_memory_store()
+
+
+@pytest.fixture(scope="function")
+def fs_store(tmp_path) -> FileSystemCatalogStore:
+    """A fixture for an local FS store."""
+    return create_fs_store(tmp_path)
 
 
 def catalog_stores() -> Generator[str, None, None]:
