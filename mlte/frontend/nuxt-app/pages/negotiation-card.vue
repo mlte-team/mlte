@@ -164,9 +164,11 @@
         <AddButton class="margin-button" @click="addMetric(goalIndex)">
           Add Metric
         </AddButton>
-        <DeleteButton @click="deleteGoal(goalIndex)">
-          Delete Goal
-        </DeleteButton>
+        <div class="inline-button" style="vertical-align: bottom">
+          <DeleteButton @click="deleteGoal(goalIndex)">
+            Delete Goal
+          </DeleteButton>
+        </div>
         <hr />
       </div>
 
@@ -1372,8 +1374,11 @@ function descriptorUpload(event: Event, descriptorName: string) {
               metric: string;
               baseline: string;
             }) => {
-              addGoal();
-              const lastGoalIndex = form.value.system.goals.length - 1;
+              let lastGoalIndex = form.value.system.goals.length - 1;
+              if(!goalEmpty(form.value.system.goals[lastGoalIndex])){
+                addGoal();
+                lastGoalIndex += 1;
+              }
 
               form.value.system.goals[lastGoalIndex].description = goal.goal;
               form.value.system.goals[lastGoalIndex].metrics[0].description =
@@ -1383,14 +1388,17 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           form.value.system.task = document.task;
-          form.value.system.problem_type = document.ml_problem_type.ml_problem;
+          form.value.system.problem_type = document.ml_problem_type.ml_problem.toLowerCase().split(' ').join('_');
           form.value.system.usage_context = document.usage_context;
           form.value.system.risks.fp = document.risks.risk_fp;
           form.value.system.risks.fn = document.risks.risk_fn;
           form.value.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
-          addDataItem();
-          const lastDataIndex = form.value.data.length - 1;
+          let lastDataIndex = form.value.data.length - 1;
+          if(!dataItemEmpty(form.value.data[lastDataIndex])){
+            addDataItem();
+            lastDataIndex += 1;
+          }
 
           let dataSourcesStr = "";
           document.data_sources.forEach(
@@ -1415,7 +1423,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
               addLabel(lastDataIndex);
-              form.value.data[lastDataIndex].labels[i].description =
+              form.value.data[lastDataIndex].labels[i].name =
                 label.label;
               form.value.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
@@ -1424,6 +1432,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
 
           form.value.data[lastDataIndex].rights = document.data_rights;
           form.value.data[lastDataIndex].policies = document.data_policies;
+          form.value.data[lastDataIndex].description = document.dataset_description;
 
           form.value.data[lastDataIndex].fields.splice(0, 1);
           document.schema.forEach(
@@ -1517,6 +1526,61 @@ function descriptorUpload(event: Event, descriptorName: string) {
     };
     reader.readAsText(file);
   }
+}
+
+function goalEmpty(goal){
+  let isEmpty = true;
+
+  if(goal.description != ""){
+    isEmpty = false;
+  }
+
+  goal.metrics.forEach((metric) => {
+    if(metric.description != "" || metric.baseline != ""){
+      isEmpty = false;
+    }
+  })
+
+  return isEmpty;
+}
+
+function dataItemEmpty(dataItem){
+  let isEmpty = true;
+
+  if(
+    dataItem.description != "" ||
+    dataItem.source != "" ||
+    dataItem.classification != "unclassified" ||
+    dataItem.access != "" ||
+    dataItem.labeling_method != ""
+  ){
+    isEmpty = false;
+  }
+
+  dataItem.labels.forEach((label) => {
+    if(
+      label.name != "" ||
+      label.description != "" ||
+      label.percentage != 0
+    ){
+      isEmpty = false;
+    }
+  })
+
+  dataItem.fields.forEach((field) => {
+    if(
+      field.name != "" ||
+      field.description != "" ||
+      field.type != "" ||
+      field.expected_values != "" ||
+      field.missing_values != "" ||
+      field.special_values != ""
+    ){
+      isEmpty = false;
+    }
+  })
+
+  return isEmpty;
 }
 
 function addGoal() {
