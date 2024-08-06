@@ -138,7 +138,6 @@ export default {
 
     const saveForm = () => {
       alert('Form has been saved!');
-      
     };
 
     return {

@@ -21,5 +21,7 @@ export default defineNuxtConfig({
     },
   },
   modules: ["nuxt-chatgpt", "@nuxt/ui"],
-  
+  chatgpt: {
+    apiKey: process.env.OPENAI_API_KEY
+  },
 });

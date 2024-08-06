@@ -781,7 +781,9 @@
     </div>
 
     <h2 class="section-header">System Requirements</h2>
+    
           <!-- Priority Legend  -->
+          <br/>
 
       <div class="horizontal-legend">
       <div class="legend-item">
@@ -800,14 +802,26 @@
       </div>
       <br/>
 
-    <div class="input-group">
-      
-      <Latency></Latency>
-
+    <div>
+      <Chatgpt>
+      </Chatgpt>
     </div>
 
+    <div class="input-group">
+      
+    <Accordion title="Inference Latency">
+      <template #content>
+          <Latency MLTask="Classification" usageContext="Real-time Application" />
+        </template>
+    </Accordion>
 
+    <Accordion title="Training Latency">
+      <template #content>
+          <Training>MLTask="Classification" usageContext="Real-time Application" </Training> 
+        </template>
+    </Accordion>
 
+    </div>
     <br/>
 
     <div class="input-group">
