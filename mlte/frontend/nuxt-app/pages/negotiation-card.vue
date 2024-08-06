@@ -50,10 +50,12 @@
       can at the beginning of the project process and revisit the card 
       throughout as the project matures. There are four sections in 
       the Negotiation Card:
-      - System Information
-      - Data
-      - Model Information
-      - System Requirements
+      <ul>
+        <li>System Information</li>
+        <li>Data</li>
+        <li>Model Information</li>
+        <li>System Requirements</li>
+      </ul>
       Negotiation Cards serve as a critical reference for teams 
       throughout development even when they are partially filled out. 
       Hover over the black information icons next to each field to 
