@@ -1,4 +1,6 @@
 import pkg from "./package.json";
+import { defineNuxtConfig } from 'nuxt/config';
+
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -17,5 +19,9 @@ export default defineNuxtConfig({
       apiPath: "http://localhost:8080/api",
       version: pkg.version,
     },
+  },
+  modules: ["nuxt-chatgpt", "@nuxt/ui"],
+  chatgpt: {
+    apiKey: process.env.OPENAI_API_KEY
   },
 });

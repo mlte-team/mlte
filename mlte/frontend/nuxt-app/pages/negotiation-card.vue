@@ -201,6 +201,22 @@
       </template>
     </UsaTextInput>
 
+    <UsaTextInput v-model="form.system.target_audience">
+      <template #label>
+        Target Audience
+        <InfoIcon>
+          Who is intended to utilize the system/model?
+          <br />
+          <br />
+          <i
+            >Example: health care providers, etc.
+            <br />
+            </i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextInput>
+
     <UsaTextInput v-model="form.system.risks.fp">
       <template #label>
         False Positive Risk
@@ -765,13 +781,48 @@
     </div>
 
     <h2 class="section-header">System Requirements</h2>
-    <p>
-      System-dependent requirements and constraints placed on the model under
-      development. The fields below correspond to parts of a quality attribute
-      scenario, which is a construct used to clearly define system requirements.
-      As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation.
-    </p>
+    
+          <!-- Priority Legend  -->
+          <br/>
+
+      <div class="horizontal-legend">
+      <div class="legend-item">
+        <span class="circle top-priority"></span>
+        <p>Top Priority</p>
+      </div>
+    
+      <div class="legend-item">
+        <span class="circle mild-priority"></span>
+        <p>Mild Priority</p>
+      </div>
+    <div class="legend-item">
+      <span class="circle low-priority"></span>
+      <p>Low Priority</p>
+    </div>
+      </div>
+      <br/>
+
+    <div>
+      <Chatgpt>
+      </Chatgpt>
+    </div>
+
+    <div class="input-group">
+      
+    <Accordion title="Inference Latency">
+      <template #content>
+          <Latency MLTask="Classification" usageContext="Real-time Application" />
+        </template>
+    </Accordion>
+
+    <Accordion title="Training Latency">
+      <template #content>
+          <Training>MLTask="Classification" usageContext="Real-time Application" </Training> 
+        </template>
+    </Accordion>
+
+    </div>
+    <br/>
 
     <div class="input-group">
       <SubHeader :render-info="false">
@@ -1628,4 +1679,7 @@ function deleteRequirement(requirementIndex: number) {
     form.value.system_requirements.splice(requirementIndex, 1);
   }
 }
+
 </script>
+
+
