@@ -42,14 +42,24 @@
 
     <UsaBreadcrumb :items="path" />
 
-    <h1 class="section-header">How to use the Negotiation Card</h1>
+    <h1 class="section-header">Negotiation Card</h1>
     <p>
-      Teams should work through as many of the following items before starting
-      model development. The Negotiation Card can and should be revisited at any
-      negotiation point. Teams should refer to this Negotiation Card during
-      development to ensure they capture all relevant critical aspects of the
-      model and system. Hover over the black information icons next to each
-      field to get more information about that field. Click on the Example
+      Teams should use the negotiation card to guide an in-depth 
+      discussion for project scoping. The card can be completed in 
+      any order and the idea is that teams fill out as much as they 
+      can at the beginning of the project process and revisit the card 
+      throughout as the project matures. There are four sections in 
+      the Negotiation Card:
+      <ul>
+        <li>System Information</li>
+        <li>Data</li>
+        <li>Model Information</li>
+        <li>System Requirements</li>
+      </ul>
+      Negotiation Cards serve as a critical reference for teams 
+      throughout development even when they are partially filled out. 
+      Hover over the black information icons next to each field to 
+      get more information about that field. Click on the Example 
       button to see specific examples for a section.
     </p>
 
