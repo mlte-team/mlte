@@ -79,7 +79,7 @@ class RelationalDBCatalogStoreSession(CatalogStoreSession):
         self.engine = engine
         """A reference to underlying storage."""
 
-        self.user_mapper = RDBEntryMapper(engine)
+        self.entry_mapper = RDBEntryMapper(engine)
         """The mapper to user CRUD."""
 
     def close(self) -> None:
