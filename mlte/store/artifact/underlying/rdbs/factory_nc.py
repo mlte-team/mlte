@@ -222,8 +222,8 @@ def create_report_db_from_model(
         intended_usage_context=report.intended_use.usage_context,
         intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
         intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
-        intended_reqs_model_prod_interface_input_desc=[],
-        intended_reqs_model_prod_interface_output_desc=[],
+        intended_reqs_model_inputs=[],
+        intended_reqs_model_outputs=[],
         intended_reqs_model_prod_resources=model_prod_resources_obj,
         risks_fp=report.risks.fp,
         risks_fn=report.risks.fn,
@@ -246,12 +246,12 @@ def create_report_db_from_model(
     # Create list of model input objects.
     for input in report.intended_use.production_requirements.interface.inputs:
         input_obj = _build_io_descriptor_obj(input)
-        report_obj.intended_reqs_model_prod_interface_input_desc.append(input_obj)
+        report_obj.intended_reqs_model_inputs.append(input_obj)
 
     # Create list of model output objects.
     for output in report.intended_use.production_requirements.interface.outputs:
         output_obj = _build_io_descriptor_obj(output)
-        report_obj.intended_reqs_model_prod_interface_output_desc.append(output_obj)
+        report_obj.intended_reqs_model_outputs.append(output_obj)
 
     # Create list of comment objects.
     for comment in report.comments:
@@ -281,8 +281,8 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             production_requirements=_build_model_prod_descriptor(
                 report_obj.intended_reqs_model_prod_deployment_platform,
                 report_obj.intended_reqs_model_prod_capability_deployment_mechanism,
-                report_obj.intended_reqs_model_prod_interface_input_desc,
-                report_obj.intended_reqs_model_prod_interface_output_desc,
+                report_obj.intended_reqs_model_inputs,
+                report_obj.intended_reqs_model_outputs,
                 report_obj.intended_reqs_model_prod_resources,
             ),
         ),
