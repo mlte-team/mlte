@@ -135,24 +135,16 @@ class DBReport(DBBase):
         Optional[str]
     ]
 
-    intended_reqs_model_prod_interface_input_desc_id: Mapped[
-        int
-    ] = mapped_column(ForeignKey("nc_model_io.id"))
     intended_reqs_model_prod_interface_input_desc: Mapped[
-        Optional[DBModelIODescriptor]
+        List[DBModelIODescriptor]
     ] = relationship(
-        cascade="all",
-        foreign_keys=[intended_reqs_model_prod_interface_input_desc_id],
+        cascade="all, delete-orphan"
     )
 
-    intended_reqs_model_prod_interface_output_desc_id: Mapped[
-        int
-    ] = mapped_column(ForeignKey("nc_model_io.id"))
     intended_reqs_model_prod_interface_output_desc: Mapped[
-        Optional[DBModelIODescriptor]
+        List[DBModelIODescriptor]
     ] = relationship(
-        cascade="all",
-        foreign_keys=[intended_reqs_model_prod_interface_output_desc_id],
+        cascade="all, delete-orphan"
     )
 
     intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(

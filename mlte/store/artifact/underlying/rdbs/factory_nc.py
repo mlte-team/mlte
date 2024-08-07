@@ -112,12 +112,12 @@ def create_negotiation_db_from_model(
         negotiation_card_obj.data_descriptors.append(data_obj)
 
     # Create list of model input objects.
-    for input in negotiation_card.model.production.interface.input:
+    for input in negotiation_card.model.production.interface.inputs:
         input_obj = _build_io_descriptor_obj(input)
         negotiation_card_obj.model_prod_inputs.append(input_obj)
 
     # Create list of model output objects.
-    for output in negotiation_card.model.production.interface.output:
+    for output in negotiation_card.model.production.interface.outputs:
         output_obj = _build_io_descriptor_obj(output)
         negotiation_card_obj.model_prod_outputs.append(output_obj)
 
@@ -205,16 +205,6 @@ def create_report_db_from_model(
         memory=report.intended_use.production_requirements.resources.memory,
         storage=report.intended_use.production_requirements.resources.storage,
     )
-    model_input_desc_obj = DBModelIODescriptor(
-        name=report.intended_use.production_requirements.interface.input.name,
-        description=report.intended_use.production_requirements.interface.input.description,
-        type=report.intended_use.production_requirements.interface.input.type,
-    )
-    model_output_desc_obj = DBModelIODescriptor(
-        name=report.intended_use.production_requirements.interface.output.name,
-        description=report.intended_use.production_requirements.interface.output.description,
-        type=report.intended_use.production_requirements.interface.output.type,
-    )
 
     # Create the actual object.
     report_obj = DBReport(
@@ -232,8 +222,8 @@ def create_report_db_from_model(
         intended_usage_context=report.intended_use.usage_context,
         intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
         intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
-        intended_reqs_model_prod_interface_input_desc=model_input_desc_obj,
-        intended_reqs_model_prod_interface_output_desc=model_output_desc_obj,
+        intended_reqs_model_prod_interface_input_desc=[],
+        intended_reqs_model_prod_interface_output_desc=[],
         intended_reqs_model_prod_resources=model_prod_resources_obj,
         risks_fp=report.risks.fp,
         risks_fn=report.risks.fn,
@@ -252,6 +242,16 @@ def create_report_db_from_model(
     for data_descriptor in report.data:
         data_obj = _build_data_descriptor_obj(data_descriptor, session)
         report_obj.data_descriptors.append(data_obj)
+
+    # Create list of model input objects.
+    for input in report.intended_use.production_requirements.interface.inputs:
+        input_obj = _build_io_descriptor_obj(input)
+        report_obj.intended_reqs_model_prod_interface_input_desc.append(input_obj)
+
+    # Create list of model output objects.
+    for output in report.intended_use.production_requirements.interface.outputs:
+        output_obj = _build_io_descriptor_obj(output)
+        report_obj.intended_reqs_model_prod_interface_output_desc.append(output_obj)
 
     # Create list of comment objects.
     for comment in report.comments:
@@ -446,8 +446,8 @@ def _build_model_prod_descriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            input=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type) for input_obj in inputs],
-            output=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type,) for output_obj in outputs]
+            inputs=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type) for input_obj in inputs],
+            outputs=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type,) for output_obj in outputs]
         ),
         resources=_build_resources(resources),
     )
