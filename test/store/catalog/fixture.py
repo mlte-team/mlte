@@ -11,13 +11,15 @@ from pathlib import Path
 from typing import Generator, Optional
 
 import pytest
+from sqlalchemy import StaticPool
 
-from mlte.store.base import StoreURIPrefix
+from mlte.store.base import StoreURI, StoreURIPrefix
 from mlte.store.catalog.factory import create_store
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
+from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 
-_STORE_FIXTURE_NAMES = ["memory_store", "fs_store"]
+_STORE_FIXTURE_NAMES = ["memory_store", "fs_store", "rdbs_store"]
 
 CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryCatalogStore] = None
 """Global, initial, in memory store, cached for faster testing."""
@@ -42,6 +44,14 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     )
 
 
+def create_rdbs_store() -> RelationalDBCatalogStore:
+    IN_MEMORY_SQLITE_DB = "sqlite+pysqlite:///:memory:"
+    return RelationalDBCatalogStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
+
+
 @pytest.fixture(scope="function")
 def memory_store() -> InMemoryCatalogStore:
     """A fixture for an in-memory store."""
@@ -52,6 +62,12 @@ def memory_store() -> InMemoryCatalogStore:
 def fs_store(tmp_path) -> FileSystemCatalogStore:
     """A fixture for an local FS store."""
     return create_fs_store(tmp_path)
+
+
+@pytest.fixture(scope="function")
+def rdbs_store() -> RelationalDBCatalogStore:
+    """A fixture for an in-memory RDBS store."""
+    return create_rdbs_store()
 
 
 def catalog_stores() -> Generator[str, None, None]:

@@ -20,6 +20,7 @@ from .fixture import (  # noqa
     create_memory_store,
     fs_store,
     memory_store,
+    rdbs_store,
 )
 
 TEST_MOD_ID = "mod1"
