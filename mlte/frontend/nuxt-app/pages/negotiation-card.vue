@@ -772,7 +772,8 @@
       development. The fields below correspond to parts of a quality attribute
       scenario, which is a construct used to clearly define system requirements.
       As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation.
+      scenario will be generated for your validation. Click on the "Example" button 
+      below for a list of examples.
     </p>
 
     <div class="input-group">
@@ -796,15 +797,16 @@
         </h3>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
           <b>Scenario for {{ requirement.quality }}: </b>
-          >{{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.stimulus }} from {{ requirement.source }} during
           {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
         </p>
         <UsaTextInput v-model="requirement.quality">
           <template #label>
-            System Quality
+            <b>System Quality:</b> What is the model property to be tested, such as accuracy, 
+            performance, robustness, fairness, or resource consumption?
             <InfoIcon>
-              System property by which the model will be evaluated <br />
+              Property by which the model will be evaluated in the context of the system <br />
               (e.g., Accuracy, Performance, Robustness, Fairness, Resource
               Consumption).
               <br />
@@ -816,7 +818,9 @@
 
         <UsaTextInput v-model="requirement.stimulus">
           <template #label>
-            Stimulus
+            <b>Stimulus:</b> What is the input to the model, the action, or the event that 
+            will enable testing of the property, such as input data, system 
+            event, or user operation?
             <InfoIcon>
               A condition arriving at the system/model (e.g., data,
               <br />
@@ -832,10 +836,11 @@
 
         <UsaTextInput v-model="requirement.source">
           <template #label>
-            Source of Stimulus
+            <b>Source of Stimulus:</b> Where is the stimulus coming from, such as a system
+            component, system user, or data source?
             <InfoIcon>
               Where the stimulus comes from (e.g., data source, <br />
-              internal/external user, internal/external computer system,
+              internal/external user, internal/external component or system,
               <br />
               sensor).
               <br />
@@ -847,7 +852,8 @@
 
         <UsaTextInput v-model="requirement.environment">
           <template #label>
-            Environment
+            <b>Environment:</b> What are the conditions under which the scenario occurs, 
+            such as normal operations, overload conditions, or under attack?
             <InfoIcon>
               Set of circumstances in which the scenario takes place <br />
               (e.g., normal operations, overload condition, startup, development
@@ -861,7 +867,8 @@
 
         <UsaTextInput v-model="requirement.response">
           <template #label>
-            Response
+            <b>Response:</b> What occurs as a result of the stimulus, such as inference on the  
+            data, event processing, or data validation?
             <InfoIcon>
               Activity that occurs as the result of the arrival of the
               <br />
@@ -876,7 +883,9 @@
 
         <UsaTextInput v-model="requirement.measure">
           <template #label>
-            Response Measure
+            <b>Response Measure: </b>What is the measure that will determine that the 
+            correct response has been achieved, such as a statistical property, latency, or 
+            execution time?
             <InfoIcon>
               Measures used to determine that the responses enumerated for
               <br />
@@ -1091,7 +1100,7 @@ const systemModalRows = ref([
     source: "Flower identification application",
     environment: "Normal operations",
     response:
-      "Model will need to run on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
+      "Model runs on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
     measure: "No errors due to unavailable resources",
   },
 ]);

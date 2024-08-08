@@ -67,25 +67,13 @@ class DBNegotiationCard(DBBase):
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
 
-    model_prod_interface_input_desc_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_model_io.id")
-    )
-    model_prod_interface_input_desc: Mapped[
-        Optional[DBModelIODescriptor]
-    ] = relationship(
-        cascade="all",
-        foreign_keys=[model_prod_interface_input_desc_id],
-    )
+    model_prod_inputs: Mapped[
+        List[DBModelIODescriptor]
+    ] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.negotiation_card_input_id")
 
-    model_prod_interface_output_desc_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_model_io.id")
-    )
-    model_prod_interface_output_desc: Mapped[
-        Optional[DBModelIODescriptor]
-    ] = relationship(
-        cascade="all",
-        foreign_keys=[model_prod_interface_output_desc_id],
-    )
+    model_prod_outputs: Mapped[
+        List[DBModelIODescriptor]
+    ] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.negotiation_card_output_id")
 
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
@@ -147,25 +135,8 @@ class DBReport(DBBase):
         Optional[str]
     ]
 
-    intended_reqs_model_prod_interface_input_desc_id: Mapped[
-        int
-    ] = mapped_column(ForeignKey("nc_model_io.id"))
-    intended_reqs_model_prod_interface_input_desc: Mapped[
-        Optional[DBModelIODescriptor]
-    ] = relationship(
-        cascade="all",
-        foreign_keys=[intended_reqs_model_prod_interface_input_desc_id],
-    )
-
-    intended_reqs_model_prod_interface_output_desc_id: Mapped[
-        int
-    ] = mapped_column(ForeignKey("nc_model_io.id"))
-    intended_reqs_model_prod_interface_output_desc: Mapped[
-        Optional[DBModelIODescriptor]
-    ] = relationship(
-        cascade="all",
-        foreign_keys=[intended_reqs_model_prod_interface_output_desc_id],
-    )
+    intended_reqs_model_inputs: Mapped[List[DBModelIODescriptor]] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.report_input_id")
+    intended_reqs_model_outputs: Mapped[List[DBModelIODescriptor]] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.report_output_id")
 
     intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
@@ -354,10 +325,15 @@ class DBModelIODescriptor(DBBase):
     name: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     type: Mapped[Optional[str]]
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+
+    negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")
     )
-    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
+    negotiation_card_output_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("negotiation_card.id")
+    )
+    report_input_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
+    report_output_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     def __repr__(self) -> str:
         return f"ModelIODescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r})"

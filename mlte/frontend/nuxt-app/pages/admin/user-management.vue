@@ -1,8 +1,5 @@
 <template>
-  <NuxtLayout
-    name="base-layout"
-    @manageUsers="manageUserClick"  
-  >
+  <NuxtLayout name="base-layout" @manageUsers="manageUserClick">
     <template #sidebar>
       <div style="padding-top: 80px">
         <div v-if="!editFlag">
@@ -65,7 +62,9 @@ async function updateUserList() {
       requestErrorAlert();
     },
     onResponse({ response }) {
-      userList.value = response._data;
+      if (response.ok) {
+        userList.value = response._data;
+      }
     },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
@@ -117,8 +116,10 @@ async function deleteUser(usernameToDelete: string) {
     onRequestError() {
       requestErrorAlert();
     },
-    onResponse() {
-      updateUserList();
+    onResponse({ response }) {
+      if (response.ok) {
+        updateUserList();
+      }
     },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
@@ -126,8 +127,8 @@ async function deleteUser(usernameToDelete: string) {
   });
 }
 
-function manageUserClick(){
-  if(editFlag.value){
+function manageUserClick() {
+  if (editFlag.value) {
     cancelEdit();
   }
 }
@@ -152,8 +153,10 @@ async function saveUser(user: object) {
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse() {
-          updateUserList();
+        onResponse({ response }) {
+          if (response.ok) {
+            updateUserList();
+          }
         },
         onResponseError({ response }) {
           handleHttpError(response.status, response._data.error_description);
@@ -170,8 +173,10 @@ async function saveUser(user: object) {
         onRequestError() {
           requestErrorAlert();
         },
-        onResponse() {
-          updateUserList();
+        onResponse({ response }) {
+          if (response.ok) {
+            updateUserList();
+          }
         },
         onResponseError({ response }) {
           handleHttpError(response.status, response._data.error_description);

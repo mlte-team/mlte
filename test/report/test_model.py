@@ -81,12 +81,16 @@ def test_intended_use() -> None:
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelIODescriptor(
-                        name="i1", description="description", type="string"
-                    ),
-                    output=ModelIODescriptor(
-                        name="o1", description="description", type="string"
-                    ),
+                    inputs=[
+                        ModelIODescriptor(
+                            name="i1", description="description", type="string"
+                        )
+                    ],
+                    outputs=[
+                        ModelIODescriptor(
+                            name="o1", description="description", type="string"
+                        )
+                    ],
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"

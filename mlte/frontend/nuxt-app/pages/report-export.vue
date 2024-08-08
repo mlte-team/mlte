@@ -159,19 +159,21 @@ await useFetch(
       requestErrorAlert();
     },
     async onResponse({ response }) {
-      if (isValidReport(response._data)) {
-        pageData.value = response._data.body;
+      if (response.ok) {
+        if (isValidReport(response._data)) {
+          pageData.value = response._data.body;
 
-        if (response._data.body.performance.validated_spec_id) {
-          pageData.value.performance.validated_spec_id =
-            response._data.body.performance.validated_spec_id;
-          const validatedSpec = await fetchArtifact(
-            token.value,
-            model,
-            version,
-            pageData.value.performance.validated_spec_id,
-          );
-          findings.value = loadFindings(validatedSpec);
+          if (response._data.body.performance.validated_spec_id) {
+            pageData.value.performance.validated_spec_id =
+              response._data.body.performance.validated_spec_id;
+            const validatedSpec = await fetchArtifact(
+              token.value,
+              model,
+              version,
+              pageData.value.performance.validated_spec_id,
+            );
+            findings.value = loadFindings(validatedSpec);
+          }
         }
       }
     },
