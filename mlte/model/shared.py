@@ -110,10 +110,10 @@ class ModelIODescriptor(BaseModel):
 class ModelInterfaceDescriptor(BaseModel):
     """A description of the model interface."""
 
-    input: ModelIODescriptor = ModelIODescriptor()
+    inputs: List[ModelIODescriptor] = []
     """The model input specification."""
 
-    output: ModelIODescriptor = ModelIODescriptor()
+    outputs: List[ModelIODescriptor] = []
     """The model output specification."""
 
 

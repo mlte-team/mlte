@@ -195,12 +195,16 @@ def test_model_interface_descriptor() -> None:
     """A model interface descriptor model can be serialized and deserialized."""
     objects = [
         ModelInterfaceDescriptor(
-            input=ModelIODescriptor(
-                name="i1", description="description", type="string"
-            ),
-            output=ModelIODescriptor(
-                name="o1", description="description", type="string"
-            ),
+            inputs=[
+                ModelIODescriptor(
+                    name="i1", description="description", type="string"
+                )
+            ],
+            outputs=[
+                ModelIODescriptor(
+                    name="o1", description="description", type="string"
+                )
+            ],
         ),
         ModelInterfaceDescriptor(),
     ]
@@ -233,12 +237,16 @@ def test_model_production_descriptor() -> None:
             deployment_platform="local server",
             capability_deployment_mechanism="API",
             interface=ModelInterfaceDescriptor(
-                input=ModelIODescriptor(
-                    name="i1", description="description", type="string"
-                ),
-                output=ModelIODescriptor(
-                    name="o1", description="description", type="string"
-                ),
+                inputs=[
+                    ModelIODescriptor(
+                        name="i1", description="description", type="string"
+                    )
+                ],
+                outputs=[
+                    ModelIODescriptor(
+                        name="o1", description="description", type="string"
+                    )
+                ],
             ),
             resources=ModelResourcesDescriptor(
                 cpu="cpu", gpu="gpu", memory="memory", storage="storage"
@@ -266,12 +274,16 @@ def test_model_descriptor() -> None:
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 interface=ModelInterfaceDescriptor(
-                    input=ModelIODescriptor(
-                        name="i1", description="description", type="string"
-                    ),
-                    output=ModelIODescriptor(
-                        name="o1", description="description", type="string"
-                    ),
+                    inputs=[
+                        ModelIODescriptor(
+                            name="i1", description="description", type="string"
+                        )
+                    ],
+                    outputs=[
+                        ModelIODescriptor(
+                            name="o1", description="description", type="string"
+                        )
+                    ],
                 ),
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"

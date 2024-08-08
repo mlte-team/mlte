@@ -80,16 +80,6 @@ def create_negotiation_db_from_model(
         memory=negotiation_card.model.production.resources.memory,
         storage=negotiation_card.model.production.resources.storage,
     )
-    model_input_desc_obj = DBModelIODescriptor(
-        name=negotiation_card.model.production.interface.input.name,
-        description=negotiation_card.model.production.interface.input.description,
-        type=negotiation_card.model.production.interface.input.type,
-    )
-    model_output_desc_obj = DBModelIODescriptor(
-        name=negotiation_card.model.production.interface.output.name,
-        description=negotiation_card.model.production.interface.output.description,
-        type=negotiation_card.model.production.interface.output.type,
-    )
 
     # Create the actual object.
     negotiation_card_obj = DBNegotiationCard(
@@ -105,8 +95,8 @@ def create_negotiation_db_from_model(
         model_prod_resources=model_prod_resources_obj,
         model_prod_deployment_platform=negotiation_card.model.production.deployment_platform,
         model_prod_capability_deployment_mechanism=negotiation_card.model.production.capability_deployment_mechanism,
-        model_prod_interface_input_desc=model_input_desc_obj,
-        model_prod_interface_output_desc=model_output_desc_obj,
+        model_prod_inputs=[],
+        model_prod_outputs=[],
         data_descriptors=[],
         system_requirements=[],
     )
@@ -120,6 +110,16 @@ def create_negotiation_db_from_model(
     for data_descriptor in negotiation_card.data:
         data_obj = _build_data_descriptor_obj(data_descriptor, session)
         negotiation_card_obj.data_descriptors.append(data_obj)
+
+    # Create list of model input objects.
+    for input in negotiation_card.model.production.interface.inputs:
+        input_obj = _build_io_descriptor_obj(input)
+        negotiation_card_obj.model_prod_inputs.append(input_obj)
+
+    # Create list of model output objects.
+    for output in negotiation_card.model.production.interface.outputs:
+        output_obj = _build_io_descriptor_obj(output)
+        negotiation_card_obj.model_prod_outputs.append(output_obj)
 
     # Create list of QAS objects.
     for qas in negotiation_card.system_requirements:
@@ -162,8 +162,8 @@ def create_negotiation_model_from_db(
             production=_build_model_prod_descriptor(
                 negotiation_obj.model_prod_deployment_platform,
                 negotiation_obj.model_prod_capability_deployment_mechanism,
-                negotiation_obj.model_prod_interface_input_desc,
-                negotiation_obj.model_prod_interface_output_desc,
+                negotiation_obj.model_prod_inputs,
+                negotiation_obj.model_prod_outputs,
                 negotiation_obj.model_prod_resources,
             ),
         ),
@@ -205,16 +205,6 @@ def create_report_db_from_model(
         memory=report.intended_use.production_requirements.resources.memory,
         storage=report.intended_use.production_requirements.resources.storage,
     )
-    model_input_desc_obj = DBModelIODescriptor(
-        name=report.intended_use.production_requirements.interface.input.name,
-        description=report.intended_use.production_requirements.interface.input.description,
-        type=report.intended_use.production_requirements.interface.input.type,
-    )
-    model_output_desc_obj = DBModelIODescriptor(
-        name=report.intended_use.production_requirements.interface.output.name,
-        description=report.intended_use.production_requirements.interface.output.description,
-        type=report.intended_use.production_requirements.interface.output.type,
-    )
 
     # Create the actual object.
     report_obj = DBReport(
@@ -232,8 +222,8 @@ def create_report_db_from_model(
         intended_usage_context=report.intended_use.usage_context,
         intended_reqs_model_prod_deployment_platform=report.intended_use.production_requirements.deployment_platform,
         intended_reqs_model_prod_capability_deployment_mechanism=report.intended_use.production_requirements.capability_deployment_mechanism,
-        intended_reqs_model_prod_interface_input_desc=model_input_desc_obj,
-        intended_reqs_model_prod_interface_output_desc=model_output_desc_obj,
+        intended_reqs_model_inputs=[],
+        intended_reqs_model_outputs=[],
         intended_reqs_model_prod_resources=model_prod_resources_obj,
         risks_fp=report.risks.fp,
         risks_fn=report.risks.fn,
@@ -252,6 +242,16 @@ def create_report_db_from_model(
     for data_descriptor in report.data:
         data_obj = _build_data_descriptor_obj(data_descriptor, session)
         report_obj.data_descriptors.append(data_obj)
+
+    # Create list of model input objects.
+    for input in report.intended_use.production_requirements.interface.inputs:
+        input_obj = _build_io_descriptor_obj(input)
+        report_obj.intended_reqs_model_inputs.append(input_obj)
+
+    # Create list of model output objects.
+    for output in report.intended_use.production_requirements.interface.outputs:
+        output_obj = _build_io_descriptor_obj(output)
+        report_obj.intended_reqs_model_outputs.append(output_obj)
 
     # Create list of comment objects.
     for comment in report.comments:
@@ -281,8 +281,8 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
             production_requirements=_build_model_prod_descriptor(
                 report_obj.intended_reqs_model_prod_deployment_platform,
                 report_obj.intended_reqs_model_prod_capability_deployment_mechanism,
-                report_obj.intended_reqs_model_prod_interface_input_desc,
-                report_obj.intended_reqs_model_prod_interface_output_desc,
+                report_obj.intended_reqs_model_inputs,
+                report_obj.intended_reqs_model_outputs,
                 report_obj.intended_reqs_model_prod_resources,
             ),
         ),
@@ -362,6 +362,16 @@ def _build_data_descriptor_obj(
     return data_obj
 
 
+def _build_io_descriptor_obj(io_descriptor: ModelIODescriptor) -> DBModelIODescriptor:
+    """Creates a DBModelIODescriptor object from a ModelIODescriptor."""
+    io_descriptor_obj = DBModelIODescriptor(
+        name=io_descriptor.name,
+        description=io_descriptor.description,
+        type=io_descriptor.type,
+    )
+    return io_descriptor_obj
+
+
 # -------------------------------------------------------------------------
 # Common Artifact Model builder methods.
 # -------------------------------------------------------------------------
@@ -428,26 +438,16 @@ def _build_data_descriptors(
 def _build_model_prod_descriptor(
     deployment_platform: Optional[str],
     capability_deployment_mechanism: Optional[str],
-    input: Optional[DBModelIODescriptor],
-    output: Optional[DBModelIODescriptor],
+    inputs: List[DBModelIODescriptor],
+    outputs: List[DBModelIODescriptor],
     resources: Optional[DBModelResourcesDescriptor],
 ) -> ModelProductionDescriptor:
     return ModelProductionDescriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            input=ModelIODescriptor(
-                name=input.name, description=input.description, type=input.type
-            )
-            if input is not None
-            else ModelIODescriptor(),
-            output=ModelIODescriptor(
-                name=output.name,
-                description=output.description,
-                type=output.type,
-            )
-            if output is not None
-            else ModelIODescriptor(),
+            inputs=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type) for input_obj in inputs],
+            outputs=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type,) for output_obj in outputs]
         ),
         resources=_build_resources(resources),
     )

@@ -327,16 +327,8 @@
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
             "interface": {
-              "input": {
-                "description": null,
-                "name": null,
-                "type": null
-              },
-              "output": {
-                "description": null,
-                "name": null,
-                "type": null
-              }
+              "inputs": [],
+              "outputs": []
             },
             "resources": {
               "cpu": null,
@@ -416,29 +408,21 @@
     "ModelInterfaceDescriptor": {
       "description": "A description of the model interface.",
       "properties": {
-        "input": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
+        "inputs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Inputs",
+          "type": "array"
         },
-        "output": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
+        "outputs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Outputs",
+          "type": "array"
         }
       },
       "title": "ModelInterfaceDescriptor",
@@ -478,16 +462,8 @@
             }
           ],
           "default": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
+            "inputs": [],
+            "outputs": []
           }
         },
         "resources": {
@@ -820,16 +796,8 @@
           "capability_deployment_mechanism": null,
           "deployment_platform": null,
           "interface": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
+            "inputs": [],
+            "outputs": []
           },
           "resources": {
             "cpu": null,
