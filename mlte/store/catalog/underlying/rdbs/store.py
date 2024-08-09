@@ -86,8 +86,6 @@ class RelationalDBCatalogStoreSession(CatalogStoreSession):
         """Close the session."""
         self.engine.dispose()
 
-    # TODO: add read and search
-
 
 # -----------------------------------------------------------------------------
 # RDBEntryMapper

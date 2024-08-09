@@ -16,7 +16,6 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
-from mlte.store.common.query import Query
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -75,25 +74,6 @@ class InMemoryCatalogStoreSession(CatalogStoreSession):
         """Close the session."""
         # Closing an in-memory session is a no-op.
         pass
-
-    def read_entries(
-        self,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[CatalogEntry]:
-        return [entry for entry in self.storage.entries.values()][
-            offset : offset + limit
-        ]
-
-    def search_entries(
-        self,
-        query: Query = Query(),
-    ) -> List[CatalogEntry]:
-        return [
-            entry
-            for entry in self.storage.entries.values()
-            if query.filter.match(entry)
-        ]
 
 
 class InMemoryCatalogEntryMapper(CatalogEntryMapper):

@@ -9,6 +9,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, List
 
+from mlte.store.common.query import Query
+
 # -----------------------------------------------------------------------------
 # StoreType
 # -----------------------------------------------------------------------------
@@ -202,3 +204,32 @@ class ResourceMapper:
         :return: The deleted resource
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list_details(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[Any]:
+        """
+        Read details of resources within limit and offset.
+        :param limit: The limit on resources to read
+        :param offset: The offset on resources to read
+        :return: The read resources
+        """
+        entry_ids = self.list()
+        return [self.read(entry_id) for entry_id in entry_ids][
+            offset : offset + limit
+        ]
+
+    def search(
+        self,
+        query: Query = Query(),
+    ) -> List[Any]:
+        """
+        Read a collection of resources, optionally filtered.
+        :param query: The resource query to apply
+        :return: A collection of resources that satisfy the filter
+        """
+        # TODO: not the most efficient way, since it loads all items first, before filtering.
+        entries = self.list_details()
+        return [entry for entry in entries if query.filter.match(entry)]

@@ -15,14 +15,24 @@ from sqlalchemy import StaticPool
 
 from mlte.store.base import StoreURI, StoreURIPrefix
 from mlte.store.catalog.factory import create_store
+from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 
-_STORE_FIXTURE_NAMES = ["memory_store", "fs_store", "rdbs_store"]
-
 CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryCatalogStore] = None
 """Global, initial, in memory store, cached for faster testing."""
+
+_STORE_FIXTURE_NAMES = ["memory_store", "fs_store", "rdbs_store"]
+
+
+def catalog_stores() -> Generator[str, None, None]:
+    """
+    Yield catalog store fixture names.
+    :return: Store fixture name
+    """
+    for store_fixture_name in _STORE_FIXTURE_NAMES:
+        yield store_fixture_name
 
 
 def create_memory_store() -> InMemoryCatalogStore:
@@ -53,27 +63,13 @@ def create_rdbs_store() -> RelationalDBCatalogStore:
 
 
 @pytest.fixture(scope="function")
-def memory_store() -> InMemoryCatalogStore:
-    """A fixture for an in-memory store."""
-    return create_memory_store()
+def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
+    def _make(store_fixture_name) -> CatalogStore:
+        if store_fixture_name == "memory_store":
+            return create_memory_store()
+        elif store_fixture_name == "fs_store":
+            return create_fs_store(tmpdir_factory.mktemp("data"))
+        else:
+            return create_rdbs_store()
 
-
-@pytest.fixture(scope="function")
-def fs_store(tmp_path) -> FileSystemCatalogStore:
-    """A fixture for an local FS store."""
-    return create_fs_store(tmp_path)
-
-
-@pytest.fixture(scope="function")
-def rdbs_store() -> RelationalDBCatalogStore:
-    """A fixture for an in-memory RDBS store."""
-    return create_rdbs_store()
-
-
-def catalog_stores() -> Generator[str, None, None]:
-    """
-    Yield catalog store fixture names.
-    :return: Store fixture name
-    """
-    for store_fixture_name in _STORE_FIXTURE_NAMES:
-        yield store_fixture_name
+    return _make

@@ -10,7 +10,6 @@ from typing import List, cast
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
-from mlte.store.common.query import Query
 
 
 class CatalogStore(Store):
@@ -32,34 +31,6 @@ class CatalogStoreSession(StoreSession):
     def __init__(self):
         self.entry_mapper = CatalogEntryMapper()
         """Mapper for the entry resource."""
-
-    def read_entries(
-        self,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[CatalogEntry]:
-        """
-        Read entries within limit and offset.
-        :param limit: The limit on entries to read
-        :param offset: The offset on entries to read
-        :return: The read entries
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
-
-    def search_entries(
-        self,
-        query: Query = Query(),
-    ) -> List[CatalogEntry]:
-        """
-         Read a collection of entries, optionally filtered.
-        # :param query: The entry query to apply
-         :return: A collection of entries that satisfy the filter
-        """
-        raise NotImplementedError(
-            "Cannot invoke method on abstract CatalogStoreSession."
-        )
 
 
 class CatalogEntryMapper(ResourceMapper):

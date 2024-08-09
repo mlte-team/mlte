@@ -4,6 +4,8 @@ test/store/catalog/test_underlying.py
 Unit tests for the underlying catalog store implementations.
 """
 
+from pathlib import Path
+
 import pytest
 
 import mlte.store.error as errors
@@ -12,30 +14,35 @@ from mlte.catalog.model import (
     CatalogEntryHeader,
     CatalogEntryType,
 )
+from mlte.store.catalog.group import (
+    CatalogStoreGroup,
+    ManagedCatalogGroupSession,
+)
 from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
+from mlte.store.common.query import Query
 
 from .fixture import (  # noqa
     catalog_stores,
     create_fs_store,
     create_memory_store,
-    fs_store,
-    memory_store,
-    rdbs_store,
+    create_rdbs_store,
+    create_test_store,
 )
-
-TEST_MOD_ID = "mod1"
-
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
 
 
-def get_test_entry() -> CatalogEntry:
+def get_test_entry(
+    id: str = "e1",
+    description: str = "code sample",
+    code: str = "print('hello')",
+) -> CatalogEntry:
     """Helper to get an entry structure."""
-    id = "e1"
-    description = "code sample"
-    code = "print(`hello`)"
+    id = id
+    description = description
+    code = code
     header = CatalogEntryHeader(identifier=id)
     test_entry = CatalogEntry(
         header=header,
@@ -56,17 +63,22 @@ def test_init_memory() -> None:
     _ = create_memory_store()
 
 
-def test_init_fs(tmp_path) -> None:
+def test_init_fs(tmp_path: Path) -> None:
     """An local FS store can be initialized."""
     _ = create_fs_store(tmp_path)
 
 
+def test_init_rdbs() -> None:
+    """An local RDBS store can be initialized."""
+    _ = create_rdbs_store()
+
+
 @pytest.mark.parametrize("store_fixture_name", catalog_stores())
 def test_catalog_entry(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_fixture_name: str, create_test_store  # noqa
 ) -> None:
     """An artifact store supports catalog entry operations."""
-    store: CatalogStore = request.getfixturevalue(store_fixture_name)
+    store: CatalogStore = create_test_store(store_fixture_name)
 
     test_entry = get_test_entry()
     description2 = "short code sample"
@@ -99,8 +111,62 @@ def test_catalog_entry(
             catalog_store.entry_mapper.read(test_entry.header.identifier)
 
 
-# @pytest.mark.parametrize("store_fixture_name", catalog_stores())
-# def test_catalog_group(
-#    store_fixture_name: str, request: pytest.FixtureRequest
-# ) -> None:
-#    """An artifact store supports catalog group operations."""
+@pytest.mark.parametrize("store_fixture_name", catalog_stores())
+def test_catalog_group(
+    store_fixture_name: str, create_test_store  # noqa
+) -> None:
+    """A catalog store group supports general operations."""
+    store1: CatalogStore = create_test_store(store_fixture_name)
+    store2: CatalogStore = create_test_store(store_fixture_name)
+
+    store1_id = "st1"
+    store2_id = "st2"
+    store_group = CatalogStoreGroup()
+    store_group.add_catalog(store1_id, store1)
+    store_group.add_catalog(store2_id, store2)
+
+    test_entry1 = get_test_entry(id="ce1")
+    test_entry2 = get_test_entry(id="ce2")
+
+    with ManagedCatalogGroupSession(store_group.session()) as group_session:
+        group_session.sessions[store1_id].entry_mapper.create(test_entry1)
+        group_session.sessions[store2_id].entry_mapper.create(test_entry2)
+
+        # Test listing entries.
+        entries = group_session.list_entries()
+        assert len(entries) == 2
+
+
+@pytest.mark.parametrize("store_fixture_name", catalog_stores())
+def test_list_details(
+    store_fixture_name: str, create_test_store  # noqa
+) -> None:
+    """A catalog store store supports queries."""
+    store: CatalogStore = create_test_store(store_fixture_name)
+
+    with ManagedCatalogSession(store.session()) as session:
+        e0 = get_test_entry(id="e1", description="code 1", code="print nothing")
+        e1 = get_test_entry(id="e2", description="code 1", code="print nothing")
+
+        for entry in [e0, e1]:
+            session.entry_mapper.create(entry)
+
+        entries = session.entry_mapper.list_details()
+        assert len(entries) == 2
+
+
+@pytest.mark.parametrize("store_fixture_name", catalog_stores())
+def test_search(store_fixture_name: str, create_test_store) -> None:  # noqa
+    """A catalog store store supports queries."""
+    store: CatalogStore = create_test_store(store_fixture_name)
+
+    with ManagedCatalogSession(store.session()) as session:
+        e0 = get_test_entry(id="e1", description="code 1", code="print nothing")
+        e1 = get_test_entry(id="e2", description="code 1", code="print nothing")
+
+        for entry in [e0, e1]:
+            session.entry_mapper.create(entry)
+
+        query = Query()
+        entries = session.entry_mapper.search(query)
+        assert len(entries) == 2

@@ -16,7 +16,6 @@ from mlte.store.catalog.store import (
     CatalogStoreSession,
 )
 from mlte.store.common.fs import FileSystemStorage
-from mlte.store.common.query import Query
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore
@@ -64,24 +63,6 @@ class FileSystemCatalogStoreSession(CatalogStoreSession):
         """Close the session."""
         # Closing a local FS session is a no-op.
         pass
-
-    def read_entries(
-        self,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[CatalogEntry]:
-        entry_ids = self.entry_mapper.list()
-        return [
-            CatalogEntry(**self.storage.read_resource(entry_id))
-            for entry_id in entry_ids
-        ][offset : offset + limit]
-
-    def search_entries(
-        self,
-        query: Query = Query(),
-    ) -> List[CatalogEntry]:
-        entries = self.read_entries()
-        return [entry for entry in entries if query.filter.match(entry)]
 
 
 # -----------------------------------------------------------------------------

@@ -6,10 +6,10 @@ MLTE catalog store group interface implementation.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 from mlte.catalog.model import CatalogEntry
-from mlte.store.base import StoreSession
+from mlte.store.base import ManagedSession, StoreSession
 from mlte.store.catalog.factory import create_store
 from mlte.store.catalog.store import CatalogStore, CatalogStoreSession
 from mlte.store.common.query import Query
@@ -18,21 +18,28 @@ from mlte.store.error import ErrorAlreadyExists, ErrorNotFound
 
 class CatalogStoreGroup:
     """
-    An group of catalog stores.
+    A group of catalog stores.
     """
 
-    catalogs: Dict[str, CatalogStore] = {}
-    """Dictionary with all catalogs in this group."""
+    def __init__(self):
+        """Initialization."""
+        self.catalogs: Dict[str, CatalogStore] = {}
+        """Dictionary with all catalogs in this group."""
 
-    def add_catalog(self, id: str, uri: str, overwite: bool = False):
+    def add_catalog_from_uri(self, id: str, uri: str, overwite: bool = False):
         """Adds a catalog by indicating its uri."""
+        catalog = create_store(uri)
+        self.add_catalog(id, catalog, overwite)
+
+    def add_catalog(
+        self, id: str, catalog_store: CatalogStore, overwite: bool = False
+    ):
+        """Adds a catalog."""
         if id in self.catalogs and not overwite:
             raise ErrorAlreadyExists(
                 f"Catalog with id {id} already exists in group."
             )
-
-        catalog = create_store(uri)
-        self.catalogs[id] = catalog
+        self.catalogs[id] = catalog_store
 
     def remove_catalog(self, id: str):
         """Removes the given catalog."""
@@ -52,11 +59,11 @@ class CatalogStoreGroup:
 class CatalogStoreGroupSession(StoreSession):
     """Sessions for all catalogs in a group."""
 
-    sessions: Dict[str, CatalogStoreSession] = {}
-    """Sessions for all catalogs in the group."""
-
     def __init__(self, catalogs: Dict[str, CatalogStore]):
         """Initialize a session instance for each catalog."""
+        self.sessions: Dict[str, CatalogStoreSession] = {}
+        """Sessions for all catalogs in the group."""
+
         for id, catalog in catalogs.items():
             self.sessions[id] = catalog.session()
 
@@ -65,7 +72,7 @@ class CatalogStoreGroupSession(StoreSession):
         for _, session in self.sessions.items():
             session.close()
 
-    def read_entries(
+    def list_entries(
         self,
         catalog_id: Optional[str] = None,
         limit: int = 100,
@@ -85,12 +92,14 @@ class CatalogStoreGroupSession(StoreSession):
                 )
 
             catalog_session = self.sessions[catalog_id]
-            return catalog_session.read_entries(limit, offset)
+            return catalog_session.entry_mapper.list_details(limit, offset)
         else:
             # Go over all catalogs, reading from each one, and grouping results.
             results: List[CatalogEntry] = []
             for catalog_id, session in self.sessions.items():
-                partial_results = session.read_entries(limit, offset)
+                partial_results = session.entry_mapper.list_details(
+                    limit, offset
+                )
                 results.extend(partial_results)
             return results[offset : offset + limit]
 
@@ -112,11 +121,18 @@ class CatalogStoreGroupSession(StoreSession):
                 )
 
             catalog_session = self.sessions[catalog_id]
-            return catalog_session.search_entries(query)
+            return catalog_session.entry_mapper.search(query)
         else:
             # Go over all catalogs, reading from each one, and grouping results.
             results: List[CatalogEntry] = []
             for catalog_id, session in self.sessions.items():
-                partial_results = session.search_entries()
+                partial_results = session.entry_mapper.search(query)
                 results.extend(partial_results)
             return results
+
+
+class ManagedCatalogGroupSession(ManagedSession):
+    """A simple context manager for store sessions."""
+
+    def __enter__(self) -> CatalogStoreGroupSession:
+        return cast(CatalogStoreGroupSession, self.session)

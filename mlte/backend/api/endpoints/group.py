@@ -131,14 +131,7 @@ def list_group_details(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            detailed_groups = []
-            group_names = user_store.group_mapper.list()
-            for group_name in group_names:
-                group_details = Group(
-                    **user_store.group_mapper.read(group_name).model_dump()
-                )
-                detailed_groups.append(group_details)
-            return detailed_groups
+            return user_store.group_mapper.list_details()
         except Exception as e:
             print(f"Internal server error. {e}")
             print(tb.format_exc())
@@ -205,12 +198,7 @@ def list_permission_details(
     """
     with dependencies.user_store_session() as user_store:
         try:
-            detailed_permissions = []
-            permissions = user_store.permission_mapper.list()
-            for permission_id in permissions:
-                permission_details = Permission.from_str(permission_id)
-                detailed_permissions.append(permission_details)
-            return detailed_permissions
+            return user_store.permission_mapper.list_details()
         except Exception as e:
             print(f"Internal server error. {e}")
             print(tb.format_exc())

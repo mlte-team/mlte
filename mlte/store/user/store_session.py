@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import List, Union, cast
 
 from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
+from mlte.store.common.query import Query
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -106,3 +107,21 @@ class PermissionMapper(ResourceMapper):
 
     def delete(self, permission: str) -> Permission:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list_details(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[Permission]:
+        entry_ids = self.list()
+        return [self.read(entry_id) for entry_id in entry_ids][
+            offset : offset + limit
+        ]
+
+    def search(
+        self,
+        query: Query = Query(),
+    ) -> List[Permission]:
+        # TODO: not the most efficient way, since it loads all items first, before filtering.
+        entries = self.list_details()
+        return [entry for entry in entries if query.filter.match(entry)]
