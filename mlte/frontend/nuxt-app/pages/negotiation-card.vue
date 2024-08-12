@@ -636,17 +636,12 @@
         v-for="(input, inputIndex) in form.model.production.interface.input"
         :key="inputIndex"
       >
-        <h3 class="no-margin-sub-header">Input {{ inputIndex + 1 }}</h3>
-        <UsaTextInput v-model="input.name">
-          <template #label> Name </template>
-        </UsaTextInput>
         <div class="input-group" style="margin-top: 1em">
-          <div v-for="(spec, specIndex) in input.input_spec" :key="specIndex">
             <h3 class="no-margin-sub-header">
-              Input Spec {{ inputIndex + 1 }} - {{ specIndex + 1 }}
+              Input {{ inputIndex + 1 }}
             </h3>
 
-            <UsaTextInput v-model="spec.name">
+            <UsaTextInput v-model="input.name">
               <template #label>
                 Input Name
                 <InfoIcon>
@@ -658,7 +653,7 @@
               </template>
             </UsaTextInput>
 
-            <UsaTextarea v-model="spec.description">
+            <UsaTextarea v-model="input.description">
               <template #label>
                 Description
                 <InfoIcon>
@@ -670,11 +665,11 @@
               </template>
             </UsaTextarea>
 
-            <UsaTextInput v-model="spec.type">
+            <UsaTextInput v-model="input.type">
               <template #label>
                 Type
                 <InfoIcon>
-                  Field type, e.g., number, string, Boolean, data, image, audio.
+                  Input type, e.g., number, string, Boolean, data, image, audio.
                   <br />
                   <br />
                   <i>Example: Audio.</i>
@@ -682,28 +677,25 @@
               </template>
             </UsaTextInput>
 
-            <UsaTextInput v-model="spec.expected_values">
-              <template #label> Expected Values </template>
+            <UsaTextInput v-model="input.expected_values">
+              <template #label>
+                Expected Values 
+                <InfoIcon>
+                  Expected values for the input.
+                  <br />
+                  <br />
+                  <i>Example: Non-empty audio file of type WAV, MP3 or MP4.</i>
+                </InfoIcon>
+              </template>
             </UsaTextInput>
-
-            <DeleteButton
-              class="margin-button"
-              @click="deleteInputSpec(inputIndex, specIndex)"
-            >
-              Delete Spec
-            </DeleteButton>
             <hr />
           </div>
 
-          <AddButton class="margin-button" @click="addInputSpec(inputIndex)">
-            Add Additional Spec
-          </AddButton>
         </div>
         <DeleteButton class="margin-button" @click="deleteInput(inputIndex)">
           Delete Input
         </DeleteButton>
         <hr />
-      </div>
       <AddButton class="margin-button" @click="addInput()">
         Add Additional Input
       </AddButton>
@@ -1114,6 +1106,7 @@ const inputModalHeaders = ref([
   { id: "inputName", label: "Input Name", sortable: false },
   { id: "inputDescription", label: "Input Description", sortable: false },
   { id: "inputType", label: "Input Type", sortable: false },
+  { id: "expectedValues", label: "Expected Values", sortable: false},
 ]);
 const inputModalRows = ref([
   {
@@ -1121,6 +1114,7 @@ const inputModalRows = ref([
     inputName: "Audio Recording",
     inputDescription: "Audio recording file for matching",
     inputType: "Audio",
+    expectedValues: "File of type WAV, MP3, or MP4",
   },
 ]);
 
@@ -1780,15 +1774,10 @@ function deleteField(dataItemIndex: number, fieldIndex: number) {
 function addInput() {
   form.value.model.production.interface.input.push({
     name: "",
-    input_spec: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-      },
-    ],
-  });
+    description: "",
+    type: "",
+    expected_values: "",
+    });
 }
 
 function deleteInput(inputIndex: number) {
