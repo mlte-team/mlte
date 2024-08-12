@@ -82,7 +82,7 @@ def read_group(
 ) -> Group:
     """
     Read a MLTE group.
-    :param group group_name: The group name
+    :param group_name: The group name
     :return: The read group
     """
     with dependencies.user_store_session() as user_store:
@@ -142,7 +142,7 @@ def list_group_details(
 
 
 @router.delete("/group/{group_name}")
-def delete_user(
+def delete_group(
     *,
     group_name: str,
     current_user: AuthorizedUser,
