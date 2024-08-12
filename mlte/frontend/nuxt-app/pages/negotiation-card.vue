@@ -803,8 +803,7 @@
       <br/>
 
     <div>
-      <Chatgpt>
-      </Chatgpt>
+      <Chatgpt></Chatgpt>
     </div>
 
     <div class="input-group">
