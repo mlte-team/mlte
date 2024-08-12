@@ -10,6 +10,7 @@ import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.catalog.group import CatalogStoreGroup
 
 
 class Session:
@@ -34,6 +35,9 @@ class Session:
         self._store: Optional[ArtifactStore] = None
         """The MLTE store instance for the session."""
 
+        self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
+        """The list of catalog store instances maintained by the state object."""
+
     @property
     def context(self) -> Context:
         if self._context is None:
@@ -53,6 +57,10 @@ class Session:
     def _set_store(self, store: ArtifactStore) -> None:
         """Set the session store."""
         self._store = store
+
+    def _add_catalog_store(self, store_uri: str, id: str):
+        """Adds a catalog store."""
+        self._catalog_stores.add_catalog_from_uri(id, store_uri)
 
     def create_context(self):
         """Creates the currently configured context in the currently configured session. Fails if either is not set. Does nothing if already created."""
@@ -92,3 +100,12 @@ def set_store(artifact_store_uri: str):
     """
     global g_session
     g_session._set_store(create_store(artifact_store_uri))
+
+
+def add_catalog_store(catalog_store_uri: str, id: str):
+    """
+    Adds a global MLTE catalog store URI.
+    :param catalog_store_uri: The catalog store URI string
+    """
+    global g_session
+    g_session._add_catalog_store(catalog_store_uri, id)
