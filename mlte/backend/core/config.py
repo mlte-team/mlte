@@ -6,7 +6,7 @@ Configuration management for FastAPI application.
 
 from __future__ import annotations
 
-from typing import List
+from typing import Dict, List
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -52,6 +52,9 @@ class Settings(BaseSettings):
 
     STORE_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
     """The store URI string; defaults to in-memory store."""
+
+    CATALOG_URIS: Dict[str, str] = {"default": StoreURIPrefix.LOCAL_MEMORY[0]}
+    """The dict of catalog URI strings; defaults to in-memory store."""
 
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""

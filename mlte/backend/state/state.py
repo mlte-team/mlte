@@ -9,7 +9,6 @@ from typing import Optional
 
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.group import CatalogStoreGroup
-from mlte.store.catalog.store import CatalogStore
 from mlte.store.user.store import UserStore
 
 
@@ -37,9 +36,9 @@ class State:
         """Set the globally-configured backend artifact store."""
         self._user_store = store
 
-    def add_catalog_store(self, store: CatalogStore, id: str):
+    def add_catalog_store(self, store_uri: str, id: str):
         """Adds to the the globally-configured backend list of catalog stores."""
-        self._catalog_stores.add_catalog(id, store)
+        self._catalog_stores.add_catalog_from_uri(id, store_uri)
 
     def set_token_key(self, token_key: str):
         """Sets the globally used token secret key."""

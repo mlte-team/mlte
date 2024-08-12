@@ -6,7 +6,7 @@ Entry point for MLTE artifact store server.
 
 import logging
 import sys
-from typing import Any, List
+from typing import Any, Dict, List
 
 import uvicorn
 from pydantic.networks import HttpUrl
@@ -41,6 +41,7 @@ def run(
     host: str,
     port: int,
     store_uri: str,
+    catalog_store_uris: Dict[str, str],
     allowed_origins: List[str],
     jwt_secret: str,
 ) -> int:
@@ -77,6 +78,10 @@ def run(
     user_store = user_store_factory.create_store(store_uri)
     state.set_user_store(user_store)
 
+    # Add all configured catalog stores.
+    for id, uri in catalog_store_uris.items():
+        state.add_catalog_store(uri, id)
+
     # Set the token signing key.
     state.set_token_key(jwt_secret)
 
@@ -90,6 +95,7 @@ def main() -> int:
         settings.BACKEND_HOST,
         int(settings.BACKEND_PORT),
         settings.STORE_URI,
+        settings.CATALOG_URIS,
         settings.ALLOWED_ORIGINS,
         settings.JWT_SECRET_KEY,
     )
