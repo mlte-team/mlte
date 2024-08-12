@@ -6,7 +6,6 @@ which automatically removes the hashed password from the model returned.
 """
 from __future__ import annotations
 
-import traceback as tb
 from typing import List, Union
 
 from fastapi import APIRouter, HTTPException
@@ -16,6 +15,7 @@ import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.model import USER_ME_ID
 from mlte.store.user.policy import Policy
 from mlte.user.model import (
@@ -123,12 +123,7 @@ def create_user(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception as e:
-            print(f"Internal server error: {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.put("/user")
@@ -162,12 +157,7 @@ def edit_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/user/{username}")
@@ -192,12 +182,7 @@ def read_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/user")
@@ -212,12 +197,7 @@ def list_users(
         try:
             return user_store.user_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/users/details")
@@ -239,12 +219,7 @@ def list_users_details(
                 detailed_users.append(user_details)
             return detailed_users
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.delete("/user/{username}")
@@ -271,12 +246,7 @@ def delete_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/user/{username}/models")
@@ -317,9 +287,4 @@ def list_user_models(
                     status_code=codes.NOT_FOUND, detail=f"{e} not found."
                 )
             except Exception as e:
-                print(f"Internal server error. {e}")
-                print(tb.format_exc())
-                raise HTTPException(
-                    status_code=codes.INTERNAL_ERROR,
-                    detail="Internal server error.",
-                )
+                raise_http_internal_error(e)

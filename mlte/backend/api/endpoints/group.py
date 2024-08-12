@@ -5,7 +5,6 @@ Group CRUD endpoint.
 """
 from __future__ import annotations
 
-import traceback as tb
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -14,6 +13,7 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.user.model import Group, Permission
 
 # The router exported by this submodule
@@ -39,12 +39,7 @@ def create_group(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.put("/group")
@@ -66,12 +61,7 @@ def edit_group(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/group/{group_name}")
@@ -93,12 +83,7 @@ def read_group(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/group")
@@ -113,12 +98,7 @@ def list_groups(
         try:
             return user_store.group_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/groups/details")
@@ -133,12 +113,7 @@ def list_group_details(
         try:
             return user_store.group_mapper.list_details()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.delete("/group/{group_name}")
@@ -160,12 +135,7 @@ def delete_group(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/groups/permissions")
@@ -180,12 +150,7 @@ def list_permissions(
         try:
             return user_store.permission_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
 @router.get("/groups/permissions/details")
@@ -200,9 +165,4 @@ def list_permission_details(
         try:
             return user_store.permission_mapper.list_details()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
