@@ -131,7 +131,7 @@ def list_catalog_entries_details(
             raise_http_internal_error(e)
 
 
-#NOTE: do we also need a separate endpoint with a list of only the ids of all catalog entries? Doubtful.
+# NOTE: do we also need a separate endpoint with a list of only the ids of all catalog entries? Doubtful.
 @router.get("/catalog_entries/details")
 def list_catalog_entry_details_all_catalogs(
     *,

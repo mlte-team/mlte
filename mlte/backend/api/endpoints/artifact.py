@@ -6,7 +6,6 @@ API definition for MLTE artifacts.
 
 from __future__ import annotations
 
-import traceback
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -16,6 +15,7 @@ import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
 from mlte.store.common.query import Query
 
@@ -56,12 +56,8 @@ def write_artifact(
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
-            print(traceback.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("/{artifact_id}")
@@ -85,11 +81,8 @@ def read_artifact(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("")
@@ -111,11 +104,8 @@ def read_artifacts(
     with dependencies.artifact_store_session() as handle:
         try:
             return handle.read_artifacts(model_id, version_id, limit, offset)
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 # TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
@@ -138,11 +128,8 @@ def search_artifacts(
     with dependencies.artifact_store_session() as handle:
         try:
             return handle.search_artifacts(model_id, version_id, query)
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.delete("/{artifact_id}")
@@ -166,8 +153,5 @@ def delete_artifact(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)

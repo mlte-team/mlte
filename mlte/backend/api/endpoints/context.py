@@ -14,6 +14,7 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.user.policy import Policy
 from mlte.user.model import ResourceType
@@ -46,11 +47,8 @@ def create_model(
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
     with dependencies.user_store_session() as handle:
         # Now create permissions and groups associated to it.
@@ -61,11 +59,8 @@ def create_model(
                 handle,
                 current_user,
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
     return created_model
 
@@ -90,11 +85,8 @@ def read_model(
         raise HTTPException(
             status_code=codes.NOT_FOUND, detail=f"{e} not found."
         )
-    except Exception:
-        raise HTTPException(
-            status_code=codes.INTERNAL_ERROR,
-            detail="Internal server error.",
-        )
+    except Exception as ex:
+        raise_http_internal_error(ex)
 
 
 @router.get("/model")
@@ -112,11 +104,8 @@ def list_models(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.delete("/model/{model_id}")
@@ -148,11 +137,8 @@ def delete_model(
         # Now delete related permissions and groups.
         try:
             Policy.remove(ResourceType.MODEL, model_id, handle)
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
     return deleted_model
 
@@ -181,11 +167,8 @@ def create_version(
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("/model/{model_id}/version/{version_id}")
@@ -208,11 +191,8 @@ def read_version(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("/model/{model_id}/version")
@@ -232,11 +212,8 @@ def list_versions(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.delete("/model/{model_id}/version/{version_id}")
@@ -259,8 +236,5 @@ def delete_version(
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
