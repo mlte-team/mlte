@@ -17,6 +17,7 @@ from typing import Generator
 
 from mlte.backend.state import state
 from mlte.store.artifact.store import ArtifactStoreSession
+from mlte.store.catalog.group import CatalogStoreGroupSession
 from mlte.store.user.store_session import UserStoreSession
 
 
@@ -40,6 +41,19 @@ def user_store_session() -> Generator[UserStoreSession, None, None]:
     :return: The session handle
     """
     session: UserStoreSession = state.user_store.session()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+@contextmanager
+def catalog_stores_session() -> Generator[CatalogStoreGroupSession, None, None]:
+    """
+    Get a handle to underlying store session.
+    :return: The session handle
+    """
+    session: CatalogStoreGroupSession = state.catalog_stores.session()
     try:
         yield session
     finally:

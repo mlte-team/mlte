@@ -72,6 +72,14 @@ class CatalogStoreGroupSession(StoreSession):
         for _, session in self.sessions.items():
             session.close()
 
+    def get_session(self, catalog_id: str) -> CatalogStoreSession:
+        """Gets a session for the given catalog store id."""
+        if catalog_id not in self.sessions:
+            raise ErrorNotFound(
+                f"Catalog id {catalog_id} was not found in registered list of catalogs."
+            )
+        return self.sessions[catalog_id]
+
     def list_entries(
         self,
         catalog_id: Optional[str] = None,
