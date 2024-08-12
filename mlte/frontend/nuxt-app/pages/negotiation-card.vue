@@ -632,41 +632,81 @@
           inference.
         </template>
       </SubHeader>
-      <UsaTextInput v-model="form.model.production.interface.input.name">
-        <template #label>
-          Input Name
-          <InfoIcon>
-            Input name.
-            <br />
-            <br />
-            <i>Example: Audio Recording.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+      <div
+        v-for="(input, inputIndex) in form.model.production.interface.input"
+        :key="inputIndex"
+      >
+        <h3 class="no-margin-sub-header">Input {{ inputIndex + 1 }}</h3>
+        <UsaTextInput v-model="input.name">
+          <template #label> Name </template>
+        </UsaTextInput>
+        <div class="input-group" style="margin-top: 1em">
+          <div v-for="(spec, specIndex) in input.input_spec" :key="specIndex">
+            <h3 class="no-margin-sub-header">
+              Input Spec {{ inputIndex + 1 }} - {{ specIndex + 1 }}
+            </h3>
 
-      <UsaTextarea v-model="form.model.production.interface.input.description">
-        <template #label>
-          Input Description
-          <InfoIcon>
-            Short input description.
-            <br />
-            <br />
-            <i>Example: Audio recording file for matching.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
+            <UsaTextInput v-model="spec.name">
+              <template #label>
+                Input Name
+                <InfoIcon>
+                  Input name.
+                  <br />
+                  <br />
+                  <i>Example: Audio Recording.</i>
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
 
-      <UsaTextInput v-model="form.model.production.interface.input.type">
-        <template #label>
-          Input Type
-          <InfoIcon>
-            Field type, e.g., number, string, Boolean, data, image, audio.
-            <br />
-            <br />
-            <i>Example: Audio.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+            <UsaTextarea v-model="spec.description">
+              <template #label>
+                Description
+                <InfoIcon>
+                  Short input description.
+                  <br />
+                  <br />
+                  <i>Example: Audio recording file for matching.</i>
+                </InfoIcon>
+              </template>
+            </UsaTextarea>
+
+            <UsaTextInput v-model="spec.type">
+              <template #label>
+                Type
+                <InfoIcon>
+                  Field type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>Example: Audio.</i>
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+
+            <UsaTextInput v-model="spec.expected_values">
+              <template #label> Expected Values </template>
+            </UsaTextInput>
+
+            <DeleteButton
+              class="margin-button"
+              @click="deleteInputSpec(inputIndex, specIndex)"
+            >
+              Delete Spec
+            </DeleteButton>
+            <hr />
+          </div>
+
+          <AddButton class="margin-button" @click="addInputSpec(inputIndex)">
+            Add Additional Spec
+          </AddButton>
+        </div>
+        <DeleteButton class="margin-button" @click="deleteInput(inputIndex)">
+          Delete Input
+        </DeleteButton>
+        <hr />
+      </div>
+      <AddButton class="margin-button" @click="addInput()">
+        Add Additional Input
+      </AddButton>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
@@ -685,45 +725,85 @@
           ingest model results.
         </template>
       </SubHeader>
-      <UsaTextInput v-model="form.model.production.interface.output.name">
-        <template #label>
-          Output Name
-          <InfoIcon>
-            Output name.
-            <br />
-            <br />
-            <i>Example: Matching recordings.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+      <div
+        v-for="(output, outputIndex) in form.model.production.interface.output"
+        :key="outputIndex"
+      >
+        <h3 class="no-margin-sub-header">Output {{ outputIndex + 1 }}</h3>
+        <UsaTextInput v-model="output.name">
+          <template #label> Name </template>
+        </UsaTextInput>
+        <div class="input-group" style="margin-top: 1em">
+          <div v-for="(spec, specIndex) in output.output_spec" :key="specIndex">
+            <h3 class="no-margin-sub-header">
+              Output Spec {{ outputIndex + 1 }} - {{ specIndex + 1 }}
+            </h3>
 
-      <UsaTextarea v-model="form.model.production.interface.output.description">
-        <template #label>
-          Output Description
-          <InfoIcon>
-            Short output description.
-            <br />
-            <br />
-            <i>Example: Set of matching recordings from the database.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
+            <UsaTextInput v-model="spec.name">
+              <template #label>
+                Output Name
+                <InfoIcon>
+                  Output name.
+                  <br />
+                  <br />
+                  <i>Example: Matching recordings.</i>
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
 
-      <UsaTextInput v-model="form.model.production.interface.output.type">
-        <template #label>
-          Output Type
-          <InfoIcon>
-            Field type, e.g., number, string, Boolean, data, image, audio.
-            <br />
-            <br />
-            <i
-              >Example: Vector of Strings with IDs of matching recordings — an
-              empty <br />
-              vector means that there were no matches.</i
+            <UsaTextarea v-model="spec.description">
+              <template #label>
+                Description
+                <InfoIcon>
+                  Short output description.
+                  <br />
+                  <br />
+                  <i>Example: Set of matching recordings from the database.</i>
+                </InfoIcon>
+              </template>
+            </UsaTextarea>
+
+            <UsaTextInput v-model="spec.type">
+              <template #label>
+                Type
+                <InfoIcon>
+                  Field type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>
+                    Example: Vector of Strings with IDs of matching recordings —
+                    an empty <br />
+                    vector means that there were no matches.
+                  </i>
+                </InfoIcon>
+              </template>
+            </UsaTextInput>
+
+            <UsaTextInput v-model="spec.expected_values">
+              <template #label> Expected Values </template>
+            </UsaTextInput>
+
+            <DeleteButton
+              class="margin-button"
+              @click="deleteOutputSpec(outputIndex, specIndex)"
             >
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+              Delete Spec
+            </DeleteButton>
+            <hr />
+          </div>
+
+          <AddButton class="margin-button" @click="addOutputSpec(outputIndex)">
+            Add Additional Spec
+          </AddButton>
+        </div>
+        <DeleteButton class="margin-button" @click="deleteOutput(outputIndex)">
+          Delete Output
+        </DeleteButton>
+        <hr />
+      </div>
+      <AddButton class="margin-button" @click="addOutput()">
+        Add Additional Output
+      </AddButton>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
@@ -772,8 +852,8 @@
       development. The fields below correspond to parts of a quality attribute
       scenario, which is a construct used to clearly define system requirements.
       As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation. Click on the "Example" button 
-      below for a list of examples.
+      scenario will be generated for your validation. Click on the "Example"
+      button below for a list of examples.
     </p>
 
     <div class="input-group">
@@ -803,10 +883,12 @@
         </p>
         <UsaTextInput v-model="requirement.quality">
           <template #label>
-            <b>System Quality:</b> What is the model property to be tested, such as accuracy, 
-            performance, robustness, fairness, or resource consumption?
+            <b>System Quality:</b> What is the model property to be tested, such
+            as accuracy, performance, robustness, fairness, or resource
+            consumption?
             <InfoIcon>
-              Property by which the model will be evaluated in the context of the system <br />
+              Property by which the model will be evaluated in the context of
+              the system <br />
               (e.g., Accuracy, Performance, Robustness, Fairness, Resource
               Consumption).
               <br />
@@ -818,9 +900,9 @@
 
         <UsaTextInput v-model="requirement.stimulus">
           <template #label>
-            <b>Stimulus:</b> What is the input to the model, the action, or the event that 
-            will enable testing of the property, such as input data, system 
-            event, or user operation?
+            <b>Stimulus:</b> What is the input to the model, the action, or the
+            event that will enable testing of the property, such as input data,
+            system event, or user operation?
             <InfoIcon>
               A condition arriving at the system/model (e.g., data,
               <br />
@@ -836,8 +918,8 @@
 
         <UsaTextInput v-model="requirement.source">
           <template #label>
-            <b>Source of Stimulus:</b> Where is the stimulus coming from, such as a system
-            component, system user, or data source?
+            <b>Source of Stimulus:</b> Where is the stimulus coming from, such
+            as a system component, system user, or data source?
             <InfoIcon>
               Where the stimulus comes from (e.g., data source, <br />
               internal/external user, internal/external component or system,
@@ -852,8 +934,9 @@
 
         <UsaTextInput v-model="requirement.environment">
           <template #label>
-            <b>Environment:</b> What are the conditions under which the scenario occurs, 
-            such as normal operations, overload conditions, or under attack?
+            <b>Environment:</b> What are the conditions under which the scenario
+            occurs, such as normal operations, overload conditions, or under
+            attack?
             <InfoIcon>
               Set of circumstances in which the scenario takes place <br />
               (e.g., normal operations, overload condition, startup, development
@@ -867,8 +950,8 @@
 
         <UsaTextInput v-model="requirement.response">
           <template #label>
-            <b>Response:</b> What occurs as a result of the stimulus, such as inference on the  
-            data, event processing, or data validation?
+            <b>Response:</b> What occurs as a result of the stimulus, such as
+            inference on the data, event processing, or data validation?
             <InfoIcon>
               Activity that occurs as the result of the arrival of the
               <br />
@@ -883,9 +966,9 @@
 
         <UsaTextInput v-model="requirement.measure">
           <template #label>
-            <b>Response Measure: </b>What is the measure that will determine that the 
-            correct response has been achieved, such as a statistical property, latency, or 
-            execution time?
+            <b>Response Measure: </b>What is the measure that will determine
+            that the correct response has been achieved, such as a statistical
+            property, latency, or execution time?
             <InfoIcon>
               Measures used to determine that the responses enumerated for
               <br />
@@ -1170,16 +1253,32 @@ const form = ref({
       deployment_platform: "",
       capability_deployment_mechanism: "",
       interface: {
-        input: {
-          name: "",
-          description: "",
-          type: "",
-        },
-        output: {
-          name: "",
-          description: "",
-          type: "",
-        },
+        input: [
+          {
+            name: "",
+            input_spec: [
+              {
+                name: "",
+                description: "",
+                type: "",
+                expected_values: "",
+              },
+            ],
+          },
+        ],
+        output: [
+          {
+            name: "",
+            output_spec: [
+              {
+                name: "",
+                description: "",
+                type: "",
+                expected_values: "",
+              },
+            ],
+          },
+        ],
       },
       resources: {
         gpu: "0",
@@ -1350,18 +1449,13 @@ async function submit() {
             requestErrorAlert();
           },
           onResponseError({ response }) {
-            handleHttpError(
-              response.status,
-              response._data.error_description,
-            );
+            handleHttpError(response.status, response._data.error_description);
           },
         },
       );
       successfulArtifactSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
-    } catch {
-      return;
-    }
+    } catch {}
   } else {
     console.log("Invalid document attempting to be submitted.");
   }
@@ -1384,7 +1478,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
               baseline: string;
             }) => {
               let lastGoalIndex = form.value.system.goals.length - 1;
-              if(!goalEmpty(form.value.system.goals[lastGoalIndex])){
+              if (!goalEmpty(form.value.system.goals[lastGoalIndex])) {
                 addGoal();
                 lastGoalIndex += 1;
               }
@@ -1397,14 +1491,17 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
           form.value.system.task = document.task;
-          form.value.system.problem_type = document.ml_problem_type.ml_problem.toLowerCase().split(' ').join('_');
+          form.value.system.problem_type = document.ml_problem_type.ml_problem
+            .toLowerCase()
+            .split(" ")
+            .join("_");
           form.value.system.usage_context = document.usage_context;
           form.value.system.risks.fp = document.risks.risk_fp;
           form.value.system.risks.fn = document.risks.risk_fn;
           form.value.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
           let lastDataIndex = form.value.data.length - 1;
-          if(!dataItemEmpty(form.value.data[lastDataIndex])){
+          if (!dataItemEmpty(form.value.data[lastDataIndex])) {
             addDataItem();
             lastDataIndex += 1;
           }
@@ -1432,8 +1529,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
               addLabel(lastDataIndex);
-              form.value.data[lastDataIndex].labels[i].name =
-                label.label;
+              form.value.data[lastDataIndex].labels[i].name = label.label;
               form.value.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
             },
@@ -1441,7 +1537,8 @@ function descriptorUpload(event: Event, descriptorName: string) {
 
           form.value.data[lastDataIndex].rights = document.data_rights;
           form.value.data[lastDataIndex].policies = document.data_policies;
-          form.value.data[lastDataIndex].description = document.dataset_description;
+          form.value.data[lastDataIndex].description =
+            document.dataset_description;
 
           form.value.data[lastDataIndex].fields.splice(0, 1);
           document.schema.forEach(
@@ -1537,57 +1634,53 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
-function goalEmpty(goal){
+function goalEmpty(goal) {
   let isEmpty = true;
 
-  if(goal.description != ""){
+  if (goal.description != "") {
     isEmpty = false;
   }
 
   goal.metrics.forEach((metric) => {
-    if(metric.description != "" || metric.baseline != ""){
+    if (metric.description != "" || metric.baseline != "") {
       isEmpty = false;
     }
-  })
+  });
 
   return isEmpty;
 }
 
-function dataItemEmpty(dataItem){
+function dataItemEmpty(dataItem) {
   let isEmpty = true;
 
-  if(
+  if (
     dataItem.description != "" ||
     dataItem.source != "" ||
     dataItem.classification != "unclassified" ||
     dataItem.access != "" ||
     dataItem.labeling_method != ""
-  ){
+  ) {
     isEmpty = false;
   }
 
   dataItem.labels.forEach((label) => {
-    if(
-      label.name != "" ||
-      label.description != "" ||
-      label.percentage != 0
-    ){
+    if (label.name != "" || label.description != "" || label.percentage != 0) {
       isEmpty = false;
     }
-  })
+  });
 
   dataItem.fields.forEach((field) => {
-    if(
+    if (
       field.name != "" ||
       field.description != "" ||
       field.type != "" ||
       field.expected_values != "" ||
       field.missing_values != "" ||
       field.special_values != ""
-    ){
+    ) {
       isEmpty = false;
     }
-  })
+  });
 
   return isEmpty;
 }
@@ -1681,6 +1774,81 @@ function addField(dataItemIndex: number) {
 function deleteField(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
     form.value.data[dataItemIndex].fields.splice(fieldIndex, 1);
+  }
+}
+
+function addInput() {
+  form.value.model.production.interface.input.push({
+    name: "",
+    input_spec: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
+      },
+    ],
+  });
+}
+
+function deleteInput(inputIndex: number) {
+  if (confirm("Are you sure you want to delete this input?")) {
+    form.value.model.production.interface.input.splice(inputIndex, 1);
+  }
+}
+
+function addInputSpec(inputIndex: number) {
+  form.value.model.production.interface.input[inputIndex].input_spec.push({
+    name: "",
+    description: "",
+    type: "",
+    expected_values: "",
+  });
+}
+
+function deleteInputSpec(inputIndex: number, specIndex: number) {
+  if (confirm("Are you sure you want to delete this spec?")) {
+    form.value.model.production.interface.input[inputIndex].input_spec.splice(
+      specIndex,
+      1,
+    );
+  }
+}
+
+function addOutput() {
+  form.value.model.production.interface.output.push({
+    name: "",
+    output_spec: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
+      },
+    ],
+  });
+}
+
+function deleteOutput(outputIndex: number) {
+  if (confirm("Are you sure you want to delete this output?")) {
+    form.value.model.production.interface.output.splice(outputIndex, 1);
+  }
+}
+
+function addOutputSpec(outputIndex: number) {
+  form.value.model.production.interface.output[outputIndex].output_spec.push({
+    name: "",
+    description: "",
+    type: "",
+    expected_values: "",
+  });
+}
+
+function deleteOutputSpec(outputIndex: number, specIndex: number) {
+  if (confirm("Are you sure you want to delete this spec?")) {
+    form.value.model.production.interface.output[
+      outputIndex
+    ].output_spec.splice(specIndex, 1);
   }
 }
 
