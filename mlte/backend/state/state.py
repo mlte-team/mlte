@@ -3,10 +3,13 @@ mlte/backend/state/state.py
 
 Globally-accessible application state.
 """
+from __future__ import annotations
 
 from typing import Optional
 
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.catalog.group import CatalogStoreGroup
+from mlte.store.catalog.store import CatalogStore
 from mlte.store.user.store import UserStore
 
 
@@ -20,6 +23,9 @@ class State:
         self._user_store: Optional[UserStore] = None
         """The user store instance maintained by the state object."""
 
+        self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
+        """The list of catalog store instances maintained by the state object."""
+
         self._jwt_secret_key: str = ""
         """Secret key used to sign authentication tokens."""
 
@@ -30,6 +36,10 @@ class State:
     def set_user_store(self, store: UserStore):
         """Set the globally-configured backend artifact store."""
         self._user_store = store
+
+    def add_catalog_store(self, store: CatalogStore, id: str):
+        """Adds to the the globally-configured backend list of catalog stores."""
+        self._catalog_stores.add_catalog(id, store)
 
     def set_token_key(self, token_key: str):
         """Sets the globally used token secret key."""
@@ -48,6 +58,11 @@ class State:
         if self._user_store is None:
             raise RuntimeError("User store is not configured.")
         return self._user_store
+
+    @property
+    def catalog_stores(self) -> CatalogStoreGroup:
+        """Get the globally-configured backend catalog store group."""
+        return self._catalog_stores
 
     @property
     def token_key(self) -> str:
