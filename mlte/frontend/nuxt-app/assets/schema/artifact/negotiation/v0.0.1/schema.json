@@ -302,48 +302,63 @@
     "ModelDescriptor": {
       "description": "A descriptor for the model.",
       "properties": {
-        "development": {
-          "allOf": [
+        "development_compute_resources": {
+          "anyOf": [
             {
-              "$ref": "#/$defs/ModelDevelopmentDescriptor"
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            },
+            {
+              "type": "null"
             }
           ],
           "default": {
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
           }
         },
-        "production": {
-          "allOf": [
+        "deployment_platform": {
+          "anyOf": [
             {
-              "$ref": "#/$defs/ModelProductionDescriptor"
+              "type": "string"
+            },
+            {
+              "type": "null"
             }
           ],
-          "default": {
-            "deployment_platform": null,
-            "capability_deployment_mechanism": null,
-            "input_specification": [],
-            "output_specification": [],
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
+          "default": null,
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
             }
-          }
-        }
-      },
-      "title": "ModelDescriptor",
-      "type": "object"
-    },
-    "ModelDevelopmentDescriptor": {
-      "description": "A descriptor for model development considerations.",
-      "properties": {
-        "resources": {
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
+        },
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
+        },
+        "production_compute_resources": {
           "allOf": [
             {
               "$ref": "#/$defs/ModelResourcesDescriptor"
@@ -357,7 +372,7 @@
           }
         }
       },
-      "title": "ModelDevelopmentDescriptor",
+      "title": "ModelDescriptor",
       "type": "object"
     },
     "ModelIODescriptor": {
@@ -413,66 +428,6 @@
         }
       },
       "title": "ModelIODescriptor",
-      "type": "object"
-    },
-    "ModelProductionDescriptor": {
-      "description": "A descriptor for model production considerations.",
-      "properties": {
-        "deployment_platform": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Deployment Platform"
-        },
-        "capability_deployment_mechanism": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Capability Deployment Mechanism"
-        },
-        "input_specification": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/ModelIODescriptor"
-          },
-          "title": "Input Specification",
-          "type": "array"
-        },
-        "output_specification": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/ModelIODescriptor"
-          },
-          "title": "Output Specification",
-          "type": "array"
-        },
-        "resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
-        }
-      },
-      "title": "ModelProductionDescriptor",
       "type": "object"
     },
     "ModelResourcesDescriptor": {
@@ -776,25 +731,21 @@
         }
       ],
       "default": {
-        "development": {
-          "resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
+        "development_compute_resources": {
+          "cpu": null,
+          "gpu": null,
+          "memory": null,
+          "storage": null
         },
-        "production": {
-          "capability_deployment_mechanism": null,
-          "deployment_platform": null,
-          "input_specification": [],
-          "output_specification": [],
-          "resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
+        "deployment_platform": null,
+        "capability_deployment_mechanism": null,
+        "input_specification": [],
+        "output_specification": [],
+        "production_compute_resources": {
+          "cpu": null,
+          "gpu": null,
+          "memory": null,
+          "storage": null
         }
       }
     },

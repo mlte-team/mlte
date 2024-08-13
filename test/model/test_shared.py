@@ -16,9 +16,7 @@ from mlte.model.shared import (
     LabelDescriptor,
     MetricDescriptor,
     ModelDescriptor,
-    ModelDevelopmentDescriptor,
     ModelIODescriptor,
-    ModelProductionDescriptor,
     ModelResourcesDescriptor,
     RiskDescriptor,
 )
@@ -195,26 +193,13 @@ def test_model_input_descriptor() -> None:
         assert d == object
 
 
-def test_model_development_descriptor() -> None:
-    """A model development descriptor model can be serialized and deserialized."""
+def test_model_descriptor() -> None:
+    """A model descriptor model can be serialized and deserialized."""
     objects = [
-        ModelDevelopmentDescriptor(
-            resources=ModelResourcesDescriptor(
+        ModelDescriptor(
+            development_compute_resources=ModelResourcesDescriptor(
                 cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-            )
-        ),
-        ModelDevelopmentDescriptor(),
-    ]
-    for object in objects:
-        s = object.to_json()
-        d = ModelDevelopmentDescriptor.from_json(s)
-        assert d == object
-
-
-def test_model_production_descriptor() -> None:
-    """A model production descriptor model can be serialized and deserialized."""
-    objects = [
-        ModelProductionDescriptor(
+            ),
             deployment_platform="local server",
             capability_deployment_mechanism="API",
             input_specification=[
@@ -233,50 +218,8 @@ def test_model_production_descriptor() -> None:
                     expected_values="3, 4.5",
                 )
             ],
-            resources=ModelResourcesDescriptor(
+            production_compute_resources=ModelResourcesDescriptor(
                 cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-            ),
-        ),
-        ModelProductionDescriptor(),
-    ]
-
-    for object in objects:
-        s = object.to_json()
-        d = ModelProductionDescriptor.from_json(s)
-        assert d == object
-
-
-def test_model_descriptor() -> None:
-    """A model descriptor model can be serialized and deserialized."""
-    objects = [
-        ModelDescriptor(
-            development=ModelDevelopmentDescriptor(
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                )
-            ),
-            production=ModelProductionDescriptor(
-                deployment_platform="local server",
-                capability_deployment_mechanism="API",
-                input_specification=[
-                    ModelIODescriptor(
-                        name="i1",
-                        description="description",
-                        type="string",
-                        expected_values="2, 4.5",
-                    )
-                ],
-                output_specification=[
-                    ModelIODescriptor(
-                        name="o1",
-                        description="description",
-                        type="string",
-                        expected_values="3, 4.5",
-                    )
-                ],
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                ),
             ),
         ),
         ModelDescriptor(),

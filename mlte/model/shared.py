@@ -110,15 +110,13 @@ class ModelIODescriptor(BaseModel):
     """Expected values for this input or output."""
 
 
-class ModelDevelopmentDescriptor(BaseModel):
-    """A descriptor for model development considerations."""
+class ModelDescriptor(BaseModel):
+    """A descriptor for the model."""
 
-    resources: ModelResourcesDescriptor = ModelResourcesDescriptor()
+    development_compute_resources: Optional[
+        ModelResourcesDescriptor
+    ] = ModelResourcesDescriptor()
     """A description of model development resource requirements."""
-
-
-class ModelProductionDescriptor(BaseModel):
-    """A descriptor for model production considerations."""
 
     deployment_platform: Optional[str] = None
     """A description of the platform used to deploy the model into the system."""
@@ -132,18 +130,10 @@ class ModelProductionDescriptor(BaseModel):
     output_specification: List[ModelIODescriptor] = []
     """The model output specification."""
 
-    resources: ModelResourcesDescriptor = ModelResourcesDescriptor()
+    production_compute_resources: ModelResourcesDescriptor = (
+        ModelResourcesDescriptor()
+    )
     """A description of model production resource requirements."""
-
-
-class ModelDescriptor(BaseModel):
-    """A descriptor for the model."""
-
-    development: ModelDevelopmentDescriptor = ModelDevelopmentDescriptor()
-    """A description of model development considerations."""
-
-    production: ModelProductionDescriptor = ModelProductionDescriptor()
-    """A description of model production considerations."""
 
 
 # -----------------------------------------------------------------------------

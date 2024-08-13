@@ -11,7 +11,7 @@ from mlte.model.base_model import BaseModel
 from mlte.model.shared import (
     DataDescriptor,
     GoalDescriptor,
-    ModelProductionDescriptor,
+    ModelDescriptor,
     ProblemType,
     RiskDescriptor,
 )
@@ -43,9 +43,7 @@ class IntendedUseDescriptor(BaseModel):
     usage_context: Optional[str] = None
     """The intended useage context."""
 
-    production_requirements: ModelProductionDescriptor = (
-        ModelProductionDescriptor()
-    )
+    production_requirements: ModelDescriptor = ModelDescriptor()
     """The production requirements and considerations for the model."""
 
 

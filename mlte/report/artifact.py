@@ -149,7 +149,7 @@ class Report(Artifact):
 
         intended_use = deepcopy(self.intended_use)
         intended_use.usage_context = artifact.system.usage_context
-        intended_use.production_requirements = artifact.model.production
+        intended_use.production_requirements = artifact.model
 
         return Report(
             identifier=self.identifier,

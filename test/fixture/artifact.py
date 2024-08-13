@@ -21,9 +21,7 @@ from mlte.model.shared import (
     LabelDescriptor,
     MetricDescriptor,
     ModelDescriptor,
-    ModelDevelopmentDescriptor,
     ModelIODescriptor,
-    ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
     QASDescriptor,
@@ -226,36 +224,35 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
             )
         ],
         model=ModelDescriptor(
-            development=ModelDevelopmentDescriptor(
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                )
+            development_compute_resources=ModelResourcesDescriptor(
+                cpu="1",
+                gpu="2",
+                memory="600",
+                storage="50",
             ),
-            production=ModelProductionDescriptor(
-                deployment_platform="local server",
-                capability_deployment_mechanism="API",
-                input_specification=[
-                    ModelIODescriptor(
-                        name="i1",
-                        description="description",
-                        type="string",
-                        expected_values="2, 4.5",
-                    )
-                ],
-                output_specification=[
-                    ModelIODescriptor(
-                        name="o1",
-                        description="description",
-                        type="string",
-                        expected_values="hi, bye",
-                    )
-                ],
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu",
-                    gpu="gpu",
-                    memory="memory",
-                    storage="storage",
-                ),
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
+            input_specification=[
+                ModelIODescriptor(
+                    name="i1",
+                    description="description",
+                    type="string",
+                    expected_values="2, 4.5",
+                )
+            ],
+            output_specification=[
+                ModelIODescriptor(
+                    name="o1",
+                    description="description",
+                    type="string",
+                    expected_values="hi, bye",
+                )
+            ],
+            production_compute_resources=ModelResourcesDescriptor(
+                cpu="1",
+                gpu="1",
+                memory="600",
+                storage="50",
             ),
         ),
         system_requirements=[
@@ -343,7 +340,7 @@ def make_complete_report() -> ReportModel:
         ),
         intended_use=IntendedUseDescriptor(
             usage_context="context",
-            production_requirements=ModelProductionDescriptor(
+            production_requirements=ModelDescriptor(
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 input_specification=[
@@ -362,8 +359,11 @@ def make_complete_report() -> ReportModel:
                         expected_values="True, False",
                     )
                 ],
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
+                production_compute_resources=ModelResourcesDescriptor(
+                    cpu="1",
+                    gpu="1",
+                    memory="600",
+                    storage="50",
                 ),
             ),
         ),

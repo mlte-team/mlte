@@ -17,9 +17,7 @@ from mlte.model.shared import (
     LabelDescriptor,
     MetricDescriptor,
     ModelDescriptor,
-    ModelDevelopmentDescriptor,
     ModelIODescriptor,
-    ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
     QASDescriptor,
@@ -67,17 +65,20 @@ def create_negotiation_db_from_model(
         if negotiation_card.system.problem_type is not None
         else None
     )
-    model_dev_resources_obj = DBModelResourcesDescriptor(
-        cpu=negotiation_card.model.development.resources.cpu,
-        gpu=negotiation_card.model.development.resources.gpu,
-        memory=negotiation_card.model.development.resources.memory,
-        storage=negotiation_card.model.development.resources.storage,
-    )
+    if negotiation_card.model.development_compute_resources:
+        model_dev_resources_obj = DBModelResourcesDescriptor(
+            cpu=negotiation_card.model.development_compute_resources.cpu,
+            gpu=negotiation_card.model.development_compute_resources.gpu,
+            memory=negotiation_card.model.development_compute_resources.memory,
+            storage=negotiation_card.model.development_compute_resources.storage,
+        )
+    else:
+        model_dev_resources_obj = None
     model_prod_resources_obj = DBModelResourcesDescriptor(
-        cpu=negotiation_card.model.production.resources.cpu,
-        gpu=negotiation_card.model.production.resources.gpu,
-        memory=negotiation_card.model.production.resources.memory,
-        storage=negotiation_card.model.production.resources.storage,
+        cpu=negotiation_card.model.production_compute_resources.cpu,
+        gpu=negotiation_card.model.production_compute_resources.gpu,
+        memory=negotiation_card.model.production_compute_resources.memory,
+        storage=negotiation_card.model.production_compute_resources.storage,
     )
 
     # Create the actual object.
@@ -92,8 +93,8 @@ def create_negotiation_db_from_model(
         sys_risks_other=negotiation_card.system.risks.other,
         model_dev_resources=model_dev_resources_obj,
         model_prod_resources=model_prod_resources_obj,
-        model_prod_deployment_platform=negotiation_card.model.production.deployment_platform,
-        model_prod_capability_deployment_mechanism=negotiation_card.model.production.capability_deployment_mechanism,
+        model_prod_deployment_platform=negotiation_card.model.deployment_platform,
+        model_prod_capability_deployment_mechanism=negotiation_card.model.capability_deployment_mechanism,
         model_prod_inputs=[],
         model_prod_outputs=[],
         data_descriptors=[],
@@ -111,12 +112,12 @@ def create_negotiation_db_from_model(
         negotiation_card_obj.data_descriptors.append(data_obj)
 
     # Create list of model input objects.
-    for input in negotiation_card.model.production.input_specification:
+    for input in negotiation_card.model.input_specification:
         input_obj = _build_io_descriptor_obj(input)
         negotiation_card_obj.model_prod_inputs.append(input_obj)
 
     # Create list of model output objects.
-    for output in negotiation_card.model.production.output_specification:
+    for output in negotiation_card.model.output_specification:
         output_obj = _build_io_descriptor_obj(output)
         negotiation_card_obj.model_prod_outputs.append(output_obj)
 
@@ -154,17 +155,13 @@ def create_negotiation_model_from_db(
             goals=_build_goal_descriptors(negotiation_obj.sys_goals),
         ),
         data=_build_data_descriptors(negotiation_obj.data_descriptors),
-        model=ModelDescriptor(
-            development=ModelDevelopmentDescriptor(
-                resources=_build_resources(negotiation_obj.model_dev_resources)
-            ),
-            production=_build_model_prod_descriptor(
-                negotiation_obj.model_prod_deployment_platform,
-                negotiation_obj.model_prod_capability_deployment_mechanism,
-                negotiation_obj.model_prod_inputs,
-                negotiation_obj.model_prod_outputs,
-                negotiation_obj.model_prod_resources,
-            ),
+        model=_build_model_descriptor(
+            negotiation_obj.model_dev_resources,
+            negotiation_obj.model_prod_deployment_platform,
+            negotiation_obj.model_prod_capability_deployment_mechanism,
+            negotiation_obj.model_prod_inputs,
+            negotiation_obj.model_prod_outputs,
+            negotiation_obj.model_prod_resources,
         ),
         system_requirements=[
             QASDescriptor(
@@ -199,10 +196,10 @@ def create_report_db_from_model(
         else None
     )
     model_prod_resources_obj = DBModelResourcesDescriptor(
-        cpu=report.intended_use.production_requirements.resources.cpu,
-        gpu=report.intended_use.production_requirements.resources.gpu,
-        memory=report.intended_use.production_requirements.resources.memory,
-        storage=report.intended_use.production_requirements.resources.storage,
+        cpu=report.intended_use.production_requirements.production_compute_resources.cpu,
+        gpu=report.intended_use.production_requirements.production_compute_resources.gpu,
+        memory=report.intended_use.production_requirements.production_compute_resources.memory,
+        storage=report.intended_use.production_requirements.production_compute_resources.storage,
     )
 
     # Create the actual object.
@@ -277,7 +274,8 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
         ),
         intended_use=IntendedUseDescriptor(
             usage_context=report_obj.intended_usage_context,
-            production_requirements=_build_model_prod_descriptor(
+            production_requirements=_build_model_descriptor(
+                None,
                 report_obj.intended_reqs_model_prod_deployment_platform,
                 report_obj.intended_reqs_model_prod_capability_deployment_mechanism,
                 report_obj.intended_reqs_model_inputs,
@@ -435,19 +433,21 @@ def _build_data_descriptors(
     ]
 
 
-def _build_model_prod_descriptor(
+def _build_model_descriptor(
+    dev_resources: Optional[DBModelResourcesDescriptor],
     deployment_platform: Optional[str],
     capability_deployment_mechanism: Optional[str],
     inputs: List[DBModelIODescriptor],
     outputs: List[DBModelIODescriptor],
-    resources: Optional[DBModelResourcesDescriptor],
-) -> ModelProductionDescriptor:
-    return ModelProductionDescriptor(
+    prod_resources: Optional[DBModelResourcesDescriptor],
+) -> ModelDescriptor:
+    return ModelDescriptor(
+        development_compute_resources=_build_resources(dev_resources) if dev_resources else None,
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         input_specification=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type, expected_values=input_obj.expected_values) for input_obj in inputs],
         output_specification=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type, expected_values=output_obj.expected_values) for output_obj in outputs],
-        resources=_build_resources(resources),
+        production_compute_resources=_build_resources(prod_resources),
     )
 
 

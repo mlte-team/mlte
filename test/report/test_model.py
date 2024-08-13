@@ -7,8 +7,8 @@ Unit tests for report model.
 from mlte.model.shared import (
     GoalDescriptor,
     MetricDescriptor,
+    ModelDescriptor,
     ModelIODescriptor,
-    ModelProductionDescriptor,
     ModelResourcesDescriptor,
     ProblemType,
 )
@@ -76,7 +76,7 @@ def test_intended_use() -> None:
     objects = [
         IntendedUseDescriptor(
             usage_context="context",
-            production_requirements=ModelProductionDescriptor(
+            production_requirements=ModelDescriptor(
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
                 input_specification=[
@@ -95,7 +95,7 @@ def test_intended_use() -> None:
                         expected_values="3, 4.5",
                     )
                 ],
-                resources=ModelResourcesDescriptor(
+                production_compute_resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"
                 ),
             ),
