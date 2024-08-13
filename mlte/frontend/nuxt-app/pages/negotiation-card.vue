@@ -556,13 +556,13 @@
       </SubHeader>
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.development.resources.gpu">
+          <UsaTextInput v-model="form.model.development_compute_resources.gpu">
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.development.resources.cpu">
+          <UsaTextInput v-model="form.model.development_compute_resources.cpu">
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
@@ -570,20 +570,24 @@
 
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.development.resources.memory">
+          <UsaTextInput
+            v-model="form.model.development_compute_resources.memory"
+          >
             <template #label> Memory </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.development.resources.storage">
+          <UsaTextInput
+            v-model="form.model.development_compute_resources.storage"
+          >
             <template #label> Storage </template>
           </UsaTextInput>
         </div>
       </div>
     </div>
 
-    <UsaTextarea v-model="form.model.production.deployment_platform">
+    <UsaTextarea v-model="form.model.deployment_platform">
       <template #label>
         Deployment Platform
         <InfoIcon>
@@ -597,9 +601,7 @@
       </template>
     </UsaTextarea>
 
-    <UsaTextarea
-      v-model="form.model.production.capability_deployment_mechanism"
-    >
+    <UsaTextarea v-model="form.model.capability_deployment_mechanism">
       <template #label>
         Capability Deployment Mechanism
         <InfoIcon>
@@ -633,70 +635,66 @@
         </template>
       </SubHeader>
       <div
-        v-for="(input, inputIndex) in form.model.production.interface.input"
+        v-for="(inputSpec, inputIndex) in form.model.input_specification"
         :key="inputIndex"
       >
-        <div class="input-group" style="margin-top: 1em">
-            <h3 class="no-margin-sub-header">
-              Input {{ inputIndex + 1 }}
-            </h3>
+        <h3 class="no-margin-sub-header">Input {{ inputIndex + 1 }}</h3>
+        <UsaTextInput v-model="inputSpec.name">
+          <template #label>
+            Input Name
+            <InfoIcon>
+              Input name.
+              <br />
+              <br />
+              <i>Example: Audio Recording.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
 
-            <UsaTextInput v-model="input.name">
-              <template #label>
-                Input Name
-                <InfoIcon>
-                  Input name.
-                  <br />
-                  <br />
-                  <i>Example: Audio Recording.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
+        <UsaTextarea v-model="inputSpec.description">
+          <template #label>
+            Description
+            <InfoIcon>
+              Short input description.
+              <br />
+              <br />
+              <i>Example: Audio recording file for matching.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
 
-            <UsaTextarea v-model="input.description">
-              <template #label>
-                Description
-                <InfoIcon>
-                  Short input description.
-                  <br />
-                  <br />
-                  <i>Example: Audio recording file for matching.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextarea>
+        <UsaTextInput v-model="inputSpec.type">
+          <template #label>
+            Type
+            <InfoIcon>
+              Input type, e.g., number, string, Boolean, data, image, audio.
+              <br />
+              <br />
+              <i>Example: Audio.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
 
-            <UsaTextInput v-model="input.type">
-              <template #label>
-                Type
-                <InfoIcon>
-                  Input type, e.g., number, string, Boolean, data, image, audio.
-                  <br />
-                  <br />
-                  <i>Example: Audio.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-
-            <UsaTextInput v-model="input.expected_values">
-              <template #label>
-                Expected Values 
-                <InfoIcon>
-                  Expected values for the input.
-                  <br />
-                  <br />
-                  <i>Example: Non-empty audio file of type WAV, MP3 or MP4.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-            <hr />
-          </div>
-
-        </div>
-        <DeleteButton class="margin-button" @click="deleteInput(inputIndex)">
+        <UsaTextInput v-model="inputSpec.expected_values">
+          <template #label>
+            Expected Values
+            <InfoIcon>
+              Expected values for the input.
+              <br />
+              <br />
+              <i>Example: Non-empty audio file of type WAV, MP3 or MP4.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
+        <DeleteButton
+          class="margin-button"
+          @click="deleteInputSpec(inputIndex)"
+        >
           Delete Input
         </DeleteButton>
         <hr />
-      <AddButton class="margin-button" @click="addInput()">
+      </div>
+      <AddButton class="margin-button" @click="addInputSpec()">
         Add Additional Input
       </AddButton>
     </div>
@@ -718,82 +716,65 @@
         </template>
       </SubHeader>
       <div
-        v-for="(output, outputIndex) in form.model.production.interface.output"
+        v-for="(outputSpec, outputIndex) in form.model.output_specification"
         :key="outputIndex"
       >
         <h3 class="no-margin-sub-header">Output {{ outputIndex + 1 }}</h3>
-        <UsaTextInput v-model="output.name">
-          <template #label> Name </template>
+        <UsaTextInput v-model="outputSpec.name">
+          <template #label>
+            Output Name
+            <InfoIcon>
+              Output name.
+              <br />
+              <br />
+              <i>Example: Matching recordings.</i>
+            </InfoIcon>
+          </template>
         </UsaTextInput>
-        <div class="input-group" style="margin-top: 1em">
-          <div v-for="(spec, specIndex) in output.output_spec" :key="specIndex">
-            <h3 class="no-margin-sub-header">
-              Output Spec {{ outputIndex + 1 }} - {{ specIndex + 1 }}
-            </h3>
 
-            <UsaTextInput v-model="spec.name">
-              <template #label>
-                Output Name
-                <InfoIcon>
-                  Output name.
-                  <br />
-                  <br />
-                  <i>Example: Matching recordings.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
+        <UsaTextarea v-model="outputSpec.description">
+          <template #label>
+            Description
+            <InfoIcon>
+              Short output description.
+              <br />
+              <br />
+              <i>Example: Set of matching recordings from the database.</i>
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
 
-            <UsaTextarea v-model="spec.description">
-              <template #label>
-                Description
-                <InfoIcon>
-                  Short output description.
-                  <br />
-                  <br />
-                  <i>Example: Set of matching recordings from the database.</i>
-                </InfoIcon>
-              </template>
-            </UsaTextarea>
+        <UsaTextInput v-model="outputSpec.type">
+          <template #label>
+            Type
+            <InfoIcon>
+              Field type, e.g., number, string, Boolean, data, image, audio.
+              <br />
+              <br />
+              <i>
+                Example: Vector of Strings with IDs of matching recordings — an
+                empty <br />
+                vector means that there were no matches.
+              </i>
+            </InfoIcon>
+          </template>
+        </UsaTextInput>
 
-            <UsaTextInput v-model="spec.type">
-              <template #label>
-                Type
-                <InfoIcon>
-                  Field type, e.g., number, string, Boolean, data, image, audio.
-                  <br />
-                  <br />
-                  <i>
-                    Example: Vector of Strings with IDs of matching recordings —
-                    an empty <br />
-                    vector means that there were no matches.
-                  </i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-
-            <UsaTextInput v-model="spec.expected_values">
-              <template #label> Expected Values </template>
-            </UsaTextInput>
-
-            <DeleteButton
-              class="margin-button"
-              @click="deleteOutputSpec(outputIndex, specIndex)"
-            >
-              Delete Spec
-            </DeleteButton>
-            <hr />
-          </div>
-
-          <AddButton class="margin-button" @click="addOutputSpec(outputIndex)">
-            Add Additional Spec
-          </AddButton>
-        </div>
-        <DeleteButton class="margin-button" @click="deleteOutput(outputIndex)">
+        <UsaTextInput v-model="outputSpec.expected_values">
+          <template #label>
+            Expected Values
+            <InfoIcon> Expected values for the output. </InfoIcon>
+          </template>
+        </UsaTextInput>
+        <DeleteButton
+          class="margin-button"
+          @click="deleteOutputSpec(outputIndex)"
+        >
           Delete Output
         </DeleteButton>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addOutput()">
+      <AddButton class="margin-button" @click="addOutputSpec()">
         Add Additional Output
       </AddButton>
     </div>
@@ -811,13 +792,13 @@
       </SubHeader>
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.production.resources.gpu">
+          <UsaTextInput v-model="form.model.production_compute_resources.gpu">
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.production.resources.cpu">
+          <UsaTextInput v-model="form.model.production_compute_resources.cpu">
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
@@ -825,13 +806,17 @@
 
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.production.resources.memory">
+          <UsaTextInput
+            v-model="form.model.production_compute_resources.memory"
+          >
             <template #label> Memory </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.production.resources.storage">
+          <UsaTextInput
+            v-model="form.model.production_compute_resources.storage"
+          >
             <template #label> Storage </template>
           </UsaTextInput>
         </div>
@@ -1106,7 +1091,7 @@ const inputModalHeaders = ref([
   { id: "inputName", label: "Input Name", sortable: false },
   { id: "inputDescription", label: "Input Description", sortable: false },
   { id: "inputType", label: "Input Type", sortable: false },
-  { id: "expectedValues", label: "Expected Values", sortable: false},
+  { id: "expectedValues", label: "Expected Values", sortable: false },
 ]);
 const inputModalRows = ref([
   {
@@ -1235,51 +1220,35 @@ const form = ref({
     },
   ],
   model: {
-    development: {
-      resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
+    development_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
     },
-    production: {
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      interface: {
-        input: [
-          {
-            name: "",
-            input_spec: [
-              {
-                name: "",
-                description: "",
-                type: "",
-                expected_values: "",
-              },
-            ],
-          },
-        ],
-        output: [
-          {
-            name: "",
-            output_spec: [
-              {
-                name: "",
-                description: "",
-                type: "",
-                expected_values: "",
-              },
-            ],
-          },
-        ],
+    deployment_platform: "",
+    capability_deployment_mechanism: "",
+    input_specification: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
       },
-      resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
+    ],
+    output_specification: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
       },
+    ],
+    production_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
     },
   },
   system_requirements: [
@@ -1561,19 +1530,15 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.model.development.resources.gpu =
+          form.value.model.development_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.development.resources.cpu =
+          form.value.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.development.resources.memory =
+          form.value.model.development_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.development.resources.storage =
+          form.value.model.development_compute_resources.storage =
             document.computing_resources.storage;
 
-          let outputString = "";
-          if (form.value.model.production.interface.output.description !== "") {
-            outputString += "\n\n";
-          }
           document.downstream_components.forEach(
             (component: {
               component_name: string;
@@ -1587,36 +1552,35 @@ function descriptorUpload(event: Event, descriptorName: string) {
               ];
               ml_component: boolean;
             }) => {
-              outputString +=
-                "Component Name: " + component.component_name + "\n";
-              outputString += "ML Component: " + component.ml_component + "\n";
-              component.input_spec.forEach(
-                (spec: {
-                  item_name: string;
-                  item_description: string;
-                  item_type: string;
-                  expected_values: string;
-                }) => {
-                  outputString += spec.item_name + "\n";
-                  outputString += spec.item_description + "\n";
-                  outputString += spec.item_type + "\n";
-                  outputString += spec.expected_values + "\n";
-                },
-              );
-              outputString += "\n";
+              component.input_spec.forEach((spec) => {
+                let lastSpecIndex =
+                  form.value.model.output_specification.length - 1;
+                if (
+                  !specEmpty(
+                    form.value.model.output_specification[lastSpecIndex],
+                  )
+                ) {
+                  addOutputSpec();
+                  lastSpecIndex += 1;
+                }
+
+                form.value.model.output_specification[lastSpecIndex] = {
+                  name: component.component_name + "." + spec.item_name,
+                  description: spec.item_description,
+                  type: spec.item_type,
+                  expected_values: spec.expected_values,
+                };
+              });
             },
           );
-          outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.interface.output.description +=
-            outputString;
         } else if (descriptorName === "Production Environment") {
-          form.value.model.production.resources.gpu =
+          form.value.model.production_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.production.resources.cpu =
+          form.value.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.production.resources.memory =
+          form.value.model.production_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.production.resources.storage =
+          form.value.model.production_compute_resources.storage =
             document.computing_resources.storage;
         }
       } catch (err) {
@@ -1631,12 +1595,12 @@ function descriptorUpload(event: Event, descriptorName: string) {
 function goalEmpty(goal) {
   let isEmpty = true;
 
-  if (goal.description != "") {
+  if (goal.description !== "") {
     isEmpty = false;
   }
 
   goal.metrics.forEach((metric) => {
-    if (metric.description != "" || metric.baseline != "") {
+    if (metric.description !== "" || metric.baseline !== "") {
       isEmpty = false;
     }
   });
@@ -1648,33 +1612,52 @@ function dataItemEmpty(dataItem) {
   let isEmpty = true;
 
   if (
-    dataItem.description != "" ||
-    dataItem.source != "" ||
-    dataItem.classification != "unclassified" ||
-    dataItem.access != "" ||
-    dataItem.labeling_method != ""
+    dataItem.description !== "" ||
+    dataItem.source !== "" ||
+    dataItem.classification !== "unclassified" ||
+    dataItem.access !== "" ||
+    dataItem.labeling_method !== ""
   ) {
     isEmpty = false;
   }
 
   dataItem.labels.forEach((label) => {
-    if (label.name != "" || label.description != "" || label.percentage != 0) {
+    if (
+      label.name !== "" ||
+      label.description !== "" ||
+      label.percentage !== 0
+    ) {
       isEmpty = false;
     }
   });
 
   dataItem.fields.forEach((field) => {
     if (
-      field.name != "" ||
-      field.description != "" ||
-      field.type != "" ||
-      field.expected_values != "" ||
-      field.missing_values != "" ||
-      field.special_values != ""
+      field.name !== "" ||
+      field.description !== "" ||
+      field.type !== "" ||
+      field.expected_values !== "" ||
+      field.missing_values !== "" ||
+      field.special_values !== ""
     ) {
       isEmpty = false;
     }
   });
+
+  return isEmpty;
+}
+
+function specEmpty(spec) {
+  let isEmpty = true;
+
+  if (
+    spec.name !== "" ||
+    spec.description !== "" ||
+    spec.type !== "" ||
+    spec.expected_values !== ""
+  ) {
+    isEmpty = false;
+  }
 
   return isEmpty;
 }
@@ -1771,23 +1754,8 @@ function deleteField(dataItemIndex: number, fieldIndex: number) {
   }
 }
 
-function addInput() {
-  form.value.model.production.interface.input.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-    });
-}
-
-function deleteInput(inputIndex: number) {
-  if (confirm("Are you sure you want to delete this input?")) {
-    form.value.model.production.interface.input.splice(inputIndex, 1);
-  }
-}
-
-function addInputSpec(inputIndex: number) {
-  form.value.model.production.interface.input[inputIndex].input_spec.push({
+function addInputSpec() {
+  form.value.model.input_specification.push({
     name: "",
     description: "",
     type: "",
@@ -1795,37 +1763,14 @@ function addInputSpec(inputIndex: number) {
   });
 }
 
-function deleteInputSpec(inputIndex: number, specIndex: number) {
+function deleteInputSpec(specIndex: number) {
   if (confirm("Are you sure you want to delete this spec?")) {
-    form.value.model.production.interface.input[inputIndex].input_spec.splice(
-      specIndex,
-      1,
-    );
+    form.value.model.input_specification.splice(specIndex, 1);
   }
 }
 
-function addOutput() {
-  form.value.model.production.interface.output.push({
-    name: "",
-    output_spec: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-      },
-    ],
-  });
-}
-
-function deleteOutput(outputIndex: number) {
-  if (confirm("Are you sure you want to delete this output?")) {
-    form.value.model.production.interface.output.splice(outputIndex, 1);
-  }
-}
-
-function addOutputSpec(outputIndex: number) {
-  form.value.model.production.interface.output[outputIndex].output_spec.push({
+function addOutputSpec() {
+  form.value.model.output_specification.push({
     name: "",
     description: "",
     type: "",
@@ -1833,11 +1778,9 @@ function addOutputSpec(outputIndex: number) {
   });
 }
 
-function deleteOutputSpec(outputIndex: number, specIndex: number) {
+function deleteOutputSpec(specIndex: number) {
   if (confirm("Are you sure you want to delete this spec?")) {
-    form.value.model.production.interface.output[
-      outputIndex
-    ].output_spec.splice(specIndex, 1);
+    form.value.model.output_specification.splice(specIndex, 1);
   }
 }
 
