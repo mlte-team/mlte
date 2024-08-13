@@ -110,16 +110,6 @@ class ModelIODescriptor(BaseModel):
     """Expected values for this input or output."""
 
 
-class ModelInterfaceDescriptor(BaseModel):
-    """A description of the model interface."""
-
-    inputs: List[ModelIODescriptor] = []
-    """The model input specification."""
-
-    outputs: List[ModelIODescriptor] = []
-    """The model output specification."""
-
-
 class ModelDevelopmentDescriptor(BaseModel):
     """A descriptor for model development considerations."""
 
@@ -136,8 +126,11 @@ class ModelProductionDescriptor(BaseModel):
     capability_deployment_mechanism: Optional[str] = None
     """A description of how the model capabilities will be made available."""
 
-    interface: ModelInterfaceDescriptor = ModelInterfaceDescriptor()
-    """A description of the model interface."""
+    input_specification: List[ModelIODescriptor] = []
+    """The model input specification."""
+
+    output_specification: List[ModelIODescriptor] = []
+    """The model output specification."""
 
     resources: ModelResourcesDescriptor = ModelResourcesDescriptor()
     """A description of model production resource requirements."""

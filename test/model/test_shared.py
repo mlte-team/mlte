@@ -17,7 +17,6 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInterfaceDescriptor,
     ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
@@ -196,35 +195,6 @@ def test_model_input_descriptor() -> None:
         assert d == object
 
 
-def test_model_interface_descriptor() -> None:
-    """A model interface descriptor model can be serialized and deserialized."""
-    objects = [
-        ModelInterfaceDescriptor(
-            inputs=[
-                ModelIODescriptor(
-                    name="i1",
-                    description="description",
-                    type="string",
-                    expected_values="2, 4.5",
-                )
-            ],
-            outputs=[
-                ModelIODescriptor(
-                    name="o1",
-                    description="description",
-                    type="string",
-                    expected_values="3, 4.5",
-                )
-            ],
-        ),
-        ModelInterfaceDescriptor(),
-    ]
-    for object in objects:
-        s = object.to_json()
-        d = ModelInterfaceDescriptor.from_json(s)
-        assert d == object
-
-
 def test_model_development_descriptor() -> None:
     """A model development descriptor model can be serialized and deserialized."""
     objects = [
@@ -247,24 +217,22 @@ def test_model_production_descriptor() -> None:
         ModelProductionDescriptor(
             deployment_platform="local server",
             capability_deployment_mechanism="API",
-            interface=ModelInterfaceDescriptor(
-                inputs=[
-                    ModelIODescriptor(
-                        name="i1",
-                        description="description",
-                        type="string",
-                        expected_values="2, 4.5",
-                    )
-                ],
-                outputs=[
-                    ModelIODescriptor(
-                        name="o1",
-                        description="description",
-                        type="string",
-                        expected_values="3, 4.5",
-                    )
-                ],
-            ),
+            input_specification=[
+                ModelIODescriptor(
+                    name="i1",
+                    description="description",
+                    type="string",
+                    expected_values="2, 4.5",
+                )
+            ],
+            output_specification=[
+                ModelIODescriptor(
+                    name="o1",
+                    description="description",
+                    type="string",
+                    expected_values="3, 4.5",
+                )
+            ],
             resources=ModelResourcesDescriptor(
                 cpu="cpu", gpu="gpu", memory="memory", storage="storage"
             ),
@@ -290,24 +258,22 @@ def test_model_descriptor() -> None:
             production=ModelProductionDescriptor(
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
-                interface=ModelInterfaceDescriptor(
-                    inputs=[
-                        ModelIODescriptor(
-                            name="i1",
-                            description="description",
-                            type="string",
-                            expected_values="2, 4.5",
-                        )
-                    ],
-                    outputs=[
-                        ModelIODescriptor(
-                            name="o1",
-                            description="description",
-                            type="string",
-                            expected_values="3, 4.5",
-                        )
-                    ],
-                ),
+                input_specification=[
+                    ModelIODescriptor(
+                        name="i1",
+                        description="description",
+                        type="string",
+                        expected_values="2, 4.5",
+                    )
+                ],
+                output_specification=[
+                    ModelIODescriptor(
+                        name="o1",
+                        description="description",
+                        type="string",
+                        expected_values="3, 4.5",
+                    )
+                ],
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"
                 ),

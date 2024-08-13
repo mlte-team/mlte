@@ -263,10 +263,8 @@
           "default": {
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
-            "interface": {
-              "inputs": [],
-              "outputs": []
-            },
+            "input_specification": [],
+            "output_specification": [],
             "resources": {
               "cpu": null,
               "gpu": null,
@@ -408,29 +406,6 @@
       "title": "ModelIODescriptor",
       "type": "object"
     },
-    "ModelInterfaceDescriptor": {
-      "description": "A description of the model interface.",
-      "properties": {
-        "inputs": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/ModelIODescriptor"
-          },
-          "title": "Inputs",
-          "type": "array"
-        },
-        "outputs": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/ModelIODescriptor"
-          },
-          "title": "Outputs",
-          "type": "array"
-        }
-      },
-      "title": "ModelInterfaceDescriptor",
-      "type": "object"
-    },
     "ModelProductionDescriptor": {
       "description": "A descriptor for model production considerations.",
       "properties": {
@@ -458,16 +433,21 @@
           "default": null,
           "title": "Capability Deployment Mechanism"
         },
-        "interface": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelInterfaceDescriptor"
-            }
-          ],
-          "default": {
-            "inputs": [],
-            "outputs": []
-          }
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
         },
         "resources": {
           "allOf": [
@@ -722,10 +702,8 @@
         "production_requirements": {
           "capability_deployment_mechanism": null,
           "deployment_platform": null,
-          "interface": {
-            "inputs": [],
-            "outputs": []
-          },
+          "input_specification": [],
+          "output_specification": [],
           "resources": {
             "cpu": null,
             "gpu": null,

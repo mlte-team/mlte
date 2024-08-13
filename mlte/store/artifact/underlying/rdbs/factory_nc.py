@@ -18,7 +18,6 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInterfaceDescriptor,
     ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
@@ -112,12 +111,12 @@ def create_negotiation_db_from_model(
         negotiation_card_obj.data_descriptors.append(data_obj)
 
     # Create list of model input objects.
-    for input in negotiation_card.model.production.interface.inputs:
+    for input in negotiation_card.model.production.input_specification:
         input_obj = _build_io_descriptor_obj(input)
         negotiation_card_obj.model_prod_inputs.append(input_obj)
 
     # Create list of model output objects.
-    for output in negotiation_card.model.production.interface.outputs:
+    for output in negotiation_card.model.production.output_specification:
         output_obj = _build_io_descriptor_obj(output)
         negotiation_card_obj.model_prod_outputs.append(output_obj)
 
@@ -244,12 +243,12 @@ def create_report_db_from_model(
         report_obj.data_descriptors.append(data_obj)
 
     # Create list of model input objects.
-    for input in report.intended_use.production_requirements.interface.inputs:
+    for input in report.intended_use.production_requirements.input_specification:
         input_obj = _build_io_descriptor_obj(input)
         report_obj.intended_reqs_model_inputs.append(input_obj)
 
     # Create list of model output objects.
-    for output in report.intended_use.production_requirements.interface.outputs:
+    for output in report.intended_use.production_requirements.output_specification:
         output_obj = _build_io_descriptor_obj(output)
         report_obj.intended_reqs_model_outputs.append(output_obj)
 
@@ -446,10 +445,8 @@ def _build_model_prod_descriptor(
     return ModelProductionDescriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
-        interface=ModelInterfaceDescriptor(
-            inputs=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type, expected_values=input_obj.expected_values) for input_obj in inputs],
-            outputs=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type, expected_values=output_obj.expected_values) for output_obj in outputs]
-        ),
+        input_specification=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type, expected_values=input_obj.expected_values) for input_obj in inputs],
+        output_specification=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type, expected_values=output_obj.expected_values) for output_obj in outputs],
         resources=_build_resources(resources),
     )
 

@@ -22,7 +22,6 @@ from mlte.model.shared import (
     MetricDescriptor,
     ModelDescriptor,
     ModelDevelopmentDescriptor,
-    ModelInterfaceDescriptor,
     ModelIODescriptor,
     ModelProductionDescriptor,
     ModelResourcesDescriptor,
@@ -235,24 +234,22 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
             production=ModelProductionDescriptor(
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
-                interface=ModelInterfaceDescriptor(
-                    inputs=[
-                        ModelIODescriptor(
-                            name="i1",
-                            description="description",
-                            type="string",
-                            expected_values="2, 4.5",
-                        )
-                    ],
-                    outputs=[
-                        ModelIODescriptor(
-                            name="o1",
-                            description="description",
-                            type="string",
-                            expected_values="hi, bye",
-                        )
-                    ],
-                ),
+                input_specification=[
+                    ModelIODescriptor(
+                        name="i1",
+                        description="description",
+                        type="string",
+                        expected_values="2, 4.5",
+                    )
+                ],
+                output_specification=[
+                    ModelIODescriptor(
+                        name="o1",
+                        description="description",
+                        type="string",
+                        expected_values="hi, bye",
+                    )
+                ],
                 resources=ModelResourcesDescriptor(
                     cpu="cpu",
                     gpu="gpu",
@@ -349,24 +346,22 @@ def make_complete_report() -> ReportModel:
             production_requirements=ModelProductionDescriptor(
                 deployment_platform="local server",
                 capability_deployment_mechanism="API",
-                interface=ModelInterfaceDescriptor(
-                    inputs=[
-                        ModelIODescriptor(
-                            name="i1",
-                            description="description",
-                            type="string",
-                            expected_values="3, 4.5",
-                        )
-                    ],
-                    outputs=[
-                        ModelIODescriptor(
-                            name="o1",
-                            description="description",
-                            type="string",
-                            expected_values="True, False",
-                        )
-                    ],
-                ),
+                input_specification=[
+                    ModelIODescriptor(
+                        name="i1",
+                        description="description",
+                        type="string",
+                        expected_values="3, 4.5",
+                    )
+                ],
+                output_specification=[
+                    ModelIODescriptor(
+                        name="o1",
+                        description="description",
+                        type="string",
+                        expected_values="True, False",
+                    )
+                ],
                 resources=ModelResourcesDescriptor(
                     cpu="cpu", gpu="gpu", memory="memory", storage="storage"
                 ),
