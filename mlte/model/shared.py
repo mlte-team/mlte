@@ -113,9 +113,7 @@ class ModelIODescriptor(BaseModel):
 class ModelDescriptor(BaseModel):
     """A descriptor for the model."""
 
-    development_compute_resources: Optional[
-        ModelResourcesDescriptor
-    ] = ModelResourcesDescriptor()
+    development_compute_resources: Optional[ModelResourcesDescriptor] = None
     """A description of model development resource requirements."""
 
     deployment_platform: Optional[str] = None

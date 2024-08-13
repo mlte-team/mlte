@@ -311,12 +311,7 @@
               "type": "null"
             }
           ],
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
+          "default": null
         },
         "deployment_platform": {
           "anyOf": [
@@ -731,12 +726,7 @@
         }
       ],
       "default": {
-        "development_compute_resources": {
-          "cpu": null,
-          "gpu": null,
-          "memory": null,
-          "storage": null
-        },
+        "development_compute_resources": null,
         "deployment_platform": null,
         "capability_deployment_mechanism": null,
         "input_specification": [],

@@ -261,12 +261,7 @@
             }
           ],
           "default": {
-            "development_compute_resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            },
+            "development_compute_resources": null,
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
             "input_specification": [],
@@ -369,12 +364,7 @@
               "type": "null"
             }
           ],
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
+          "default": null
         },
         "deployment_platform": {
           "anyOf": [
@@ -724,12 +714,7 @@
         "production_requirements": {
           "capability_deployment_mechanism": null,
           "deployment_platform": null,
-          "development_compute_resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          },
+          "development_compute_resources": null,
           "input_specification": [],
           "output_specification": [],
           "production_compute_resources": {

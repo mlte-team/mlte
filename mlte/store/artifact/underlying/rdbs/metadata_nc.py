@@ -55,7 +55,7 @@ class DBNegotiationCard(DBBase):
     )
 
     # Model
-    model_dev_resources_id: Mapped[int] = mapped_column(
+    model_dev_resources_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
     model_dev_resources: Mapped[
