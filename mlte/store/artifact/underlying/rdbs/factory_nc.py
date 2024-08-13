@@ -368,6 +368,7 @@ def _build_io_descriptor_obj(io_descriptor: ModelIODescriptor) -> DBModelIODescr
         name=io_descriptor.name,
         description=io_descriptor.description,
         type=io_descriptor.type,
+        expected_values=io_descriptor.expected_values
     )
     return io_descriptor_obj
 
@@ -446,8 +447,8 @@ def _build_model_prod_descriptor(
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
         interface=ModelInterfaceDescriptor(
-            inputs=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type) for input_obj in inputs],
-            outputs=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type,) for output_obj in outputs]
+            inputs=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type, expected_values=input_obj.expected_values) for input_obj in inputs],
+            outputs=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type, expected_values=output_obj.expected_values) for output_obj in outputs]
         ),
         resources=_build_resources(resources),
     )

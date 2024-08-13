@@ -106,6 +106,9 @@ class ModelIODescriptor(BaseModel):
     type: Optional[str] = None
     """A description of the type of data for this input or output."""
 
+    expected_values: Optional[str] = None
+    """Expected values for this input or output."""
+
 
 class ModelInterfaceDescriptor(BaseModel):
     """A description of the model interface."""

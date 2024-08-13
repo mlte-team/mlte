@@ -238,12 +238,18 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 interface=ModelInterfaceDescriptor(
                     inputs=[
                         ModelIODescriptor(
-                            name="i1", description="description", type="string"
+                            name="i1",
+                            description="description",
+                            type="string",
+                            expected_values="2, 4.5",
                         )
                     ],
                     outputs=[
                         ModelIODescriptor(
-                            name="o1", description="description", type="string"
+                            name="o1",
+                            description="description",
+                            type="string",
+                            expected_values="hi, bye",
                         )
                     ],
                 ),
@@ -346,12 +352,18 @@ def make_complete_report() -> ReportModel:
                 interface=ModelInterfaceDescriptor(
                     inputs=[
                         ModelIODescriptor(
-                            name="i1", description="description", type="string"
+                            name="i1",
+                            description="description",
+                            type="string",
+                            expected_values="3, 4.5",
                         )
                     ],
                     outputs=[
                         ModelIODescriptor(
-                            name="o1", description="description", type="string"
+                            name="o1",
+                            description="description",
+                            type="string",
+                            expected_values="True, False",
                         )
                     ],
                 ),

@@ -400,6 +400,18 @@
           ],
           "default": null,
           "title": "Type"
+        },
+        "expected_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Values"
         }
       },
       "title": "ModelIODescriptor",

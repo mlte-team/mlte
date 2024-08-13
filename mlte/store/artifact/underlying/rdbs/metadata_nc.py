@@ -325,6 +325,7 @@ class DBModelIODescriptor(DBBase):
     name: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     type: Mapped[Optional[str]]
+    expected_values: Mapped[Optional[str]]
 
     negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("negotiation_card.id")

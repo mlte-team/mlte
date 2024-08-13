@@ -83,12 +83,18 @@ def test_intended_use() -> None:
                 interface=ModelInterfaceDescriptor(
                     inputs=[
                         ModelIODescriptor(
-                            name="i1", description="description", type="string"
+                            name="i1",
+                            description="description",
+                            type="string",
+                            expected_values="2, 4.5",
                         )
                     ],
                     outputs=[
                         ModelIODescriptor(
-                            name="o1", description="description", type="string"
+                            name="o1",
+                            description="description",
+                            type="string",
+                            expected_values="3, 4.5",
                         )
                     ],
                 ),

@@ -181,7 +181,12 @@ def test_model_resources_descriptor() -> None:
 def test_model_input_descriptor() -> None:
     """A model input descriptor model can be serialized and deserialized."""
     objects = [
-        ModelIODescriptor(description="description"),
+        ModelIODescriptor(
+            name="i1",
+            description="description",
+            type="string",
+            expected_values="2, 4.5",
+        ),
         ModelIODescriptor(),
     ]
 
@@ -197,12 +202,18 @@ def test_model_interface_descriptor() -> None:
         ModelInterfaceDescriptor(
             inputs=[
                 ModelIODescriptor(
-                    name="i1", description="description", type="string"
+                    name="i1",
+                    description="description",
+                    type="string",
+                    expected_values="2, 4.5",
                 )
             ],
             outputs=[
                 ModelIODescriptor(
-                    name="o1", description="description", type="string"
+                    name="o1",
+                    description="description",
+                    type="string",
+                    expected_values="3, 4.5",
                 )
             ],
         ),
@@ -239,12 +250,18 @@ def test_model_production_descriptor() -> None:
             interface=ModelInterfaceDescriptor(
                 inputs=[
                     ModelIODescriptor(
-                        name="i1", description="description", type="string"
+                        name="i1",
+                        description="description",
+                        type="string",
+                        expected_values="2, 4.5",
                     )
                 ],
                 outputs=[
                     ModelIODescriptor(
-                        name="o1", description="description", type="string"
+                        name="o1",
+                        description="description",
+                        type="string",
+                        expected_values="3, 4.5",
                     )
                 ],
             ),
@@ -276,12 +293,18 @@ def test_model_descriptor() -> None:
                 interface=ModelInterfaceDescriptor(
                     inputs=[
                         ModelIODescriptor(
-                            name="i1", description="description", type="string"
+                            name="i1",
+                            description="description",
+                            type="string",
+                            expected_values="2, 4.5",
                         )
                     ],
                     outputs=[
                         ModelIODescriptor(
-                            name="o1", description="description", type="string"
+                            name="o1",
+                            description="description",
+                            type="string",
+                            expected_values="3, 4.5",
                         )
                     ],
                 ),
