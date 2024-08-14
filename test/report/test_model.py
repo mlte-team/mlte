@@ -4,21 +4,10 @@ test/report/test_model.py
 Unit tests for report model.
 """
 
-from mlte.model.shared import (
-    GoalDescriptor,
-    MetricDescriptor,
-    ModelDescriptor,
-    ModelIODescriptor,
-    ModelResourcesDescriptor,
-    ProblemType,
-)
 from mlte.report.model import (
     CommentDescriptor,
-    IntendedUseDescriptor,
-    PerformanceDesciptor,
     QuantitiveAnalysisDescriptor,
     ReportModel,
-    SummaryDescriptor,
 )
 from test.fixture.artifact import make_complete_report
 
@@ -33,79 +22,6 @@ def test_report() -> None:
     for object in objects:
         s = object.to_json()
         d = ReportModel.from_json(s)
-        assert d == object
-
-
-def test_summary() -> None:
-    """A summary descriptor can be serialized and deserialized."""
-    objects = [
-        SummaryDescriptor(problem_type=ProblemType.CLASSIFICATION, task="task"),
-        SummaryDescriptor(),
-    ]
-    for object in objects:
-        s = object.to_json()
-        d = SummaryDescriptor.from_json(s)
-        assert d == object
-
-
-def test_performance() -> None:
-    """A performance descriptor can be serialized and deserialized."""
-    objects = [
-        PerformanceDesciptor(
-            goals=[
-                GoalDescriptor(
-                    description="description",
-                    metrics=[
-                        MetricDescriptor(
-                            description="description", baseline="baseline"
-                        )
-                    ],
-                )
-            ]
-        ),
-        PerformanceDesciptor(),
-    ]
-    for object in objects:
-        s = object.to_json()
-        d = PerformanceDesciptor.from_json(s)
-        assert d == object
-
-
-def test_intended_use() -> None:
-    """An intended use descriptor can be serialized and deserialized."""
-    objects = [
-        IntendedUseDescriptor(
-            usage_context="context",
-            production_requirements=ModelDescriptor(
-                deployment_platform="local server",
-                capability_deployment_mechanism="API",
-                input_specification=[
-                    ModelIODescriptor(
-                        name="i1",
-                        description="description",
-                        type="string",
-                        expected_values="2, 4.5",
-                    )
-                ],
-                output_specification=[
-                    ModelIODescriptor(
-                        name="o1",
-                        description="description",
-                        type="string",
-                        expected_values="3, 4.5",
-                    )
-                ],
-                production_compute_resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                ),
-            ),
-        ),
-        IntendedUseDescriptor(),
-    ]
-
-    for object in objects:
-        s = object.to_json()
-        d = IntendedUseDescriptor.from_json(s)
         assert d == object
 
 

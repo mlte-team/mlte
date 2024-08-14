@@ -113,7 +113,9 @@ class ModelIODescriptor(BaseModel):
 class ModelDescriptor(BaseModel):
     """A descriptor for the model."""
 
-    development_compute_resources: Optional[ModelResourcesDescriptor] = None
+    development_compute_resources: ModelResourcesDescriptor = (
+        ModelResourcesDescriptor()
+    )
     """A description of model development resource requirements."""
 
     deployment_platform: Optional[str] = None
@@ -236,3 +238,48 @@ class QASDescriptor(BaseModel):
 
     measure: Optional[str] = None
     """Used to determine if the goals of the responses of the scenario have been achieved."""
+
+
+# -----------------------------------------------------------------------------
+# System Subcomponents
+# -----------------------------------------------------------------------------
+
+
+class SystemDescriptor(BaseModel):
+    """A description of the system context."""
+
+    goals: List[GoalDescriptor] = []
+    """A description of system goals."""
+
+    problem_type: Optional[ProblemType] = None
+    """A description of the machine learning problem type."""
+
+    task: Optional[str] = None
+    """A description of the machine learning task."""
+
+    usage_context: Optional[str] = None
+    """A description of the usage context."""
+
+    risks: RiskDescriptor = RiskDescriptor()
+    """A description of risks associated with system failures."""
+
+
+# -----------------------------------------------------------------------------
+# NegotiationCardDataModel
+# -----------------------------------------------------------------------------
+
+
+class NegotiationCardDataModel(BaseModel):
+    """The model implementation for the NegotiationCard information."""
+
+    system: SystemDescriptor = SystemDescriptor()
+    """The descriptor for the system in which the model is integrated."""
+
+    data: List[DataDescriptor] = []
+    """A collection of descriptors for relevant data."""
+
+    model: ModelDescriptor = ModelDescriptor()
+    """The descriptor for the model."""
+
+    system_requirements: List[QASDescriptor] = []
+    """The descriptor of the system-level quality requirements."""

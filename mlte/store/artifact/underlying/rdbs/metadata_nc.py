@@ -35,6 +35,22 @@ class DBNegotiationCard(DBBase):
         cascade="all",
     )
 
+    # Main data.
+    negotiation_card_data_id: Mapped[int] = mapped_column(
+        ForeignKey("negotiation_card_data.id")
+    )
+    negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
+
+    def __repr__(self) -> str:
+        return f"NegotiationCard(id={self.id!r}, artifact_header={self.artifact_header!r})"
+
+
+class DBNegotiationCardData(DBBase):
+    __tablename__ = "negotiation_card_data"
+
+    # General
+    id: Mapped[int] = mapped_column(primary_key=True)
+
     # System
     sys_goals: Mapped[List[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
@@ -55,11 +71,11 @@ class DBNegotiationCard(DBBase):
     )
 
     # Model
-    model_dev_resources_id: Mapped[Optional[int]] = mapped_column(
+    model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
     model_dev_resources: Mapped[
-        Optional[DBModelResourcesDescriptor]
+        DBModelResourcesDescriptor
     ] = relationship(
         cascade="all",
         foreign_keys=[model_dev_resources_id],
@@ -79,7 +95,7 @@ class DBNegotiationCard(DBBase):
         ForeignKey("nc_model_resource.id")
     )
     model_prod_resources: Mapped[
-        Optional[DBModelResourcesDescriptor]
+        DBModelResourcesDescriptor
     ] = relationship(
         cascade="all",
         foreign_keys=[model_prod_resources_id],
@@ -89,9 +105,6 @@ class DBNegotiationCard(DBBase):
     system_requirements: Mapped[List[DBQAS]] = relationship(
         cascade="all, delete-orphan"
     )
-
-    def __repr__(self) -> str:
-        return f"NegotiationCard(id={self.id!r}, artifact_header={self.artifact_header!r})"
 
 
 # -------------------------------------------------------------------------
@@ -112,51 +125,17 @@ class DBReport(DBBase):
         cascade="all",
     )
 
-    # Summary
-    summary_task: Mapped[Optional[str]]
-    summary_problem_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("nc_problem_type.id")
+    # Main data.
+    negotiation_card_data_id: Mapped[int] = mapped_column(
+        ForeignKey("negotiation_card_data.id")
     )
-    summary_problem_type: Mapped[Optional[DBProblemType]] = relationship()
+    negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
 
-    # Performance results
+    # Results.
     validated_spec_id: Mapped[Optional[str]] = mapped_column(
         ForeignKey("validated_spec.id", ondelete="SET NULL")
     )
     validated_spec: Mapped[DBValidatedSpec] = relationship()
-    performance_goals: Mapped[List[DBGoalDescriptor]] = relationship(
-        cascade="all, delete-orphan"
-    )
-
-    # Intended use
-    intended_usage_context: Mapped[Optional[str]]
-    intended_reqs_model_prod_deployment_platform: Mapped[Optional[str]]
-    intended_reqs_model_prod_capability_deployment_mechanism: Mapped[
-        Optional[str]
-    ]
-
-    intended_reqs_model_inputs: Mapped[List[DBModelIODescriptor]] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.report_input_id")
-    intended_reqs_model_outputs: Mapped[List[DBModelIODescriptor]] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.report_output_id")
-
-    intended_reqs_model_prod_resources_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_model_resource.id")
-    )
-    intended_reqs_model_prod_resources: Mapped[
-        Optional[DBModelResourcesDescriptor]
-    ] = relationship(
-        cascade="all",
-        foreign_keys=[intended_reqs_model_prod_resources_id],
-    )
-
-    # Risks
-    risks_fp: Mapped[Optional[str]]
-    risks_fn: Mapped[Optional[str]]
-    risks_other: Mapped[Optional[str]]
-
-    # Data
-    data_descriptors: Mapped[List[DBDataDescriptor]] = relationship(
-        cascade="all, delete-orphan"
-    )
 
     # Comments
     comments: Mapped[List[DBCommentDescriptor]] = relationship(
@@ -196,9 +175,8 @@ class DBGoalDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
-    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     metrics: Mapped[List[DBMetricDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="goal_descriptor"
@@ -251,9 +229,8 @@ class DBDataDescriptor(DBBase):
         ForeignKey("nc_data_classification.id")
     )
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
-    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     classification: Mapped[DBDataClassification] = relationship()
     labels: Mapped[List[DBLabelDescriptor]] = relationship(
@@ -328,13 +305,11 @@ class DBModelIODescriptor(DBBase):
     expected_values: Mapped[Optional[str]]
 
     negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
     negotiation_card_output_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
-    report_input_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
-    report_output_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     def __repr__(self) -> str:
         return f"ModelIODescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r})"
@@ -349,9 +324,8 @@ class DBModelResourcesDescriptor(DBBase):
     memory: Mapped[Optional[str]]
     storage: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
-    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     def __repr__(self) -> str:
         return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, memory={self.memory!r}, storage={self.storage!r})"
@@ -369,9 +343,8 @@ class DBQAS(DBBase):
     measure: Mapped[Optional[str]]
 
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card.id")
+        ForeignKey("negotiation_card_data.id")
     )
-    # report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
 
     def __repr__(self) -> str:
         return f"ModelIODescriptor(id={self.id!r}, quality={self.quality!r}, stimulus={self.stimulus!r}, source={self.source!r}, environment={self.environment!r}, response={self.response!r}, measure={self.measure!r})"
