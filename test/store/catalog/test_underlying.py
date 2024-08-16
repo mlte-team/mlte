@@ -4,8 +4,6 @@ test/store/catalog/test_underlying.py
 Unit tests for the underlying catalog store implementations.
 """
 
-from pathlib import Path
-
 import pytest
 
 import mlte.store.error as errors
@@ -58,19 +56,13 @@ def get_test_entry(
 # -----------------------------------------------------------------------------
 
 
-def test_init_memory() -> None:
-    """An in-memory store can be initialized."""
-    _ = create_memory_store()
+@pytest.mark.parametrize("store_fixture_name", catalog_stores())
+def test_init_store(store_fixture_name: str, create_test_store) -> None:  # noqa
+    """A store can be initialized."""
+    _ = create_test_store(store_fixture_name)
 
-
-def test_init_fs(tmp_path: Path) -> None:
-    """An local FS store can be initialized."""
-    _ = create_fs_store(tmp_path)
-
-
-def test_init_rdbs() -> None:
-    """An local RDBS store can be initialized."""
-    _ = create_rdbs_store()
+    # If we get here, the fixture was called and the store was initialized.
+    assert True
 
 
 @pytest.mark.parametrize("store_fixture_name", catalog_stores())

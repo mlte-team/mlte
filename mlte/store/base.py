@@ -166,6 +166,9 @@ class ResourceMapper:
     )
     """Default error message for this abstract class."""
 
+    DEFAULT_LIST_LIMIT = 100
+    """Default limit for lists."""
+
     def create(self, new_resource: Any) -> Any:
         """
         Create a new resource.
@@ -207,7 +210,7 @@ class ResourceMapper:
 
     def list_details(
         self,
-        limit: int = 100,
+        limit: int = DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[Any]:
         """
