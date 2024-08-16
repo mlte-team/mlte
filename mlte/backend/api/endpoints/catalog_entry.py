@@ -161,7 +161,7 @@ def list_catalog_entries_all_catalogs(
     """
     with dependencies.catalog_stores_session() as catalog_stores:
         try:
-            return catalog_stores.list_entries()
+            return catalog_stores.list_details()
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -179,6 +179,12 @@ def search(
     """
     with dependencies.catalog_stores_session() as catalog_stores:
         try:
-            return catalog_stores.search_entries(query=query)
+            return catalog_stores.search(query=query)
         except Exception as e:
             raise_http_internal_error(e)
+
+
+# TODO:
+# 1. Implement HTTP Catalog Store
+# 2. Review default groups for test catalog
+# 3. Add unit tests for catalog endpoints

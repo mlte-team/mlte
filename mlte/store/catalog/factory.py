@@ -7,7 +7,8 @@ Top-level functions for catalog store creation.
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
-from mlte.store.catalog.underlying.http import HttpCatalogStore
+
+# from mlte.store.catalog.underlying.http import HttpCatalogStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 

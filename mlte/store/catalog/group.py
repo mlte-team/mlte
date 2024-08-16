@@ -80,7 +80,7 @@ class CatalogStoreGroupSession(StoreSession):
             )
         return self.sessions[catalog_id]
 
-    def list_entries(
+    def list_details(
         self,
         catalog_id: Optional[str] = None,
         limit: int = 100,
@@ -111,7 +111,7 @@ class CatalogStoreGroupSession(StoreSession):
                 results.extend(partial_results)
             return results[offset : offset + limit]
 
-    def search_entries(
+    def search(
         self,
         catalog_id: Optional[str] = None,
         query: Query = Query(),

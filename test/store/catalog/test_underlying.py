@@ -125,7 +125,11 @@ def test_catalog_group(
         group_session.sessions[store2_id].entry_mapper.create(test_entry2)
 
         # Test listing entries.
-        entries = group_session.list_entries()
+        entries = group_session.list_details()
+        assert len(entries) == 2
+
+        # Test searching entries.
+        entries = group_session.search()
         assert len(entries) == 2
 
 
