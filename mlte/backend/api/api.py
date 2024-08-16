@@ -8,6 +8,7 @@ from fastapi import APIRouter
 
 from mlte.backend.api.endpoints import (
     artifact,
+    catalog_entry,
     context,
     group,
     health,
@@ -25,6 +26,7 @@ api_router.include_router(context.router, tags=["context"])
 api_router.include_router(token.router, tags=["token"])
 api_router.include_router(user.router, tags=["user"])
 api_router.include_router(group.router, tags=["group"])
+api_router.include_router(catalog_entry.router, tags=["catalog_entry"])
 api_router.include_router(
     artifact.router,
     prefix=f"{_ARTIFACT_PREFIX}/artifact",

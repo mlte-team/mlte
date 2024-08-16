@@ -15,6 +15,7 @@ from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.catalog.model import CatalogEntry
+from mlte.store.common.query import Query
 
 # The router exported by this submodule
 router = APIRouter()
@@ -34,8 +35,13 @@ def create_catalog_entry(
     """
     with dependencies.catalog_stores_session() as catalog_stores:
         try:
+            entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.create(
                 entry
+            )
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
@@ -59,6 +65,7 @@ def edit_catalog_entry(
     """
     with dependencies.catalog_stores_session() as catalog_stores:
         try:
+            entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.edit(
                 entry
             )
@@ -70,7 +77,7 @@ def edit_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.put("/catalog/{catalog_id}/entry/{catalog_entry_id}")
+@router.get("/catalog/{catalog_id}/entry/{catalog_entry_id}")
 def read_catalog_entry(
     *,
     catalog_id: str,
@@ -95,7 +102,7 @@ def read_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.get("/catalog/{catalog_id}/catalog_entry")
+@router.get("/catalog/{catalog_id}/entry")
 def list_catalog_entries(
     *,
     catalog_id: str,
@@ -108,11 +115,15 @@ def list_catalog_entries(
     with dependencies.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(catalog_id).entry_mapper.list()
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
         except Exception as e:
             raise_http_internal_error(e)
 
 
-@router.get("/catalog/{catalog_id}/catalog_entries/details")
+@router.get("/catalog/{catalog_id}/entries/details")
 def list_catalog_entries_details(
     *,
     catalog_id: str,
@@ -127,12 +138,16 @@ def list_catalog_entries_details(
             return catalog_stores.get_session(
                 catalog_id
             ).entry_mapper.list_details()
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
         except Exception as e:
             raise_http_internal_error(e)
 
 
 # NOTE: do we also need a separate endpoint with a list of only the ids of all catalog entries? Doubtful.
-@router.get("/catalog_entries/details")
+@router.get("/catalogs/entries/details")
 def list_catalog_entry_details_all_catalogs(
     *,
     current_user: AuthorizedUser,
@@ -148,7 +163,7 @@ def list_catalog_entry_details_all_catalogs(
             raise_http_internal_error(e)
 
 
-@router.put("/catalog/{catalog_id}/entry/{catalog_entry_id}")
+@router.delete("/catalog/{catalog_id}/entry/{catalog_entry_id}")
 def delete_catalog_entry(
     *,
     catalog_id: str,
@@ -173,4 +188,21 @@ def delete_catalog_entry(
             raise_http_internal_error(e)
 
 
-# TODO: add endpoint for search functionality.
+# TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
+# and it forces us to use write permissions to reach this endpoint. This should be fixed.
+@router.post("/catalogs/entries/search")
+def search(
+    *,
+    query: Query,
+    current_user: AuthorizedUser,
+) -> List[CatalogEntry]:
+    """
+    Search MLTE catalog entries, with details for each entry.
+    :param query: The search query.
+    :return: A collection of entries with their details for the provided query.
+    """
+    with dependencies.catalog_stores_session() as catalog_stores:
+        try:
+            return catalog_stores.search_entries(query=query)
+        except Exception as e:
+            raise_http_internal_error(e)

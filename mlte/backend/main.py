@@ -41,7 +41,7 @@ def run(
     host: str,
     port: int,
     store_uri: str,
-    catalog_store_uris: Dict[str, str],
+    catalog_uris: Dict[str, str],
     allowed_origins: List[str],
     jwt_secret: str,
 ) -> int:
@@ -50,6 +50,7 @@ def run(
     :param host: The application host
     :param port: The application port
     :param store_uri: The store URI string
+    :param catalog_uris: A dict of URIs for catalog stores
     :param allowed_origins: A list of allowed CORS origins
     :param jwt_secret: A secret random string key used to sign tokens
     :return: Return code
@@ -79,7 +80,7 @@ def run(
     state.set_user_store(user_store)
 
     # Add all configured catalog stores.
-    for id, uri in catalog_store_uris.items():
+    for id, uri in catalog_uris.items():
         state.add_catalog_store(uri, id)
 
     # Set the token signing key.

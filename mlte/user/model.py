@@ -150,6 +150,9 @@ class ResourceType(StrEnum):
     GROUP = "group"
     """Group resources."""
 
+    CATALOG_ENTRY = "catalog"
+    """Entries in test catalog."""
+
     @staticmethod
     def get_type_from_url(url: str) -> Optional[ResourceType]:
         """Returns the resource type for the given URL."""
