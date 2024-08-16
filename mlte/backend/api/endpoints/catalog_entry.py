@@ -21,7 +21,7 @@ from mlte.store.common.query import Query
 router = APIRouter()
 
 
-@router.post("/catalog/{catalog_id}/entry")
+@router.post("/{catalog_id}/entry")
 def create_catalog_entry(
     *,
     catalog_id: str,
@@ -51,7 +51,7 @@ def create_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.put("/catalog/{catalog_id}/entry")
+@router.put("/{catalog_id}/entry")
 def edit_catalog_entry(
     *,
     catalog_id: str,
@@ -77,7 +77,7 @@ def edit_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.get("/catalog/{catalog_id}/entry/{catalog_entry_id}")
+@router.get("/{catalog_id}/entry/{catalog_entry_id}")
 def read_catalog_entry(
     *,
     catalog_id: str,
@@ -102,68 +102,7 @@ def read_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.get("/catalog/{catalog_id}/entry")
-def list_catalog_entries(
-    *,
-    catalog_id: str,
-    current_user: AuthorizedUser,
-) -> List[str]:
-    """
-    List MLTE catalog entries.
-    :return: A collection of catalog entry ids.
-    """
-    with dependencies.catalog_stores_session() as catalog_stores:
-        try:
-            return catalog_stores.get_session(catalog_id).entry_mapper.list()
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
-        except Exception as e:
-            raise_http_internal_error(e)
-
-
-@router.get("/catalog/{catalog_id}/entries/details")
-def list_catalog_entries_details(
-    *,
-    catalog_id: str,
-    current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
-    """
-    List MLTE catalog entries, with details for each entry.
-    :return: A collection of entries with their details.
-    """
-    with dependencies.catalog_stores_session() as catalog_stores:
-        try:
-            return catalog_stores.get_session(
-                catalog_id
-            ).entry_mapper.list_details()
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
-        except Exception as e:
-            raise_http_internal_error(e)
-
-
-# NOTE: do we also need a separate endpoint with a list of only the ids of all catalog entries? Doubtful.
-@router.get("/catalogs/entries/details")
-def list_catalog_entry_details_all_catalogs(
-    *,
-    current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
-    """
-    List MLTE catalog entries, with details for each entry.
-    :return: A collection of entries with their details.
-    """
-    with dependencies.catalog_stores_session() as catalog_stores:
-        try:
-            return catalog_stores.list_entries()
-        except Exception as e:
-            raise_http_internal_error(e)
-
-
-@router.delete("/catalog/{catalog_id}/entry/{catalog_entry_id}")
+@router.delete("/{catalog_id}/entry/{catalog_entry_id}")
 def delete_catalog_entry(
     *,
     catalog_id: str,
@@ -188,9 +127,46 @@ def delete_catalog_entry(
             raise_http_internal_error(e)
 
 
-# TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
-# and it forces us to use write permissions to reach this endpoint. This should be fixed.
-@router.post("/catalogs/entries/search")
+@router.get("/{catalog_id}/entry/")
+def list_catalog_entries(
+    *,
+    catalog_id: str,
+    current_user: AuthorizedUser,
+) -> List[CatalogEntry]:
+    """
+    List MLTE catalog entries, with details for each entry.
+    :return: A collection of entries with their details.
+    """
+    with dependencies.catalog_stores_session() as catalog_stores:
+        try:
+            return catalog_stores.get_session(
+                catalog_id
+            ).entry_mapper.list_details()
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception as e:
+            raise_http_internal_error(e)
+
+
+@router.get("s/entry")
+def list_catalog_entries_all_catalogs(
+    *,
+    current_user: AuthorizedUser,
+) -> List[CatalogEntry]:
+    """
+    List MLTE catalog entries, with details for each entry.
+    :return: A collection of entries with their details.
+    """
+    with dependencies.catalog_stores_session() as catalog_stores:
+        try:
+            return catalog_stores.list_entries()
+        except Exception as e:
+            raise_http_internal_error(e)
+
+
+@router.post("s/entry/search")
 def search(
     *,
     query: Query,
