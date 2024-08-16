@@ -36,7 +36,7 @@ router = APIRouter()
 # -----------------------------------------------------------------------------
 
 
-@router.get("/user/me")
+@router.get("/me")
 def read_user_me(
     current_user: AuthorizedUser,
 ) -> BasicUser:
@@ -49,7 +49,7 @@ def read_user_me(
     return read_user(**parameters)
 
 
-@router.get("/user/me/models")
+@router.get("/me/models")
 def list_user_models_me(
     *,
     current_user: AuthorizedUser,
@@ -68,7 +68,7 @@ def list_user_models_me(
 # -----------------------------------------------------------------------------
 
 
-@router.post("/user")
+@router.post("")
 def create_user(
     *,
     user: UserWithPassword,
@@ -126,7 +126,7 @@ def create_user(
             raise_http_internal_error(e)
 
 
-@router.put("/user")
+@router.put("")
 def edit_user(
     *,
     user: Union[UserWithPassword, BasicUser],
@@ -160,7 +160,7 @@ def edit_user(
             raise_http_internal_error(e)
 
 
-@router.get("/user/{username}")
+@router.get("/{username}")
 def read_user(
     *,
     username: str,
@@ -185,7 +185,7 @@ def read_user(
             raise_http_internal_error(e)
 
 
-@router.get("/user")
+@router.get("")
 def list_users(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -200,7 +200,7 @@ def list_users(
             raise_http_internal_error(e)
 
 
-@router.get("/users/details")
+@router.get("s/details")
 def list_users_details(
     current_user: AuthorizedUser,
 ) -> List[BasicUser]:
@@ -222,7 +222,7 @@ def list_users_details(
             raise_http_internal_error(e)
 
 
-@router.delete("/user/{username}")
+@router.delete("/{username}")
 def delete_user(
     *,
     username: str,
@@ -249,7 +249,7 @@ def delete_user(
             raise_http_internal_error(e)
 
 
-@router.get("/user/{username}/models")
+@router.get("/{username}/models")
 def list_user_models(
     *,
     username: str,

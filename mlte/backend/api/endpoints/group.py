@@ -20,7 +20,7 @@ from mlte.user.model import Group, Permission
 router = APIRouter()
 
 
-@router.post("/group")
+@router.post("")
 def create_group(
     *,
     group: Group,
@@ -42,7 +42,7 @@ def create_group(
             raise_http_internal_error(e)
 
 
-@router.put("/group")
+@router.put("")
 def edit_group(
     *,
     group: Group,
@@ -64,7 +64,7 @@ def edit_group(
             raise_http_internal_error(e)
 
 
-@router.get("/group/{group_name}")
+@router.get("/{group_name}")
 def read_group(
     *,
     group_name: str,
@@ -86,7 +86,7 @@ def read_group(
             raise_http_internal_error(e)
 
 
-@router.get("/group")
+@router.get("")
 def list_groups(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -101,7 +101,7 @@ def list_groups(
             raise_http_internal_error(e)
 
 
-@router.get("/groups/details")
+@router.get("s/details")
 def list_group_details(
     current_user: AuthorizedUser,
 ) -> List[Group]:
@@ -116,7 +116,7 @@ def list_group_details(
             raise_http_internal_error(e)
 
 
-@router.delete("/group/{group_name}")
+@router.delete("/{group_name}")
 def delete_group(
     *,
     group_name: str,
@@ -138,7 +138,7 @@ def delete_group(
             raise_http_internal_error(e)
 
 
-@router.get("/groups/permissions")
+@router.get("s/permissions")
 def list_permissions(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -153,7 +153,7 @@ def list_permissions(
             raise_http_internal_error(e)
 
 
-@router.get("/groups/permissions/details")
+@router.get("s/permissions/details")
 def list_permission_details(
     current_user: AuthorizedUser,
 ) -> List[Permission]:

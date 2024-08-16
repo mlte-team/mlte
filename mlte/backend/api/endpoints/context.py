@@ -23,7 +23,7 @@ from mlte.user.model import ResourceType
 router = APIRouter()
 
 
-@router.post("/model")
+@router.post("")
 def create_model(
     *,
     model: ModelCreate,
@@ -65,7 +65,7 @@ def create_model(
     return created_model
 
 
-@router.get("/model/{model_id}")
+@router.get("/{model_id}")
 def read_model(
     *,
     model_id: str,
@@ -89,7 +89,7 @@ def read_model(
         raise_http_internal_error(ex)
 
 
-@router.get("/model")
+@router.get("")
 def list_models(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -108,7 +108,7 @@ def list_models(
             raise_http_internal_error(ex)
 
 
-@router.delete("/model/{model_id}")
+@router.delete("/{model_id}")
 def delete_model(
     *,
     model_id: str,
@@ -143,7 +143,7 @@ def delete_model(
     return deleted_model
 
 
-@router.post("/model/{model_id}/version")
+@router.post("/{model_id}/version")
 def create_version(
     *,
     model_id: str,
@@ -171,7 +171,7 @@ def create_version(
             raise_http_internal_error(ex)
 
 
-@router.get("/model/{model_id}/version/{version_id}")
+@router.get("/{model_id}/version/{version_id}")
 def read_version(
     *,
     model_id: str,
@@ -195,7 +195,7 @@ def read_version(
             raise_http_internal_error(ex)
 
 
-@router.get("/model/{model_id}/version")
+@router.get("/{model_id}/version")
 def list_versions(
     model_id: str,
     current_user: AuthorizedUser,
@@ -216,7 +216,7 @@ def list_versions(
             raise_http_internal_error(ex)
 
 
-@router.delete("/model/{model_id}/version/{version_id}")
+@router.delete("/{model_id}/version/{version_id}")
 def delete_version(
     *,
     model_id: str,
