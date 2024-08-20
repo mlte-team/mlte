@@ -1324,13 +1324,13 @@ if (useRoute().query.artifactId !== undefined) {
           form.value.timestamp = new Date(
             response._data.header.timestamp * 1000,
           ).toLocaleString("en-US");
-          form.value.system = response._data.body.system;
-          form.value.data = response._data.body.data;
-          form.value.model = response._data.body.model;
+          form.value.system = response._data.body.nc_data.system;
+          form.value.data = response._data.body.nc_data.data;
+          form.value.model = response._data.body.nc_data.model;
           form.value.system_requirements =
-            response._data.body.system_requirements;
+            response._data.body.nc_data.system_requirements;
 
-          const problemType = response._data.body.system.problem_type;
+          const problemType = response._data.body.nc_data.system.problem_type;
           if (
             problemTypeOptions.find((x) => x.value === problemType)?.value !==
             undefined
@@ -1340,7 +1340,7 @@ if (useRoute().query.artifactId !== undefined) {
             )?.value;
           }
 
-          response._data.data.forEach((item) => {
+          response._data.body.nc_data.data.forEach((item) => {
             const classification = item.classification;
             if (
               classificationOptions.find((x) => x.value === classification)
