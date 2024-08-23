@@ -635,11 +635,17 @@
       </template>
     </UsaTextarea>
 
-    <FormFieldsInputSpecification v-model="form.nc_data.model.input_specification" />
+    <FormFieldsInputSpecification
+      v-model="form.nc_data.model.input_specification"
+    />
 
-    <FormFieldsOutputSpecification v-model="form.nc_data.model.output_specification" />
+    <FormFieldsOutputSpecification
+      v-model="form.nc_data.model.output_specification"
+    />
 
-    <FormFieldsProductionCompute v-model="form.nc_data.model.production_compute_resources" />
+    <FormFieldsProductionCompute
+      v-model="form.nc_data.model.production_compute_resources"
+    />
 
     <h2 class="section-header">System Requirements</h2>
     <p>
