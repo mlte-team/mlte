@@ -67,7 +67,7 @@
     </UsaTextInput>
     <div v-else>
       <h3>Last Modified by:</h3>
-      {{ form.creator }} - {{ form.timestamp }}
+      {{ creator }} - {{ timestamp }}
     </div>
 
     <h2 class="section-header">System Information</h2>
@@ -955,9 +955,10 @@ const systemModalRows = ref([
   },
 ]);
 
+const creator = ref("");
+const timestamp = ref("");
 const form = ref({
-  creator: "",
-  timestamp: "",
+  artifact_type: "negotiation_card",
   nc_data: {
     system: {
       goals: [
@@ -1110,11 +1111,11 @@ if (useRoute().query.artifactId !== undefined) {
       },
       onResponse({ response }) {
         if (isValidNegotiation(response._data)) {
-          form.value.creator = response._data.header.creator;
-          form.value.timestamp = new Date(
+          creator.value = response._data.header.creator;
+          timestamp.value = new Date(
             response._data.header.timestamp * 1000,
           ).toLocaleString("en-US");
-          form.value.nc_data = response._data.body.nc_data;
+          form.value = response._data.body;
 
           const problemType = response._data.body.nc_data.system.problem_type;
           if (
@@ -1165,10 +1166,7 @@ async function submit() {
       timestamp: -1,
       creator: "",
     },
-    body: {
-      artifact_type: "negotiation_card",
-      nc_data: form.value.nc_data,
-    },
+    body: form.value,
   };
 
   if (isValidNegotiation(artifact)) {
@@ -1353,8 +1351,12 @@ function descriptorUpload(event: Event, descriptorName: string) {
                     ],
                   )
                 ) {
-                  // TODO : FIGURE OUT HOW I AM GOING TO CALL THIS WITH OUTPUT AS A COMPONENT
-                  addOutputSpec();
+                  form.value.nc_data.model.output_specification.push({
+                    name: "",
+                    description: "",
+                    type: "",
+                    expected_values: "",
+                  });
                   lastSpecIndex += 1;
                 }
 
