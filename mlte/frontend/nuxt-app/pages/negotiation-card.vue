@@ -394,7 +394,7 @@
             </div>
             <div class="inline-button">
               <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
-                Delete label
+                Delete Label
               </DeleteButton>
             </div>
           </div>
@@ -1333,6 +1333,48 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.memory;
           form.value.nc_data.model.development_compute_resources.storage =
             document.computing_resources.storage;
+
+            document.upstream_components.forEach(
+            (component: {
+              component_name: string;
+              output_spec: [
+                {
+                  item_name: string;
+                  item_description: string;
+                  item_type: string;
+                  expected_values: string;
+                },
+              ];
+              ml_component: boolean;
+            }) => {
+              component.output_spec.forEach((spec) => {
+                let lastSpecIndex =
+                  form.value.nc_data.model.input_specification.length - 1;
+                if (
+                  !specEmpty(
+                    form.value.nc_data.model.input_specification[
+                      lastSpecIndex
+                    ],
+                  )
+                ) {
+                  form.value.nc_data.model.input_specification.push({
+                    name: "",
+                    description: "",
+                    type: "",
+                    expected_values: "",
+                  });
+                  lastSpecIndex += 1;
+                }
+
+                form.value.nc_data.model.input_specification[lastSpecIndex] = {
+                  name: component.component_name + "." + spec.item_name,
+                  description: spec.item_description,
+                  type: spec.item_type,
+                  expected_values: spec.expected_values,
+                };
+              });
+            },
+          );
 
           document.downstream_components.forEach(
             (component: {
