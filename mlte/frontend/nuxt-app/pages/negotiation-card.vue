@@ -567,52 +567,7 @@
     </div>
 
     <h2 class="section-header">Model Information</h2>
-    <div class="input-group">
-      <SubHeader>
-        Development Compute Resources
-        <template #example>
-          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
-        </template>
-        <template #info>
-          Describe the amount and type of compute resources needed for training.
-        </template>
-      </SubHeader>
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.nc_data.model.development_compute_resources.gpu"
-          >
-            <template #label> Graphics Processing Units (GPUs) </template>
-          </UsaTextInput>
-        </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.nc_data.model.development_compute_resources.cpu"
-          >
-            <template #label> Central Processing Units (CPUs) </template>
-          </UsaTextInput>
-        </div>
-      </div>
-
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.nc_data.model.development_compute_resources.memory"
-          >
-            <template #label> Memory </template>
-          </UsaTextInput>
-        </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.nc_data.model.development_compute_resources.storage"
-          >
-            <template #label> Storage </template>
-          </UsaTextInput>
-        </div>
-      </div>
-    </div>
+    <FormFieldsDevelopmentCompute v-model="form.nc_data.model.development_compute_resources" />
 
     <UsaTextarea v-model="form.nc_data.model.deployment_platform">
       <template #label>
