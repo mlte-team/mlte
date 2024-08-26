@@ -6,42 +6,11 @@ Model implementation for negotiation card artifact.
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Literal
 
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
-from mlte.model.shared import (
-    DataDescriptor,
-    GoalDescriptor,
-    ModelDescriptor,
-    ProblemType,
-    QASDescriptor,
-    RiskDescriptor,
-)
-
-# -----------------------------------------------------------------------------
-# System Subcomponents
-# -----------------------------------------------------------------------------
-
-
-class SystemDescriptor(BaseModel):
-    """A description of the system context."""
-
-    goals: List[GoalDescriptor] = []
-    """A description of system goals."""
-
-    problem_type: Optional[ProblemType] = None
-    """A description of the machine learning problem type."""
-
-    task: Optional[str] = None
-    """A description of the machine learning task."""
-
-    usage_context: Optional[str] = None
-    """A description of the usage context."""
-
-    risks: RiskDescriptor = RiskDescriptor()
-    """A description of risks associated with system failures."""
-
+from mlte.model.shared import NegotiationCardDataModel
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
@@ -57,14 +26,5 @@ class NegotiationCardModel(BaseModel):
 
     """Union discriminator."""
 
-    system: SystemDescriptor = SystemDescriptor()
-    """The descriptor for the system in which the model is integrated."""
-
-    data: List[DataDescriptor] = []
-    """A collection of descriptors for relevant data."""
-
-    model: ModelDescriptor = ModelDescriptor()
-    """The descriptor for the model."""
-
-    system_requirements: List[QASDescriptor] = []
-    """The descriptor of the system-level quality requirements."""
+    nc_data: NegotiationCardDataModel = NegotiationCardDataModel()
+    """The specific data for this negotiation card."""

@@ -302,58 +302,60 @@
     "ModelDescriptor": {
       "description": "A descriptor for the model.",
       "properties": {
-        "development": {
+        "development_compute_resources": {
           "allOf": [
             {
-              "$ref": "#/$defs/ModelDevelopmentDescriptor"
+              "$ref": "#/$defs/ModelResourcesDescriptor"
             }
           ],
           "default": {
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
           }
         },
-        "production": {
-          "allOf": [
+        "deployment_platform": {
+          "anyOf": [
             {
-              "$ref": "#/$defs/ModelProductionDescriptor"
+              "type": "string"
+            },
+            {
+              "type": "null"
             }
           ],
-          "default": {
-            "deployment_platform": null,
-            "capability_deployment_mechanism": null,
-            "interface": {
-              "input": {
-                "description": null,
-                "name": null,
-                "type": null
-              },
-              "output": {
-                "description": null,
-                "name": null,
-                "type": null
-              }
+          "default": null,
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
             },
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
+            {
+              "type": "null"
             }
-          }
-        }
-      },
-      "title": "ModelDescriptor",
-      "type": "object"
-    },
-    "ModelDevelopmentDescriptor": {
-      "description": "A descriptor for model development considerations.",
-      "properties": {
-        "resources": {
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
+        },
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
+        },
+        "production_compute_resources": {
           "allOf": [
             {
               "$ref": "#/$defs/ModelResourcesDescriptor"
@@ -367,7 +369,7 @@
           }
         }
       },
-      "title": "ModelDevelopmentDescriptor",
+      "title": "ModelDescriptor",
       "type": "object"
     },
     "ModelIODescriptor": {
@@ -408,103 +410,21 @@
           ],
           "default": null,
           "title": "Type"
+        },
+        "expected_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Values"
         }
       },
       "title": "ModelIODescriptor",
-      "type": "object"
-    },
-    "ModelInterfaceDescriptor": {
-      "description": "A description of the model interface.",
-      "properties": {
-        "input": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
-        },
-        "output": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
-        }
-      },
-      "title": "ModelInterfaceDescriptor",
-      "type": "object"
-    },
-    "ModelProductionDescriptor": {
-      "description": "A descriptor for model production considerations.",
-      "properties": {
-        "deployment_platform": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Deployment Platform"
-        },
-        "capability_deployment_mechanism": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Capability Deployment Mechanism"
-        },
-        "interface": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelInterfaceDescriptor"
-            }
-          ],
-          "default": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
-          }
-        },
-        "resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
-        }
-      },
-      "title": "ModelProductionDescriptor",
       "type": "object"
     },
     "ModelResourcesDescriptor": {
@@ -560,6 +480,72 @@
         }
       },
       "title": "ModelResourcesDescriptor",
+      "type": "object"
+    },
+    "NegotiationCardDataModel": {
+      "description": "The model implementation for the NegotiationCard information.",
+      "properties": {
+        "system": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SystemDescriptor"
+            }
+          ],
+          "default": {
+            "goals": [],
+            "problem_type": null,
+            "task": null,
+            "usage_context": null,
+            "risks": {
+              "fn": null,
+              "fp": null,
+              "other": null
+            }
+          }
+        },
+        "data": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DataDescriptor"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "model": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelDescriptor"
+            }
+          ],
+          "default": {
+            "development_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            },
+            "deployment_platform": null,
+            "capability_deployment_mechanism": null,
+            "input_specification": [],
+            "output_specification": [],
+            "production_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            }
+          }
+        },
+        "system_requirements": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QASDescriptor"
+          },
+          "title": "System Requirements",
+          "type": "array"
+        }
+      },
+      "title": "NegotiationCardDataModel",
       "type": "object"
     },
     "ProblemType": {
@@ -775,78 +761,45 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "system": {
+    "nc_data": {
       "allOf": [
         {
-          "$ref": "#/$defs/SystemDescriptor"
+          "$ref": "#/$defs/NegotiationCardDataModel"
         }
       ],
       "default": {
-        "goals": [],
-        "problem_type": null,
-        "task": null,
-        "usage_context": null,
-        "risks": {
-          "fn": null,
-          "fp": null,
-          "other": null
-        }
-      }
-    },
-    "data": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/DataDescriptor"
-      },
-      "title": "Data",
-      "type": "array"
-    },
-    "model": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/ModelDescriptor"
-        }
-      ],
-      "default": {
-        "development": {
-          "resources": {
+        "system": {
+          "goals": [],
+          "problem_type": null,
+          "risks": {
+            "fn": null,
+            "fp": null,
+            "other": null
+          },
+          "task": null,
+          "usage_context": null
+        },
+        "data": [],
+        "model": {
+          "capability_deployment_mechanism": null,
+          "deployment_platform": null,
+          "development_compute_resources": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
+          },
+          "input_specification": [],
+          "output_specification": [],
+          "production_compute_resources": {
             "cpu": null,
             "gpu": null,
             "memory": null,
             "storage": null
           }
         },
-        "production": {
-          "capability_deployment_mechanism": null,
-          "deployment_platform": null,
-          "interface": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
-          },
-          "resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
-        }
+        "system_requirements": []
       }
-    },
-    "system_requirements": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/QASDescriptor"
-      },
-      "title": "System Requirements",
-      "type": "array"
     }
   },
   "title": "NegotiationCardModel",

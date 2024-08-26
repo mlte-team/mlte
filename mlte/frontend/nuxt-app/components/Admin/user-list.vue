@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(user, index) in modelValue" :key="index">
+      <tr v-for="(user, index) in props.modelValue" :key="index">
         <td>
           {{ user.username }}
         </td>

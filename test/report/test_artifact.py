@@ -7,10 +7,9 @@ Unit tests for report artifact type.
 from typing import Tuple
 
 from mlte.context.context import Context
-from mlte.model.shared import ProblemType
+from mlte.model.shared import ProblemType, SystemDescriptor
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
-from mlte.report.model import SummaryDescriptor
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
 
@@ -43,7 +42,7 @@ def test_populate_from() -> None:
 
     report = Report(
         "my-report",
-        summary=SummaryDescriptor(problem_type=ProblemType.BENCHMARKING),
+        system=SystemDescriptor(problem_type=ProblemType.BENCHMARKING),
     )
 
     card = NegotiationCard("my-card")
@@ -51,5 +50,5 @@ def test_populate_from() -> None:
 
     new = report.populate_from(card)
 
-    assert new.summary.problem_type == ProblemType.CLASSIFICATION
-    assert report.summary.problem_type == ProblemType.BENCHMARKING
+    assert new.system.problem_type == ProblemType.CLASSIFICATION
+    assert report.system.problem_type == ProblemType.BENCHMARKING
