@@ -657,154 +657,7 @@
       v-model="form.nc_data.model.production_compute_resources"
     />
 
-    <h2 class="section-header">System Requirements</h2>
-    <p>
-      System-dependent requirements and constraints placed on the model under
-      development. The fields below correspond to parts of a quality attribute
-      scenario, which is a construct used to clearly define system requirements.
-      As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation. Click on the "Example"
-      button below for a list of examples.
-    </p>
-
-    <div class="input-group">
-      <SubHeader :render-info="false">
-        Requirements
-        <template #example>
-          <UsaTable
-            :headers="systemModalHeaders"
-            :rows="systemModalRows"
-            borderless
-            class="table"
-          />
-        </template>
-      </SubHeader>
-      <div
-        v-for="(requirement, requirementIndex) in form.nc_data
-          .system_requirements"
-        :key="requirementIndex"
-      >
-        <h3 class="no-margin-sub-header">
-          Requirement {{ requirementIndex + 1 }}
-        </h3>
-        <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
-          <b>Scenario for {{ requirement.quality }}: </b>
-          {{ requirement.stimulus }} from {{ requirement.source }} during
-          {{ requirement.environment }}. {{ requirement.response }}
-          {{ requirement.measure }}.
-        </p>
-        <UsaTextInput v-model="requirement.quality">
-          <template #label>
-            <b>System Quality:</b> What is the model property to be tested, such
-            as accuracy, performance, robustness, fairness, or resource
-            consumption?
-            <InfoIcon>
-              Property by which the model will be evaluated in the context of
-              the system <br />
-              (e.g., Accuracy, Performance, Robustness, Fairness, Resource
-              Consumption).
-              <br />
-              <br />
-              <i>Example: Response time.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="requirement.stimulus">
-          <template #label>
-            <b>Stimulus:</b> What is the input to the model, the action, or the
-            event that will enable testing of the property, such as input data,
-            system event, or user operation?
-            <InfoIcon>
-              A condition arriving at the system/model (e.g., data,
-              <br />
-              event, user operation, attack, request for modification,
-              <br />
-              completion of a unit of development).
-              <br />
-              <br />
-              <i>Example: Model receives an audio recording.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="requirement.source">
-          <template #label>
-            <b>Source of Stimulus:</b> Where is the stimulus coming from, such
-            as a system component, system user, or data source?
-            <InfoIcon>
-              Where the stimulus comes from (e.g., data source, <br />
-              internal/external user, internal/external component or system,
-              <br />
-              sensor).
-              <br />
-              <br />
-              <i>Example: Intel analyst application.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="requirement.environment">
-          <template #label>
-            <b>Environment:</b> What are the conditions under which the scenario
-            occurs, such as normal operations, overload conditions, or under
-            attack?
-            <InfoIcon>
-              Set of circumstances in which the scenario takes place <br />
-              (e.g., normal operations, overload condition, startup, development
-              time).
-              <br />
-              <br />
-              <i>Example: Normal operations.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="requirement.response">
-          <template #label>
-            <b>Response:</b> What occurs as a result of the stimulus, such as
-            inference on the data, event processing, or data validation?
-            <InfoIcon>
-              Activity that occurs as the result of the arrival of the
-              <br />
-              stimulus (e.g., inference, process event, deny access, <br />
-              implement modification, test).
-              <br />
-              <br />
-              <i>Example: Inference time.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="requirement.measure">
-          <template #label>
-            <b>Response Measure: </b>What is the measure that will determine
-            that the correct response has been achieved, such as a statistical
-            property, latency, or execution time?
-            <InfoIcon>
-              Measures used to determine that the responses enumerated for
-              <br />
-              the scenario have been achieved (e.g., statistical property,
-              <br />
-              latency, throughput, execution time, effort).
-              <br />
-              <br />
-              <i>Example: At most 5 seconds.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-        <DeleteButton
-          class="margin-button"
-          @click="deleteRequirement(requirementIndex)"
-        >
-          Delete Requirement
-        </DeleteButton>
-        <hr />
-      </div>
-      <AddButton class="margin-button" @click="addRequirement()">
-        Add Requirement
-      </AddButton>
-    </div>
+    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
 
     <div class="submit-footer">
       <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
@@ -919,55 +772,6 @@ const dataModalRows = ref([
       "If date is null or empty attempt to find date. If not possible then change to 00/00/0000 to simply use as a data point",
     specialValues:
       "00/00/0000 would indicate that the file did not have an associated date",
-  },
-]);
-
-const systemModalHeaders = ref([
-  { id: "systemQuality", label: "System Quality", sortable: false },
-  { id: "stimulus", label: "Stimulus", sortable: false },
-  { id: "source", label: "Source of Stimulus", sortable: false },
-  { id: "environment", label: "Environment", sortable: false },
-  { id: "response", label: "Response", sortable: false },
-  { id: "measure", label: "Response Measure", sortable: false },
-]);
-const systemModalRows = ref([
-  {
-    id: "responseTime",
-    systemQuality: "Response Time",
-    stimulus: "Model receives an audio recording",
-    source: "Intel analyst application",
-    environment: "Normal operations",
-    response: "Inference time",
-    measure: "At most 5 seconds",
-  },
-  {
-    id: "fairness",
-    systemQuality: "Fairness - Model Impartial to Photo Location",
-    stimulus: "Model receives a picture taken at the garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers regardless of garden location",
-    measure: "At least 90% of the time",
-  },
-  {
-    id: "robustness",
-    systemQuality: "Robustness - Model Robust to Noise (Image Blur)",
-    stimulus:
-      "Model receives a picture taken at the garden and it is a bit blurry",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers",
-    measure: "Same rate as non-blurry images",
-  },
-  {
-    id: "performance",
-    systemQuality: "Performance on Operational Platform",
-    stimulus: "Model receives a picture taken at a garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response:
-      "Model runs on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
-    measure: "No errors due to unavailable resources",
   },
 ]);
 
@@ -1344,7 +1148,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.nc_data.model.development_compute_resources.storage =
             document.computing_resources.storage;
 
-            document.upstream_components.forEach(
+          document.upstream_components.forEach(
             (component: {
               component_name: string;
               output_spec: [
@@ -1362,9 +1166,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                   form.value.nc_data.model.input_specification.length - 1;
                 if (
                   !specEmpty(
-                    form.value.nc_data.model.input_specification[
-                      lastSpecIndex
-                    ],
+                    form.value.nc_data.model.input_specification[lastSpecIndex],
                   )
                 ) {
                   form.value.nc_data.model.input_specification.push({
@@ -1605,23 +1407,6 @@ function addField(dataItemIndex: number) {
 function deleteField(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
     form.value.nc_data.data[dataItemIndex].fields.splice(fieldIndex, 1);
-  }
-}
-
-function addRequirement() {
-  form.value.nc_data.system_requirements.push({
-    quality: "<System Quality>",
-    stimulus: "<Stimulus>",
-    source: "<Source>",
-    environment: "<Environment>",
-    response: "<Response>",
-    measure: "<Response Measure>",
-  });
-}
-
-function deleteRequirement(requirementIndex: number) {
-  if (confirm("Are you sure you want to delete this requirement?")) {
-    form.value.nc_data.system_requirements.splice(requirementIndex, 1);
   }
 }
 </script>
