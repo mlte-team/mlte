@@ -803,20 +803,21 @@
       <br/>
 
     <div>
-      <Chatgpt></Chatgpt>
+      
     </div>
 
     <div class="input-group">
+
       
     <Accordion title="Inference Latency">
       <template #content>
-          <Latency MLTask="Classification" usageContext="Real-time Application" />
-        </template>
+        <Latency :MLTask="form.system.task" :usageContext="form.system.usage_context" />
+      </template>
     </Accordion>
 
     <Accordion title="Training Latency">
       <template #content>
-          <Training>MLTask="Classification" usageContext="Real-time Application" </Training> 
+          <Training MLTask= {{form.system.task}} usageContext={{form.system.usage_context}} /> 
         </template>
     </Accordion>
 
