@@ -252,10 +252,10 @@ if (useRoute().query.artifactId !== undefined) {
 
           const problemType = response._data.body.nc_data.system.problem_type;
           if (
-            problemTypeOptions.find((x) => x.value === problemType)?.value !==
+            problemTypeOptions.value.find((x) => x.value === problemType)?.value !==
             undefined
           ) {
-            form.value.nc_data.system.problem_type = problemTypeOptions.find(
+            form.value.nc_data.system.problem_type = problemTypeOptions.value.find(
               (x) => x.value === problemType,
             )?.value;
           }
@@ -263,10 +263,10 @@ if (useRoute().query.artifactId !== undefined) {
           response._data.body.nc_data.data.forEach((item) => {
             const classification = item.classification;
             if (
-              classificationOptions.find((x) => x.value === classification)
+              classificationOptions.value.find((x) => x.value === classification)
                 ?.value !== undefined
             ) {
-              item.classification = classificationOptions.find(
+              item.classification = classificationOptions.value.find(
                 (x) => x.value === classification,
               )?.value;
             }
