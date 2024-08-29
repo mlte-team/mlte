@@ -21,7 +21,7 @@
 
     <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
 
-    <h2 class="section-header">MLTE Evaluation</h2>
+    <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
       <thead>
         <tr>
@@ -61,15 +61,18 @@
       </tbody>
     </table>
 
-    <h3>Comments</h3>
+    <!-- <h3>Comments</h3>
     <p>Free-form comments from model developers and system integrators.</p>
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
       <UsaTextarea v-model="comment.content"> </UsaTextarea>
-    </div>
+    </div> -->
 
     <!-- TODO: Implement this visualization -->
-    <h3>Quantitative Analysis</h3>
-    <p>No quantitative analysis included with this report.</p>
+    <!-- <h3>Quantitative Analysis</h3>
+    <p>No quantitative analysis included with this report.</p> -->
+
+    <hr/>
+    <h1 class="section-header">Additional Context</h1>
 
     <FormFieldsDataFields v-model="form.nc_data.data" />
 
