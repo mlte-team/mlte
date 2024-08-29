@@ -780,50 +780,48 @@
       </div>
     </div>
 
+  <br/>
     <h2 class="section-header">System Requirements</h2>
-    
-          <!-- Priority Legend  -->
-          <br/>
-
-      <div class="horizontal-legend">
+      <!-- Priority Legend  -->
+    <br/>
+    <div class="horizontal-legend">
       <div class="legend-item">
         <span class="circle top-priority"></span>
         <p>Top Priority</p>
-      </div>
+    </div>
     
-      <div class="legend-item">
+    <div class="legend-item">
         <span class="circle mild-priority"></span>
         <p>Mild Priority</p>
-      </div>
+    </div>
+
     <div class="legend-item">
       <span class="circle low-priority"></span>
       <p>Low Priority</p>
     </div>
-      </div>
-      <br/>
-
-    <div>
-      
     </div>
 
-    <div class="input-group">
+    <br/>
 
-      
+    <div class="input-group">
+    <!-- List of requirements -->
+    <br/>
     <Accordion title="Inference Latency">
       <template #content>
-        <Latency :MLTask="form.system.task" :usageContext="form.system.usage_context" />
+        <InferenceLat MLTask="form.system.task" :usageContext="form.system.usage_context" />
       </template>
     </Accordion>
 
     <Accordion title="Training Latency">
       <template #content>
-          <Training MLTask= {{form.system.task}} usageContext={{form.system.usage_context}} /> 
+          <TrainingLat MLTask= {{form.system.task}} usageContext={{form.system.usage_context}} /> 
         </template>
     </Accordion>
 
     </div>
     <br/>
 
+    <!--TO DELETE: Prior Version -->
     <div class="input-group">
       <SubHeader :render-info="false">
         Requirements

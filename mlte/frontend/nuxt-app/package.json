@@ -8,8 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint --fix --ext .vue,.ts ."
-  },
+    "lint": "eslint --fix --ext .vue,.ts ."  },
+    
   "devDependencies": {
     "@nuxt/ui": "^2.18.1",
     "@types/node": "^18",

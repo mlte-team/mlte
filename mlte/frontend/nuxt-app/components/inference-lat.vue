@@ -57,6 +57,7 @@
       <li><b> - Latency vs. Throughput:</b> Optimizing for latency can sometimes reduce throughput, meaning the system can process fewer requests per second. How will you balance the need for low latency with the required throughput for your application?</li>
       <li><b> - Latency vs. Model Size:</b> Larger models generally require more processing time, which can increase latency. How will you manage the tradeoff between model complexity and the need for quick response times?</li>
     </ul>
+    <br/>
   </div>
 </template>
 
