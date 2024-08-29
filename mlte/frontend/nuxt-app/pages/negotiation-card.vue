@@ -80,537 +80,11 @@
       {{ creator }} - {{ timestamp }}
     </div>
 
-    <h2 class="section-header">System Information</h2>
+    <FormFieldsSystemInformation ref="systemInformationRef" v-model="form.nc_data.system"/>
 
-    <UsaTextarea
-      v-model="form.nc_data.system.usage_context"
-      style="margin-bottom: 1em"
-    >
-      <template #label>
-        Usage Context for the Model
-        <InfoIcon>
-          Who is intended to utilize the system/model; how the results of the
-          model are <br />
-          going to be used by end users or in the context of a larger system.
-          <br />
-          <br />
-          <i
-            >Example: Model results are consumed by a system component that
-            shows
-            <br />
-            an intel analyst a list of matching voice recordings.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
+    <FormFieldsDataFields ref="dataRef" v-model="form.nc_data.data"/>
 
-    <div class="input-group">
-      <SubHeader :render-example="false">
-        Goals
-        <template #info>
-          Goals or objectives that the model is going to help satisfy as part of
-          the system.
-        </template>
-      </SubHeader>
-      <div
-        v-for="(goal, goalIndex) in form.nc_data.system.goals"
-        :key="goalIndex"
-      >
-        <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
-        <UsaTextInput v-model="goal.description">
-          <template #label>
-            Goal Description
-            <InfoIcon>
-              Short description for the goal.
-              <br />
-              <br />
-              <i
-                >Example: Identify voice recordings that belong to a given
-                person of interest.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <SubHeader :render-example="false" :render-info="false">
-          Metrics
-        </SubHeader>
-        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
-          <div class="inline-input-left">
-            <UsaTextInput v-model="metric.description">
-              <template #label>
-                Description
-                <InfoIcon>
-                  Performance metric that captures the system's ability to
-                  accomplish the goal,<br />
-                  i.e., acceptance criteria for determining that the model is
-                  performing correctly.
-                  <br />
-                  <br />
-                  <i>Example: Accuracy > 90%</i>
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
-
-          <div class="inline-input-right">
-            <UsaTextInput v-model="metric.baseline">
-              <template #label>
-                Baseline Source
-                <InfoIcon>
-                  Indicates where the performance metric goal comes from, or why
-                  it is <br />
-                  believed to be achievable.
-                  <br />
-                  <br />
-                  <i
-                    >Example: Human accuracy for matching voices is ~60% as
-                    stated in the paper<br />
-                    by Smith et al.</i
-                  ><br />
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
-          <div class="inline-button">
-            <DeleteButton @click="deleteMetric(goalIndex, metricIndex)">
-              Delete Metric
-            </DeleteButton>
-          </div>
-        </div>
-        <AddButton class="margin-button" @click="addMetric(goalIndex)">
-          Add Metric
-        </AddButton>
-        <div class="inline-button" style="vertical-align: bottom">
-          <DeleteButton @click="deleteGoal(goalIndex)">
-            Delete Goal
-          </DeleteButton>
-        </div>
-        <hr />
-      </div>
-
-      <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
-    </div>
-
-    <UsaSelect
-      v-model="form.nc_data.system.problem_type"
-      :options="problemTypeOptions"
-    >
-      <template #label>
-        ML Problem Type
-        <InfoIcon>
-          Type of ML problem that the model is intended to solve.
-          <br />
-          <br />
-          <i
-            >Example: Classification, Clustering, Detection, and others in
-            drop-down list.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaSelect>
-
-    <UsaTextInput v-model="form.nc_data.system.task">
-      <template #label>
-        ML Task
-        <InfoIcon>
-          Well-defined task that model is expected to perform, or problem that
-          the model is expected to solve.
-          <br />
-          <br />
-          <i>Example: Match voice recordings spoken by the same person.</i>
-        </InfoIcon>
-      </template>
-    </UsaTextInput>
-
-    <UsaTextInput v-model="form.nc_data.system.risks.fp">
-      <template #label>
-        False Positive Risk
-        <InfoIcon>
-          What is the risk of producing a false positive?
-          <br />
-          <br />
-          <i
-            >Example: Incorrect positive results will cause extra work for the
-            <br />
-            intel analyst that needs to analyze every recording flagged by the
-            model.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaTextInput>
-
-    <UsaTextInput v-model="form.nc_data.system.risks.fn">
-      <template #label>
-        False Negative Risk
-        <InfoIcon>
-          What is the risk of producing a false negative?
-          <br />
-          <br />
-          <i
-            >Example: Incorrect negative results means that the model will
-            <br />
-            not flag suspicious recordings, which means that intel analysts
-            <br />
-            might miss information that is crucial to an investigation.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaTextInput>
-
-    <UsaTextInput v-model="form.nc_data.system.risks.other">
-      <template #label>
-        Other Risks of Producing Incorrect Results
-        <InfoIcon>
-          What are other risks of producing incorrect results?
-        </InfoIcon>
-      </template>
-    </UsaTextInput>
-
-    <h2 class="section-header">Data</h2>
-    <div class="input-group">
-      <SubHeader :render-example="false">
-        Data
-        <template #info>
-          Details of the data that will influence model development efforts.
-        </template>
-      </SubHeader>
-      <div
-        v-for="(dataItem, dataItemIndex) in form.nc_data.data"
-        :key="dataItemIndex"
-      >
-        <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
-        <div>
-          <UsaTextInput v-model="dataItem.description">
-            <template #label>
-              Dataset Description
-              <InfoIcon>
-                Short description of the data set that will be used for model
-                development.
-                <br />
-                <br />
-                <i
-                  >Example: Voice recordings from phone calls made to numbers in
-                  the 412 area code.</i
-                >
-              </InfoIcon>
-            </template>
-          </UsaTextInput>
-
-          <UsaTextInput v-model="dataItem.source">
-            <template #label>
-              Source
-              <InfoIcon>
-                Where is the data coming from, e.g., Enterprise Data, Public
-                Data Source, <br />
-                Synthetic Data?
-                <br />
-                <br />
-                <i
-                  >Example: Company log data collected between 2023/01/01 and
-                  2023/12/31.</i
-                >
-              </InfoIcon>
-            </template>
-          </UsaTextInput>
-        </div>
-
-        <UsaSelect
-          v-model="dataItem.classification"
-          :options="classificationOptions"
-        >
-          <template #label>
-            Data Classification
-            <InfoIcon>
-              What is the classification of the data?
-              <br />
-              <br />
-              <i>Example: Classified, Unclassified, PHI, etc.</i>
-            </InfoIcon>
-          </template>
-        </UsaSelect>
-
-        <UsaTextInput v-model="dataItem.access">
-          <template #label>
-            Requirements and Constraints for Data Access
-            <InfoIcon>
-              How will the data be accessed? What accounts are needed?
-              <br />
-              <br />
-              <i
-                >Example: Data is stored on the "blue" server that requires an
-                account on the "solid" network.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <div class="input-group" style="margin-top: 1em">
-          <SubHeader>
-            Labels and Distribution
-            <template #example>
-              <UsaTable
-                :headers="labelModalHeaders"
-                :rows="labelModalRows"
-                borderless
-                class="table"
-              />
-            </template>
-            <template #info>
-              If data is labeled, include information about labels and their
-              distribution in the dataset.
-            </template>
-          </SubHeader>
-          <UsaTextInput v-model="dataItem.labeling_method">
-            <template #label>
-              Labeling Method
-              <InfoIcon>
-                How data was labeled, e.g., hand labeled by expert, <br />
-                labeled by automated process.
-                <br />
-                <br />
-                <i>Example: Hand labeled by single domain expert.</i>
-              </InfoIcon>
-            </template>
-          </UsaTextInput>
-          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
-            <div class="inline-input-left">
-              <UsaTextInput v-model="label.name">
-                <template #label>
-                  Label Name
-                  <InfoIcon> Label in data set. </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-
-            <div class="inline-input-left">
-              <UsaTextInput v-model="label.description">
-                <template #label>
-                  Label Description
-                  <InfoIcon> Short description of label. </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-
-            <div class="inline-input-right">
-              <UsaTextInput v-model="label.percentage" type="number">
-                <template #label>
-                  Percentage
-                  <InfoIcon>
-                    Percentage of data elements with that label.
-                  </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-            <div class="inline-button">
-              <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
-                Delete Label
-              </DeleteButton>
-            </div>
-          </div>
-
-          <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
-            Add Additional Label
-          </AddButton>
-        </div>
-
-        <div class="input-group" style="margin-top: 1em">
-          <SubHeader>
-            Data Schema
-            <template #example>
-              <UsaTable
-                :headers="dataModalHeaders"
-                :rows="dataModalRows"
-                borderless
-                class="table"
-              />
-            </template>
-            <template #info>
-              Include relevant information that is known about the data; fill
-              out all sections below for each data field.
-            </template>
-          </SubHeader>
-          <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
-            <h3 class="no-margin-sub-header">
-              Data Schema {{ dataItemIndex + 1 }} - {{ fieldIndex + 1 }}
-            </h3>
-            <div>
-              <div class="inline-input-left">
-                <UsaTextInput v-model="field.name">
-                  <template #label>
-                    Field Name
-                    <InfoIcon> Field name. </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-
-              <div class="inline-input-right">
-                <UsaTextInput v-model="field.description">
-                  <template #label>
-                    Field Description
-                    <InfoIcon> Short field description. </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-            </div>
-
-            <div>
-              <div class="inline-input-left">
-                <UsaTextInput v-model="field.type">
-                  <template #label>
-                    Field Type
-                    <InfoIcon>
-                      Field type, e.g., number, string, Boolean, data, image,
-                      audio.
-                    </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-
-              <div class="inline-input-right">
-                <UsaTextInput v-model="field.expected_values">
-                  <template #label>
-                    Expected Values
-                    <InfoIcon>
-                      Expected values for field, e.g., any, range, enumeration.
-                    </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-            </div>
-
-            <div>
-              <div class="inline-input-left">
-                <UsaTextInput v-model="field.missing_values">
-                  <template #label>
-                    Handling Missing Values
-                    <InfoIcon>
-                      How to interpret missing values, e.g., null, empty string.
-                    </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-
-              <div class="inline-input-right">
-                <UsaTextInput v-model="field.special_values">
-                  <template #label>
-                    Handling Special Values
-                    <InfoIcon>
-                      How to interpret special values, e.g., 999, N/A.
-                    </InfoIcon>
-                  </template>
-                </UsaTextInput>
-              </div>
-            </div>
-            <DeleteButton
-              class="margin-button"
-              @click="deleteField(dataItemIndex, fieldIndex)"
-            >
-              Delete Field
-            </DeleteButton>
-            <hr />
-          </div>
-
-          <AddButton class="margin-button" @click="addField(dataItemIndex)">
-            Add Additional Field
-          </AddButton>
-        </div>
-
-        <UsaTextInput v-model="dataItem.rights">
-          <template #label>
-            Data Rights
-            <InfoIcon>
-              Are there particular ways in which the data can or cannot be used?
-              <br />
-              <br />
-              <i
-                >Example: Given that data is classified it should be treated as
-                <br />
-                such, e.g., not uploaded to any public servers or stored on
-                <br />
-                any non-authorized equipment.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextInput v-model="dataItem.policies">
-          <template #label>
-            Data Policies
-            <InfoIcon>
-              Are there policies that govern the data and its use, such as
-              <br />
-              Personally Identifiable Information [PII]?
-              <br />
-              <br />
-              <i
-                >Example: Although the audio recordings are not associated to a
-                <br />
-                person, post-analysis may associate them to a person and <br />
-                therefore become PII.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-
-        <DeleteButton
-          class="margin-button"
-          @click="deleteDataItem(dataItemIndex)"
-        >
-          Delete Dataset
-        </DeleteButton>
-        <hr />
-      </div>
-      <AddButton class="margin-button" @click="addDataItem()">
-        Add Dataset
-      </AddButton>
-    </div>
-
-    <h2 class="section-header">Model Information</h2>
-    <FormFieldsDevelopmentCompute v-model="form.nc_data.model.development_compute_resources" />
-
-    <UsaTextarea v-model="form.nc_data.model.deployment_platform">
-      <template #label>
-        Deployment Platform
-        <InfoIcon>
-          Describe the deployment platform for the model, e.g., local server,
-          <br />
-          cloud server, embedded platform.
-          <br />
-          <br />
-          <i>Example: Local server due to data classification issues.</i>
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
-
-    <UsaTextarea v-model="form.nc_data.model.capability_deployment_mechanism">
-      <template #label>
-        Capability Deployment Mechanism
-        <InfoIcon>
-          Describe how the model capabilities will be made available, <br />
-          e.g., API, user facing, data feed.
-          <br />
-          <br />
-          <i
-            >Example: The model will expose an API so that it can be called
-            <br />
-            from the intel analyst UI.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaTextarea>
-
-    <FormFieldsInputSpecification
-      v-model="form.nc_data.model.input_specification"
-    />
-
-    <FormFieldsOutputSpecification
-      v-model="form.nc_data.model.output_specification"
-    />
-
-    <FormFieldsProductionCompute
-      v-model="form.nc_data.model.production_compute_resources"
-    />
+    <FormFieldsModelFields ref="modelRef" v-model="form.nc_data.model"/>
 
     <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
 
@@ -639,96 +113,6 @@ const path = ref([
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
-
-const labelModalHeaders = ref([
-  { id: "labelName", label: "Label Name", sortable: false },
-  { id: "labelDescription", label: "Label Description", sortable: false },
-  { id: "percentage", label: "Percentage", sortable: false },
-]);
-const labelModalRows = ref([
-  {
-    id: "rock",
-    labelName: "Rock",
-    labelDescription: "Includes all rock genres",
-    percentage: 24,
-  },
-  {
-    id: "classical",
-    labelName: "Classical",
-    labelDescription: "Includes traditional and crossover",
-    percentage: 7,
-  },
-  {
-    id: "pop",
-    labelName: "Pop",
-    labelDescription: "Pop genre",
-    percentage: 28,
-  },
-  {
-    id: "jazz",
-    labelName: "Jazz",
-    labelDescription: "Includes classical, latin, and other forms of jazz",
-    percentage: 16,
-  },
-  {
-    id: "rap",
-    labelName: "Rap",
-    labelDescription: "Rap genre (not R&B)",
-    percentage: 9,
-  },
-  {
-    id: "dance",
-    labelName: "Dance",
-    labelDescription: "Includes all dance variants (e.g., house, techno)",
-    percentage: 10,
-  },
-  {
-    id: "other",
-    labelName: "Other",
-    labelDescription: "Any genre not covered by the above labels",
-    percentage: 6,
-  },
-]);
-
-const dataModalHeaders = ref([
-  { id: "fieldName", label: "Field Name", sortable: false },
-  { id: "fieldDescription", label: "Field Description", sortable: false },
-  { id: "fieldType", label: "Field Type", sortable: false },
-  { id: "expectedValues", label: "Expected Values", sortable: false },
-  { id: "missingValues", label: "Handling Missing Values", sortable: false },
-  { id: "specialValues", label: "Handling Special Values", sortable: false },
-]);
-const dataModalRows = ref([
-  {
-    id: "idRecording",
-    fieldName: "ID Recording",
-    fieldDescription: "Unique ID for audio recording",
-    fieldType: "String",
-    expectedValues: "Alphanumeric string",
-    missingValues: "If ID is missing it should be discarded",
-    specialValues: "No special values",
-  },
-  {
-    id: "audioRecording",
-    fieldName: "Audio Recording",
-    fieldDescription: "Audio recording file",
-    fieldType: "Audio",
-    expectedValues: "Non-empty audio file",
-    missingValues: "If audio file is missing it should be discarded",
-    specialValues: "No special values",
-  },
-  {
-    id: "dateRecording",
-    fieldName: "Date Recording",
-    fieldDescription: "Date audio was recorded",
-    fieldType: "Date",
-    expectedValues: "Between 2023/01/01 and 2023/12/31",
-    missingValues:
-      "If date is null or empty attempt to find date. If not possible then change to 00/00/0000 to simply use as a data point",
-    specialValues:
-      "00/00/0000 would indicate that the file did not have an associated date",
-  },
-]);
 
 const creator = ref("");
 const timestamp = ref("");
@@ -829,38 +213,12 @@ const form = ref({
   },
 });
 
-// TODO: Pull these from the schema
-const problemTypeOptions = [
-  { value: "classification", text: "Classification" },
-  { value: "clustering", text: "Clustering" },
-  { value: "detection", text: "Detection" },
-  { value: "trend", text: "Trend" },
-  { value: "alert", text: "Alert" },
-  { value: "forecasting", text: "Forecasting" },
-  { value: "content_generation", text: "Content Generation" },
-  { value: "benchmarking", text: "Benchmarking" },
-  { value: "goals", text: "Goals" },
-  { value: "other", text: "Other" },
-];
+const classificationOptions = useClassificationOptions();
+const problemTypeOptions = useProblemTypeOptions();
 
-// TODO: Pull these from the schema
-const classificationOptions = [
-  { value: "unclassified", text: "Unclassified" },
-  {
-    value: "cui",
-    text: "Controlled Unclassified Information (CUI)",
-  },
-  { value: "classified", text: "Classified" },
-  {
-    value: "pii",
-    text: "Personally Identifiable Information (PII)",
-  },
-  {
-    value: "phi",
-    text: "Protected Health Information (PHI)",
-  },
-  { value: "other", text: "Other" },
-];
+const systemInformationRef = ref(null);
+const dataRef = ref(null);
+const modelRef = ref(null);
 
 if (useRoute().query.artifactId !== undefined) {
   const model = useRoute().query.model;
@@ -998,7 +356,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               let lastGoalIndex = form.value.nc_data.system.goals.length - 1;
               if (!goalEmpty(form.value.nc_data.system.goals[lastGoalIndex])) {
-                addGoal();
+                systemInformationRef.value.parentAddGoal();
                 lastGoalIndex += 1;
               }
 
@@ -1025,7 +383,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
         } else if (descriptorName === "Raw Data") {
           let lastDataIndex = form.value.nc_data.data.length - 1;
           if (!dataItemEmpty(form.value.nc_data.data[lastDataIndex])) {
-            addDataItem();
+            dataRef.value.parentAddDataItem();
             lastDataIndex += 1;
           }
 
@@ -1051,7 +409,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.nc_data.data[lastDataIndex].labels.splice(0, 1);
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
-              addLabel(lastDataIndex);
+              dataRef.value.parentAddLabel(lastDataIndex);
               form.value.nc_data.data[lastDataIndex].labels[i].name =
                 label.label;
               form.value.nc_data.data[lastDataIndex].labels[i].percentage =
@@ -1078,7 +436,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
               },
               i: number,
             ) => {
-              addField(lastDataIndex);
+              dataRef.value.parentAddField(lastDataIndex);
               form.value.nc_data.data[lastDataIndex].fields[i].name =
                 fields.field_name;
               form.value.nc_data.data[lastDataIndex].fields[i].description =
@@ -1124,12 +482,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                     form.value.nc_data.model.input_specification[lastSpecIndex],
                   )
                 ) {
-                  form.value.nc_data.model.input_specification.push({
-                    name: "",
-                    description: "",
-                    type: "",
-                    expected_values: "",
-                  });
+                  modelRef.value.parentAddInputSpec();
                   lastSpecIndex += 1;
                 }
 
@@ -1166,12 +519,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                     ],
                   )
                 ) {
-                  form.value.nc_data.model.output_specification.push({
-                    name: "",
-                    description: "",
-                    type: "",
-                    expected_values: "",
-                  });
+                  modelRef.value.parentAddOutputSpec();
                   lastSpecIndex += 1;
                 }
 
@@ -1271,97 +619,5 @@ function specEmpty(spec) {
   }
 
   return isEmpty;
-}
-
-function addGoal() {
-  form.value.nc_data.system.goals.push({
-    description: "",
-    metrics: [{ description: "", baseline: "" }],
-  });
-}
-
-function deleteGoal(goalIndex: number) {
-  if (confirm("Are you sure you want to delete this goal?")) {
-    form.value.nc_data.system.goals.splice(goalIndex, 1);
-  }
-}
-
-function addMetric(goalIndex: number) {
-  form.value.nc_data.system.goals[goalIndex].metrics.push({
-    description: "",
-    baseline: "",
-  });
-}
-
-function deleteMetric(goalIndex: number, metricIndex: number) {
-  if (confirm("Are you sure you want to delete this metric?")) {
-    form.value.nc_data.system.goals[goalIndex].metrics.splice(metricIndex, 1);
-  }
-}
-
-function addDataItem() {
-  form.value.nc_data.data.push({
-    description: "",
-    source: "",
-    classification: "unclassified",
-    access: "",
-    labeling_method: "",
-    labels: [
-      {
-        name: "",
-        description: "",
-        percentage: 0,
-      },
-    ],
-    fields: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-        missing_values: "",
-        special_values: "",
-      },
-    ],
-    rights: "",
-    policies: "",
-  });
-}
-
-function deleteDataItem(dataItemIndex: number) {
-  if (confirm("Are you sure you want to delete this data item?")) {
-    form.value.nc_data.data.splice(dataItemIndex, 1);
-  }
-}
-
-function addLabel(dataItemIndex: number) {
-  form.value.nc_data.data[dataItemIndex].labels.push({
-    name: "",
-    description: "",
-    percentage: 0,
-  });
-}
-
-function deleteLabel(dataItemIndex: number, labelIndex: number) {
-  if (confirm("Are you sure you want to delete this label?")) {
-    form.value.nc_data.data[dataItemIndex].labels.splice(labelIndex, 1);
-  }
-}
-
-function addField(dataItemIndex: number) {
-  form.value.nc_data.data[dataItemIndex].fields.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-    missing_values: "",
-    special_values: "",
-  });
-}
-
-function deleteField(dataItemIndex: number, fieldIndex: number) {
-  if (confirm("Are you sure you want to delete this field?")) {
-    form.value.nc_data.data[dataItemIndex].fields.splice(fieldIndex, 1);
-  }
 }
 </script>
