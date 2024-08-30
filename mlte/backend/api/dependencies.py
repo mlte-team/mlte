@@ -17,7 +17,7 @@ from typing import Generator
 
 from mlte.backend.state import state
 from mlte.store.artifact.store import ArtifactStoreSession
-from mlte.store.catalog.group import CatalogStoreGroupSession
+from mlte.store.catalog.catalog_group import CatalogStoreGroupSession
 from mlte.store.user.store_session import UserStoreSession
 
 

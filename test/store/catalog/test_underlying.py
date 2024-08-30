@@ -12,7 +12,7 @@ from mlte.catalog.model import (
     CatalogEntryHeader,
     CatalogEntryType,
 )
-from mlte.store.catalog.group import (
+from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
 )

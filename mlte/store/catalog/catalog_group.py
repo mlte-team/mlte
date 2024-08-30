@@ -1,5 +1,5 @@
 """
-mlte/store/catalog/group.py
+mlte/store/catalog/catalog_group.py
 
 MLTE catalog store group interface implementation.
 """

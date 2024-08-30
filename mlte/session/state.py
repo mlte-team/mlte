@@ -10,7 +10,7 @@ import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
 from mlte.store.artifact.factory import create_store
 from mlte.store.artifact.store import ArtifactStore
-from mlte.store.catalog.group import CatalogStoreGroup
+from mlte.store.catalog.catalog_group import CatalogStoreGroup
 
 
 class Session:

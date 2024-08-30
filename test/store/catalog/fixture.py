@@ -18,7 +18,7 @@ from mlte.store.base import StoreURI, StoreURIPrefix
 from mlte.store.catalog.factory import create_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
-from mlte.store.catalog.underlying.http import HttpCatalogStore
+from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 from mlte.store.common.http_clients import RequestsClient
@@ -72,9 +72,9 @@ def create_rdbs_store() -> RelationalDBCatalogStore:
     )
 
 
-def create_http_store() -> HttpCatalogStore:
+def create_http_store() -> HttpCatalogGroupStore:
     """
-    Get a HttpCatalogStore configured with a test client.
+    Get a HttpCatalogGroupStore configured with a test client.
     :return: The configured store
     """
     # Set an in memory store and get a test http client, configured for the app.
@@ -86,7 +86,7 @@ def create_http_store() -> HttpCatalogStore:
     username = client.username if client.username else FAKE_USER
     password = client.password if client.password else FAKE_PASS
     uri = str(client.client.base_url)
-    return HttpCatalogStore(
+    return HttpCatalogGroupStore(
         StoreURI.from_string(
             url_utils.set_url_username_password(uri, username, password)
         ),

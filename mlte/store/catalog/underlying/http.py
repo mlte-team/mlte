@@ -6,7 +6,7 @@ Implementation of HTTP catalog store.
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Tuple
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry
@@ -24,11 +24,11 @@ API_PREFIX = settings.API_PREFIX
 
 
 # -----------------------------------------------------------------------------
-# HttpCatalogStore
+# HttpCatalogGroupStore
 # -----------------------------------------------------------------------------
 
 
-class HttpCatalogStore(CatalogStore):
+class HttpCatalogGroupStore(CatalogStore):
     """A HTTP implementation of the MLTE catalog store."""
 
     def __init__(
@@ -43,20 +43,22 @@ class HttpCatalogStore(CatalogStore):
         uri.uri = self.client.process_credentials(uri.uri)
         super().__init__(uri=uri)
 
-    def session(self) -> HttpCatalogStoreSession:  # type: ignore[override]
+    def session(self) -> HttpCatalogGroupStoreSession:  # type: ignore[override]
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return HttpCatalogStoreSession(url=self.uri.uri, client=self.client)
+        return HttpCatalogGroupStoreSession(
+            url=self.uri.uri, client=self.client
+        )
 
 
 # -----------------------------------------------------------------------------
-# HttpCatalogStoreSession
+# HttpCatalogGroupStoreSession
 # -----------------------------------------------------------------------------
 
 
-class HttpCatalogStoreSession(CatalogStoreSession):
+class HttpCatalogGroupStoreSession(CatalogStoreSession):
     """An HTTP implementation of the MLTE catalog store session."""
 
     def __init__(self, *, url: str, client: OAuthHttpClient) -> None:
@@ -66,7 +68,7 @@ class HttpCatalogStoreSession(CatalogStoreSession):
         self.client = client
         """The client for HTTP requests."""
 
-        self.entry_mapper = HTTPCatalogEntryMapper(
+        self.entry_mapper = HTTPCatalogGroupEntryMapper(
             url=self.url, client=self.client
         )
         """The mapper to entries CRUD."""
@@ -83,12 +85,14 @@ class HttpCatalogStoreSession(CatalogStoreSession):
 
 
 # -----------------------------------------------------------------------------
-# HTTPCatalogEntryMapper
+# HTTPCatalogGroupEntryMapper
 # -----------------------------------------------------------------------------
 
 
-class HTTPCatalogEntryMapper(CatalogEntryMapper):
-    """HTTP mapper for the catalog entry resource."""
+class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
+    """HTTP mapper for the catalog group entry resource."""
+
+    CATALOG_ENTRY_ID_SEPARATOR = "--"
 
     def __init__(self, url: str, client: OAuthHttpClient) -> None:
         self.url = url
@@ -100,48 +104,67 @@ class HTTPCatalogEntryMapper(CatalogEntryMapper):
         self.base_url = f"{self.url}/{ResourceType.CATALOG_ENTRY.value}"
         """Base URL used in mapper."""
 
-    def create2(self, entry: CatalogEntry) -> CatalogEntry:
-        url = f"{self.base_url}/{entry.header.catalog_id}/entry"
+    def create(self, entry: CatalogEntry) -> CatalogEntry:
+        # Entry id contains the remote catalog id as well.
+        catalog_id, entry_id = self._split_ids(entry.header.identifier)
+        entry.header.identifier = entry_id
+
+        url = f"{self.base_url}/{catalog_id}/entry"
         res = self.client.post(url, json=entry.model_dump())
         self.client.raise_for_response(res)
 
         return CatalogEntry(**(res.json()))
 
-    def edit2(self, entry: CatalogEntry) -> CatalogEntry:
-        url = f"{self.base_url}/{entry.header.catalog_id}/entry"
+    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+        # Entry id contains the remote catalog id as well.
+        catalog_id, entry_id = self._split_ids(entry.header.identifier)
+        entry.header.identifier = entry_id
+
+        url = f"{self.base_url}/{catalog_id}/entry"
         res = self.client.put(url, json=entry.model_dump())
         self.client.raise_for_response(res)
 
         return CatalogEntry(**(res.json()))
 
-    def read2(self, entry_id: str, catalog_id: str) -> CatalogEntry:
+    def read(self, catalog_and_entry_id: str) -> CatalogEntry:
+        catalog_id, entry_id = self._split_ids(catalog_and_entry_id)
         url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return CatalogEntry(**(res.json()))
 
-    def list2(self, catalog_id: str) -> List[str]:
-        entries = self.list_details2(catalog_id)
+    def list(self) -> List[str]:
+        entries = self.list_details()
         return [entry.header.identifier for entry in entries]
 
-    def delete2(self, entry_id: str, catalog_id: str) -> CatalogEntry:
+    def delete(self, catalog_and_entry_id: str) -> CatalogEntry:
+        catalog_id, entry_id = self._split_ids(catalog_and_entry_id)
         url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
         res = self.client.delete(url)
         self.client.raise_for_response(res)
 
         return CatalogEntry(**(res.json()))
 
-    def list_details2(
+    def list_details(
         self,
-        catalog_id: str,
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[CatalogEntry]:
-        url = f"{self.base_url}/{catalog_id}/entry"
+        url = f"{self.base_url}s/entry"
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
         return [CatalogEntry(**entry) for entry in res.json()][
             offset : offset + limit
         ]
+
+    def _split_ids(self, catalog_and_entry_id: str) -> Tuple[str, str]:
+        parts = catalog_and_entry_id.split(
+            HTTPCatalogGroupEntryMapper.CATALOG_ENTRY_ID_SEPARATOR
+        )
+        if len(parts) != 2:
+            raise RuntimeError(
+                f"Invalid catalog and entry id provided: {catalog_and_entry_id}"
+            )
+        return parts[0], parts[1]
