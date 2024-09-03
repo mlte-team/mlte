@@ -1,7 +1,7 @@
 """
 mlte/store/catalog/underlying/http.py
 
-Implementation of HTTP catalog store.
+Implementation of HTTP catalog store group.
 """
 
 from __future__ import annotations
@@ -29,7 +29,11 @@ API_PREFIX = settings.API_PREFIX
 
 
 class HttpCatalogGroupStore(CatalogStore):
-    """A HTTP implementation of the MLTE catalog store."""
+    """
+    A HTTP implementation of the MLTE catalog store group. Note that it is slightly
+    different than the other implementations, in mapping to a store group through a 
+    backend, instead of a simple catalog store.
+    """
 
     def __init__(
         self,
