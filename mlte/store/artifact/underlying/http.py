@@ -16,7 +16,8 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
-from mlte.store.common.query import Query
+from mlte.store.common.http_store import HttpStorage
+from mlte.store.query import Query
 
 API_PREFIX = settings.API_PREFIX
 """API URL prefix."""
@@ -30,21 +31,19 @@ class HttpArtifactStore(ArtifactStore):
     """A HTTP implementation of the MLTE artifact store."""
 
     def __init__(
-        self, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
+        self, *, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
     ) -> None:
-        self.client = client
-        """The client for requests."""
-
-        # Get credentials, if any, from the uri and into the client.
-        uri.uri = self.client.process_credentials(uri.uri)
         super().__init__(uri=uri)
 
-    def session(self) -> HttpArtifactStoreSession:  # type: ignore[override]
+        self.storage = HttpStorage(uri=uri, client=client)
+        """HTTP storage."""
+
+    def session(self) -> HttpArtifactStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return HttpArtifactStoreSession(url=self.uri.uri, client=self.client)
+        return HttpArtifactStoreSession(storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -55,21 +54,18 @@ class HttpArtifactStore(ArtifactStore):
 class HttpArtifactStoreSession(ArtifactStoreSession):
     """An HTTP implementation of the MLTE artifact store session."""
 
-    def __init__(self, *, url: str, client: OAuthHttpClient) -> None:
-        self.url = url
+    def __init__(self, *, storage: HttpStorage) -> None:
         """The remote artifact store URL."""
+        self.url = storage.url
+        """URL."""
 
-        self.client = client
-        """The client for HTTP requests."""
+        self.client = storage.client
+        """Storage."""
 
-        # Authenticate.
-        self.client.authenticate(
-            f"{self.url}{API_PREFIX}",
-        )
+        storage.start_session()
 
-    def close(self) -> None:
-        """Close the session."""
-        # Closing a remote HTTP session is a no-op.
+    def close(self):
+        # No closing needed.
         pass
 
     # -------------------------------------------------------------------------

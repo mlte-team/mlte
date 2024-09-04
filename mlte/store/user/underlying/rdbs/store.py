@@ -5,16 +5,15 @@ Implementation of relational database system user store.
 """
 from __future__ import annotations
 
+import typing
 from typing import List, Optional, Union
 
-import sqlalchemy
-import sqlalchemy.orm
-import sqlalchemy_utils
 from sqlalchemy import Engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
+from mlte.store.common.rdbs import RDBStorage
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -48,37 +47,36 @@ from mlte.user.model import (
 class RelationalDBUserStore(UserStore):
     """A DB implementation of the MLTE user store."""
 
-    def __init__(self, uri: StoreURI, **kwargs) -> None:
-        self.engine = sqlalchemy.create_engine(uri.uri, **kwargs)
-        """The underlying storage for the store."""
+    def __init__(
+        self,
+        uri: StoreURI,
+        add_default_data: bool = True,
+        **kwargs,
+    ) -> None:
+        self.storage = RDBStorage(
+            uri,
+            base_class=typing.cast(DeclarativeBase, DBBase),
+            init_tables_func=init_user_tables,
+            **kwargs,
+        )
+        """The relational DB storage."""
 
-        # Create the DB if it doesn't exist already.
-        if not sqlalchemy_utils.database_exists(self.engine.url):
-            sqlalchemy_utils.create_database(self.engine.url)
+        UserStore.__init__(self, uri, add_default_data)
+        """Basic user setup."""
 
-        # Creates the DB items if they don't exist already.
-        self._create_tables()
-        self._init_tables()
-
-        # Intialize base defaults.
-        super().__init__(uri=uri)
-
-    def session(self) -> RelationalDBUserStoreSession:  # type: ignore[override]
+    def session(self) -> RelationalDBUserStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBUserStoreSession(engine=self.engine)
+        return RelationalDBUserStoreSession(storage=self.storage)
 
-    def _create_tables(self):
-        """Creates all items, if they don't exist already."""
-        DBBase.metadata.create_all(self.engine)
 
-    def _init_tables(self):
-        """Pre-populate tables."""
-        with Session(self.engine) as session:
-            init_role_types(session)
-            init_method_types(session)
+def init_user_tables(engine: Engine):
+    """Pre-populate tables."""
+    with Session(engine) as session:
+        init_role_types(session)
+        init_method_types(session)
 
 
 # -----------------------------------------------------------------------------
@@ -89,22 +87,22 @@ class RelationalDBUserStore(UserStore):
 class RelationalDBUserStoreSession(UserStoreSession):
     """A relational DB implementation of the MLTE user store session."""
 
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
-        """A reference to underlying storage."""
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
+        """RDB storage."""
 
-        self.user_mapper = RDBUserMapper(engine)
+        self.user_mapper = RDBUserMapper(storage)
         """The mapper to user CRUD."""
 
-        self.group_mapper = RDBGroupMapper(engine)
+        self.group_mapper = RDBGroupMapper(storage)
         """The mapper to group CRUD."""
 
-        self.permission_mapper = RDBPermissionMapper(engine)
+        self.permission_mapper = RDBPermissionMapper(storage)
         """The mapper to group CRUD."""
 
     def close(self) -> None:
         """Close the session."""
-        self.engine.dispose()
+        self.storage.close()
 
 
 # -----------------------------------------------------------------------------
@@ -115,12 +113,12 @@ class RelationalDBUserStoreSession(UserStoreSession):
 class RDBUserMapper(UserMapper):
     """RDB mapper for the user resource."""
 
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
         """A reference to underlying storage."""
 
     def create(self, user: UserWithPassword) -> User:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
                 raise errors.ErrorAlreadyExists(
@@ -137,7 +135,7 @@ class RDBUserMapper(UserMapper):
                 return stored_user
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             curr_user, user_obj = DBReader.get_user(user.username, session)
             updated_user = update_user_data(curr_user, user)
 
@@ -149,20 +147,20 @@ class RDBUserMapper(UserMapper):
             return stored_user
 
     def read(self, username: str) -> User:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             user, _ = DBReader.get_user(username, session)
             return user
 
     def list(self) -> List[str]:
         users: List[str] = []
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             user_objs = session.scalars(select(DBUser))
             for user_obj in user_objs:
                 users.append(user_obj.username)
         return users
 
     def delete(self, username: str) -> User:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             user, user_obj = DBReader.get_user(username, session)
             session.delete(user_obj)
             session.commit()
@@ -196,12 +194,12 @@ class RDBUserMapper(UserMapper):
 class RDBGroupMapper(GroupMapper):
     """RDB mapper for the group resource"""
 
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
         """A reference to underlying storage."""
 
     def create(self, new_group: Group) -> Group:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_group(new_group.name, session)
                 raise errors.ErrorAlreadyExists(
@@ -215,7 +213,7 @@ class RDBGroupMapper(GroupMapper):
                 return new_group
 
     def edit(self, updated_group: Group) -> Group:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             _, group_obj = DBReader.get_group(updated_group.name, session)
 
             # Update existing group.
@@ -225,20 +223,20 @@ class RDBGroupMapper(GroupMapper):
             return updated_group
 
     def read(self, group_name: str) -> Group:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             group, _ = DBReader.get_group(group_name, session)
             return group
 
     def list(self) -> List[str]:
         groups: List[str] = []
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             group_objs = session.scalars(select(DBGroup))
             for group_obj in group_objs:
                 groups.append(group_obj.name)
         return groups
 
     def delete(self, group_name: str) -> Group:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             group, group_obj = DBReader.get_group(group_name, session)
             session.delete(group_obj)
             session.commit()
@@ -274,12 +272,12 @@ class RDBGroupMapper(GroupMapper):
 class RDBPermissionMapper(PermissionMapper):
     """A interface for mapping CRUD actions to store permissions."""
 
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
         """A reference to underlying storage."""
 
     def create(self, new_permission: Permission) -> Permission:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_permission(new_permission, session)
                 raise errors.ErrorAlreadyExists(
@@ -299,19 +297,19 @@ class RDBPermissionMapper(PermissionMapper):
                 return new_permission
 
     def read(self, permission: str) -> Permission:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             perm, _ = DBReader.get_permission(
                 Permission.from_str(permission), session
             )
             return perm
 
     def list(self) -> List[str]:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             permissions, _ = DBReader.get_permissions(session)
             return [permission.to_str() for permission in permissions]
 
     def delete(self, permission: str) -> Permission:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             perm, permission_obj = DBReader.get_permission(
                 Permission.from_str(permission), session
             )

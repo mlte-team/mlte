@@ -17,6 +17,7 @@ from mlte.store.catalog.store import (
     CatalogStoreSession,
 )
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
+from mlte.store.common.http_store import HttpStorage
 from mlte.user.model import ResourceType
 
 API_PREFIX = settings.API_PREFIX
@@ -31,30 +32,24 @@ API_PREFIX = settings.API_PREFIX
 class HttpCatalogGroupStore(CatalogStore):
     """
     A HTTP implementation of the MLTE catalog store group. Note that it is slightly
-    different than the other implementations, in mapping to a store group through a 
+    different than the other implementations, in mapping to a store group through a
     backend, instead of a simple catalog store.
     """
 
     def __init__(
-        self,
-        uri: StoreURI,
-        client: OAuthHttpClient = RequestsClient(),
+        self, *, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
     ) -> None:
-        self.client = client
-        """The client for requests."""
-
-        # Get credentials, if any, from the uri and into the client.
-        uri.uri = self.client.process_credentials(uri.uri)
         super().__init__(uri=uri)
 
-    def session(self) -> HttpCatalogGroupStoreSession:  # type: ignore[override]
+        self.storage = HttpStorage(uri=uri, client=client)
+        """HTTP storage."""
+
+    def session(self) -> CatalogStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return HttpCatalogGroupStoreSession(
-            url=self.uri.uri, client=self.client
-        )
+        return HttpCatalogGroupStoreSession(storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -65,26 +60,19 @@ class HttpCatalogGroupStore(CatalogStore):
 class HttpCatalogGroupStoreSession(CatalogStoreSession):
     """An HTTP implementation of the MLTE catalog store session."""
 
-    def __init__(self, *, url: str, client: OAuthHttpClient) -> None:
-        self.url = url
-        """The remote catalog store URL."""
-
-        self.client = client
-        """The client for HTTP requests."""
+    def __init__(self, *, storage: HttpStorage) -> None:
+        self.storage = storage
+        """Http Storage"""
 
         self.entry_mapper = HTTPCatalogGroupEntryMapper(
-            url=self.url, client=self.client
+            url=self.storage.url, client=self.storage.client
         )
         """The mapper to entries CRUD."""
 
-        # Authenticate.
-        self.client.authenticate(
-            f"{self.url}{API_PREFIX}",
-        )
+        storage.start_session()
 
-    def close(self) -> None:
-        """Close the session."""
-        # Closing a remote HTTP session is a no-op.
+    def close(self):
+        # No closing needed.
         pass
 
 

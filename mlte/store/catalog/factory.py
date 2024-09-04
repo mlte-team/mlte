@@ -4,6 +4,7 @@ mlte/store/catalog/factory.py
 Top-level functions for catalog store creation.
 """
 
+
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
@@ -13,7 +14,7 @@ from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 
 
-def create_store(uri: str) -> CatalogStore:
+def create_catalog_store(uri: str) -> CatalogStore:
     """
     Create a MLTE catalog store instance.
     :param uri: The URI for the store instance

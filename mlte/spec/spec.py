@@ -75,7 +75,7 @@ class Spec(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Spec:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> Spec:
         """Convert a negotiation card model to its corresponding artifact."""
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
         body = typing.cast(SpecModel, model.body)

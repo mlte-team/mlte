@@ -15,7 +15,7 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.fs import FileSystemStorage
-from mlte.store.common.query import Query
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore

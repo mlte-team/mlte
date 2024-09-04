@@ -17,7 +17,7 @@ from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
 from mlte.backend.api.model import USER_ME_ID
 from mlte.backend.core.config import settings
 from mlte.backend.state import state
-from mlte.store.user.store_session import UserStoreSession
+from mlte.store.user.store import UserStore
 from mlte.user.model import (
     BasicUser,
     MethodType,
@@ -50,7 +50,7 @@ async def get_current_resource(request: Request) -> Permission:
             try:
                 # If the URL didn't have an id, try to get it from a JSON body.
                 data = await request.json()
-                id_key = UserStoreSession.ID_MAP[resource_type]
+                id_key = UserStore.ID_MAP[resource_type]
                 if id_key in data:
                     resource_id = data[id_key]
             except JSONDecodeError:

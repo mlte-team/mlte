@@ -4,7 +4,7 @@ test/store/test_query.py
 Unit tests for store query functionality.
 """
 
-from mlte.store.common.query import AllFilter, NoneFilter
+from mlte.store.query import AllFilter, NoneFilter
 
 
 def test_all() -> None:

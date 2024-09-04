@@ -29,10 +29,10 @@ class InMemoryCatalogStore(CatalogStore):
         self.storage = MemoryCatalogStorage()
         """The underlying storage for the store."""
 
-        # Initialize defaults.
         super().__init__(uri=uri)
+        """Store uri."""
 
-    def session(self) -> InMemoryCatalogStoreSession:
+    def session(self) -> CatalogStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle

@@ -29,7 +29,8 @@ class FileSystemCatalogStore(CatalogStore):
     """Base fodler to store catalog entries in."""
 
     def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
+        self.uri = uri
+        """Store uri."""
 
         self.storage = FileSystemStorage(
             uri=uri, sub_folder=self.BASE_CATALOG_FOLDER

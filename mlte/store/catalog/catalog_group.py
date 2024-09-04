@@ -10,10 +10,10 @@ from typing import Dict, List, Optional, cast
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, StoreSession
-from mlte.store.catalog.factory import create_store
+from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore, CatalogStoreSession
-from mlte.store.common.query import Query
 from mlte.store.error import ErrorAlreadyExists, ErrorNotFound
+from mlte.store.query import Query
 
 
 class CatalogStoreGroup:
@@ -28,7 +28,7 @@ class CatalogStoreGroup:
 
     def add_catalog_from_uri(self, id: str, uri: str, overwite: bool = False):
         """Adds a catalog by indicating its uri."""
-        catalog = create_store(uri)
+        catalog = create_catalog_store(uri)
         self.add_catalog(id, catalog, overwite)
 
     def add_catalog(

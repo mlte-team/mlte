@@ -14,7 +14,7 @@ import pytest
 from sqlalchemy.pool import StaticPool
 
 from mlte.store.base import StoreURI, StoreURIPrefix
-from mlte.store.user.factory import create_store
+from mlte.store.user.factory import create_user_store
 from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
@@ -30,7 +30,7 @@ def create_memory_store() -> InMemoryUserStore:
     global CACHED_DEFAULT_MEMORY_STORE
     if CACHED_DEFAULT_MEMORY_STORE is None:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
-            InMemoryUserStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+            InMemoryUserStore, create_user_store(StoreURIPrefix.LOCAL_MEMORY[0])
         )
 
     return CACHED_DEFAULT_MEMORY_STORE.clone()
@@ -44,7 +44,7 @@ def memory_store() -> InMemoryUserStore:
 
 def create_rdbs_store() -> RelationalDBUserStore:
     return RelationalDBUserStore(
-        StoreURI.from_string("sqlite+pysqlite:///:memory:"),
+        uri=StoreURI.from_string("sqlite+pysqlite:///:memory:"),
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
@@ -59,7 +59,7 @@ def rdbs_store() -> RelationalDBUserStore:
 def create_fs_store(path: Path) -> FileSystemUserStore:
     return typing.cast(
         FileSystemUserStore,
-        create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[0]}{path}"),
+        create_user_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[0]}{path}"),
     )
 
 

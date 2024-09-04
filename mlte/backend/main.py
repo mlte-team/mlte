@@ -76,7 +76,7 @@ def run(
     logging.info(
         f"Backend using store URI of type: {StoreURI.from_string(store_uri).type}"
     )
-    user_store = user_store_factory.create_store(store_uri)
+    user_store = user_store_factory.create_user_store(store_uri)
     state.set_user_store(user_store)
 
     # Add all configured catalog stores.

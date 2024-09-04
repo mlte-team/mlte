@@ -15,7 +15,7 @@ from mlte.store.catalog.query import (
     CatalogEntryOrFilter,
     CatalogEntryTypeFilter,
 )
-from mlte.store.common.query import AllFilter, NoneFilter
+from mlte.store.query import AllFilter, NoneFilter
 
 
 def create_test_entry(

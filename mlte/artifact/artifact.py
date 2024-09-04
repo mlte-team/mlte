@@ -16,7 +16,7 @@ from mlte.context.context import Context
 from mlte.session.state import session
 from mlte.store.artifact.query import ArtifactTypeFilter
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
-from mlte.store.common.query import FilterType, Query
+from mlte.store.query import FilterType, Query
 
 
 class Artifact(metaclass=abc.ABCMeta):

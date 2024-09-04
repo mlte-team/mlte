@@ -11,7 +11,7 @@ from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 
 
-def create_store(uri: str) -> UserStore:
+def create_user_store(uri: str) -> UserStore:
     """
     Create a MLTE user store instance.
     :param uri: The URI for the store instance

@@ -5,13 +5,11 @@ Implementation of relational database system artifact store.
 """
 from __future__ import annotations
 
+import typing
 from typing import List
 
-import sqlalchemy
-import sqlalchemy.orm
-import sqlalchemy_utils
 from sqlalchemy import Engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
@@ -31,73 +29,67 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
 )
 from mlte.store.artifact.underlying.rdbs.metadata_value import init_value_types
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
-from mlte.store.base import StoreURI
-from mlte.store.common.query import Query
+from mlte.store.common.rdbs import RDBStorage
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
-# RelationalDBStore
+# RelationalDBArtifactStore
 # -----------------------------------------------------------------------------
 
 
-class RelationalDBStore(ArtifactStore):
+class RelationalDBArtifactStore(ArtifactStore):
     """A DB implementation of the MLTE artifact store."""
 
-    def __init__(self, uri: StoreURI, **kwargs) -> None:
-        super().__init__(uri=uri)
+    def __init__(self, uri, **kwargs):
+        ArtifactStore.__init__(self, uri=uri)
 
-        self.engine = sqlalchemy.create_engine(uri.uri, **kwargs)
-        """The underlying storage for the store."""
+        self.storage = RDBStorage(
+            uri,
+            base_class=typing.cast(DeclarativeBase, DBBase),
+            init_tables_func=init_artifact_store_tables,
+            **kwargs,
+        )
+        """The relational DB storage."""
 
-        # Create the DB if it doesn't exist already.
-        if not sqlalchemy_utils.database_exists(self.engine.url):
-            sqlalchemy_utils.create_database(self.engine.url)
-
-        # Creates the DB items if they don't exist already.
-        self._create_tables()
-        self._init_tables()
-
-    def session(self) -> RelationalDBStoreSession:  # type: ignore[override]
+    def session(self) -> RelationalDBArtifactStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBStoreSession(engine=self.engine)
+        return RelationalDBArtifactStoreSession(storage=self.storage)
 
-    def _create_tables(self):
-        """Creates all items, if they don't exist already."""
-        DBBase.metadata.create_all(self.engine)
 
-    def _init_tables(self):
-        """Pre-populate tables."""
-        with Session(self.engine) as session:
-            init_artifact_types(session)
-            init_problem_types(session)
-            init_classification_types(session)
-            init_value_types(session)
+def init_artifact_store_tables(engine: Engine):
+    """Pre-populate tables."""
+    with Session(engine) as session:
+        init_artifact_types(session)
+        init_problem_types(session)
+        init_classification_types(session)
+        init_value_types(session)
 
 
 # -----------------------------------------------------------------------------
-# RelationalDatabaseStoreSession
+# RelationalDBArtifactStoreSession
 # -----------------------------------------------------------------------------
 
 
-class RelationalDBStoreSession(ArtifactStoreSession):
+class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     """A relational DB implementation of the MLTE artifact store session."""
 
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
         """A reference to underlying storage."""
 
     def close(self) -> None:
         """Close the session."""
-        self.engine.dispose()
+        self.storage.close()
 
     # -------------------------------------------------------------------------
     # Structural Elements
     # -------------------------------------------------------------------------
 
     def create_model(self, model: ModelCreate) -> Model:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_model(model.identifier, session)
                 raise errors.ErrorAlreadyExists(
@@ -114,27 +106,27 @@ class RelationalDBStoreSession(ArtifactStoreSession):
                 return Model(identifier=model.identifier, versions=[])
 
     def read_model(self, model_id: str) -> Model:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             model, _ = DBReader.get_model(model_id, session)
             return model
 
     def list_models(self) -> List[str]:
         models: List[str] = []
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             model_objs = session.scalars(select(DBModel))
             for model_obj in model_objs:
                 models.append(model_obj.name)
         return models
 
     def delete_model(self, model_id: str) -> Model:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             model, model_obj = DBReader.get_model(model_id, session)
             session.delete(model_obj)
             session.commit()
             return model
 
     def create_version(self, model_id: str, version: VersionCreate) -> Version:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_version(
                     model_id, version.identifier, session
@@ -155,13 +147,13 @@ class RelationalDBStoreSession(ArtifactStoreSession):
                 return Version(identifier=version.identifier)
 
     def read_version(self, model_id: str, version_id: str) -> Version:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             version, _ = DBReader.get_version(model_id, version_id, session)
             return version
 
     def list_versions(self, model_id: str) -> List[str]:
         versions: List[str] = []
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             version_objs = session.scalars(
                 (
                     select(DBVersion)
@@ -174,7 +166,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         return versions
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             version, version_obj = DBReader.get_version(
                 model_id, version_id, session
             )
@@ -195,7 +187,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         force: bool = False,
         parents: bool = False,
     ) -> ArtifactModel:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             if parents:
                 storeutil.create_parents(self, model_id, version_id)
             else:
@@ -244,7 +236,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             artifact, _ = DBReader.get_artifact(
                 model_id, version_id, artifact_id, session
             )
@@ -258,7 +250,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         offset: int = 0,
     ) -> List[ArtifactModel]:
         # TODO: not the best support of offset and limit, still loading everything from DB.
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             all_artifacts = []
             for artifact_type in DBReader.SUPPORTED_ARTIFACT_DB_CLASSES.keys():
                 artifacts = DBReader.get_artifacts_for_type(
@@ -285,7 +277,7 @@ class RelationalDBStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        with Session(self.engine) as session:
+        with Session(self.storage.engine) as session:
             artifact, artifact_obj = DBReader.get_artifact(
                 model_id, version_id, artifact_id, session
             )

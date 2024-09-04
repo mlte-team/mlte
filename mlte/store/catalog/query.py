@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import List, Union
 
 from mlte.catalog.model import CatalogEntry, CatalogEntryType
-from mlte.store.common.query import (
+from mlte.store.query import (
     AllFilter,
     AndFilter,
     IdentifierFilter,

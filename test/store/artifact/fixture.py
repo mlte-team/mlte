@@ -17,7 +17,7 @@ from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
-from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.user.model import UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
@@ -60,7 +60,7 @@ def fs_store(tmp_path) -> LocalFileSystemStore:
 
 
 @pytest.fixture(scope="function")
-def rdbs_store() -> RelationalDBStore:
+def rdbs_store() -> RelationalDBArtifactStore:
     """A fixture for an in-memory RDBS store."""
     return artifact_store_creators.create_rdbs_store()
 

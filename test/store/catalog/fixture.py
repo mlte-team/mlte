@@ -15,7 +15,7 @@ from sqlalchemy import StaticPool
 
 from mlte._private import url as url_utils
 from mlte.store.base import StoreURI, StoreURIPrefix
-from mlte.store.catalog.factory import create_store
+from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
@@ -49,7 +49,8 @@ def create_memory_store() -> InMemoryCatalogStore:
     global CACHED_DEFAULT_MEMORY_STORE
     if CACHED_DEFAULT_MEMORY_STORE is None:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
-            InMemoryCatalogStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+            InMemoryCatalogStore,
+            create_catalog_store(StoreURIPrefix.LOCAL_MEMORY[0]),
         )
 
     return CACHED_DEFAULT_MEMORY_STORE.clone()
@@ -59,7 +60,7 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     """Creates a file system store."""
     return typing.cast(
         FileSystemCatalogStore,
-        create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
+        create_catalog_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
     )
 
 
@@ -87,10 +88,10 @@ def create_http_store() -> HttpCatalogGroupStore:
     password = client.password if client.password else FAKE_PASS
     uri = str(client.client.base_url)
     return HttpCatalogGroupStore(
-        StoreURI.from_string(
+        uri=StoreURI.from_string(
             url_utils.set_url_username_password(uri, username, password)
         ),
-        RequestsClient(username, password),
+        client=RequestsClient(username, password),
     )
 
 

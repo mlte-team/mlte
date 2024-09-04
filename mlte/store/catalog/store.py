@@ -6,31 +6,30 @@ MLTE catalog store interface implementation.
 
 from __future__ import annotations
 
-from typing import List, cast
+import typing
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
 
 
 class CatalogStore(Store):
-    """
-    An abstract store.
-    """
-
     def session(self) -> CatalogStoreSession:
-        """
-        Return a session handle for the store instance.
-        :return: The session handle
-        """
-        raise NotImplementedError("Cannot get handle to abstract Store.")
+        """Return a session handle for a catalog store session instance."""
+        raise NotImplementedError("Can't call session on a base Store.")
 
 
 class CatalogStoreSession(StoreSession):
     """The base class for all implementations of the MLTE catalog store session."""
 
-    def __init__(self):
-        self.entry_mapper = CatalogEntryMapper()
-        """Mapper for the entry resource."""
+    entry_mapper: CatalogEntryMapper
+    """Mapper for the entry resource."""
+
+
+class ManagedCatalogSession(ManagedSession):
+    """A simple context manager for store sessions."""
+
+    def __enter__(self) -> CatalogStoreSession:
+        return typing.cast(CatalogStoreSession, self.session)
 
 
 class CatalogEntryMapper(ResourceMapper):
@@ -45,15 +44,8 @@ class CatalogEntryMapper(ResourceMapper):
     def read(self, entry_id: str) -> CatalogEntry:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self) -> List[str]:
+    def list(self) -> typing.List[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, entry_id: str) -> CatalogEntry:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-
-class ManagedCatalogSession(ManagedSession):
-    """A simple context manager for store sessions."""
-
-    def __enter__(self) -> CatalogStoreSession:
-        return cast(CatalogStoreSession, self.session)

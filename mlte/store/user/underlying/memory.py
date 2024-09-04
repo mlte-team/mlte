@@ -41,7 +41,7 @@ class InMemoryUserStore(UserStore):
         # Initialize defaults.
         super().__init__(uri=uri, add_default_data=add_default_data)
 
-    def session(self) -> InMemoryUserStoreSession:  # type: ignore[override]
+    def session(self) -> InMemoryUserStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle

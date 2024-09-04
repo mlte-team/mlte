@@ -17,7 +17,7 @@ from mlte.store.catalog.catalog_group import (
     ManagedCatalogGroupSession,
 )
 from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
-from mlte.store.common.query import Query
+from mlte.store.query import Query
 
 from .fixture import (  # noqa
     catalog_stores,

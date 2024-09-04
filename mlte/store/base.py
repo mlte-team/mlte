@@ -7,9 +7,9 @@ MLTE general store interface.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Protocol
 
-from mlte.store.common.query import Query
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -119,7 +119,7 @@ class Store:
         Return a session handle for the store instance.
         :return: The session handle
         """
-        raise NotImplementedError("Cannot get handle to abstract Store.")
+        raise NotImplementedError("Can't call session on a base Store.")
 
 
 # -----------------------------------------------------------------------------
@@ -127,21 +127,12 @@ class Store:
 # -----------------------------------------------------------------------------
 
 
-class StoreSession:
+class StoreSession(Protocol):
     """The base class for all implementations of the MLTE store session."""
-
-    resource_mappers: List[ResourceMapper] = []
-    """A list of resource mappers for all resources in this store."""
-
-    def __init__(self):
-        """Initialize a session instance."""
-        pass
 
     def close(self) -> None:
         """Close the session."""
-        raise NotImplementedError(
-            "Cannot invoke method on abstract StoreSession."
-        )
+        ...
 
 
 class ManagedSession:

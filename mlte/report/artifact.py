@@ -119,7 +119,7 @@ class Report(Artifact):
         super().post_load_hook(context, store)
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Report:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> Report:
         """Convert a report model to its corresponding artifact."""
         assert model.header.type == ArtifactType.REPORT, "Broken precondition."
         body = typing.cast(ReportModel, model.body)

@@ -13,7 +13,7 @@ from mlte.store.artifact.query import (
     ArtifactOrFilter,
     ArtifactTypeFilter,
 )
-from mlte.store.common.query import AllFilter, NoneFilter
+from mlte.store.query import AllFilter, NoneFilter
 
 from ...fixture.artifact import ArtifactFactory, TypeUtil
 

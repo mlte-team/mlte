@@ -10,7 +10,7 @@ from typing import List, Union
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.store.common.query import (
+from mlte.store.query import (
     AllFilter,
     AndFilter,
     IdentifierFilter,
