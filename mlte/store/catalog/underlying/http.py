@@ -17,7 +17,7 @@ from mlte.store.catalog.store import (
     CatalogStoreSession,
 )
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
-from mlte.store.common.http_store import HttpStorage
+from mlte.store.common.http_storage import HttpStorage
 from mlte.user.model import ResourceType
 
 API_PREFIX = settings.API_PREFIX

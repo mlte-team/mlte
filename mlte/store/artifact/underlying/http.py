@@ -16,7 +16,7 @@ from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
-from mlte.store.common.http_store import HttpStorage
+from mlte.store.common.http_storage import HttpStorage
 from mlte.store.query import Query
 
 API_PREFIX = settings.API_PREFIX

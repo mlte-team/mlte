@@ -15,7 +15,7 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
-from mlte.store.common.fs import FileSystemStorage
+from mlte.store.common.fs_storage import FileSystemStorage
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore

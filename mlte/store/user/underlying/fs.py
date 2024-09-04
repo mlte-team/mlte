@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import List, Union
 
 from mlte.store.base import StoreURI
-from mlte.store.common.fs import FileSystemStorage
+from mlte.store.common.fs_storage import FileSystemStorage
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
