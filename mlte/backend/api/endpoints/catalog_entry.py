@@ -162,6 +162,10 @@ def list_catalog_entries_all_catalogs(
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.list_details()
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -185,6 +189,5 @@ def search(
 
 
 # TODO:
-# 1. Implement HTTP Catalog Store
 # 2. Review default groups for test catalog
 # 3. Add unit tests for catalog endpoints

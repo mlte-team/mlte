@@ -7,17 +7,11 @@ Unit tests for the underlying catalog store implementations.
 import pytest
 
 import mlte.store.error as errors
-from mlte.catalog.model import (
-    CatalogEntry,
-    CatalogEntryHeader,
-    CatalogEntryType,
-)
 from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
 )
 from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
-from mlte.store.catalog.underlying.http import HTTPCatalogGroupEntryMapper
 from mlte.store.query import Query
 from test.store.catalog.catalog_store_creators import (  # noqa
     create_fs_store,
@@ -26,42 +20,7 @@ from test.store.catalog.catalog_store_creators import (  # noqa
     create_rdbs_store,
 )
 from test.store.catalog.fixture import create_test_store  # noqa
-from test.store.catalog.fixture import TEST_CATALOG_ID, catalog_stores
-
-# -----------------------------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------------------------
-
-
-def get_test_entry(
-    id: str = "e1",
-    description: str = "code sample",
-    code: str = "print('hello')",
-    catalog_id="cat1",
-    store_fixture_name: str = "",
-) -> CatalogEntry:
-    """Helper to get an entry structure."""
-    id = id
-    description = description
-    code = code
-    header = CatalogEntryHeader(identifier=id, catalog_id=catalog_id)
-    test_entry = CatalogEntry(
-        header=header,
-        code=code,
-        description=description,
-        code_type=CatalogEntryType.MEASUREMENT,
-    )
-
-    if store_fixture_name == "http_store":
-        test_entry.header.catalog_id = TEST_CATALOG_ID
-        test_entry.header.identifier = (
-            HTTPCatalogGroupEntryMapper.generate_composite_id(
-                TEST_CATALOG_ID, test_entry.header.identifier
-            )
-        )
-
-    return test_entry
-
+from test.store.catalog.fixture import catalog_stores, get_test_entry_for_store
 
 # -----------------------------------------------------------------------------
 # Tests
@@ -84,7 +43,7 @@ def test_catalog_entry(
     """An artifact store supports catalog entry operations."""
     store: CatalogStore = create_test_store(store_fixture_name)
 
-    test_entry = get_test_entry(store_fixture_name=store_fixture_name)
+    test_entry = get_test_entry_for_store(store_name=store_fixture_name)
     description2 = "short code sample"
 
     with ManagedCatalogSession(store.session()) as catalog_store:
@@ -129,11 +88,11 @@ def test_catalog_group(
     store_group.add_catalog(store1_id, store1)
     store_group.add_catalog(store2_id, store2)
 
-    test_entry1 = get_test_entry(
-        id="ce1", store_fixture_name=store_fixture_name
+    test_entry1 = get_test_entry_for_store(
+        id="ce1", store_name=store_fixture_name
     )
-    test_entry2 = get_test_entry(
-        id="ce2", store_fixture_name=store_fixture_name
+    test_entry2 = get_test_entry_for_store(
+        id="ce2", store_name=store_fixture_name
     )
 
     with ManagedCatalogGroupSession(store_group.session()) as group_session:
@@ -157,17 +116,17 @@ def test_list_details(
     store: CatalogStore = create_test_store(store_fixture_name)
 
     with ManagedCatalogSession(store.session()) as session:
-        e0 = get_test_entry(
+        e0 = get_test_entry_for_store(
             id="e1",
             description="code 1",
             code="print nothing",
-            store_fixture_name=store_fixture_name,
+            store_name=store_fixture_name,
         )
-        e1 = get_test_entry(
+        e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
-            store_fixture_name=store_fixture_name,
+            store_name=store_fixture_name,
         )
 
         for entry in [e0, e1]:
@@ -183,17 +142,17 @@ def test_search(store_fixture_name: str, create_test_store) -> None:  # noqa
     store: CatalogStore = create_test_store(store_fixture_name)
 
     with ManagedCatalogSession(store.session()) as session:
-        e0 = get_test_entry(
+        e0 = get_test_entry_for_store(
             id="e1",
             description="code 1",
             code="print nothing",
-            store_fixture_name=store_fixture_name,
+            store_name=store_fixture_name,
         )
-        e1 = get_test_entry(
+        e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
-            store_fixture_name=store_fixture_name,
+            store_name=store_fixture_name,
         )
 
         for entry in [e0, e1]:

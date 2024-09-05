@@ -93,7 +93,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self.client = client
         """A reference to underlying HTTP client."""
 
-        self.base_url = f"{self.url}/{ResourceType.CATALOG_ENTRY.value}"
+        self.base_url = (
+            f"{self.url}{API_PREFIX}/{ResourceType.CATALOG_ENTRY.value}"
+        )
         """Base URL used in mapper."""
 
     def create(self, entry: CatalogEntry) -> CatalogEntry:
@@ -144,6 +146,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         offset: int = 0,
     ) -> List[CatalogEntry]:
         url = f"{self.base_url}s/entry"
+        print(url)
         res = self.client.get(url)
         self.client.raise_for_response(res)
 
@@ -163,5 +166,8 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         return parts[0], parts[1]
 
     @staticmethod
-    def generate_composite_id(catalog_id: str, entry_id: str) -> str:
-        return f"{catalog_id}{HTTPCatalogGroupEntryMapper.CATALOG_ENTRY_ID_SEPARATOR}{entry_id}"
+    def generate_composite_id(catalog_id: Optional[str], entry_id: str) -> str:
+        if catalog_id:
+            return f"{catalog_id}{HTTPCatalogGroupEntryMapper.CATALOG_ENTRY_ID_SEPARATOR}{entry_id}"
+        else:
+            return entry_id
