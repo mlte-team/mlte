@@ -81,7 +81,7 @@ check: check-isort check-format check-lint check-typecheck
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest test
+	poetry run pytest --cov=mlte test 
 
 # Open coverage results in a browser
 .PHONY: cov-results
