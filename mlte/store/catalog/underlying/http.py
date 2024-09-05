@@ -6,7 +6,7 @@ Implementation of HTTP catalog store group.
 
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry
@@ -16,7 +16,7 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
-from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
+from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
 from mlte.user.model import ResourceType
 
@@ -37,7 +37,7 @@ class HttpCatalogGroupStore(CatalogStore):
     """
 
     def __init__(
-        self, *, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
+        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
     ) -> None:
         super().__init__(uri=uri)
 
@@ -98,7 +98,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
 
     def create(self, entry: CatalogEntry) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
-        catalog_id, entry_id = self._split_ids(entry.header.identifier)
+        catalog_id, entry_id = self.split_ids(entry.header.identifier)
         entry.header.identifier = entry_id
 
         url = f"{self.base_url}/{catalog_id}/entry"
@@ -109,7 +109,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
 
     def edit(self, entry: CatalogEntry) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
-        catalog_id, entry_id = self._split_ids(entry.header.identifier)
+        catalog_id, entry_id = self.split_ids(entry.header.identifier)
         entry.header.identifier = entry_id
 
         url = f"{self.base_url}/{catalog_id}/entry"
@@ -119,7 +119,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         return CatalogEntry(**(res.json()))
 
     def read(self, catalog_and_entry_id: str) -> CatalogEntry:
-        catalog_id, entry_id = self._split_ids(catalog_and_entry_id)
+        catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
         url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
         res = self.client.get(url)
         self.client.raise_for_response(res)
@@ -131,7 +131,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         return [entry.header.identifier for entry in entries]
 
     def delete(self, catalog_and_entry_id: str) -> CatalogEntry:
-        catalog_id, entry_id = self._split_ids(catalog_and_entry_id)
+        catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
         url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
         res = self.client.delete(url)
         self.client.raise_for_response(res)
@@ -151,7 +151,8 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
             offset : offset + limit
         ]
 
-    def _split_ids(self, catalog_and_entry_id: str) -> Tuple[str, str]:
+    @staticmethod
+    def split_ids(catalog_and_entry_id: str) -> Tuple[str, str]:
         parts = catalog_and_entry_id.split(
             HTTPCatalogGroupEntryMapper.CATALOG_ENTRY_ID_SEPARATOR
         )
@@ -160,3 +161,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
                 f"Invalid catalog and entry id provided: {catalog_and_entry_id}"
             )
         return parts[0], parts[1]
+
+    @staticmethod
+    def generate_composite_id(catalog_id: str, entry_id: str) -> str:
+        return f"{catalog_id}{HTTPCatalogGroupEntryMapper.CATALOG_ENTRY_ID_SEPARATOR}{entry_id}"

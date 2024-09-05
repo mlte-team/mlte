@@ -6,6 +6,8 @@ Base class for HTTP based stores.
 
 from __future__ import annotations
 
+from typing import Optional
+
 from mlte.backend.core.config import settings
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
@@ -20,8 +22,11 @@ class HttpStorage:
     def __init__(
         self,
         uri: StoreURI,
-        client: OAuthHttpClient = RequestsClient(),
+        client: Optional[OAuthHttpClient] = None,
     ) -> None:
+        if client is None:
+            client = RequestsClient()
+
         self.client = client
         """The client for requests."""
 

@@ -17,15 +17,16 @@ from mlte.store.catalog.catalog_group import (
     ManagedCatalogGroupSession,
 )
 from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
+from mlte.store.catalog.underlying.http import HTTPCatalogGroupEntryMapper
 from mlte.store.query import Query
-
-from .fixture import (  # noqa
-    catalog_stores,
+from test.store.catalog.catalog_store_creators import (  # noqa
     create_fs_store,
+    create_http_store,
     create_memory_store,
     create_rdbs_store,
-    create_test_store,
 )
+from test.store.catalog.fixture import create_test_store  # noqa
+from test.store.catalog.fixture import TEST_CATALOG_ID, catalog_stores
 
 # -----------------------------------------------------------------------------
 # Helpers
@@ -36,18 +37,29 @@ def get_test_entry(
     id: str = "e1",
     description: str = "code sample",
     code: str = "print('hello')",
+    catalog_id="cat1",
+    store_fixture_name: str = "",
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     id = id
     description = description
     code = code
-    header = CatalogEntryHeader(identifier=id)
+    header = CatalogEntryHeader(identifier=id, catalog_id=catalog_id)
     test_entry = CatalogEntry(
         header=header,
         code=code,
         description=description,
         code_type=CatalogEntryType.MEASUREMENT,
     )
+
+    if store_fixture_name == "http_store":
+        test_entry.header.catalog_id = TEST_CATALOG_ID
+        test_entry.header.identifier = (
+            HTTPCatalogGroupEntryMapper.generate_composite_id(
+                TEST_CATALOG_ID, test_entry.header.identifier
+            )
+        )
+
     return test_entry
 
 
@@ -72,7 +84,7 @@ def test_catalog_entry(
     """An artifact store supports catalog entry operations."""
     store: CatalogStore = create_test_store(store_fixture_name)
 
-    test_entry = get_test_entry()
+    test_entry = get_test_entry(store_fixture_name=store_fixture_name)
     description2 = "short code sample"
 
     with ManagedCatalogSession(store.session()) as catalog_store:
@@ -117,8 +129,12 @@ def test_catalog_group(
     store_group.add_catalog(store1_id, store1)
     store_group.add_catalog(store2_id, store2)
 
-    test_entry1 = get_test_entry(id="ce1")
-    test_entry2 = get_test_entry(id="ce2")
+    test_entry1 = get_test_entry(
+        id="ce1", store_fixture_name=store_fixture_name
+    )
+    test_entry2 = get_test_entry(
+        id="ce2", store_fixture_name=store_fixture_name
+    )
 
     with ManagedCatalogGroupSession(store_group.session()) as group_session:
         group_session.sessions[store1_id].entry_mapper.create(test_entry1)
@@ -141,8 +157,18 @@ def test_list_details(
     store: CatalogStore = create_test_store(store_fixture_name)
 
     with ManagedCatalogSession(store.session()) as session:
-        e0 = get_test_entry(id="e1", description="code 1", code="print nothing")
-        e1 = get_test_entry(id="e2", description="code 1", code="print nothing")
+        e0 = get_test_entry(
+            id="e1",
+            description="code 1",
+            code="print nothing",
+            store_fixture_name=store_fixture_name,
+        )
+        e1 = get_test_entry(
+            id="e2",
+            description="code 1",
+            code="print nothing",
+            store_fixture_name=store_fixture_name,
+        )
 
         for entry in [e0, e1]:
             session.entry_mapper.create(entry)
@@ -157,8 +183,18 @@ def test_search(store_fixture_name: str, create_test_store) -> None:  # noqa
     store: CatalogStore = create_test_store(store_fixture_name)
 
     with ManagedCatalogSession(store.session()) as session:
-        e0 = get_test_entry(id="e1", description="code 1", code="print nothing")
-        e1 = get_test_entry(id="e2", description="code 1", code="print nothing")
+        e0 = get_test_entry(
+            id="e1",
+            description="code 1",
+            code="print nothing",
+            store_fixture_name=store_fixture_name,
+        )
+        e1 = get_test_entry(
+            id="e2",
+            description="code 1",
+            code="print nothing",
+            store_fixture_name=store_fixture_name,
+        )
 
         for entry in [e0, e1]:
             session.entry_mapper.create(entry)

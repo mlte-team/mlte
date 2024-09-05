@@ -9,6 +9,7 @@ from typing import Optional
 
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
+from mlte.store.catalog.store import CatalogStore
 from mlte.store.user.store import UserStore
 
 
@@ -16,6 +17,10 @@ class State:
     """Global state object."""
 
     def __init__(self):
+        self.reset()
+
+    def reset(self):
+        """Resets all internal state to defaults."""
         self._artifact_store: Optional[ArtifactStore] = None
         """The artifact store instance maintained by the state object."""
 
@@ -36,7 +41,11 @@ class State:
         """Set the globally-configured backend artifact store."""
         self._user_store = store
 
-    def add_catalog_store(self, store_uri: str, id: str):
+    def add_catalog_store(self, store: CatalogStore, id: str):
+        """Adds to the the globally-configured backend list of catalog stores."""
+        self._catalog_stores.add_catalog(id, store)
+
+    def add_catalog_store_from_uri(self, store_uri: str, id: str):
         """Adds to the the globally-configured backend list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri)
 

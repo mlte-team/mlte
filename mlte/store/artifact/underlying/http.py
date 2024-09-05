@@ -7,7 +7,7 @@ Implementation of HTTP artifact store.
 from __future__ import annotations
 
 import typing
-from typing import List
+from typing import List, Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.model import WriteArtifactRequest
@@ -15,7 +15,7 @@ from mlte.backend.core.config import settings
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
-from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
+from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
 from mlte.store.query import Query
 
@@ -31,7 +31,7 @@ class HttpArtifactStore(ArtifactStore):
     """A HTTP implementation of the MLTE artifact store."""
 
     def __init__(
-        self, *, uri: StoreURI, client: OAuthHttpClient = RequestsClient()
+        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
     ) -> None:
         super().__init__(uri=uri)
 

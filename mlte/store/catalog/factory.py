@@ -8,8 +8,7 @@ Top-level functions for catalog store creation.
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
-
-# from mlte.store.catalog.underlying.http import HttpCatalogStore
+from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 
@@ -27,5 +26,7 @@ def create_catalog_store(uri: str) -> CatalogStore:
         return FileSystemCatalogStore(parsed_uri)
     if parsed_uri.type == StoreType.RELATIONAL_DB:
         return RelationalDBCatalogStore(parsed_uri)
+    if parsed_uri.type == StoreType.REMOTE_HTTP:
+        return HttpCatalogGroupStore(uri=parsed_uri)
 
     raise Exception(f"Invalid store type: {uri}")

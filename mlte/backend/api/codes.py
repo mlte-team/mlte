@@ -1,7 +1,7 @@
 """
 mlte/backend/api/codes.py
 
-Status codes for MLTE artifact store.
+Status codes for MLTE backend.
 """
 
 OK = 200

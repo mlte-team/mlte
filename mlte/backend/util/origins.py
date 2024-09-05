@@ -1,7 +1,7 @@
 """
 mlte/backend/util/origins.py
 
-Unit tests for origin utilities.
+Host checking utilities.
 """
 
 from typing import List

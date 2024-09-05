@@ -81,7 +81,7 @@ def run(
 
     # Add all configured catalog stores.
     for id, uri in catalog_uris.items():
-        state.add_catalog_store(uri, id)
+        state.add_catalog_store_from_uri(uri, id)
 
     # Set the token signing key.
     state.set_token_key(jwt_secret)

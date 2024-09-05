@@ -18,26 +18,19 @@ from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.store.base import StoreURI, StoreURIPrefix
-from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
-
-FAKE_USER = "fake_user"
-FAKE_PASS = "fake_pass"
-FAKE_URI = "http://localhost:8080"
-"""Default fake values for http store."""
+from mlte.store.common.http_clients import OAuthHttpClient
+from test.store.defaults import IN_MEMORY_SQLITE_DB, get_http_defaults_if_needed
 
 
 def create_http_store(
-    username: typing.Optional[str] = FAKE_USER,
-    password: typing.Optional[str] = FAKE_PASS,
-    uri: str = FAKE_URI,
+    username: typing.Optional[str] = None,
+    password: typing.Optional[str] = None,
+    uri: typing.Optional[str] = None,
     client: typing.Optional[OAuthHttpClient] = None,
 ) -> HttpArtifactStore:
-    if client is None:
-        client = RequestsClient(username, password)
-    if username is None:
-        username = FAKE_USER
-    if password is None:
-        password = FAKE_PASS
+    username, password, uri = get_http_defaults_if_needed(
+        username, password, uri
+    )
     return HttpArtifactStore(
         uri=StoreURI.from_string(
             url_utils.set_url_username_password(uri, username, password)
@@ -60,7 +53,6 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
 
 
 def create_rdbs_store() -> RelationalDBArtifactStore:
-    IN_MEMORY_SQLITE_DB = "sqlite+pysqlite:///:memory:"
     return RelationalDBArtifactStore(
         StoreURI.from_string(IN_MEMORY_SQLITE_DB),
         poolclass=StaticPool,

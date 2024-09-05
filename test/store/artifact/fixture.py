@@ -35,8 +35,7 @@ def http_store(user: Optional[UserWithPassword] = None) -> HttpArtifactStore:
     # Set an in memory store and get a test http client, configured for the app.
     if user is None:
         user = user_generator.build_admin_user()
-    test_api = TestAPI()
-    test_api.set_users(user)
+    test_api = TestAPI(user=user)
     client = test_api.get_test_client()
 
     return artifact_store_creators.create_http_store(
