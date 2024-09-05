@@ -61,6 +61,11 @@ typecheck:
 .PHONY: check-typecheck
 check-typecheck: typecheck
 
+# Clean cache files
+.PHONY: clean
+clean: 
+	rm -r -f .mypy_cache .pytest_cache
+
 # All quality assurance
 .PHONY: qa
 qa: isort format lint typecheck
@@ -100,4 +105,4 @@ vet:
 # All actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 .PHONY: ci
-ci: gen qa test
+ci: clean gen qa test
