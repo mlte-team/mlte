@@ -21,9 +21,7 @@ from test.store.catalog.fixture import get_entry_uri, get_test_entry
 
 @pytest.mark.parametrize(
     "api_user",
-    user_generator.get_test_users_with_write_permissions(
-        ResourceType.CATALOG_ENTRY
-    ),
+    user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
 )
 def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     """Catalog entries can be created."""
@@ -32,8 +30,6 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     entry = get_test_entry()
 
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
-    print(url)
     res = test_client.post(f"{url}", json=entry.model_dump())
-    print(res)
     assert res.status_code == codes.OK
     _ = CatalogEntry(**res.json())

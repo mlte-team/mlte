@@ -93,9 +93,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self.client = client
         """A reference to underlying HTTP client."""
 
-        self.base_url = (
-            f"{self.url}{API_PREFIX}/{ResourceType.CATALOG_ENTRY.value}"
-        )
+        self.base_url = f"{self.url}{API_PREFIX}/{ResourceType.CATALOG.value}"
         """Base URL used in mapper."""
 
     def create(self, entry: CatalogEntry) -> CatalogEntry:

@@ -39,7 +39,9 @@ async def get_current_resource(request: Request) -> Permission:
     resource_url = url.replace(settings.API_PREFIX, "")
     resource_type = ResourceType.get_type_from_url(resource_url)
     if resource_type is None:
-        raise RuntimeError(f"Could not parse resource from URL: {resource_url}")
+        raise RuntimeError(
+            f"Could not parse resource type from URL: {resource_url}"
+        )
 
     # Parse URL and body for resource id, if any.
     resource_id = None

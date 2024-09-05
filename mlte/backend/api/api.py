@@ -37,7 +37,7 @@ api_router.include_router(
 )
 api_router.include_router(
     catalog_entry.router,
-    prefix=f"/{ResourceType.CATALOG_ENTRY.value}",
+    prefix=f"/{ResourceType.CATALOG.value}",
     tags=["catalog_entry"],
 )
 api_router.include_router(

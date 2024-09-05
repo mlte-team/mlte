@@ -7,11 +7,9 @@ Fixtures for MLTE catalog store unit tests.
 from __future__ import annotations
 
 import typing
-from enum import auto
 from typing import Generator, Optional
 
 import pytest
-from strenum import StrEnum
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import (
@@ -19,6 +17,7 @@ from mlte.catalog.model import (
     CatalogEntryHeader,
     CatalogEntryType,
 )
+from mlte.store.base import StoreType
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.http import (
     HTTPCatalogGroupEntryMapper,
@@ -34,7 +33,7 @@ from test.store.catalog.catalog_store_creators import (
     create_rdbs_store,
 )
 
-CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG_ENTRY.value}"
+CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 """Base URI for catalogs."""
 
 DEFAULT_ENTRY_ID = "e1"
@@ -45,21 +44,12 @@ TEST_CATALOG_ID = "cat1"
 """Default values."""
 
 
-class CatalogStoreType(StrEnum):
-    """Store types."""
-
-    MEMORY_STORE = auto()
-    FS_STORE = auto()
-    RDBS_STORE = auto()
-    HTTP_STORE = auto()
-
-
 def catalog_stores() -> Generator[str, None, None]:
     """
     Yield catalog store fixture names.
     :return: Store fixture name
     """
-    for store_fixture_name in CatalogStoreType:
+    for store_fixture_name in StoreType:
         yield store_fixture_name.value
 
 
@@ -84,13 +74,13 @@ def create_api_and_http_store() -> HttpCatalogGroupStore:
 @pytest.fixture(scope="function")
 def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
     def _make(store_fixture_name) -> CatalogStore:
-        if store_fixture_name == CatalogStoreType.MEMORY_STORE:
+        if store_fixture_name == StoreType.LOCAL_MEMORY.value:
             return create_memory_store()
-        elif store_fixture_name == CatalogStoreType.FS_STORE:
+        elif store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
             return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_fixture_name == CatalogStoreType.RDBS_STORE:
+        elif store_fixture_name == StoreType.RELATIONAL_DB.value:
             return create_rdbs_store()
-        elif store_fixture_name == CatalogStoreType.HTTP_STORE:
+        elif store_fixture_name == StoreType.REMOTE_HTTP.value:
             return create_api_and_http_store()
         else:
             raise RuntimeError(
@@ -152,7 +142,7 @@ def get_test_entry_for_store(
     """Helper to get an entry structure."""
     entry = get_test_entry(id, description, code, code_type, catalog_id)
 
-    if store_name == CatalogStoreType.HTTP_STORE.value:
+    if store_name == StoreType.REMOTE_HTTP.value:
         entry.header.identifier = (
             HTTPCatalogGroupEntryMapper.generate_composite_id(
                 entry.header.catalog_id, entry.header.identifier
