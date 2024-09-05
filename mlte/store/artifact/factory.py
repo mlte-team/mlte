@@ -13,7 +13,7 @@ from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.store.base import StoreType, StoreURI
 
 
-def create_store(uri: str) -> ArtifactStore:
+def create_artifact_store(uri: str) -> ArtifactStore:
     """
     Create a MLTE artifact store instance.
     :param uri: The URI for the store instance

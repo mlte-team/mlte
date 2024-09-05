@@ -13,10 +13,13 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.backend.api import dependencies
+from mlte.backend.api.artifact_model import (
+    WriteArtifactRequest,
+    WriteArtifactResponse,
+)
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
-from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
+from mlte.backend.core import state_stores
 from mlte.store.query import Query
 
 # The router exported by this submodule
@@ -37,7 +40,7 @@ def write_artifact(
     :param request: The artifact write request
     :return: The created artifact
     """
-    with dependencies.artifact_store_session() as artifact_store:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
             artifact = artifact_store.write_artifact_with_header(
                 model_id,
@@ -74,7 +77,7 @@ def read_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The read artifact
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
@@ -101,7 +104,7 @@ def read_artifacts(
     :param offset: The offset on returned artifacts
     :return: The read artifacts
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifacts(model_id, version_id, limit, offset)
         except Exception as ex:
@@ -125,7 +128,7 @@ def search_artifacts(
     :param query: The artifact query
     :return: The read artifacts
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.search_artifacts(model_id, version_id, query)
         except Exception as ex:
@@ -146,7 +149,7 @@ def delete_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The deleted artifact
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.delete_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:

@@ -12,9 +12,9 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.core import state_stores
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.user.policy import Policy
 from mlte.user.model import ResourceType
@@ -36,7 +36,7 @@ def create_model(
     """
     # First create model.
     created_model: Model
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             created_model = handle.create_model(model)
         except errors.ErrorNotFound as e:
@@ -50,7 +50,7 @@ def create_model(
         except Exception as ex:
             raise_http_internal_error(ex)
 
-    with dependencies.user_store_session() as handle:
+    with state_stores.user_store_session() as handle:
         # Now create permissions and groups associated to it.
         try:
             Policy.create(
@@ -77,7 +77,7 @@ def read_model(
     :return: The read model
     """
     try:
-        with dependencies.artifact_store_session() as handle:
+        with state_stores.artifact_store_session() as handle:
             model = handle.read_model(model_id)
 
         return model
@@ -97,7 +97,7 @@ def list_models(
     List MLTE models.
     :return: A collection of model identifiers
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.list_models()
         except errors.ErrorNotFound as e:
@@ -120,7 +120,7 @@ def delete_model(
     :return: The deleted model
     """
     deleted_model: Model
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             deleted_model = handle.delete_model(model_id)
         except errors.ErrorNotFound as e:
@@ -133,7 +133,7 @@ def delete_model(
                 detail="Internal server error.",
             )
 
-    with dependencies.user_store_session() as handle:
+    with state_stores.user_store_session() as handle:
         # Now delete related permissions and groups.
         try:
             Policy.remove(ResourceType.MODEL, model_id, handle)
@@ -156,7 +156,7 @@ def create_version(
     :param version: The version create model
     :return: The created version
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.create_version(model_id, version)
         except errors.ErrorNotFound as e:
@@ -184,7 +184,7 @@ def read_version(
     :param version_id: The version identifier
     :return: The read version
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_version(model_id, version_id)
         except errors.ErrorNotFound as e:
@@ -205,7 +205,7 @@ def list_versions(
     :param model_id: The model identifier
     :return: A collection of version identifiers
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.list_versions(model_id)
         except errors.ErrorNotFound as e:
@@ -229,7 +229,7 @@ def delete_version(
     :param version_id: The version identifier
     :return: The deleted version
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.delete_version(model_id, version_id)
         except errors.ErrorNotFound as e:

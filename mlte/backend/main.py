@@ -11,10 +11,10 @@ from typing import Any, Dict, List
 import uvicorn
 from pydantic.networks import HttpUrl
 
-import mlte.backend.app_factory as app_factory
-import mlte.backend.util.origins as util
+import mlte._private.hosts as util
+import mlte.backend.core.app_factory as app_factory
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.user import factory as user_store_factory
@@ -66,7 +66,7 @@ def run(
     app = app_factory.create(allowed_origins)
 
     # Initialize the backing artifact store instance
-    store = artifact_store_factory.create_store(store_uri)
+    store = artifact_store_factory.create_artifact_store(store_uri)
     if store.uri.type == StoreType.REMOTE_HTTP:
         raise RuntimeError("Cannot run backend with remote HTTP store.")
     state.set_artifact_store(store)

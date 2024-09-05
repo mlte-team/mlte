@@ -12,11 +12,11 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
+from mlte.backend.api.artifact_model import USER_ME_ID
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
-from mlte.backend.api.model import USER_ME_ID
+from mlte.backend.core import state_stores
 from mlte.store.user.policy import Policy
 from mlte.user.model import (
     BasicUser,
@@ -86,7 +86,7 @@ def create_user(
         )
 
     new_user: BasicUser
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             # Give every new user permissions to create models.
             # Check first if the group was not manually added in the received user data.
@@ -140,7 +140,7 @@ def edit_user(
     if user.username == USER_ME_ID:
         user.username = current_user.username
 
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             # We only want to allow admins to edit a user's groups.
             if current_user.role != RoleType.ADMIN:
@@ -174,7 +174,7 @@ def read_user(
     if username == USER_ME_ID:
         return current_user
 
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.user_mapper.read(username)
         except errors.ErrorNotFound as e:
@@ -193,7 +193,7 @@ def list_users(
     List MLTE users.
     :return: A collection of usernames
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.user_mapper.list()
         except Exception as e:
@@ -208,7 +208,7 @@ def list_users_details(
     List MLTE users, with details for each user.
     :return: A collection of users with their details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             detailed_users = []
             usernames = user_store.user_mapper.list()
@@ -233,7 +233,7 @@ def delete_user(
     :param username: The username
     :return: The deleted user
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             deleted_user = user_store.user_mapper.delete(username)
 
@@ -263,8 +263,8 @@ def list_user_models(
     if username == USER_ME_ID:
         username = current_user.username
 
-    with dependencies.artifact_store_session() as artifact_store:
-        with dependencies.user_store_session() as user_store:
+    with state_stores.artifact_store_session() as artifact_store:
+        with state_stores.user_store_session() as user_store:
             try:
                 # Get all models, and filter out only the ones the user has read permissions for.
                 user_models: List[str] = []

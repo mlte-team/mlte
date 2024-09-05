@@ -12,7 +12,7 @@ from pathlib import Path
 from sqlalchemy.pool import StaticPool
 
 from mlte._private import url as url_utils
-from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
@@ -41,14 +41,16 @@ def create_http_store(
 
 def create_memory_store() -> InMemoryStore:
     return typing.cast(
-        InMemoryStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+        InMemoryStore, create_artifact_store(StoreURIPrefix.LOCAL_MEMORY[0])
     )
 
 
 def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
-        create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
+        create_artifact_store(
+            f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"
+        ),
     )
 
 

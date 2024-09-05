@@ -12,11 +12,11 @@ from typing import Any, Dict, Optional
 import httpx
 from fastapi.testclient import TestClient
 
-import mlte.backend.app_factory as app_factory
+import mlte.backend.core.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore

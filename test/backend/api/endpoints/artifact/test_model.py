@@ -8,7 +8,7 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.context.model import Model, ModelCreate
 from mlte.store.user.policy import Policy
 from mlte.store.user.store_session import ManagedUserSession

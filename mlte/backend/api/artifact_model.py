@@ -1,7 +1,7 @@
 """
-mlte/backend/api/model.py
+mlte/backend/api/artifact_model.py
 
-Model implementations for artifact store.
+Model implementations for artifact store intermediaries for the API.
 
 NOTE(Kyle): I am unsure as to how I want to refactor the API to account
 for additional meta-models like these. This worked well for write request;

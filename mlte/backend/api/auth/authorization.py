@@ -10,13 +10,14 @@ from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
 
-from mlte.backend.api import codes, dependencies
+from mlte.backend.api import codes
+from mlte.backend.api.artifact_model import USER_ME_ID
 from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
-from mlte.backend.api.model import USER_ME_ID
+from mlte.backend.core import state_stores
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.store.user.store import UserStore
 from mlte.user.model import (
     BasicUser,
@@ -143,7 +144,7 @@ async def get_authorized_user(
 
     # Check if user in token exists.
     user = None
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         user = user_store.user_mapper.read(username)
     if user is None:
         raise HTTPAuthException(

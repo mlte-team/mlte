@@ -11,9 +11,9 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.core import state_stores
 from mlte.catalog.model import CatalogEntry
 from mlte.store.query import Query
 
@@ -33,7 +33,7 @@ def create_catalog_entry(
     :param entry: The catalog entry to create
     :return: The created catalog entry
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.create(
@@ -63,7 +63,7 @@ def edit_catalog_entry(
     :param entry: The entry to edit
     :return: The edited entry
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.edit(
@@ -89,7 +89,7 @@ def read_catalog_entry(
     :param catalog_entry_id: The entry name
     :return: The read entry
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(catalog_id).entry_mapper.read(
                 catalog_entry_id
@@ -114,7 +114,7 @@ def delete_catalog_entry(
     :param catalog_entry_id: The entry id
     :return: The deleted entry
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(catalog_id).entry_mapper.delete(
                 catalog_entry_id
@@ -137,7 +137,7 @@ def list_catalog_entries(
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(
                 catalog_id
@@ -159,7 +159,7 @@ def list_catalog_entries_all_catalogs(
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.list_details()
         except Exception as e:
@@ -177,7 +177,7 @@ def search(
     :param query: The search query.
     :return: A collection of entries with their details for the provided query.
     """
-    with dependencies.catalog_stores_session() as catalog_stores:
+    with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.search(query=query)
         except Exception as e:

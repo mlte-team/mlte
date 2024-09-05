@@ -10,7 +10,7 @@ import typing
 from typing import List, Optional
 
 from mlte.artifact.model import ArtifactModel
-from mlte.backend.api.model import WriteArtifactRequest
+from mlte.backend.api.artifact_model import WriteArtifactRequest
 from mlte.backend.core.config import settings
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession

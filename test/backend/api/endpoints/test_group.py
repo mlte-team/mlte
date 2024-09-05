@@ -11,7 +11,7 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import (
     Group,

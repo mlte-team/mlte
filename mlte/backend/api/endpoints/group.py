@@ -11,9 +11,9 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.core import state_stores
 from mlte.user.model import Group, Permission
 
 # The router exported by this submodule
@@ -31,7 +31,7 @@ def create_group(
     :param group: The group to create
     :return: The created group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.create(group)
         except errors.ErrorAlreadyExists as e:
@@ -53,7 +53,7 @@ def edit_group(
     :param group: The group to edit
     :return: The edited group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.edit(group)
         except errors.ErrorNotFound as e:
@@ -75,7 +75,7 @@ def read_group(
     :param group_name: The group name
     :return: The read group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.read(group_name)
         except errors.ErrorNotFound as e:
@@ -94,7 +94,7 @@ def list_groups(
     List MLTE group.
     :return: A collection of group names
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.list()
         except Exception as e:
@@ -109,7 +109,7 @@ def list_group_details(
     List MLTE group, with details for each group.
     :return: A collection of groups with their details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.list_details()
         except Exception as e:
@@ -127,7 +127,7 @@ def delete_group(
     :param group_name: The group name
     :return: The deleted group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.delete(group_name)
         except errors.ErrorNotFound as e:
@@ -146,7 +146,7 @@ def list_permissions(
     List MLTE permissions.
     :return: A collection of permissions
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.permission_mapper.list()
         except Exception as e:
@@ -161,7 +161,7 @@ def list_permission_details(
     List MLTE permissions, with details.
     :return: A collection of permissions, with details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.permission_mapper.list_details()
         except Exception as e:

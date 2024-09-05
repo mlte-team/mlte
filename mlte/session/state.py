@@ -8,7 +8,7 @@ from typing import Optional
 
 import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
-from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 
@@ -99,7 +99,7 @@ def set_store(artifact_store_uri: str):
     :param artifact_store_uri: The artifact store URI string
     """
     global g_session
-    g_session._set_store(create_store(artifact_store_uri))
+    g_session._set_store(create_artifact_store(artifact_store_uri))
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):

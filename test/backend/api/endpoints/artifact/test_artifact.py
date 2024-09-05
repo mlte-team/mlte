@@ -13,7 +13,7 @@ import pytest
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.backend.api import codes
-from mlte.backend.api.model import WriteArtifactRequest
+from mlte.backend.api.artifact_model import WriteArtifactRequest
 from mlte.model.base_model import BaseModel
 from mlte.store.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
