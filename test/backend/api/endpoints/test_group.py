@@ -70,7 +70,7 @@ def create_group_using_admin(api: TestAPI):
 
 
 def get_group_using_admin(group_id: str, api: TestAPI) -> dict[str, Any]:
-    """Gets a user using admin."""
+    """Gets a group using admin."""
     return api.admin_read_entity(group_id, GROUP_URI)
 
 
