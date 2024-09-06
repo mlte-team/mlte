@@ -129,7 +129,7 @@ def delete_catalog_entry(
             raise_http_internal_error(e)
 
 
-@router.get("/{catalog_id}/entry/")
+@router.get("/{catalog_id}/entry")
 def list_catalog_entries(
     *,
     catalog_id: str,
@@ -191,5 +191,7 @@ def search(
 
 
 # TODO:
-# 2. Review default groups for test catalog
-# 3. Add unit tests for catalog endpoints
+# 3. Figure out permissions for search
+# 4. Refactor get_url or other functions?
+# 5. Add default system file catalog
+# 6. Date functionality in entities hedaer?

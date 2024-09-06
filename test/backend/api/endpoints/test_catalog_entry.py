@@ -11,6 +11,7 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.catalog.model import CatalogEntry
+from mlte.store.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
@@ -180,6 +181,45 @@ def test_read_no_permission(
     user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
 def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+    """Entries can be listed in a catalog."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+    entry = get_test_entry()
+
+    url = get_entry_uri(catalog_id=entry.header.catalog_id)
+    original_entries = test_client.get(f"{url}")
+
+    create_entry_using_admin(entry, test_api)
+
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.OK
+    assert len(res.json()) == len(original_entries.json()) + 1
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_no_read_permissions(
+        ResourceType.CATALOG
+    ),
+)
+def test_list_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:  # noqa
+    """No permission to list."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+    entry = get_test_entry()
+
+    url = get_entry_uri(catalog_id=entry.header.catalog_id)
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
+)
+def test_list_all(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Entries can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -201,7 +241,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
         ResourceType.CATALOG
     ),
 )
-def test_list_no_permission(
+def test_list_all_no_permission(
     test_api_fixture, api_user: UserWithPassword
 ) -> None:  # noqa
     """No permission to list."""
@@ -257,3 +297,30 @@ def test_delete_no_permission(
     )
     res = test_client.delete(f"{url}")
     assert res.status_code == codes.FORBIDDEN
+
+
+# TODO: note that this is tested with write permissions, since search uses post, and that is interpreted as write.
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
+)
+def test_search(
+    test_api_fixture,
+    api_user: UserWithPassword,
+) -> None:
+    """Catalogs can be searched."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    entry = get_test_entry()
+    create_entry_using_admin(entry, test_api)
+
+    url = get_entry_uri()
+    res = test_client.post(f"{url}/search", json=Query().model_dump())
+    assert res.status_code == codes.OK
+
+    collection = res.json()
+    assert len(collection) == 1
+
+    read = CatalogEntry(**collection[0])
+    assert read == entry
