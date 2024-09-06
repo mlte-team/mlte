@@ -35,7 +35,8 @@ def create_catalog_entry(
     """
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
-            entry.header.catalog_id = catalog_id
+            if not entry.header.catalog_id:
+                entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.create(
                 entry
             )
@@ -65,7 +66,8 @@ def edit_catalog_entry(
     """
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
-            entry.header.catalog_id = catalog_id
+            if not entry.header.catalog_id:
+                entry.header.catalog_id = catalog_id
             return catalog_stores.get_session(catalog_id).entry_mapper.edit(
                 entry
             )
