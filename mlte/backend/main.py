@@ -65,6 +65,10 @@ def run(
     # The global FastAPI application
     app = app_factory.create(allowed_origins)
 
+    logging.info(
+        f"Backend using artifact and user store URI of type: {StoreURI.from_string(store_uri).type}"
+    )
+
     # Initialize the backing artifact store instance
     store = artifact_store_factory.create_artifact_store(store_uri)
     if store.uri.type == StoreType.REMOTE_HTTP:
@@ -73,9 +77,6 @@ def run(
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
-    logging.info(
-        f"Backend using store URI of type: {StoreURI.from_string(store_uri).type}"
-    )
     user_store = user_store_factory.create_user_store(store_uri)
     state.set_user_store(user_store)
 

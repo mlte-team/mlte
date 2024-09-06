@@ -22,7 +22,7 @@ If you are new to Python and haven't installed it, we recommend starting with <a
 
 ## Using MLTE as a library
 
-### Subpackages
+### Importing
 
 `MLTE` contains the following subpackages:
 
@@ -34,8 +34,6 @@ If you are new to Python and haven't installed it, we recommend starting with <a
 
 - **Report**: A *`MLTE`* report encapsulates all of the knowledge gained about the model and the system as a consequence of the evaluation process. The report renders as a web page and is opened automatically in an available window of the default browser. 
 
-### Import
-
 *`MLTE`* can be imported like any Python pacakge using the standard conventions.
 
 ```python
@@ -45,46 +43,51 @@ from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
 ```
 
-### Setting a MLTE session
+### Setting up a MLTE session
 
-Before most operations can be done on MLTE, a context and store need to be set. When using MLTE as a library, there are two commands that can be executed once on a script to set this global state. They can be imported like so:
+Before most operations can be done on MLTE, a context and artifact store need to be set. When using MLTE as a library, there are two commands that can be executed once on a script to set this global state. They can be imported like so:
 
 ```python
 from mlte.session import set_context, set_store
 ```
 
-They are used in the following way:
+They are described used in the following way:
 
 - ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
 
-- ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the following URI structure:
+- ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the structure described in the section [Store URIs](#store-uris) below.
 
-  - **In Memory Store** (``memory://``): a temporary, in memory store, useful for quick tests. Artifacts stored here are not permanent. The URI for this store is simply the given string, without any parameters.
+## Running the Backend and User Interface
 
-  - **File System Store** (``fs://<store_path>``): a local file system artifact store. The  ``<store_path>`` parameter has to be a path to an existing folder in your local system. The store will be created in subfolders inside it. This makes it easy to review the artifacts by just opening the JSON files with their information.
+The web-based user interface (UI or frontend) allows you to edit some types of artifacts in the system (like a Negotiation Card), and review the existing models and test catalogs. It requires authentication to access, so it also allows admins to manage users. To access the UI, first you need to start the backend server. See details for running each component.
 
-  - **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): a store in a relational database (DB) engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html" target="_blank">page</a> for details on supported drivers, and see section below on [Using a Relational DB](#using-a-relational-db-engine-backend) for more details on the other parameters on this URI.
+### Backend
 
-  - **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote MLTE backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the MLTE frontend. The ``<host>`` and ``<port>`` point to the server where the MLTE backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the MLTE backend and frontend.
-
-
-## Running the User Interface
-
-To run the user interface (UI or frontend), first you need to start the backend server. Running the backend can be done with the following command:
+Running the backend can be done with the following command:
 
 ```bash
 $ mlte backend
 ```
 
-However, by default this will store any artifacts in a non-persistent, in-memory store. You also have the option to use a folder to store artifacts, or a relational database, using the `--store-uri` flag. 
+Some common flags used with the backend include the following:
 
-- To use a relational database to store artifacts, see the [Using a Relational DB](#using-a-relational-db-engine-backend) section below.
-
-- To use a folder to store artifacts, you have to specify a relative or absolute folder path with the `fs://` prefix. For example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
+ - **Artifact store**: the default artifact store will store any artifacts in a non-persistent, in-memory store. To change the store type, use the `--store-uri` flag. Please see the [Store URIs](#store-uris) section for details about each store type and corresponding URI. Note that this flag will also set the internal user store, used to handle users and permissions needed for the UI. To use a relational database to store artifacts, you will need to set up the database engine separately; see the [Using a Relational DB](#using-a-relational-db-engine-backend) section below for details. For example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
 
 ```bash
 $ mlte backend --store-uri fs://store
 ```
+
+ - **Test catalog stores**: Optionally, you can specify one or more test catalog stores to use by the system. This is done with the `--catalog-uris` flag, which is similar to the flag for artifact stores. Unlike that one, however, catalogs need to have an ID, and this flag allows you to specify more than one test catalog if required. The value of this flag is a string with a dictionary with the ids and the actual store URIs. For example, to run the backend with two catalogs, one called "cat1" and another one called "cat2", the first one being in memory and the second one being in a local folder called `store`, you would run this command:
+
+```bash
+$ mlte backend --catalog-uris '{"cat1": "memory://", "cat2": "fs://store"}'
+```
+
+ - **Token key**: The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing instead of the default one. This can be done by either passing it as a command line argument with the `--jwt-secret` flag, or creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`
+
+ - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend need to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
+
+### Frontend
 
 Once the backend is running, you can run the frontend with the following command:
 
@@ -101,30 +104,36 @@ After this, go to the hosted address (defaults to `http://localhost:8000`) to vi
 
 For more information on how to use the UI, see our how-to guide on [using `MLTE`](using_mlte.md).
 
-## Backend Considerations
+## Store URIs
 
-The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing instead of the default one. This can be done by either creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`, or passing it as a command line argument with the `--jwt-secret` flag.
+The following are the types of store URIs used by the system.
 
-In order for the frontend to be able to communicate with the backend, the frontend need to be allowed as an origin. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
+- **In Memory Store** (``memory://``): a temporary, in memory store, useful for quick tests. Items stored here are not permanent. The URI for this store is simply the given string, without any parameters.
 
+- **File System Store** (``fs://<store_path>``): a local file system store. The  ``<store_path>`` parameter has to be a path to an existing folder in your local system. The store will be created in subfolders inside it. This makes it easy to review the store contents by just opening the JSON files with their information.
 
-### Using a Relational DB Engine Backend
+- **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): a store in a relational database (DB) engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html" target="_blank">page</a> for details on supported drivers, and see section below on [Using a Relational DB](#using-a-relational-db-engine-backend) for more details on the other parameters on this URI.
+
+- **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote MLTE backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the MLTE frontend. The ``<host>`` and ``<port>`` point to the server where the MLTE backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the MLTE backend and frontend.
+
+## Using a Relational DB Engine Backend
 
 To use a relational DB engine as a store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
 To install your DB engine, you need to follow the specific instructions depending on the engine type. Usually the steps will include:
 
-1. Download the DB engine installer (e.g., for PostgreSQL, get it from their <a href="https://www.postgresql.org/download/" target="_blank">downloads page</a>).
-1. Execute the installation as required for the DB engine.
-1. Ensure the DB engine is running.
-1. Create a user with DB creation permissions to be used by MLTE (or create a regular user, and create the DB for MLTE manually using a user that can do that).
+1. Download the DB engine installer (e.g., for PostgreSQL, get it from their <a href="https://www.postgresql.org/download/" target="_blank">downloads page</a>), and execute the installation as required for the DB engine.
+   - Alternatively, you can download a docker container image with the proper database engine set up.
+1. Ensure the DB engine is running (starting a container if applicable).
+1. Use the DB's tools to create a user with DB creation permissions to be used by MLTE; or create a regular user for MLTE, and create the DB for MLTE manually using an existing user that can do that.
+   - If using a container, this may just require you to specify environment variables for the container, which will create and set up the user automatically.
 
 Then, you can just pass the URI for the DB store when running the MLTE backend, or when using `set_store` and using MLTE as a library.
 
-Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte`:
+Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte` (which can exist previously or will be created by MLTE if possible):
 
 ```bash
-$ mlte backend --store-uri postgresql://mlte_user:mlte_pass@localhost/mlte --allowed-origins http://localhost:8000
+$ mlte backend --store-uri postgresql://mlte_user:mlte_pass@localhost/mlte
 ```
 
 Example for setting the store inside code when you are using MLTE as a library:
