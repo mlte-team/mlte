@@ -285,7 +285,6 @@ bash stop.sh
 
 Currently, `MLTE` supports the following Python versions:
 
-- `3.8`
 - `3.9`
 - `3.10`
 - `3.11`
@@ -297,7 +296,7 @@ Currently, `MLTE` supports the following Python versions:
 Install the desired version with:
 
 ```bash
-export VERSION=3.8
+export VERSION=3.9
 
 # Install the desired version
 pyenv install $VERSION
@@ -305,7 +304,7 @@ pyenv install $VERSION
 pyenv local $VERSION
 # Confirm the version
 python --version
-Python 3.8.16
+Python 3.9.16
 ```
 
 With the proper version activated, use `poetry` as described in [QuickStart](#quickstart) to create a virtual environment and install dependencies.
