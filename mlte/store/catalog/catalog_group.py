@@ -27,14 +27,26 @@ class CatalogStoreGroup:
         """Dictionary with all catalogs in this group."""
 
     def add_catalog_from_uri(self, id: str, uri: str, overwite: bool = False):
-        """Adds a catalog by indicating its uri."""
-        catalog = create_catalog_store(uri)
+        """
+        Adds a catalog by indicating its uri.
+
+        :param id: A string to identify the catalog.
+        :param uri: The store URI that describes the store to be used for the catalog.
+        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary to the new URI.
+        """
+        catalog = create_catalog_store(uri, id)
         self.add_catalog(id, catalog, overwite)
 
     def add_catalog(
         self, id: str, catalog_store: CatalogStore, overwite: bool = False
     ):
-        """Adds a catalog."""
+        """
+        Adds a catalog.
+
+        :param id: A string to identify the catalog.
+        :param uri: The store URI that describes the store to be used for the catalog.
+        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary to the new URI.
+        """
         if id in self.catalogs and not overwite:
             raise ErrorAlreadyExists(
                 f"Catalog with id {id} already exists in group."

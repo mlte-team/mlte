@@ -5,8 +5,9 @@ Implementation of local file system catalog store.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -25,16 +26,23 @@ from mlte.store.common.fs_storage import FileSystemStorage
 class FileSystemCatalogStore(CatalogStore):
     """A local file system implementation of the MLTE catalog store."""
 
-    BASE_CATALOG_FOLDER = "catalog"
+    BASE_CATALOGS_FOLDER = "catalogs"
     """Base fodler to store catalog entries in."""
 
-    def __init__(self, uri: StoreURI) -> None:
+    DEFAULT_CATALOG_FOLDER = "catalog"
+    """A default name for a catalog folder."""
+
+    def __init__(
+        self, uri: StoreURI, catalog_folder: Optional[str] = None
+    ) -> None:
         self.uri = uri
         """Store uri."""
 
-        self.storage = FileSystemStorage(
-            uri=uri, sub_folder=self.BASE_CATALOG_FOLDER
-        )
+        if not catalog_folder:
+            catalog_folder = self.DEFAULT_CATALOG_FOLDER
+
+        catalog_folder = os.path.join(self.BASE_CATALOGS_FOLDER, catalog_folder)
+        self.storage = FileSystemStorage(uri=uri, sub_folder=catalog_folder)
         """The underlying storage for the store."""
 
     def session(self) -> FileSystemCatalogStoreSession:
@@ -82,9 +90,7 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         """A reference to underlying storage."""
 
         self.storage.set_base_path(
-            Path(
-                FileSystemCatalogStore.BASE_CATALOG_FOLDER, self.ENTRIES_FOLDER
-            )
+            Path(self.storage.sub_folder, self.ENTRIES_FOLDER)
         )
         """Set the subfodler for this resrouce."""
 
