@@ -100,7 +100,6 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         new_entry = self._convert_to_local(entry)
-        print(new_entry)
 
         url = f"{self.base_url}/{local_catalog_id}/entry"
         res = self.client.post(url, json=new_entry.model_dump())
@@ -150,7 +149,6 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         offset: int = 0,
     ) -> List[CatalogEntry]:
         url = f"{self.base_url}s/entry"
-        print(url)
         res = self.client.get(url)
         self.client.raise_for_response(res)
 

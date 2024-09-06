@@ -7,6 +7,7 @@ Unit tests for the underlying catalog store implementations.
 import pytest
 
 import mlte.store.error as errors
+from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
@@ -79,20 +80,26 @@ def test_catalog_group(
     store_fixture_name: str, create_test_store  # noqa
 ) -> None:
     """A catalog store group supports general operations."""
-    store1: CatalogStore = create_test_store(store_fixture_name)
-    store2: CatalogStore = create_test_store(store_fixture_name)
+    if store_fixture_name == StoreType.REMOTE_HTTP.value:
+        # NOTE: MLTE does not support having 2 separate TestAPIs at the same time,
+        # as there is one global shared state that they access and overwrite.
+        # Thus, two HTTP stores, which require to TestAPIs, won't work properly.
+        pytest.skip()
 
     store1_id = "st1"
     store2_id = "st2"
+    store1: CatalogStore = create_test_store(store_fixture_name, store1_id)
+    store2: CatalogStore = create_test_store(store_fixture_name, store2_id)
+
     store_group = CatalogStoreGroup()
     store_group.add_catalog(store1_id, store1)
     store_group.add_catalog(store2_id, store2)
 
     test_entry1 = get_test_entry_for_store(
-        id="ce1", store_name=store_fixture_name
+        id="ce1", store_name=store_fixture_name, catalog_id=store1_id
     )
     test_entry2 = get_test_entry_for_store(
-        id="ce2", store_name=store_fixture_name
+        id="ce2", store_name=store_fixture_name, catalog_id=store2_id
     )
 
     with ManagedCatalogGroupSession(store_group.session()) as group_session:

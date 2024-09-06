@@ -53,14 +53,16 @@ def catalog_stores() -> Generator[str, None, None]:
         yield store_fixture_name.value
 
 
-def create_api_and_http_store() -> HttpCatalogGroupStore:
+def create_api_and_http_store(
+    catalog_id: str = TEST_CATALOG_ID,
+) -> HttpCatalogGroupStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
     # Set an in memory store and get a test http client, configured for the app.
     user = user_generator.build_admin_user()
-    test_api = TestAPI(user=user, default_catalog_id=TEST_CATALOG_ID)
+    test_api = TestAPI(user=user, default_catalog_id=catalog_id)
     client = test_api.get_test_client()
 
     return create_http_store(
@@ -73,7 +75,9 @@ def create_api_and_http_store() -> HttpCatalogGroupStore:
 
 @pytest.fixture(scope="function")
 def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
-    def _make(store_fixture_name) -> CatalogStore:
+    def _make(
+        store_fixture_name, catalog_id: str = TEST_CATALOG_ID
+    ) -> CatalogStore:
         if store_fixture_name == StoreType.LOCAL_MEMORY.value:
             return create_memory_store()
         elif store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
@@ -81,7 +85,7 @@ def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
         elif store_fixture_name == StoreType.RELATIONAL_DB.value:
             return create_rdbs_store()
         elif store_fixture_name == StoreType.REMOTE_HTTP.value:
-            return create_api_and_http_store()
+            return create_api_and_http_store(catalog_id)
         else:
             raise RuntimeError(
                 f"Invalid store type received: {store_fixture_name}"
