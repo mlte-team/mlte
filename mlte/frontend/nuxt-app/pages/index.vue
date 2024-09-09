@@ -1,35 +1,13 @@
 <template>
   <NuxtLayout name="base-layout">
     <template #sidebar>
-      <div style="padding-top: 60px">
-        <UsaTextInput v-model="newModelIdentifier">
-          <template #label> New Model </template>
-        </UsaTextInput>
-        <UsaButton
-          class="secondary-button margin-button"
-          @click="submitNewModel(newModelIdentifier)"
-        >
-          Create Model
-        </UsaButton>
-
-        <UsaTextInput
-          v-model="newVersionIdentifier"
-          :disabled="selectedModel === ''"
-        >
-          <template #label> New Version for: {{ selectedModel }} </template>
-        </UsaTextInput>
-        <UsaButton
-          class="secondary-button margin-button"
-          @click="submitNewVersion(selectedModel, newVersionIdentifier)"
-        >
-          Create Version
-        </UsaButton>
+      <div style="padding-top: 60px;">
       </div>
     </template>
 
     <UsaBreadcrumb :items="path" />
     <div style="display: flex">
-      <div class="split-div">
+      <div class="model-version-div">
         <b>Model</b>
         <UsaSelect
           :options="modelOptions"
@@ -39,7 +17,7 @@
         <br />
       </div>
 
-      <div class="split-div">
+      <div class="model-version-div">
         <b>Version</b>
         <UsaSelect
           :options="versionOptions"
@@ -53,6 +31,42 @@
         <!-- Placeholder for when the search functionality is implemented
         <label class="usa-label" style="margin-top: 0px;">Search</label>
         <UsaTextInput v-model="searchInput" style="width: 100%;"/> -->
+      </div>
+    </div>
+
+    <div style="margin-bottom: 2em;">
+      <div class="inline-input-left" style="margin-right: .25em">
+        <UsaTextInput v-model="newModelIdentifier">
+          <template #label>
+            <b>New Model</b>
+          </template>
+        </UsaTextInput>
+      </div>
+      <div class="inline-button" style="margin-right: 3em;">
+        <UsaButton
+          class="secondary-button"
+          @click="submitNewModel(newModelIdentifier)"
+        >
+          Create Model
+        </UsaButton>
+      </div>
+      <div class="inline-input-right" style="margin-right: .25em">
+        <UsaTextInput 
+          v-model="newVersionIdentifier"
+          :disabled="selectedModel === ''"
+        >
+          <template #label>
+            <b>New Version for: {{ selectedModel }} </b>
+          </template>
+        </UsaTextInput>
+      </div>    
+      <div class="inline-button">
+        <UsaButton
+          class="secondary-button inline-button"
+          @click="submitNewVersion(selectedModel, newVersionIdentifier)"
+        >
+          Create Version
+        </UsaButton>
       </div>
     </div>
 
@@ -615,7 +629,7 @@ async function submitNewVersion(modelName: string, versionName: string) {
   width: 100%;
 }
 
-.split-div {
+.model-version-div {
   width: 34ch;
   margin-right: 1em;
 }
