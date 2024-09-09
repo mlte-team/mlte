@@ -6,6 +6,7 @@ MLTE catalog store interface implementation.
 
 from __future__ import annotations
 
+import time
 import typing
 
 from mlte.catalog.model import CatalogEntry
@@ -49,3 +50,19 @@ class CatalogEntryMapper(ResourceMapper):
 
     def delete(self, entry_id: str) -> CatalogEntry:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def create_with_header(
+        self, entry: CatalogEntry, user: typing.Optional[str] = None
+    ) -> CatalogEntry:
+        """Create an entry, generating the timestamp and adding creator. Internally calls the appropriate create implementation."""
+        entry.header.created = int(time.time())
+        entry.header.creator = user
+        return self.create(entry)
+
+    def edit_with_header(
+        self, entry: CatalogEntry, user: typing.Optional[str] = None
+    ) -> CatalogEntry:
+        """Edit an entry, generating the proper timestamp. Internally calls the appropriate create implementation."""
+        entry.header.updated = int(time.time())
+        entry.header.updater = user
+        return self.edit(entry)

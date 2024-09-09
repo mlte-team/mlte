@@ -28,10 +28,13 @@ class CatalogEntryHeader(BaseModel):
     """The unique identifier for the entry."""
 
     creator: Optional[str] = None
-    """The author for the entry."""
+    """The username of the author for the entry."""
 
     created: Optional[int] = -1
     """The timestamp of creation of this entry, as Unix time."""
+
+    updater: Optional[str] = None
+    """The username of the author of the last edition."""
 
     updated: Optional[int] = -1
     """The timestamp of last update of this entry, as Unix time."""

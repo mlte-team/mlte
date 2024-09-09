@@ -24,6 +24,7 @@ from test.store.catalog.fixture import get_entry_uri, get_test_entry
 
 def create_entry_using_admin(entry: CatalogEntry, api: TestAPI):
     """Create test entry using admin."""
+    entry.header.creator = user_generator.TEST_ADMIN_USERNAME
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
     api.admin_create_entity(entry, url)
 
@@ -51,7 +52,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     """Catalog entries can be created."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
-    entry = get_test_entry()
+    entry = get_test_entry(creator=api_user.username)
 
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
     res = test_client.post(f"{url}", json=entry.model_dump())
@@ -86,7 +87,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     """Entries can be edited."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
-    entry = get_test_entry()
+    entry = get_test_entry(updater=api_user.username)
     desc2 = "new description"
 
     # Create test entry.
@@ -150,6 +151,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
     read = CatalogEntry(**res.json())
+    read.header.created = -1  # To ignore times when comparing
     assert read == entry
 
 
@@ -323,4 +325,5 @@ def test_search(
     assert len(collection) == 1
 
     read = CatalogEntry(**collection[0])
+    read.header.created = -1  # To ignore times when comparing
     assert read == entry

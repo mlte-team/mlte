@@ -37,9 +37,9 @@ def create_catalog_entry(
         try:
             if not entry.header.catalog_id:
                 entry.header.catalog_id = catalog_id
-            return catalog_stores.get_session(catalog_id).entry_mapper.create(
-                entry
-            )
+            return catalog_stores.get_session(
+                catalog_id
+            ).entry_mapper.create_with_header(entry, current_user.username)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -68,9 +68,9 @@ def edit_catalog_entry(
         try:
             if not entry.header.catalog_id:
                 entry.header.catalog_id = catalog_id
-            return catalog_stores.get_session(catalog_id).entry_mapper.edit(
-                entry
-            )
+            return catalog_stores.get_session(
+                catalog_id
+            ).entry_mapper.edit_with_header(entry, current_user.username)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -188,8 +188,3 @@ def search(
             return catalog_stores.search(query=query)
         except Exception as e:
             raise_http_internal_error(e)
-
-
-# TODO:
-# 3. Figure out permissions for search
-# 6. Date functionality in entities hedaer?

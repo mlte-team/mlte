@@ -119,12 +119,16 @@ def get_test_entry(
     code: str = DEFAULT_ENTRY_CODE,
     code_type: CatalogEntryType = DEFAULT_ENTRY_TYPE,
     catalog_id: str = TEST_CATALOG_ID,
+    creator: Optional[str] = None,
+    updater: Optional[str] = None,
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     id = id
     description = description
     code = code
-    header = CatalogEntryHeader(identifier=id, catalog_id=catalog_id)
+    header = CatalogEntryHeader(
+        identifier=id, catalog_id=catalog_id, creator=creator, updater=updater
+    )
     test_entry = CatalogEntry(
         header=header,
         code=code,

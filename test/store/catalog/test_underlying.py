@@ -55,6 +55,8 @@ def test_catalog_entry(
         read_entry = catalog_store.entry_mapper.read(
             test_entry.header.identifier
         )
+        read_entry.header.creator = None    # To avoid issue with creator.
+        read_entry.header.created = -1 # To avoid issue with creation time.
         assert test_entry == read_entry
 
         # Test listing entries.
