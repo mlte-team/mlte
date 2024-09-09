@@ -1,9 +1,9 @@
 <template>
   <NuxtLayout name="base-layout" @manageGroups="manageGroupClick">
-    <template #sidebar>
-      <div style="padding-top: 80px">
+    <template #right-sidebar>
+      <div>
         <div v-if="!editFlag">
-          <UsaButton class="secondary-button margin-button" @click="addGroup">
+          <UsaButton class="secondary-button" @click="addGroup">
             Add Group
           </UsaButton>
         </div>

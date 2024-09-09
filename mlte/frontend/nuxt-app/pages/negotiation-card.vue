@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
-    <template #sidebar>
-      <div style="padding-top: 255px">
+    <template #right-sidebar>
+      <div>
         TEC Import
         <hr />
         <div class="usa-form-group">
@@ -1368,7 +1368,7 @@ async function submit() {
       successfulArtifactSubmission("negotiation card", identifier);
       forceSaveParam.value = true;
     } catch {
-      return;
+      
     }
   } else {
     console.log("Invalid document attempting to be submitted.");
