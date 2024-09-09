@@ -13,7 +13,7 @@ from typing import Optional
 from sqlalchemy import StaticPool
 
 from mlte._private import url as url_utils
-from mlte.store.base import StoreURI, StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
@@ -32,7 +32,9 @@ def create_memory_store() -> InMemoryCatalogStore:
     if CACHED_DEFAULT_MEMORY_STORE is None:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
             InMemoryCatalogStore,
-            create_catalog_store(StoreURIPrefix.LOCAL_MEMORY[0]),
+            create_catalog_store(
+                f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+            ),
         )
 
     return CACHED_DEFAULT_MEMORY_STORE.clone()
@@ -42,7 +44,9 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     """Creates a file system store."""
     return typing.cast(
         FileSystemCatalogStore,
-        create_catalog_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
+        create_catalog_store(
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{tmp_path}"
+        ),
     )
 
 

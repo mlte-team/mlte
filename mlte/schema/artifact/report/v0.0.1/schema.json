@@ -255,11 +255,7 @@
           "title": "Usage Context"
         },
         "production_requirements": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelProductionDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelProductionDescriptor",
           "default": {
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
@@ -408,11 +404,7 @@
       "description": "A description of the model interface.",
       "properties": {
         "input": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelIODescriptor",
           "default": {
             "name": null,
             "description": null,
@@ -420,11 +412,7 @@
           }
         },
         "output": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelIODescriptor",
           "default": {
             "name": null,
             "description": null,
@@ -463,11 +451,7 @@
           "title": "Capability Deployment Mechanism"
         },
         "interface": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelInterfaceDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelInterfaceDescriptor",
           "default": {
             "input": {
               "description": null,
@@ -482,11 +466,7 @@
           }
         },
         "resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -702,33 +682,21 @@
       "type": "string"
     },
     "summary": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/SummaryDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/SummaryDescriptor",
       "default": {
         "problem_type": null,
         "task": null
       }
     },
     "performance": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/PerformanceDesciptor"
-        }
-      ],
+      "$ref": "#/$defs/PerformanceDesciptor",
       "default": {
         "goals": [],
         "validated_spec_id": null
       }
     },
     "intended_use": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/IntendedUseDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/IntendedUseDescriptor",
       "default": {
         "usage_context": null,
         "production_requirements": {
@@ -756,11 +724,7 @@
       }
     },
     "risks": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/RiskDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/RiskDescriptor",
       "default": {
         "fp": null,
         "fn": null,
@@ -784,11 +748,7 @@
       "type": "array"
     },
     "quantitative_analysis": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuantitiveAnalysisDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/QuantitiveAnalysisDescriptor",
       "default": {
         "content": null
       }

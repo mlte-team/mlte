@@ -1,6 +1,6 @@
 # Python virtual environments
 env/
-.venv/
+.venv*/
 env-dev/
 env-test/
 
@@ -46,8 +46,7 @@ docs/site
 # Pyenv conf
 .python-version
 
-/store/
-/stores/
+/store*/
 pgdata/
 *.whl
 

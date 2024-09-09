@@ -13,7 +13,7 @@ from typing import Generator, Optional
 import pytest
 from sqlalchemy.pool import StaticPool
 
-from mlte.store.base import StoreURI, StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.user.factory import create_user_store
 from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
@@ -30,7 +30,10 @@ def create_memory_store() -> InMemoryUserStore:
     global CACHED_DEFAULT_MEMORY_STORE
     if CACHED_DEFAULT_MEMORY_STORE is None:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
-            InMemoryUserStore, create_user_store(StoreURIPrefix.LOCAL_MEMORY[0])
+            InMemoryUserStore,
+            create_user_store(
+                f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+            ),
         )
 
     return CACHED_DEFAULT_MEMORY_STORE.clone()
@@ -59,7 +62,9 @@ def rdbs_store() -> RelationalDBUserStore:
 def create_fs_store(path: Path) -> FileSystemUserStore:
     return typing.cast(
         FileSystemUserStore,
-        create_user_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[0]}{path}"),
+        create_user_store(
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{path}"
+        ),
     )
 
 
