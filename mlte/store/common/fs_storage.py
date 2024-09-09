@@ -11,24 +11,19 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 import mlte.store.error as errors
-from mlte.store.base import StoreURI, StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 
 
-def parse_root_path(uristr: str) -> Path:
+def parse_root_path(uri: StoreURI) -> Path:
     """
     Parse the root path for the backend from the URI.
-    :param uristr: The URI
+    :param uri: The URI
     :return: The parsed path
     """
-    assert uristr.startswith(
-        tuple(StoreURIPrefix.LOCAL_FILESYSTEM)
-    ), "Not a valid file system URI."
+    if uri.type != StoreType.LOCAL_FILESYSTEM:
+        raise RuntimeError(f"Not a valid file system URI: {uri.uri}")
 
-    # Remove any of the possible FS prefixes, and return a clean Path.
-    path = uristr
-    for prefix in tuple(StoreURIPrefix.LOCAL_FILESYSTEM):
-        path = path.replace(prefix, "")
-    return Path(path)
+    return Path(uri.path)
 
 
 class JsonFileStorage:
@@ -80,7 +75,7 @@ class FileSystemStorage(JsonFileStorage):
         self.uri = uri
         """The base URI"""
 
-        self.root = parse_root_path(uri.uri)
+        self.root = parse_root_path(uri)
         """Root folder, that exists, where the storage will be located."""
 
         if not self.root.exists():

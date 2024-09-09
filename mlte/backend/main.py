@@ -71,18 +71,20 @@ def run(
     )
 
     # Initialize the backing artifact store instance
-    store = artifact_store_factory.create_artifact_store(store_uri)
-    if store.uri.type == StoreType.REMOTE_HTTP:
+    artifact_store = artifact_store_factory.create_artifact_store(store_uri)
+    if artifact_store.uri.type == StoreType.REMOTE_HTTP:
         raise RuntimeError("Cannot run backend with remote HTTP store.")
-    state.set_artifact_store(store)
+    state.set_artifact_store(artifact_store)
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
     user_store = user_store_factory.create_user_store(store_uri)
     state.set_user_store(user_store)
 
-    # First add the default catalog store.
-    DefaultCatalog.add_default_catalog(state.catalog_stores)
+    # First add the default catalog store. If using a FS store, put catalog there; otherwise use default locations.
+    DefaultCatalog.add_default_catalog(
+        state.catalog_stores, stores_uri=artifact_store.uri
+    )
 
     # Add all configured catalog stores.
     for id, uri in catalog_uris.items():

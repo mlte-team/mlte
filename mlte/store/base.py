@@ -33,27 +33,6 @@ class StoreType(Enum):
 
 
 # -----------------------------------------------------------------------------
-# StoreURIPrefix
-# -----------------------------------------------------------------------------
-
-
-class StoreURIPrefix:
-    """Represents the valid prefixes for a MLTE store URI."""
-
-    LOCAL_MEMORY = ["memory://"]
-    """The in-memory store prefix."""
-
-    LOCAL_FILESYSTEM = ["fs://", "local://"]
-    """The local filesystem prefixes."""
-
-    REMOTE_HTTP = ["http://"]
-    """The remote HTTP prefix."""
-
-    RELATIONAL_DB = ["sqlite", "mysql", "postgresql", "oracle", "mssql"]
-    """The relational database system prefixes."""
-
-
-# -----------------------------------------------------------------------------
 # StoreURI
 # -----------------------------------------------------------------------------
 
@@ -61,17 +40,38 @@ class StoreURIPrefix:
 class StoreURI:
     """Represents the URI for an store instance."""
 
-    def __init__(self, uri: str, type: StoreType):
+    PREFIXES = {
+        StoreType.LOCAL_MEMORY: ["memory"],
+        StoreType.LOCAL_FILESYSTEM: ["fs", "local"],
+        StoreType.REMOTE_HTTP: ["http"],
+        StoreType.RELATIONAL_DB: [
+            "sqlite",
+            "mysql",
+            "postgresql",
+            "oracle",
+            "mssql",
+        ],
+    }
+    """Valid prefixes by store type."""
+
+    DELIMITER = "://"
+    """Delimiter used to separate prefixes from rest of the path."""
+
+    def __init__(self, uri: str, type: StoreType, path: str):
         """
         Initialize a StoreURI instance.
         :param uri: The URI
         :param type: The type of the backend store
+        :param path: The rest of the URI's path with the prefix removed
         """
         self.uri = uri
         """The string that represents the URI."""
 
         self.type = type
         """The type identifier for the URI."""
+
+        self.path = path
+        """The rest of the path, with the prefix removed."""
 
     @staticmethod
     def from_string(uri: str) -> StoreURI:
@@ -80,15 +80,29 @@ class StoreURI:
         :param uri: The URI
         :return: The parsed StoreURI
         """
-        if uri.startswith(tuple(StoreURIPrefix.LOCAL_MEMORY)):
-            return StoreURI(uri, StoreType.LOCAL_MEMORY)
-        if uri.startswith(tuple(StoreURIPrefix.LOCAL_FILESYSTEM)):
-            return StoreURI(uri, StoreType.LOCAL_FILESYSTEM)
-        if uri.startswith(tuple(StoreURIPrefix.REMOTE_HTTP)):
-            return StoreURI(uri, StoreType.REMOTE_HTTP)
-        if uri.startswith(tuple(StoreURIPrefix.RELATIONAL_DB)):
-            return StoreURI(uri, StoreType.RELATIONAL_DB)
-        raise RuntimeError(f"Unrecognized backend URI: {uri}.")
+        prefix, path = StoreURI._parse_uri(uri)
+        for type in StoreType:
+            if prefix.startswith(tuple(StoreURI.PREFIXES[type])):
+                return StoreURI(uri, type, path)
+
+        # If we got here, the stucture of the URI is fine, but the prefix is unknown.
+        raise RuntimeError(f"Unsupported store URI: {uri}")
+
+    @staticmethod
+    def _parse_uri(uri: str) -> tuple[str, str]:
+        """Split an URI into its prefix and the rest of the path."""
+        parts = uri.split(StoreURI.DELIMITER)
+        if len(parts) != 2:
+            raise RuntimeError(f"Invalid store URI: {uri}")
+        else:
+            prefix = parts[0]
+            path = parts[1]
+            return prefix, path
+
+    @staticmethod
+    def get_default_prefix(type: StoreType) -> str:
+        """Returns the default prefix for the given type, which will be the first one."""
+        return f"{StoreURI.PREFIXES[type][0]}{StoreURI.DELIMITER}"
 
     def __str__(self) -> str:
         return f"{self.type}:{self.uri}"

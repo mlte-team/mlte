@@ -11,7 +11,7 @@ from typing import Dict, List
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from mlte.store.base import StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 
 # An enumeration of supported log levels
 _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
             ) from None
         return v
 
-    STORE_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
+    STORE_URI: str = StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)
     """The store URI string; defaults to in-memory store."""
 
     CATALOG_URIS: Dict[str, str] = {}

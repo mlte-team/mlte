@@ -8,7 +8,7 @@ import pytest
 
 from mlte.session import session, set_context, set_store
 from mlte.store.artifact.store import ArtifactStore
-from mlte.store.base import StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 
 from ..store.artifact.fixture import (  # noqa
     artifact_stores,
@@ -22,7 +22,7 @@ from ..store.artifact.fixture import (  # noqa
 def test_session() -> None:
     model = "model"
     version = "v0.0.1"
-    uri = StoreURIPrefix.LOCAL_MEMORY[0]
+    uri = f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
 
     set_context(model, version)
     set_store(uri)

@@ -17,7 +17,7 @@ from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
-from mlte.store.base import StoreURI, StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from test.store.defaults import IN_MEMORY_SQLITE_DB, get_http_defaults_if_needed
 
@@ -41,7 +41,10 @@ def create_http_store(
 
 def create_memory_store() -> InMemoryStore:
     return typing.cast(
-        InMemoryStore, create_artifact_store(StoreURIPrefix.LOCAL_MEMORY[0])
+        InMemoryStore,
+        create_artifact_store(
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+        ),
     )
 
 
@@ -49,7 +52,7 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
         create_artifact_store(
-            f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{tmp_path}"
         ),
     )
 
