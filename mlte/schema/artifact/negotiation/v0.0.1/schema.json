@@ -303,11 +303,7 @@
       "description": "A descriptor for the model.",
       "properties": {
         "development": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelDevelopmentDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelDevelopmentDescriptor",
           "default": {
             "resources": {
               "cpu": null,
@@ -318,11 +314,7 @@
           }
         },
         "production": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelProductionDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelProductionDescriptor",
           "default": {
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
@@ -354,11 +346,7 @@
       "description": "A descriptor for model development considerations.",
       "properties": {
         "resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -417,11 +405,7 @@
       "description": "A description of the model interface.",
       "properties": {
         "input": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelIODescriptor",
           "default": {
             "name": null,
             "description": null,
@@ -429,11 +413,7 @@
           }
         },
         "output": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelIODescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelIODescriptor",
           "default": {
             "name": null,
             "description": null,
@@ -472,11 +452,7 @@
           "title": "Capability Deployment Mechanism"
         },
         "interface": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelInterfaceDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelInterfaceDescriptor",
           "default": {
             "input": {
               "description": null,
@@ -491,11 +467,7 @@
           }
         },
         "resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -748,11 +720,7 @@
           "title": "Usage Context"
         },
         "risks": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RiskDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/RiskDescriptor",
           "default": {
             "fp": null,
             "fn": null,
@@ -776,11 +744,7 @@
       "type": "string"
     },
     "system": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/SystemDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/SystemDescriptor",
       "default": {
         "goals": [],
         "problem_type": null,
@@ -802,11 +766,7 @@
       "type": "array"
     },
     "model": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/ModelDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/ModelDescriptor",
       "default": {
         "development": {
           "resources": {
