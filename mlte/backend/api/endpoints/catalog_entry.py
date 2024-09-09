@@ -192,6 +192,4 @@ def search(
 
 # TODO:
 # 3. Figure out permissions for search
-# 4. Refactor get_url or other functions?
-# 5. Overwrite default catalog each time?
 # 6. Date functionality in entities hedaer?

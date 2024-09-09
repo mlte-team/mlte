@@ -15,7 +15,7 @@ import mlte.store.catalog.default as default_entries
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
-from mlte.store.catalog.store import ManagedCatalogSession
+from mlte.store.catalog.store import CatalogStoreSession, ManagedCatalogSession
 
 
 class DefaultCatalog:
@@ -56,26 +56,36 @@ class DefaultCatalog:
         with ManagedCatalogSession(
             catalog_group.catalogs[default_catalog_id].session()
         ) as store:
+            # Only populate default catalog the first time.
             if len(store.entry_mapper.list()) == 0:
-                DefaultCatalog._populate_catalog(
-                    catalog_group, default_catalog_id
-                )
+                DefaultCatalog._populate_catalog(store)
 
     @staticmethod
-    def _populate_catalog(catalog_group: CatalogStoreGroup, catalog_id: str):
+    def reset_catalog(catalog_group: CatalogStoreGroup) -> None:
+        """Ensures the default catalog is reset to default values."""
+        with ManagedCatalogSession(
+            catalog_group.catalogs[DefaultCatalog.DEFAULT_CATALOG_ID].session()
+        ) as store:
+            # First remove all existing entries.
+            entry_ids = store.entry_mapper.list()
+            for entry_id in entry_ids:
+                store.entry_mapper.delete(entry_id)
+
+            # Now populate it again with the default values.
+            DefaultCatalog._populate_catalog(store)
+
+    @staticmethod
+    def _populate_catalog(catalog_session: CatalogStoreSession) -> None:
         """Load all entry files from entry folder and put them into default catalog."""
         num_entries = 0
         resources = importlib.resources.files(default_entries)
         with importlib.resources.as_file(resources) as resources_path:
             with os.scandir(resources_path) as files:
-                with ManagedCatalogSession(
-                    catalog_group.catalogs[catalog_id].session()
-                ) as store:
-                    print("Loading default catalog entries.")
-                    for file in files:
-                        if file.is_file() and file.name.endswith("json"):
-                            with open(file.path) as open_file:
-                                entry = CatalogEntry(**json.load(open_file))
-                                store.entry_mapper.create(entry)
-                                num_entries += 1
-                    print(f"Loaded {num_entries} entries for default catalog.")
+                print("Loading default catalog entries.")
+                for file in files:
+                    if file.is_file() and file.name.endswith("json"):
+                        with open(file.path) as open_file:
+                            entry = CatalogEntry(**json.load(open_file))
+                            catalog_session.entry_mapper.create(entry)
+                            num_entries += 1
+                print(f"Loaded {num_entries} entries for default catalog.")
