@@ -53,8 +53,8 @@ class Settings(BaseSettings):
     STORE_URI: str = StoreURIPrefix.LOCAL_MEMORY[0]
     """The store URI string; defaults to in-memory store."""
 
-    CATALOG_URIS: Dict[str, str] = {"default": StoreURIPrefix.LOCAL_MEMORY[0]}
-    """The dict of catalog URI strings; defaults to in-memory store."""
+    CATALOG_URIS: Dict[str, str] = {"samples": StoreURIPrefix.LOCAL_MEMORY[0]}
+    """The dict of catalog URI strings; defaults to one in-memory store."""
 
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""

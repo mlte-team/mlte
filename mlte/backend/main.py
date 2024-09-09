@@ -17,6 +17,7 @@ from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.catalog.default_catalog import DefaultCatalog
 from mlte.store.user import factory as user_store_factory
 
 # Application exit codes
@@ -79,6 +80,9 @@ def run(
     # TODO: allow for separate config of uri here
     user_store = user_store_factory.create_user_store(store_uri)
     state.set_user_store(user_store)
+
+    # First add the default catalog store.
+    DefaultCatalog.add_default_catalog(state.catalog_stores)
 
     # Add all configured catalog stores.
     for id, uri in catalog_uris.items():

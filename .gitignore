@@ -47,6 +47,7 @@ docs/site
 .python-version
 
 /store/
+/stores/
 pgdata/
 *.whl
 
