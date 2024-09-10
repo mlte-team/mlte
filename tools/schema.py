@@ -23,7 +23,7 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 # The base path for artifact generation
-OUTPUT_BASE = Path("schema/artifact")
+OUTPUT_BASE = Path("schema")
 
 # Path to frontend assets.
 FRONTEND_PATH = Path("frontend/nuxt-app/assets")
@@ -49,11 +49,13 @@ class ModelImport:
 class Config:
     """A configuration for a schema task."""
 
-    def __init__(self, *, model: ModelImport, output_path: str) -> None:
+    def __init__(
+        self, *, model: ModelImport, output_path: str, sub_path: str = ""
+    ) -> None:
         self.model = model
         """The the model import descriptor."""
 
-        self.output_path = OUTPUT_BASE / output_path / "schema.json"
+        self.output_path = OUTPUT_BASE / sub_path / output_path / "schema.json"
         """The path to which the model is dumped."""
 
     def generate(self) -> Dict[str, Any]:
@@ -72,24 +74,34 @@ CONFIGS = [
             path="mlte.negotiation.model", model="NegotiationCardModel"
         ),
         output_path="negotiation/v0.0.1",
+        sub_path="artifact",
     ),
     Config(
         model=ModelImport(path="mlte.value.model", model="ValueModel"),
         output_path="value/v0.0.1",
+        sub_path="artifact",
     ),
     Config(
         model=ModelImport(path="mlte.spec.model", model="SpecModel"),
         output_path="spec/v0.0.1",
+        sub_path="artifact",
     ),
     Config(
         model=ModelImport(
             path="mlte.validation.model", model="ValidatedSpecModel"
         ),
         output_path="validated/v0.0.1",
+        sub_path="artifact",
     ),
     Config(
         model=ModelImport(path="mlte.report.model", model="ReportModel"),
         output_path="report/v0.0.1",
+        sub_path="artifact",
+    ),
+    Config(
+        model=ModelImport(path="mlte.catalog.model", model="CatalogEntry"),
+        output_path="catalog_entry/v0.0.1",
+        sub_path="catalog",
     ),
 ]
 
