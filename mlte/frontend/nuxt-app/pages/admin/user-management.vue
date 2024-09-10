@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout name="base-layout" @manageUsers="manageUserClick">
-    <template #sidebar>
-      <div style="padding-top: 80px">
+    <template #right-sidebar>
+      <div>
         <div v-if="!editFlag">
           <UsaButton class="secondary-button" @click="addUser">
             Add User

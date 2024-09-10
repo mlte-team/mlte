@@ -1,9 +1,9 @@
 <template>
-  <NuxtLayout name="base-layout" @manageGroups="manageGroupClick">
-    <template #sidebar>
-      <div style="padding-top: 80px">
+  <NuxtLayout name="base-layout">
+    <template #right-sidebar>
+      <div>
         <div v-if="!editFlag">
-          <UsaButton class="secondary-button margin-button" @click="addGroup">
+          <UsaButton class="secondary-button" @click="addGroup">
             Add Group
           </UsaButton>
         </div>
@@ -107,12 +107,6 @@ async function deleteGroup(groupName: string) {
       handleHttpError(response.status, response._data.error_description);
     },
   });
-}
-
-function manageGroupClick() {
-  if (editFlag.value) {
-    cancelEdit();
-  }
 }
 
 function cancelEdit() {
