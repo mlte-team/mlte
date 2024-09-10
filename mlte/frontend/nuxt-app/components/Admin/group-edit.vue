@@ -45,7 +45,7 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
+const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
     type: Object,
