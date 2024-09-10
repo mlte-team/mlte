@@ -142,10 +142,10 @@ async function saveGroup(group: object) {
       await $fetch(config.public.apiPath + "/group", {
         retry: 0,
         method: "PUT",
-        body: group,
         headers: {
           Authorization: "Bearer " + token.value,
         },
+        body: group,
         onRequestError() {
           requestErrorAlert();
         },
