@@ -31,12 +31,14 @@
                     Artifact Store
                   </NuxtLink>
                 </li>
-                <!-- <li class="usa-sidenav__item">
-                  <a href="/test-catalog">Test Catalog</a>
-                  <NuxtLink :to="{ path: '/test-catalog' }">
+                <li class="usa-sidenav__item">
+                  <NuxtLink 
+                    :to="{ path: '/test-catalog' }"
+                    :class="{ 'usa-current': $route.name === 'test-catalog' }"
+                  >
                     Test Catalog
                   </NuxtLink>
-                </li> -->
+                </li>
                 <li v-if="userRole === 'admin'" class="usa-sidenav__item">
                   <a href="javascript:void(0);">Admin Pages</a>
                   <ul class="usa-sidenav__sublist">
