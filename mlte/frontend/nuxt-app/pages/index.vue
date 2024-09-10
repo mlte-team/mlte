@@ -2,7 +2,10 @@
   <NuxtLayout name="base-layout">
     <template #right-sidebar>
       <div>
-        <UsaTextInput v-model="newModelIdentifier">
+        <UsaTextInput
+          v-model="newModelIdentifier"
+          @keyup.enter="submitNewModel(newModelIdentifier)"  
+        >
           <template #label> New Model </template>
         </UsaTextInput>
         <UsaButton
@@ -16,6 +19,7 @@
         <UsaTextInput
           v-model="newVersionIdentifier"
           :disabled="selectedModel === ''"
+          @keyup.enter="submitNewVersion(selectedModel, newVersionIdentifier)"
         >
           <template #label> New Version for: {{ selectedModel }} </template>
         </UsaTextInput>
@@ -29,25 +33,27 @@
       </div>
     </template>
 
-    <UsaBreadcrumb :items="path" />
+    <!-- <UsaBreadcrumb :items="path" /> -->
     <div style="display: flex">
       <div class="model-version-div">
-        <b>Model</b>
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
           @update:modelValue="selectModel($event, true)"
-        />
+        >
+        <template #label>Model</template>
+      </UsaSelect>
         <br />
       </div>
 
       <div class="model-version-div">
-        <b>Version</b>
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
           @update:modelValue="selectVersion($event)"
-        />
+        >
+          <template #label>Version</template>
+        </UsaSelect>
         <br />
       </div>
 
