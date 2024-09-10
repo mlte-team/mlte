@@ -141,8 +141,6 @@ const token = useCookie("token");
 const user = useCookie("user");
 const userRole = useCookie("userRole");
 const version = config.public.version;
-
-const emits = defineEmits(["manageUsers", "manageGroups"]);
 </script>
 
 <style>
