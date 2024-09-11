@@ -4,7 +4,7 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import ConfigDict, Field
 
@@ -13,6 +13,7 @@ from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
 from mlte.spec.model import SpecModel
+from mlte.store.query import Filtrable
 from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import ValueModel
 
@@ -35,7 +36,7 @@ class ArtifactHeaderModel(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
 
-class ArtifactModel(BaseModel):
+class ArtifactModel(Filtrable):
     """The base model for all MLTE artifacts."""
 
     header: ArtifactHeaderModel
@@ -49,3 +50,9 @@ class ArtifactModel(BaseModel):
         ReportModel,
     ] = Field(..., discriminator="artifact_type")
     """The artifact body."""
+
+    def get_identifier(self) -> str:
+        return self.header.identifier
+
+    def get_type(self) -> Any:
+        return self.header.type

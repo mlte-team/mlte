@@ -4,11 +4,12 @@ mlte/catalog/entry/model.py
 Model implementation for MLTE catalog entries.
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from strenum import StrEnum
 
 from mlte.model import BaseModel
+from mlte.store.query import Filtrable
 
 
 class CatalogEntryType(StrEnum):
@@ -43,7 +44,7 @@ class CatalogEntryHeader(BaseModel):
     """The id of the catalog this entry came from."""
 
 
-class CatalogEntry(BaseModel):
+class CatalogEntry(Filtrable):
     """The base model for MLTE catalog entries."""
 
     header: CatalogEntryHeader
@@ -75,3 +76,9 @@ class CatalogEntry(BaseModel):
 
     output: Optional[str] = None
     """The output for the entry."""
+
+    def get_identifier(self) -> str:
+        return self.header.identifier
+
+    def get_type(self) -> Any:
+        return self.code_type

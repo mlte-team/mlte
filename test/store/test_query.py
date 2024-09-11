@@ -4,7 +4,15 @@ test/store/test_query.py
 Unit tests for store query functionality.
 """
 
-from mlte.store.query import AllFilter, NoneFilter
+from mlte.store.query import (
+    AllFilter,
+    AndFilter,
+    IdentifierFilter,
+    NoneFilter,
+    OrFilter,
+    Query,
+    TypeFilter,
+)
 
 
 def test_all() -> None:
@@ -17,3 +25,48 @@ def test_none() -> None:
     """The all filter cna be serialized and deserialized."""
     f = NoneFilter()
     assert NoneFilter(**f.model_dump()) == f
+
+
+def test_identifier() -> None:
+    """The identifier filter can be serialized and deserialized."""
+    f = IdentifierFilter(id="id0")
+    assert IdentifierFilter(**f.model_dump()) == f
+
+
+def test_type() -> None:
+    """The type filter can be serialized and deserialized."""
+    f = TypeFilter(item_type="test")
+    assert TypeFilter(**f.model_dump()) == f
+
+
+def test_and() -> None:
+    """The AND filter can be serialized and deserialized."""
+    f = AndFilter(
+        filters=[
+            AllFilter(),
+            NoneFilter(),
+            IdentifierFilter(id="id0"),
+            TypeFilter(item_type="test"),
+        ],
+    )
+    assert AndFilter(**f.model_dump()) == f
+
+
+def test_or() -> None:
+    """The OR filter can be serialized and deserialized."""
+    f = OrFilter(
+        filters=[
+            AllFilter(),
+            NoneFilter(),
+            IdentifierFilter(id="id0"),
+            TypeFilter(item_type="test"),
+        ],
+    )
+    assert OrFilter(**f.model_dump()) == f
+
+
+def test_query() -> None:
+    """The query can be serialized and deserialized."""
+    query = Query()
+    print(query.model_dump())
+    assert Query(**query.model_dump()) == query

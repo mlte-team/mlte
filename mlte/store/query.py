@@ -6,21 +6,54 @@ Query and filtering functionality for store operations.
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from enum import Enum
-from typing import List, Literal, Union
+from typing import Any, List, Literal, Union
 
 from mlte.model import BaseModel
 
-# A type alias
-Filter = Union[
+# Alias for all supported filters.
+SupportedFilter = Union[
     "IdentifierFilter",
     "TypeFilter",
-    "AndFilter",
-    "OrFilter",
     "AllFilter",
     "NoneFilter",
+    "AndFilter",
+    "OrFilter",
 ]
+
+
+class Filter(BaseModel):
+    """Definition of a filter interface."""
+
+    @abstractmethod
+    def match(self, item: Filtrable) -> bool:
+        raise NotImplementedError(
+            "Can't call match without a specific implementation."
+        )
+
+
+class CompositeFilter(Filter):
+    """Definition of a composite filter interface."""
+
+    filters: List[SupportedFilter]
+
+
+class Filtrable(BaseModel):
+    """Definition of a filtrable interface."""
+
+    @abstractmethod
+    def get_identifier(self) -> str:
+        raise NotImplementedError(
+            "Can't call get id without a specific implementation."
+        )
+
+    @abstractmethod
+    def get_type(self) -> Any:
+        raise NotImplementedError(
+            "Can't call get type without a specific implementation."
+        )
+
 
 # -----------------------------------------------------------------------------
 # Filters
@@ -31,98 +64,83 @@ class FilterType(str, Enum):
     """An enumeration over filter types."""
 
     IDENTIFIER = "identifier"
-    """A filter over item identifiers."""
-
     TYPE = "type"
-    """A filter over item types."""
-
     ALL = "all"
-    """The 'all' filter."""
-
     NONE = "none"
-    """The 'none' filter."""
-
     AND = "and"
-    """The 'and' filter."""
-
     OR = "or"
-    """The 'or' filter."""
 
 
-class IdentifierFilter(BaseModel, ABC):
+class IdentifierFilter(Filter):
     """A filter that matches an catalog entry identifier."""
 
     type: Literal[FilterType.IDENTIFIER] = FilterType.IDENTIFIER
     """An identifier for the filter type."""
 
-    @abstractmethod
-    def match(self, item: BaseModel) -> bool:
-        raise NotImplementedError(
-            "Can't match on abstract base IdentifierFilter"
-        )
+    id: str
+    """The identifier to match."""
+
+    def match(self, item: Filtrable) -> bool:
+        return bool(item.get_identifier() == self.id)
 
 
-class TypeFilter(BaseModel, ABC):
+class TypeFilter(Filter):
     """A filter that matches an catalog entry type."""
 
     type: Literal[FilterType.TYPE] = FilterType.TYPE
     """An identifier for the filter type."""
 
-    @abstractmethod
-    def match(self, item: BaseModel) -> bool:
-        raise NotImplementedError("Can't match on abstract base TypeFilter")
+    item_type: Any
+    """The type to match."""
+
+    def match(self, item: Filtrable) -> bool:
+        return bool(item.get_type() == self.item_type)
 
 
-class AllFilter(BaseModel):
+class AllFilter(Filter):
     """A filter that matches all entries."""
 
     type: Literal[FilterType.ALL] = FilterType.ALL
     """An identifier for the filter type."""
 
-    def match(self, _: BaseModel) -> bool:
+    def match(self, _: Filtrable) -> bool:
         return True
 
 
-class NoneFilter(BaseModel):
+class NoneFilter(Filter):
     """A filter that matches no entries."""
 
     type: Literal[FilterType.NONE] = FilterType.NONE
     """An identifier for the filter type."""
 
-    def match(self, _: BaseModel) -> bool:
+    def match(self, _: Filtrable) -> bool:
         return False
 
 
-class AndFilter(BaseModel):
+class AndFilter(CompositeFilter):
     """A generic filter that implements a logical AND of filters."""
 
     type: Literal[FilterType.AND] = FilterType.AND
     """An identifier for the filter type."""
 
-    filters: List[Filter]
-    """The filters of which the composition is composed."""
-
-    def match(self, item: BaseModel) -> bool:
+    def match(self, item: Filtrable) -> bool:
         return all(filter.match(item) for filter in self.filters)
 
 
-class OrFilter(BaseModel):
+class OrFilter(CompositeFilter):
     """A generic filter that implements a logical OR of filters."""
 
     type: Literal[FilterType.OR] = FilterType.OR
     """An identifier for the filter type."""
 
-    filters: List[Filter]
-    """The filters of which the composition is composed."""
-
-    def match(self, item: BaseModel) -> bool:
+    def match(self, item: Filtrable) -> bool:
         return any(filter.match(item) for filter in self.filters)
 
 
 class Query(BaseModel):
     """A Query object represents a query over entries."""
 
-    filter: Filter = AllFilter(type=FilterType.ALL)
+    filter: SupportedFilter = AllFilter()
     """The filter that is applied to implement the query."""
 
 

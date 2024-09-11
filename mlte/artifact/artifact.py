@@ -14,9 +14,8 @@ from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.session.state import session
-from mlte.store.artifact.query import ArtifactTypeFilter
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
-from mlte.store.query import FilterType, Query
+from mlte.store.query import Query, TypeFilter
 
 
 class Artifact(metaclass=abc.ABCMeta):
@@ -204,11 +203,7 @@ class Artifact(metaclass=abc.ABCMeta):
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""
         with ManagedArtifactSession(store.session()) as handle:
-            query_instance = Query(
-                filter=ArtifactTypeFilter(
-                    type=FilterType.TYPE, artifact_type=artifact_type
-                )
-            )
+            query_instance = Query(filter=TypeFilter(item_type=artifact_type))
             artifact_models = handle.search_artifacts(
                 context.model,
                 context.version,
