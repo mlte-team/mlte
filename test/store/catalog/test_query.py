@@ -9,6 +9,11 @@ from mlte.catalog.model import (
     CatalogEntryHeader,
     CatalogEntryType,
 )
+from mlte.store.catalog.query import (
+    ProblemDomainTagFilter,
+    ProblemTypeTagFilter,
+    PropertyCategoryPropertyFilter,
+)
 from mlte.store.query import (
     AllFilter,
     AndFilter,
@@ -30,16 +35,34 @@ def create_test_entry(
     return entry
 
 
+def test_problem_type() -> None:
+    """The filter can be serialized and deserialized."""
+    f = ProblemTypeTagFilter(tag_value="v1")
+    assert ProblemTypeTagFilter(**f.model_dump()) == f
+
+
+def test_problem_domain() -> None:
+    """The filter can be serialized and deserialized."""
+    f = ProblemDomainTagFilter(tag_value="v1")
+    assert ProblemDomainTagFilter(**f.model_dump()) == f
+
+
+def test_property_category() -> None:
+    """The filter can be serialized and deserialized."""
+    f = PropertyCategoryPropertyFilter(property_value="v1")
+    assert PropertyCategoryPropertyFilter(**f.model_dump()) == f
+
+
 def test_all_match() -> None:
     """The all filter matches all entries."""
-    e = create_test_entry()
-    assert AllFilter().match(e)
+    entry = create_test_entry()
+    assert AllFilter().match(entry)
 
 
 def test_none_match() -> None:
     """The none filter matches no entries."""
-    e = create_test_entry()
-    assert not NoneFilter().match(e)
+    entry = create_test_entry()
+    assert not NoneFilter().match(entry)
 
 
 def test_identifier_match() -> None:
@@ -54,13 +77,45 @@ def test_identifier_match() -> None:
 
 def test_type_match() -> None:
     """The type filter matches expected entries."""
-    a = create_test_entry(type=CatalogEntryType.MEASUREMENT)
+    entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
 
     filter = TypeFilter(item_type=CatalogEntryType.MEASUREMENT)
-    assert filter.match(a)
+    assert filter.match(entry)
 
     filter = TypeFilter(item_type=CatalogEntryType.VALIDATION)
-    assert not filter.match(a)
+    assert not filter.match(entry)
+
+
+def test_property_match() -> None:
+    """The filter matches expected entries."""
+    entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
+    entry.problem_type = ["type1", "type2"]
+    entry.problem_domain = ["domain1", "domain2"]
+    entry.property_category = "cat1"
+
+    filter1 = ProblemTypeTagFilter(tag_value="type1")
+    assert filter1.match(entry)
+
+    filter1 = ProblemTypeTagFilter(tag_value="type2")
+    assert filter1.match(entry)
+
+    filter1 = ProblemTypeTagFilter(tag_value="type3")
+    assert not filter1.match(entry)
+
+    filter2 = ProblemDomainTagFilter(tag_value="domain1")
+    assert filter2.match(entry)
+
+    filter2 = ProblemDomainTagFilter(tag_value="domain2")
+    assert filter2.match(entry)
+
+    filter2 = ProblemDomainTagFilter(tag_value="domain3")
+    assert not filter2.match(entry)
+
+    filter3 = PropertyCategoryPropertyFilter(property_value="cat1")
+    assert filter3.match(entry)
+
+    filter3 = PropertyCategoryPropertyFilter(property_value="cat3")
+    assert not filter3.match(entry)
 
 
 def test_and_match() -> None:

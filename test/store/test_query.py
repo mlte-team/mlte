@@ -10,7 +10,9 @@ from mlte.store.query import (
     IdentifierFilter,
     NoneFilter,
     OrFilter,
+    PropertyFilter,
     Query,
+    TagFilter,
     TypeFilter,
 )
 
@@ -37,6 +39,18 @@ def test_type() -> None:
     """The type filter can be serialized and deserialized."""
     f = TypeFilter(item_type="test")
     assert TypeFilter(**f.model_dump()) == f
+
+
+def test_tags() -> None:
+    """The tag filter can be serialized and deserialized."""
+    f = TagFilter(tag_property_name="test", tag_value="v1")
+    assert TagFilter(**f.model_dump()) == f
+
+
+def test_property() -> None:
+    """The filter can be serialized and deserialized."""
+    f = PropertyFilter(property_name="test", property_value="v1")
+    assert PropertyFilter(**f.model_dump()) == f
 
 
 def test_and() -> None:

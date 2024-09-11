@@ -7,17 +7,20 @@ Query and filtering functionality for store operations.
 from __future__ import annotations
 
 from abc import abstractmethod
-from enum import Enum
 from typing import Any, List, Literal, Union
+
+from strenum import LowercaseStrEnum
 
 from mlte.model import BaseModel
 
 # Alias for all supported filters.
 SupportedFilter = Union[
-    "IdentifierFilter",
-    "TypeFilter",
     "AllFilter",
     "NoneFilter",
+    "IdentifierFilter",
+    "TypeFilter",
+    "TagFilter",
+    "PropertyFilter",
     "AndFilter",
     "OrFilter",
 ]
@@ -44,15 +47,42 @@ class Filtrable(BaseModel):
 
     @abstractmethod
     def get_identifier(self) -> str:
+        """Returns the identifier for filtering."""
         raise NotImplementedError(
             "Can't call get id without a specific implementation."
         )
 
     @abstractmethod
     def get_type(self) -> Any:
+        """Returns the class-specific type for filtering."""
         raise NotImplementedError(
             "Can't call get type without a specific implementation."
         )
+
+    def get_property(self, property_name: str) -> Any:
+        """Returns the given property."""
+        try:
+            value = getattr(self, property_name)
+            return value
+        except Exception:
+            raise RuntimeError(
+                f"Property {property_name} is not part of the model."
+            )
+
+    def get_tags(self, property_name: str) -> List[Any]:
+        """Returns the given tags."""
+        try:
+            value = getattr(self, property_name)
+            if type(value) is not list:
+                raise RuntimeError(
+                    f"Property {property_name} does not contain a list of tags."
+                )
+            else:
+                return value
+        except Exception:
+            raise RuntimeError(
+                f"Property {property_name} is not part of the model."
+            )
 
 
 # -----------------------------------------------------------------------------
@@ -60,15 +90,37 @@ class Filtrable(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class FilterType(str, Enum):
+class FilterType(LowercaseStrEnum):
     """An enumeration over filter types."""
 
     IDENTIFIER = "identifier"
     TYPE = "type"
+    TAG = "tag"
+    PROPERTY = "property"
     ALL = "all"
     NONE = "none"
     AND = "and"
     OR = "or"
+
+
+class AllFilter(Filter):
+    """A filter that matches all entries."""
+
+    type: Literal[FilterType.ALL] = FilterType.ALL
+    """An identifier for the filter type."""
+
+    def match(self, _: Filtrable) -> bool:
+        return True
+
+
+class NoneFilter(Filter):
+    """A filter that matches no entries."""
+
+    type: Literal[FilterType.NONE] = FilterType.NONE
+    """An identifier for the filter type."""
+
+    def match(self, _: Filtrable) -> bool:
+        return False
 
 
 class IdentifierFilter(Filter):
@@ -97,24 +149,38 @@ class TypeFilter(Filter):
         return bool(item.get_type() == self.item_type)
 
 
-class AllFilter(Filter):
-    """A filter that matches all entries."""
+class TagFilter(Filter):
+    """A filter that matches a given tag."""
 
-    type: Literal[FilterType.ALL] = FilterType.ALL
+    type: Literal[FilterType.TAG] = FilterType.TAG
     """An identifier for the filter type."""
 
-    def match(self, _: Filtrable) -> bool:
-        return True
+    tag_property_name: str
+    """The name of the property with the tags."""
+
+    tag_value: Any
+    """The property to match."""
+
+    def match(self, item: Filtrable) -> bool:
+        return self.tag_value in item.get_tags(self.tag_property_name)
 
 
-class NoneFilter(Filter):
-    """A filter that matches no entries."""
+class PropertyFilter(Filter):
+    """A filter that matches a given property."""
 
-    type: Literal[FilterType.NONE] = FilterType.NONE
+    type: Literal[FilterType.TAG] = FilterType.TAG
     """An identifier for the filter type."""
 
-    def match(self, _: Filtrable) -> bool:
-        return False
+    property_name: str
+    """The name of the property."""
+
+    property_value: Any
+    """The property to match."""
+
+    def match(self, item: Filtrable) -> bool:
+        return bool(
+            self.property_value in item.get_property(self.property_name)
+        )
 
 
 class AndFilter(CompositeFilter):
