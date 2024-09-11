@@ -6,6 +6,7 @@ MLTE catalog store group interface implementation.
 
 from __future__ import annotations
 
+import typing
 from typing import Dict, List, Optional, cast
 
 from mlte.catalog.model import CatalogEntry
@@ -141,12 +142,28 @@ class CatalogStoreGroupSession(StoreSession):
                 )
 
             catalog_session = self.sessions[catalog_id]
-            return catalog_session.entry_mapper.search(query)
+            entries = typing.cast(
+                List[CatalogEntry], catalog_session.entry_mapper.search(query)
+            )
+
+            # Ensure they are marked as coming from this catalog.
+            for entry in entries:
+                entry.header.catalog_id = catalog_id
+            return entries
         else:
             # Go over all catalogs, reading from each one, and grouping results.
             results: List[CatalogEntry] = []
             for catalog_id, session in self.sessions.items():
-                partial_results = session.entry_mapper.search(query)
+                # Get results for this catalog.
+                partial_results = typing.cast(
+                    List[CatalogEntry], session.entry_mapper.search(query)
+                )
+
+                # Ensure they are marked as coming from this catalog.
+                for entry in partial_results:
+                    entry.header.catalog_id = catalog_id
+
+                # Add them to the overall lilst.
                 results.extend(partial_results)
             return results
 

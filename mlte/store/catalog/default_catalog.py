@@ -86,6 +86,9 @@ class DefaultCatalog:
                     if file.is_file() and file.name.endswith("json"):
                         with open(file.path) as open_file:
                             entry = CatalogEntry(**json.load(open_file))
+                            entry.header.catalog_id = (
+                                DefaultCatalog.DEFAULT_CATALOG_ID
+                            )
                             catalog_session.entry_mapper.create(entry)
                             num_entries += 1
                 print(f"Loaded {num_entries} entries for default catalog.")
