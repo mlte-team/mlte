@@ -8,7 +8,7 @@ import os
 import sys
 from pathlib import Path
 
-from mlte.measurement import ProcessMeasurement
+from mlte.measurement.process_measurement import ProcessMeasurement
 
 from ..support.meta import path_to_support
 

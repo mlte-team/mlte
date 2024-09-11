@@ -11,9 +11,8 @@ import time
 from typing import List, Optional
 
 from mlte._private import job
+from mlte.measurement.measurement import Measurement
 from mlte.value.artifact import Value
-
-from .measurement import Measurement
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement

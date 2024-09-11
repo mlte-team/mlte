@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional, Type
 
-from mlte.measurement import Measurement
+from mlte.measurement.measurement import Measurement
 from mlte.value.artifact import Value
 
 
