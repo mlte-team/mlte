@@ -7,7 +7,6 @@ Superclass for all measurements.
 from __future__ import annotations
 
 import abc
-import typing
 from typing import Optional, Type
 
 import mlte._private.meta as meta
@@ -43,12 +42,10 @@ class Measurement(metaclass=abc.ABCMeta):
         """The metadata for the measurement instance."""
 
     @abc.abstractmethod
-    @typing.no_type_check
     def __call__(self, *args, **kwargs) -> Value:
         """Evaluate a measurement and return a value semantics."""
         raise NotImplementedError("Cannot evaluate abstract measurement.")
 
-    @typing.no_type_check
     def evaluate(self, *args, **kwargs) -> Value:
         """
         Evaluate a measurement and return a value with semantics.

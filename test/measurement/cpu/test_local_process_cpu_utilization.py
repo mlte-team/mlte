@@ -9,6 +9,7 @@ import os
 import subprocess
 import threading
 import time
+import typing
 from typing import Tuple
 
 import pytest
@@ -129,7 +130,10 @@ def test_result_save_load(
     stats = CPUStatistics(m, 0.5, 0.1, 0.8)
     stats.save_with(ctx, store)
 
-    r: CPUStatistics = CPUStatistics.load_with("id.value", context=ctx, store=store)  # type: ignore
+    r: CPUStatistics = typing.cast(
+        CPUStatistics,
+        CPUStatistics.load_with("id.value", context=ctx, store=store),
+    )
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
