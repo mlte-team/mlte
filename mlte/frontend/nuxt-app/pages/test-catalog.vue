@@ -197,50 +197,56 @@ function cancelEdit() {
 }
 
 async function saveEntry(entry: object) {
-  if (newEntryFlag.value) {
-    await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: entry,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          populateFullEntryList();
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
-  } else {
-    await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
-      retry: 0,
-      method: "PUT",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: entry,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          populateFullEntryList();
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+  
+  try{  
+    if (newEntryFlag.value) {
+      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
+        retry: 0,
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        body: entry,
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          if (response.ok) {
+            populateFullEntryList();
+          }
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    } else {
+      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
+        retry: 0,
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + token.value,
+        },
+        body: entry,
+        onRequestError() {
+          requestErrorAlert();
+        },
+        onResponse({ response }) {
+          if (response.ok) {
+            populateFullEntryList();
+          }
+        },
+        onResponseError({ response }) {
+          handleHttpError(response.status, response._data.error_description);
+        },
+      });
+    }
+  }
+  catch{
+    console.log("Error in submit.");
+    return;
   }
 
-  console.log('blah')
-
+  alert("Entry has been saved successfully.");
   resetSelectedEntry();
   editFlag.value = false;
 }

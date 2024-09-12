@@ -227,7 +227,6 @@ async function submit() {
   if (submitError) {
     return;
   }
-
   emit("submit", props.modelValue);
 }
 </script>

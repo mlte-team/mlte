@@ -184,9 +184,10 @@ async function saveUser(user: object) {
       });
     }
   } catch {
+    console.log("Error in submit.")
     return;
   }
-
+  alert("User has been saved successfully.");
   resetSelectedUser();
   editFlag.value = false;
 }

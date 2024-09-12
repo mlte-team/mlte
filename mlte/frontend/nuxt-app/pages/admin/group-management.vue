@@ -160,9 +160,10 @@ async function saveGroup(group: object) {
       });
     }
   } catch {
+    console.log("Error in submit.")
     return;
   }
-
+  alert("Group has been saved successfully.");
   resetSelectedGroup();
   editFlag.value = false;
 }
