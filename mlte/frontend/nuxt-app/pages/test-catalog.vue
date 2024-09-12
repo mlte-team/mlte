@@ -16,7 +16,7 @@
           v-model="searchValue"
           @keyup.enter="search()"
         >
-          <template #label> Search </template>
+          <template #label> Search by Identifier </template>
         </UsaTextInput>
       </div>
       <div class="inline-button">
@@ -69,14 +69,19 @@ const entryList = ref<{
 }>([]);
 const selectedEntry = ref({});
 
-updateEntryList();
+populateFullEntryList();
 
-async function updateEntryList(){
-  await $fetch(config.public.apiPath + "/catalogs/entry", {
+async function populateFullEntryList(){
+  await $fetch(config.public.apiPath + "/catalogs/entry/search", {
     retry: 0,
-    method: "GET",
+    method: "POST",
     headers: {
       Authorization: "Bearer " + token.value,
+    },
+    body: {
+      "filter": {
+        "type": "all"
+      },
     },
     onRequestError() {
       requestErrorAlert();
@@ -93,7 +98,35 @@ async function updateEntryList(){
 }
 
 async function search(){
-  console.log("searched")
+  if(searchValue.value == ""){
+    populateFullEntryList();
+  }
+  else{
+    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        "filter": {
+          "type": "identifier",
+          "id": searchValue.value
+        }
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          entryList.value = response._data;
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
 }
 
 function resetSelectedEntry() {
@@ -147,7 +180,7 @@ async function deleteEntry(catalogId: string, entryId: string) {
     },
     onResponse({ response }) {
       if (response.ok) {
-        updateEntryList();
+        populateFullEntryList();
       }
     },
     onResponseError({ response }) {
@@ -163,52 +196,50 @@ function cancelEdit() {
   }
 }
 
-async function saveEntry(catalog: string, entry: object) {
-  try {
-    if (newEntryFlag.value) {
-      await $fetch(config.public.apiPath + "/catalog/" + catalog + "/entry", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: entry,
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateEntryList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    } else {
-      await $fetch(config.public.apiPath + "/catalog/" + catalog + "/entry", {
-        retry: 0,
-        method: "PUT",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: entry,
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateEntryList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    }
-  } catch {
-    return;
+async function saveEntry(entry: object) {
+  if (newEntryFlag.value) {
+    await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: entry,
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          populateFullEntryList();
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  } else {
+    await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
+      retry: 0,
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: entry,
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          populateFullEntryList();
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
   }
+
+  console.log('blah')
 
   resetSelectedEntry();
   editFlag.value = false;

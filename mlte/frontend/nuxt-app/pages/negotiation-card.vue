@@ -76,7 +76,7 @@
       </template>
     </UsaTextInput>
     <div v-else>
-      <h3>Last Modified by:</h3>
+      <h3 style="display: inline;">Last Modified by:</h3>
       {{ form.creator }} - {{ form.timestamp }}
     </div>
 
