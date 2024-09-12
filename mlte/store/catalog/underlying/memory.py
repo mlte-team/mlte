@@ -64,9 +64,14 @@ class MemoryCatalogStorage:
 class InMemoryCatalogStoreSession(CatalogStoreSession):
     """An in-memory implementation of the MLTE user store."""
 
-    def __init__(self, *, storage: MemoryCatalogStorage) -> None:
+    def __init__(
+        self, *, storage: MemoryCatalogStorage, read_only: bool = False
+    ) -> None:
         self.storage = storage
         """The storage."""
+
+        self.read_only = read_only
+        """Whether this is read only or not."""
 
         self.entry_mapper = InMemoryCatalogEntryMapper(storage=storage)
 

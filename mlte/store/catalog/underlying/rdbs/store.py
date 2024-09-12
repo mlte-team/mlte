@@ -66,9 +66,12 @@ def init_catalog_tables(engine: Engine):
 class RelationalDBCatalogStoreSession(CatalogStoreSession):
     """A relational DB implementation of the MLTE user store session."""
 
-    def __init__(self, storage: RDBStorage) -> None:
+    def __init__(self, storage: RDBStorage, read_only: bool = False) -> None:
         self.storage = storage
         """RDB storage."""
+
+        self.read_only = read_only
+        """Whether this is read only or not."""
 
         self.entry_mapper = RDBEntryMapper(storage)
         """The mapper to user CRUD."""

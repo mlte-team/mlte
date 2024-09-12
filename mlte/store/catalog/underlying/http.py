@@ -60,9 +60,14 @@ class HttpCatalogGroupStore(CatalogStore):
 class HttpCatalogGroupStoreSession(CatalogStoreSession):
     """An HTTP implementation of the MLTE catalog store session."""
 
-    def __init__(self, *, storage: HttpStorage) -> None:
+    def __init__(
+        self, *, storage: HttpStorage, read_only: bool = False
+    ) -> None:
         self.storage = storage
         """Http Storage"""
+
+        self.read_only = read_only
+        """Whether this is read only or not."""
 
         self.entry_mapper = HTTPCatalogGroupEntryMapper(
             url=self.storage.url, client=self.storage.client

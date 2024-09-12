@@ -14,6 +14,9 @@ from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
 
 
 class CatalogStore(Store):
+    read_only: bool = False
+    """Whether this catalog is read only or not."""
+
     def session(self) -> CatalogStoreSession:
         """Return a session handle for a catalog store session instance."""
         raise NotImplementedError("Can't call session on a base Store.")
@@ -24,6 +27,9 @@ class CatalogStoreSession(StoreSession):
 
     entry_mapper: CatalogEntryMapper
     """Mapper for the entry resource."""
+
+    read_only: bool = False
+    """Whether this session is read only or not."""
 
 
 class ManagedCatalogSession(ManagedSession):

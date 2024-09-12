@@ -61,9 +61,14 @@ class FileSystemCatalogStore(CatalogStore):
 class FileSystemCatalogStoreSession(CatalogStoreSession):
     """A local file-system implementation of the MLTE catalog store."""
 
-    def __init__(self, storage: FileSystemStorage) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, read_only: bool = False
+    ) -> None:
         self.storage = storage
         """The storage."""
+
+        self.read_only = read_only
+        """Whether this is read only or not."""
 
         self.entry_mapper = FileSystemCatalogEntryMapper(storage=storage)
         """The mapper to entries CRUD."""

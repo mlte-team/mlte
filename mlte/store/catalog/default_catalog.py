@@ -61,8 +61,9 @@ class DefaultCatalog:
             stores_uri.uri, DefaultCatalog.DEFAULT_CATALOG_ID
         )
 
-        # Ensure the catalog is always reset to its initial state.
+        # Ensure the catalog is always reset to its initial state, and mark it as read only.
         DefaultCatalog.reset_catalog(catalog)
+        catalog.read_only = True
 
         return catalog
 
