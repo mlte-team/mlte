@@ -18,71 +18,73 @@
     </header>
 
     <div class="flex-container">
-      <div class="sidebar">
-        <div v-if="$route.name != 'login'" class="grid-row grid-gap">
-          <div class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0">
-            <nav aria-label="Side navigation,">
-              <ul class="usa-sidenav" style="width: 30ch">
-                <li class="usa-sidenav__item">
-                  <NuxtLink
-                    :to="{ path: '/' }"
-                    :class="{ 'usa-current': $route.name === 'index' }"
-                  >
-                    Artifact Store
-                  </NuxtLink>
-                </li>
-                <li class="usa-sidenav__item">
-                  <NuxtLink 
-                    :to="{ path: '/test-catalog' }"
-                    :class="{ 'usa-current': $route.name === 'test-catalog' }"
-                  >
-                    Test Catalog
-                  </NuxtLink>
-                </li>
-                <li v-if="userRole === 'admin'" class="usa-sidenav__item">
-                  <a href="javascript:void(0);">Admin Pages</a>
-                  <ul class="usa-sidenav__sublist">
-                    <li class="usa-sidenav__item">
-                      <NuxtLink
-                        :to="{ path: '/admin/user-management' }"
-                        :class="{
-                          'usa-current':
-                            $route.name === 'admin-user-management',
-                        }"
-                      >
-                        Manage Users
-                      </NuxtLink>
-                    </li>
-                    <li class="usa-sidenav__item">
-                      <NuxtLink
-                        :to="{ path: '/admin/group-management' }"
-                        :class="{
-                          'usa-current':
-                            $route.name === 'admin-group-management',
-                        }"
-                      >
-                        Manage Groups
-                      </NuxtLink>
-                    </li>
-                  </ul>
-                </li>
-                <li v-else class="usa-sidenav__item">
-                  <a href="javascript:void(0);">User Pages</a>
-                  <ul class="usa-sidenav__sublist">
-                    <li class="usa-sidenav__item">
-                      <NuxtLink
-                        :to="{ path: '/regular/profile-edit' }"
-                        :class="{
-                          'usa-current': $route.name === 'regular-profile-edit',
-                        }"
-                      >
-                        Edit Profile
-                      </NuxtLink>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </nav>
+      <div class="sidebar left-sidebar">
+        <div style="position: fixed;">
+          <div v-if="$route.name != 'login'" class="grid-row grid-gap">
+            <div class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0">
+              <nav aria-label="Side navigation,">
+                <ul class="usa-sidenav" style="width: 30ch">
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/' }"
+                      :class="{ 'usa-current': $route.name === 'index' }"
+                    >
+                      Artifact Store
+                    </NuxtLink>
+                  </li>
+                  <li class="usa-sidenav__item">
+                    <NuxtLink 
+                      :to="{ path: '/test-catalog' }"
+                      :class="{ 'usa-current': $route.name === 'test-catalog' }"
+                    >
+                      Test Catalog
+                    </NuxtLink>
+                  </li>
+                  <li v-if="userRole === 'admin'" class="usa-sidenav__item">
+                    <a href="javascript:void(0);">Admin Pages</a>
+                    <ul class="usa-sidenav__sublist">
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/admin/user-management' }"
+                          :class="{
+                            'usa-current':
+                              $route.name === 'admin-user-management',
+                          }"
+                        >
+                          Manage Users
+                        </NuxtLink>
+                      </li>
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/admin/group-management' }"
+                          :class="{
+                            'usa-current':
+                              $route.name === 'admin-group-management',
+                          }"
+                        >
+                          Manage Groups
+                        </NuxtLink>
+                      </li>
+                    </ul>
+                  </li>
+                  <li v-else class="usa-sidenav__item">
+                    <a href="javascript:void(0);">User Pages</a>
+                    <ul class="usa-sidenav__sublist">
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/regular/profile-edit' }"
+                          :class="{
+                            'usa-current': $route.name === 'regular-profile-edit',
+                          }"
+                        >
+                          Edit Profile
+                        </NuxtLink>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -104,7 +106,9 @@
       </div>
 
       <div class="sidebar">
-        <slot name="right-sidebar" />
+        <div class="right-sidebar">
+          <slot name="right-sidebar" />
+        </div>
       </div>
     </div>
 
@@ -185,8 +189,16 @@ header {
 .sidebar {
   width: 100%;
   max-width: 30ch;
-  margin-left: 40px;
   padding-top: 60px;
+}
+
+.left-sidebar {
+  margin-left: 30px;
+}
+
+.right-sidebar {
+  margin-right: 40px;
+  position: fixed;
 }
 
 .body-div {
