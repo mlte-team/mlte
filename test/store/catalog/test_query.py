@@ -9,19 +9,28 @@ from mlte.catalog.model import (
     CatalogEntryHeader,
     CatalogEntryType,
 )
-from mlte.store.catalog.query import (
-    ProblemDomainTagFilter,
-    ProblemTypeTagFilter,
-    PropertyCategoryPropertyFilter,
-)
 from mlte.store.query import (
     AllFilter,
     AndFilter,
     IdentifierFilter,
     NoneFilter,
     OrFilter,
+    PropertyFilter,
+    TagFilter,
     TypeFilter,
 )
+
+
+class ProblemTypeTagFilter(TagFilter):
+    name: str = "problem_type"
+
+
+class ProblemDomainTagFilter(TagFilter):
+    name: str = "problem_domain"
+
+
+class PropertyCategoryPropertyFilter(PropertyFilter):
+    name: str = "property_category"
 
 
 def create_test_entry(
