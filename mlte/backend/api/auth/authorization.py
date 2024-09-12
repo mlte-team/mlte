@@ -63,6 +63,12 @@ async def get_current_resource(request: Request) -> Permission:
     # Get method.
     method = MethodType[request.method]
 
+    # NOTE: if this is a search, treat it as if it was a GET method.
+    # This is used so that read permissions will be applied to searches, while allowing
+    # it to send complex queries through its body.
+    if url.endswith("/search"):
+        method = MethodType.GET
+
     # Build and return the resource permission description
     resource = Permission(
         resource_type=resource_type, resource_id=resource_id, method=method

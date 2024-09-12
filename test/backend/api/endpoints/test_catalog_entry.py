@@ -301,10 +301,9 @@ def test_delete_no_permission(
     assert res.status_code == codes.FORBIDDEN
 
 
-# TODO: note that this is tested with write permissions, since search uses post, and that is interpreted as write.
 @pytest.mark.parametrize(
     "api_user",
-    user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
+    user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
 def test_search(
     test_api_fixture,

@@ -162,10 +162,9 @@ def test_list(
     assert read == created
 
 
-# TODO: note that this is tested with write permissions, since search uses post, and that is interpreted as write.
 @pytest.mark.parametrize(
     "api_user",
-    user_generator.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )
