@@ -81,9 +81,12 @@ def run(
     user_store = user_store_factory.create_user_store(store_uri)
     state.set_user_store(user_store)
 
-    # First add the default catalog store. If using a FS store, put catalog there; otherwise use default locations.
-    DefaultCatalog.add_default_catalog(
-        state.catalog_stores, stores_uri=artifact_store.uri
+    # First add the default catalog store.
+    default_catalog = DefaultCatalog.setup_default_catalog(
+        stores_uri=artifact_store.uri
+    )
+    state.add_catalog_store(
+        store=default_catalog, id=DefaultCatalog.DEFAULT_CATALOG_ID
     )
 
     # Add all configured catalog stores.
