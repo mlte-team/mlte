@@ -54,7 +54,7 @@ class CatalogEntry(Filtrable):
     """Tags for the problem type for the entry."""
 
     problem_domain: List[str] = []
-    """Tags for the problem type for the entry."""
+    """Tags for the problem domain for the entry."""
 
     property_category: Optional[str] = None
     """The property category or QA for the entry."""

@@ -33,7 +33,7 @@ class CatalogStoreGroup:
 
         :param id: A string to identify the catalog.
         :param uri: The store URI that describes the store to be used for the catalog.
-        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary to the new URI.
+        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary id to the new URI.
         """
         catalog = create_catalog_store(uri, id)
         self.add_catalog(id, catalog, overwite)
@@ -46,7 +46,7 @@ class CatalogStoreGroup:
 
         :param id: A string to identify the catalog.
         :param uri: The store URI that describes the store to be used for the catalog.
-        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary to the new URI.
+        :param overwrite: Add catalog to list even if id is already stored, pointing dictionary id to the new URI.
         """
         if id in self.catalogs and not overwite:
             raise ErrorAlreadyExists(

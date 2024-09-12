@@ -41,13 +41,17 @@ class State:
         """Set the globally-configured backend artifact store."""
         self._user_store = store
 
-    def add_catalog_store(self, store: CatalogStore, id: str):
+    def add_catalog_store(
+        self, store: CatalogStore, id: str, overwite: bool = False
+    ):
         """Adds to the the globally-configured backend list of catalog stores."""
-        self._catalog_stores.add_catalog(id, store)
+        self._catalog_stores.add_catalog(id, store, overwite)
 
-    def add_catalog_store_from_uri(self, store_uri: str, id: str):
+    def add_catalog_store_from_uri(
+        self, store_uri: str, id: str, overwite: bool = False
+    ):
         """Adds to the the globally-configured backend list of catalog stores."""
-        self._catalog_stores.add_catalog_from_uri(id, store_uri)
+        self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
 
     def set_token_key(self, token_key: str):
         """Sets the globally used token secret key."""
