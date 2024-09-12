@@ -161,31 +161,31 @@
       "description": "A filter that matches a given property.",
       "properties": {
         "type": {
-          "const": "tag",
-          "default": "tag",
+          "const": "property",
+          "default": "property",
           "enum": [
-            "tag"
+            "property"
           ],
           "title": "Type",
           "type": "string"
         },
-        "property_name": {
-          "title": "Property Name",
+        "name": {
+          "title": "Name",
           "type": "string"
         },
-        "property_value": {
-          "title": "Property Value"
+        "value": {
+          "title": "Value"
         }
       },
       "required": [
-        "property_name",
-        "property_value"
+        "name",
+        "value"
       ],
       "title": "PropertyFilter",
       "type": "object"
     },
     "TagFilter": {
-      "description": "A filter that matches a given tag.",
+      "description": "A filter that matches a given tag, from a field with a list of tags.",
       "properties": {
         "type": {
           "const": "tag",
@@ -196,17 +196,17 @@
           "title": "Type",
           "type": "string"
         },
-        "tag_property_name": {
-          "title": "Tag Property Name",
+        "name": {
+          "title": "Name",
           "type": "string"
         },
-        "tag_value": {
-          "title": "Tag Value"
+        "value": {
+          "title": "Value"
         }
       },
       "required": [
-        "tag_property_name",
-        "tag_value"
+        "name",
+        "value"
       ],
       "title": "TagFilter",
       "type": "object"

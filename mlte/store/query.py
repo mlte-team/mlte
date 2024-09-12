@@ -150,37 +150,35 @@ class TypeFilter(Filter):
 
 
 class TagFilter(Filter):
-    """A filter that matches a given tag."""
+    """A filter that matches a given tag, from a field with a list of tags."""
 
     type: Literal[FilterType.TAG] = FilterType.TAG
     """An identifier for the filter type."""
 
-    tag_property_name: str
+    name: str
     """The name of the property with the tags."""
 
-    tag_value: Any
+    value: Any
     """The property to match."""
 
     def match(self, item: Filtrable) -> bool:
-        return self.tag_value in item.get_tags(self.tag_property_name)
+        return self.value in item.get_tags(self.name)
 
 
 class PropertyFilter(Filter):
     """A filter that matches a given property."""
 
-    type: Literal[FilterType.TAG] = FilterType.TAG
+    type: Literal[FilterType.PROPERTY] = FilterType.PROPERTY
     """An identifier for the filter type."""
 
-    property_name: str
+    name: str
     """The name of the property."""
 
-    property_value: Any
+    value: Any
     """The property to match."""
 
     def match(self, item: Filtrable) -> bool:
-        return bool(
-            self.property_value in item.get_property(self.property_name)
-        )
+        return bool(self.value in item.get_property(self.name))
 
 
 class AndFilter(CompositeFilter):

@@ -37,19 +37,19 @@ def create_test_entry(
 
 def test_problem_type() -> None:
     """The filter can be serialized and deserialized."""
-    f = ProblemTypeTagFilter(tag_value="v1")
+    f = ProblemTypeTagFilter(value="v1")
     assert ProblemTypeTagFilter(**f.model_dump()) == f
 
 
 def test_problem_domain() -> None:
     """The filter can be serialized and deserialized."""
-    f = ProblemDomainTagFilter(tag_value="v1")
+    f = ProblemDomainTagFilter(value="v1")
     assert ProblemDomainTagFilter(**f.model_dump()) == f
 
 
 def test_property_category() -> None:
     """The filter can be serialized and deserialized."""
-    f = PropertyCategoryPropertyFilter(property_value="v1")
+    f = PropertyCategoryPropertyFilter(value="v1")
     assert PropertyCategoryPropertyFilter(**f.model_dump()) == f
 
 
@@ -93,28 +93,28 @@ def test_property_match() -> None:
     entry.problem_domain = ["domain1", "domain2"]
     entry.property_category = "cat1"
 
-    filter1 = ProblemTypeTagFilter(tag_value="type1")
+    filter1 = ProblemTypeTagFilter(value="type1")
     assert filter1.match(entry)
 
-    filter1 = ProblemTypeTagFilter(tag_value="type2")
+    filter1 = ProblemTypeTagFilter(value="type2")
     assert filter1.match(entry)
 
-    filter1 = ProblemTypeTagFilter(tag_value="type3")
+    filter1 = ProblemTypeTagFilter(value="type3")
     assert not filter1.match(entry)
 
-    filter2 = ProblemDomainTagFilter(tag_value="domain1")
+    filter2 = ProblemDomainTagFilter(value="domain1")
     assert filter2.match(entry)
 
-    filter2 = ProblemDomainTagFilter(tag_value="domain2")
+    filter2 = ProblemDomainTagFilter(value="domain2")
     assert filter2.match(entry)
 
-    filter2 = ProblemDomainTagFilter(tag_value="domain3")
+    filter2 = ProblemDomainTagFilter(value="domain3")
     assert not filter2.match(entry)
 
-    filter3 = PropertyCategoryPropertyFilter(property_value="cat1")
+    filter3 = PropertyCategoryPropertyFilter(value="cat1")
     assert filter3.match(entry)
 
-    filter3 = PropertyCategoryPropertyFilter(property_value="cat3")
+    filter3 = PropertyCategoryPropertyFilter(value="cat3")
     assert not filter3.match(entry)
 
 

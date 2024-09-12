@@ -10,12 +10,12 @@ from mlte.store.query import PropertyFilter, TagFilter
 
 
 class ProblemTypeTagFilter(TagFilter):
-    tag_property_name: str = "problem_type"
+    name: str = "problem_type"
 
 
 class ProblemDomainTagFilter(TagFilter):
-    tag_property_name: str = "problem_domain"
+    name: str = "problem_domain"
 
 
 class PropertyCategoryPropertyFilter(PropertyFilter):
-    property_name: str = "property_category"
+    name: str = "property_category"
