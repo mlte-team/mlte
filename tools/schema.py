@@ -103,6 +103,11 @@ CONFIGS = [
         output_path="catalog_entry/v0.0.1",
         sub_path="catalog",
     ),
+    Config(
+        model=ModelImport(path="mlte.store.query", model="Query"),
+        output_path="query/v0.0.1",
+        sub_path="store",
+    ),
 ]
 
 # -----------------------------------------------------------------------------

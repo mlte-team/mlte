@@ -124,7 +124,7 @@ class NoneFilter(Filter):
 
 
 class IdentifierFilter(Filter):
-    """A filter that matches an catalog entry identifier."""
+    """A filter that matches an item's identifier."""
 
     type: Literal[FilterType.IDENTIFIER] = FilterType.IDENTIFIER
     """An identifier for the filter type."""
@@ -137,7 +137,7 @@ class IdentifierFilter(Filter):
 
 
 class TypeFilter(Filter):
-    """A filter that matches an catalog entry type."""
+    """A filter that matches an item's type."""
 
     type: Literal[FilterType.TYPE] = FilterType.TYPE
     """An identifier for the filter type."""
