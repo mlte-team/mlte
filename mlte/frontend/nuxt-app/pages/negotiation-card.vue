@@ -1,5 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
+    <title>Negotiation Card</title>
+    <template #page-title>Negotiation Card</template>
     <template #right-sidebar>
       <div>
         TEC Import
@@ -40,9 +42,6 @@
       </div>
     </template>
 
-    <UsaBreadcrumb :items="path" />
-
-    <h1 class="section-header">Negotiation Card</h1>
     <p>
       Teams should use the negotiation card to guide an in-depth 
       discussion for project scoping. The card can be completed in 

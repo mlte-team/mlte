@@ -1,24 +1,18 @@
 <template>
   <div>
     <div v-if="!newUserFlag">
-      <div class="flex-container">
-        <h1 class="section-header">{{ modelValue.username }}</h1>
-        <div
-          class="centered-container"
-          style="vertical-align: bottom; padding-left: 38ch"
-        >
-          <div v-if="!changePasswordFlag">
-            <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Change Password
-            </UsaButton>
-          </div>
-          <div v-if="changePasswordFlag">
-            <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Change
-            </UsaButton>
-          </div>
-        </div>
+      <h2 class="section-header" style="display: inline">{{ modelValue.username }}</h2>
+      <div v-if="!changePasswordFlag" style="display: inline; float: right">
+        <UsaButton class="secondary-button" @click="enablePasswordReset">
+          Change Password
+        </UsaButton>
       </div>
+      <div v-if="changePasswordFlag" style="display: inline; float: right;">
+        <UsaButton class="secondary-button" @click="disablePasswordReset">
+          Cancel Change
+        </UsaButton>
+      </div>
+
       <div v-if="changePasswordFlag">
         <UsaTextInput
           v-model="modelValue.password"

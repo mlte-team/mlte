@@ -1,8 +1,8 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template #page-title>Login</template>
     <form>
       <div style="max-width: 30rem">
-        <h1 class="section-header">Login to MLTE</h1>
         <UsaTextInput v-model="username" :error="formErrors.username">
           <template #label> Username </template>
           <template #error-message> Enter a username </template>

@@ -1,5 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
+    <title>Test Catalog</title>
+    <template #page-title>Test Catalog</template>
     <template #right-sidebar>
       <div>
         <div v-if="!editFlag">

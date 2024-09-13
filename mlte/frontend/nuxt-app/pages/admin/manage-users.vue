@@ -1,28 +1,23 @@
 <template>
-  <NuxtLayout name="base-layout">
-    <template #right-sidebar>
-      <div>
-        <div v-if="!editFlag">
-          <UsaButton class="secondary-button" @click="addGroup">
-            Add Group
-          </UsaButton>
-        </div>
-      </div>
-    </template>
-
+  <NuxtLayout name="base-layout" @manageUsers="manageUserClick">
+    <title>Manage Users</title>
+    <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
-      <AdminGroupList
-        v-model="groupList"
-        @editGroup="editGroup"
-        @deleteGroup="deleteGroup"
+      <UsaButton class="secondary-button" @click="addUser" style="float: right;">
+        Add User
+      </UsaButton>
+      <AdminUserList
+        v-model="userList"
+        @editUser="editUser"
+        @deleteUser="deleteUser"
       />
     </div>
     <div v-if="editFlag">
-      <AdminGroupEdit
-        v-model="selectedGroup"
-        :new-group-flag="newGroupFlag"
+      <AdminUserEdit
+        v-model="selectedUser"
+        :new-user-flag="newUserFlag"
         @cancel="cancelEdit"
-        @submit="saveGroup"
+        @submit="saveUser"
       />
     </div>
   </NuxtLayout>
@@ -31,19 +26,28 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const userCookie = useCookie("user");
 
 const editFlag = ref(false);
-const newGroupFlag = ref(false);
-const groupList = ref<{
-  name: string;
-  permissions: Array<object>;
-}>([]);
-const selectedGroup = ref({});
+const newUserFlag = ref(false);
+const userList = ref<
+  {
+    username: string;
+    email: string;
+    full_name: string;
+    disabled: boolean;
+    role: string;
+    groups: Array<object>;
+    password: string;
+  }[]
+>([]);
+const selectedUser = ref({});
 
-updateGroupList();
+updateUserList();
+resetSelectedUser();
 
-async function updateGroupList() {
-  await $fetch(config.public.apiPath + "/groups/details", {
+async function updateUserList() {
+  await $fetch(config.public.apiPath + "/users/details", {
     retry: 0,
     method: "GET",
     headers: {
@@ -54,7 +58,7 @@ async function updateGroupList() {
     },
     onResponse({ response }) {
       if (response.ok) {
-        groupList.value = response._data;
+        userList.value = response._data;
       }
     },
     onResponseError({ response }) {
@@ -63,33 +67,42 @@ async function updateGroupList() {
   });
 }
 
-function resetSelectedGroup() {
-  selectedGroup.value = {
-    name: "",
-    permissions: [],
+function resetSelectedUser() {
+  selectedUser.value = {
+    username: "",
+    email: "",
+    full_name: "",
+    disabled: false,
+    role: "",
+    groups: [],
+    password: "",
   };
 }
 
-function addGroup() {
-  resetSelectedGroup();
+function addUser() {
+  resetSelectedUser();
   editFlag.value = true;
-  newGroupFlag.value = true;
+  newUserFlag.value = true;
 }
 
-function editGroup(group: object) {
-  selectedGroup.value = group;
+function editUser(user: object) {
+  selectedUser.value = user;
   editFlag.value = true;
-  newGroupFlag.value = false;
+  newUserFlag.value = false;
 }
 
-async function deleteGroup(groupName: string) {
+async function deleteUser(usernameToDelete: string) {
+  if (userCookie.value === usernameToDelete) {
+    alert("Cannot delete the active user.");
+    return;
+  }
   if (
-    !confirm("Are you sure you want to delete the group: " + groupName + "?")
+    !confirm("Are you sure you want to delete user, " + usernameToDelete + "?")
   ) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/group/" + groupName, {
+  await $fetch(config.public.apiPath + "/user/" + usernameToDelete, {
     retry: 0,
     method: "DELETE",
     headers: {
@@ -100,7 +113,7 @@ async function deleteGroup(groupName: string) {
     },
     onResponse({ response }) {
       if (response.ok) {
-        updateGroupList();
+        updateUserList();
       }
     },
     onResponseError({ response }) {
@@ -109,29 +122,35 @@ async function deleteGroup(groupName: string) {
   });
 }
 
-function cancelEdit() {
-  if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
-    editFlag.value = false;
-    resetSelectedGroup();
+function manageUserClick() {
+  if (editFlag.value) {
+    cancelEdit();
   }
 }
 
-async function saveGroup(group: object) {
+function cancelEdit() {
+  if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
+    editFlag.value = false;
+    resetSelectedUser();
+  }
+}
+
+async function saveUser(user: object) {
   try {
-    if (newGroupFlag.value) {
-      await $fetch(config.public.apiPath + "/group", {
+    if (newUserFlag.value) {
+      await $fetch(config.public.apiPath + "/user", {
         retry: 0,
         method: "POST",
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: group,
+        body: user,
         onRequestError() {
           requestErrorAlert();
         },
         onResponse({ response }) {
           if (response.ok) {
-            updateGroupList();
+            updateUserList();
           }
         },
         onResponseError({ response }) {
@@ -139,19 +158,19 @@ async function saveGroup(group: object) {
         },
       });
     } else {
-      await $fetch(config.public.apiPath + "/group", {
+      await $fetch(config.public.apiPath + "/user", {
         retry: 0,
         method: "PUT",
+        body: user,
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: group,
         onRequestError() {
           requestErrorAlert();
         },
         onResponse({ response }) {
           if (response.ok) {
-            updateGroupList();
+            updateUserList();
           }
         },
         onResponseError({ response }) {
@@ -163,8 +182,8 @@ async function saveGroup(group: object) {
     console.log("Error in submit.")
     return;
   }
-  alert("Group has been saved successfully.");
-  resetSelectedGroup();
+  alert("User has been saved successfully.");
+  resetSelectedUser();
   editFlag.value = false;
 }
 </script>
