@@ -1,5 +1,5 @@
 """
-mlte/session/state.py
+mlte/session/session.py
 
 Session state management for the MLTE library.
 """
@@ -36,7 +36,7 @@ class Session:
         """The MLTE store instance for the session."""
 
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
-        """The list of catalog store instances maintained by the state object."""
+        """The list of catalog store instances maintained by the session object."""
 
     @property
     def context(self) -> Context:
@@ -73,12 +73,12 @@ class Session:
         )
 
 
-# Singleton session state
+# Singleton session.
 g_session = Session()
 
 
 def session() -> Session:
-    """Return the package global state."""
+    """Return the package global session."""
     return g_session
 
 

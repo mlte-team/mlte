@@ -13,7 +13,7 @@ import mlte._private.meta as meta
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.session.state import session
+from mlte.session.session import session
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 
