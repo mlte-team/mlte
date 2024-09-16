@@ -31,7 +31,7 @@ def test_session() -> None:
 
     assert s.context.model == model
     assert s.context.version == version
-    assert s.store.uri.uri == uri
+    assert s.artifact_store.uri.uri == uri
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -52,5 +52,8 @@ def test_eager_context_creation(
 
     s = session()
 
-    assert s.store.session().read_model(model).identifier == model
-    assert s.store.session().read_version(model, version).identifier == version
+    assert s.artifact_store.session().read_model(model).identifier == model
+    assert (
+        s.artifact_store.session().read_version(model, version).identifier
+        == version
+    )

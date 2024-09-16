@@ -32,7 +32,7 @@ class Session:
         self._context: Optional[Context] = None
         """The MLTE context for the session."""
 
-        self._store: Optional[ArtifactStore] = None
+        self._artifact_store: Optional[ArtifactStore] = None
         """The MLTE store instance for the session."""
 
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
@@ -45,18 +45,20 @@ class Session:
         return self._context
 
     @property
-    def store(self) -> ArtifactStore:
-        if self._store is None:
-            raise RuntimeError("Must initialize MLTE store for session.")
-        return self._store
+    def artifact_store(self) -> ArtifactStore:
+        if self._artifact_store is None:
+            raise RuntimeError(
+                "Must initialize MLTE artifact store for session."
+            )
+        return self._artifact_store
 
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
 
-    def _set_store(self, store: ArtifactStore) -> None:
-        """Set the session store."""
-        self._store = store
+    def _set_artifact_store(self, artifact_store: ArtifactStore) -> None:
+        """Set the session artifact store."""
+        self._artifact_store = artifact_store
 
     def _add_catalog_store(self, store_uri: str, id: str):
         """Adds a catalog store."""
@@ -64,7 +66,7 @@ class Session:
 
     def create_context(self):
         """Creates the currently configured context in the currently configured session. Fails if either is not set. Does nothing if already created."""
-        store = self.store
+        store = self.artifact_store
         context = self.context
         storeutil.create_parents(
             store.session(), context.model, context.version
@@ -99,7 +101,7 @@ def set_store(artifact_store_uri: str):
     :param artifact_store_uri: The artifact store URI string
     """
     global g_session
-    g_session._set_store(create_artifact_store(artifact_store_uri))
+    g_session._set_artifact_store(create_artifact_store(artifact_store_uri))
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
