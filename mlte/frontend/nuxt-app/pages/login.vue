@@ -46,18 +46,19 @@ const formErrors = ref({
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (username.value.trim() === "") {
     formErrors.value.username = true;
-    submitError = true;
+    inputError = true;
   }
   if (password.value.trim() === "") {
     formErrors.value.password = true;
-    submitError = true;
+    inputError = true;
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
 

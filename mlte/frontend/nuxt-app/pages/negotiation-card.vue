@@ -65,6 +65,7 @@
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
       v-model="userInputArtifactId"
+      :error="formErrors.identifier"
     >
       <template #label>
         Artifact ID
@@ -72,6 +73,9 @@
           The Artifact ID this negotiation card <br />
           will be saved under upon submission.
         </InfoIcon>
+      </template>
+      <template #error-message>
+        Identifier cannot be empty
       </template>
     </UsaTextInput>
     <div v-else>
@@ -1208,6 +1212,10 @@ const form = ref({
   ],
 });
 
+const formErrors = ref({
+  identifier: false,
+})
+
 // TODO: Pull these from the schema
 const problemTypeOptions = [
   { value: "classification", text: "Classification" },
@@ -1309,11 +1317,22 @@ async function submit() {
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
+  let inputError = false;
   let identifier = "";
   if (useRoute().query.artifactId === undefined) {
     identifier = userInputArtifactId.value;
   } else {
     identifier = useRoute().query.artifactId?.toString();
+  }
+
+  if(identifier === ""){
+    formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (inputError){
+    inputErrorAlert();
+    return;
   }
 
   // Construct the object to be submitted to the backend here
@@ -1356,6 +1375,15 @@ async function submit() {
           onRequestError() {
             requestErrorAlert();
           },
+          onResponse({ response }) {
+            if(response.ok){
+              successfulArtifactSubmission("negotiation card", identifier);
+              forceSaveParam.value = true;
+              if (useRoute().query.artifactId === undefined) {
+                window.location = "/negotiation-card?" + "model=" + useRoute().query.model + "&version=" + useRoute().query.version + "&artifactId=" + identifier
+              }
+            }
+          },
           onResponseError({ response }) {
             handleHttpError(
               response.status,
@@ -1364,8 +1392,6 @@ async function submit() {
           },
         },
       );
-      successfulArtifactSubmission("negotiation card", identifier);
-      forceSaveParam.value = true;
     } catch {
       
     }

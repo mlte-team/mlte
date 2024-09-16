@@ -90,20 +90,21 @@ function disablePasswordReset() {
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (resetPasswordFlag.value) {
     if (newPassword.value.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
     if (newPassword.value !== confirmPassword.value) {
       formErrors.value.confirmPassword = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
 

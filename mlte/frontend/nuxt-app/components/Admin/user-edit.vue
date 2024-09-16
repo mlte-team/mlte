@@ -188,37 +188,38 @@ function groupChange(selected: boolean, groupOption: object) {
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (props.newUserFlag) {
     if (props.modelValue.username.trim() === "") {
       formErrors.value.username = true;
-      submitError = true;
+      inputError = true;
     }
 
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
     if (props.modelValue.password !== confirmPassword.value) {
       formErrors.value.confirmPassword = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
   if (props.modelValue.role.trim() === "") {
     formErrors.value.role = true;
-    submitError = true;
+    inputError = true;
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
   emit("submit", props.modelValue);

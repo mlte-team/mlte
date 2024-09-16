@@ -124,16 +124,16 @@ function permissionChange(selected: boolean, permissionOption: object) {
 
 function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (props.newGroupFlag) {
     if (props.modelValue.name.trim() === "") {
       formErrors.value.name = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
-  if (submitError) {
+  if (inputError) {
     return;
   }
   emit("submit", props.modelValue);

@@ -146,9 +146,10 @@ const codeTypeOptions = ref([]);
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
 
