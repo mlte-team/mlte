@@ -2,21 +2,16 @@
   <NuxtLayout name="base-layout">
     <title>Test Catalog</title>
     <template #page-title>Test Catalog</template>
-    <template #right-sidebar>
-      <div>
-        <div v-if="!editFlag">
-          <UsaButton class="secondary-button" @click="addEntry">
-            New Catalog Entry
-          </UsaButton>
-        </div>
-      </div>
-    </template>
 
     <div v-if="!editFlag">
+      <UsaButton class="secondary-button" @click="addEntry" style="float: right;">
+        Add Catalog Entry
+      </UsaButton>
       <div class="inline-input-right">
-        <UsaTextInput v-model="searchValue" @keyup.enter="search()">
-          <template #label> Search by Identifier </template>
-        </UsaTextInput>
+        <label class="usa-label" style="margin-top: 0px;">
+          Search by Identifier
+        </label>
+        <UsaTextInput v-model="searchValue" @keyup.enter="search()"/>
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
