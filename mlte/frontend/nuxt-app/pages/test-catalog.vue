@@ -1,5 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
+    <title>Test Catalog</title>
+    <template #page-title>Test Catalog</template>
     <template #right-sidebar>
       <div>
         <div v-if="!editFlag">
@@ -16,7 +18,7 @@
           v-model="searchValue"
           @keyup.enter="search()"
         >
-          <template #label> Search </template>
+          <template #label> Search by Identifier </template>
         </UsaTextInput>
       </div>
       <div class="inline-button">
@@ -69,14 +71,19 @@ const entryList = ref<{
 }>([]);
 const selectedEntry = ref({});
 
-updateEntryList();
+populateFullEntryList();
 
-async function updateEntryList(){
-  await $fetch(config.public.apiPath + "/catalogs/entry", {
+async function populateFullEntryList(){
+  await $fetch(config.public.apiPath + "/catalogs/entry/search", {
     retry: 0,
-    method: "GET",
+    method: "POST",
     headers: {
       Authorization: "Bearer " + token.value,
+    },
+    body: {
+      "filter": {
+        "type": "all"
+      },
     },
     onRequestError() {
       requestErrorAlert();
@@ -93,7 +100,35 @@ async function updateEntryList(){
 }
 
 async function search(){
-  console.log("searched")
+  if(searchValue.value == ""){
+    populateFullEntryList();
+  }
+  else{
+    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        "filter": {
+          "type": "identifier",
+          "id": searchValue.value
+        }
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          entryList.value = response._data;
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  }
 }
 
 function resetSelectedEntry() {
@@ -147,7 +182,7 @@ async function deleteEntry(catalogId: string, entryId: string) {
     },
     onResponse({ response }) {
       if (response.ok) {
-        updateEntryList();
+        populateFullEntryList();
       }
     },
     onResponseError({ response }) {
@@ -163,10 +198,11 @@ function cancelEdit() {
   }
 }
 
-async function saveEntry(catalog: string, entry: object) {
-  try {
+async function saveEntry(entry: object) {
+  
+  try{  
     if (newEntryFlag.value) {
-      await $fetch(config.public.apiPath + "/catalog/" + catalog + "/entry", {
+      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
         retry: 0,
         method: "POST",
         headers: {
@@ -178,7 +214,7 @@ async function saveEntry(catalog: string, entry: object) {
         },
         onResponse({ response }) {
           if (response.ok) {
-            updateEntryList();
+            populateFullEntryList();
           }
         },
         onResponseError({ response }) {
@@ -186,7 +222,7 @@ async function saveEntry(catalog: string, entry: object) {
         },
       });
     } else {
-      await $fetch(config.public.apiPath + "/catalog/" + catalog + "/entry", {
+      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
         retry: 0,
         method: "PUT",
         headers: {
@@ -198,7 +234,7 @@ async function saveEntry(catalog: string, entry: object) {
         },
         onResponse({ response }) {
           if (response.ok) {
-            updateEntryList();
+            populateFullEntryList();
           }
         },
         onResponseError({ response }) {
@@ -206,10 +242,13 @@ async function saveEntry(catalog: string, entry: object) {
         },
       });
     }
-  } catch {
+  }
+  catch{
+    console.log("Error in submit.");
     return;
   }
 
+  alert("Entry has been saved successfully.");
   resetSelectedEntry();
   editFlag.value = false;
 }

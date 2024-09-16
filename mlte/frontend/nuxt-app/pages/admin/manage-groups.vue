@@ -1,16 +1,12 @@
 <template>
   <NuxtLayout name="base-layout">
-    <template #right-sidebar>
-      <div>
-        <div v-if="!editFlag">
-          <UsaButton class="secondary-button" @click="addGroup">
-            Add Group
-          </UsaButton>
-        </div>
-      </div>
-    </template>
+    <title>Manage Groups</title>
+    <template #page-title>Manage Groups</template>
 
     <div v-if="!editFlag">
+      <UsaButton class="secondary-button" @click="addGroup" style="float: right;">
+        Add Group
+      </UsaButton>
       <AdminGroupList
         v-model="groupList"
         @editGroup="editGroup"
@@ -160,9 +156,10 @@ async function saveGroup(group: object) {
       });
     }
   } catch {
+    console.log("Error in submit.")
     return;
   }
-
+  alert("Group has been saved successfully.");
   resetSelectedGroup();
   editFlag.value = false;
 }

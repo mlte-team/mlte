@@ -1,5 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
+    <title>Artifact Store</title>
+    <template #page-title>Artifact Store</template>
     <template #right-sidebar>
       <div>
         <UsaTextInput

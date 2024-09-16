@@ -2,7 +2,7 @@
   <div>
     <div v-if="!newEntryFlag">
         <h1 class="section-header">{{ modelValue.header.identifier }}</h1>
-        <h3>Created by:</h3>
+        <h3 style="display: inline">Created by:</h3>
         {{ modelValue.header.creator }} - {{ modelValue.header.created }}
     </div>
     <div v-if="newEntryFlag">

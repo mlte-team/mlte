@@ -1,16 +1,11 @@
 <template>
   <NuxtLayout name="base-layout" @manageUsers="manageUserClick">
-    <template #right-sidebar>
-      <div>
-        <div v-if="!editFlag">
-          <UsaButton class="secondary-button" @click="addUser">
-            Add User
-          </UsaButton>
-        </div>
-      </div>
-    </template>
-
+    <title>Manage Users</title>
+    <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
+      <UsaButton class="secondary-button" @click="addUser" style="float: right;">
+        Add User
+      </UsaButton>
       <AdminUserList
         v-model="userList"
         @editUser="editUser"
@@ -184,9 +179,10 @@ async function saveUser(user: object) {
       });
     }
   } catch {
+    console.log("Error in submit.")
     return;
   }
-
+  alert("User has been saved successfully.");
   resetSelectedUser();
   editFlag.value = false;
 }
