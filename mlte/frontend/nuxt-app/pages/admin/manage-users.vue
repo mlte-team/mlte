@@ -3,7 +3,7 @@
     <title>Manage Users</title>
     <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
-      <UsaButton class="secondary-button" @click="addUser" style="float: right;">
+      <UsaButton class="secondary-button" style="float: right" @click="addUser">
         Add User
       </UsaButton>
       <AdminUserList
@@ -179,7 +179,7 @@ async function saveUser(user: object) {
       });
     }
   } catch {
-    console.log("Error in submit.")
+    console.log("Error in submit.");
     return;
   }
   alert("User has been saved successfully.");

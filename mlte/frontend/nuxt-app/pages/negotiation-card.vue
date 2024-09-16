@@ -1380,7 +1380,10 @@ async function submit() {
               successfulArtifactSubmission("negotiation card", identifier);
               forceSaveParam.value = true;
               if (useRoute().query.artifactId === undefined) {
-                window.location = "/negotiation-card?" + "model=" + useRoute().query.model + "&version=" + useRoute().query.version + "&artifactId=" + identifier
+                window.location = "/negotiation-card?" 
+                  + "model=" + useRoute().query.model
+                  + "&version=" + useRoute().query.version
+                  + "&artifactId=" + identifier;
               }
             }
           },

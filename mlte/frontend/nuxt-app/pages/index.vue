@@ -6,7 +6,7 @@
       <div>
         <UsaTextInput
           v-model="newModelIdentifier"
-          @keyup.enter="submitNewModel(newModelIdentifier)"  
+          @keyup.enter="submitNewModel(newModelIdentifier)"
         >
           <template #label> New Model </template>
         </UsaTextInput>
@@ -43,8 +43,8 @@
           :model-value="selectedModel"
           @update:modelValue="selectModel($event, true)"
         >
-        <template #label>Model</template>
-      </UsaSelect>
+          <template #label>Model</template>
+        </UsaSelect>
         <br />
       </div>
 

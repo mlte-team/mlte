@@ -4,7 +4,11 @@
     <template #page-title>Manage Groups</template>
 
     <div v-if="!editFlag">
-      <UsaButton class="secondary-button" @click="addGroup" style="float: right;">
+      <UsaButton
+        class="secondary-button"
+        style="float: right"
+        @click="addGroup"
+      >
         Add Group
       </UsaButton>
       <AdminGroupList
@@ -156,7 +160,7 @@ async function saveGroup(group: object) {
       });
     }
   } catch {
-    console.log("Error in submit.")
+    console.log("Error in submit.");
     return;
   }
   alert("Group has been saved successfully.");

@@ -1,13 +1,15 @@
 <template>
   <div>
     <div v-if="!newUserFlag">
-      <h2 class="section-header" style="display: inline">{{ modelValue.username }}</h2>
+      <h2 class="section-header" style="display: inline">
+        {{ modelValue.username }}
+      </h2>
       <div v-if="!changePasswordFlag" style="display: inline; float: right">
         <UsaButton class="secondary-button" @click="enablePasswordReset">
           Change Password
         </UsaButton>
       </div>
-      <div v-if="changePasswordFlag" style="display: inline; float: right;">
+      <div v-if="changePasswordFlag" style="display: inline; float: right">
         <UsaButton class="secondary-button" @click="disablePasswordReset">
           Cancel Change
         </UsaButton>

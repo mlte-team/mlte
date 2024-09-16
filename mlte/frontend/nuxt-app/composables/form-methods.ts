@@ -5,7 +5,7 @@ export function successfulArtifactSubmission(
   alert(`${artifactType}, ${artifactName}, has been saved successfully.`);
 }
 
-export function inputErrorAlert(){
+export function inputErrorAlert() {
   alert("One or more invalid fields in submission.");
 }
 

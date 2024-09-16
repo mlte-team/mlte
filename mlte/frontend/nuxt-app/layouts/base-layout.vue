@@ -19,9 +19,11 @@
 
     <div class="flex-container">
       <div class="sidebar left-sidebar">
-        <div style="position: fixed;">
+        <div style="position: fixed">
           <div v-if="$route.name != 'login'" class="grid-row grid-gap">
-            <div class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0">
+            <div
+              class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
+            >
               <nav aria-label="Side navigation,">
                 <ul class="usa-sidenav" style="width: 30ch">
                   <li class="usa-sidenav__item">
@@ -33,7 +35,7 @@
                     </NuxtLink>
                   </li>
                   <li class="usa-sidenav__item">
-                    <NuxtLink 
+                    <NuxtLink
                       :to="{ path: '/test-catalog' }"
                       :class="{ 'usa-current': $route.name === 'test-catalog' }"
                     >
@@ -47,8 +49,7 @@
                         <NuxtLink
                           :to="{ path: '/admin/manage-users' }"
                           :class="{
-                            'usa-current':
-                              $route.name === 'admin-manage-users',
+                            'usa-current': $route.name === 'admin-manage-users',
                           }"
                         >
                           Manage Users
@@ -74,7 +75,8 @@
                         <NuxtLink
                           :to="{ path: '/regular/profile-edit' }"
                           :class="{
-                            'usa-current': $route.name === 'regular-profile-edit',
+                            'usa-current':
+                              $route.name === 'regular-profile-edit',
                           }"
                         >
                           Edit Profile
@@ -90,7 +92,10 @@
       </div>
 
       <div class="body-div">
-        <h1 class="section-header" style="display: inline; align-items: left; justify-content: left;">
+        <h1
+          class="section-header"
+          style="display: inline; align-items: left; justify-content: left"
+        >
           <slot name="page-title" />
         </h1>
         <div v-if="token" class="logout-header">
@@ -105,7 +110,7 @@
             </UsaButton>
           </div>
         </div>
-        <hr/>
+        <hr />
         <slot name="default" />
         <footer>
           <p class="footer-text-left">

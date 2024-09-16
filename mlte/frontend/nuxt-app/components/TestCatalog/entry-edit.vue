@@ -1,14 +1,12 @@
 <template>
   <div>
     <div v-if="!newEntryFlag">
-        <h1 class="section-header">{{ modelValue.header.identifier }}</h1>
-        <h3 style="display: inline">Created by:</h3>
-        {{ modelValue.header.creator }} - {{ modelValue.header.created }}
+      <h1 class="section-header">{{ modelValue.header.identifier }}</h1>
+      <h3 style="display: inline">Created by:</h3>
+      {{ modelValue.header.creator }} - {{ modelValue.header.created }}
     </div>
     <div v-if="newEntryFlag">
-      <UsaTextInput 
-        :error="formErrors.identifier"
-      >
+      <UsaTextInput :error="formErrors.identifier">
         <template #label>Identifier</template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
@@ -38,26 +36,17 @@
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput
-      v-model="modelValue.property"
-      :error="formErrors.property"
-    >
+    <UsaTextInput v-model="modelValue.property" :error="formErrors.property">
       <template #label>Property</template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput
-      v-model="modelValue.code_type"
-      :error="formErrors.code_type"
-    >
+    <UsaTextInput v-model="modelValue.code_type" :error="formErrors.code_type">
       <template #label>Code Type</template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextarea
-      v-model="modelValue.code"
-      :error="formErrors.code"
-    >
+    <UsaTextarea v-model="modelValue.code" :error="formErrors.code">
       <template #label>Code</template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
@@ -70,18 +59,12 @@
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput
-      v-model="modelValue.inputs"
-      :error="formErrors.inputs"
-    >
+    <UsaTextInput v-model="modelValue.inputs" :error="formErrors.inputs">
       <template #label>Inputs</template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput
-      v-model="modelValue.output"
-      :error="formErrors.output"
-    >
+    <UsaTextInput v-model="modelValue.output" :error="formErrors.output">
       <template #label>Ouptut</template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
@@ -110,7 +93,7 @@ const props = defineProps({
         creator: "",
         created: -1,
         updated: -1,
-        catalog_id: ""
+        catalog_id: "",
       },
       problem_type: [],
       problem_domain: [],
@@ -120,7 +103,7 @@ const props = defineProps({
       code: "",
       description: "",
       inputs: "",
-      output: ""
+      output: "",
     },
   },
   newEntryFlag: {
@@ -146,7 +129,7 @@ const codeTypeOptions = ref([]);
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let inputError = false;
+  const inputError = false;
 
   if (inputError) {
     inputErrorAlert();

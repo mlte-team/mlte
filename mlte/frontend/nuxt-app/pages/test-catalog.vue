@@ -14,22 +14,13 @@
 
     <div v-if="!editFlag">
       <div class="inline-input-right">
-        <UsaTextInput
-          v-model="searchValue"
-          @keyup.enter="search()"
-        >
+        <UsaTextInput v-model="searchValue" @keyup.enter="search()">
           <template #label> Search by Identifier </template>
         </UsaTextInput>
       </div>
       <div class="inline-button">
-        <UsaButton
-          @click="search()"
-          class="usa-button--unstyled"
-        >
-          <img 
-            src="/assets/uswds/img/usa-icons/search.svg"
-            class="usa-icon"
-          />
+        <UsaButton class="usa-button--unstyled" @click="search()">
+          <img src="/assets/uswds/img/usa-icons/search.svg" class="usa-icon" />
         </UsaButton>
       </div>
 
@@ -58,22 +49,22 @@ const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const searchValue = ref("");
 const entryList = ref<{
-  header: object,
-  problem_type: Array<string>,
-  problem_domain: Array<string>,
-  property_category: string,
-  property: string,
-  code_type: string,
-  code: string,
-  description: string,
-  inputs: string,
-  output: string
+  header: object;
+  problem_type: Array<string>;
+  problem_domain: Array<string>;
+  property_category: string;
+  property: string;
+  code_type: string;
+  code: string;
+  description: string;
+  inputs: string;
+  output: string;
 }>([]);
 const selectedEntry = ref({});
 
 populateFullEntryList();
 
-async function populateFullEntryList(){
+async function populateFullEntryList() {
   await $fetch(config.public.apiPath + "/catalogs/entry/search", {
     retry: 0,
     method: "POST",
@@ -81,8 +72,8 @@ async function populateFullEntryList(){
       Authorization: "Bearer " + token.value,
     },
     body: {
-      "filter": {
-        "type": "all"
+      filter: {
+        type: "all",
       },
     },
     onRequestError() {
@@ -99,11 +90,10 @@ async function populateFullEntryList(){
   });
 }
 
-async function search(){
-  if(searchValue.value == ""){
+async function search() {
+  if (searchValue.value === "") {
     populateFullEntryList();
-  }
-  else{
+  } else {
     await $fetch(config.public.apiPath + "/catalogs/entry/search", {
       retry: 0,
       method: "POST",
@@ -111,10 +101,10 @@ async function search(){
         Authorization: "Bearer " + token.value,
       },
       body: {
-        "filter": {
-          "type": "identifier",
-          "id": searchValue.value
-        }
+        filter: {
+          type: "identifier",
+          id: searchValue.value,
+        },
       },
       onRequestError() {
         requestErrorAlert();
@@ -134,21 +124,21 @@ async function search(){
 function resetSelectedEntry() {
   selectedEntry.value = {
     header: {
-        identifier: "",
-        creator: "",
-        created: -1,
-        updated: -1,
-        catalog_id: ""
-      },
-      problem_type: [],
-      problem_domain: [],
-      property_category: "",
-      property: "",
-      code_type: "",
-      code: "",
-      description: "",
-      inputs: "",
-      output: ""
+      identifier: "",
+      creator: "",
+      created: -1,
+      updated: -1,
+      catalog_id: "",
+    },
+    problem_type: [],
+    problem_domain: [],
+    property_category: "",
+    property: "",
+    code_type: "",
+    code: "",
+    description: "",
+    inputs: "",
+    output: "",
   };
 }
 
@@ -166,29 +156,38 @@ function editEntry(entry: object) {
 
 async function deleteEntry(catalogId: string, entryId: string) {
   if (
-    !confirm("Are you sure you want to delete the entry: " + entryId + " in the " + catalogId + " catalog?")
+    !confirm(
+      "Are you sure you want to delete the entry: " +
+        entryId +
+        " in the " +
+        catalogId +
+        " catalog?",
+    )
   ) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/catalog/" + catalogId + "/entry/" + entryId, {
-    retry: 0,
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token.value,
+  await $fetch(
+    config.public.apiPath + "/catalog/" + catalogId + "/entry/" + entryId,
+    {
+      retry: 0,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          populateFullEntryList();
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
     },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        populateFullEntryList();
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  );
 }
 
 function cancelEdit() {
@@ -199,51 +198,61 @@ function cancelEdit() {
 }
 
 async function saveEntry(entry: object) {
-  
-  try{  
+  try {
     if (newEntryFlag.value) {
-      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
+      await $fetch(
+        config.public.apiPath +
+          "/catalog/" +
+          entry.header.catalog_id +
+          "/entry",
+        {
+          retry: 0,
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token.value,
+          },
+          body: entry,
+          onRequestError() {
+            requestErrorAlert();
+          },
+          onResponse({ response }) {
+            if (response.ok) {
+              populateFullEntryList();
+            }
+          },
+          onResponseError({ response }) {
+            handleHttpError(response.status, response._data.error_description);
+          },
         },
-        body: entry,
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            populateFullEntryList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+      );
     } else {
-      await $fetch(config.public.apiPath + "/catalog/" + entry.header.catalog_id + "/entry", {
-        retry: 0,
-        method: "PUT",
-        headers: {
-          Authorization: "Bearer " + token.value,
+      await $fetch(
+        config.public.apiPath +
+          "/catalog/" +
+          entry.header.catalog_id +
+          "/entry",
+        {
+          retry: 0,
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer " + token.value,
+          },
+          body: entry,
+          onRequestError() {
+            requestErrorAlert();
+          },
+          onResponse({ response }) {
+            if (response.ok) {
+              populateFullEntryList();
+            }
+          },
+          onResponseError({ response }) {
+            handleHttpError(response.status, response._data.error_description);
+          },
         },
-        body: entry,
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            populateFullEntryList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+      );
     }
-  }
-  catch{
+  } catch {
     console.log("Error in submit.");
     return;
   }
