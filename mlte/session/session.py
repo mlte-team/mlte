@@ -52,6 +52,10 @@ class Session:
             )
         return self._artifact_store
 
+    @property
+    def catalog_stores(self) -> CatalogStoreGroup:
+        return self._catalog_stores
+
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
@@ -66,10 +70,10 @@ class Session:
 
     def create_context(self):
         """Creates the currently configured context in the currently configured session. Fails if either is not set. Does nothing if already created."""
-        store = self.artifact_store
+        artifact_store = self.artifact_store
         context = self.context
         storeutil.create_parents(
-            store.session(), context.model, context.version
+            artifact_store.session(), context.model, context.version
         )
 
 

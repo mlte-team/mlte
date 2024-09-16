@@ -7,6 +7,7 @@ Unit tests for global session management.
 import pytest
 
 from mlte.session import session, set_context, set_store
+from mlte.session.session import add_catalog_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
 
@@ -22,16 +23,22 @@ from ..store.artifact.fixture import (  # noqa
 def test_session() -> None:
     model = "model"
     version = "v0.0.1"
-    uri = f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+    cat_id = "test_cat"
+    artifact_store_uri = (
+        f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+    )
+    catalog_store_uri = f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
 
     set_context(model, version)
-    set_store(uri)
+    set_store(artifact_store_uri)
+    add_catalog_store(catalog_store_uri, cat_id)
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
-    assert s.artifact_store.uri.uri == uri
+    assert s.artifact_store.uri.uri == artifact_store_uri
+    assert s.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
