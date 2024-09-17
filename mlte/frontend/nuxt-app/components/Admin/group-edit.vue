@@ -11,14 +11,18 @@
     </div>
 
     <label class="usa-label">Permissions</label>
-    <div v-for="(permissionOption, index) in permissionOptions" :key="index">
-      <UsaCheckbox
-        v-model="permissionOption.selected"
-        @update:modelValue="
-          permissionChange(permissionOption.selected, permissionOption)
-        "
+    <div class="multi-line-checkbox-div">
+      <span
+        v-for="(permissionOption, index) in permissionOptions"
+        :key="index"
+        class="multiple-per-line-checkbox"
       >
-        <template #default>
+        <UsaCheckbox
+          v-model="permissionOption.selected"
+          @update:modelValue="
+            permissionChange(permissionOption.selected, permissionOption)
+          "
+        >
           <span v-if="permissionOption.resource_id === null">
             {{ permissionOption.resource_type }} - (All) -
             {{ permissionOption.method }}
@@ -28,8 +32,8 @@
             {{ permissionOption.resource_id }} -
             {{ permissionOption.method }}
           </span>
-        </template>
-      </UsaCheckbox>
+        </UsaCheckbox>
+      </span>
     </div>
 
     <div class="submit-footer">

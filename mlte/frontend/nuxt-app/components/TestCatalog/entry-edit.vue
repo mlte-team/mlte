@@ -12,21 +12,23 @@
       </UsaTextInput>
     </div>
 
-    <!-- <UsaTextInput
-      v-model="modelValue.problem_type"
-      :error="formErrors.problem_type"
-    >
-      <template #label>Problem Type @@ Should be list? @@</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput>
-
-    <UsaTextInput
-      v-model="modelValue.problem_domain"
-      :error="formErrors.problem_domain"
-    >
-      <template #label>Problem Domain @@ Should be list? @@</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput> -->
+    <div class="multi-line-checkbox-div">
+      <label class="usa-label">Tags</label>
+      <span
+        v-for="(tag, tagIndex) in tagOptions"
+        :key="tagIndex"
+        class="multiple-per-line-checkbox"
+      >
+        <UsaCheckbox
+          v-model="tag.selected"
+          @update:modelValue="tagChange(tag.selected, tag.name)"
+        >
+          <template #default>
+            {{ tag.name }}
+          </template>
+        </UsaCheckbox>
+      </span>
+    </div>
 
     <UsaTextInput
       v-model="modelValue.property_category"
@@ -96,7 +98,6 @@ const props = defineProps({
         catalog_id: "",
       },
       problem_type: [],
-      problem_domain: [],
       property_category: "",
       property: "",
       code_type: "",
@@ -125,7 +126,28 @@ const formErrors = ref({
   inputs: false,
   output: false,
 });
-const codeTypeOptions = ref([]);
+const tagOptions = ref([
+  { name: "Audio Analysis", selected: false },
+  { name: "Classification", selected: false },
+  { name: "Computer Vision", selected: false },
+  { name: "Decoder", selected: false },
+  { name: "Encoder", selected: false },
+  { name: "Generative Model", selected: false },
+  { name: "Infrared", selected: false },
+  { name: "NLP", selected: false },
+  { name: "Object Detection", selected: false },
+  { name: "Sentiment Analysis", selected: false },
+  { name: "Regression", selected: false },
+  { name: "Segmentation", selected: false },
+  { name: "Tabular", selected: false },
+  { name: "Time Series", selected: false },
+]);
+
+tagOptions.value.forEach((tagOption: object) => {
+  if (props.modelValue.problem_type.find((x) => x === tagOption.name)) {
+    tagOption.selected = true;
+  }
+});
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
@@ -137,5 +159,17 @@ async function submit() {
   }
 
   emit("submit", props.modelValue);
+}
+
+function tagChange(selected: boolean, tagOption: object) {
+  if (selected) {
+    props.modelValue.problem_type.push(tagOption);
+  } else {
+    const objForRemoval = props.modelValue.problem_type.find(
+      (x) => x.name === tagOption.name,
+    );
+    const index = props.modelValue.problem_type.indexOf(objForRemoval);
+    props.modelValue.problem_type.splice(index, 1);
+  }
 }
 </script>
