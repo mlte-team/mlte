@@ -88,6 +88,17 @@ test:
 cov-results:
 	coverage html && open htmlcov/index.html
 
+# Demo Jupyter Notebook tests
+.PHONY: demo-test
+demo-test:
+	poetry run pytest --nbmake ./demo/simple/negotiation.ipynb
+	poetry run pytest --nbmake ./demo/simple/requirements.ipynb
+	poetry run pytest --nbmake ./demo/simple/evidence.ipynb
+	poetry run pytest --nbmake ./demo/simple/report.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/0_requirements.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/1_evidence.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/2_report.ipynb	
+
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
 # -----------------------------------------------------------------------------
