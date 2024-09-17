@@ -120,6 +120,12 @@ $ poetry run pytest test
 
 Unit tests failures result in build failures in CI.
 
+To test the Juypter notebooks present in the demo folders, run:
+
+```bash
+$ poetry run make demo-test
+```
+
 ### Model Schema Generation
 
 The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
