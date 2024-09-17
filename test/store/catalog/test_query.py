@@ -21,14 +21,6 @@ from mlte.store.query import (
 )
 
 
-class ProblemTypeTagFilter(TagFilter):
-    name: str = "problem_type"
-
-
-class ProblemDomainTagFilter(TagFilter):
-    name: str = "problem_domain"
-
-
 class PropertyCategoryPropertyFilter(PropertyFilter):
     name: str = "property_category"
 
@@ -42,24 +34,6 @@ def create_test_entry(
         code="hello world",
     )
     return entry
-
-
-def test_problem_type() -> None:
-    """The filter can be serialized and deserialized."""
-    f = ProblemTypeTagFilter(value="v1")
-    assert ProblemTypeTagFilter(**f.model_dump()) == f
-
-
-def test_problem_domain() -> None:
-    """The filter can be serialized and deserialized."""
-    f = ProblemDomainTagFilter(value="v1")
-    assert ProblemDomainTagFilter(**f.model_dump()) == f
-
-
-def test_property_category() -> None:
-    """The filter can be serialized and deserialized."""
-    f = PropertyCategoryPropertyFilter(value="v1")
-    assert PropertyCategoryPropertyFilter(**f.model_dump()) == f
 
 
 def test_all_match() -> None:
@@ -98,27 +72,17 @@ def test_type_match() -> None:
 def test_property_match() -> None:
     """The filter matches expected entries."""
     entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
-    entry.problem_type = ["type1", "type2"]
-    entry.problem_domain = ["domain1", "domain2"]
+    entry.tags = ["type1", "type2"]
     entry.property_category = "cat1"
 
-    filter1 = ProblemTypeTagFilter(value="type1")
+    filter1 = TagFilter(name="tags", value="type1")
     assert filter1.match(entry)
 
-    filter1 = ProblemTypeTagFilter(value="type2")
+    filter1 = TagFilter(name="tags", value="type2")
     assert filter1.match(entry)
 
-    filter1 = ProblemTypeTagFilter(value="type3")
+    filter1 = TagFilter(name="tags", value="type3")
     assert not filter1.match(entry)
-
-    filter2 = ProblemDomainTagFilter(value="domain1")
-    assert filter2.match(entry)
-
-    filter2 = ProblemDomainTagFilter(value="domain2")
-    assert filter2.match(entry)
-
-    filter2 = ProblemDomainTagFilter(value="domain3")
-    assert not filter2.match(entry)
 
     filter3 = PropertyCategoryPropertyFilter(value="cat1")
     assert filter3.match(entry)

@@ -57,8 +57,7 @@ class DBCatalogEntry(DBBase):
     __tablename__ = "catalog_entry"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    problem_type: Mapped[str]
-    problem_domain: Mapped[str]
+    tags: Mapped[str]
     property_category: Mapped[Optional[str]]
     property: Mapped[Optional[str]]
     code: Mapped[str]

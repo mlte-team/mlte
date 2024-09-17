@@ -60,8 +60,7 @@ class DBReader:
         )
 
         return CatalogEntry(
-            problem_type=json.loads(entry_obj.problem_type),
-            problem_domain=json.loads(entry_obj.problem_domain),
+            tags=json.loads(entry_obj.tags),
             property_category=entry_obj.property_category,
             property=entry_obj.property,
             code=entry_obj.code,
@@ -97,8 +96,7 @@ class DBReader:
         entry_header_obj.creator = entry.header.creator
         entry_header_obj.catalog_identifier = entry.header.catalog_id
 
-        entry_obj.problem_type = json.dumps(entry.problem_type)
-        entry_obj.problem_domain = json.dumps(entry.problem_domain)
+        entry_obj.tags = json.dumps(entry.tags)
         entry_obj.property_category = entry.property_category
         entry_obj.property = entry.property
         entry_obj.code = entry.code

@@ -89,20 +89,12 @@
     "header": {
       "$ref": "#/$defs/CatalogEntryHeader"
     },
-    "problem_type": {
+    "tags": {
       "default": [],
       "items": {
         "type": "string"
       },
-      "title": "Problem Type",
-      "type": "array"
-    },
-    "problem_domain": {
-      "default": [],
-      "items": {
-        "type": "string"
-      },
-      "title": "Problem Domain",
+      "title": "Tags",
       "type": "array"
     },
     "property_category": {
