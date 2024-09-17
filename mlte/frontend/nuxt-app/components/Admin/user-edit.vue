@@ -74,17 +74,24 @@
       <template #error-message> A role must be selected </template>
     </UsaSelect>
 
-    <label class="usa-label">Groups</label>
-    <div v-if="newUserFlag">
-      User will automatically be added to the <b>create-model</b> group upon
-      submission.
-    </div>
-    <div v-for="groupOption in groupOptions" :key="groupOption.name">
-      <UsaCheckbox
-        v-model="groupOption.selected"
-        :label="groupOption.name"
-        @update:modelValue="groupChange(groupOption.selected, groupOption)"
-      />
+    <div class="multi-line-checkbox-div">
+      <label class="usa-label">Groups</label>
+      <div v-if="newUserFlag">
+        User will automatically be added to the <b>create-model</b> group upon
+        submission.
+      </div>
+      <span
+        v-for="groupOption in groupOptions"
+        :key="groupOption.name"
+        class="multiple-per-line-checkbox"
+      >
+        <UsaCheckbox
+          v-model="groupOption.selected"
+          @update:modelValue="groupChange(groupOption.selected, groupOption)"
+        >
+          {{ groupOption.name }}
+        </UsaCheckbox>
+      </span>
     </div>
 
     <div class="submit-footer">

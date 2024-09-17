@@ -10,11 +10,16 @@
       >
         Add Catalog Entry
       </UsaButton>
+      <div class="inline-input-left">
+        <label class="usa-label" style="margin-top: 0px"> Search by Tag </label>
+        <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
+      </div>
+
       <div class="inline-input-right">
         <label class="usa-label" style="margin-top: 0px">
-          Search by Identifier
+          Search by Property Category
         </label>
-        <UsaTextInput v-model="searchValue" @keyup.enter="search()" />
+        <UsaTextInput v-model="propertySearchValue" @keyup.enter="search()" />
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
@@ -45,7 +50,8 @@ const token = useCookie("token");
 
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
-const searchValue = ref("");
+const tagSearchValue = ref("");
+const propertySearchValue = ref("");
 const entryList = ref<{
   header: object;
   problem_type: Array<string>;
@@ -89,8 +95,60 @@ async function populateFullEntryList() {
 }
 
 async function search() {
-  if (searchValue.value === "") {
+  if (tagSearchValue.value === "" && propertySearchValue.value === "") {
     populateFullEntryList();
+  } else if (propertySearchValue.value === "") {
+    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        filter: {
+          type: "tag",
+          name: "problem_type",
+          value: tagSearchValue.value,
+        },
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          entryList.value = response._data;
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
+  } else if (tagSearchValue.value === "") {
+    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
+      retry: 0,
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: {
+        filter: {
+          type: "property",
+          name: "property_category",
+          value: propertySearchValue.value,
+        },
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponse({ response }) {
+        if (response.ok) {
+          entryList.value = response._data;
+        }
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    });
   } else {
     await $fetch(config.public.apiPath + "/catalogs/entry/search", {
       retry: 0,
@@ -100,8 +158,19 @@ async function search() {
       },
       body: {
         filter: {
-          type: "identifier",
-          id: searchValue.value,
+          type: "and",
+          filters: [
+            {
+              type: "tag",
+              name: "problem_type",
+              value: tagSearchValue.value,
+            },
+            {
+              type: "property",
+              name: "property_category",
+              value: propertySearchValue.value,
+            },
+          ],
         },
       },
       onRequestError() {

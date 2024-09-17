@@ -6,27 +6,41 @@
       {{ modelValue.header.creator }} - {{ modelValue.header.created }}
     </div>
     <div v-if="newEntryFlag">
-      <UsaTextInput :error="formErrors.identifier">
+      <UsaSelect
+        v-model="modelValue.header.catalog_id"
+        :options="catalogOptions"
+        :error="formErrors.catalog"
+        @change="formErrors.catalog = false"
+      >
+        <template #label>Catalog</template>
+        <template #error-message>A catalog must be selected</template>
+      </UsaSelect>
+      <UsaTextInput
+        v-model="props.modelValue.header.identifier"
+        :error="formErrors.identifier"
+      >
         <template #label>Identifier</template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
     </div>
 
-    <!-- <UsaTextInput
-      v-model="modelValue.problem_type"
-      :error="formErrors.problem_type"
-    >
-      <template #label>Problem Type @@ Should be list? @@</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput>
-
-    <UsaTextInput
-      v-model="modelValue.problem_domain"
-      :error="formErrors.problem_domain"
-    >
-      <template #label>Problem Domain @@ Should be list? @@</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput> -->
+    <div class="multi-line-checkbox-div">
+      <label class="usa-label">Tags</label>
+      <span
+        v-for="(tag, tagIndex) in tagOptions"
+        :key="tagIndex"
+        class="multiple-per-line-checkbox"
+      >
+        <UsaCheckbox
+          v-model="tag.selected"
+          @update:modelValue="tagChange(tag.selected, tag.name)"
+        >
+          <template #default>
+            {{ tag.name }}
+          </template>
+        </UsaCheckbox>
+      </span>
+    </div>
 
     <UsaTextInput
       v-model="modelValue.property_category"
@@ -41,10 +55,15 @@
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="modelValue.code_type" :error="formErrors.code_type">
+    <UsaSelect
+      v-model="modelValue.code_type"
+      :error="formErrors.code_type"
+      :options="codeTypeOptions"
+      @change="formErrors.code_type = false"
+    >
       <template #label>Code Type</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput>
+      <template #error-message>Code Type must be selected</template>
+    </UsaSelect>
 
     <UsaTextarea v-model="modelValue.code" :error="formErrors.code">
       <template #label>Code</template>
@@ -96,7 +115,6 @@ const props = defineProps({
         catalog_id: "",
       },
       problem_type: [],
-      problem_domain: [],
       property_category: "",
       property: "",
       code_type: "",
@@ -114,22 +132,56 @@ const props = defineProps({
 });
 
 const formErrors = ref({
+  catalog: false,
   identifier: false,
-  problem_type: false,
-  problem_domain: false,
-  property_category: false,
-  property: false,
   code_type: false,
-  code: false,
-  description: false,
-  inputs: false,
-  output: false,
 });
-const codeTypeOptions = ref([]);
+const catalogOptions = ref([{ value: "default", text: "default" }]);
+const codeTypeOptions = ref([
+  { value: "measurement", text: "Measurement" },
+  { value: "validation", text: "Validation " },
+]);
+const tagOptions = ref([
+  { name: "Audio Analysis", selected: false },
+  { name: "Classification", selected: false },
+  { name: "Computer Vision", selected: false },
+  { name: "Decoder", selected: false },
+  { name: "Encoder", selected: false },
+  { name: "Generative Model", selected: false },
+  { name: "Infrared", selected: false },
+  { name: "NLP", selected: false },
+  { name: "Object Detection", selected: false },
+  { name: "Sentiment Analysis", selected: false },
+  { name: "Regression", selected: false },
+  { name: "Segmentation", selected: false },
+  { name: "Tabular", selected: false },
+  { name: "Time Series", selected: false },
+]);
+
+tagOptions.value.forEach((tagOption: object) => {
+  if (props.modelValue.problem_type.find((x) => x === tagOption.name)) {
+    tagOption.selected = true;
+  }
+});
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  const inputError = false;
+  let inputError = false;
+
+  if (props.modelValue.header.catalog_id === "") {
+    formErrors.value.catalog = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.header.identifier === "") {
+    formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.code_type === "") {
+    formErrors.value.code_type = true;
+    inputError = true;
+  }
 
   if (inputError) {
     inputErrorAlert();
@@ -137,5 +189,18 @@ async function submit() {
   }
 
   emit("submit", props.modelValue);
+}
+
+function tagChange(selected: boolean, tagOption: object) {
+  if (selected) {
+    props.modelValue.problem_type.push(tagOption);
+    props.modelValue.problem_type.sort();
+  } else {
+    const objForRemoval = props.modelValue.problem_type.find(
+      (x) => x.name === tagOption.name,
+    );
+    const index = props.modelValue.problem_type.indexOf(objForRemoval);
+    props.modelValue.problem_type.splice(index, 1);
+  }
 }
 </script>

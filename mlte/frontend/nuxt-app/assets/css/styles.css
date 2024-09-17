@@ -64,6 +64,15 @@ hr {
     margin-top: 1em;
 }
 
+.multi-line-checkbox-div {
+    display: inline-block;
+}
+
+.multiple-per-line-checkbox {
+    float: left;
+    width: 30%;
+}
+
 .submit-footer {
     background-color: #000000;
     border: 1px solid #000000;
