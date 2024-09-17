@@ -934,16 +934,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const path = ref([
-  {
-    href: "/",
-    text: "Artifact Store",
-  },
-  {
-    href: "/here",
-    text: "Negotiation Card",
-  },
-]);
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);

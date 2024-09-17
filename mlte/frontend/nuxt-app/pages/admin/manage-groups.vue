@@ -2,11 +2,9 @@
   <NuxtLayout name="base-layout">
     <title>Manage Groups</title>
     <template #page-title>Manage Groups</template>
-
     <div v-if="!editFlag">
       <UsaButton
-        class="secondary-button"
-        style="float: right"
+        class="secondary-button sub-header-float-button"
         @click="addGroup"
       >
         Add Group

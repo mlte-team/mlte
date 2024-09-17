@@ -2,19 +2,23 @@
   <NuxtLayout name="base-layout">
     <title>Edit Profile</title>
     <template #page-title>Edit Profile</template>
-    <h2 class="section-header" style="display: inline;">
+    <h2 class="section-header" style="display: inline">
       {{ userCookie }}
     </h2>
-    <div v-if="!resetPasswordFlag" style="display: inline; float: right">
-      <UsaButton class="secondary-button" @click="enablePasswordReset">
-        Change Password
-      </UsaButton>
-    </div>
-    <div v-if="resetPasswordFlag" style="display: inline; float: right">
-      <UsaButton class="secondary-button" @click="disablePasswordReset">
-        Cancel Change
-      </UsaButton>
-    </div>
+    <UsaButton
+      v-if="!resetPasswordFlag"
+      class="secondary-button sub-header-float-button"
+      @click="enablePasswordReset"
+    >
+      Change Password
+    </UsaButton>
+    <UsaButton
+      v-if="resetPasswordFlag"
+      class="secondary-button sub-header-float-button"
+      @click="disablePasswordReset"
+    >
+      Cancel Change
+    </UsaButton>
     <div v-if="resetPasswordFlag">
       <UsaTextInput
         v-model="newPassword"
