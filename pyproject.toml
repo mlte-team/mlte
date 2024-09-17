@@ -41,6 +41,38 @@ bcrypt = "^4.1.2"
 StrEnum = "^0.4.15"
 pip-system-certs = "^4.0.0"
 
+[tool.poetry.group.demo]
+optional = true
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.qa]
+optional = true
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.build]
+optional = true
+
+[tool.poetry.group.demo.dependencies]
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+pandas-stubs = "^2.2.2.240807"
+scikit-learn = "^1.2.1"
+matplotlib = "^3.6.3"
+ipykernel = "^6.21.2"
+notebook = "^6.5.3"
+tensorflow = "^2.17.0"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
+mkdocstrings = "*"
+mkdocs-material = "*"
+mkdocs-gen-files = "*"
+mkdocs-literate-nav = "*"
+
 [tool.poetry.group.qa.dependencies]
 isort = "^5.12.0"
 black = {extras = ["jupyter"], version = "^23.9.1"}
