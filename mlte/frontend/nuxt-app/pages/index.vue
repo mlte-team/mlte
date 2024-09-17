@@ -258,12 +258,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const path = ref([
-  {
-    href: "/",
-    text: "",
-  },
-]);
 
 const newModelIdentifier = ref("");
 const newVersionIdentifier = ref("");
