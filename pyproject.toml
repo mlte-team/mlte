@@ -65,6 +65,7 @@ matplotlib = "^3.6.3"
 ipykernel = "^6.21.2"
 notebook = "^6.5.3"
 tensorflow = "2.14.0"
+tensorflow-macos = "2.14.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "*"

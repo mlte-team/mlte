@@ -951,13 +951,13 @@ tests = ["asttokens (>=2.1.0)", "coverage", "coverage-enable-subprocess", "ipyth
 
 [[package]]
 name = "fastapi"
-version = "0.114.2"
+version = "0.115.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fastapi-0.114.2-py3-none-any.whl", hash = "sha256:44474a22913057b1acb973ab90f4b671ba5200482e7622816d79105dcece1ac5"},
-    {file = "fastapi-0.114.2.tar.gz", hash = "sha256:0adb148b62edb09e8c6eeefa3ea934e8f276dabc038c5a82989ea6346050c3da"},
+    {file = "fastapi-0.115.0-py3-none-any.whl", hash = "sha256:17ea427674467486e997206a5ab25760f6b09e069f099b96f5b55a32fb6f1631"},
+    {file = "fastapi-0.115.0.tar.gz", hash = "sha256:f93b4ca3529a8ebc6fc3fcf710e5efa8de3df9b41570958abf1d97d843138004"},
 ]
 
 [package.dependencies]
@@ -2977,13 +2977,13 @@ wrapt = ">=1.10.4"
 
 [[package]]
 name = "platformdirs"
-version = "4.3.4"
+version = "4.3.6"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "platformdirs-4.3.4-py3-none-any.whl", hash = "sha256:8b4ba85412f5065dae40aa19feaa02ac2be584c8b14abd70712b5cd11ad80034"},
-    {file = "platformdirs-4.3.4.tar.gz", hash = "sha256:9e8a037c36fe1b1f1b5de4482e60464272cc8dca725e40b568bf2c285f7509cf"},
+    {file = "platformdirs-4.3.6-py3-none-any.whl", hash = "sha256:73e575e1408ab8103900836b97580d5307456908a03e92031bab39e4554cc3fb"},
+    {file = "platformdirs-4.3.6.tar.gz", hash = "sha256:357fb2acbc885b0419afd3ce3ed34564c13c9b95c89360cd9563f73aa5e2b907"},
 ]
 
 [package.extras]
@@ -4555,6 +4555,45 @@ tensorflow-gpu = ["tensorflow-gpu (>=2.16.0,<2.17.0)"]
 tensorflow-rocm = ["tensorflow-rocm (>=2.16.0,<2.17.0)"]
 
 [[package]]
+name = "tensorflow-macos"
+version = "2.14.0"
+description = "TensorFlow is an open source machine learning framework for everyone."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "tensorflow_macos-2.14.0-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:31fa670b0afd2a52b3ad15bab97a0d0aae28c4ea2a96ab7f0a91e8844390bfb0"},
+    {file = "tensorflow_macos-2.14.0-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:064e98b67d7a89e72c37c90254c0a322a0b8d0ce9b68f23286816210e3ef6685"},
+    {file = "tensorflow_macos-2.14.0-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:7b3e4e01721bfc0105c99275113531a659e89fd6512340a7b8970593676e0114"},
+]
+
+[package.dependencies]
+absl-py = ">=1.0.0"
+astunparse = ">=1.6.0"
+flatbuffers = ">=23.5.26"
+gast = ">=0.2.1,<0.5.0 || >0.5.0,<0.5.1 || >0.5.1,<0.5.2 || >0.5.2"
+google-pasta = ">=0.1.1"
+grpcio = ">=1.24.3,<2.0"
+h5py = ">=2.9.0"
+keras = ">=2.14.0,<2.15"
+libclang = ">=13.0.0"
+ml-dtypes = "0.2.0"
+numpy = ">=1.23.5"
+opt-einsum = ">=2.3.2"
+packaging = "*"
+protobuf = ">=3.20.3,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+setuptools = "*"
+six = ">=1.12.0"
+tensorboard = ">=2.14,<2.15"
+tensorflow-estimator = ">=2.14.0,<2.15"
+tensorflow-io-gcs-filesystem = ">=0.23.1"
+termcolor = ">=1.1.0"
+typing-extensions = ">=3.6.6"
+wrapt = ">=1.11.0,<1.15"
+
+[package.extras]
+and-cuda = ["nvidia-cublas-cu11 (==11.11.3.6)", "nvidia-cuda-cupti-cu11 (==11.8.87)", "nvidia-cuda-nvcc-cu11 (==11.8.89)", "nvidia-cuda-runtime-cu11 (==11.8.89)", "nvidia-cudnn-cu11 (==8.7.0.84)", "nvidia-cufft-cu11 (==10.9.0.58)", "nvidia-curand-cu11 (==10.3.0.86)", "nvidia-cusolver-cu11 (==11.4.1.48)", "nvidia-cusparse-cu11 (==11.7.5.86)", "nvidia-nccl-cu11 (==2.16.5)", "tensorrt (==8.5.3.1)"]
+
+[[package]]
 name = "termcolor"
 version = "2.4.0"
 description = "ANSI color formatting for output in terminal"
@@ -5014,4 +5053,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.1,<=3.11.0"
-content-hash = "2e8e6cedafb1f2428b995c6bf52c3da6cd64c528124be6660e2303b99079f05e"
+content-hash = "e081b34152998a77dc66b60fe40a8e6216bab7430f701ecd185b8ad4351ccffc"
