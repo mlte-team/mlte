@@ -1,24 +1,19 @@
 <template>
   <NuxtLayout name="base-layout">
-    <div class="flex-container">
-      <div class="flex-container">
-        <h1 class="section-header">{{ userCookie }}</h1>
-        <div
-          class="centered-container"
-          style="vertical-align: bottom; padding-left: 38ch"
-        >
-          <div v-if="!resetPasswordFlag">
-            <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Change Password
-            </UsaButton>
-          </div>
-          <div v-if="resetPasswordFlag">
-            <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Change
-            </UsaButton>
-          </div>
-        </div>
-      </div>
+    <title>Edit Profile</title>
+    <template #page-title>Edit Profile</template>
+    <h2 class="section-header" style="display: inline;">
+      {{ userCookie }}
+    </h2>
+    <div v-if="!resetPasswordFlag" style="display: inline; float: right">
+      <UsaButton class="secondary-button" @click="enablePasswordReset">
+        Change Password
+      </UsaButton>
+    </div>
+    <div v-if="resetPasswordFlag" style="display: inline; float: right">
+      <UsaButton class="secondary-button" @click="disablePasswordReset">
+        Cancel Change
+      </UsaButton>
     </div>
     <div v-if="resetPasswordFlag">
       <UsaTextInput
