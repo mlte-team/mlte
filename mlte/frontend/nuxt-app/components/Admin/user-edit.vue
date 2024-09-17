@@ -4,16 +4,20 @@
       <h2 class="section-header" style="display: inline">
         {{ modelValue.username }}
       </h2>
-      <div v-if="!changePasswordFlag" style="display: inline; float: right">
-        <UsaButton class="secondary-button" @click="enablePasswordReset">
-          Change Password
-        </UsaButton>
-      </div>
-      <div v-if="changePasswordFlag" style="display: inline; float: right">
-        <UsaButton class="secondary-button" @click="disablePasswordReset">
-          Cancel Change
-        </UsaButton>
-      </div>
+      <UsaButton
+        v-if="!changePasswordFlag"
+        class="secondary-button sub-header-float-button"
+        @click="enablePasswordReset"
+      >
+        Change Password
+      </UsaButton>
+      <UsaButton
+        v-if="changePasswordFlag"
+        class="secondary-button sub-header-float-button"
+        @click="disablePasswordReset"
+      >
+        Cancel Change
+      </UsaButton>
 
       <div v-if="changePasswordFlag">
         <UsaTextInput

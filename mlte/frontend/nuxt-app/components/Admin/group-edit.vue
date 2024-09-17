@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!newGroupFlag">
-      <h1 class="section-header">{{ modelValue.name }}</h1>
+      <h2 class="section-header">{{ modelValue.name }}</h2>
     </div>
     <div v-if="newGroupFlag">
       <UsaTextInput v-model="modelValue.name" :error="formErrors.name">

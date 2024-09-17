@@ -4,14 +4,17 @@
     <template #page-title>Test Catalog</template>
 
     <div v-if="!editFlag">
-      <UsaButton class="secondary-button" @click="addEntry" style="float: right;">
+      <UsaButton
+        class="secondary-button sub-header-float-button"
+        @click="addEntry"
+      >
         Add Catalog Entry
       </UsaButton>
       <div class="inline-input-right">
-        <label class="usa-label" style="margin-top: 0px;">
+        <label class="usa-label" style="margin-top: 0px">
           Search by Identifier
         </label>
-        <UsaTextInput v-model="searchValue" @keyup.enter="search()"/>
+        <UsaTextInput v-model="searchValue" @keyup.enter="search()" />
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">

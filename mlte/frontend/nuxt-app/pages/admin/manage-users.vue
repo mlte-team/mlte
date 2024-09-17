@@ -3,7 +3,10 @@
     <title>Manage Users</title>
     <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
-      <UsaButton class="secondary-button" style="float: right" @click="addUser">
+      <UsaButton
+        class="secondary-button sub-header-float-button"
+        @click="addUser"
+      >
         Add User
       </UsaButton>
       <AdminUserList
