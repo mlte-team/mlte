@@ -100,10 +100,15 @@ def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
 
 
 def get_entry_uri(
-    catalog_id: Optional[str] = None, entry_id: Optional[str] = None
+    catalog_id: Optional[str] = None,
+    entry_id: Optional[str] = None,
+    only_base: bool = False,
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""
     url = f"{CATALOG_BASE_URI}"
+    if only_base:
+        return f"{url}s"
+
     if catalog_id is None:
         url = f"{url}s/entry"
     else:

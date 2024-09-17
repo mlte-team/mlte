@@ -257,6 +257,24 @@ def test_list_all_no_permission(
 
 @pytest.mark.parametrize(
     "api_user",
+    user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
+)
+def test_list_catalogs(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:  # noqa
+    """Entries can be listed."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    url = get_entry_uri(only_base=True)
+
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.OK
+    assert len(res.json()) == 1  # Default catalog only
+
+
+@pytest.mark.parametrize(
+    "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
 )
 def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa

@@ -173,6 +173,22 @@ def list_catalog_entries(
             raise_http_internal_error(e)
 
 
+@router.get("s")
+def list_catalogs(
+    *,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    List MLTE catalogs, returning their ids.
+    :return: A collection of catalog ids.
+    """
+    with state_stores.catalog_stores_session() as catalog_stores:
+        try:
+            return list(catalog_stores.sessions.keys())
+        except Exception as e:
+            raise_http_internal_error(e)
+
+
 @router.get("s/entry")
 def list_catalog_entries_all_catalogs(
     *,
