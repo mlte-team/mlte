@@ -21,6 +21,6 @@ RUN if [ -n "$(ls -A /certs/*.crt)" ]; then \
 # Setup poetry to handle dependencies.
 RUN pip install poetry
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # NOTE: MLTE code is not copied and left for the specific sub dockerfiles to do, to allow caching their specific dependencies.
