@@ -43,7 +43,7 @@
                     </NuxtLink>
                   </li>
                   <li v-if="userRole === 'admin'" class="usa-sidenav__item">
-                    <a href="javascript:void(0);">Admin Pages</a>
+                    <a>Admin Pages</a>
                     <ul class="usa-sidenav__sublist">
                       <li class="usa-sidenav__item">
                         <NuxtLink
@@ -69,7 +69,7 @@
                     </ul>
                   </li>
                   <li v-else class="usa-sidenav__item">
-                    <a href="javascript:void(0);">User Pages</a>
+                    <a>User Pages</a>
                     <ul class="usa-sidenav__sublist">
                       <li class="usa-sidenav__item">
                         <NuxtLink
