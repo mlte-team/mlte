@@ -22,7 +22,7 @@ exclude = [
 mlte = "mlte.cli:run"
 
 [tool.poetry.dependencies]
-python = ">=3.9.1"
+python = ">=3.9.1,<4.0.0"
 fastapi = ">=0.100.0"
 pydantic-settings = "^2.0.3"
 pydantic = "^2.1.1"
@@ -85,6 +85,7 @@ pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 httpx = "^0.24.1"
 jsonschema = "^4.19.0"
+nbmake = "^1.5.4"
 
 [tool.poetry.group.build.dependencies]
 bump2version = "^1.0.1"
