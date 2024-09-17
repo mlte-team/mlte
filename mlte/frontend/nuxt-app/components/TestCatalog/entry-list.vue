@@ -29,7 +29,7 @@
       <td>
         {{ entry.code_type }}
       </td>
-      <td>
+      <td style="width: 13em">
         <UsaButton class="secondary-button" @click="$emit('editEntry', entry)">
           Edit
         </UsaButton>

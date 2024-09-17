@@ -6,7 +6,19 @@
       {{ modelValue.header.creator }} - {{ modelValue.header.created }}
     </div>
     <div v-if="newEntryFlag">
-      <UsaTextInput :error="formErrors.identifier">
+      <UsaSelect
+        v-model="modelValue.header.catalog_id"
+        :options="catalogOptions"
+        :error="formErrors.catalog"
+        @change="formErrors.catalog = false"
+      >
+        <template #label>Catalog</template>
+        <template #error-message>A catalog must be selected</template>
+      </UsaSelect>
+      <UsaTextInput
+        v-model="props.modelValue.header.identifier"
+        :error="formErrors.identifier"
+      >
         <template #label>Identifier</template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
@@ -43,10 +55,15 @@
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="modelValue.code_type" :error="formErrors.code_type">
+    <UsaSelect
+      v-model="modelValue.code_type"
+      :error="formErrors.code_type"
+      :options="codeTypeOptions"
+      @change="formErrors.code_type = false"
+    >
       <template #label>Code Type</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput>
+      <template #error-message>Code Type must be selected</template>
+    </UsaSelect>
 
     <UsaTextarea v-model="modelValue.code" :error="formErrors.code">
       <template #label>Code</template>
@@ -115,17 +132,15 @@ const props = defineProps({
 });
 
 const formErrors = ref({
+  catalog: false,
   identifier: false,
-  problem_type: false,
-  problem_domain: false,
-  property_category: false,
-  property: false,
   code_type: false,
-  code: false,
-  description: false,
-  inputs: false,
-  output: false,
 });
+const catalogOptions = ref([{ value: "default", text: "default" }]);
+const codeTypeOptions = ref([
+  { value: "measurement", text: "Measurement" },
+  { value: "validation", text: "Validation " },
+]);
 const tagOptions = ref([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
@@ -151,7 +166,22 @@ tagOptions.value.forEach((tagOption: object) => {
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  const inputError = false;
+  let inputError = false;
+
+  if (props.modelValue.header.catalog_id === "") {
+    formErrors.value.catalog = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.header.identifier === "") {
+    formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.code_type === "") {
+    formErrors.value.code_type = true;
+    inputError = true;
+  }
 
   if (inputError) {
     inputErrorAlert();
@@ -164,6 +194,7 @@ async function submit() {
 function tagChange(selected: boolean, tagOption: object) {
   if (selected) {
     props.modelValue.problem_type.push(tagOption);
+    props.modelValue.problem_type.sort();
   } else {
     const objForRemoval = props.modelValue.problem_type.find(
       (x) => x.name === tagOption.name,
