@@ -57,6 +57,11 @@ They are described used in the following way:
 
 - ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the structure described in the section [Store URIs](#store-uris) below.
 
+Alternatively, these two things can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
+
+- ``MLTE_CONTEXT_MODEL`` and ``MLTE_CONTEXT_VERSION`` to set the model and version.
+- ``MLTE_ARTIFACT_STORE_URI`` to set the artifact store URI.
+
 ## Running the Backend and User Interface
 
 The web-based user interface (UI or frontend) allows you to edit some types of artifacts in the system (like a Negotiation Card), and review the existing models and test catalogs. It requires authentication to access, so it also allows admins to manage users. To access the UI, first you need to start the backend server. See details for running each component.

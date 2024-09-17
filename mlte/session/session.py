@@ -4,6 +4,8 @@ mlte/session/session.py
 Session state management for the MLTE library.
 """
 
+import os
+import typing
 from typing import Optional
 
 import mlte.store.artifact.util as storeutil
@@ -20,6 +22,13 @@ class Session:
     The primary function of the Session data structure is to provide
     convenient access to the MLTE context for application developers.
     """
+
+    MLTE_CONTEXT_MODEL_VAR = "MLTE_CONTEXT_MODEL"
+    MLTE_CONTEXT_VERSION_VAR = "MLTE_CONTEXT_VERSION"
+    """Environment variables to get model and version from, if needed."""
+
+    MLTE_ARTIFACT_STORE_URI_VAR = "MLTE_ARTIFACT_STORE_URI"
+    """Environment variable to get the artifact store URI from, if needed."""
 
     _instance = None
 
@@ -41,15 +50,41 @@ class Session:
     @property
     def context(self) -> Context:
         if self._context is None:
-            raise RuntimeError("Must initialize MLTE context for session.")
+            # If the context has not been manually set, get it from environment.
+            if (
+                self.MLTE_CONTEXT_MODEL_VAR in os.environ
+                and self.MLTE_CONTEXT_VERSION_VAR in os.environ
+            ):
+                self._context = Context(
+                    model=typing.cast(
+                        str, os.getenv(self.MLTE_CONTEXT_MODEL_VAR)
+                    ),
+                    version=typing.cast(
+                        str, os.getenv(self.MLTE_CONTEXT_VERSION_VAR)
+                    ),
+                )
+            else:
+                raise RuntimeError(
+                    "Must initialize MLTE context for session, either manually or through environment variables."
+                )
+
         return self._context
 
     @property
     def artifact_store(self) -> ArtifactStore:
         if self._artifact_store is None:
-            raise RuntimeError(
-                "Must initialize MLTE artifact store for session."
-            )
+            # If the artifact store URI has not been manually set, get it from environment.
+            if self.MLTE_ARTIFACT_STORE_URI_VAR in os.environ:
+                self._artifact_store = create_artifact_store(
+                    typing.cast(
+                        str, os.getenv(self.MLTE_ARTIFACT_STORE_URI_VAR)
+                    )
+                )
+            else:
+                raise RuntimeError(
+                    "Must initialize MLTE artifact store for session, either manually or through environment variables."
+                )
+
         return self._artifact_store
 
     @property
@@ -79,6 +114,12 @@ class Session:
 
 # Singleton session.
 g_session = Session()
+
+
+def reset_session() -> None:
+    """Used to reset session if needed."""
+    global g_session
+    g_session = Session()
 
 
 def session() -> Session:
