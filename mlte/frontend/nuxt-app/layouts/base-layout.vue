@@ -43,7 +43,7 @@
                     </NuxtLink>
                   </li>
                   <li v-if="userRole === 'admin'" class="usa-sidenav__item">
-                    <a>Admin Pages</a>
+                    <div class="nav-section-title">Admin Pages</div>
                     <ul class="usa-sidenav__sublist">
                       <li class="usa-sidenav__item">
                         <NuxtLink
@@ -69,7 +69,7 @@
                     </ul>
                   </li>
                   <li v-else class="usa-sidenav__item">
-                    <a>User Pages</a>
+                    <div class="nav-section-title">User Pages</div>
                     <ul class="usa-sidenav__sublist">
                       <li class="usa-sidenav__item">
                         <NuxtLink
@@ -206,6 +206,12 @@ header {
 .right-sidebar {
   margin-right: 40px;
   position: fixed;
+}
+
+.nav-section-title {
+  padding: 0.5rem 1rem;
+  display: block;
+  color: #565c65;
 }
 
 .body-div {
