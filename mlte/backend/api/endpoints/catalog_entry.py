@@ -53,7 +53,7 @@ def create_catalog_entry(
             )
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
-                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
+                status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
             )
         except errors.ForbiddenError as e:
             raise HTTPException(

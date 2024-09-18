@@ -99,7 +99,9 @@ class RDBEntryMapper(CatalogEntryMapper):
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_entry(entry.header.identifier, session)
-                raise errors.ErrorAlreadyExists(f"{entry} already exists.")
+                raise errors.ErrorAlreadyExists(
+                    f"Entry with id {entry.header.identifier} already exists."
+                )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
                 entry_obj = DBReader._build_entry_obj(entry, session)
