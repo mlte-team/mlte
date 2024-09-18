@@ -40,9 +40,8 @@ def create_catalog_entry(
 
             catalog_session = catalog_stores.get_session(catalog_id)
             if catalog_session.read_only:
-                raise HTTPException(
-                    status_code=codes.FORBIDDEN,
-                    detail="This catalog is read only.",
+                raise errors.ForbiddenError(
+                    f"The catalog '{catalog_id}' is read only."
                 )
 
             return catalog_session.entry_mapper.create_with_header(
@@ -55,6 +54,10 @@ def create_catalog_entry(
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
+            )
+        except errors.ForbiddenError as e:
+            raise HTTPException(
+                status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
             )
         except Exception as e:
             raise_http_internal_error(e)
@@ -79,9 +82,8 @@ def edit_catalog_entry(
 
             catalog_session = catalog_stores.get_session(catalog_id)
             if catalog_session.read_only:
-                raise HTTPException(
-                    status_code=codes.FORBIDDEN,
-                    detail="This catalog is read only.",
+                raise errors.ForbiddenError(
+                    f"The catalog '{catalog_id}' is read only."
                 )
 
             return catalog_session.entry_mapper.edit_with_header(
@@ -90,6 +92,10 @@ def edit_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
+        except errors.ForbiddenError as e:
+            raise HTTPException(
+                status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
             )
         except Exception as e:
             raise_http_internal_error(e)
@@ -136,15 +142,18 @@ def delete_catalog_entry(
         try:
             catalog_session = catalog_stores.get_session(catalog_id)
             if catalog_session.read_only:
-                raise HTTPException(
-                    status_code=codes.FORBIDDEN,
-                    detail="This catalog is read only.",
+                raise errors.ForbiddenError(
+                    f"The catalog '{catalog_id}' is read only."
                 )
 
             return catalog_session.entry_mapper.delete(catalog_entry_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
+        except errors.ForbiddenError as e:
+            raise HTTPException(
+                status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
             )
         except Exception as e:
             raise_http_internal_error(e)

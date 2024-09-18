@@ -37,7 +37,9 @@ class InMemoryCatalogStore(CatalogStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return InMemoryCatalogStoreSession(storage=self.storage)
+        return InMemoryCatalogStoreSession(
+            storage=self.storage, read_only=self.read_only
+        )
 
     def clone(self) -> InMemoryCatalogStore:
         """

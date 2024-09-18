@@ -50,7 +50,9 @@ class FileSystemCatalogStore(CatalogStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return FileSystemCatalogStoreSession(storage=self.storage)
+        return FileSystemCatalogStoreSession(
+            storage=self.storage, read_only=self.read_only
+        )
 
 
 # -----------------------------------------------------------------------------

@@ -49,7 +49,9 @@ class HttpCatalogGroupStore(CatalogStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return HttpCatalogGroupStoreSession(storage=self.storage)
+        return HttpCatalogGroupStoreSession(
+            storage=self.storage, read_only=self.read_only
+        )
 
 
 # -----------------------------------------------------------------------------

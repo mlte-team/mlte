@@ -49,7 +49,9 @@ class RelationalDBCatalogStore(CatalogStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBCatalogStoreSession(storage=self.storage)
+        return RelationalDBCatalogStoreSession(
+            storage=self.storage, read_only=self.read_only
+        )
 
 
 def init_catalog_tables(engine: Engine):
