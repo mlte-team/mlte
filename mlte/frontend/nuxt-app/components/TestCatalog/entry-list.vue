@@ -18,9 +18,9 @@
         {{ entry.header.catalog_id }}
       </td>
       <td>
-        <span v-for="(tag, tagIndex) in entry.problem_type" :key="tagIndex">
+        <span v-for="(tag, tagIndex) in entry.tags" :key="tagIndex">
           <span>{{ tag }}</span>
-          <span v-if="tagIndex + 1 < entry.problem_type.length">, </span>
+          <span v-if="tagIndex + 1 < entry.tags.length">, </span>
         </span>
       </td>
       <td>

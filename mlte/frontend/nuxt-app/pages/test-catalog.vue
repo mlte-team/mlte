@@ -54,8 +54,7 @@ const tagSearchValue = ref("");
 const propertySearchValue = ref("");
 const entryList = ref<{
   header: object;
-  problem_type: Array<string>;
-  problem_domain: Array<string>;
+  tags: Array<string>;
   property_category: string;
   property: string;
   code_type: string;
@@ -107,7 +106,7 @@ async function search() {
       body: {
         filter: {
           type: "tag",
-          name: "problem_type",
+          name: "tags",
           value: tagSearchValue.value,
         },
       },
@@ -162,7 +161,7 @@ async function search() {
           filters: [
             {
               type: "tag",
-              name: "problem_type",
+              name: "tags",
               value: tagSearchValue.value,
             },
             {
@@ -197,8 +196,7 @@ function resetSelectedEntry() {
       updated: -1,
       catalog_id: "",
     },
-    problem_type: [],
-    problem_domain: [],
+    tags: [],
     property_category: "",
     property: "",
     code_type: "",

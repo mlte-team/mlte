@@ -114,7 +114,7 @@ const props = defineProps({
         updated: -1,
         catalog_id: "",
       },
-      problem_type: [],
+      tags: [],
       property_category: "",
       property: "",
       code_type: "",
@@ -182,7 +182,7 @@ const tagOptions = ref([
 ]);
 
 tagOptions.value.forEach((tagOption: object) => {
-  if (props.modelValue.problem_type.find((x) => x === tagOption.name)) {
+  if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
   }
 });
@@ -216,14 +216,14 @@ async function submit() {
 
 function tagChange(selected: boolean, tagOption: object) {
   if (selected) {
-    props.modelValue.problem_type.push(tagOption);
-    props.modelValue.problem_type.sort();
+    props.modelValue.tags.push(tagOption);
+    props.modelValue.tags.sort();
   } else {
-    const objForRemoval = props.modelValue.problem_type.find(
+    const objForRemoval = props.modelValue.tags.find(
       (x) => x.name === tagOption.name,
     );
-    const index = props.modelValue.problem_type.indexOf(objForRemoval);
-    props.modelValue.problem_type.splice(index, 1);
+    const index = props.modelValue.tags.indexOf(objForRemoval);
+    props.modelValue.tags.splice(index, 1);
   }
 }
 </script>
