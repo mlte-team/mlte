@@ -232,5 +232,7 @@ def search(
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.search(query=query)
+        except errors.ErrorNotFound as e:
+            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
         except Exception as e:
             raise_http_internal_error(e)

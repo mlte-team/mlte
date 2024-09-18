@@ -11,6 +11,7 @@ from typing import Any, List, Literal, Union
 
 from strenum import LowercaseStrEnum
 
+import mlte.store.error as errors
 from mlte.model import BaseModel
 
 # Alias for all supported filters.
@@ -65,24 +66,19 @@ class Filtrable(BaseModel):
             value = getattr(self, property_name)
             return value
         except Exception:
-            raise RuntimeError(
-                f"Property {property_name} is not part of the model."
+            raise errors.ErrorNotFound(
+                f"Property '{property_name}' is not part of the model."
             )
 
     def get_tags(self, property_name: str) -> List[Any]:
         """Returns the given tags."""
-        try:
-            value = getattr(self, property_name)
-            if type(value) is not list:
-                raise RuntimeError(
-                    f"Property {property_name} does not contain a list of tags."
-                )
-            else:
-                return value
-        except Exception:
+        value = self.get_property(property_name)
+        if type(value) is not list:
             raise RuntimeError(
-                f"Property {property_name} is not part of the model."
+                f"Property {property_name} does not contain a list of tags."
             )
+        else:
+            return value
 
 
 # -----------------------------------------------------------------------------
