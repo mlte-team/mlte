@@ -136,7 +136,30 @@ const formErrors = ref({
   identifier: false,
   code_type: false,
 });
-const catalogOptions = ref([{ value: "default", text: "default" }]);
+const catalogOptions = ref<
+  {
+    value: string,
+    text: string,
+  }[]
+>([]);
+const { data: catalogList } = await useFetch<string[]>(
+  config.public.apiPath + "/catalogs",
+  {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+  },
+);
+if (catalogList.value) {
+  catalogList.value.forEach((catalog: object) => {
+    catalogOptions.value.push({
+      value: catalog,
+      text: catalog,
+    });
+  });
+}
+
 const codeTypeOptions = ref([
   { value: "measurement", text: "Measurement" },
   { value: "validation", text: "Validation " },
