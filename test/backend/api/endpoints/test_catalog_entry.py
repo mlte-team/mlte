@@ -270,7 +270,7 @@ def test_list_catalogs(
 
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
-    assert len(res.json()) == 1  # Default catalog only
+    assert len(res.json()) == 1  # Sample catalog only
 
 
 @pytest.mark.parametrize(
