@@ -16,6 +16,7 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
+from mlte.store.common.storage import Storage
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -26,7 +27,7 @@ class InMemoryCatalogStore(CatalogStore):
     """An in-memory implementation of the MLTE user store."""
 
     def __init__(self, uri: StoreURI) -> None:
-        self.storage = MemoryCatalogStorage()
+        self.storage = MemoryCatalogStorage(uri)
         """The underlying storage for the store."""
 
         super().__init__(uri=uri)
@@ -51,10 +52,12 @@ class InMemoryCatalogStore(CatalogStore):
         return clone
 
 
-class MemoryCatalogStorage:
+class MemoryCatalogStorage(Storage):
     """A simple storage wrapper for the in-memory store."""
 
-    def __init__(self) -> None:
+    def __init__(self, uri: StoreURI) -> None:
+        super().__init__(uri)
+
         self.entries: Dict[str, CatalogEntry] = {}
 
 

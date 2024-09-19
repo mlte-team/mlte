@@ -12,6 +12,7 @@ from typing import Any, Dict, List
 
 import mlte.store.error as errors
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.common.storage import Storage
 
 
 def parse_root_path(uri: StoreURI) -> Path:
@@ -31,49 +32,57 @@ class JsonFileStorage:
 
     JSON_EXT = ".json"
 
-    def create_folder(self, path: Path) -> None:
+    @staticmethod
+    def create_folder(path: Path) -> None:
         Path.mkdir(path, parents=True)
 
-    def list_folders(self, path: Path) -> List[Path]:
+    @staticmethod
+    def list_folders(path: Path) -> List[Path]:
         return [x for x in sorted(path.iterdir()) if x.is_dir()]
 
-    def delete_folder(self, path: Path) -> None:
+    @staticmethod
+    def delete_folder(path: Path) -> None:
         shutil.rmtree(path)
 
-    def list_json_files(self, path: Path) -> List[Path]:
+    @staticmethod
+    def list_json_files(path: Path) -> List[Path]:
         return [
             x
             for x in sorted(path.iterdir())
-            if x.is_file() and x.suffix == self.JSON_EXT
+            if x.is_file() and x.suffix == JsonFileStorage.JSON_EXT
         ]
 
-    def read_json_file(self, path: Path) -> Dict[str, Any]:
+    @staticmethod
+    def read_json_file(path: Path) -> Dict[str, Any]:
         with path.open("r") as f:
             data: Dict[str, Any] = json.load(f)
         return data
 
-    def write_json_to_file(self, path: Path, data: Dict[str, Any]) -> None:
+    @staticmethod
+    def write_json_to_file(path: Path, data: Dict[str, Any]) -> None:
         with path.open("w") as f:
             json.dump(data, f, indent=4)
 
-    def delete_file(self, path: Path) -> None:
+    @staticmethod
+    def delete_file(path: Path) -> None:
         if not path.exists():
             raise RuntimeError(f"Path {path} does not exist.")
         path.unlink()
 
-    def add_extension(self, filename: str) -> Path:
-        return Path(filename + self.JSON_EXT)
+    @staticmethod
+    def add_extension(filename: str) -> Path:
+        return Path(filename + JsonFileStorage.JSON_EXT)
 
-    def get_just_filename(self, path: Path) -> str:
+    @staticmethod
+    def get_just_filename(path: Path) -> str:
         return path.stem
 
 
-class FileSystemStorage(JsonFileStorage):
+class FileSystemStorage(Storage, JsonFileStorage):
     """A local file system implementation of a storage."""
 
     def __init__(self, uri: StoreURI, sub_folder: str) -> None:
-        self.uri = uri
-        """The base URI"""
+        super().__init__(uri)
 
         self.root = parse_root_path(uri)
         """Root folder, that exists, where the storage will be located."""
@@ -95,7 +104,7 @@ class FileSystemStorage(JsonFileStorage):
         """The the base folder for the file store."""
 
         try:
-            self.create_folder(self.base_path)
+            JsonFileStorage.create_folder(self.base_path)
         except FileExistsError:
             # If it already existed, we just ignore warning.
             pass
@@ -112,22 +121,24 @@ class FileSystemStorage(JsonFileStorage):
         """Returns a list of resource ids in this storage."""
         return [
             self._resource_id(resource_path)
-            for resource_path in self.list_json_files(self.base_path)
+            for resource_path in JsonFileStorage.list_json_files(self.base_path)
         ]
 
     def read_resource(self, resource_id: str) -> Dict[str, Any]:
         """Reads the given resource as a dict."""
-        return self.read_json_file(self._resource_path(resource_id))
+        return JsonFileStorage.read_json_file(self._resource_path(resource_id))
 
     def write_resource(
         self, resource_id: str, resource_data: Dict[str, Any]
     ) -> None:
         """Writes the given resource to storage."""
-        self.write_json_to_file(self._resource_path(resource_id), resource_data)
+        JsonFileStorage.write_json_to_file(
+            self._resource_path(resource_id), resource_data
+        )
 
     def delete_resource(self, resource_id: str) -> None:
         """Deletes the file for the associated resource id."""
-        self.delete_file(self._resource_path(resource_id))
+        JsonFileStorage.delete_file(self._resource_path(resource_id))
 
     def ensure_resource_does_not_exist(self, resource_id: str) -> None:
         """Throws an ErrorAlreadyExists if the given resource does exist."""
@@ -151,7 +162,7 @@ class FileSystemStorage(JsonFileStorage):
         :param resource_id: The resource identifier
         :return: The formatted path
         """
-        return Path(self.base_path, self.add_extension(resource_id))
+        return Path(self.base_path, JsonFileStorage.add_extension(resource_id))
 
     def _resource_id(self, resource_path: Path) -> str:
         """
@@ -159,4 +170,4 @@ class FileSystemStorage(JsonFileStorage):
         :param resource_path: The full path
         :return: The resource id
         """
-        return self.get_just_filename(resource_path)
+        return JsonFileStorage.get_just_filename(resource_path)

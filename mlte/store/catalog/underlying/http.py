@@ -72,7 +72,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
         """Whether this is read only or not."""
 
         self.entry_mapper = HTTPCatalogGroupEntryMapper(
-            url=self.storage.url, client=self.storage.client
+            url=self.storage.clean_url, client=self.storage.client
         )
         """The mapper to entries CRUD."""
 

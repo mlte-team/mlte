@@ -10,7 +10,14 @@ import time
 import typing
 
 from mlte.catalog.model import CatalogEntry
-from mlte.store.base import ManagedSession, ResourceMapper, Store, StoreSession
+from mlte.store.base import (
+    ManagedSession,
+    ResourceMapper,
+    Store,
+    StoreSession,
+    StoreURI,
+)
+from mlte.store.common.storage import Storage
 
 
 class CatalogStore(Store):
@@ -30,6 +37,13 @@ class CatalogStoreSession(StoreSession):
 
     read_only: bool = False
     """Whether this session is read only or not."""
+
+    storage: Storage
+    """The underlying storage method."""
+
+    def get_uri(self) -> StoreURI:
+        """Returns the URI of the store."""
+        return self.storage.get_uri()
 
 
 class ManagedCatalogSession(ManagedSession):

@@ -13,9 +13,10 @@ import sqlalchemy_utils
 from sqlalchemy.orm import DeclarativeBase
 
 from mlte.store.base import StoreURI
+from mlte.store.common.storage import Storage
 
 
-class RDBStorage:
+class RDBStorage(Storage):
     """Helper to setup RDB storage.."""
 
     def __init__(
@@ -25,8 +26,10 @@ class RDBStorage:
         init_tables_func: Optional[Callable[[sqlalchemy.Engine], None]],
         **kwargs,
     ) -> None:
+        super().__init__(uri)
+
         self.engine = sqlalchemy.create_engine(uri.uri, **kwargs)
-        """The underlying storage for the store."""
+        """The underlying DB engine access."""
 
         # Create the DB if it doesn't exist already.
         if not sqlalchemy_utils.database_exists(self.engine.url):

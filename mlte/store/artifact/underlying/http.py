@@ -56,7 +56,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
     def __init__(self, *, storage: HttpStorage) -> None:
         """The remote artifact store URL."""
-        self.url = storage.url
+        self.url = storage.clean_url
         """URL."""
 
         self.client = storage.client

@@ -23,7 +23,7 @@ from mlte.store.catalog.underlying.rdbs.metadata import (
     init_catalog_entry_types,
 )
 from mlte.store.catalog.underlying.rdbs.reader import DBReader
-from mlte.store.common.rdbs import RDBStorage
+from mlte.store.common.rdbs_storage import RDBStorage
 
 # -----------------------------------------------------------------------------
 # RelationalDBCatalogStore

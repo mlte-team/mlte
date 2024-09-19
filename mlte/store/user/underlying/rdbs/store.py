@@ -13,7 +13,7 @@ from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.common.rdbs import RDBStorage
+from mlte.store.common.rdbs_storage import RDBStorage
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,

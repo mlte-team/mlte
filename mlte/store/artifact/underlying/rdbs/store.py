@@ -29,7 +29,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
 )
 from mlte.store.artifact.underlying.rdbs.metadata_value import init_value_types
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
-from mlte.store.common.rdbs import RDBStorage
+from mlte.store.common.rdbs_storage import RDBStorage
 from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
