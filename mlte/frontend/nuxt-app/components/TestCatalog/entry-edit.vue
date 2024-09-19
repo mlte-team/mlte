@@ -170,6 +170,7 @@ const tagOptions = ref([
   { name: "Computer Vision", selected: false },
   { name: "Decoder", selected: false },
   { name: "Encoder", selected: false },
+  { name: "General", selected: false },
   { name: "Generative Model", selected: false },
   { name: "Infrared", selected: false },
   { name: "NLP", selected: false },
