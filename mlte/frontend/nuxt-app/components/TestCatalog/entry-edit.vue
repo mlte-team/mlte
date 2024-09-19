@@ -12,7 +12,12 @@
         :error="formErrors.catalog"
         @change="formErrors.catalog = false"
       >
-        <template #label> Catalog </template>
+        <template #label>
+          Catalog
+          <InfoIcon>
+            Catalog where test example will be stored.
+          </InfoIcon>
+        </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
       <UsaTextInput
@@ -192,7 +197,7 @@ if (catalogList.value) {
     if (!catalog.read_only) {
       catalogOptions.value.push({
         value: catalog.id,
-        text: catalog.id,
+        text: catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
       });
     }
   });
