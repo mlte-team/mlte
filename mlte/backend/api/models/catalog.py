@@ -13,3 +13,6 @@ class CatalogReply(BaseModel):
 
     read_only: bool
     """Whether the catalog is read only or not."""
+
+    type: str
+    """Type of catalog."""

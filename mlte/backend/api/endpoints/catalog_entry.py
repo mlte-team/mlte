@@ -196,7 +196,11 @@ def list_catalogs(
         catalog_stores.sessions
         try:
             return [
-                CatalogReply(id=catalog_id, read_only=catalog.read_only)
+                CatalogReply(
+                    id=catalog_id,
+                    read_only=catalog.read_only,
+                    type=catalog.get_uri().type.value,
+                )
                 for catalog_id, catalog in catalog_stores.sessions.items()
             ]
         except Exception as e:
