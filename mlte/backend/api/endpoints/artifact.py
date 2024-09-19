@@ -13,12 +13,12 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.backend.api.artifact_model import (
+from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.api.models.artifact_model import (
     WriteArtifactRequest,
     WriteArtifactResponse,
 )
-from mlte.backend.api.auth.authorization import AuthorizedUser
-from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
 from mlte.store.query import Query
 

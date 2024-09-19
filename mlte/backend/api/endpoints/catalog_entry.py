@@ -13,6 +13,7 @@ import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.api.models.catalog import CatalogReply
 from mlte.backend.core import state_stores
 from mlte.catalog.model import CatalogEntry
 from mlte.store.query import Query
@@ -186,14 +187,18 @@ def list_catalog_entries(
 def list_catalogs(
     *,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> List[CatalogReply]:
     """
     List MLTE catalogs, returning their ids.
     :return: A collection of catalog ids.
     """
     with state_stores.catalog_stores_session() as catalog_stores:
+        catalog_stores.sessions
         try:
-            return list(catalog_stores.sessions.keys())
+            return [
+                CatalogReply(id=catalog_id, read_only=catalog.read_only)
+                for catalog_id, catalog in catalog_stores.sessions.items()
+            ]
         except Exception as e:
             raise_http_internal_error(e)
 

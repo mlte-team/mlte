@@ -11,10 +11,10 @@ from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
 
 from mlte.backend.api import codes
-from mlte.backend.api.artifact_model import USER_ME_ID
 from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
+from mlte.backend.api.models.artifact_model import USER_ME_ID
 from mlte.backend.core import state_stores
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state

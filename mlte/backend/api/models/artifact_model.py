@@ -1,5 +1,5 @@
 """
-mlte/backend/api/artifact_model.py
+mlte/backend/api/models/artifact_model.py
 
 Model implementations for artifact store intermediaries for the API.
 
