@@ -12,20 +12,29 @@
         :error="formErrors.catalog"
         @change="formErrors.catalog = false"
       >
-        <template #label>Catalog</template>
+        <template #label> Catalog </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
       <UsaTextInput
         v-model="props.modelValue.header.identifier"
         :error="formErrors.identifier"
       >
-        <template #label>Identifier</template>
+        <template #label>
+          Identifier
+          <InfoIcon> User-defined identifier for the test example. </InfoIcon>
+        </template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
     </div>
 
     <div class="multi-line-checkbox-div">
-      <label class="usa-label">Tags</label>
+      <label class="usa-label">
+        Tags
+        <InfoIcon>
+          System-defined tags that are used in catalog search. Select as many as
+          are relevant to the test example.
+        </InfoIcon>
+      </label>
       <span
         v-for="(tag, tagIndex) in tagOptions"
         :key="tagIndex"
@@ -42,16 +51,28 @@
       </span>
     </div>
 
-    <UsaTextInput
+    <UsaSelect
       v-model="modelValue.property_category"
-      :error="formErrors.property_category"
+      :options="propertyCategoryOptions"
     >
-      <template #label>Property Category</template>
+      <template #label>
+        Property Category
+        <InfoIcon>
+          High-level property that the test example is validating, e.g.,
+          functional correctness, performance, robustness.
+        </InfoIcon>
+      </template>
       <template #error-message>Not defined</template>
-    </UsaTextInput>
+    </UsaSelect>
 
-    <UsaTextInput v-model="modelValue.property" :error="formErrors.property">
-      <template #label>Property</template>
+    <UsaTextInput v-model="modelValue.property">
+      <template #label>
+        Property
+        <InfoIcon>
+          More specific property that the test example is validating, e.g.,
+          accuracy, inference time, robustness to image blur.
+        </InfoIcon>
+      </template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
@@ -65,26 +86,41 @@
       <template #error-message>Code Type must be selected</template>
     </UsaSelect>
 
-    <UsaTextarea v-model="modelValue.code" :error="formErrors.code">
-      <template #label>Code</template>
+    <UsaTextarea v-model="modelValue.code">
+      <template #label>
+        Code
+        <InfoIcon> Code for the test example. </InfoIcon>
+      </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
 
-    <UsaTextInput
-      v-model="modelValue.description"
-      :error="formErrors.description"
-    >
-      <template #label>Description</template>
+    <UsaTextarea v-model="modelValue.description">
+      <template #label>
+        Description
+        <InfoIcon> Description of the test example. </InfoIcon>
+      </template>
+      <template #error-message>Not defined</template>
+    </UsaTextarea>
+
+    <UsaTextInput v-model="modelValue.inputs">
+      <template #label>
+        Inputs
+        <InfoIcon>
+          Inputs that are required to run the test example, e.g., data sets,
+          parameters.
+        </InfoIcon>
+      </template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="modelValue.inputs" :error="formErrors.inputs">
-      <template #label>Inputs</template>
-      <template #error-message>Not defined</template>
-    </UsaTextInput>
-
-    <UsaTextInput v-model="modelValue.output" :error="formErrors.output">
-      <template #label>Ouptut</template>
+    <UsaTextInput v-model="modelValue.output">
+      <template #label>
+        Ouptut
+        <InfoIcon>
+          Output of the test example, e.g., value, log entry, database entry,
+          alert.
+        </InfoIcon>
+      </template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
@@ -138,8 +174,8 @@ const formErrors = ref({
 });
 const catalogOptions = ref<
   {
-    value: string,
-    text: string,
+    value: string;
+    text: string;
   }[]
 >([]);
 const { data: catalogList } = await useFetch<string[]>(
@@ -153,7 +189,7 @@ const { data: catalogList } = await useFetch<string[]>(
 );
 if (catalogList.value) {
   catalogList.value.forEach((catalog: object) => {
-    if(!catalog.read_only){
+    if (!catalog.read_only) {
       catalogOptions.value.push({
         value: catalog.id,
         text: catalog.id,
@@ -162,10 +198,6 @@ if (catalogList.value) {
   });
 }
 
-const codeTypeOptions = ref([
-  { value: "measurement", text: "Measurement" },
-  { value: "validation", text: "Validation " },
-]);
 const tagOptions = ref([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
@@ -182,6 +214,25 @@ const tagOptions = ref([
   { name: "Segmentation", selected: false },
   { name: "Tabular", selected: false },
   { name: "Time Series", selected: false },
+]);
+const propertyCategoryOptions = ref([
+  { value: "Explainability", text: "Explainability" },
+  { value: "Functional Correctness", text: "Functional Correctness" },
+  { value: "Interoperability", text: "Interoperability" },
+  { value: "Maintainability", text: "Maintainability" },
+  { value: "Monitorability", text: "Monitorability" },
+  { value: "Privacy", text: "Privacy" },
+  { value: "Resource Consumption", text: "Resource Consumption" },
+  { value: "Robustness", text: "Robustness" },
+  { value: "Safety", text: "Safety" },
+  { value: "Scalability", text: "Scalability" },
+  { value: "Security", text: "Security" },
+  { value: "Testability", text: "Testability" },
+  { value: "Trust", text: "Trust" },
+]);
+const codeTypeOptions = ref([
+  { value: "measurement", text: "Measurement" },
+  { value: "validation", text: "Validation " },
 ]);
 
 tagOptions.value.forEach((tagOption: object) => {
