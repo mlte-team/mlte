@@ -153,10 +153,12 @@ const { data: catalogList } = await useFetch<string[]>(
 );
 if (catalogList.value) {
   catalogList.value.forEach((catalog: object) => {
-    catalogOptions.value.push({
-      value: catalog,
-      text: catalog,
-    });
+    if(!catalog.read_only){
+      catalogOptions.value.push({
+        value: catalog.id,
+        text: catalog.id,
+      });
+    }
   });
 }
 
