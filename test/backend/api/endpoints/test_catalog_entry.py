@@ -10,7 +10,9 @@ from typing import Any, Optional
 import pytest
 
 from mlte.backend.api import codes
+from mlte.backend.api.models.catalog import CatalogReply
 from mlte.catalog.model import CatalogEntry
+from mlte.store.base import StoreType
 from mlte.store.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
@@ -270,7 +272,10 @@ def test_list_catalogs(
 
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
-    assert len(res.json()) == 1  # Sample catalog only
+    assert len(res.json()) == 1  # Default catalog only
+    catalog = CatalogReply(**res.json()[0])
+    assert catalog.read_only is False
+    assert catalog.type == StoreType.LOCAL_MEMORY.value
 
 
 @pytest.mark.parametrize(
