@@ -6,21 +6,18 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
-import typing
-from typing import Callable, Optional, Type
+from typing import Any, Callable, Optional, Type
 
+from mlte.measurement.measurement import Measurement
 from mlte.value.artifact import Value
-
-from .measurement import Measurement
 
 
 class ExternalMeasurement(Measurement):
-    @typing.no_type_check
     def __init__(
         self,
         identifier: str,
         value_type: type,
-        function: Optional[Callable] = None,
+        function: Optional[Callable[..., Any]] = None,
     ):
         """
         Initialize a new ExternalMeasurement measurement.
@@ -38,16 +35,13 @@ class ExternalMeasurement(Measurement):
         self.value_type: type = value_type
 
         if function is not None:
-            if not callable(function):
-                raise Exception(
-                    f"Function type provided is not a function: {function}"
-                )
-            else:
-                # Store the function module+name as additional metadata info, for better traceability.
-                self.metadata.info = (
-                    f"function: {function.__module__}.{function.__name__}"
-                )
-        self.function: Optional[Callable] = function  # type: ignore
+            # Store the function module+name as additional metadata info, for better traceability.
+            self.metadata.info = (
+                f"function: {function.__module__}.{function.__name__}"
+            )
+
+        self.function: Optional[Callable[..., Any]] = function
+        """Store the callable function itself."""
 
     def __call__(self, *args, **kwargs) -> Value:
         """Evaluate a measurement and return values without semantics."""

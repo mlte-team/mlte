@@ -1,0 +1,274 @@
+{
+  "$defs": {
+    "AllFilter": {
+      "description": "A filter that matches all entries.",
+      "properties": {
+        "type": {
+          "const": "all",
+          "default": "all",
+          "enum": [
+            "all"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "AllFilter",
+      "type": "object"
+    },
+    "AndFilter": {
+      "description": "A generic filter that implements a logical AND of filters.",
+      "properties": {
+        "filters": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AllFilter"
+              },
+              {
+                "$ref": "#/$defs/NoneFilter"
+              },
+              {
+                "$ref": "#/$defs/IdentifierFilter"
+              },
+              {
+                "$ref": "#/$defs/TypeFilter"
+              },
+              {
+                "$ref": "#/$defs/TagFilter"
+              },
+              {
+                "$ref": "#/$defs/PropertyFilter"
+              },
+              {
+                "$ref": "#/$defs/AndFilter"
+              },
+              {
+                "$ref": "#/$defs/OrFilter"
+              }
+            ]
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "type": {
+          "const": "and",
+          "default": "and",
+          "enum": [
+            "and"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filters"
+      ],
+      "title": "AndFilter",
+      "type": "object"
+    },
+    "IdentifierFilter": {
+      "description": "A filter that matches an item's identifier.",
+      "properties": {
+        "type": {
+          "const": "identifier",
+          "default": "identifier",
+          "enum": [
+            "identifier"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "IdentifierFilter",
+      "type": "object"
+    },
+    "NoneFilter": {
+      "description": "A filter that matches no entries.",
+      "properties": {
+        "type": {
+          "const": "none",
+          "default": "none",
+          "enum": [
+            "none"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "NoneFilter",
+      "type": "object"
+    },
+    "OrFilter": {
+      "description": "A generic filter that implements a logical OR of filters.",
+      "properties": {
+        "filters": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AllFilter"
+              },
+              {
+                "$ref": "#/$defs/NoneFilter"
+              },
+              {
+                "$ref": "#/$defs/IdentifierFilter"
+              },
+              {
+                "$ref": "#/$defs/TypeFilter"
+              },
+              {
+                "$ref": "#/$defs/TagFilter"
+              },
+              {
+                "$ref": "#/$defs/PropertyFilter"
+              },
+              {
+                "$ref": "#/$defs/AndFilter"
+              },
+              {
+                "$ref": "#/$defs/OrFilter"
+              }
+            ]
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "type": {
+          "const": "or",
+          "default": "or",
+          "enum": [
+            "or"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filters"
+      ],
+      "title": "OrFilter",
+      "type": "object"
+    },
+    "PropertyFilter": {
+      "description": "A filter that matches a given property.",
+      "properties": {
+        "type": {
+          "const": "property",
+          "default": "property",
+          "enum": [
+            "property"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "PropertyFilter",
+      "type": "object"
+    },
+    "TagFilter": {
+      "description": "A filter that matches a given tag, from a field with a list of tags.",
+      "properties": {
+        "type": {
+          "const": "tag",
+          "default": "tag",
+          "enum": [
+            "tag"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "TagFilter",
+      "type": "object"
+    },
+    "TypeFilter": {
+      "description": "A filter that matches an item's type.",
+      "properties": {
+        "type": {
+          "const": "type",
+          "default": "type",
+          "enum": [
+            "type"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "item_type": {
+          "title": "Item Type"
+        }
+      },
+      "required": [
+        "item_type"
+      ],
+      "title": "TypeFilter",
+      "type": "object"
+    }
+  },
+  "description": "A Query object represents a query over entries.",
+  "properties": {
+    "filter": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AllFilter"
+        },
+        {
+          "$ref": "#/$defs/NoneFilter"
+        },
+        {
+          "$ref": "#/$defs/IdentifierFilter"
+        },
+        {
+          "$ref": "#/$defs/TypeFilter"
+        },
+        {
+          "$ref": "#/$defs/TagFilter"
+        },
+        {
+          "$ref": "#/$defs/PropertyFilter"
+        },
+        {
+          "$ref": "#/$defs/AndFilter"
+        },
+        {
+          "$ref": "#/$defs/OrFilter"
+        }
+      ],
+      "default": {
+        "type": "all"
+      },
+      "title": "Filter"
+    }
+  },
+  "title": "Query",
+  "type": "object"
+}

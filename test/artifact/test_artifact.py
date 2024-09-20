@@ -13,10 +13,10 @@ from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
-from mlte.session.state import set_context, set_store
+from mlte.session.session import set_context, set_store
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
-from mlte.store.base import StoreURIPrefix
+from mlte.store.base import StoreType, StoreURI
 from mlte.validation.validated_spec import ValidatedSpec
 from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
@@ -32,7 +32,7 @@ def test_save_load_session() -> None:
     """
 
     set_context(FX_MODEL_ID, FX_VERSION_ID)
-    set_store(StoreURIPrefix.LOCAL_MEMORY[0])
+    set_store(f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}")
 
     a = NegotiationCard("my-card")
 

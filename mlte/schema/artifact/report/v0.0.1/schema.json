@@ -317,11 +317,7 @@
       "description": "A descriptor for the model.",
       "properties": {
         "development_compute_resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -370,11 +366,7 @@
           "type": "array"
         },
         "production_compute_resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -500,11 +492,7 @@
       "description": "The model implementation for the NegotiationCard information.",
       "properties": {
         "system": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/SystemDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/SystemDescriptor",
           "default": {
             "goals": [],
             "problem_type": null,
@@ -526,11 +514,7 @@
           "type": "array"
         },
         "model": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelDescriptor",
           "default": {
             "development_compute_resources": {
               "cpu": null,
@@ -767,11 +751,7 @@
           "title": "Usage Context"
         },
         "risks": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RiskDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/RiskDescriptor",
           "default": {
             "fp": null,
             "fn": null,
@@ -795,11 +775,7 @@
       "type": "string"
     },
     "nc_data": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/NegotiationCardDataModel"
-        }
-      ],
+      "$ref": "#/$defs/NegotiationCardDataModel",
       "default": {
         "system": {
           "goals": [],
@@ -855,11 +831,7 @@
       "type": "array"
     },
     "quantitative_analysis": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuantitiveAnalysisDescriptor"
-        }
-      ],
+      "$ref": "#/$defs/QuantitiveAnalysisDescriptor",
       "default": {
         "content": null
       }

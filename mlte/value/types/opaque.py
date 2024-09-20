@@ -49,7 +49,7 @@ class Opaque(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Opaque:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> Opaque:
         """
         Convert an opaque value model to its corresponding artifact.
         :param model: The model representation

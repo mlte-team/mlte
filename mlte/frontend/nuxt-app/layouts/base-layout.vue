@@ -18,11 +18,86 @@
     </header>
 
     <div class="flex-container">
-      <div class="sidebar">
-        <slot name="sidebar" />
+      <div class="sidebar left-sidebar">
+        <div style="position: fixed">
+          <div v-if="$route.name != 'login'" class="grid-row grid-gap">
+            <div
+              class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
+            >
+              <nav aria-label="Side navigation,">
+                <ul class="usa-sidenav" style="width: 30ch">
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/' }"
+                      :class="{ 'usa-current': $route.name === 'index' }"
+                    >
+                      Artifact Store
+                    </NuxtLink>
+                  </li>
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/test-catalog' }"
+                      :class="{ 'usa-current': $route.name === 'test-catalog' }"
+                    >
+                      Test Catalog
+                    </NuxtLink>
+                  </li>
+                  <li v-if="userRole === 'admin'" class="usa-sidenav__item">
+                    <div class="nav-section-title">Admin Pages</div>
+                    <ul class="usa-sidenav__sublist">
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/admin/manage-users' }"
+                          :class="{
+                            'usa-current': $route.name === 'admin-manage-users',
+                          }"
+                        >
+                          Manage Users
+                        </NuxtLink>
+                      </li>
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/admin/manage-groups' }"
+                          :class="{
+                            'usa-current':
+                              $route.name === 'admin-manage-groups',
+                          }"
+                        >
+                          Manage Groups
+                        </NuxtLink>
+                      </li>
+                    </ul>
+                  </li>
+                  <li v-else class="usa-sidenav__item">
+                    <div class="nav-section-title">User Pages</div>
+                    <ul class="usa-sidenav__sublist">
+                      <li class="usa-sidenav__item">
+                        <NuxtLink
+                          :to="{ path: '/regular/profile-edit' }"
+                          :class="{
+                            'usa-current':
+                              $route.name === 'regular-profile-edit',
+                          }"
+                        >
+                          Edit Profile
+                        </NuxtLink>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="body-div">
+        <h1
+          class="section-header"
+          style="display: inline; align-items: left; justify-content: left"
+        >
+          <slot name="page-title" />
+        </h1>
         <div v-if="token" class="logout-header">
           <div class="centered-container">
             Welcome, {{ user }}
@@ -33,65 +108,44 @@
             >
               Logout
             </UsaButton>
-            <div v-if="userRole === 'admin'">
-              <NuxtLink :to="{ path: '/admin/user-management' }">
-                <UsaButton
-                  class="secondary-button"
-                  style="margin-left: 0.5em"
-                  @click="$emit('manageUsers')"
-                >
-                  Manage Users
-                </UsaButton>
-              </NuxtLink>
-              <NuxtLink :to="{ path: '/admin/group-management' }">
-                <UsaButton
-                  class="secondary-button"
-                  style="margin-left: 0.5em"
-                  @click="$emit('manageGroups')"
-                >
-                  Manage Groups
-                </UsaButton>
-              </NuxtLink>
-            </div>
-            <div v-else>
-              <NuxtLink :to="{ path: '/regular/profile-edit' }">
-                <UsaButton class="secondary-button" style="margin-left: 0.5em">
-                  Edit Profile
-                </UsaButton>
-              </NuxtLink>
-            </div>
           </div>
         </div>
+        <hr />
         <slot name="default" />
+        <footer>
+          <p class="footer-text-left">
+            <b>MLTE - 2024</b>
+          </p>
+          <div class="footer-text-right">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/mlte-team/mlte"
+              >Github</a
+            >
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://mlte.readthedocs.io/en/latest/"
+              >Docs</a
+            >
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://mlte.readthedocs.io/en/latest/using_mlte/"
+              >User Guide</a
+            >
+            <span>v{{ version }}</span>
+          </div>
+        </footer>
+      </div>
+
+      <div class="sidebar">
+        <div class="right-sidebar">
+          <slot name="right-sidebar" />
+        </div>
       </div>
     </div>
-
-    <footer>
-      <p class="footer-text-left">
-        <b>MLTE - 2024</b>
-      </p>
-      <div class="footer-text-right">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/mlte-team/mlte"
-          >Github</a
-        >
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://mlte.readthedocs.io/en/latest/"
-          >Docs</a
-        >
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://mlte.readthedocs.io/en/latest/using_mlte/"
-          >User Guide</a
-        >
-        <span>v{{ version }}</span>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -101,8 +155,6 @@ const token = useCookie("token");
 const user = useCookie("user");
 const userRole = useCookie("userRole");
 const version = config.public.version;
-
-const emits = defineEmits(["manageUsers", "manageGroups"]);
 </script>
 
 <style>
@@ -134,8 +186,7 @@ header {
 
 .logout-header {
   display: flex;
-  align-items: right;
-  justify-content: right;
+  float: right;
 }
 
 .flex-container {
@@ -145,7 +196,22 @@ header {
 .sidebar {
   width: 100%;
   max-width: 30ch;
-  margin-left: 40px;
+  padding-top: 60px;
+}
+
+.left-sidebar {
+  margin-left: 30px;
+}
+
+.right-sidebar {
+  margin-right: 40px;
+  position: fixed;
+}
+
+.nav-section-title {
+  padding: 0.5rem 1rem;
+  display: block;
+  color: #565c65;
 }
 
 .body-div {
@@ -159,19 +225,17 @@ header {
 footer {
   width: 100%;
   height: 90px;
-  margin-top: 8px;
+  margin-top: 15px;
   bottom: 0;
   left: 0;
   font-size: 16px;
 }
 
 .footer-text-left {
-  margin-left: 40px;
   float: left;
 }
 
 .footer-text-right {
-  margin-right: 40px;
   margin-top: 20px;
   float: right;
 }

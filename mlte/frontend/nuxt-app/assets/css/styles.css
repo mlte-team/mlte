@@ -6,6 +6,11 @@
     margin-bottom: 0px;
 }
 
+.sub-header-float-button {
+    float: right;
+    display: inline;
+}
+
 .input-group {
     border: 1px solid gray;
     padding-left: 1em;
@@ -57,6 +62,15 @@
 
 hr {
     margin-top: 1em;
+}
+
+.multi-line-checkbox-div {
+    display: inline-block;
+}
+
+.multiple-per-line-checkbox {
+    float: left;
+    width: 30%;
 }
 
 .submit-footer {

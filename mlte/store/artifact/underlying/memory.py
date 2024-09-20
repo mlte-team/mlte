@@ -13,9 +13,9 @@ import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # Data Structures
@@ -275,7 +275,7 @@ class InMemoryStore(ArtifactStore):
         self.storage = MemoryStorage()
         """The underlying storage for the store."""
 
-    def session(self) -> InMemoryStoreSession:  # type: ignore[override]
+    def session(self) -> InMemoryStoreSession:
         """
         Return a session handle for the store instance.
         :return: The session handle

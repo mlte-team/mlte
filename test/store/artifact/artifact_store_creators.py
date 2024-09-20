@@ -12,56 +12,53 @@ from pathlib import Path
 from sqlalchemy.pool import StaticPool
 
 from mlte._private import url as url_utils
-from mlte.store.artifact.factory import create_store
+from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
-from mlte.store.artifact.underlying.rdbs.store import RelationalDBStore
-from mlte.store.base import StoreURI, StoreURIPrefix
-from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
-
-FAKE_USER = "fake_user"
-FAKE_PASS = "fake_pass"
-FAKE_URI = "http://localhost:8080"
-"""Default fake values for http store."""
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
+from mlte.store.base import StoreType, StoreURI
+from mlte.store.common.http_clients import OAuthHttpClient
+from test.store.defaults import IN_MEMORY_SQLITE_DB, get_http_defaults_if_needed
 
 
 def create_http_store(
-    username: typing.Optional[str] = FAKE_USER,
-    password: typing.Optional[str] = FAKE_PASS,
-    uri: str = FAKE_URI,
+    username: typing.Optional[str] = None,
+    password: typing.Optional[str] = None,
+    uri: typing.Optional[str] = None,
     client: typing.Optional[OAuthHttpClient] = None,
 ) -> HttpArtifactStore:
-    if client is None:
-        client = RequestsClient(username, password)
-    if username is None:
-        username = FAKE_USER
-    if password is None:
-        password = FAKE_PASS
+    username, password, uri = get_http_defaults_if_needed(
+        username, password, uri
+    )
     return HttpArtifactStore(
-        StoreURI.from_string(
+        uri=StoreURI.from_string(
             url_utils.set_url_username_password(uri, username, password)
         ),
-        client,
+        client=client,
     )
 
 
 def create_memory_store() -> InMemoryStore:
     return typing.cast(
-        InMemoryStore, create_store(StoreURIPrefix.LOCAL_MEMORY[0])
+        InMemoryStore,
+        create_artifact_store(
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+        ),
     )
 
 
 def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
-        create_store(f"{StoreURIPrefix.LOCAL_FILESYSTEM[1]}{tmp_path}"),
+        create_artifact_store(
+            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{tmp_path}"
+        ),
     )
 
 
-def create_rdbs_store() -> RelationalDBStore:
-    IN_MEMORY_SQLITE_DB = "sqlite+pysqlite:///:memory:"
-    return RelationalDBStore(
+def create_rdbs_store() -> RelationalDBArtifactStore:
+    return RelationalDBArtifactStore(
         StoreURI.from_string(IN_MEMORY_SQLITE_DB),
         poolclass=StaticPool,
     )

@@ -1,25 +1,24 @@
 <template>
   <NuxtLayout name="base-layout">
-    <div class="flex-container">
-      <div class="flex-container">
-        <h1 class="section-header">{{ userCookie }}</h1>
-        <div
-          class="centered-container"
-          style="vertical-align: bottom; padding-left: 38ch"
-        >
-          <div v-if="!resetPasswordFlag">
-            <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Change Password
-            </UsaButton>
-          </div>
-          <div v-if="resetPasswordFlag">
-            <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Change
-            </UsaButton>
-          </div>
-        </div>
-      </div>
-    </div>
+    <title>Edit Profile</title>
+    <template #page-title>Edit Profile</template>
+    <h2 class="section-header" style="display: inline">
+      {{ userCookie }}
+    </h2>
+    <UsaButton
+      v-if="!resetPasswordFlag"
+      class="secondary-button sub-header-float-button"
+      @click="enablePasswordReset"
+    >
+      Change Password
+    </UsaButton>
+    <UsaButton
+      v-if="resetPasswordFlag"
+      class="secondary-button sub-header-float-button"
+      @click="disablePasswordReset"
+    >
+      Cancel Change
+    </UsaButton>
     <div v-if="resetPasswordFlag">
       <UsaTextInput
         v-model="newPassword"
@@ -90,20 +89,21 @@ function disablePasswordReset() {
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (resetPasswordFlag.value) {
     if (newPassword.value.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
     if (newPassword.value !== confirmPassword.value) {
       formErrors.value.confirmPassword = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
 

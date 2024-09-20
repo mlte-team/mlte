@@ -6,17 +6,17 @@ which automatically removes the hashed password from the model returned.
 """
 from __future__ import annotations
 
-import traceback as tb
 from typing import List, Union
 
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
-from mlte.backend.api.model import USER_ME_ID
+from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.api.models.artifact_model import USER_ME_ID
+from mlte.backend.core import state_stores
 from mlte.store.user.policy import Policy
 from mlte.user.model import (
     BasicUser,
@@ -36,7 +36,7 @@ router = APIRouter()
 # -----------------------------------------------------------------------------
 
 
-@router.get("/user/me")
+@router.get("/me")
 def read_user_me(
     current_user: AuthorizedUser,
 ) -> BasicUser:
@@ -49,7 +49,7 @@ def read_user_me(
     return read_user(**parameters)
 
 
-@router.get("/user/me/models")
+@router.get("/me/models")
 def list_user_models_me(
     *,
     current_user: AuthorizedUser,
@@ -68,7 +68,7 @@ def list_user_models_me(
 # -----------------------------------------------------------------------------
 
 
-@router.post("/user")
+@router.post("")
 def create_user(
     *,
     user: UserWithPassword,
@@ -86,7 +86,7 @@ def create_user(
         )
 
     new_user: BasicUser
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             # Give every new user permissions to create models.
             # Check first if the group was not manually added in the received user data.
@@ -123,15 +123,10 @@ def create_user(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception as e:
-            print(f"Internal server error: {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.put("/user")
+@router.put("")
 def edit_user(
     *,
     user: Union[UserWithPassword, BasicUser],
@@ -145,7 +140,7 @@ def edit_user(
     if user.username == USER_ME_ID:
         user.username = current_user.username
 
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             # We only want to allow admins to edit a user's groups.
             if current_user.role != RoleType.ADMIN:
@@ -162,15 +157,10 @@ def edit_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/user/{username}")
+@router.get("/{username}")
 def read_user(
     *,
     username: str,
@@ -184,7 +174,7 @@ def read_user(
     if username == USER_ME_ID:
         return current_user
 
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.user_mapper.read(username)
         except errors.ErrorNotFound as e:
@@ -192,15 +182,10 @@ def read_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/user")
+@router.get("")
 def list_users(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -208,19 +193,14 @@ def list_users(
     List MLTE users.
     :return: A collection of usernames
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.user_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/users/details")
+@router.get("s/details")
 def list_users_details(
     current_user: AuthorizedUser,
 ) -> List[BasicUser]:
@@ -228,7 +208,7 @@ def list_users_details(
     List MLTE users, with details for each user.
     :return: A collection of users with their details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             detailed_users = []
             usernames = user_store.user_mapper.list()
@@ -239,15 +219,10 @@ def list_users_details(
                 detailed_users.append(user_details)
             return detailed_users
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.delete("/user/{username}")
+@router.delete("/{username}")
 def delete_user(
     *,
     username: str,
@@ -258,7 +233,7 @@ def delete_user(
     :param username: The username
     :return: The deleted user
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             deleted_user = user_store.user_mapper.delete(username)
 
@@ -271,15 +246,10 @@ def delete_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/user/{username}/models")
+@router.get("/{username}/models")
 def list_user_models(
     *,
     username: str,
@@ -293,8 +263,8 @@ def list_user_models(
     if username == USER_ME_ID:
         username = current_user.username
 
-    with dependencies.artifact_store_session() as artifact_store:
-        with dependencies.user_store_session() as user_store:
+    with state_stores.artifact_store_session() as artifact_store:
+        with state_stores.user_store_session() as user_store:
             try:
                 # Get all models, and filter out only the ones the user has read permissions for.
                 user_models: List[str] = []
@@ -317,9 +287,4 @@ def list_user_models(
                     status_code=codes.NOT_FOUND, detail=f"{e} not found."
                 )
             except Exception as e:
-                print(f"Internal server error. {e}")
-                print(tb.format_exc())
-                raise HTTPException(
-                    status_code=codes.INTERNAL_ERROR,
-                    detail="Internal server error.",
-                )
+                raise_http_internal_error(e)

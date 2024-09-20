@@ -55,7 +55,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         raise NotImplementedError("Value.to_mode()")
 
     @classmethod
-    def from_model(cls, _: ArtifactModel) -> Value:  # type: ignore[override]
+    def from_model(cls, _: ArtifactModel) -> Value:
         """
         Convert a value model to its corresponding artifact.
         NOTE: To cope with polymorphism, the Value artifact type

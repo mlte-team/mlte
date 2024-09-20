@@ -1,7 +1,9 @@
 <template>
   <NuxtLayout name="base-layout">
-    <template #sidebar>
-      <div style="padding-top: 255px">
+    <title>Negotiation Card</title>
+    <template #page-title>Negotiation Card</template>
+    <template #right-sidebar>
+      <div>
         TEC Import
         <hr />
         <div class="usa-form-group">
@@ -40,32 +42,30 @@
       </div>
     </template>
 
-    <UsaBreadcrumb :items="path" />
-
-    <h1 class="section-header">Negotiation Card</h1>
     <p>
-      Teams should use the negotiation card to guide an in-depth 
-      discussion for project scoping. The card can be completed in 
-      any order and the idea is that teams fill out as much as they 
-      can at the beginning of the project process and revisit the card 
-      throughout as the project matures. There are four sections in 
-      the Negotiation Card:
-      <ul>
-        <li>System Information</li>
-        <li>Data</li>
-        <li>Model Information</li>
-        <li>System Requirements</li>
-      </ul>
-      Negotiation Cards serve as a critical reference for teams 
-      throughout development even when they are partially filled out. 
-      Hover over the black information icons next to each field to 
-      get more information about that field. Click on the Example 
-      button to see specific examples for a section.
+      Teams should use the negotiation card to guide an in-depth discussion for
+      project scoping. The card can be completed in any order and the idea is
+      that teams fill out as much as they can at the beginning of the project
+      process and revisit the card throughout as the project matures. There are
+      four sections in the Negotiation Card:
+    </p>
+    <ul>
+      <li>System Information</li>
+      <li>Data</li>
+      <li>Model Information</li>
+      <li>System Requirements</li>
+    </ul>
+    <p>
+      Negotiation Cards serve as a critical reference for teams throughout
+      development even when they are partially filled out. Hover over the black
+      information icons next to each field to get more information about that
+      field. Click on the Example button to see specific examples for a section.
     </p>
 
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
       v-model="userInputArtifactId"
+      :error="formErrors.identifier"
     >
       <template #label>
         Artifact ID
@@ -74,10 +74,11 @@
           will be saved under upon submission.
         </InfoIcon>
       </template>
+      <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>
     <div v-else>
-      <h3>Last Modified by:</h3>
-      {{ creator }} - {{ timestamp }}
+      <h3 style="display: inline">Last Modified by:</h3>
+      {{ form.creator }} - {{ form.timestamp }}
     </div>
 
     <FormFieldsSystemInformation ref="systemInformationRef" v-model="form.nc_data.system"/>
@@ -100,16 +101,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const path = ref([
-  {
-    href: "/",
-    text: "Artifact Store",
-  },
-  {
-    href: "/here",
-    text: "Negotiation Card",
-  },
-]);
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
@@ -213,6 +204,10 @@ const form = ref({
   },
 });
 
+const formErrors = ref({
+  identifier: false,
+});
+
 const classificationOptions = useClassificationOptions();
 const problemTypeOptions = useProblemTypeOptions();
 
@@ -284,11 +279,22 @@ async function submit() {
   const model = useRoute().query.model;
   const version = useRoute().query.version;
 
+  let inputError = false;
   let identifier = "";
   if (useRoute().query.artifactId === undefined) {
     identifier = userInputArtifactId.value;
   } else {
     identifier = useRoute().query.artifactId?.toString();
+  }
+
+  if (identifier === "") {
+    formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (inputError) {
+    inputErrorAlert();
+    return;
   }
 
   // Construct the object to be submitted to the backend here
@@ -325,14 +331,30 @@ async function submit() {
           onRequestError() {
             requestErrorAlert();
           },
+          onResponse({ response }) {
+            if (response.ok) {
+              successfulArtifactSubmission("negotiation card", identifier);
+              forceSaveParam.value = true;
+              if (useRoute().query.artifactId === undefined) {
+                window.location =
+                  "/negotiation-card?" +
+                  "model=" +
+                  useRoute().query.model +
+                  "&version=" +
+                  useRoute().query.version +
+                  "&artifactId=" +
+                  identifier;
+              }
+            }
+          },
           onResponseError({ response }) {
             handleHttpError(response.status, response._data.error_description);
           },
         },
       );
-      successfulArtifactSubmission("negotiation card", identifier);
-      forceSaveParam.value = true;
-    } catch {}
+    } catch {
+      return;
+    }
   } else {
     console.log("Invalid document attempting to be submitted.");
   }

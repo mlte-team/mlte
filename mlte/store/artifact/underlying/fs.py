@@ -12,10 +12,10 @@ import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
-from mlte.store.common.fs import FileSystemStorage
+from mlte.store.common.fs_storage import FileSystemStorage
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore

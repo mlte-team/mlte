@@ -7,7 +7,9 @@ MLTE general store interface.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Protocol
+
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -26,29 +28,8 @@ class StoreType(Enum):
     REMOTE_HTTP = "remote_http"
     """A remote HTTP implementation."""
 
-    RELATIONAL_DB = "relational_db"
+    RELATIONAL_DB = "database"
     """A relational database system implementation."""
-
-
-# -----------------------------------------------------------------------------
-# StoreURIPrefix
-# -----------------------------------------------------------------------------
-
-
-class StoreURIPrefix:
-    """Represents the valid prefixes for a MLTE store URI."""
-
-    LOCAL_MEMORY = ["memory://"]
-    """The in-memory store prefix."""
-
-    LOCAL_FILESYSTEM = ["fs://", "local://"]
-    """The local filesystem prefixes."""
-
-    REMOTE_HTTP = ["http://"]
-    """The remote HTTP prefix."""
-
-    RELATIONAL_DB = ["sqlite", "mysql", "postgresql", "oracle", "mssql"]
-    """The relational database system prefixes."""
 
 
 # -----------------------------------------------------------------------------
@@ -59,17 +40,38 @@ class StoreURIPrefix:
 class StoreURI:
     """Represents the URI for an store instance."""
 
-    def __init__(self, uri: str, type: StoreType):
+    PREFIXES = {
+        StoreType.LOCAL_MEMORY: ["memory"],
+        StoreType.LOCAL_FILESYSTEM: ["fs", "local"],
+        StoreType.REMOTE_HTTP: ["http"],
+        StoreType.RELATIONAL_DB: [
+            "sqlite",
+            "mysql",
+            "postgresql",
+            "oracle",
+            "mssql",
+        ],
+    }
+    """Valid prefixes by store type."""
+
+    DELIMITER = "://"
+    """Delimiter used to separate prefixes from rest of the path."""
+
+    def __init__(self, uri: str, type: StoreType, path: str):
         """
         Initialize a StoreURI instance.
         :param uri: The URI
         :param type: The type of the backend store
+        :param path: The rest of the URI's path with the prefix removed
         """
         self.uri = uri
         """The string that represents the URI."""
 
         self.type = type
         """The type identifier for the URI."""
+
+        self.path = path
+        """The rest of the path, with the prefix removed."""
 
     @staticmethod
     def from_string(uri: str) -> StoreURI:
@@ -78,15 +80,29 @@ class StoreURI:
         :param uri: The URI
         :return: The parsed StoreURI
         """
-        if uri.startswith(tuple(StoreURIPrefix.LOCAL_MEMORY)):
-            return StoreURI(uri, StoreType.LOCAL_MEMORY)
-        if uri.startswith(tuple(StoreURIPrefix.LOCAL_FILESYSTEM)):
-            return StoreURI(uri, StoreType.LOCAL_FILESYSTEM)
-        if uri.startswith(tuple(StoreURIPrefix.REMOTE_HTTP)):
-            return StoreURI(uri, StoreType.REMOTE_HTTP)
-        if uri.startswith(tuple(StoreURIPrefix.RELATIONAL_DB)):
-            return StoreURI(uri, StoreType.RELATIONAL_DB)
-        raise RuntimeError(f"Unrecognized backend URI: {uri}.")
+        prefix, path = StoreURI._parse_uri(uri)
+        for type in StoreType:
+            if prefix.startswith(tuple(StoreURI.PREFIXES[type])):
+                return StoreURI(uri, type, path)
+
+        # If we got here, the stucture of the URI is fine, but the prefix is unknown.
+        raise RuntimeError(f"Unsupported store URI: {uri}")
+
+    @staticmethod
+    def _parse_uri(uri: str) -> tuple[str, str]:
+        """Split an URI into its prefix and the rest of the path."""
+        parts = uri.split(StoreURI.DELIMITER)
+        if len(parts) != 2:
+            raise RuntimeError(f"Invalid store URI: {uri}")
+        else:
+            prefix = parts[0]
+            path = parts[1]
+            return prefix, path
+
+    @staticmethod
+    def get_default_prefix(type: StoreType) -> str:
+        """Returns the default prefix for the given type, which will be the first one."""
+        return f"{StoreURI.PREFIXES[type][0]}{StoreURI.DELIMITER}"
 
     def __str__(self) -> str:
         return f"{self.type}:{self.uri}"
@@ -117,7 +133,7 @@ class Store:
         Return a session handle for the store instance.
         :return: The session handle
         """
-        raise NotImplementedError("Cannot get handle to abstract Store.")
+        raise NotImplementedError("Can't call session on a base Store.")
 
 
 # -----------------------------------------------------------------------------
@@ -125,21 +141,12 @@ class Store:
 # -----------------------------------------------------------------------------
 
 
-class StoreSession:
+class StoreSession(Protocol):
     """The base class for all implementations of the MLTE store session."""
-
-    resource_mappers: List[ResourceMapper] = []
-    """A list of resource mappers for all resources in this store."""
-
-    def __init__(self):
-        """Initialize a session instance."""
-        pass
 
     def close(self) -> None:
         """Close the session."""
-        raise NotImplementedError(
-            "Cannot invoke method on abstract StoreSession."
-        )
+        ...
 
 
 class ManagedSession:
@@ -163,6 +170,9 @@ class ResourceMapper:
         "Cannot invoke method that has not been implemented for this mapper."
     )
     """Default error message for this abstract class."""
+
+    DEFAULT_LIST_LIMIT = 100
+    """Default limit for lists."""
 
     def create(self, new_resource: Any) -> Any:
         """
@@ -202,3 +212,32 @@ class ResourceMapper:
         :return: The deleted resource
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def list_details(
+        self,
+        limit: int = DEFAULT_LIST_LIMIT,
+        offset: int = 0,
+    ) -> List[Any]:
+        """
+        Read details of resources within limit and offset.
+        :param limit: The limit on resources to read
+        :param offset: The offset on resources to read
+        :return: The read resources
+        """
+        entry_ids = self.list()
+        return [self.read(entry_id) for entry_id in entry_ids][
+            offset : offset + limit
+        ]
+
+    def search(
+        self,
+        query: Query = Query(),
+    ) -> List[Any]:
+        """
+        Read a collection of resources, optionally filtered.
+        :param query: The resource query to apply
+        :return: A collection of resources that satisfy the filter
+        """
+        # TODO: not the most efficient way, since it loads all items first, before filtering.
+        entries = self.list_details()
+        return [entry for entry in entries if query.filter.match(entry)]

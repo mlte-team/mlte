@@ -11,7 +11,7 @@ import pytest
 
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.context.model import ModelCreate
 from mlte.store.user.policy import Policy
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword

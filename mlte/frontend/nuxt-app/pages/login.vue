@@ -1,8 +1,8 @@
 <template>
   <NuxtLayout name="base-layout">
+    <template #page-title>Login</template>
     <form>
       <div style="max-width: 30rem">
-        <h1 class="section-header">Login to MLTE</h1>
         <UsaTextInput v-model="username" :error="formErrors.username">
           <template #label> Username </template>
           <template #error-message> Enter a username </template>
@@ -46,18 +46,19 @@ const formErrors = ref({
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (username.value.trim() === "") {
     formErrors.value.username = true;
-    submitError = true;
+    inputError = true;
   }
   if (password.value.trim() === "") {
     formErrors.value.password = true;
-    submitError = true;
+    inputError = true;
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
 

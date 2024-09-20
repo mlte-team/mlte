@@ -13,11 +13,10 @@ from typing import Any, Dict, Type
 
 from mlte._private.platform import is_windows
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
 from mlte.value.base import ValueBase
-
-from ..process_measurement import ProcessMeasurement
 
 # -----------------------------------------------------------------------------
 # CPUStatistics

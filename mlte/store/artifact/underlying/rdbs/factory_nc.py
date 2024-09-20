@@ -60,7 +60,9 @@ def create_negotiation_data_db_from_model(
     """Creates the DB object from the corresponding internal model."""
     # Create intermedidate objects.
     problem_type_obj = (
-        DBReader.get_problem_type(negotiation_card_data.system.problem_type, session)
+        DBReader.get_problem_type(
+            negotiation_card_data.system.problem_type, session
+        )
         if negotiation_card_data.system.problem_type is not None
         else None
     )
@@ -142,12 +144,14 @@ def create_negotiation_db_from_model(
 ) -> DBNegotiationCard:
     """Creates the DB object from the corresponding internal model."""
     # Create intermedidate objects.
-    negotiation_card_data_obj = create_negotiation_data_db_from_model(negotiation_card.nc_data, session)
+    negotiation_card_data_obj = create_negotiation_data_db_from_model(
+        negotiation_card.nc_data, session
+    )
 
     # Create the actual object.
     negotiation_card_obj = DBNegotiationCard(
         artifact_header=artifact_header,
-        negotiation_card_data=negotiation_card_data_obj
+        negotiation_card_data=negotiation_card_data_obj,
     )
 
     return negotiation_card_obj
@@ -166,12 +170,16 @@ def create_negotiation_data_model_from_db(
                 fn=negotiation_card_data_obj.sys_risks_fn,
                 other=negotiation_card_data_obj.sys_risks_other,
             ),
-            problem_type=ProblemType(negotiation_card_data_obj.sys_problem_type.name)
+            problem_type=ProblemType(
+                negotiation_card_data_obj.sys_problem_type.name
+            )
             if negotiation_card_data_obj.sys_problem_type is not None
             else None,
             goals=_build_goal_descriptors(negotiation_card_data_obj.sys_goals),
         ),
-        data=_build_data_descriptors(negotiation_card_data_obj.data_descriptors),
+        data=_build_data_descriptors(
+            negotiation_card_data_obj.data_descriptors
+        ),
         model=_build_model_descriptor(
             negotiation_card_data_obj.model_dev_resources,
             negotiation_card_data_obj.model_prod_deployment_platform,
@@ -199,7 +207,11 @@ def create_negotiation_model_from_db(
     negotiation_card_obj: DBNegotiationCard,
 ) -> NegotiationCardModel:
     """Creates the internal model object from the corresponding DB object."""
-    return NegotiationCardModel(nc_data=create_negotiation_data_model_from_db(negotiation_card_obj.negotiation_card_data))
+    return NegotiationCardModel(
+        nc_data=create_negotiation_data_model_from_db(
+            negotiation_card_obj.negotiation_card_data
+        )
+    )
 
 
 # -------------------------------------------------------------------------
@@ -213,7 +225,9 @@ def create_report_db_from_model(
     session: Session,
 ) -> DBReport:
     """Creates the DB object from the corresponding internal model."""
-    negotiation_card_data_obj = create_negotiation_data_db_from_model(report.nc_data, session)
+    negotiation_card_data_obj = create_negotiation_data_db_from_model(
+        report.nc_data, session
+    )
 
     # Create the actual object.
     report_obj = DBReport(
@@ -240,11 +254,15 @@ def create_report_db_from_model(
 
 def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
     """Creates the internal model object from the corresponding DB object."""
-    negotiation_card_data = create_negotiation_data_model_from_db(report_obj.negotiation_card_data)
+    negotiation_card_data = create_negotiation_data_model_from_db(
+        report_obj.negotiation_card_data
+    )
 
     body = ReportModel(
         nc_data=negotiation_card_data,
-        validated_spec_id=report_obj.validated_spec.artifact_header.identifier if report_obj.validated_spec is not None else None,
+        validated_spec_id=report_obj.validated_spec.artifact_header.identifier
+        if report_obj.validated_spec is not None
+        else None,
         comments=[
             CommentDescriptor(content=comment.content)
             for comment in report_obj.comments
@@ -315,13 +333,15 @@ def _build_data_descriptor_obj(
     return data_obj
 
 
-def _build_io_descriptor_obj(io_descriptor: ModelIODescriptor) -> DBModelIODescriptor:
+def _build_io_descriptor_obj(
+    io_descriptor: ModelIODescriptor,
+) -> DBModelIODescriptor:
     """Creates a DBModelIODescriptor object from a ModelIODescriptor."""
     io_descriptor_obj = DBModelIODescriptor(
         name=io_descriptor.name,
         description=io_descriptor.description,
         type=io_descriptor.type,
-        expected_values=io_descriptor.expected_values
+        expected_values=io_descriptor.expected_values,
     )
     return io_descriptor_obj
 
@@ -401,8 +421,24 @@ def _build_model_descriptor(
         development_compute_resources=_build_resources(dev_resources),
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
-        input_specification=[ModelIODescriptor(name=input_obj.name, description=input_obj.description, type=input_obj.type, expected_values=input_obj.expected_values) for input_obj in inputs],
-        output_specification=[ModelIODescriptor(name=output_obj.name, description=output_obj.description, type=output_obj.type, expected_values=output_obj.expected_values) for output_obj in outputs],
+        input_specification=[
+            ModelIODescriptor(
+                name=input_obj.name,
+                description=input_obj.description,
+                type=input_obj.type,
+                expected_values=input_obj.expected_values,
+            )
+            for input_obj in inputs
+        ],
+        output_specification=[
+            ModelIODescriptor(
+                name=output_obj.name,
+                description=output_obj.description,
+                type=output_obj.type,
+                expected_values=output_obj.expected_values,
+            )
+            for output_obj in outputs
+        ],
         production_compute_resources=_build_resources(prod_resources),
     )
 

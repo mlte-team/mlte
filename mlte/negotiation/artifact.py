@@ -64,7 +64,7 @@ class NegotiationCard(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> NegotiationCard:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(

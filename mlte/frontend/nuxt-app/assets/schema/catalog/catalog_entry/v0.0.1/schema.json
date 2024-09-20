@@ -1,0 +1,175 @@
+{
+  "$defs": {
+    "CatalogEntryHeader": {
+      "description": "The ArtifactHeaderModel contains the common metadata for all artifacts.",
+      "properties": {
+        "identifier": {
+          "title": "Identifier",
+          "type": "string"
+        },
+        "creator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "title": "Created"
+        },
+        "updater": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updater"
+        },
+        "updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "title": "Updated"
+        },
+        "catalog_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catalog Id"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "CatalogEntryHeader",
+      "type": "object"
+    },
+    "CatalogEntryType": {
+      "description": "Types of catalog entries.",
+      "enum": [
+        "measurement",
+        "validation"
+      ],
+      "title": "CatalogEntryType",
+      "type": "string"
+    }
+  },
+  "description": "The base model for MLTE catalog entries.",
+  "properties": {
+    "header": {
+      "$ref": "#/$defs/CatalogEntryHeader"
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "property_category": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Property Category"
+    },
+    "property": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Property"
+    },
+    "code_type": {
+      "$ref": "#/$defs/CatalogEntryType"
+    },
+    "code": {
+      "title": "Code",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "inputs": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inputs"
+    },
+    "output": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Output"
+    }
+  },
+  "required": [
+    "header",
+    "code_type",
+    "code"
+  ],
+  "title": "CatalogEntry",
+  "type": "object"
+}

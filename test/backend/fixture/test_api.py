@@ -12,17 +12,18 @@ from typing import Any, Dict, Optional
 import httpx
 from fastapi.testclient import TestClient
 
-import mlte.backend.app_factory as app_factory
+import mlte.backend.core.app_factory as app_factory
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
+from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
 from test.backend.fixture import user_generator
 from test.store.artifact import artifact_store_creators
+from test.store.catalog import catalog_store_creators
 
 TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
 """JWT token secret used for signing tokens."""
@@ -79,25 +80,40 @@ class TestAPI:
     __test__ = False
     """Avoid PyTest thinking this is a test class."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        user: Optional[UserWithPassword] = None,
+        default_catalog_id: Optional[str] = None,
+    ) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
+
+        self.app = app_factory.create()
+        """Internal FastAPI app."""
+
         # Set up API global state.
+        state.reset()
         state.set_user_store(user_store_fixture.create_memory_store())
         state.set_artifact_store(artifact_store_creators.create_memory_store())
+        if default_catalog_id:
+            state.add_catalog_store(
+                catalog_store_creators.create_memory_store(), default_catalog_id
+            )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 
-        # Create and store app.
-        self.app = app_factory.create()
+        # Set user to interact with API, and admin user.
+        self.set_user(user)
+        self.set_admin_user()
 
-        # Default user.
-        self.user: Optional[UserWithPassword] = None
-
-    def set_users(self, user: Optional[UserWithPassword]):
-        """Add user and an admin user."""
+    def set_user(self, user: Optional[UserWithPassword]):
+        """Set up default user to use API."""
         user_store = typing.cast(InMemoryUserStore, state.user_store)
         self.user = user
         if user is not None:
             self._set_user_in_mem_store(user, user_store)
+
+    def set_admin_user(self):
+        """Sets an admin user."""
+        user_store = typing.cast(InMemoryUserStore, state.user_store)
         self._set_user_in_mem_store(
             user_generator.build_admin_user(), user_store
         )

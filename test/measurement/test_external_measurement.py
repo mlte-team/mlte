@@ -11,7 +11,7 @@ from typing import Any, Dict
 import pytest
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.measurement import ExternalMeasurement
+from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.value.base import ValueBase
 from mlte.value.types.integer import Integer
 
@@ -148,7 +148,7 @@ def test_invalid_function() -> None:
     """An external measurement cannot be instantiated with a bad function type."""
 
     with pytest.raises(Exception):
-        ExternalMeasurement("dummy", Integer, "not_a_function")
+        ExternalMeasurement("dummy", Integer, "not_a_function")  # type: ignore
 
 
 def test_evaluate_no_function() -> None:

@@ -7,9 +7,9 @@ Test the authentication operations
 
 import pytest
 
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication
-from mlte.backend.state import state
+from mlte.backend.core import state_stores
+from mlte.backend.core.state import state
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import UserWithPassword
@@ -73,7 +73,7 @@ def test_authenticate_valid_user(
     # Set user store in state before each test.
     set_user_store_in_state(store_fixture_name, request)
 
-    with dependencies.user_store_session() as user_store_sesion:
+    with state_stores.user_store_session() as user_store_sesion:
         set_test_user(username, password, user_store_sesion)
 
         success = authentication.authenticate_user(
@@ -94,7 +94,7 @@ def test_authenticate_inexistent_user(
     # Set user store in state before each test.
     set_user_store_in_state(store_fixture_name, request)
 
-    with dependencies.user_store_session() as user_store_sesion:
+    with state_stores.user_store_session() as user_store_sesion:
         success = authentication.authenticate_user(
             username, password, user_store_sesion
         )
@@ -113,7 +113,7 @@ def test_authenticate_wrong_password(
     # Set user store in state before each test.
     set_user_store_in_state(store_fixture_name, request)
 
-    with dependencies.user_store_session() as user_store_sesion:
+    with state_stores.user_store_session() as user_store_sesion:
         set_test_user(username, password, user_store_sesion)
 
         success = authentication.authenticate_user(

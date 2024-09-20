@@ -11,8 +11,8 @@ from typing import List, Optional, cast
 
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, ModelCreate, Version, VersionCreate
-from mlte.store.artifact.query import Query
 from mlte.store.base import ManagedSession, Store, StoreSession
+from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # ArtifactStore
@@ -32,7 +32,7 @@ class ArtifactStore(Store):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        raise NotImplementedError("Cannot get handle to abstract Store.")
+        raise NotImplementedError("Can't call session on a base Store.")
 
 
 # -----------------------------------------------------------------------------

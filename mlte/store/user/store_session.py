@@ -9,14 +9,7 @@ from __future__ import annotations
 from typing import List, Union, cast
 
 from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
-from mlte.user.model import (
-    BasicUser,
-    Group,
-    Permission,
-    ResourceType,
-    User,
-    UserWithPassword,
-)
+from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 
 # -----------------------------------------------------------------------------
 # UserStoreSession
@@ -26,20 +19,14 @@ from mlte.user.model import (
 class UserStoreSession(StoreSession):
     """The base class for all implementations of the MLTE user store session."""
 
-    ID_MAP = {ResourceType.USER: "username",
-              ResourceType.MODEL: "identifier",
-              ResourceType.GROUP: "name"}
-    """Map of ids used for each resource."""
+    user_mapper: UserMapper
+    """Mapper for the user resource."""
 
-    def __init__(self):
-        self.user_mapper = UserMapper()
-        """Mapper for the user resource."""
+    group_mapper: GroupMapper
+    """Mapper for the group resource."""
 
-        self.group_mapper = GroupMapper()
-        """Mapper for the group resource."""
-
-        self.permission_mapper = PermissionMapper()
-        """Mapper for the permission resource."""
+    permission_mapper: PermissionMapper
+    """Mapper for the permission resource."""
 
 
 class ManagedUserSession(ManagedSession):

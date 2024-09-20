@@ -4,17 +4,31 @@ This document describes some of the development practices used within `MLTE`.
 
 ## Quickstart
 
-Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first. Once it is installed, you can set up your environment like this:
+Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first (see https://python-poetry.org/docs/#installation). Once it is installed, you can set up your environment like this (note the inclusion of dev dependency groups below):
 
 ```bash
 $ python -m venv .venv
 $ source .venv/bin/activate
-$ poetry install
+$ poetry install --with qa,test,build
 ```
 
 Instead of activating the environment, you can also choose to use `poetry run` to run specific commands.
 
 Now you are ready to start working on `MLTE`!
+
+## Demos
+
+There are several demos available in the `demo\` folder, as Jupyter notebooks. To run them, you need to install their dependencies first. This can be done with:
+
+```bash
+$ poetry install --with demo
+```
+
+If using macOS, please also install this additional group:
+
+```bash
+$ poetry install --with demo-mac
+```
 
 ## Project Development Commands
 
@@ -106,6 +120,12 @@ $ poetry run pytest test
 
 Unit tests failures result in build failures in CI.
 
+To test the Juypter notebooks present in the demo folders, run:
+
+```bash
+$ poetry run make demo-test
+```
+
 ### Model Schema Generation
 
 The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
@@ -186,13 +206,10 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-We maintain a separate set of requirements for building the documentation under `docs/requirements.txt`. To build the documentation locally, create a new virtual environment and install the requirements from this listing:
+We maintain a group of requirements for building the documentation under asthe `docs` optional group. To build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 
 ```bash
-$ cd docs
-$ python -m venv .venv
-$ source ./.venv/bin/activate
-$ pip install -r requirements.txt
+$ poetry install --with docs
 ```
 
 Now you can build and serve the documentation with:
@@ -285,7 +302,6 @@ bash stop.sh
 
 Currently, `MLTE` supports the following Python versions:
 
-- `3.8`
 - `3.9`
 - `3.10`
 - `3.11`
@@ -297,7 +313,7 @@ Currently, `MLTE` supports the following Python versions:
 Install the desired version with:
 
 ```bash
-export VERSION=3.8
+export VERSION=3.9
 
 # Install the desired version
 pyenv install $VERSION
@@ -305,7 +321,7 @@ pyenv install $VERSION
 pyenv local $VERSION
 # Confirm the version
 python --version
-Python 3.8.16
+Python 3.9.16
 ```
 
 With the proper version activated, use `poetry` as described in [QuickStart](#quickstart) to create a virtual environment and install dependencies.

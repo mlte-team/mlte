@@ -8,10 +8,10 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
 
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth import authentication, jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPTokenException
-from mlte.backend.state import state
+from mlte.backend.core import state_stores
+from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
 from mlte.store.user import policy
 
@@ -61,7 +61,7 @@ async def login_for_access_token(
     user = None
     if form_data.grant_type == GRANT_TYPE_PASSWORD:
         # Validate user and password from db.
-        with dependencies.user_store_session() as user_store_session:
+        with state_stores.user_store_session() as user_store_session:
             is_valid_user = authentication.authenticate_user(
                 form_data.username, form_data.password, user_store_session
             )
@@ -93,8 +93,8 @@ async def login_for_access_token(
 
     # Create policies for models if needed.
     # TODO: this is terribly not efficient. This is checked every time anybody logins.
-    with dependencies.artifact_store_session() as artifact_store:
-        with dependencies.user_store_session() as user_store:
+    with state_stores.artifact_store_session() as artifact_store:
+        with state_stores.user_store_session() as user_store:
             policy.create_model_policies_if_needed(artifact_store, user_store)
 
     # Create and return token using username as data.

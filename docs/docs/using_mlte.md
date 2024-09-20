@@ -359,7 +359,7 @@ report.spec = validated_spec
 report.to_html(REPORTS_DIR / "report.html", local=True)
 ```
 
-If the model performs as desired, teams can consider the evaluation complete. However, it is very common that teams will need to iterate through [IMT](#internal-model-testing-imt) and [SDMT](system-dependent-model-testing-sdmt) several times before they are satisfied with the results and ready to communicate with stakeholders.
+If the model performs as desired, teams can consider the evaluation complete. However, it is very common that teams will need to iterate through [IMT](#internal-model-testing-imt) and [SDMT](#system-dependent-model-testing-sdmt) several times before they are satisfied with the results and ready to communicate with stakeholders.
 
 ## More Information
 

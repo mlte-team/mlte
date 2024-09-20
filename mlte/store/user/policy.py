@@ -19,7 +19,9 @@ from mlte.user.model import (
 )
 
 
-def create_model_policies_if_needed(artifact_store: ArtifactStoreSession, user_store: UserStoreSession):
+def create_model_policies_if_needed(
+    artifact_store: ArtifactStoreSession, user_store: UserStoreSession
+):
     """
     Function that checks, for all models, if policies have not been created.
     This is for cases where the model may have been created without the API.
@@ -54,14 +56,22 @@ class Policy:
     # -----------------------------------------------------------------------------
 
     @staticmethod
-    def build_groups(resource_type: ResourceType, resource_id: Any = None, build_read_group: bool = True, build_edit_group: bool = True, build_create_group: bool = True) -> List[Group]:
+    def build_groups(
+        resource_type: ResourceType,
+        resource_id: Any = None,
+        build_read_group: bool = True,
+        build_edit_group: bool = True,
+        build_create_group: bool = True,
+    ) -> List[Group]:
         """Generates in memory representations of read and write groups for the given resource."""
         groups: List[Group] = []
 
         # Group with read permissions.
         if build_read_group:
             read_group = Group(
-                name=Policy._build_group_name(Policy.READ_GROUP_PREFIX, resource_type, resource_id),
+                name=Policy._build_group_name(
+                    Policy.READ_GROUP_PREFIX, resource_type, resource_id
+                ),
                 permissions=[
                     Permission(
                         resource_type=resource_type,
@@ -77,7 +87,9 @@ class Policy:
             # Create group is only created for non-resource-id related groups, create is always general, never associated to an id.
             if resource_id is None:
                 create_group = Group(
-                    name=Policy._build_group_name(Policy.CREATE_GROUP_PREFIX, resource_type, None),
+                    name=Policy._build_group_name(
+                        Policy.CREATE_GROUP_PREFIX, resource_type, None
+                    ),
                     permissions=[
                         Permission(
                             resource_type=resource_type,
@@ -91,7 +103,9 @@ class Policy:
         # Group with edit/delete permissions.
         if build_edit_group:
             write_group = Group(
-                name=Policy._build_group_name(Policy.EDIT_GROUP_PREFIX, resource_type, resource_id),
+                name=Policy._build_group_name(
+                    Policy.EDIT_GROUP_PREFIX, resource_type, resource_id
+                ),
                 permissions=[
                     Permission(
                         resource_type=resource_type,

@@ -1,0 +1,2 @@
+This folder is only useful if local certs need to be passed to the Docker container to work behind proxies or similar setups.
+See Doeckerfile for details, but it is enough to just put the proper crt files inside this folder for them to be loaded.

@@ -1,24 +1,24 @@
 <template>
   <div>
     <div v-if="!newUserFlag">
-      <div class="flex-container">
-        <h1 class="section-header">{{ modelValue.username }}</h1>
-        <div
-          class="centered-container"
-          style="vertical-align: bottom; padding-left: 38ch"
-        >
-          <div v-if="!changePasswordFlag">
-            <UsaButton class="secondary-button" @click="enablePasswordReset">
-              Change Password
-            </UsaButton>
-          </div>
-          <div v-if="changePasswordFlag">
-            <UsaButton class="secondary-button" @click="disablePasswordReset">
-              Cancel Change
-            </UsaButton>
-          </div>
-        </div>
-      </div>
+      <h2 class="section-header" style="display: inline">
+        {{ modelValue.username }}
+      </h2>
+      <UsaButton
+        v-if="!changePasswordFlag"
+        class="secondary-button sub-header-float-button"
+        @click="enablePasswordReset"
+      >
+        Change Password
+      </UsaButton>
+      <UsaButton
+        v-if="changePasswordFlag"
+        class="secondary-button sub-header-float-button"
+        @click="disablePasswordReset"
+      >
+        Cancel Change
+      </UsaButton>
+
       <div v-if="changePasswordFlag">
         <UsaTextInput
           v-model="modelValue.password"
@@ -74,17 +74,24 @@
       <template #error-message> A role must be selected </template>
     </UsaSelect>
 
-    <label class="usa-label">Groups</label>
-    <div v-if="newUserFlag">
-      User will automatically be added to the <b>create-model</b> group upon
-      submission.
-    </div>
-    <div v-for="groupOption in groupOptions" :key="groupOption.name">
-      <UsaCheckbox
-        v-model="groupOption.selected"
-        :label="groupOption.name"
-        @update:modelValue="groupChange(groupOption.selected, groupOption)"
-      />
+    <div class="multi-line-checkbox-div">
+      <label class="usa-label">Groups</label>
+      <div v-if="newUserFlag">
+        User will automatically be added to the <b>create-model</b> group upon
+        submission.
+      </div>
+      <span
+        v-for="groupOption in groupOptions"
+        :key="groupOption.name"
+        class="multiple-per-line-checkbox"
+      >
+        <UsaCheckbox
+          v-model="groupOption.selected"
+          @update:modelValue="groupChange(groupOption.selected, groupOption)"
+        >
+          {{ groupOption.name }}
+        </UsaCheckbox>
+      </span>
     </div>
 
     <div class="submit-footer">
@@ -194,40 +201,40 @@ function groupChange(selected: boolean, groupOption: object) {
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (props.newUserFlag) {
     if (props.modelValue.username.trim() === "") {
       formErrors.value.username = true;
-      submitError = true;
+      inputError = true;
     }
 
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
     if (props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
-      submitError = true;
+      inputError = true;
     }
     if (props.modelValue.password !== confirmPassword.value) {
       formErrors.value.confirmPassword = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
   if (props.modelValue.role.trim() === "") {
     formErrors.value.role = true;
-    submitError = true;
+    inputError = true;
   }
 
-  if (submitError) {
+  if (inputError) {
+    inputErrorAlert();
     return;
   }
-
   emit("submit", props.modelValue);
 }
 </script>

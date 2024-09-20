@@ -49,7 +49,7 @@ class Array(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Array:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> Array:
         """
         Convert an array value model to its corresponding artifact.
         :param model: The model representation

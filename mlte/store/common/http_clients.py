@@ -59,7 +59,6 @@ class HttpClient:
         """
         Raise an error from from a response.
         :param response: The response object
-        :raises: Error in the event an error occurred
         """
         if response.status_code == codes.OK:
             return

@@ -10,14 +10,15 @@ from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
 
-from mlte.backend.api import codes, dependencies
+from mlte.backend.api import codes
 from mlte.backend.api.auth import jwt
 from mlte.backend.api.auth.http_auth_exception import HTTPAuthException
 from mlte.backend.api.endpoints.token import TOKEN_ENDPOINT_URL
-from mlte.backend.api.model import USER_ME_ID
+from mlte.backend.api.models.artifact_model import USER_ME_ID
+from mlte.backend.core import state_stores
 from mlte.backend.core.config import settings
-from mlte.backend.state import state
-from mlte.store.user.store_session import UserStoreSession
+from mlte.backend.core.state import state
+from mlte.store.user.store import UserStore
 from mlte.user.model import (
     BasicUser,
     MethodType,
@@ -38,7 +39,9 @@ async def get_current_resource(request: Request) -> Permission:
     resource_url = url.replace(settings.API_PREFIX, "")
     resource_type = ResourceType.get_type_from_url(resource_url)
     if resource_type is None:
-        raise RuntimeError(f"Could not parse resource from URL: {resource_url}")
+        raise RuntimeError(
+            f"Could not parse resource type from URL: {resource_url}"
+        )
 
     # Parse URL and body for resource id, if any.
     resource_id = None
@@ -50,7 +53,7 @@ async def get_current_resource(request: Request) -> Permission:
             try:
                 # If the URL didn't have an id, try to get it from a JSON body.
                 data = await request.json()
-                id_key = UserStoreSession.ID_MAP[resource_type]
+                id_key = UserStore.ID_MAP[resource_type]
                 if id_key in data:
                     resource_id = data[id_key]
             except JSONDecodeError:
@@ -59,6 +62,12 @@ async def get_current_resource(request: Request) -> Permission:
 
     # Get method.
     method = MethodType[request.method]
+
+    # NOTE: if this is a search, treat it as if it was a GET method.
+    # This is used so that read permissions will be applied to searches, while allowing
+    # it to send complex queries through its body.
+    if url.endswith("/search"):
+        method = MethodType.GET
 
     # Build and return the resource permission description
     resource = Permission(
@@ -143,7 +152,7 @@ async def get_authorized_user(
 
     # Check if user in token exists.
     user = None
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         user = user_store.user_mapper.read(username)
     if user is None:
         raise HTTPAuthException(

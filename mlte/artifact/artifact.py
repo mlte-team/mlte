@@ -10,12 +10,12 @@ import abc
 from typing import Optional
 
 import mlte._private.meta as meta
-import mlte.store.artifact.query as query
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.session.state import session
+from mlte.session.session import session
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.query import Query, TypeFilter
 
 
 class Artifact(metaclass=abc.ABCMeta):
@@ -117,7 +117,10 @@ class Artifact(metaclass=abc.ABCMeta):
         artifact are created implicitly on write (default: False)
         """
         self.save_with(
-            session().context, session().store, force=force, parents=parents
+            session().context,
+            session().artifact_store,
+            force=force,
+            parents=parents,
         )
 
     def save_with(
@@ -158,7 +161,9 @@ class Artifact(metaclass=abc.ABCMeta):
             Artifact.load_with(session().context, session().store)
         """
         return cls.load_with(
-            identifier, context=session().context, store=session().store
+            identifier,
+            context=session().context,
+            store=session().artifact_store,
         )
 
     @classmethod
@@ -194,7 +199,9 @@ class Artifact(metaclass=abc.ABCMeta):
     def load_all_models(artifact_type: ArtifactType) -> list[ArtifactModel]:
         """Loads all artifact models of the given type from the session."""
         return Artifact.load_all_models_with(
-            artifact_type, context=session().context, store=session().store
+            artifact_type,
+            context=session().context,
+            store=session().artifact_store,
         )
 
     @staticmethod
@@ -203,11 +210,7 @@ class Artifact(metaclass=abc.ABCMeta):
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""
         with ManagedArtifactSession(store.session()) as handle:
-            query_instance = query.Query(
-                filter=query.ArtifactTypeFilter(
-                    type=query.FilterType.TYPE, artifact_type=artifact_type
-                )
-            )
+            query_instance = Query(filter=TypeFilter(item_type=artifact_type))
             artifact_models = handle.search_artifacts(
                 context.model,
                 context.version,

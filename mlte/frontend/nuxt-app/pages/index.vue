@@ -1,12 +1,18 @@
 <template>
   <NuxtLayout name="base-layout">
-    <template #sidebar>
-      <div style="padding-top: 60px">
-        <UsaTextInput v-model="newModelIdentifier">
+    <title>Artifact Store</title>
+    <template #page-title>Artifact Store</template>
+    <template #right-sidebar>
+      <div>
+        <UsaTextInput
+          v-model="newModelIdentifier"
+          @keyup.enter="submitNewModel(newModelIdentifier)"
+        >
           <template #label> New Model </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
+          style="margin-left: 0px"
           @click="submitNewModel(newModelIdentifier)"
         >
           Create Model
@@ -15,11 +21,13 @@
         <UsaTextInput
           v-model="newVersionIdentifier"
           :disabled="selectedModel === ''"
+          @keyup.enter="submitNewVersion(selectedModel, newVersionIdentifier)"
         >
           <template #label> New Version for: {{ selectedModel }} </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
+          style="margin-left: 0px"
           @click="submitNewVersion(selectedModel, newVersionIdentifier)"
         >
           Create Version
@@ -27,25 +35,27 @@
       </div>
     </template>
 
-    <UsaBreadcrumb :items="path" />
+    <!-- <UsaBreadcrumb :items="path" /> -->
     <div style="display: flex">
-      <div class="split-div">
-        <b>Model</b>
+      <div class="model-version-div">
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
           @update:modelValue="selectModel($event, true)"
-        />
+        >
+          <template #label>Model</template>
+        </UsaSelect>
         <br />
       </div>
 
-      <div class="split-div">
-        <b>Version</b>
+      <div class="model-version-div">
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
           @update:modelValue="selectVersion($event)"
-        />
+        >
+          <template #label>Version</template>
+        </UsaSelect>
         <br />
       </div>
 
@@ -248,12 +258,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const path = ref([
-  {
-    href: "/",
-    text: "",
-  },
-]);
 
 const newModelIdentifier = ref("");
 const newVersionIdentifier = ref("");
@@ -615,7 +619,7 @@ async function submitNewVersion(modelName: string, versionName: string) {
   width: 100%;
 }
 
-.split-div {
+.model-version-div {
   width: 34ch;
   margin-right: 1em;
 }

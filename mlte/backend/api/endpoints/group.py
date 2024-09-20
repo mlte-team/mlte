@@ -5,22 +5,22 @@ Group CRUD endpoint.
 """
 from __future__ import annotations
 
-import traceback as tb
 from typing import List
 
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
+from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.core import state_stores
 from mlte.user.model import Group, Permission
 
 # The router exported by this submodule
 router = APIRouter()
 
 
-@router.post("/group")
+@router.post("")
 def create_group(
     *,
     group: Group,
@@ -31,7 +31,7 @@ def create_group(
     :param group: The group to create
     :return: The created group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.create(group)
         except errors.ErrorAlreadyExists as e:
@@ -39,15 +39,10 @@ def create_group(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.put("/group")
+@router.put("")
 def edit_group(
     *,
     group: Group,
@@ -58,7 +53,7 @@ def edit_group(
     :param group: The group to edit
     :return: The edited group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.edit(group)
         except errors.ErrorNotFound as e:
@@ -66,15 +61,10 @@ def edit_group(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/group/{group_name}")
+@router.get("/{group_name}")
 def read_group(
     *,
     group_name: str,
@@ -82,10 +72,10 @@ def read_group(
 ) -> Group:
     """
     Read a MLTE group.
-    :param group name: The group name
+    :param group_name: The group name
     :return: The read group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.read(group_name)
         except errors.ErrorNotFound as e:
@@ -93,15 +83,10 @@ def read_group(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/group")
+@router.get("")
 def list_groups(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -109,19 +94,14 @@ def list_groups(
     List MLTE group.
     :return: A collection of group names
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/groups/details")
+@router.get("s/details")
 def list_group_details(
     current_user: AuthorizedUser,
 ) -> List[Group]:
@@ -129,37 +109,25 @@ def list_group_details(
     List MLTE group, with details for each group.
     :return: A collection of groups with their details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
-            detailed_groups = []
-            group_names = user_store.group_mapper.list()
-            for group_name in group_names:
-                group_details = Group(
-                    **user_store.group_mapper.read(group_name).model_dump()
-                )
-                detailed_groups.append(group_details)
-            return detailed_groups
+            return user_store.group_mapper.list_details()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.delete("/group/{group_name}")
-def delete_user(
+@router.delete("/{group_name}")
+def delete_group(
     *,
     group_name: str,
     current_user: AuthorizedUser,
 ) -> Group:
     """
     Delete a MLTE group.
-    :param group name: The group name
+    :param group_name: The group name
     :return: The deleted group
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.group_mapper.delete(group_name)
         except errors.ErrorNotFound as e:
@@ -167,15 +135,10 @@ def delete_user(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/groups/permissions")
+@router.get("s/permissions")
 def list_permissions(
     current_user: AuthorizedUser,
 ) -> List[str]:
@@ -183,19 +146,14 @@ def list_permissions(
     List MLTE permissions.
     :return: A collection of permissions
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
             return user_store.permission_mapper.list()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)
 
 
-@router.get("/groups/permissions/details")
+@router.get("s/permissions/details")
 def list_permission_details(
     current_user: AuthorizedUser,
 ) -> List[Permission]:
@@ -203,18 +161,8 @@ def list_permission_details(
     List MLTE permissions, with details.
     :return: A collection of permissions, with details.
     """
-    with dependencies.user_store_session() as user_store:
+    with state_stores.user_store_session() as user_store:
         try:
-            detailed_permissions = []
-            permissions = user_store.permission_mapper.list()
-            for permission_id in permissions:
-                permission_details = Permission.from_str(permission_id)
-                detailed_permissions.append(permission_details)
-            return detailed_permissions
+            return user_store.permission_mapper.list_details()
         except Exception as e:
-            print(f"Internal server error. {e}")
-            print(tb.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+            raise_http_internal_error(e)

@@ -1,9 +1,7 @@
 <template>
   <NuxtLayout name="base-layout">
-    <UsaBreadcrumb :items="path" />
-
-    <h1 class="section-header">MLTE REPORT</h1>
-
+    <title>Report</title>
+    <template #page-title>Report</template>
     <UsaTextInput
       v-if="useRoute().query.artifactId === undefined"
       v-model="userInputArtifactId"
@@ -93,16 +91,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 const token = useCookie("token");
-const path = ref([
-  {
-    href: "/",
-    text: "Artifact Store",
-  },
-  {
-    href: "/here",
-    text: "Report",
-  },
-]);
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);

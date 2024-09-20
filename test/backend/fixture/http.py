@@ -12,6 +12,7 @@ import pytest
 
 from mlte.user.model import UserWithPassword
 from test.backend.fixture.test_api import TestAPI
+from test.store.catalog.fixture import TEST_CATALOG_ID
 
 # -----------------------------------------------------------------------------
 # Store Backend Fixtures
@@ -20,11 +21,9 @@ from test.backend.fixture.test_api import TestAPI
 
 @pytest.fixture(scope="function")
 def mem_store_test_api() -> Callable[[Optional[UserWithPassword]], TestAPI]:
-    """Sets up memory based store for the API and gets an associated client."""
+    """Sets up a memory-based test API and returns it."""
 
     def wrapper(api_user: Optional[UserWithPassword] = None) -> TestAPI:
-        test_api = TestAPI()
-        test_api.set_users(api_user)
-        return test_api
+        return TestAPI(user=api_user, default_catalog_id=TEST_CATALOG_ID)
 
     return wrapper

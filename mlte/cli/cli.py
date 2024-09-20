@@ -6,6 +6,7 @@ Top-level command line interface.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import traceback
 from importlib.metadata import PackageNotFoundError, version
@@ -86,6 +87,12 @@ def _attach_backend_parser(
         type=str,
         default=backend_settings.STORE_URI,
         help=f"The URI for the backend store (default: {backend_settings.STORE_URI}).",
+    )
+    parser.add_argument(
+        "--catalog-uris",
+        type=json.loads,
+        default=backend_settings.CATALOG_URIS,
+        help=f"A JSON string with a dictionary of URI for the backend catalog stores to usestore (default: {backend_settings.CATALOG_URIS}).",
     )
     parser.add_argument(
         "--allowed-origins",

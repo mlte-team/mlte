@@ -5,6 +5,7 @@ Unit test for LocalObjectSize measurement.
 """
 from __future__ import annotations
 
+import typing
 from pathlib import Path
 from typing import Any, Dict
 
@@ -122,7 +123,7 @@ def test_file(tmp_path):
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = m.evaluate(str(tmp_path / "model"))
+    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
     assert size.value == expected_hierarchy_size(model)
 
 
@@ -133,7 +134,7 @@ def test_directory(tmp_path):
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = m.evaluate(str(tmp_path / "model"))
+    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
     assert size.value == expected_hierarchy_size(model)
 
 
@@ -142,7 +143,7 @@ def test_validation_less_than(tmp_path):
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = m.evaluate(str(tmp_path / "model"))
+    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
     v = Integer.less_than(128)(size)
@@ -160,7 +161,7 @@ def test_validation_less_or_equal_to(tmp_path):
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = m.evaluate(str(tmp_path / "model"))
+    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
     v = Integer.less_or_equal_to(64)(size)

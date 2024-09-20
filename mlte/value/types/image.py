@@ -68,7 +68,7 @@ class Image(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Image:  # type: ignore[override]
+    def from_model(cls, model: ArtifactModel) -> Image:
         """
         Convert an opaque value model to its corresponding artifact.
         :param model: The model representation

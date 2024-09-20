@@ -154,7 +154,9 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
 
 @pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_user_group_change(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+def test_user_group_change(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
     """Test proper syncchronization between users and groups."""
     store: UserStore = request.getfixturevalue(store_fixture_name)
 

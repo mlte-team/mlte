@@ -61,6 +61,11 @@ typecheck:
 .PHONY: check-typecheck
 check-typecheck: typecheck
 
+# Clean cache files
+.PHONY: clean
+clean: 
+	rm -r -f .mypy_cache .pytest_cache
+
 # All quality assurance
 .PHONY: qa
 qa: isort format lint typecheck
@@ -76,12 +81,23 @@ check: check-isort check-format check-lint check-typecheck
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest test
+	poetry run pytest --cov=mlte test 
 
 # Open coverage results in a browser
 .PHONY: cov-results
 cov-results:
 	coverage html && open htmlcov/index.html
+
+# Demo Jupyter Notebook tests
+.PHONY: demo-test
+demo-test:
+	poetry run pytest --nbmake ./demo/simple/negotiation.ipynb
+	poetry run pytest --nbmake ./demo/simple/requirements.ipynb
+	poetry run pytest --nbmake ./demo/simple/evidence.ipynb
+	poetry run pytest --nbmake ./demo/simple/report.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/0_requirements.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/1_evidence.ipynb
+	poetry run pytest --nbmake ./demo/scenarios/2_report.ipynb	
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
@@ -100,4 +116,4 @@ vet:
 # All actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 .PHONY: ci
-ci: gen qa test
+ci: clean gen qa test

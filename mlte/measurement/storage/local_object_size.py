@@ -7,7 +7,7 @@ Storage capacity measurement for locally-stored objects.
 import os
 from typing import Type
 
-from mlte.measurement import Measurement
+from mlte.measurement.measurement import Measurement
 from mlte.value.types.integer import Integer
 
 

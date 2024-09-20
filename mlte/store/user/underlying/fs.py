@@ -8,9 +8,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Union
 
-import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.common.fs import FileSystemStorage
+from mlte.store.common.fs_storage import FileSystemStorage
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -90,7 +89,9 @@ class FileSystemUserMappper(UserMapper):
     USERS_FOLDER = "users"
     """Subfolder for users."""
 
-    def __init__(self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper
+    ) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
@@ -103,8 +104,7 @@ class FileSystemUserMappper(UserMapper):
         """Set the subfodler for this resrouce."""
 
     def create(self, user: UserWithPassword) -> User:
-        if self.storage._resource_path(user.username).exists():
-            raise errors.ErrorAlreadyExists(f"User '{user.username}'")
+        self.storage.ensure_resource_does_not_exist(user.username)
 
         new_user = user.to_hashed_user()
 
@@ -115,8 +115,7 @@ class FileSystemUserMappper(UserMapper):
 
     def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
         # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
-        if not self.storage._resource_path(user.username).exists():
-            raise errors.ErrorNotFound(f"User '{user.username}'")
+        self.storage.ensure_resource_exists(user.username)
 
         curr_user = self._read_user(user.username)
         updated_user = update_user_data(curr_user, user)
@@ -138,17 +137,12 @@ class FileSystemUserMappper(UserMapper):
         return user
 
     def list(self) -> List[str]:
-        return [
-            self.storage.get_just_filename(user_path)
-            for user_path in self.storage.list_json_files(
-                self.storage.base_path
-            )
-        ]
+        return self.storage.list_resources()
 
     def delete(self, username: str) -> User:
-        self.storage._ensure_resource_exists(username)
+        self.storage.ensure_resource_exists(username)
         user = self._read_user(username)
-        self.storage.delete_file(self.storage._resource_path(username))
+        self.storage.delete_resource(username)
         return user
 
     def _read_user(self, username: str) -> User:
@@ -157,17 +151,12 @@ class FileSystemUserMappper(UserMapper):
         :param username: The username
         :return: The user object
         """
-        self.storage._ensure_resource_exists(username)
-        return User(
-            **self.storage.read_json_file(self.storage._resource_path(username))
-        )
+        self.storage.ensure_resource_exists(username)
+        return User(**self.storage.read_resource(username))
 
     def _write_user(self, user: User) -> User:
         """Writes a user to storage."""
-        self.storage.write_json_to_file(
-            self.storage._resource_path(user.username),
-            user.model_dump(),
-        )
+        self.storage.write_resource(user.username, user.model_dump())
         return user
 
 
@@ -192,30 +181,23 @@ class FileSystemGroupMappper(GroupMapper):
         """Set the subfodler for this resrouce."""
 
     def create(self, group: Group) -> Group:
-        if self.storage._resource_path(group.name).exists():
-            raise errors.ErrorAlreadyExists(f"Group '{group.name}'")
+        self.storage.ensure_resource_does_not_exist(group.name)
         return self._write_group(group)
 
     def edit(self, group: Group) -> Group:
-        if not self.storage._resource_path(group.name).exists():
-            raise errors.ErrorNotFound(f"Group '{group.name}'")
+        self.storage.ensure_resource_exists(group.name)
         return self._write_group(group)
 
     def read(self, group_name: str) -> Group:
         return self._read_group(group_name)
 
     def list(self) -> List[str]:
-        return [
-            self.storage.get_just_filename(group_path)
-            for group_path in self.storage.list_json_files(
-                self.storage.base_path
-            )
-        ]
+        return self.storage.list_resources()
 
     def delete(self, group_name: str) -> Group:
-        self.storage._ensure_resource_exists(group_name)
+        self.storage.ensure_resource_exists(group_name)
         group = self._read_group(group_name)
-        self.storage.delete_file(self.storage._resource_path(group_name))
+        self.storage.delete_resource(group_name)
         return group
 
     def _read_group(self, group_name: str) -> Group:
@@ -224,19 +206,12 @@ class FileSystemGroupMappper(GroupMapper):
         :param group_name: The group name
         :return: The group object
         """
-        self.storage._ensure_resource_exists(group_name)
-        return Group(
-            **self.storage.read_json_file(
-                self.storage._resource_path(group_name)
-            )
-        )
+        self.storage.ensure_resource_exists(group_name)
+        return Group(**self.storage.read_resource(group_name))
 
     def _write_group(self, group: Group) -> Group:
         """Writes a Group to storage."""
-        self.storage.write_json_to_file(
-            self.storage._resource_path(group.name),
-            group.model_dump(),
-        )
+        self.storage.write_resource(group.name, group.model_dump())
         return self._read_group(group.name)
 
 
@@ -261,32 +236,23 @@ class FileSystemPermissionMappper(PermissionMapper):
         """Set the subfodler for this resrouce."""
 
     def create(self, permission: Permission) -> Permission:
-        if self.storage._resource_path(permission.to_str()).exists():
-            raise errors.ErrorAlreadyExists(
-                f"Permission '{permission.to_str()}'"
-            )
+        self.storage.ensure_resource_does_not_exist(permission.to_str())
         return self._write_permission(permission)
 
     def edit(self, permission: Permission) -> Permission:
-        if not self.storage._resource_path(permission.to_str()).exists():
-            raise errors.ErrorNotFound(f"Permission '{permission.to_str()}'")
+        self.storage.ensure_resource_exists(permission.to_str())
         return self._write_permission(permission)
 
     def read(self, permission_str: str) -> Permission:
         return self._read_permission(permission_str)
 
     def list(self) -> List[str]:
-        return [
-            self.storage.get_just_filename(perm_path)
-            for perm_path in self.storage.list_json_files(
-                self.storage.base_path
-            )
-        ]
+        return self.storage.list_resources()
 
     def delete(self, permission_str: str) -> Permission:
-        self.storage._ensure_resource_exists(permission_str)
+        self.storage.ensure_resource_exists(permission_str)
         permission = self._read_permission(permission_str)
-        self.storage.delete_file(self.storage._resource_path(permission_str))
+        self.storage.delete_resource(permission_str)
         return permission
 
     def _read_permission(self, permission_str: str) -> Permission:
@@ -295,17 +261,12 @@ class FileSystemPermissionMappper(PermissionMapper):
         :param permission_str: The permission str
         :return: The permission object
         """
-        self.storage._ensure_resource_exists(permission_str)
-        return Permission(
-            **self.storage.read_json_file(
-                self.storage._resource_path(permission_str)
-            )
-        )
+        self.storage.ensure_resource_exists(permission_str)
+        return Permission(**self.storage.read_resource(permission_str))
 
     def _write_permission(self, permission: Permission) -> Permission:
         """Writes a Permission to storage."""
-        self.storage.write_json_to_file(
-            self.storage._resource_path(permission.to_str()),
-            permission.model_dump(),
+        self.storage.write_resource(
+            permission.to_str(), permission.model_dump()
         )
         return self._read_permission(permission.to_str())

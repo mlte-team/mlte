@@ -13,9 +13,9 @@ import pytest
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.backend.api import codes
-from mlte.backend.api.model import WriteArtifactRequest
+from mlte.backend.api.models.artifact_model import WriteArtifactRequest
 from mlte.model.base_model import BaseModel
-from mlte.store.artifact.query import Query
+from mlte.store.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     create_sample_model_using_admin,
@@ -162,10 +162,9 @@ def test_list(
     assert read == created
 
 
-# TODO: note that this is tested with write permissions, since search uses post, and that is interperted as write.
 @pytest.mark.parametrize(
     "api_user",
-    user_generator.get_test_users_with_write_permissions(
+    user_generator.get_test_users_with_read_permissions(
         ResourceType.MODEL, resource_id=get_sample_model().identifier
     ),
 )

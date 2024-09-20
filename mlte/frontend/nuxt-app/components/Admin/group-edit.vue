@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!newGroupFlag">
-      <h1 class="section-header">{{ modelValue.name }}</h1>
+      <h2 class="section-header">{{ modelValue.name }}</h2>
     </div>
     <div v-if="newGroupFlag">
       <UsaTextInput v-model="modelValue.name" :error="formErrors.name">
@@ -11,14 +11,18 @@
     </div>
 
     <label class="usa-label">Permissions</label>
-    <div v-for="(permissionOption, index) in permissionOptions" :key="index">
-      <UsaCheckbox
-        v-model="permissionOption.selected"
-        @update:modelValue="
-          permissionChange(permissionOption.selected, permissionOption)
-        "
+    <div class="multi-line-checkbox-div">
+      <span
+        v-for="(permissionOption, index) in permissionOptions"
+        :key="index"
+        class="multiple-per-line-checkbox"
       >
-        <template #default>
+        <UsaCheckbox
+          v-model="permissionOption.selected"
+          @update:modelValue="
+            permissionChange(permissionOption.selected, permissionOption)
+          "
+        >
           <span v-if="permissionOption.resource_id === null">
             {{ permissionOption.resource_type }} - (All) -
             {{ permissionOption.method }}
@@ -28,8 +32,8 @@
             {{ permissionOption.resource_id }} -
             {{ permissionOption.method }}
           </span>
-        </template>
-      </UsaCheckbox>
+        </UsaCheckbox>
+      </span>
     </div>
 
     <div class="submit-footer">
@@ -45,7 +49,7 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
+const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -123,19 +127,18 @@ function permissionChange(selected: boolean, permissionOption: object) {
 
 function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
-  let submitError = false;
+  let inputError = false;
 
   if (props.newGroupFlag) {
     if (props.modelValue.name.trim() === "") {
       formErrors.value.name = true;
-      submitError = true;
+      inputError = true;
     }
   }
 
-  if (submitError) {
+  if (inputError) {
     return;
   }
-
   emit("submit", props.modelValue);
 }
 </script>

@@ -6,7 +6,6 @@ API definition for MLTE artifacts.
 
 from __future__ import annotations
 
-import traceback
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -14,10 +13,14 @@ from fastapi import APIRouter, HTTPException
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.backend.api import dependencies
 from mlte.backend.api.auth.authorization import AuthorizedUser
-from mlte.backend.api.model import WriteArtifactRequest, WriteArtifactResponse
-from mlte.store.artifact.query import Query
+from mlte.backend.api.error_handlers import raise_http_internal_error
+from mlte.backend.api.models.artifact_model import (
+    WriteArtifactRequest,
+    WriteArtifactResponse,
+)
+from mlte.backend.core import state_stores
+from mlte.store.query import Query
 
 # The router exported by this submodule
 router = APIRouter()
@@ -37,7 +40,7 @@ def write_artifact(
     :param request: The artifact write request
     :return: The created artifact
     """
-    with dependencies.artifact_store_session() as artifact_store:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
             artifact = artifact_store.write_artifact_with_header(
                 model_id,
@@ -56,12 +59,8 @@ def write_artifact(
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
             )
-        except Exception:
-            print(traceback.format_exc())
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("/{artifact_id}")
@@ -78,18 +77,15 @@ def read_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The read artifact
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.get("")
@@ -108,14 +104,11 @@ def read_artifacts(
     :param offset: The offset on returned artifacts
     :return: The read artifacts
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifacts(model_id, version_id, limit, offset)
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 # TODO: this uses post to take advantge of the Query model. However, this is not corret REST syntax,
@@ -135,14 +128,11 @@ def search_artifacts(
     :param query: The artifact query
     :return: The read artifacts
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.search_artifacts(model_id, version_id, query)
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
 
 
 @router.delete("/{artifact_id}")
@@ -159,15 +149,12 @@ def delete_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The deleted artifact
     """
-    with dependencies.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as handle:
         try:
             return handle.delete_artifact(model_id, version_id, artifact_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
-        except Exception:
-            raise HTTPException(
-                status_code=codes.INTERNAL_ERROR,
-                detail="Internal server error.",
-            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
