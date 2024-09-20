@@ -74,29 +74,27 @@ class DBNegotiationCardData(DBBase):
     model_dev_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_dev_resources: Mapped[
-        DBModelResourcesDescriptor
-    ] = relationship(
+    model_dev_resources: Mapped[DBModelResourcesDescriptor] = relationship(
         cascade="all",
         foreign_keys=[model_dev_resources_id],
     )
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
 
-    model_prod_inputs: Mapped[
-        List[DBModelIODescriptor]
-    ] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.negotiation_card_input_id")
+    model_prod_inputs: Mapped[List[DBModelIODescriptor]] = relationship(
+        cascade="all, delete-orphan",
+        foreign_keys="DBModelIODescriptor.negotiation_card_input_id",
+    )
 
-    model_prod_outputs: Mapped[
-        List[DBModelIODescriptor]
-    ] = relationship(cascade="all, delete-orphan", foreign_keys="DBModelIODescriptor.negotiation_card_output_id")
+    model_prod_outputs: Mapped[List[DBModelIODescriptor]] = relationship(
+        cascade="all, delete-orphan",
+        foreign_keys="DBModelIODescriptor.negotiation_card_output_id",
+    )
 
     model_prod_resources_id: Mapped[int] = mapped_column(
         ForeignKey("nc_model_resource.id")
     )
-    model_prod_resources: Mapped[
-        DBModelResourcesDescriptor
-    ] = relationship(
+    model_prod_resources: Mapped[DBModelResourcesDescriptor] = relationship(
         cascade="all",
         foreign_keys=[model_prod_resources_id],
     )

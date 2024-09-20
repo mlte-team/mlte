@@ -302,8 +302,8 @@
     "ModelDescriptor": {
       "description": "A descriptor for the model.",
       "properties": {
-        "development": {
-          "$ref": "#/$defs/ModelDevelopmentDescriptor",
+        "development_compute_resources": {
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -311,39 +311,47 @@
             "storage": null
           }
         },
-        "production": {
-          "$ref": "#/$defs/ModelProductionDescriptor",
-          "default": {
-            "deployment_platform": null,
-            "capability_deployment_mechanism": null,
-            "interface": {
-              "input": {
-                "description": null,
-                "name": null,
-                "type": null
-              },
-              "output": {
-                "description": null,
-                "name": null,
-                "type": null
-              }
+        "deployment_platform": {
+          "anyOf": [
+            {
+              "type": "string"
             },
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
+            {
+              "type": "null"
             }
-          }
-        }
-      },
-      "title": "ModelDescriptor",
-      "type": "object"
-    },
-    "ModelDevelopmentDescriptor": {
-      "description": "A descriptor for model development considerations.",
-      "properties": {
-        "resources": {
+          ],
+          "default": null,
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
+        },
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
+        },
+        "production_compute_resources": {
           "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
@@ -394,87 +402,21 @@
           ],
           "default": null,
           "title": "Type"
+        },
+        "expected_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Values"
         }
       },
       "title": "ModelIODescriptor",
-      "type": "object"
-    },
-    "ModelInterfaceDescriptor": {
-      "description": "A description of the model interface.",
-      "properties": {
-        "input": {
-          "$ref": "#/$defs/ModelIODescriptor",
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
-        },
-        "output": {
-          "$ref": "#/$defs/ModelIODescriptor",
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
-        }
-      },
-      "title": "ModelInterfaceDescriptor",
-      "type": "object"
-    },
-    "ModelProductionDescriptor": {
-      "description": "A descriptor for model production considerations.",
-      "properties": {
-        "deployment_platform": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Deployment Platform"
-        },
-        "capability_deployment_mechanism": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Capability Deployment Mechanism"
-        },
-        "interface": {
-          "$ref": "#/$defs/ModelInterfaceDescriptor",
-          "default": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
-          }
-        },
-        "resources": {
-          "$ref": "#/$defs/ModelResourcesDescriptor",
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
-        }
-      },
-      "title": "ModelProductionDescriptor",
       "type": "object"
     },
     "ModelResourcesDescriptor": {
@@ -536,11 +478,7 @@
       "description": "The model implementation for the NegotiationCard information.",
       "properties": {
         "system": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/SystemDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/SystemDescriptor",
           "default": {
             "goals": [],
             "problem_type": null,
@@ -562,11 +500,7 @@
           "type": "array"
         },
         "model": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelDescriptor",
           "default": {
             "development_compute_resources": {
               "cpu": null,
@@ -807,33 +741,25 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "system": {
-      "$ref": "#/$defs/SystemDescriptor",
+    "nc_data": {
+      "$ref": "#/$defs/NegotiationCardDataModel",
       "default": {
-        "goals": [],
-        "problem_type": null,
-        "task": null,
-        "usage_context": null,
-        "risks": {
-          "fn": null,
-          "fp": null,
-          "other": null
-        }
-      }
-    },
-    "data": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/DataDescriptor"
-      },
-      "title": "Data",
-      "type": "array"
-    },
-    "model": {
-      "$ref": "#/$defs/ModelDescriptor",
-      "default": {
-        "development": {
-          "resources": {
+        "system": {
+          "goals": [],
+          "problem_type": null,
+          "risks": {
+            "fn": null,
+            "fp": null,
+            "other": null
+          },
+          "task": null,
+          "usage_context": null
+        },
+        "data": [],
+        "model": {
+          "capability_deployment_mechanism": null,
+          "deployment_platform": null,
+          "development_compute_resources": {
             "cpu": null,
             "gpu": null,
             "memory": null,

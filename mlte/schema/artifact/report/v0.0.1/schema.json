@@ -239,50 +239,6 @@
       "title": "GoalDescriptor",
       "type": "object"
     },
-    "IntendedUseDescriptor": {
-      "description": "The model implementation for intended use.",
-      "properties": {
-        "usage_context": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Usage Context"
-        },
-        "production_requirements": {
-          "$ref": "#/$defs/ModelProductionDescriptor",
-          "default": {
-            "deployment_platform": null,
-            "capability_deployment_mechanism": null,
-            "interface": {
-              "input": {
-                "description": null,
-                "name": null,
-                "type": null
-              },
-              "output": {
-                "description": null,
-                "name": null,
-                "type": null
-              }
-            },
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
-          }
-        }
-      },
-      "title": "IntendedUseDescriptor",
-      "type": "object"
-    },
     "LabelDescriptor": {
       "description": "Describes a dataset label.",
       "properties": {
@@ -361,11 +317,7 @@
       "description": "A descriptor for the model.",
       "properties": {
         "development_compute_resources": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelResourcesDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -395,25 +347,26 @@
             }
           ],
           "default": null,
-          "title": "Type"
-        }
-      },
-      "title": "ModelIODescriptor",
-      "type": "object"
-    },
-    "ModelInterfaceDescriptor": {
-      "description": "A description of the model interface.",
-      "properties": {
-        "input": {
-          "$ref": "#/$defs/ModelIODescriptor",
-          "default": {
-            "name": null,
-            "description": null,
-            "type": null
-          }
+          "title": "Capability Deployment Mechanism"
         },
-        "output": {
-          "$ref": "#/$defs/ModelIODescriptor",
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
+        },
+        "production_compute_resources": {
+          "$ref": "#/$defs/ModelResourcesDescriptor",
           "default": {
             "cpu": null,
             "gpu": null,
@@ -452,13 +405,10 @@
           "default": null,
           "title": "Description"
         },
-        "interface": {
-          "$ref": "#/$defs/ModelInterfaceDescriptor",
-          "default": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
             },
             {
               "type": "null"
@@ -467,14 +417,17 @@
           "default": null,
           "title": "Type"
         },
-        "resources": {
-          "$ref": "#/$defs/ModelResourcesDescriptor",
-          "default": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
+        "expected_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Values"
         }
       },
       "title": "ModelIODescriptor",
@@ -539,11 +492,7 @@
       "description": "The model implementation for the NegotiationCard information.",
       "properties": {
         "system": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/SystemDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/SystemDescriptor",
           "default": {
             "goals": [],
             "problem_type": null,
@@ -565,11 +514,7 @@
           "type": "array"
         },
         "model": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/ModelDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/ModelDescriptor",
           "default": {
             "development_compute_resources": {
               "cpu": null,
@@ -806,11 +751,7 @@
           "title": "Usage Context"
         },
         "risks": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RiskDescriptor"
-            }
-          ],
+          "$ref": "#/$defs/RiskDescriptor",
           "default": {
             "fp": null,
             "fn": null,
@@ -833,22 +774,8 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "summary": {
-      "$ref": "#/$defs/SummaryDescriptor",
-      "default": {
-        "problem_type": null,
-        "task": null
-      }
-    },
-    "performance": {
-      "$ref": "#/$defs/PerformanceDesciptor",
-      "default": {
-        "goals": [],
-        "validated_spec_id": null
-      }
-    },
-    "intended_use": {
-      "$ref": "#/$defs/IntendedUseDescriptor",
+    "nc_data": {
+      "$ref": "#/$defs/NegotiationCardDataModel",
       "default": {
         "system": {
           "goals": [],
@@ -883,21 +810,17 @@
         "system_requirements": []
       }
     },
-    "risks": {
-      "$ref": "#/$defs/RiskDescriptor",
-      "default": {
-        "fp": null,
-        "fn": null,
-        "other": null
-      }
-    },
-    "data": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/DataDescriptor"
-      },
-      "title": "Data",
-      "type": "array"
+    "validated_spec_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Validated Spec Id"
     },
     "comments": {
       "default": [],
