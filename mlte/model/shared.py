@@ -106,26 +106,17 @@ class ModelIODescriptor(BaseModel):
     type: Optional[str] = None
     """A description of the type of data for this input or output."""
 
-
-class ModelInterfaceDescriptor(BaseModel):
-    """A description of the model interface."""
-
-    input: ModelIODescriptor = ModelIODescriptor()
-    """The model input specification."""
-
-    output: ModelIODescriptor = ModelIODescriptor()
-    """The model output specification."""
+    expected_values: Optional[str] = None
+    """Expected values for this input or output."""
 
 
-class ModelDevelopmentDescriptor(BaseModel):
-    """A descriptor for model development considerations."""
+class ModelDescriptor(BaseModel):
+    """A descriptor for the model."""
 
-    resources: ModelResourcesDescriptor = ModelResourcesDescriptor()
+    development_compute_resources: ModelResourcesDescriptor = (
+        ModelResourcesDescriptor()
+    )
     """A description of model development resource requirements."""
-
-
-class ModelProductionDescriptor(BaseModel):
-    """A descriptor for model production considerations."""
 
     deployment_platform: Optional[str] = None
     """A description of the platform used to deploy the model into the system."""
@@ -133,21 +124,16 @@ class ModelProductionDescriptor(BaseModel):
     capability_deployment_mechanism: Optional[str] = None
     """A description of how the model capabilities will be made available."""
 
-    interface: ModelInterfaceDescriptor = ModelInterfaceDescriptor()
-    """A description of the model interface."""
+    input_specification: List[ModelIODescriptor] = []
+    """The model input specification."""
 
-    resources: ModelResourcesDescriptor = ModelResourcesDescriptor()
+    output_specification: List[ModelIODescriptor] = []
+    """The model output specification."""
+
+    production_compute_resources: ModelResourcesDescriptor = (
+        ModelResourcesDescriptor()
+    )
     """A description of model production resource requirements."""
-
-
-class ModelDescriptor(BaseModel):
-    """A descriptor for the model."""
-
-    development: ModelDevelopmentDescriptor = ModelDevelopmentDescriptor()
-    """A description of model development considerations."""
-
-    production: ModelProductionDescriptor = ModelProductionDescriptor()
-    """A description of model production considerations."""
 
 
 # -----------------------------------------------------------------------------
@@ -252,3 +238,48 @@ class QASDescriptor(BaseModel):
 
     measure: Optional[str] = None
     """Used to determine if the goals of the responses of the scenario have been achieved."""
+
+
+# -----------------------------------------------------------------------------
+# System Subcomponents
+# -----------------------------------------------------------------------------
+
+
+class SystemDescriptor(BaseModel):
+    """A description of the system context."""
+
+    goals: List[GoalDescriptor] = []
+    """A description of system goals."""
+
+    problem_type: Optional[ProblemType] = None
+    """A description of the machine learning problem type."""
+
+    task: Optional[str] = None
+    """A description of the machine learning task."""
+
+    usage_context: Optional[str] = None
+    """A description of the usage context."""
+
+    risks: RiskDescriptor = RiskDescriptor()
+    """A description of risks associated with system failures."""
+
+
+# -----------------------------------------------------------------------------
+# NegotiationCardDataModel
+# -----------------------------------------------------------------------------
+
+
+class NegotiationCardDataModel(BaseModel):
+    """The model implementation for the NegotiationCard information."""
+
+    system: SystemDescriptor = SystemDescriptor()
+    """The descriptor for the system in which the model is integrated."""
+
+    data: List[DataDescriptor] = []
+    """A collection of descriptors for relevant data."""
+
+    model: ModelDescriptor = ModelDescriptor()
+    """The descriptor for the model."""
+
+    system_requirements: List[QASDescriptor] = []
+    """The descriptor of the system-level quality requirements."""

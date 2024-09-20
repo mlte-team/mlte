@@ -8,22 +8,25 @@ from __future__ import annotations
 
 import typing
 from copy import deepcopy
-from typing import List
+from typing import List, Optional
 
 import mlte.store.error as errors
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.model.shared import DataDescriptor, RiskDescriptor
+from mlte.model.shared import (
+    DataDescriptor,
+    ModelDescriptor,
+    NegotiationCardDataModel,
+    QASDescriptor,
+    SystemDescriptor,
+)
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.model import (
     CommentDescriptor,
-    IntendedUseDescriptor,
-    PerformanceDesciptor,
     QuantitiveAnalysisDescriptor,
     ReportModel,
-    SummaryDescriptor,
 )
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 
@@ -36,30 +39,30 @@ class Report(Artifact):
     def __init__(
         self,
         identifier: str = DEFAULT_REPORT_ID,
-        summary: SummaryDescriptor = SummaryDescriptor(),
-        performance: PerformanceDesciptor = PerformanceDesciptor(),
-        intended_use: IntendedUseDescriptor = IntendedUseDescriptor(),
-        risks: RiskDescriptor = RiskDescriptor(),
+        system: SystemDescriptor = SystemDescriptor(),
+        model: ModelDescriptor = ModelDescriptor(),
         data: List[DataDescriptor] = [],
+        system_requirements: List[QASDescriptor] = [],
+        validated_spec_id: Optional[str] = None,
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
     ) -> None:
         super().__init__(identifier, ArtifactType.REPORT)
 
-        self.summary = summary
-        """A summary of the evaluation."""
-
-        self.performance = performance
-        """A summary of model performance evaluation."""
-
-        self.intended_use = intended_use
-        """The intended use of the model under evaluation."""
-
-        self.risks = risks
-        """A description of the risks for the model."""
+        self.system = system
+        """A system requirements."""
 
         self.data = data
         """A description of the data used during model evaluation."""
+
+        self.model = model
+        """The intended use of the model under evaluation."""
+
+        self.system_requirements = system_requirements
+        """A description of the system requirements."""
+
+        self.validated_spec_id = validated_spec_id
+        """A summary of model performance evaluation."""
 
         self.comments = comments
         """A collection of comments for the report."""
@@ -72,11 +75,13 @@ class Report(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ReportModel(
-                summary=self.summary,
-                performance=self.performance,
-                intended_use=self.intended_use,
-                risks=self.risks,
-                data=self.data,
+                nc_data=NegotiationCardDataModel(
+                    system=self.system,
+                    data=self.data,
+                    model=self.model,
+                    system_requirements=self.system_requirements,
+                ),
+                validated_spec_id=self.validated_spec_id,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
             ),
@@ -89,7 +94,7 @@ class Report(Artifact):
         :param store: The store in which to save the artifact
         :raises RuntimeError: On broken invariant
         """
-        if self.performance.validated_spec_id is None:
+        if self.validated_spec_id is None:
             return
 
         with ManagedArtifactSession(store.session()) as handle:
@@ -97,16 +102,16 @@ class Report(Artifact):
                 artifact = handle.read_artifact(
                     context.model,
                     context.version,
-                    self.performance.validated_spec_id,
+                    self.validated_spec_id,
                 )
             except errors.ErrorNotFound:
                 raise RuntimeError(
-                    f"Validated specification with identifier {self.performance.validated_spec_id} not found."
+                    f"Validated specification with identifier {self.validated_spec_id} not found."
                 )
 
         if not artifact.header.type == ArtifactType.VALIDATED_SPEC:
             raise RuntimeError(
-                f"Validated specification with identifier {self.performance.validated_spec_id} not found."
+                f"Validated specification with identifier {self.validated_spec_id} not found."
             )
 
     def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
@@ -125,11 +130,11 @@ class Report(Artifact):
         body = typing.cast(ReportModel, model.body)
         return Report(
             identifier=model.header.identifier,
-            summary=body.summary,
-            performance=body.performance,
-            intended_use=body.intended_use,
-            risks=body.risks,
-            data=body.data,
+            system=body.nc_data.system,
+            data=body.nc_data.data,
+            model=body.nc_data.model,
+            system_requirements=body.nc_data.system_requirements,
+            validated_spec_id=body.validated_spec_id,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
         )
@@ -140,24 +145,13 @@ class Report(Artifact):
         :param artifact: The artifact to populate from
         :return: The new report artifact with fields populated
         """
-        summary = deepcopy(self.summary)
-        summary.problem_type = artifact.system.problem_type
-        summary.task = artifact.system.task
-
-        performance = deepcopy(self.performance)
-        performance.goals = artifact.system.goals
-
-        intended_use = deepcopy(self.intended_use)
-        intended_use.usage_context = artifact.system.usage_context
-        intended_use.production_requirements = artifact.model.production
-
         return Report(
             identifier=self.identifier,
-            summary=summary,
-            performance=performance,
-            intended_use=intended_use,
-            risks=deepcopy(artifact.system.risks),
+            system=deepcopy(artifact.system),
             data=deepcopy(artifact.data),
+            model=deepcopy(artifact.model),
+            system_requirements=deepcopy(artifact.qas),
+            validated_spec_id=self.validated_spec_id,
             comments=deepcopy(self.comments),
             quantitative_analysis=deepcopy(self.quantitative_analysis),
         )

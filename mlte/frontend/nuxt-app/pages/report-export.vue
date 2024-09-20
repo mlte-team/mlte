@@ -27,7 +27,7 @@
       <h3 class="insection-margin">Overview</h3>
       <hr />
       <div
-        v-for="(goal, goalIndex) in pageData.performance.goals"
+        v-for="(goal, goalIndex) in pageData.nc_data.system.goals"
         :key="goalIndex"
       >
         <div class="info-box-row insection-margin">
@@ -100,30 +100,30 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ pageData.summary.problem_type }}
+          {{ pageData.nc_data.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ pageData.summary.task }}
+          {{ pageData.nc_data.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ pageData.intended_use.usage_context }}
+          {{ pageData.nc_data.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ pageData.risks.fp }}
+          {{ pageData.nc_data.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ pageData.risks.fn }}
+          {{ pageData.nc_data.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br />
-          {{ pageData.risks.other }}
+          {{ pageData.nc_data.system.risks.other }}
         </div>
       </div>
     </div>
@@ -163,14 +163,14 @@ await useFetch(
         if (isValidReport(response._data)) {
           pageData.value = response._data.body;
 
-          if (response._data.body.performance.validated_spec_id) {
-            pageData.value.performance.validated_spec_id =
-              response._data.body.performance.validated_spec_id;
+          if (response._data.body.validated_spec_id) {
+            pageData.value.validated_spec_id =
+              response._data.body.validated_spec_id;
             const validatedSpec = await fetchArtifact(
               token.value,
               model,
               version,
-              pageData.value.performance.validated_spec_id,
+              pageData.value.validated_spec_id,
             );
             findings.value = loadFindings(validatedSpec);
           }
@@ -182,31 +182,6 @@ await useFetch(
     },
   },
 );
-
-// Load findings from a validated specication.
-function loadFindings(proxyObject: object) {
-  console.log("loading findings");
-  const findings = [];
-  // TODO(Kyle): Standardize conversion of proxy objects.
-  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.spec.properties.forEach((property) => {
-    // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(
-      Object.entries(validatedSpec.body.results[property.name]),
-    );
-    results.forEach((value) => {
-      const finding = {
-        status: value.type,
-        property: property.name,
-        measurement: value.metadata.measurement_type,
-        evidence_id: value.metadata.identifier.name,
-        message: value.message,
-      };
-      findings.push(finding);
-    });
-  });
-  return findings;
-}
 </script>
 
 <style>

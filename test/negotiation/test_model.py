@@ -15,8 +15,9 @@ from mlte.model.shared import (
     MetricDescriptor,
     ProblemType,
     RiskDescriptor,
+    SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
+from mlte.negotiation.model import NegotiationCardModel
 from test.fixture.artifact import make_complete_negotiation_card
 
 # -----------------------------------------------------------------------------

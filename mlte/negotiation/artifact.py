@@ -12,8 +12,14 @@ from typing import List
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.model.shared import DataDescriptor, ModelDescriptor, QASDescriptor
-from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
+from mlte.model.shared import (
+    DataDescriptor,
+    ModelDescriptor,
+    NegotiationCardDataModel,
+    QASDescriptor,
+    SystemDescriptor,
+)
+from mlte.negotiation.model import NegotiationCardModel
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
 
@@ -48,26 +54,25 @@ class NegotiationCard(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=NegotiationCardModel(
-                system=self.system,
-                data=self.data,
-                model=self.model,
-                system_requirements=self.qas,
+                nc_data=NegotiationCardDataModel(
+                    system=self.system,
+                    data=self.data,
+                    model=self.model,
+                    system_requirements=self.qas,
+                ),
             ),
         )
 
     @classmethod
     def from_model(cls, model: ArtifactModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
-        assert (
-            model.header.type == ArtifactType.NEGOTIATION_CARD
-        ), "Broken precondition."
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,
-            system=body.system,
-            data=body.data,
-            model=body.model,
-            qas=body.system_requirements,
+            system=body.nc_data.system,
+            data=body.nc_data.data,
+            model=body.nc_data.model,
+            qas=body.nc_data.system_requirements,
         )
 
     @staticmethod

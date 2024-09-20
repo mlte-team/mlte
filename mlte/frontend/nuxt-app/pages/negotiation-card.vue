@@ -82,7 +82,11 @@
     </div>
 
     <h2 class="section-header">System Information</h2>
-    <UsaTextarea v-model="form.system.usage_context" style="margin-bottom: 1em">
+
+    <UsaTextarea
+      v-model="form.nc_data.system.usage_context"
+      style="margin-bottom: 1em"
+    >
       <template #label>
         Usage Context for the Model
         <InfoIcon>
@@ -109,7 +113,10 @@
           the system.
         </template>
       </SubHeader>
-      <div v-for="(goal, goalIndex) in form.system.goals" :key="goalIndex">
+      <div
+        v-for="(goal, goalIndex) in form.nc_data.system.goals"
+        :key="goalIndex"
+      >
         <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
         <UsaTextInput v-model="goal.description">
           <template #label>
@@ -175,16 +182,21 @@
         <AddButton class="margin-button" @click="addMetric(goalIndex)">
           Add Metric
         </AddButton>
-        <DeleteButton @click="deleteGoal(goalIndex)">
-          Delete Goal
-        </DeleteButton>
+        <div class="inline-button" style="vertical-align: bottom">
+          <DeleteButton @click="deleteGoal(goalIndex)">
+            Delete Goal
+          </DeleteButton>
+        </div>
         <hr />
       </div>
 
       <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
     </div>
 
-    <UsaSelect v-model="form.system.problem_type" :options="problemTypeOptions">
+    <UsaSelect
+      v-model="form.nc_data.system.problem_type"
+      :options="problemTypeOptions"
+    >
       <template #label>
         ML Problem Type
         <InfoIcon>
@@ -199,7 +211,7 @@
       </template>
     </UsaSelect>
 
-    <UsaTextInput v-model="form.system.task">
+    <UsaTextInput v-model="form.nc_data.system.task">
       <template #label>
         ML Task
         <InfoIcon>
@@ -212,7 +224,7 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.risks.fp">
+    <UsaTextInput v-model="form.nc_data.system.risks.fp">
       <template #label>
         False Positive Risk
         <InfoIcon>
@@ -229,7 +241,7 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.risks.fn">
+    <UsaTextInput v-model="form.nc_data.system.risks.fn">
       <template #label>
         False Negative Risk
         <InfoIcon>
@@ -247,7 +259,7 @@
       </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.system.risks.other">
+    <UsaTextInput v-model="form.nc_data.system.risks.other">
       <template #label>
         Other Risks of Producing Incorrect Results
         <InfoIcon>
@@ -264,7 +276,10 @@
           Details of the data that will influence model development efforts.
         </template>
       </SubHeader>
-      <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
+      <div
+        v-for="(dataItem, dataItemIndex) in form.nc_data.data"
+        :key="dataItemIndex"
+      >
         <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
         <div>
           <UsaTextInput v-model="dataItem.description">
@@ -390,7 +405,7 @@
             </div>
             <div class="inline-button">
               <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
-                Delete label
+                Delete Label
               </DeleteButton>
             </div>
           </div>
@@ -565,13 +580,17 @@
       </SubHeader>
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.development.resources.gpu">
+          <UsaTextInput
+            v-model="form.nc_data.model.development_compute_resources.gpu"
+          >
             <template #label> Graphics Processing Units (GPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.development.resources.cpu">
+          <UsaTextInput
+            v-model="form.nc_data.model.development_compute_resources.cpu"
+          >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
@@ -579,20 +598,24 @@
 
       <div>
         <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.development.resources.memory">
+          <UsaTextInput
+            v-model="form.nc_data.model.development_compute_resources.memory"
+          >
             <template #label> Memory </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.development.resources.storage">
+          <UsaTextInput
+            v-model="form.nc_data.model.development_compute_resources.storage"
+          >
             <template #label> Storage </template>
           </UsaTextInput>
         </div>
       </div>
     </div>
 
-    <UsaTextarea v-model="form.model.production.deployment_platform">
+    <UsaTextarea v-model="form.nc_data.model.deployment_platform">
       <template #label>
         Deployment Platform
         <InfoIcon>
@@ -606,9 +629,7 @@
       </template>
     </UsaTextarea>
 
-    <UsaTextarea
-      v-model="form.model.production.capability_deployment_mechanism"
-    >
+    <UsaTextarea v-model="form.nc_data.model.capability_deployment_mechanism">
       <template #label>
         Capability Deployment Mechanism
         <InfoIcon>
@@ -625,155 +646,17 @@
       </template>
     </UsaTextarea>
 
-    <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
-        Input Specification
-        <template #example>
-          <UsaTable
-            :headers="inputModalHeaders"
-            :rows="inputModalRows"
-            borderless
-            class="table"
-          />
-        </template>
-        <template #info>
-          Describe the input data type and format needed for model to conduct
-          inference.
-        </template>
-      </SubHeader>
-      <UsaTextInput v-model="form.model.production.interface.input.name">
-        <template #label>
-          Input Name
-          <InfoIcon>
-            Input name.
-            <br />
-            <br />
-            <i>Example: Audio Recording.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+    <FormFieldsInputSpecification
+      v-model="form.nc_data.model.input_specification"
+    />
 
-      <UsaTextarea v-model="form.model.production.interface.input.description">
-        <template #label>
-          Input Description
-          <InfoIcon>
-            Short input description.
-            <br />
-            <br />
-            <i>Example: Audio recording file for matching.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
+    <FormFieldsOutputSpecification
+      v-model="form.nc_data.model.output_specification"
+    />
 
-      <UsaTextInput v-model="form.model.production.interface.input.type">
-        <template #label>
-          Input Type
-          <InfoIcon>
-            Field type, e.g., number, string, Boolean, data, image, audio.
-            <br />
-            <br />
-            <i>Example: Audio.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-    </div>
-
-    <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
-        Output Specification
-        <template #example>
-          <UsaTable
-            :headers="outputModalHeaders"
-            :rows="outputModalRows"
-            borderless
-            class="table"
-          />
-        </template>
-        <template #info>
-          Describe the output format and specification needed for the system to
-          ingest model results.
-        </template>
-      </SubHeader>
-      <UsaTextInput v-model="form.model.production.interface.output.name">
-        <template #label>
-          Output Name
-          <InfoIcon>
-            Output name.
-            <br />
-            <br />
-            <i>Example: Matching recordings.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-
-      <UsaTextarea v-model="form.model.production.interface.output.description">
-        <template #label>
-          Output Description
-          <InfoIcon>
-            Short output description.
-            <br />
-            <br />
-            <i>Example: Set of matching recordings from the database.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
-
-      <UsaTextInput v-model="form.model.production.interface.output.type">
-        <template #label>
-          Output Type
-          <InfoIcon>
-            Field type, e.g., number, string, Boolean, data, image, audio.
-            <br />
-            <br />
-            <i
-              >Example: Vector of Strings with IDs of matching recordings — an
-              empty <br />
-              vector means that there were no matches.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-    </div>
-
-    <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
-        Production Compute Resources
-        <template #example>
-          Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
-        </template>
-        <template #info>
-          Describe the amount and type of compute resources needed for
-          inference.
-        </template>
-      </SubHeader>
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.production.resources.gpu">
-            <template #label> Graphics Processing Units (GPUs) </template>
-          </UsaTextInput>
-        </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.production.resources.cpu">
-            <template #label> Central Processing Units (CPUs) </template>
-          </UsaTextInput>
-        </div>
-      </div>
-
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput v-model="form.model.production.resources.memory">
-            <template #label> Memory </template>
-          </UsaTextInput>
-        </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput v-model="form.model.production.resources.storage">
-            <template #label> Storage </template>
-          </UsaTextInput>
-        </div>
-      </div>
-    </div>
+    <FormFieldsProductionCompute
+      v-model="form.nc_data.model.production_compute_resources"
+    />
 
     <h2 class="section-header">System Requirements</h2>
     <p>
@@ -798,7 +681,8 @@
         </template>
       </SubHeader>
       <div
-        v-for="(requirement, requirementIndex) in form.system_requirements"
+        v-for="(requirement, requirementIndex) in form.nc_data
+          .system_requirements"
         :key="requirementIndex"
       >
         <h3 class="no-margin-sub-header">
@@ -1029,35 +913,6 @@ const dataModalRows = ref([
   },
 ]);
 
-const inputModalHeaders = ref([
-  { id: "inputName", label: "Input Name", sortable: false },
-  { id: "inputDescription", label: "Input Description", sortable: false },
-  { id: "inputType", label: "Input Type", sortable: false },
-]);
-const inputModalRows = ref([
-  {
-    id: "audio",
-    inputName: "Audio Recording",
-    inputDescription: "Audio recording file for matching",
-    inputType: "Audio",
-  },
-]);
-
-const outputModalHeaders = ref([
-  { id: "outputName", label: "Output Name", sortable: false },
-  { id: "outputDescription", label: "Output Description", sortable: false },
-  { id: "outputType", label: "Output Type", sortable: false },
-]);
-const outputModalRows = ref([
-  {
-    id: "recording",
-    outputName: "Matching Recordings",
-    outputDescription: "Set of matching recordings from the database",
-    outputType:
-      "Vector of Strings with IDs of matching recordings — an empty vector means that there were no matches",
-  },
-]);
-
 const systemModalHeaders = ref([
   { id: "systemQuality", label: "System Quality", sortable: false },
   { id: "stimulus", label: "Stimulus", sortable: false },
@@ -1107,83 +962,86 @@ const systemModalRows = ref([
   },
 ]);
 
+const creator = ref("");
+const timestamp = ref("");
 const form = ref({
-  creator: "",
-  timestamp: "",
-  system: {
-    goals: [
+  artifact_type: "negotiation_card",
+  nc_data: {
+    system: {
+      goals: [
+        {
+          description: "",
+          metrics: [
+            {
+              description: "",
+              baseline: "",
+            },
+          ],
+        },
+      ],
+      problem_type: "classification",
+      task: "",
+      usage_context: "",
+      risks: {
+        fp: "",
+        fn: "",
+        other: "",
+      },
+    },
+    data: [
       {
         description: "",
-        metrics: [
+        source: "",
+        classification: "unclassified",
+        access: "",
+        labeling_method: "",
+        labels: [
           {
+            name: "",
             description: "",
-            baseline: "",
+            percentage: 0,
           },
         ],
+        fields: [
+          {
+            name: "",
+            description: "",
+            type: "",
+            expected_values: "",
+            missing_values: "",
+            special_values: "",
+          },
+        ],
+        rights: "",
+        policies: "",
       },
     ],
-    problem_type: "classification",
-    task: "",
-    usage_context: "",
-    risks: {
-      fp: "",
-      fn: "",
-      other: "",
-    },
-  },
-  data: [
-    {
-      description: "",
-      source: "",
-      classification: "unclassified",
-      access: "",
-      labeling_method: "",
-      labels: [
-        {
-          name: "",
-          description: "",
-          percentage: 0,
-        },
-      ],
-      fields: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-          missing_values: "",
-          special_values: "",
-        },
-      ],
-      rights: "",
-      policies: "",
-    },
-  ],
-  model: {
-    development: {
-      resources: {
+    model: {
+      development_compute_resources: {
         gpu: "0",
         cpu: "0",
         memory: "0",
         storage: "0",
       },
-    },
-    production: {
       deployment_platform: "",
       capability_deployment_mechanism: "",
-      interface: {
-        input: {
+      input_specification: [
+        {
           name: "",
           description: "",
           type: "",
+          expected_values: "",
         },
-        output: {
+      ],
+      output_specification: [
+        {
           name: "",
           description: "",
           type: "",
+          expected_values: "",
         },
-      },
-      resources: {
+      ],
+      production_compute_resources: {
         gpu: "0",
         cpu: "0",
         memory: "0",
@@ -1201,10 +1059,6 @@ const form = ref({
       measure: "<Response Measure>",
     },
   ],
-});
-
-const formErrors = ref({
-  identifier: false,
 });
 
 // TODO: Pull these from the schema
@@ -1264,27 +1118,23 @@ if (useRoute().query.artifactId !== undefined) {
       },
       onResponse({ response }) {
         if (isValidNegotiation(response._data)) {
-          form.value.creator = response._data.header.creator;
-          form.value.timestamp = new Date(
+          creator.value = response._data.header.creator;
+          timestamp.value = new Date(
             response._data.header.timestamp * 1000,
           ).toLocaleString("en-US");
-          form.value.system = response._data.body.system;
-          form.value.data = response._data.body.data;
-          form.value.model = response._data.body.model;
-          form.value.system_requirements =
-            response._data.body.system_requirements;
+          form.value = response._data.body;
 
-          const problemType = response._data.body.system.problem_type;
+          const problemType = response._data.body.nc_data.system.problem_type;
           if (
             problemTypeOptions.find((x) => x.value === problemType)?.value !==
             undefined
           ) {
-            form.value.system.problem_type = problemTypeOptions.find(
+            form.value.nc_data.system.problem_type = problemTypeOptions.find(
               (x) => x.value === problemType,
             )?.value;
           }
 
-          response._data.data.forEach((item) => {
+          response._data.body.nc_data.data.forEach((item) => {
             const classification = item.classification;
             if (
               classificationOptions.find((x) => x.value === classification)
@@ -1334,13 +1184,7 @@ async function submit() {
       timestamp: -1,
       creator: "",
     },
-    body: {
-      artifact_type: "negotiation_card",
-      system: form.value.system,
-      data: form.value.data,
-      model: form.value.model,
-      system_requirements: form.value.system_requirements,
-    },
+    body: form.value,
   };
 
   if (isValidNegotiation(artifact)) {
@@ -1387,7 +1231,11 @@ async function submit() {
           },
         },
       );
-    } catch {}
+      successfulArtifactSubmission("negotiation card", identifier);
+      forceSaveParam.value = true;
+    } catch {
+      return;
+    }
   } else {
     console.log("Invalid document attempting to be submitted.");
   }
@@ -1409,25 +1257,38 @@ function descriptorUpload(event: Event, descriptorName: string) {
               metric: string;
               baseline: string;
             }) => {
-              addGoal();
-              const lastGoalIndex = form.value.system.goals.length - 1;
+              let lastGoalIndex = form.value.nc_data.system.goals.length - 1;
+              if (!goalEmpty(form.value.nc_data.system.goals[lastGoalIndex])) {
+                addGoal();
+                lastGoalIndex += 1;
+              }
 
-              form.value.system.goals[lastGoalIndex].description = goal.goal;
-              form.value.system.goals[lastGoalIndex].metrics[0].description =
-                goal.metric;
-              form.value.system.goals[lastGoalIndex].metrics[0].baseline =
-                goal.baseline;
+              form.value.nc_data.system.goals[lastGoalIndex].description =
+                goal.goal;
+              form.value.nc_data.system.goals[
+                lastGoalIndex
+              ].metrics[0].description = goal.metric;
+              form.value.nc_data.system.goals[
+                lastGoalIndex
+              ].metrics[0].baseline = goal.baseline;
             },
           );
-          form.value.system.task = document.task;
-          form.value.system.problem_type = document.ml_problem_type.ml_problem;
-          form.value.system.usage_context = document.usage_context;
-          form.value.system.risks.fp = document.risks.risk_fp;
-          form.value.system.risks.fn = document.risks.risk_fn;
-          form.value.system.risks.other = document.risks.risk_other;
+          form.value.nc_data.system.task = document.task;
+          form.value.nc_data.system.problem_type =
+            document.ml_problem_type.ml_problem
+              .toLowerCase()
+              .split(" ")
+              .join("_");
+          form.value.nc_data.system.usage_context = document.usage_context;
+          form.value.nc_data.system.risks.fp = document.risks.risk_fp;
+          form.value.nc_data.system.risks.fn = document.risks.risk_fn;
+          form.value.nc_data.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
-          addDataItem();
-          const lastDataIndex = form.value.data.length - 1;
+          let lastDataIndex = form.value.nc_data.data.length - 1;
+          if (!dataItemEmpty(form.value.nc_data.data[lastDataIndex])) {
+            addDataItem();
+            lastDataIndex += 1;
+          }
 
           let dataSourcesStr = "";
           document.data_sources.forEach(
@@ -1446,24 +1307,27 @@ function descriptorUpload(event: Event, descriptorName: string) {
               }
             },
           );
-          form.value.data[lastDataIndex].source = dataSourcesStr;
+          form.value.nc_data.data[lastDataIndex].source = dataSourcesStr;
 
-          form.value.data[lastDataIndex].labels.splice(0, 1);
+          form.value.nc_data.data[lastDataIndex].labels.splice(0, 1);
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
               addLabel(lastDataIndex);
-              form.value.data[lastDataIndex].labels[i].description =
+              form.value.nc_data.data[lastDataIndex].labels[i].name =
                 label.label;
-              form.value.data[lastDataIndex].labels[i].percentage =
+              form.value.nc_data.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
             },
           );
 
-          form.value.data[lastDataIndex].rights = document.data_rights;
-          form.value.data[lastDataIndex].policies = document.data_policies;
+          form.value.nc_data.data[lastDataIndex].rights = document.data_rights;
+          form.value.nc_data.data[lastDataIndex].policies =
+            document.data_policies;
+          form.value.nc_data.data[lastDataIndex].description =
+            document.dataset_description;
 
-          form.value.data[lastDataIndex].fields.splice(0, 1);
-          document.fields.forEach(
+          form.value.nc_data.data[lastDataIndex].fields.splice(0, 1);
+          document.schema.forEach(
             (
               fields: {
                 field_name: string;
@@ -1476,32 +1340,72 @@ function descriptorUpload(event: Event, descriptorName: string) {
               i: number,
             ) => {
               addField(lastDataIndex);
-              form.value.data[lastDataIndex].fields[i].name = fields.field_name;
-              form.value.data[lastDataIndex].fields[i].description =
+              form.value.nc_data.data[lastDataIndex].fields[i].name =
+                fields.field_name;
+              form.value.nc_data.data[lastDataIndex].fields[i].description =
                 fields.field_description;
-              form.value.data[lastDataIndex].fields[i].type = fields.field_type;
-              form.value.data[lastDataIndex].fields[i].expected_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].type =
+                fields.field_type;
+              form.value.nc_data.data[lastDataIndex].fields[i].expected_values =
                 fields.expected_values;
-              form.value.data[lastDataIndex].fields[i].missing_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].missing_values =
                 fields.interpret_missing;
-              form.value.data[lastDataIndex].fields[i].special_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].special_values =
                 fields.interpret_special;
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.model.development.resources.gpu =
+          form.value.nc_data.model.development_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.development.resources.cpu =
+          form.value.nc_data.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.development.resources.memory =
+          form.value.nc_data.model.development_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.development.resources.storage =
+          form.value.nc_data.model.development_compute_resources.storage =
             document.computing_resources.storage;
 
-          let outputString = "";
-          if (form.value.model.production.interface.output.description !== "") {
-            outputString += "\n\n";
-          }
+            document.upstream_components.forEach(
+            (component: {
+              component_name: string;
+              output_spec: [
+                {
+                  item_name: string;
+                  item_description: string;
+                  item_type: string;
+                  expected_values: string;
+                },
+              ];
+              ml_component: boolean;
+            }) => {
+              component.output_spec.forEach((spec) => {
+                let lastSpecIndex =
+                  form.value.nc_data.model.input_specification.length - 1;
+                if (
+                  !specEmpty(
+                    form.value.nc_data.model.input_specification[
+                      lastSpecIndex
+                    ],
+                  )
+                ) {
+                  form.value.nc_data.model.input_specification.push({
+                    name: "",
+                    description: "",
+                    type: "",
+                    expected_values: "",
+                  });
+                  lastSpecIndex += 1;
+                }
+
+                form.value.nc_data.model.input_specification[lastSpecIndex] = {
+                  name: component.component_name + "." + spec.item_name,
+                  description: spec.item_description,
+                  type: spec.item_type,
+                  expected_values: spec.expected_values,
+                };
+              });
+            },
+          );
+
           document.downstream_components.forEach(
             (component: {
               component_name: string;
@@ -1515,48 +1419,125 @@ function descriptorUpload(event: Event, descriptorName: string) {
               ];
               ml_component: boolean;
             }) => {
-              outputString +=
-                "Component Name: " + component.component_name + "\n";
-              outputString += "ML Component: " + component.ml_component + "\n";
-              component.input_spec.forEach(
-                (spec: {
-                  item_name: string;
-                  item_description: string;
-                  item_type: string;
-                  expected_values: string;
-                }) => {
-                  outputString += spec.item_name + "\n";
-                  outputString += spec.item_description + "\n";
-                  outputString += spec.item_type + "\n";
-                  outputString += spec.expected_values + "\n";
-                },
-              );
-              outputString += "\n";
+              component.input_spec.forEach((spec) => {
+                let lastSpecIndex =
+                  form.value.nc_data.model.output_specification.length - 1;
+                if (
+                  !specEmpty(
+                    form.value.nc_data.model.output_specification[
+                      lastSpecIndex
+                    ],
+                  )
+                ) {
+                  form.value.nc_data.model.output_specification.push({
+                    name: "",
+                    description: "",
+                    type: "",
+                    expected_values: "",
+                  });
+                  lastSpecIndex += 1;
+                }
+
+                form.value.nc_data.model.output_specification[lastSpecIndex] = {
+                  name: component.component_name + "." + spec.item_name,
+                  description: spec.item_description,
+                  type: spec.item_type,
+                  expected_values: spec.expected_values,
+                };
+              });
             },
           );
-          outputString = outputString.substring(0, outputString.length - 2);
-          form.value.model.production.interface.output.description +=
-            outputString;
         } else if (descriptorName === "Production Environment") {
-          form.value.model.production.resources.gpu =
+          form.value.nc_data.model.production_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.production.resources.cpu =
+          form.value.nc_data.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.production.resources.memory =
+          form.value.nc_data.model.production_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.production.resources.storage =
+          form.value.nc_data.model.production_compute_resources.storage =
             document.computing_resources.storage;
         }
       } catch (err) {
         console.error("Invalid JSON or error in parsing file.");
+        console.log(err);
       }
     };
     reader.readAsText(file);
   }
 }
 
+function goalEmpty(goal) {
+  let isEmpty = true;
+
+  if (goal.description !== "") {
+    isEmpty = false;
+  }
+
+  goal.metrics.forEach((metric) => {
+    if (metric.description !== "" || metric.baseline !== "") {
+      isEmpty = false;
+    }
+  });
+
+  return isEmpty;
+}
+
+function dataItemEmpty(dataItem) {
+  let isEmpty = true;
+
+  if (
+    dataItem.description !== "" ||
+    dataItem.source !== "" ||
+    dataItem.classification !== "unclassified" ||
+    dataItem.access !== "" ||
+    dataItem.labeling_method !== ""
+  ) {
+    isEmpty = false;
+  }
+
+  dataItem.labels.forEach((label) => {
+    if (
+      label.name !== "" ||
+      label.description !== "" ||
+      label.percentage !== 0
+    ) {
+      isEmpty = false;
+    }
+  });
+
+  dataItem.fields.forEach((field) => {
+    if (
+      field.name !== "" ||
+      field.description !== "" ||
+      field.type !== "" ||
+      field.expected_values !== "" ||
+      field.missing_values !== "" ||
+      field.special_values !== ""
+    ) {
+      isEmpty = false;
+    }
+  });
+
+  return isEmpty;
+}
+
+function specEmpty(spec) {
+  let isEmpty = true;
+
+  if (
+    spec.name !== "" ||
+    spec.description !== "" ||
+    spec.type !== "" ||
+    spec.expected_values !== ""
+  ) {
+    isEmpty = false;
+  }
+
+  return isEmpty;
+}
+
 function addGoal() {
-  form.value.system.goals.push({
+  form.value.nc_data.system.goals.push({
     description: "",
     metrics: [{ description: "", baseline: "" }],
   });
@@ -1564,12 +1545,12 @@ function addGoal() {
 
 function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
-    form.value.system.goals.splice(goalIndex, 1);
+    form.value.nc_data.system.goals.splice(goalIndex, 1);
   }
 }
 
 function addMetric(goalIndex: number) {
-  form.value.system.goals[goalIndex].metrics.push({
+  form.value.nc_data.system.goals[goalIndex].metrics.push({
     description: "",
     baseline: "",
   });
@@ -1577,12 +1558,12 @@ function addMetric(goalIndex: number) {
 
 function deleteMetric(goalIndex: number, metricIndex: number) {
   if (confirm("Are you sure you want to delete this metric?")) {
-    form.value.system.goals[goalIndex].metrics.splice(metricIndex, 1);
+    form.value.nc_data.system.goals[goalIndex].metrics.splice(metricIndex, 1);
   }
 }
 
 function addDataItem() {
-  form.value.data.push({
+  form.value.nc_data.data.push({
     description: "",
     source: "",
     classification: "unclassified",
@@ -1612,12 +1593,12 @@ function addDataItem() {
 
 function deleteDataItem(dataItemIndex: number) {
   if (confirm("Are you sure you want to delete this data item?")) {
-    form.value.data.splice(dataItemIndex, 1);
+    form.value.nc_data.data.splice(dataItemIndex, 1);
   }
 }
 
 function addLabel(dataItemIndex: number) {
-  form.value.data[dataItemIndex].labels.push({
+  form.value.nc_data.data[dataItemIndex].labels.push({
     name: "",
     description: "",
     percentage: 0,
@@ -1626,12 +1607,12 @@ function addLabel(dataItemIndex: number) {
 
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
   if (confirm("Are you sure you want to delete this label?")) {
-    form.value.data[dataItemIndex].labels.splice(labelIndex, 1);
+    form.value.nc_data.data[dataItemIndex].labels.splice(labelIndex, 1);
   }
 }
 
 function addField(dataItemIndex: number) {
-  form.value.data[dataItemIndex].fields.push({
+  form.value.nc_data.data[dataItemIndex].fields.push({
     name: "",
     description: "",
     type: "",
@@ -1643,12 +1624,12 @@ function addField(dataItemIndex: number) {
 
 function deleteField(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
-    form.value.data[dataItemIndex].fields.splice(fieldIndex, 1);
+    form.value.nc_data.data[dataItemIndex].fields.splice(fieldIndex, 1);
   }
 }
 
 function addRequirement() {
-  form.value.system_requirements.push({
+  form.value.nc_data.system_requirements.push({
     quality: "<System Quality>",
     stimulus: "<Stimulus>",
     source: "<Source>",
@@ -1660,7 +1641,7 @@ function addRequirement() {
 
 function deleteRequirement(requirementIndex: number) {
   if (confirm("Are you sure you want to delete this requirement?")) {
-    form.value.system_requirements.splice(requirementIndex, 1);
+    form.value.nc_data.system_requirements.splice(requirementIndex, 1);
   }
 }
 </script>

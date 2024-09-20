@@ -21,23 +21,19 @@ from mlte.model.shared import (
     LabelDescriptor,
     MetricDescriptor,
     ModelDescriptor,
-    ModelDevelopmentDescriptor,
-    ModelInterfaceDescriptor,
     ModelIODescriptor,
-    ModelProductionDescriptor,
     ModelResourcesDescriptor,
+    NegotiationCardDataModel,
     ProblemType,
     QASDescriptor,
     RiskDescriptor,
+    SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel, SystemDescriptor
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import (
     CommentDescriptor,
-    IntendedUseDescriptor,
-    PerformanceDesciptor,
     QuantitiveAnalysisDescriptor,
     ReportModel,
-    SummaryDescriptor,
 )
 from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
 from mlte.validation.model import ResultModel, ValidatedSpecModel
@@ -182,6 +178,13 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
     :return: The artifact model
     """
     return NegotiationCardModel(
+        nc_data=_make_nc_data_model(),
+    )
+
+
+def _make_nc_data_model() -> NegotiationCardDataModel:
+    """Helper function to create sample NC data model with data."""
+    return NegotiationCardDataModel(
         system=SystemDescriptor(
             goals=[
                 GoalDescriptor(
@@ -227,28 +230,35 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
             )
         ],
         model=ModelDescriptor(
-            development=ModelDevelopmentDescriptor(
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                )
+            development_compute_resources=ModelResourcesDescriptor(
+                cpu="1",
+                gpu="2",
+                memory="600",
+                storage="50",
             ),
-            production=ModelProductionDescriptor(
-                deployment_platform="local server",
-                capability_deployment_mechanism="API",
-                interface=ModelInterfaceDescriptor(
-                    input=ModelIODescriptor(
-                        name="i1", description="description", type="string"
-                    ),
-                    output=ModelIODescriptor(
-                        name="o1", description="description", type="string"
-                    ),
-                ),
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu",
-                    gpu="gpu",
-                    memory="memory",
-                    storage="storage",
-                ),
+            deployment_platform="local server",
+            capability_deployment_mechanism="API",
+            input_specification=[
+                ModelIODescriptor(
+                    name="i1",
+                    description="description",
+                    type="string",
+                    expected_values="2, 4.5",
+                )
+            ],
+            output_specification=[
+                ModelIODescriptor(
+                    name="o1",
+                    description="description",
+                    type="string",
+                    expected_values="hi, bye",
+                )
+            ],
+            production_compute_resources=ModelResourcesDescriptor(
+                cpu="1",
+                gpu="1",
+                memory="600",
+                storage="50",
             ),
         ),
         system_requirements=[
@@ -319,68 +329,7 @@ def make_complete_report() -> ReportModel:
     :return: The artifact model
     """
     return ReportModel(
-        summary=SummaryDescriptor(
-            problem_type=ProblemType.CLASSIFICATION, task="task"
-        ),
-        performance=PerformanceDesciptor(
-            goals=[
-                GoalDescriptor(
-                    description="description",
-                    metrics=[
-                        MetricDescriptor(
-                            description="description", baseline="baseline"
-                        )
-                    ],
-                )
-            ]
-        ),
-        intended_use=IntendedUseDescriptor(
-            usage_context="context",
-            production_requirements=ModelProductionDescriptor(
-                deployment_platform="local server",
-                capability_deployment_mechanism="API",
-                interface=ModelInterfaceDescriptor(
-                    input=ModelIODescriptor(
-                        name="i1", description="description", type="string"
-                    ),
-                    output=ModelIODescriptor(
-                        name="o1", description="description", type="string"
-                    ),
-                ),
-                resources=ModelResourcesDescriptor(
-                    cpu="cpu", gpu="gpu", memory="memory", storage="storage"
-                ),
-            ),
-        ),
-        risks=RiskDescriptor(fp="fp", fn="fn", other="other"),
-        data=[
-            DataDescriptor(
-                description="description",
-                classification=DataClassification.UNCLASSIFIED,
-                access="access",
-                labeling_method="by hand",
-                fields=[
-                    FieldDescriptor(
-                        name="name",
-                        description="description",
-                        type="type",
-                        expected_values="expected_values",
-                        missing_values="missing_values",
-                        special_values="special_values",
-                    )
-                ],
-                labels=[
-                    LabelDescriptor(
-                        name="label1",
-                        description="description",
-                        percentage=95.0,
-                    )
-                ],
-                policies="policies",
-                rights="rights",
-                source="source",
-            )
-        ],
+        nc_data=_make_nc_data_model(),
         comments=[CommentDescriptor(content="content")],
         quantitative_analysis=QuantitiveAnalysisDescriptor(content="analysis"),
     )

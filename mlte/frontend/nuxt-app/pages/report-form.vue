@@ -19,7 +19,7 @@
     <p>A summary of the model under evaluation.</p>
 
     <UsaSelect
-      v-model="form.summary.problem_type"
+      v-model="form.nc_data.system.problem_type"
       :options="problemTypeOptions"
     >
       <template #label>
@@ -28,7 +28,7 @@
       </template>
     </UsaSelect>
 
-    <UsaTextInput :model-value="form.summary.task">
+    <UsaTextInput :model-value="form.nc_data.system.task">
       <template #label> Task </template>
     </UsaTextInput>
 
@@ -37,7 +37,10 @@
     <div class="input-group">
       <h3>Goals</h3>
       <p>Goals or objectives that the model is going to help satisfy.</p>
-      <div v-for="(goal, goalIndex) in form.performance.goals" :key="goalIndex">
+      <div
+        v-for="(goal, goalIndex) in form.nc_data.system.goals"
+        :key="goalIndex"
+      >
         <h3>Goal {{ goalIndex + 1 }}</h3>
 
         <UsaTextInput v-model="goal.description">
@@ -137,88 +140,81 @@
     </table>
 
     <h2 class="section-header">Intended Use</h2>
-    <p>A description of how the model is intended to be used.</p>
-    <UsaTextarea :model-value="form.intended_use.usage_context"></UsaTextarea>
-
     <UsaTextarea
-      v-model="form.intended_use.production_requirements.integration"
+      v-model="form.nc_data.system.usage_context"
+      style="margin-bottom: 1em"
     >
       <template #label>
-        A description of model integration practices.
+        Usage Context for the Model
+        <InfoIcon>
+          Who is intended to utilize the system/model; how the results of the
+          model are <br />
+          going to be used by end users or in the context of a larger system.
+          <br />
+          <br />
+          <i
+            >Example: Model results are consumed by a system component that
+            shows
+            <br />
+            an intel analyst a list of matching voice recordings.</i
+          >
+        </InfoIcon>
       </template>
     </UsaTextarea>
 
-    <UsaTextInput
-      v-model="
-        form.intended_use.production_requirements.interface.input.description
-      "
-    >
-      <template #label> Model input description. </template>
-    </UsaTextInput>
+    <UsaTextarea v-model="form.nc_data.model.deployment_platform">
+      <template #label>
+        Deployment Platform
+        <InfoIcon>
+          Describe the deployment platform for the model, e.g., local server,
+          <br />
+          cloud server, embedded platform.
+          <br />
+          <br />
+          <i>Example: Local server due to data classification issues.</i>
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
 
-    <UsaTextInput
-      v-model="
-        form.intended_use.production_requirements.interface.output.description
-      "
-    >
-      <template #label> Mode output description. </template>
-    </UsaTextInput>
-
-    <div class="input-group" style="margin-top: 1em">
-      <h3>Production Compute Resources</h3>
-      <p>
-        Describe the hardware and software requirements including amount of
-        compute resources needed for inference.
-      </p>
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.gpu"
+    <UsaTextarea v-model="form.nc_data.model.capability_deployment_mechanism">
+      <template #label>
+        Capability Deployment Mechanism
+        <InfoIcon>
+          Describe how the model capabilities will be made available, <br />
+          e.g., API, user facing, data feed.
+          <br />
+          <br />
+          <i
+            >Example: The model will expose an API so that it can be called
+            <br />
+            from the intel analyst UI.</i
           >
-            <template #label> GPU </template>
-          </UsaTextInput>
-        </div>
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
 
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.cpu"
-          >
-            <template #label> CPU </template>
-          </UsaTextInput>
-        </div>
-      </div>
+    <FormFieldsInputSpecification
+      v-model="form.nc_data.model.input_specification"
+    />
 
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="form.intended_use.production_requirements.resources.memory"
-          >
-            <template #label> Memory </template>
-          </UsaTextInput>
-        </div>
+    <FormFieldsOutputSpecification
+      v-model="form.nc_data.model.output_specification"
+    />
 
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="
-              form.intended_use.production_requirements.resources.storage
-            "
-          >
-            <template #label> Storage </template>
-          </UsaTextInput>
-        </div>
-      </div>
-    </div>
+    <FormFieldsProductionCompute
+      v-model="form.nc_data.model.production_compute_resources"
+    />
 
     <h2 class="section-header">Risks</h2>
-    <UsaTextInput v-model="form.risks.fp">
+    <UsaTextInput v-model="form.nc_data.system.risks.fp">
       <template #label> False Positive Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.fn">
+    <UsaTextInput v-model="form.nc_data.system.risks.fn">
       <template #label> False Negative Risk </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="form.risks.other">
+    <UsaTextInput v-model="form.nc_data.system.risks.other">
       <template #label> Other risks of producing incorrect results </template>
     </UsaTextInput>
 
@@ -233,7 +229,10 @@
       data transportation.
     </p>
     <div class="input-group">
-      <div v-for="(dataItem, dataItemIndex) in form.data" :key="dataItemIndex">
+      <div
+        v-for="(dataItem, dataItemIndex) in form.nc_data.data"
+        :key="dataItemIndex"
+      >
         <h3>Data Item {{ dataItemIndex + 1 }}</h3>
         <UsaTextInput v-model="dataItem.access">
           <template #label> Account Access / Account Availability </template>
@@ -368,10 +367,6 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextInput v-model="dataItem.identifiable_information">
-          <template #label> Identifiable Information </template>
-        </UsaTextInput>
-
         <DeleteButton
           class="margin-button"
           @click="deleteDataItem(dataItemIndex)"
@@ -417,81 +412,101 @@ const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 const findings = ref(null);
 const form = ref({
   artifact_type: "report",
-  summary: {
-    problem_type: "classification",
-    task: "",
-  },
-  performance: {
-    goals: [
-      {
-        description: "",
-        metrics: [
-          {
-            description: "",
-            baseline: "",
-          },
-        ],
-      },
-    ],
-    validated_spec_id: null,
-  },
-  intended_use: {
-    usage_context: "",
-    production_requirements: {
-      integration: "",
-      interface: {
-        input: {
-          description: "",
-        },
-        output: {
-          description: "",
-        },
-      },
-      resources: {
-        cpu: "",
-        gpu: "",
-        memory: "",
-        storage: "",
-      },
-    },
-  },
-  risks: {
-    fp: "",
-    fn: "",
-    other: "",
-  },
-  data: [
-    {
-      access: "",
-      description: "",
-      source: "",
-      classification: "unclassified",
-      labels: [
+  nc_data: {
+    system: {
+      goals: [
         {
           description: "",
-          percentage: 0,
+          metrics: [
+            {
+              description: "",
+              baseline: "",
+            },
+          ],
         },
       ],
-      fields: [
+      problem_type: "classification",
+      task: "",
+      usage_context: "",
+      risks: {
+        fp: "",
+        fn: "",
+        other: "",
+      },
+    },
+    data: [
+      {
+        description: "",
+        source: "",
+        classification: "unclassified",
+        access: "",
+        labeling_method: "",
+        labels: [
+          {
+            name: "",
+            description: "",
+            percentage: 0,
+          },
+        ],
+        fields: [
+          {
+            name: "",
+            description: "",
+            type: "",
+            expected_values: "",
+            missing_values: "",
+            special_values: "",
+          },
+        ],
+        rights: "",
+        policies: "",
+      },
+    ],
+    model: {
+      development_compute_resources: {
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
+      },
+      deployment_platform: "",
+      capability_deployment_mechanism: "",
+      input_specification: [
         {
           name: "",
           description: "",
           type: "",
           expected_values: "",
-          missing_values: "",
-          special_values: "",
         },
       ],
-      rights: "",
-      policies: "",
-      identifiable_information: "",
+      output_specification: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+        },
+      ],
+      production_compute_resources: {
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
+      },
     },
-  ],
-  comments: [
-    {
-      content: "",
-    },
-  ],
+    system_requirements: [
+      {
+        quality: "<System Quality>",
+        stimulus: "<Stimulus>",
+        source: "<Source>",
+        environment: "<Environment>",
+        response: "<Response>",
+        measure: "<Response Measure>",
+      },
+    ],
+  },
+  validated_spec_id: "",
+  comments: [{ content: "" }],
   quantitative_analysis: {},
 });
 
@@ -553,18 +568,18 @@ if (useRoute().query.artifactId !== undefined) {
         if (response.ok) {
           if (isValidReport(response._data)) {
             form.value = response._data.body;
-            const problemType = response._data.body.summary.problem_type;
+            const problemType = response._data.body.nc_data.system.problem_type;
             if (
               problemTypeOptions.find((x) => x.value === problemType)?.value !==
               undefined
             ) {
-              form.value.summary.problem_type = problemTypeOptions.find(
+              form.value.nc_data.system.problem_type = problemTypeOptions.find(
                 (x) => x.value === problemType,
               )?.value;
             }
 
             // Setting .value for each classification item to work in the select
-            response._data.body.data.forEach((item) => {
+            response._data.body.nc_data.data.forEach((item) => {
               const classification = item.classification;
               if (
                 classificationOptions.find((x) => x.value === classification)
@@ -576,14 +591,14 @@ if (useRoute().query.artifactId !== undefined) {
               }
             });
 
-            if (response._data.body.performance.validated_spec_id) {
-              form.value.performance.validated_spec_id =
-                response._data.body.performance.validated_spec_id;
+            if (response._data.body.validated_spec_id) {
+              form.value.validated_spec_id =
+                response._data.body.validated_spec_id;
               const validatedSpec = await fetchArtifact(
                 token.value,
                 model,
                 version,
-                form.value.performance.validated_spec_id,
+                form.value.validated_spec_id,
               );
               findings.value = loadFindings(validatedSpec);
             }
@@ -661,37 +676,13 @@ async function submit() {
   }
 }
 
-// Load findings from a validated specication.
-function loadFindings(proxyObject: object) {
-  const findings = [];
-  // TODO(Kyle): Standardize conversion of proxy objects.
-  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.spec.properties.forEach((property) => {
-    // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(
-      Object.entries(validatedSpec.body.results[property.name]),
-    );
-    results.forEach((value) => {
-      const finding = {
-        status: value.type,
-        property: property.name,
-        measurement: value.metadata.measurement_type,
-        evidence_id: value.metadata.identifier.name,
-        message: value.message,
-      };
-      findings.push(finding);
-    });
-  });
-  return findings;
-}
-
 // Export the current report.
 function exportReport() {
   alert("Report export is not currently implemented.");
 }
 
 function addGoal() {
-  form.value.performance.goals.push({
+  form.value.nc_data.system.goals.push({
     description: "",
     metrics: [{ description: "", baseline: "" }],
   });
@@ -699,12 +690,12 @@ function addGoal() {
 
 function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
-    form.value.performance.goals.splice(goalIndex, 1);
+    form.value.nc_data.system.goals.splice(goalIndex, 1);
   }
 }
 
 function addMetric(goalIndex: number) {
-  form.value.performance.goals[goalIndex].metrics.push({
+  form.value.nc_data.system.goals[goalIndex].metrics.push({
     description: "",
     baseline: "",
   });
@@ -712,18 +703,20 @@ function addMetric(goalIndex: number) {
 
 function deleteMetric(goalIndex: number, metricIndex: number) {
   if (confirm("Are you sure you want to delete this metric?")) {
-    form.value.performance.goals[goalIndex].metrics.splice(metricIndex, 1);
+    form.value.nc_data.system.goals[goalIndex].metrics.splice(metricIndex, 1);
   }
 }
 
 function addDataItem() {
-  form.value.data.push({
-    access: "",
+  form.value.nc_data.data.push({
     description: "",
     source: "",
     classification: "unclassified",
+    access: "",
+    labeling_method: "",
     labels: [
       {
+        name: "",
         description: "",
         percentage: 0,
       },
@@ -740,18 +733,18 @@ function addDataItem() {
     ],
     rights: "",
     policies: "",
-    identifiable_information: "",
   });
 }
 
 function deleteDataItem(dataItemIndex: number) {
   if (confirm("Are you sure you want to delete this data item?")) {
-    form.value.data.splice(dataItemIndex, 1);
+    form.value.nc_data.data.splice(dataItemIndex, 1);
   }
 }
 
 function addLabel(dataItemIndex: number) {
-  form.value.data[dataItemIndex].labels.push({
+  form.value.nc_data.data[dataItemIndex].labels.push({
+    name: "",
     description: "",
     percentage: 0,
   });
@@ -759,12 +752,12 @@ function addLabel(dataItemIndex: number) {
 
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
   if (confirm("Are you sure you want to delete this label?")) {
-    form.value.data[dataItemIndex].labels.splice(labelIndex, 1);
+    form.value.nc_data.data[dataItemIndex].labels.splice(labelIndex, 1);
   }
 }
 
 function addSchema(dataItemIndex: number) {
-  form.value.data[dataItemIndex].fields.push({
+  form.value.nc_data.data[dataItemIndex].fields.push({
     name: "",
     description: "",
     type: "",
@@ -776,7 +769,7 @@ function addSchema(dataItemIndex: number) {
 
 function deleteSchema(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
-    form.value.data[dataItemIndex].fields.splice(fieldIndex, 1);
+    form.value.nc_data.data[dataItemIndex].fields.splice(fieldIndex, 1);
   }
 }
 </script>

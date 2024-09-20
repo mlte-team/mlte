@@ -255,7 +255,11 @@
           "title": "Usage Context"
         },
         "production_requirements": {
-          "$ref": "#/$defs/ModelProductionDescriptor",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelProductionDescriptor"
+            }
+          ],
           "default": {
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
@@ -357,6 +361,79 @@
       "title": "MetricDescriptor",
       "type": "object"
     },
+    "ModelDescriptor": {
+      "description": "A descriptor for the model.",
+      "properties": {
+        "development_compute_resources": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            }
+          ],
+          "default": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
+          }
+        },
+        "deployment_platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deployment Platform"
+        },
+        "capability_deployment_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Deployment Mechanism"
+        },
+        "input_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Input Specification",
+          "type": "array"
+        },
+        "output_specification": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ModelIODescriptor"
+          },
+          "title": "Output Specification",
+          "type": "array"
+        },
+        "production_compute_resources": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            }
+          ],
+          "default": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
+          }
+        }
+      },
+      "title": "ModelDescriptor",
+      "type": "object"
+    },
     "ModelIODescriptor": {
       "description": "A description of the model input or output specification.",
       "properties": {
@@ -404,7 +481,11 @@
       "description": "A description of the model interface.",
       "properties": {
         "input": {
-          "$ref": "#/$defs/ModelIODescriptor",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelIODescriptor"
+            }
+          ],
           "default": {
             "name": null,
             "description": null,
@@ -412,7 +493,11 @@
           }
         },
         "output": {
-          "$ref": "#/$defs/ModelIODescriptor",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelIODescriptor"
+            }
+          ],
           "default": {
             "name": null,
             "description": null,
@@ -451,7 +536,11 @@
           "title": "Capability Deployment Mechanism"
         },
         "interface": {
-          "$ref": "#/$defs/ModelInterfaceDescriptor",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelInterfaceDescriptor"
+            }
+          ],
           "default": {
             "input": {
               "description": null,
@@ -466,7 +555,11 @@
           }
         },
         "resources": {
-          "$ref": "#/$defs/ModelResourcesDescriptor",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelResourcesDescriptor"
+            }
+          ],
           "default": {
             "cpu": null,
             "gpu": null,
@@ -533,31 +626,70 @@
       "title": "ModelResourcesDescriptor",
       "type": "object"
     },
-    "PerformanceDesciptor": {
-      "description": "The model implementation for the performance descriptor.",
+    "NegotiationCardDataModel": {
+      "description": "The model implementation for the NegotiationCard information.",
       "properties": {
-        "goals": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/GoalDescriptor"
-          },
-          "title": "Goals",
-          "type": "array"
-        },
-        "validated_spec_id": {
-          "anyOf": [
+        "system": {
+          "allOf": [
             {
-              "type": "string"
-            },
-            {
-              "type": "null"
+              "$ref": "#/$defs/SystemDescriptor"
             }
           ],
-          "default": null,
-          "title": "Validated Spec Id"
+          "default": {
+            "goals": [],
+            "problem_type": null,
+            "task": null,
+            "usage_context": null,
+            "risks": {
+              "fn": null,
+              "fp": null,
+              "other": null
+            }
+          }
+        },
+        "data": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DataDescriptor"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "model": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelDescriptor"
+            }
+          ],
+          "default": {
+            "development_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            },
+            "deployment_platform": null,
+            "capability_deployment_mechanism": null,
+            "input_specification": [],
+            "output_specification": [],
+            "production_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            }
+          }
+        },
+        "system_requirements": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QASDescriptor"
+          },
+          "title": "System Requirements",
+          "type": "array"
         }
       },
-      "title": "PerformanceDesciptor",
+      "title": "NegotiationCardDataModel",
       "type": "object"
     },
     "ProblemType": {
@@ -576,6 +708,85 @@
       ],
       "title": "ProblemType",
       "type": "string"
+    },
+    "QASDescriptor": {
+      "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
+      "properties": {
+        "quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "stimulus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stimulus"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response"
+        },
+        "measure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measure"
+        }
+      },
+      "title": "QASDescriptor",
+      "type": "object"
     },
     "QuantitiveAnalysisDescriptor": {
       "description": "The model implementation for report quantitative analysis.",
@@ -639,9 +850,17 @@
       "title": "RiskDescriptor",
       "type": "object"
     },
-    "SummaryDescriptor": {
-      "description": "The model implementation for the report summary.",
+    "SystemDescriptor": {
+      "description": "A description of the system context.",
       "properties": {
+        "goals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GoalDescriptor"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
         "problem_type": {
           "anyOf": [
             {
@@ -664,9 +883,33 @@
           ],
           "default": null,
           "title": "Task"
+        },
+        "usage_context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usage Context"
+        },
+        "risks": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RiskDescriptor"
+            }
+          ],
+          "default": {
+            "fp": null,
+            "fn": null,
+            "other": null
+          }
         }
       },
-      "title": "SummaryDescriptor",
+      "title": "SystemDescriptor",
       "type": "object"
     }
   },
@@ -682,49 +925,62 @@
       "type": "string"
     },
     "summary": {
-      "$ref": "#/$defs/SummaryDescriptor",
+      "allOf": [
+        {
+          "$ref": "#/$defs/SummaryDescriptor"
+        }
+      ],
       "default": {
         "problem_type": null,
         "task": null
       }
     },
     "performance": {
-      "$ref": "#/$defs/PerformanceDesciptor",
+      "allOf": [
+        {
+          "$ref": "#/$defs/PerformanceDesciptor"
+        }
+      ],
       "default": {
         "goals": [],
         "validated_spec_id": null
       }
     },
     "intended_use": {
-      "$ref": "#/$defs/IntendedUseDescriptor",
+      "allOf": [
+        {
+          "$ref": "#/$defs/IntendedUseDescriptor"
+        }
+      ],
       "default": {
         "usage_context": null,
         "production_requirements": {
           "capability_deployment_mechanism": null,
           "deployment_platform": null,
-          "interface": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
+          "development_compute_resources": {
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
           },
-          "resources": {
+          "input_specification": [],
+          "output_specification": [],
+          "production_compute_resources": {
             "cpu": null,
             "gpu": null,
             "memory": null,
             "storage": null
           }
-        }
+        },
+        "system_requirements": []
       }
     },
     "risks": {
-      "$ref": "#/$defs/RiskDescriptor",
+      "allOf": [
+        {
+          "$ref": "#/$defs/RiskDescriptor"
+        }
+      ],
       "default": {
         "fp": null,
         "fn": null,

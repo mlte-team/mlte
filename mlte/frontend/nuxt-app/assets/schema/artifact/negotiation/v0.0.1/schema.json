@@ -305,12 +305,10 @@
         "development": {
           "$ref": "#/$defs/ModelDevelopmentDescriptor",
           "default": {
-            "resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
+            "cpu": null,
+            "gpu": null,
+            "memory": null,
+            "storage": null
           }
         },
         "production": {
@@ -355,7 +353,7 @@
           }
         }
       },
-      "title": "ModelDevelopmentDescriptor",
+      "title": "ModelDescriptor",
       "type": "object"
     },
     "ModelIODescriptor": {
@@ -532,6 +530,72 @@
         }
       },
       "title": "ModelResourcesDescriptor",
+      "type": "object"
+    },
+    "NegotiationCardDataModel": {
+      "description": "The model implementation for the NegotiationCard information.",
+      "properties": {
+        "system": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SystemDescriptor"
+            }
+          ],
+          "default": {
+            "goals": [],
+            "problem_type": null,
+            "task": null,
+            "usage_context": null,
+            "risks": {
+              "fn": null,
+              "fp": null,
+              "other": null
+            }
+          }
+        },
+        "data": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DataDescriptor"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "model": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelDescriptor"
+            }
+          ],
+          "default": {
+            "development_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            },
+            "deployment_platform": null,
+            "capability_deployment_mechanism": null,
+            "input_specification": [],
+            "output_specification": [],
+            "production_compute_resources": {
+              "cpu": null,
+              "gpu": null,
+              "memory": null,
+              "storage": null
+            }
+          }
+        },
+        "system_requirements": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QASDescriptor"
+          },
+          "title": "System Requirements",
+          "type": "array"
+        }
+      },
+      "title": "NegotiationCardDataModel",
       "type": "object"
     },
     "ProblemType": {
@@ -774,39 +838,18 @@
             "gpu": null,
             "memory": null,
             "storage": null
-          }
-        },
-        "production": {
-          "capability_deployment_mechanism": null,
-          "deployment_platform": null,
-          "interface": {
-            "input": {
-              "description": null,
-              "name": null,
-              "type": null
-            },
-            "output": {
-              "description": null,
-              "name": null,
-              "type": null
-            }
           },
-          "resources": {
+          "input_specification": [],
+          "output_specification": [],
+          "production_compute_resources": {
             "cpu": null,
             "gpu": null,
             "memory": null,
             "storage": null
           }
-        }
+        },
+        "system_requirements": []
       }
-    },
-    "system_requirements": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/QASDescriptor"
-      },
-      "title": "System Requirements",
-      "type": "array"
     }
   },
   "title": "NegotiationCardModel",
