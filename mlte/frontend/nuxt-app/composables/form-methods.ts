@@ -21,7 +21,6 @@ export function cancelFormSubmission(redirect: string) {
 
 // Load findings from a validated specication.
 export function loadFindings(proxyObject: object) {
-  console.log("loading findings");
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));

@@ -10,7 +10,7 @@
         <th data-sortable scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
-    <tr v-for="(group, groupIndex) in modelValue" :key="groupIndex">
+    <tr v-for="(group, groupIndex) in props.modelValue" :key="groupIndex">
       <td>
         {{ group.name }}
       </td>
