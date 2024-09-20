@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["toggleVisible"]);
+const emits = defineEmits(["toggleVisible"]);
 const props = defineProps({
   visible: {
     type: Boolean,
