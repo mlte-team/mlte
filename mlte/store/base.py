@@ -28,7 +28,7 @@ class StoreType(Enum):
     REMOTE_HTTP = "remote_http"
     """A remote HTTP implementation."""
 
-    RELATIONAL_DB = "relational_db"
+    RELATIONAL_DB = "database"
     """A relational database system implementation."""
 
 
