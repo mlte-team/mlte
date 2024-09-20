@@ -1048,17 +1048,21 @@ const form = ref({
         storage: "0",
       },
     },
+    system_requirements: [
+      {
+        quality: "<System Quality>",
+        stimulus: "<Stimulus>",
+        source: "<Source>",
+        environment: "<Environment>",
+        response: "<Response>",
+        measure: "<Response Measure>",
+      },
+    ],
   },
-  system_requirements: [
-    {
-      quality: "<System Quality>",
-      stimulus: "<Stimulus>",
-      source: "<Source>",
-      environment: "<Environment>",
-      response: "<Response>",
-      measure: "<Response Measure>",
-    },
-  ],
+});
+
+const formErrors = ref({
+  identifier: false,
 });
 
 // TODO: Pull these from the schema
@@ -1231,8 +1235,6 @@ async function submit() {
           },
         },
       );
-      successfulArtifactSubmission("negotiation card", identifier);
-      forceSaveParam.value = true;
     } catch {
       return;
     }
