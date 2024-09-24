@@ -1,0 +1,103 @@
+{
+    "header": {
+        "identifier": "default.negotiation_card",
+        "type": "negotiation_card",
+        "timestamp": 1717703082,
+        "creator": "admin"
+    },
+    "body": {
+        "artifact_type": "negotiation_card",
+        "system": {
+            "goals": [
+                {
+                    "description": "The model should perform well.",
+                    "metrics": [
+                        {
+                            "description": "accuracy",
+                            "baseline": "Better than random chance."
+                        }
+                    ]
+                }
+            ],
+            "problem_type": "classification",
+            "task": "Flower Classification",
+            "usage_context": "A handheld flower identification device.",
+            "risks": {
+                "fp": "The wrong type of flower is identified.",
+                "fn": "The flower is not identified.",
+                "other": "N/A"
+            }
+        },
+        "data": [
+            {
+                "description": "Iris flower dataset.",
+                "source": "https://archive.ics.uci.edu/dataset/53/iris",
+                "classification": "unclassified",
+                "access": "None",
+                "labeling_method": "by hand",
+                "labels": [
+                    {
+                        "name": null,
+                        "description": "Setosa",
+                        "percentage": 30.0
+                    },
+                    {
+                        "name": null,
+                        "description": "Versicolour",
+                        "percentage": 30.0
+                    },
+                    {
+                        "name": null,
+                        "description": "Virginica",
+                        "percentage": 40.0
+                    }
+                ],
+                "fields": [
+                    {
+                        "name": "Sepal length",
+                        "description": "The length of the sepal.",
+                        "type": "float",
+                        "expected_values": "N/A",
+                        "missing_values": "N/A",
+                        "special_values": "N/A"
+                    }
+                ],
+                "rights": "N/A",
+                "policies": "N/A"
+            }
+        ],
+        "model": {
+            "development": {
+                "resources": {
+                    "cpu": "1",
+                    "gpu": "0",
+                    "memory": "6MiB",
+                    "storage": "2KiB"
+                }
+            },
+            "production": {
+                "deployment_platform": "local server",
+                "capability_deployment_mechanism": "API",
+                "interface": {
+                    "input": {
+                        "name": "i1",
+                        "description": "description",
+                        "type": "Vector[150]"
+                    },
+                    "output": {
+                        "name": "o1",
+                        "description": "description",
+                        "type": "Vector[3]"
+                    }
+                },
+                "resources": {
+                    "cpu": "1",
+                    "gpu": "1",
+                    "memory": "6MiB",
+                    "storage": "2KiB"
+                }
+            }
+        },
+        "system_requirements": []
+    }
+}

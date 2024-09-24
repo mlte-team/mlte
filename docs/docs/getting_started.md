@@ -92,6 +92,12 @@ $ mlte backend --catalog-uris '{"cat1": "memory://", "cat2": "fs://store"}'
 
  - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend need to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
 
+ A sample artifact store is included in this repo, currently containing only a sample negotiation card artifact. To start the backend with this store, run it in this way from the root of this repo:
+
+ ```bash
+$ mlte backend --store-uri fs://demo/sample_store
+```
+
 ### Frontend
 
 Once the backend is running, you can run the frontend with the following command:
