@@ -206,7 +206,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-We maintain a group of requirements for building the documentation under asthe `docs` optional group. To build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
+We maintain a group of requirements for building the documentation under the `docs` optional group. To build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 
 ```bash
 $ poetry install --with docs

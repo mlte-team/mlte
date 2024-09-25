@@ -1,6 +1,6 @@
 # Using MLTE
 
-After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements definition. 
+After [setting up `MLTE`](setting_up_mlte.md), the process begins at the inception of a project with requirements definition. 
 
 If your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`.
 
@@ -8,7 +8,7 @@ If your team has an existing project you'd like to test using the `MLTE` infrast
 
 To begin the `MLTE` process, teams hold a negotiation - a discussion about requirements - amongst stakeholders, software engineers, data scientists, and anyone else involved in the project. 
 
-- The negotiation facilitator should review the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Getting Started](getting_started.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
+- The negotiation facilitator should review the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Setting Up `MLTE`](setting_up_mlte.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
 - The negotiation is a collaborative discussion where all involved parties can agree on project requirements and discuss technical details.
 - Once the negotiation is complete and the negotiation card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The negotiation card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
 
