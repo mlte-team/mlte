@@ -3,7 +3,7 @@
     <div v-if="!newEntryFlag">
       <h1 class="section-header">{{ modelValue.header.identifier }}</h1>
       <h3 style="display: inline">Created by:</h3>
-      {{ modelValue.header.creator }} - {{ modelValue.header.created }}
+      {{ modelValue.header.creator }} - {{ timestamp }}
     </div>
     <div v-if="newEntryFlag">
       <UsaSelect
@@ -14,9 +14,7 @@
       >
         <template #label>
           Catalog
-          <InfoIcon>
-            Catalog where test example will be stored.
-          </InfoIcon>
+          <InfoIcon> Catalog where test example will be stored. </InfoIcon>
         </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
@@ -91,15 +89,22 @@
       <template #error-message>Code Type must be selected</template>
     </UsaSelect>
 
-    <UsaTextarea v-model="modelValue.code">
+    <UsaTextarea
+      v-model="modelValue.code"
+      style="resize: both; width: 30rem; max-width: 100%"
+    >
       <template #label>
         Code
         <InfoIcon> Code for the test example. </InfoIcon>
+        <CopyIcon @click="copyCode()" />
       </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="modelValue.description">
+    <UsaTextarea
+      v-model="modelValue.description"
+      style="resize: both; width: 30rem; max-width: 100%"
+    >
       <template #label>
         Description
         <InfoIcon> Description of the test example. </InfoIcon>
@@ -172,6 +177,10 @@ const props = defineProps({
   },
 });
 
+const timestamp = ref("");
+timestamp.value = new Date(
+  props.modelValue.header.created * 1000,
+).toLocaleString("en-US");
 const formErrors = ref({
   catalog: false,
   identifier: false,
@@ -222,11 +231,14 @@ const tagOptions = ref([
 ]);
 const propertyCategoryOptions = ref([
   { value: "Explainability", text: "Explainability" },
+  { value: "Fairness", text: "Fairness" },
   { value: "Functional Correctness", text: "Functional Correctness" },
   { value: "Interoperability", text: "Interoperability" },
+  { value: "Interpretability", text: "Interpretability" },
   { value: "Maintainability", text: "Maintainability" },
   { value: "Monitorability", text: "Monitorability" },
   { value: "Privacy", text: "Privacy" },
+  { value: "Resilience", text: "Resilience" },
   { value: "Resource Consumption", text: "Resource Consumption" },
   { value: "Robustness", text: "Robustness" },
   { value: "Safety", text: "Safety" },
@@ -284,5 +296,9 @@ function tagChange(selected: boolean, tagOption: object) {
     const index = props.modelValue.tags.indexOf(objForRemoval);
     props.modelValue.tags.splice(index, 1);
   }
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(props.modelValue.code);
 }
 </script>

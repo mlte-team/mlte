@@ -38,7 +38,7 @@ class SampleCatalog:
         """
         Sets up the sample catalog.
 
-        :param store_uri: The URI of the stores being used (i.e., base folder, base DB, etc).
+        :param stores_uri: The URI of the stores being used (i.e., base folder, base DB, etc).
         :return: The sample catalog store.
         """
         # Set file system URI if we didn't get one, or if we got a non-file system one.

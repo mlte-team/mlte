@@ -9,7 +9,7 @@ Use `poetry` to create a Python virtual environment and install the required run
 ```bash
 $ python -m venv .venv
 $ source .venv/bin/activate
-$ poetry install --with qa,test,build
+$ poetry install --with qa,test,build,docs
 ```
 
 Instead of activating the environment, you can also choose to use `poetry run` to run specific commands.
@@ -103,6 +103,14 @@ $ poetry run mypy test/
 ```
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
+
+### Doc Generation
+
+More details in the [Documentation](#documentation) section, but to run document generation from the make command, run this: 
+
+```bash
+$ poetry run make docs
+```
 
 ### Unit Tests
 
@@ -206,13 +214,13 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-We maintain a group of requirements for building the documentation under the `docs` optional group. To build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
+We maintain a group of requirements for building the documentation under asthe `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 
 ```bash
 $ poetry install --with docs
 ```
 
-Now you can build and serve the documentation with:
+Now you can build and serve the documentation with the following command, when run from inside the `docs/` folder:
 
 ```bash
 $ mkdocs serve

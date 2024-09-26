@@ -35,7 +35,13 @@
         </UsaButton>
         <UsaButton
           class="usa-button usa-button--secondary"
-          @click="$emit('deleteEntry', entry.header.catalog_id, entry.header.identifier)"
+          @click="
+            $emit(
+              'deleteEntry',
+              entry.header.catalog_id,
+              entry.header.identifier,
+            )
+          "
         >
           Delete
         </UsaButton>
