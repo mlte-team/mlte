@@ -75,7 +75,7 @@ tensorflow-macos = "2.14.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "*"
-mkdocstrings = "*"
+mkdocstrings-python = "*"
 mkdocs-material = "*"
 mkdocs-gen-files = "*"
 mkdocs-literate-nav = "*"

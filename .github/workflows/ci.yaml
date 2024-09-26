@@ -20,7 +20,7 @@ jobs:
       - name: Install poetry
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
-        run: poetry install --with qa,test,build
+        run: poetry install --with qa,test,build,docs
       - name: Sort imports with isort
         run: make check-isort
       - name: Format with black
@@ -29,6 +29,8 @@ jobs:
         run: make check-lint
       - name: Typecheck with mypy
         run: make check-typecheck
+      - name: Check docs
+        run: make docs 
       - name: Execute unit tests
         run: make test
       - name: Vet schemas
