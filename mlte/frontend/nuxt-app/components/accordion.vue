@@ -5,10 +5,8 @@
         <span :class="{'rotate-symbol': isOpen}">▼</span>
         <span class="circle top-priority"></span>
         <h2>{{ title }}</h2>
-        
-        
       </div>
-      <div class="accordion-item-body" ref="accordionItemBody">
+      <div :class="['accordion-item-body', { 'accordion-item-open': isOpen }]" ref="accordionItemBody">
         <slot name="content"></slot>
       </div>
     </div>
@@ -113,8 +111,17 @@ export default defineComponent({
 .accordion-item-body{
   max-height: 0; 
   overflow: hidden;
-  transition: max-geight 0.2s ease-out;
+  transition: max-height 0.2s ease-out;
 
+}
+
+.accordion-item-open{
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  padding: 1rem;  
+  margin-top: -1px; 
+  max-height: 300px; 
+  overflow-y: auto; 
 }
 
 .circle{

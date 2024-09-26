@@ -801,6 +801,8 @@
     </div>
     </div>
 
+    <!-- End Priority Legend  -->
+
     <br/>
 
     <div class="input-group">
@@ -808,20 +810,24 @@
     <br/>
     <Accordion title="Inference Latency">
       <template #content>
-        <InferenceLat MLTask="form.system.task" :usageContext="form.system.usage_context" />
+        <!-- TODO: pull data from these fields if it is modified while filling out the form-->
+         <!-- TODO: Make those fields mandatory in the form -->
+        <InferenceLat MLTask={{ form.system.task }} :usageContext="form.system.usage_context" />
       </template>
     </Accordion>
 
-    <Accordion title="Training Latency">
+ 
+
+    <Accordion title="Explainability">
       <template #content>
-          <TrainingLat MLTask= {{form.system.task}} usageContext={{form.system.usage_context}} /> 
-        </template>
+        <Explainability></Explainability>
+      </template>
     </Accordion>
 
     </div>
     <br/>
 
-    <!--TO DELETE: Prior Version -->
+    <!--TODO: Delete Prior Version -->
     <div class="input-group">
       <SubHeader :render-info="false">
         Requirements
