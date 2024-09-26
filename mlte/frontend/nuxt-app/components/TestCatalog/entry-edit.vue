@@ -91,7 +91,7 @@
       <template #error-message>Code Type must be selected</template>
     </UsaSelect>
 
-    <UsaTextarea v-model="modelValue.code">
+    <UsaTextarea v-model="modelValue.code" style="resize: both; width: 30rem; max-width: 100%">
       <template #label>
         Code
         <InfoIcon> Code for the test example. </InfoIcon>
@@ -99,7 +99,7 @@
       <template #error-message>Not defined</template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="modelValue.description">
+    <UsaTextarea v-model="modelValue.description" style="resize: both; width: 30rem; max-width: 100%">
       <template #label>
         Description
         <InfoIcon> Description of the test example. </InfoIcon>
