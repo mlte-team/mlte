@@ -95,6 +95,7 @@
       <template #label>
         Code
         <InfoIcon> Code for the test example. </InfoIcon>
+        <CopyIcon @click="copyCode()"/>
       </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
@@ -291,5 +292,9 @@ function tagChange(selected: boolean, tagOption: object) {
     const index = props.modelValue.tags.indexOf(objForRemoval);
     props.modelValue.tags.splice(index, 1);
   }
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(props.modelValue.code);
 }
 </script>
