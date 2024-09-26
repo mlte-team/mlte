@@ -81,11 +81,14 @@
       {{ creator }} - {{ timestamp }}
     </div>
 
-    <FormFieldsSystemInformation ref="systemInformationRef" v-model="form.nc_data.system"/>
+    <FormFieldsSystemInformation
+      ref="systemInformationRef"
+      v-model="form.nc_data.system"
+    />
 
-    <FormFieldsDataFields ref="dataRef" v-model="form.nc_data.data"/>
+    <FormFieldsDataFields ref="dataRef" v-model="form.nc_data.data" />
 
-    <FormFieldsModelFields ref="modelRef" v-model="form.nc_data.model"/>
+    <FormFieldsModelFields ref="modelRef" v-model="form.nc_data.model" />
 
     <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
 
@@ -247,19 +250,21 @@ if (useRoute().query.artifactId !== undefined) {
 
           const problemType = response._data.body.nc_data.system.problem_type;
           if (
-            problemTypeOptions.value.find((x) => x.value === problemType)?.value !==
-            undefined
+            problemTypeOptions.value.find((x) => x.value === problemType)
+              ?.value !== undefined
           ) {
-            form.value.nc_data.system.problem_type = problemTypeOptions.value.find(
-              (x) => x.value === problemType,
-            )?.value;
+            form.value.nc_data.system.problem_type =
+              problemTypeOptions.value.find(
+                (x) => x.value === problemType,
+              )?.value;
           }
 
           response._data.body.nc_data.data.forEach((item) => {
             const classification = item.classification;
             if (
-              classificationOptions.value.find((x) => x.value === classification)
-                ?.value !== undefined
+              classificationOptions.value.find(
+                (x) => x.value === classification,
+              )?.value !== undefined
             ) {
               item.classification = classificationOptions.value.find(
                 (x) => x.value === classification,
@@ -352,9 +357,7 @@ async function submit() {
           },
         },
       );
-    } catch {
-      return;
-    }
+    } catch {}
   } else {
     console.log("Invalid document attempting to be submitted.");
   }

@@ -69,7 +69,7 @@
     <!-- <h3>Quantitative Analysis</h3>
     <p>No quantitative analysis included with this report.</p> -->
 
-    <hr/>
+    <hr />
     <h1 class="section-header">Additional Context</h1>
 
     <FormFieldsDataFields v-model="form.nc_data.data" />
@@ -227,20 +227,22 @@ if (useRoute().query.artifactId !== undefined) {
             form.value = response._data.body;
             const problemType = response._data.body.nc_data.system.problem_type;
             if (
-              problemTypeOptions.value.find((x) => x.value === problemType)?.value !==
-              undefined
+              problemTypeOptions.value.find((x) => x.value === problemType)
+                ?.value !== undefined
             ) {
-              form.value.nc_data.system.problem_type = problemTypeOptions.value.find(
-                (x) => x.value === problemType,
-              )?.value;
+              form.value.nc_data.system.problem_type =
+                problemTypeOptions.value.find(
+                  (x) => x.value === problemType,
+                )?.value;
             }
 
             // Setting .value for each classification item to work in the select
             response._data.body.nc_data.data.forEach((item) => {
               const classification = item.classification;
               if (
-                classificationOptions.value.find((x) => x.value === classification)
-                  ?.value !== undefined
+                classificationOptions.value.find(
+                  (x) => x.value === classification,
+                )?.value !== undefined
               ) {
                 item.classification = classificationOptions.value.find(
                   (x) => x.value === classification,

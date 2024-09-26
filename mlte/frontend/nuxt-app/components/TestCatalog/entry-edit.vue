@@ -14,9 +14,7 @@
       >
         <template #label>
           Catalog
-          <InfoIcon>
-            Catalog where test example will be stored.
-          </InfoIcon>
+          <InfoIcon> Catalog where test example will be stored. </InfoIcon>
         </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
@@ -91,16 +89,22 @@
       <template #error-message>Code Type must be selected</template>
     </UsaSelect>
 
-    <UsaTextarea v-model="modelValue.code" style="resize: both; width: 30rem; max-width: 100%">
+    <UsaTextarea
+      v-model="modelValue.code"
+      style="resize: both; width: 30rem; max-width: 100%"
+    >
       <template #label>
         Code
         <InfoIcon> Code for the test example. </InfoIcon>
-        <CopyIcon @click="copyCode()"/>
+        <CopyIcon @click="copyCode()" />
       </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
 
-    <UsaTextarea v-model="modelValue.description" style="resize: both; width: 30rem; max-width: 100%">
+    <UsaTextarea
+      v-model="modelValue.description"
+      style="resize: both; width: 30rem; max-width: 100%"
+    >
       <template #label>
         Description
         <InfoIcon> Description of the test example. </InfoIcon>
@@ -294,7 +298,7 @@ function tagChange(selected: boolean, tagOption: object) {
   }
 }
 
-function copyCode(){
+function copyCode() {
   navigator.clipboard.writeText(props.modelValue.code);
 }
 </script>
