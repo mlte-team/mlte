@@ -73,7 +73,7 @@ clean:
 
 # All quality assurance
 .PHONY: qa
-qa: isort format lint typecheck
+qa: isort format lint typecheck docs
 
 # Check all QA tasks
 .PHONY: check

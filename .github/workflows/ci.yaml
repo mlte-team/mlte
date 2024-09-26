@@ -29,6 +29,8 @@ jobs:
         run: make check-lint
       - name: Typecheck with mypy
         run: make check-typecheck
+      - name: Check docs
+        run: make docs 
       - name: Execute unit tests
         run: make test
       - name: Vet schemas
