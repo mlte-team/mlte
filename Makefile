@@ -61,6 +61,11 @@ typecheck:
 .PHONY: check-typecheck
 check-typecheck: typecheck
 
+# Doc generation.
+.PHONY: docs
+docs:
+	cd docs && poetry run mkdocs build --strict
+
 # Clean cache files
 .PHONY: clean
 clean: 
