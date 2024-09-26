@@ -78,7 +78,7 @@
     </UsaTextInput>
     <div v-else>
       <h3 style="display: inline">Last Modified by:</h3>
-      {{ form.creator }} - {{ form.timestamp }}
+      {{ creator }} - {{ timestamp }}
     </div>
 
     <FormFieldsSystemInformation ref="systemInformationRef" v-model="form.nc_data.system"/>

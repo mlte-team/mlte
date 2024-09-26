@@ -3,7 +3,7 @@
     <div v-if="!newEntryFlag">
       <h1 class="section-header">{{ modelValue.header.identifier }}</h1>
       <h3 style="display: inline">Created by:</h3>
-      {{ modelValue.header.creator }} - {{ modelValue.header.created }}
+      {{ modelValue.header.creator }} - {{ timestamp }}
     </div>
     <div v-if="newEntryFlag">
       <UsaSelect
@@ -172,6 +172,10 @@ const props = defineProps({
   },
 });
 
+const timestamp = ref("");
+timestamp.value = new Date(
+  props.modelValue.header.created * 1000,
+).toLocaleString("en-US");
 const formErrors = ref({
   catalog: false,
   identifier: false,
