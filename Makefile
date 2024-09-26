@@ -73,7 +73,7 @@ clean:
 
 # All quality assurance
 .PHONY: qa
-qa: isort format lint typecheck docs
+qa: isort format lint typecheck
 
 # Check all QA tasks
 .PHONY: check
@@ -121,4 +121,4 @@ vet:
 # All actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 .PHONY: ci
-ci: clean gen qa test
+ci: clean gen qa docs test
