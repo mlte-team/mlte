@@ -27,7 +27,7 @@ class CatalogStoreGroup:
         self.catalogs: Dict[str, CatalogStore] = {}
         """Dictionary with all catalogs in this group."""
 
-    def add_catalog_from_uri(self, id: str, uri: str, overwite: bool = False):
+    def add_catalog_from_uri(self, id: str, uri: str, overwrite: bool = False):
         """
         Adds a catalog by indicating its uri.
 
@@ -36,19 +36,19 @@ class CatalogStoreGroup:
         :param overwrite: Add catalog to list even if id is already stored, pointing dictionary id to the new URI.
         """
         catalog = create_catalog_store(uri, id)
-        self.add_catalog(id, catalog, overwite)
+        self.add_catalog(id, catalog, overwrite)
 
     def add_catalog(
-        self, id: str, catalog_store: CatalogStore, overwite: bool = False
+        self, id: str, catalog_store: CatalogStore, overwrite: bool = False
     ):
         """
         Adds a catalog.
 
         :param id: A string to identify the catalog.
-        :param uri: The store URI that describes the store to be used for the catalog.
+        :param catalog_store: The catalog store to add.
         :param overwrite: Add catalog to list even if id is already stored, pointing dictionary id to the new URI.
         """
-        if id in self.catalogs and not overwite:
+        if id in self.catalogs and not overwrite:
             raise ErrorAlreadyExists(
                 f"Catalog with id {id} already exists in group."
             )
