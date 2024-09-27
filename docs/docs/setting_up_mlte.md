@@ -1,6 +1,6 @@
 # Setting Up `MLTE`
 
-`MLTE` is a framework (a process to follow) and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the `MLTE` [process](mlte_framework.md).
+`MLTE` is a process and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the `MLTE` [process](mlte_framework.md).
 
 ## Installation
 
@@ -41,13 +41,13 @@ from mlte.report ... #importing from report subpackage
 
 ### Setting up a MLTE session
 
-Before most operations can be done on MLTE, a context and artifact store need to be set. When using MLTE as a library, there are two commands that can be executed once on a script to set this global state. They can be imported like so:
+Before most operations can be done on MLTE, a context and artifact store need to be set. When using MLTE as a library, there are two commands that can be executed once in a script to set this global state. They can be imported using
 
 ```python
 from mlte.session import set_context, set_store
 ```
 
-They are described used in the following way:
+They are described and used in the following way:
 
 - ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
 
@@ -60,7 +60,7 @@ Alternatively, these two things can also be set by environment variables before 
 
 ## Running the Backend and User Interface
 
-The web-based user interface (UI or frontend) allows you to edit some types of artifacts in the system (like a Negotiation Card), and review the existing models and test catalogs. It requires authentication to access, so it also allows admins to manage users. To access the UI, first you need to start the backend server. See details for running each component.
+The web-based user interface (UI or frontend) allows you to create and edit system artifacts, such as the Negotiation Card, and review existing models and test catalogs. It requires authentication for access and allows admins to manage users. To access the UI, first you need to start the backend server. See details for running each component.
 
 ### Backend
 
@@ -74,19 +74,19 @@ Some common flags used with the backend include the following:
 
  - **Artifact store**: the default artifact store will store any artifacts in a non-persistent, in-memory store. To change the store type, use the `--store-uri` flag. Please see the [Store URIs](#store-uris) section for details about each store type and corresponding URI. Note that this flag will also set the internal user store, used to handle users and permissions needed for the UI. To use a relational database to store artifacts, you will need to set up the database engine separately; see the [Using a Relational DB](#using-a-relational-db-engine-backend) section below for details. For example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
 
-```bash
-$ mlte backend --store-uri fs://store
-```
+    ```bash
+    $ mlte backend --store-uri fs://store
+    ```
 
- - **Test catalog stores**: Optionally, you can specify one or more test catalog stores to use by the system. This is done with the `--catalog-uris` flag, which is similar to the flag for artifact stores. Unlike that one, however, catalogs need to have an ID, and this flag allows you to specify more than one test catalog if required. The value of this flag is a string with a dictionary with the ids and the actual store URIs. For example, to run the backend with two catalogs, one called "cat1" and another one called "cat2", the first one being in memory and the second one being in a local folder called `store`, you would run this command:
+ - **Test catalog stores**: Optionally, you can specify one or more test catalog stores to be used by the system. This is done with the `--catalog-uris` flag, which is similar to the flag for artifact stores. Unlike that flag, however, catalogs need to have an ID, and this flag allows you to specify more than one test catalog if required. The value of this flag is a string with a dictionary with the ids and the actual store URIs. For example, to run the backend with two catalogs, one called "cat1" and another one called "cat2", the first one being in memory and the second one being in a local folder called `store`, you would run this command:
 
-```bash
-$ mlte backend --catalog-uris '{"cat1": "memory://", "cat2": "fs://store"}'
-```
+    ```bash
+    $ mlte backend --catalog-uris '{"cat1": "memory://", "cat2": "fs://store"}'
+    ```
 
  - **Token key**: The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing instead of the default one. This can be done by either passing it as a command line argument with the `--jwt-secret` flag, or creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`
 
- - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend need to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When ran through the mlte package, the frontend will be hosted at `http://localhost:8000`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
+ - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend needs to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When run through the mlte package, the frontend will be hosted at `http://localhost:8080`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
 
 ### Frontend
 

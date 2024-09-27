@@ -224,7 +224,7 @@ Measures used to determine that the responses enumerated for the scenario have b
 
 ### System Quality Statement
 
-Scenario for {System Quality}: {Stimulus} from {Source} during {Environment}. {Response} {Response Measure}.
+As the information above is added, the text for the full scenario is constructed. Adjust the infornation until there is a clear statement of the quaity attribute scenario.
 
 #### Example: Response Time
 

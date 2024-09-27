@@ -24,7 +24,7 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 $ poetry install --with demo
 ```
 
-If using macOS, please also install this additional group:
+If using macOS, also install this additional group:
 
 ```bash
 $ poetry install --with demo-mac
@@ -32,13 +32,13 @@ $ poetry install --with demo-mac
 
 ## Project Development Commands
 
-You can run most project commands (to format sources, lint, etc.), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
+You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
 Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `source .venv/bin/activate` (see above), you can run all the commands below without the `poetry run` prefix.
 
 ### Import Sorting
 
-We sort all Python imports code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
+We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
 
 ```bash
 $ poetry run make isort
@@ -126,7 +126,7 @@ Alternatively, you can run the tests manually from the project root:
 $ poetry run pytest test
 ```
 
-Unit tests failures result in build failures in CI.
+Unit test failures result in build failures in CI.
 
 To test the Juypter notebooks present in the demo folders, run:
 
@@ -154,8 +154,8 @@ Unit test failures result in build failures in CI.
 
 There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
 
-* `poetry run make qa`: execues the source sorting, formatting, source linting, and static type checking commands.
-* `poetry run make ci`: execues the same commands as `qa`, but also runs `gen` to generate updated schemas if needed, and runs `test` to execute the unit tests.
+* `poetry run make qa`: executes the source sorting, formatting, source linting, and static type checking commands.
+* `poetry run make ci`: executes the same commands as `qa`, but also runs `gen` to generate updated schemas if needed, and runs `test` to execute the unit tests.
 
 
 ## Front End
@@ -214,7 +214,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-We maintain a group of requirements for building the documentation under asthe `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
+We maintain a group of requirements for building the documentation under the `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 
 ```bash
 $ poetry install --with docs
@@ -258,15 +258,15 @@ $ bash build.sh
 You can also do this manually:
 1. Build the static distribution for the front end; the command below assumes that you have the dependencies for frontend builds installed:
 
-```bash
-$ cd mlte/frontend/nuxt-app && npm run build
-```
+    ```bash
+    $ cd mlte/frontend/nuxt-app && npm run build
+    ```
 
 2. Create the source distribution and wheel from the main repo folder:
 
-```bash
-$ poetry build
-```
+    ```bash
+    $ poetry build
+    ```
 
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
@@ -290,9 +290,9 @@ Run the containers with:
 bash start.sh
 ```
 
-This exposes the backend on the host at `localhost:8080`, and the frontend at `localhost:8080`. By default, PostgreSQL database is used in a container, and the data is mapped to the local `./pgdata` folder.
+This exposes the backend on the host at `localhost:8080`, and the frontend at `localhost:8000`. By default, PostgreSQL database is used in a container, and the data is mapped to the local `./pgdata` folder.
 
-You can CTRL+C to stop seeing the output in the console, but the containers will continue running. You can check back the current logs at any time with:
+You can CTRL+C to stop seeing the output in the console, but the containers will continue running. You can check the current logs at any time with:
 
 ```bash
 # From inside the docker/deployment folder
@@ -314,9 +314,9 @@ Currently, `MLTE` supports the following Python versions:
 - `3.10`
 - `3.11`
 
-<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to be repeating this step in order to contribute to `MLTE`.
+<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to repeat this step to contribute to `MLTE`.
 
-### Establishing Depdencies for a Particular Python Version
+### Establishing Dependencies for a Particular Python Version
 
 Install the desired version with:
 
@@ -345,4 +345,4 @@ Once all QA checks and unit tests pass, we can be assured that the environment d
 
 ## Contributing
 
-To contribute to `MLTE`, check out our <a href="https://github.com/mlte-team/mlte" target="_blank">GitHub</a>!
+To contribute to `MLTE`, check out our <a href="https://github.com/mlte-team/mlte" target="_blank">GitHub</a> repository!
