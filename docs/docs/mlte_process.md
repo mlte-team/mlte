@@ -1,5 +1,5 @@
 # MLTE Process
-![MLTE Diagram](img/mlte_numbered_diagram.png)
+![MLTE Diagram](img/numbered_diagram.png)
 
 ## 1. Continuous Negotiation
 The process starts with a negotiation step between model developers and project stakeholders where the goal is to share information about mission and system requirements that will influence model development, such as the deployment environment, available data, model requirements, and system requirements.
