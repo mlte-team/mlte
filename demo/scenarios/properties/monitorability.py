@@ -1,4 +1,3 @@
-
 from mlte.property.base import Property
 
 
