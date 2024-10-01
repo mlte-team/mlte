@@ -11,8 +11,8 @@ class Accuracy(Property):
         super().__init__(
             instance=self,
             description="""
-            The Accuracy property assesses the total predictive performance requirements of a
-            model and system. These requirements are typically given as a single real valued number. 
-            """,
+                The Accuracy property assesses the total predictive performance requirements of a
+                model and system. These requirements are typically given as a single real valued number. 
+                """,
             rationale=rationale,
         )
