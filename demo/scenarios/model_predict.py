@@ -22,7 +22,9 @@ def parse_args():
     )
     # --weights file example: model_f_a.h5
     parser.add_argument(
-        "--weights", help="The file that contains the model weights.", required=True
+        "--weights",
+        help="The file that contains the model weights.",
+        required=True,
     )
     args = parser.parse_args()
     return args
@@ -38,6 +40,7 @@ def run_model(image_folder_path, model_file, weights_file):
     r_mem_units_str = "KiB" if sys.platform.startswith("linux") else "bytes"
 
     import tensorflow as tf
+
     print("TensorFlow version:", tf.__version__)
     from tensorflow.keras.models import model_from_json
 
