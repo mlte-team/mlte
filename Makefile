@@ -96,17 +96,8 @@ cov-results:
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	poetry run pytest --nbmake ./demo/simple/negotiation.ipynb
-	poetry run pytest --nbmake ./demo/simple/requirements.ipynb
-	poetry run pytest --nbmake ./demo/simple/evidence.ipynb
-	poetry run pytest --nbmake ./demo/simple/report.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/1_requirements.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/2_evidence.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/2a_evidence_fairness.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/2b_evidence_robustness.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/2c_evidence_performance.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/2d_evidence_interpretability.ipynb
-	poetry run pytest --nbmake ./demo/scenarios/3_report.ipynb	
+	bash demo/simple/test.sh
+	bash demo/scenarios/test.sh
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
