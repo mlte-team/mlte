@@ -21,13 +21,19 @@ MODELS_DIR = Path.cwd() / "model"
 MEDIA_DIR = Path.cwd() / "media"
 os.makedirs(MEDIA_DIR, exist_ok=True)
 
+# The json file of the model to load
+MODEL_FILE_PATH = MODELS_DIR / "model_f3_a.json"
+
+# The weights file for the model
+MODEL_WEIGHTS_PATH = MODELS_DIR / "model_f_a.h5" 
+
 # This is the external script that will load and run the model for inference/prediction.
 MODEL_SCRIPT = Path.cwd() / "model_predict.py"
 MODEL_ARGS = [
     "--images",
     DATASETS_DIR,
     "--model",
-    MODELS_DIR / "model_f3_a.json",
+    MODEL_FILE_PATH,
     "--weights",
-    MODELS_DIR / "model_f_a.h5",
+    MODEL_WEIGHTS_PATH,
 ]
