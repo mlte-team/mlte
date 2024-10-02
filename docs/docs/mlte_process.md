@@ -7,14 +7,14 @@ The process starts with a negotiation step between model developers and project 
 This negotiation continues throughout model development, in response to, for example, to missing information, unrealistic expectations, and/or test results that do not meet system requirements.
 
 ## 2. Quality Attribute Scenarios
-Quality attributes are a way to specify a system’s structural and behavioral requirements; MLTE leverages this approach during negotiations to help teams move from vague statements to concrete requirements. More information on using quality attributes can be found by reading this <a href="https://arxiv.org/abs/2406.08575" target="_blank">paper</a>.
+Quality attributes are a way to specify a system’s structural and behavioral requirements; MLTE leverages this approach during negotiations to help teams move from vague requirements statements to concrete measurable requirements. More information on using quality attributes can be found by reading this <a href="https://arxiv.org/abs/2406.08575" target="_blank">paper</a>.
 
 
 ## 3. Negotiation Card
 As part of the negotiation, teams fill out a `MLTE` [Negotiation Card](negotiation_card.md) which allows them to record agreements and drives model development and testing.
 
 ## 4. Initial Model Testing (IMT)
-IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform initial testing during this step to determine when the model exceeds baselines. Once model performance exceeds baselines, or if additional testing is needed to validate assumptions, the procees moves to SDMT.
+IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform initial testing during this step to determine when the model exceeds baselines. Once model performance exceeds baselines, or if additional testing is needed to validate assumptions, the process moves to SDMT.
 
 ## 5. System Dependent Model Testing (SDMT)
 In SDMT, teams focus on ensuring that the model passes the larger set of system and model requirements. To do so, teams use system requirements and quality attribute information from the [Negotiation Card](negotiation_card.md) to develop a test specification, which contains code that will evaluate each model or system requirement.
