@@ -110,6 +110,8 @@ def run_model(image_folder_path, model_file, weights_file):
         )
     )
 
+    return avg_elapsed_time, avg_inference_memory, r_mem_units_str
+
 
 # Run the script if called on its own.
 if __name__ == "__main__":
