@@ -62,3 +62,7 @@ class String(ValueBase):
             ),
         )
         return condition
+
+    def __str__(self) -> str:
+        """Return a string representation of the value."""
+        return f"{self.value}"

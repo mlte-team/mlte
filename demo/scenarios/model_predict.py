@@ -7,10 +7,25 @@ from resource import *
 from typing import Optional
 
 
+def setup_log():
+    logging.basicConfig(
+        filename="./log.txt",
+        format="%(asctime)s %(message)s",
+        level=logging.DEBUG,
+    )
+
+
 def print_and_log(message: Optional[str]):
     """Print to console, as well as log to file."""
     print(message, flush=True)
     logging.info(message)
+
+
+def load_log() -> str:
+    """Loads the log contents and returns it as a string."""
+    with open("log.txt", "r") as f:
+        content = f.read()
+    return content
 
 
 def parse_args():
@@ -44,11 +59,7 @@ def run_model(image_folder_path, model_file, weights_file):
     It does NOT check accurate predictions - it simply runs the inference on the provided dataset and outputs statics
     on elapsed time and memory consumption.
     """
-    logging.basicConfig(
-        filename="./log.txt",
-        format="%(asctime)s %(message)s",
-        level=logging.DEBUG,
-    )
+    setup_log()
 
     # getrusage returns Kibibytes on linux and bytes on MacOS
     r_mem_units_str = "KiB" if sys.platform.startswith("linux") else "bytes"
