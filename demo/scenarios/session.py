@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
+
 from mlte.session import set_context, set_store
 
-# This script sets up the session context used for all steps of this demo, as well as 
+# This script sets up the session context used for all steps of this demo, as well as
 # global constants about folders and model to use.
 
 store_path = Path.cwd() / "store"
@@ -25,7 +26,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 MODEL_FILE_PATH = MODELS_DIR / "model_f3_a.json"
 
 # The weights file for the model
-MODEL_WEIGHTS_PATH = MODELS_DIR / "model_f_a.h5" 
+MODEL_WEIGHTS_PATH = MODELS_DIR / "model_f_a.h5"
 
 # This is the external script that will load and run the model for inference/prediction.
 MODEL_SCRIPT = Path.cwd() / "model_predict.py"
