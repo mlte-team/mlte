@@ -1,8 +1,16 @@
 import argparse
+import logging
 import os
 import sys
 import time
 from resource import *
+from typing import Optional
+
+
+def print_and_log(message: Optional[str]):
+    """Print to console, as well as log to file."""
+    print(message, flush=True)
+    logging.info(message)
 
 
 def parse_args():
@@ -36,12 +44,18 @@ def run_model(image_folder_path, model_file, weights_file):
     It does NOT check accurate predictions - it simply runs the inference on the provided dataset and outputs statics
     on elapsed time and memory consumption.
     """
+    logging.basicConfig(
+        filename="./log.txt",
+        format="%(asctime)s %(message)s",
+        level=logging.DEBUG,
+    )
+
     # getrusage returns Kibibytes on linux and bytes on MacOS
     r_mem_units_str = "KiB" if sys.platform.startswith("linux") else "bytes"
 
     import tensorflow as tf
 
-    print("TensorFlow version:", tf.__version__)
+    print_and_log(f"TensorFlow version: {tf.__version__}")
     from tensorflow.keras.models import model_from_json
 
     # Load dataset
@@ -64,25 +78,25 @@ def run_model(image_folder_path, model_file, weights_file):
 
     # Load weights into new model
     loaded_model.load_weights(weights_file)
-    print("Loaded model from disk!")
+    print_and_log("Loaded model from disk!")
 
     ru2 = getrusage(RUSAGE_SELF).ru_maxrss
 
-    print(loaded_model.summary())
+    print_and_log(loaded_model.summary())
 
     mfile_size = os.path.getsize(model_file)
     wfile_size = os.path.getsize(weights_file)
 
-    print(f"Size of model json file ({model_file}): {mfile_size} bytes")
-    print(f"Size of weights file ({weights_file}): {wfile_size} bytes")
-    print(
+    print_and_log(f"Size of model json file ({model_file}): {mfile_size} bytes")
+    print_and_log(f"Size of weights file ({weights_file}): {wfile_size} bytes")
+    print_and_log(
         f"Memory used for the entire model loading process: {ru2 - ru1} {r_mem_units_str}."
     )
 
     total_elapsed_time = 0.0
     total_inference_memory = 0.0
     num_samples = len(dataset)
-    print(f"Running inference on {num_samples} samples...")
+    print_and_log(f"Running inference on {num_samples} samples...")
 
     for image in dataset:
         start = time.time()
@@ -98,13 +112,13 @@ def run_model(image_folder_path, model_file, weights_file):
 
     avg_elapsed_time = total_elapsed_time / num_samples
     avg_inference_memory = total_inference_memory / num_samples
-    print("\n--- STATISTICS ---")
-    print(
+    print_and_log("\n--- STATISTICS ---")
+    print_and_log(
         "Average elapsed time per inference: {0:.5f} seconds".format(
             avg_elapsed_time
         )
     )
-    print(
+    print_and_log(
         "Average memory used per inference: {0:.5f} {1}.".format(
             avg_inference_memory, r_mem_units_str
         )
@@ -119,4 +133,5 @@ if __name__ == "__main__":
     image_folder = args.images
     model_file = args.model
     weights_file = args.weights
+
     run_model(image_folder, model_file, weights_file)
