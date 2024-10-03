@@ -13,9 +13,7 @@ class RankSums(Array):
 
     @classmethod
     def p_value_greater_or_equal_to(cls, threshold: float) -> Condition:
-        condition: Condition = Condition(
-            "p_value_greater_or_equal_to",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda value: Success(
                 f"P-Value {value.array[1]} is greater or equal to {threshold}"
             )
