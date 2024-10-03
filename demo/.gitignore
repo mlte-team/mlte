@@ -5,3 +5,4 @@ simple/models
 **/media
 **/reports
 log.txt
+.ipynb_checkpoints
