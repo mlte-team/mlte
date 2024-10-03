@@ -11,7 +11,9 @@ class Resilience(Property):
         super().__init__(
             instance=self,
             description="""
-                The Resilience property assesses ...
+                The Resilience property assesses if a component is able to continue to carry out its mission in 
+                the face of adversity (i.e., if it provides required capabilities despite excessive stresses 
+                that can cause disruptions).
                 """,
             rationale=rationale,
         )
