@@ -114,9 +114,9 @@ def run_model(image_folder_path, model_file, weights_file):
         image_np = image.numpy()
 
         # OOD
-        r_avg = image_np[:,:,0].average()
-        g_avg = image_np[:,:,1].average()
-        b_avg = image_np[:,:,2].average()
+        r_avg = image_np[:,:,0].mean()
+        g_avg = image_np[:,:,1].mean()
+        b_avg = image_np[:,:,2].mean()
 
         r_dist_lb = 51
         r_dist_ub = 171
