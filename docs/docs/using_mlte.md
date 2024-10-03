@@ -1,20 +1,20 @@
 # Using MLTE
 
-After [setting up `MLTE`](getting_started.md), the process begins at the inception of a project with requirements definition. 
+After [setting up `MLTE`](setting_up_mlte.md), the process begins at the inception of a project with requirements definition. 
 
-If your team has an existing project you'd like to test using the `MLTE` infrastructure, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`.
+If your team has an existing project and you would like to test it using  `MLTE`, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`. However, if stakeholders have not been activley involved in the process, it is recommended to start with the Negotiation Card to make sure that both system and model requirements have been elicited and defined.
 
 ## Negotiate Model Quality Requirements
 
-To begin the `MLTE` process, teams hold a negotiation - a discussion about requirements - amongst stakeholders, software engineers, data scientists, and anyone else involved in the project. 
+To begin the `MLTE` process, teams hold a negotiation a discussion about requirements with stakeholders that should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
 
-- The negotiation facilitator should review the instructions and content for the negotiation card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Getting Started](getting_started.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
-- The negotiation is a collaborative discussion where all involved parties can agree on project requirements and discuss technical details.
-- Once the negotiation is complete and the negotiation card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The negotiation card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
+- The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Setting Up `MLTE`](setting_up_mlte.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
+- The negotiation is a collaborative discussion where all involved parties aim to agree on project requirements and discuss technical details.
+- Once the negotiation is complete and the Negotiation Card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The Negotiation Card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
 
 ## Internal Model Testing (IMT)
 
-After initial model development has been completed, the team should have a model that is ready for preliminary testing. In IMT, the development team evaluates how the model performs against its baseline on the chosen performance metrics for each system goal. Evaluation in `MLTE` follows this process:
+After initial model development has been completed, the team should have a model that is ready for preliminary testing. In IMT, the development team evaluates how the model performs against the baselines for the defined performance metrics for each system goal. Evaluation in `MLTE` follows this process:
 
 1. Initialize the `MLTE` context.
 2. Define a specification.
@@ -34,7 +34,7 @@ set_store(f"local://{store_path}")
 
 ### 2. Define a `Specification`
 
-A `Specification` (or `Spec`) represents the requirements the completed model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. However, the process is the same for both stages. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
+A `Specification` (or `Spec`) represents the requirements the model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. However, the process is the same for both stages. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
 
 ```python
 from mlte.spec.spec import Spec
@@ -147,17 +147,19 @@ IMT is an iterative process - the development team will likely repeat it several
 
 ## Negotiate Model Requirements Beyond Task Efficacy
 
-After completing IMT, development teams should have a sense of how their model performs on the core project performance metric against the chosen baseline. After they have this additional information, the team conducts another negotiation amongst everyone involved in the project: stakeholders, software engineers, data scientists, and anyone else involved such as a project manager.
+After completing IMT, development teams should have a sense of how their model performs on the core project performance metric against the chosen baseline. After they have this additional information, the team conducts another negotiation amongst everyone involved in the project: stakeholders, software engineers, data scientists, and anyone else involved such as a project manager ot system/product owner.
 
 - The emphasis of this negotiation is to review the discussion from [requirements negotiation](#negotiate-model-quality-requirements) and update it based on the intial evaluation that was performed in [IMT](#internal-model-testing-imt).
-- It is also important to ensure that the development team has all the information they need to build out a `Specification` (`Spec`) after this negotiation.
-- It is likely that the first negotiation only resulted in some sections of the negotiation card being filled out, and a goal of this second negotiation should be to complete more of the sections and have a better picture of what project success will be.
+- It is also important to ensure that the development team has all the information they need to build a `Specification` (`Spec`) after this negotiation.
+- It is likely that the first negotiation only resulted in some sections of the Negotiation Card being filled out, and a goal of this second negotiation should be to complete more of the sections and have a better picture of what project success will be.
 
-Once the negotiation is complete and the contents of the negotiation card have been updated, the development team will conduct a comprehensive round of testing as part of System Dependent Model Testing.
+Once the negotiation is complete and the contents of the Negotiation Card have been updated, the development team will conduct a comprehensive round of testing as part of System Dependent Model Testing.
 
 ## System Dependent Model Testing (SDMT)
 
-SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated negotiation card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. This follows the same process described in [IMT](#internal-model-testing-imt), with more emphasis on building out the specification. As such, this section will focus on the specification and will offer more detail on collecting different types of evidence.
+SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated Negotiation Card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. This follows the same process described in [IMT](#internal-model-testing-imt), with more emphasis on building out the specification. As such, this section will focus on the specification and will offer more detail on collecting different types of evidence.
+
+Teams can search the Test Catalog to find examples of how different quality attributes were tested by other teams. Note that MLTE comes with a sample test catalog simply for reference. The goal is for organizations to create and populate their own Test catalogs over time.
 
 ### Define a System-Oriented `Specification`
 
@@ -205,7 +207,7 @@ After building the `Spec`, teams must collect evidence to attest to whether or n
 
 #### Evidence: MLTE Measurements
 
-The simplest use-case is to import a MLTE-defined `Measurement`, which is then invoked to produce a `Value`. This value can then be inspected and automatically saved to the artifact store. Following are two examples of this type of evidence collection.
+The simplest use case is to import a MLTE-defined `Measurement`, which is then invoked to produce a `Value`. This value can then be inspected and automatically saved to the artifact store. Following are two examples of this type of evidence collection.
 
 ```python
 from mlte.measurement.storage import LocalObjectSize
@@ -314,7 +316,7 @@ img.save()
 
 ## Communicate ML Evaluation Results
 
-To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the negotiation card using the `MLTE` UI, and the fields can be customized as needed. The report is most easily generated using the UI, but can also be defined via code as demonstrated below.
+To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the Negotiation Card using the `MLTE` UI, and the fields can be customized as needed. The report is most easily generated using the UI, but can also be defined via code as demonstrated below.
 
 ```python
 import time
