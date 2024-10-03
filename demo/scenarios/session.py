@@ -38,7 +38,7 @@ MODEL_WEIGHTS_PATH = MODELS_DIR / "model_f_a.h5"
 MODEL_SCRIPT = Path.cwd() / "model_predict.py"
 MODEL_ARGS = [
     "--images",
-    DATASETS_DIR,
+    SAMPLE_DATASET_DIR,
     "--model",
     MODEL_FILE_PATH,
     "--weights",
