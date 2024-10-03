@@ -114,9 +114,9 @@ def run_model(image_folder_path, model_file, weights_file):
         image_np = image.numpy()
 
         # OOD
-        r_avg = image_np[:,:,0].mean()
-        g_avg = image_np[:,:,1].mean()
-        b_avg = image_np[:,:,2].mean()
+        r_avg = image_np[:, :, 0].mean()
+        g_avg = image_np[:, :, 1].mean()
+        b_avg = image_np[:, :, 2].mean()
 
         r_dist_lb = 51
         r_dist_ub = 171
@@ -124,13 +124,19 @@ def run_model(image_folder_path, model_file, weights_file):
         g_dist_ub = 141
         b_dist_lb = 40
         g_dist_ub = 142
-        
+
         if r_avg < r_dist_lb or r_dist_ub < r_avg:
-            print_and_log("Model - Input OOD Error - Red channel out of expected range")
+            print_and_log(
+                "Model - Input OOD Error - Red channel out of expected range"
+            )
         if g_avg < g_dist_lb or g_dist_ub < g_avg:
-            print_and_log("Model - Input OOD Error - Green channel out of expected range")
+            print_and_log(
+                "Model - Input OOD Error - Green channel out of expected range"
+            )
         if b_avg < b_dist_lb or b_dist_ub < b_avg:
-            print_and_log("Model - Input OOD Error - Blue channel out of expected range")
+            print_and_log(
+                "Model - Input OOD Error - Blue channel out of expected range"
+            )
         # Input shape
 
         # Do inference
