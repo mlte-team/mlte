@@ -123,7 +123,7 @@ def run_model(image_folder_path, model_file, weights_file):
         g_dist_lb = 5
         g_dist_ub = 141
         b_dist_lb = 40
-        g_dist_ub = 142
+        b_dist_ub = 142
 
         if r_avg < r_dist_lb or r_dist_ub < r_avg:
             print_and_log(
