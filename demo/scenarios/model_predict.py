@@ -110,6 +110,30 @@ def run_model(image_folder_path, model_file, weights_file):
     print_and_log(f"Running inference on {num_samples} samples...")
 
     for image in dataset:
+        # Input validation
+        image_np = image.numpy()
+
+        # OOD
+        r_avg = image_np[:,:,0].average()
+        g_avg = image_np[:,:,1].average()
+        b_avg = image_np[:,:,2].average()
+
+        r_dist_lb = 51
+        r_dist_ub = 171
+        g_dist_lb = 5
+        g_dist_ub = 141
+        b_dist_lb = 40
+        g_dist_ub = 142
+        
+        if r_avg < r_dist_lb or r_dist_ub < r_avg:
+            print_and_log("Model - Input OOD Error - Red channel out of expected range")
+        if g_avg < g_dist_lb or g_dist_ub < g_avg:
+            print_and_log("Model - Input OOD Error - Green channel out of expected range")
+        if b_avg < b_dist_lb or b_dist_ub < b_avg:
+            print_and_log("Model - Input OOD Error - Blue channel out of expected range")
+        # Input shape
+
+        # Do inference
         start = time.time()
         ru3 = getrusage(RUSAGE_SELF).ru_maxrss
         _ = loaded_model.predict(image)

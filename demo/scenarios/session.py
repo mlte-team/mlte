@@ -15,6 +15,12 @@ set_store(f"local://{store_path}")
 # The path at which datasets are stored
 DATASETS_DIR = Path.cwd() / "data"
 
+# Path for the data set of known good samples
+SAMPLE_DATASET_DIR = DATASETS_DIR / "sample
+
+# Path for the data set of out of distribution samples
+OOD_DATASET_DIR = DATASETS_DIR / "ood
+
 # Path where the model files are stored.
 MODELS_DIR = Path.cwd() / "model"
 
