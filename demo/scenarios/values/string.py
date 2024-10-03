@@ -34,9 +34,7 @@ class String(ValueBase):
     @classmethod
     def contains(cls, substring: str) -> Condition:
         """Checks if the p-value for multiple ranksums is below given threshold."""
-        condition: Condition = Condition(
-            "contains",
-            [substring],
+        condition: Condition = Condition.build_condition(
             lambda value: Success(
                 f"Substring '{substring}' is contained in the string value."
             )
@@ -50,9 +48,7 @@ class String(ValueBase):
     @classmethod
     def equal_to(cls, other_string: str) -> Condition:
         """Checks if the p-value for multiple ranksums is below given threshold."""
-        condition: Condition = Condition(
-            "equal_to",
-            [other_string],
+        condition: Condition = Condition.build_condition(
             lambda value: Success(
                 f"String '{other_string}' is equal to the internal string value."
             )
