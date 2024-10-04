@@ -113,10 +113,11 @@ def run_model(image_folder_path, model_file, weights_file):
     for image in dataset:
         # Input validation
         image_np = image.numpy()
-        if len(image_np.shape) == 3:
+        print(image_np.shape)
+        if image_np.shape[-1] == 3:
             print_and_log("Model - Input Validation Okay - RGB image loaded")
         else: 
-            print_and_log(f"Model - Input Validation Error - RGB image expected but {image} has wrong number of channels")
+            print_and_log(f"Model - Input Validation Error - RGB image expected but  has wrong number of channels")
             # Not sure if this is the best way to deal with the spec: "input specification it will generate the output "N/A"
             break
         # OOD
@@ -168,7 +169,7 @@ def run_model(image_folder_path, model_file, weights_file):
         predicted_class = tf.argmax(probs, axis=-1)
         confidence = tf.reduce_max(probs, axis=-1)
 
-        if confidence[0] > 0.8:
+        if confidence[0] > 0.015:
             label = garden.label_dict[int(predicted_class[0])]
             print_and_log(f"Model - file: {image_folder_path} predicted to be {label} (class {predicted_class}) with confidence {confidence}")
         else:
