@@ -2,31 +2,8 @@ from os import path
 
 import pandas as pd
 
-
-def load_base_results(data_folder: str) -> pd.DataFrame:
-    df_results = pd.read_csv(
-        path.join(data_folder, "FlowerModelv1_TestSetResults.csv")
-    )
-    df_results.drop(columns=["Unnamed: 0"], inplace=True)
-    return df_results
-
-
-def load_taxonomy(data_folder: str) -> pd.DataFrame:
-    """Loads taxonomy info about the flowers and returns a dict with it."""
-    df_labels = pd.read_csv(
-        path.join(data_folder, "OxfordFlowerLabels.csv"), header=1
-    )
-    df_labels.drop(columns=["Phylum", "Class"], inplace=True)
-    df_labels.rename(columns={"Phylum.1": "Phylum"}, inplace=True)
-    df_labels.drop([0], inplace=True)
-    # df_labels['Common Name'] = df_labels['Common Name'].str.strip()
-    df_labels["Label Name"] = df_labels["Common Name"].replace(
-        " ", "_", regex=True
-    )
-    df_labels.head()
-
-    # set up a data lavel dictionary to switch between data label number and english name
-    label_dict = {
+ # set up a data label dictionary to switch between data label number and english name
+label_dict = {
         0: "_mexican_aster",
         1: "alpine_sea_holly",
         2: "anthurium",
@@ -130,6 +107,30 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
         100: "windflower",
         101: "yellow_iris",
     }
+def load_base_results(data_folder: str) -> pd.DataFrame:
+    df_results = pd.read_csv(
+        path.join(data_folder, "FlowerModelv1_TestSetResults.csv")
+    )
+    df_results.drop(columns=["Unnamed: 0"], inplace=True)
+    return df_results
+
+
+def load_taxonomy(data_folder: str) -> pd.DataFrame:
+    """Loads taxonomy info about the flowers and returns a dict with it."""
+    df_labels = pd.read_csv(
+        path.join(data_folder, "OxfordFlowerLabels.csv"), header=1
+    )
+    df_labels.drop(columns=["Phylum", "Class"], inplace=True)
+    df_labels.rename(columns={"Phylum.1": "Phylum"}, inplace=True)
+    df_labels.drop([0], inplace=True)
+    # df_labels['Common Name'] = df_labels['Common Name'].str.strip()
+    df_labels["Label Name"] = df_labels["Common Name"].replace(
+        " ", "_", regex=True
+    )
+    df_labels.head()
+
+   
+    
     df_dict = pd.DataFrame.from_dict(
         {"Label": list(label_dict), "Label Name": label_dict.values()}
     )
