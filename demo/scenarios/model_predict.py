@@ -117,10 +117,12 @@ def run_model(image_folder_path, model_file, weights_file):
         image_np = image.numpy()
         print(image_np.shape)
         if image_np.shape[-1] == 3:
-            print_and_log("Model - Input Validation Okay - RGB image loaded")
-        else: 
-            print_and_log(f"Model - Input Validation Error - RGB image expected but  has wrong number of channels")
-           # Not sure if this is the best way to deal with the spec: "input specification it will generate the output "N/A"
+            print_and_log("Model - Input Validation Pass - RGB image loaded")
+        else:
+            print_and_log(
+                f"Model - Input Validation Error - RGB image expected but  has wrong number of channels"
+            )
+            # Not sure if this is the best way to deal with the spec: "input specification it will generate the output "N/A"
             break
         # OOD
         r_avg = image_np[:, :, 0].mean()
