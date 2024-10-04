@@ -195,7 +195,7 @@
                     "cpu": "1",
                     "gpu": "0",
                     "memory": "512 MB",
-                    "storage": "3 KB"
+                    "storage": "150 MB"
                 }
             },
             "system_requirements": [
@@ -227,7 +227,7 @@
                     "quality": "Performance: Resource Consumption on Operational Platform",
                     "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                     "source": "the flower identification application",
-                    "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 3 KB, respectively)",
+                    "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively)",
                     "response": "The model executes on the loaned device",
                     "measure": "without any errors due to unavailable resources"
                 },
