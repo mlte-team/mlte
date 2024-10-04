@@ -14,9 +14,7 @@ class MultipleAccuracy(Array):
     @classmethod
     def all_accuracies_more_or_equal_than(cls, threshold: float) -> Condition:
         """Checks if the accuracy for multiple populations is fair by checking if all of them are over the given threshold."""
-        condition: Condition = Condition(
-            "all_accuracies_more_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda value: Success(
                 f"All accuracies are equal to or over threshold {threshold}"
             )

@@ -47,9 +47,7 @@ class MultipleRanksums(ValueBase):
     @classmethod
     def all_p_values_greater_or_equal_than(cls, threshold: float) -> Condition:
         """Checks if the p-value for multiple ranksums is below given threshold."""
-        condition: Condition = Condition(
-            "all_p_values_greater_or_equal_than",
-            [threshold],
+        condition: Condition = Condition.build_condition(
             lambda value: Success(
                 f"All p-values are equal to or over threshold {value.get_total_p_value_threshold(threshold)}"
             )
