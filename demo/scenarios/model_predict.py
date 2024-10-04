@@ -5,7 +5,8 @@ import sys
 import time
 from resource import *
 from typing import Optional
-
+import tensorflow as tf
+import garden
 
 def setup_log():
     logging.basicConfig(
@@ -112,7 +113,12 @@ def run_model(image_folder_path, model_file, weights_file):
     for image in dataset:
         # Input validation
         image_np = image.numpy()
-
+        if len(image_np.shape) == 3:
+            print_and_log("Model - Input Validation Okay - RGB image loaded")
+        else: 
+            print_and_log(f"Model - Input Validation Error - RGB image expected but {image} has wrong number of channels")
+            # Not sure if this is the best way to deal with the spec: "input specification it will generate the output "N/A"
+            break
         # OOD
         r_avg = image_np[:, :, 0].mean()
         g_avg = image_np[:, :, 1].mean()
@@ -137,12 +143,11 @@ def run_model(image_folder_path, model_file, weights_file):
             print_and_log(
                 "Model - Input OOD Error - Blue channel out of expected range"
             )
-        # Input shape
 
         # Do inference
         start = time.time()
         ru3 = getrusage(RUSAGE_SELF).ru_maxrss
-        _ = loaded_model.predict(image)
+        pred = loaded_model.predict(image)
         ru4 = getrusage(RUSAGE_SELF).ru_maxrss
         end = time.time()
 
@@ -150,6 +155,24 @@ def run_model(image_folder_path, model_file, weights_file):
         inference_memory = ru4 - ru3
         total_elapsed_time += elapsed_time
         total_inference_memory += inference_memory
+
+        
+        # Output validation
+        if pred.shape[1] == 102:
+            print_and_log(f"Model - Output Validation Pass - {pred.shape} - validated")
+        else:
+            print_and_log(f"Model - Output Validation Error - Output shape: {pred.shape}")
+        
+        # Get prediction
+        probs = tf.nn.softmax(pred)
+        predicted_class = tf.argmax(probs, axis=-1)
+        confidence = tf.reduce_max(probs, axis=-1)
+
+        if confidence[0] > 0.8:
+            label = garden.label_dict[int(predicted_class[0])]
+            print_and_log(f"Model - file: {image_folder_path} predicted to be {label} (class {predicted_class}) with confidence {confidence}")
+        else:
+            print_and_log(f"Model - Output Confidence Error - max class confidence of {confidence} too low")
 
     avg_elapsed_time = total_elapsed_time / num_samples
     avg_inference_memory = total_inference_memory / num_samples
