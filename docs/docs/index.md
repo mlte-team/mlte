@@ -16,7 +16,7 @@ To begin, model developers and project stakeholders meet to determine mission, b
 As part of the negotiation, teams fill out a `MLTE` [Negotiation Card](negotiation_card.md) which allows them to record agreements and drives model development and testing.
 
 #### Quality Attribute Scenarios
-Quality attributes are a way to specify a system’s structural and behavioral requirements; MLTE leverages this approach during negotiations to help teams move from vague statements to concrete requirements.
+Quality attribute scenarios are a way to specify a system’s structural and behavioral requirements; MLTE leverages this approach during negotiations to help teams move from vague statements to concrete requirements.
 
 ### Initial Model Testing (IMT)
 Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements and thresholds. Once initial development is complete, model teams do initial testing during this step to determine when the model exceeds their baselines.
@@ -38,7 +38,7 @@ If results are not satisfactory, more negotiation is required to determine if re
 
 - [MLTE Process](mlte_process.md) (A more detailed guide than above)
 - [Setting Up MLTE](setting_up_mlte.md)
-- [Development](development.md)
+- [Development Environment](development.md)
 - MLTE <a href="https://arxiv.org/abs/2303.01998" target="_blank">Paper</a> (ICSE 2023 - 45th International Conference on Software Engineering)
 - <a href="https://doi.org/10.48550/arXiv.2406.08575" target="_blank">Using Quality Attribute Scenarios for ML Model Test Case Generation</a> (SAML 2024 - 3rd International Workshop on Software Architecture and Machine Learning)
 

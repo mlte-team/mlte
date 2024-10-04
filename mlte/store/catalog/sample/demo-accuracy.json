@@ -1,0 +1,18 @@
+{
+    "header": {
+        "identifier": "demo-accuracy",
+        "creator": "admin",
+        "created": 1727114774,
+        "updater": null,        
+        "updated": -1,
+        "catalog_id": "sample"
+    },
+    "tags": ["Computer Vision"],
+    "property_category": "Functional Correctness",
+    "property": "Accuracy",
+    "code_type": "measurement",
+    "code": "# %% [markdown]\n# ## Accuracy QAS Measurements\n# \n# Measure accuracy of the model.\n\n# %% [markdown]\n# ### Helper Functions\n# \n# Prepare all functions and data for the measurements.\n\n# %%\nfrom demo.scenarios import garden\nimport numpy as np\n\n\ndef load_data(data_folder: str):\n    \"\"\"Loads all garden data results and taxonomy categories.\"\"\"\n    df_results = garden.load_base_results(data_folder)\n    df_results.head()\n\n    # Load the taxonomic data and merge with results.\n    df_info = garden.load_taxonomy(data_folder)\n    df_results.rename(columns={\"label\": \"Label\"}, inplace=True)\n    df_all = garden.merge_taxonomy_with_results(df_results, df_info)\n\n    return df_results\n\n\ndef calculate_model_performance_basic_acc(df_results):\n    \"\"\"Get basic accucray of model across the entire garden\"\"\"\n    n, d = df_results.shape\n    model_performance_acc = np.sum(df_results[\"model correct\"]) / n\n\n    return model_performance_acc\n\n# %%\n# Prepare the data. For this section, instead of executing the model, we will use CSV files containing the results of an already executed run of the model.\ndf_results = load_data(DATASETS_DIR)\n\n# %%\nn, d = df_results.shape\n\n# %%\ncalculate_model_performance_basic_acc(df_results)\n\n# %% [markdown]\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\n# %%\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.value.types.real import Real\n\n# Evaluate, identifier has to be the same one defined in the Spec.\nmeasurement = ExternalMeasurement(\n    \"overall accuracy\", Real, calculate_model_performance_basic_acc\n)\nresult = measurement.evaluate(df_results)\n\n# Inspect value\nprint(result)\n\n# Save to artifact store\nresult.save(force=True)\n",
+    "description": "The model receives receives a picture taken at the garden and can identify it correctly at least 90% of the time during normal operation.",
+    "inputs": "model results on Oxford garden data",
+    "output": "overall accuracy"
+}

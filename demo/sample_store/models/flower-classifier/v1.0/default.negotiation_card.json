@@ -1,0 +1,293 @@
+{
+    "header": {
+        "identifier": "default.negotiation_card",
+        "type": "negotiation_card",
+        "timestamp": 1727711963,
+        "creator": "admin"
+    },
+    "body": {
+        "artifact_type": "negotiation_card",
+        "nc_data": {
+            "system": {
+                "goals": [
+                    {
+                        "description": "Correct identification of flowers",
+                        "metrics": [
+                            {
+                                "description": "Accuracy > 0.9",
+                                "baseline": "Paper that describes the base model"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Increased number of visits to the garden",
+                        "metrics": [
+                            {
+                                "description": "40% growth in repeat visits",
+                                "baseline": "Strategic plan"
+                            },
+                            {
+                                "description": "40% new visits",
+                                "baseline": "Strategic plan"
+                            }
+                        ]
+                    }
+                ],
+                "problem_type": "classification",
+                "task": "Identify flowers in pictures taken at the garden",
+                "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
+                "risks": {
+                    "fp": "Poor user experience due to incorrectly identified flowers",
+                    "fn": "Poor user experience due to inability to identify flowers",
+                    "other": ""
+                }
+            },
+            "data": [
+                {
+                    "description": "Oxford Flower Dataset.",
+                    "source": "https://archive.ics.uci.edu/dataset/53/iris",
+                    "classification": "unclassified",
+                    "access": "None",
+                    "labeling_method": "By hand",
+                    "labels": [
+                        {
+                            "name": "",
+                            "description": "",
+                            "percentage": 0.0
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "name": "filename",
+                            "description": "Path to flower image.",
+                            "type": "String (to PNG file)",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Kingdom",
+                            "description": "The second highest taxonomic rank.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Phylum",
+                            "description": "The taxonomic rank below kingdom and above Clade 1.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Clade1",
+                            "description": "The taxonomic rank below Phylum and above Clade 2.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Clade2",
+                            "description": "The taxonomic rank below Clade 1 and above Clade 3.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Clade3",
+                            "description": "The taxonomic rank below Clade 2 and above Order.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Order",
+                            "description": "The taxonomic rank below Clade 3 and above Family.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Family",
+                            "description": "The taxonomic rank below Order and above Subfamily.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Subfamily",
+                            "description": "The taxonomic rank below Family and above Genus.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Genus",
+                            "description": "The taxonomic rank below Subfamily and above Species.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Common Name",
+                            "description": "Common name for the flower.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Other Name",
+                            "description": "Other name for the flower.",
+                            "type": "string",
+                            "expected_values": "N/A",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        },
+                        {
+                            "name": "Label",
+                            "description": "Image Label",
+                            "type": "string",
+                            "expected_values": "Value between 0 and 102",
+                            "missing_values": "N/A",
+                            "special_values": "N/A"
+                        }
+                    ],
+                    "rights": "N/A",
+                    "policies": "N/A"
+                }
+            ],
+            "model": {
+                "development_compute_resources": {
+                    "cpu": "1",
+                    "gpu": "0",
+                    "memory": "2 GB",
+                    "storage": "100 GB"
+                },
+                "deployment_platform": "Model will be deployed on a small device loaned out to garden visitors.",
+                "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
+                "input_specification": [
+                    {
+                        "name": "flower-picture",
+                        "description": "Path to the picture of the flower taken at the garden",
+                        "type": "String",
+                        "expected_values": "String corresponding to a valid path to a picture in PNG format"
+                    }
+                ],
+                "output_specification": [
+                    {
+                        "name": "flower-number-for-lookup",
+                        "description": "Number of the flower identified in the picture, which is used as a lookup number for a table that contains the identified flower information. This table is derived from the training data.",
+                        "type": "Integer",
+                        "expected_values": "Either flower number between 0 and 102, or -1 to indicate that it could not identify the flower."
+                    }
+                ],
+                "production_compute_resources": {
+                    "cpu": "1",
+                    "gpu": "0",
+                    "memory": "512 MB",
+                    "storage": "3 KB"
+                }
+            },
+            "system_requirements": [
+                {
+                    "quality": "Fairness: Model Impartial to Photo Location",
+                    "stimulus": "The model receives a picture taken at the garden",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "Regardless of the location in the garden, the model can correctly identify the correct flowers",
+                    "measure": "at least 90% of the time"
+                },
+                {
+                    "quality": "Robustness: Model Robust to Noise (Image Blur)",
+                    "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry,",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "The model successfully identifies flowers",
+                    "measure": "at the same rate as non-blurry images"
+                },
+                {
+                    "quality": "Robustness: Model Robust to Noise (Channel Loss)",
+                    "stimulus": "The model receives a picture taken at the garden",
+                    "source": "the flower identification application running on a loaned device ",
+                    "environment": "normal operations. These devices are known to sometimes lose a channel (i.e., RGB channel)",
+                    "response": "The model successfully identifies flowers",
+                    "measure": "at the same rate as full images"
+                },
+                {
+                    "quality": "Performance: Resource Consumption on Operational Platform",
+                    "stimulus": "The model running on the loaned device receives pictures taken at the garden",
+                    "source": "the flower identification application",
+                    "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 3 KB, respectively)",
+                    "response": "The model executes on the loaned device",
+                    "measure": "without any errors due to unavailable resources"
+                },
+                {
+                    "quality": "Interpretability: Understanding Model Results",
+                    "stimulus": "The model receives a picture taken at the garden",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "The application indicates main features that were used to recognize the flower, as part of the educational experience.",
+                    "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
+                },
+                {
+                    "quality": "Functional Correctness: Accuracy",
+                    "stimulus": "The model receives a picture taken at the garden",
+                    "source": "flower identification application",
+                    "environment": "normal operations",
+                    "response": "The model identifies the flower correctly",
+                    "measure": "at least 90% of the time"
+                },
+                {
+                    "quality": "Functional Correctness: Input and Output Specification",
+                    "stimulus": "The model receives a picture taken at the garden",
+                    "source": "flower identification application",
+                    "environment": "normal operations",
+                    "response": "Model correctly processes inputs and produces outputs",
+                    "measure": "according to established input and output specifications without exceptions"
+                },
+                {
+                    "quality": "Resilience: Input Validation",
+                    "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "The model does not process the input",
+                    "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input."
+                },
+                {
+                    "quality": "Monitorability: Detect Out-of-Distribution (OOD) Inputs",
+                    "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "The model will process the input ",
+                    "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
+                },
+                {
+                    "quality": "Monitorability: Detect Shifts in Output (Confidence) Distribution",
+                    "stimulus": "The ML pipeline detects an output distribution change",
+                    "source": "the output produced by the model",
+                    "environment": "normal operations",
+                    "response": "The ML pipeline will create a log entry",
+                    "measure": "with the tag \"Model - Output Confidence Error - <Output>, where <Output> is the output produced by the model that triggered the condition"
+                },
+                {
+                    "quality": "Performance: Inference Time on Operational Platform",
+                    "stimulus": "Model running on the loaned device receives a picture",
+                    "source": "the flower identification application",
+                    "environment": "normal operations",
+                    "response": "The time for the model to return an output",
+                    "measure": "is always within two seconds"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "header": {
+        "identifier": "demo-monitorability",
+        "creator": "admin",
+        "created": 1727114774,
+        "updater": null,        
+        "updated": -1,
+        "catalog_id": "sample"
+    },
+    "tags": ["General"],
+    "property_category": "Monitorability",
+    "property": "Detect OOD inputs and shifts in output",
+    "code_type": "measurement",
+    "code": "# %% [markdown]\n# ## Monitorability QAS Measurements\n# \n# Measurements to monitor and detect issues with changes in inputs and outputs.\n\n# %% [markdown]\n# ### Initialize MLTE Context\n# \n### Helper Functions\n# Prepare all functions and data for the measurements.\n\n# %%\n# Load model module\nfrom demo.scenarios import model_predict\n\n\ndef run_and_get_log() -> str:\n    \"\"\"Runs the model and gets the log.\"\"\"\n    model_predict.run_model(OOD_DATASET_DIR, MODEL_FILE_PATH, MODEL_WEIGHTS_PATH)\n\n    return model_predict.load_log()\n\n# %% [markdown]\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\n# %%\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom demo.scenarios.values.string import String\n\n# Evaluate, identifier has to be the same one defined in the Spec.\nmeasurement = ExternalMeasurement(\"detect odd inputs\", String, run_and_get_log)\nresult = measurement.evaluate()\n\n# Inspect value\nprint(result)\n\n# Save to artifact store\nresult.save(force=True)\n\n# %%\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom demo.scenarios.values.string import String\n\n# Evaluate, identifier has to be the same one defined in the Spec.\nmeasurement = ExternalMeasurement(\n    \"monitor output confidence shift\", String, run_and_get_log\n)\nresult = measurement.evaluate()\n\n# Inspect value\nprint(result)\n\n# Save to artifact store\nresult.save(force=True)\n\n\n",
+    "description": "During normal operation, the ML pipeline will log errors when out of distribution data is observed. The ML pipeline will create a log entry with a tag. During normal operation, ML pipeline will log errors when the output distribution changes. The ML pipeline will create a log entry with a tag.",
+    "inputs": "existing ML model, sample image data that has out of bounds input, and that produces output confidence error",
+    "output": "log with input issues tagged"
+}

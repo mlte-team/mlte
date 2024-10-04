@@ -1,0 +1,18 @@
+{
+    "header": {
+        "identifier": "demo-resource-time",
+        "creator": "admin",
+        "created": 1727114774,
+        "updater": null,        
+        "updated": -1,
+        "catalog_id": "sample"
+    },
+    "tags": ["General"],
+    "property_category": "Resource Consumption",
+    "property": "Inference Time on Operational Platform",
+    "code_type": "measurement",
+    "code": "# %% [markdown]\n# ## Performance Time QAS Measurements\n# \n# Measure time required to run model and execute inferences.\n\n# %% [markdown]\n# ### Helper Functions\n# \n# Set up functions to time the model run.\n\n# %%\nimport time\nfrom demo.scenarios import model_predict\n\n\ndef time_model():\n    \"\"\"Returns total time, and average time per inference.\"\"\"\n    start = time.time()\n    avg_time, _, _ = model_predict.run_model(\n        SAMPLE_DATASET_DIR, MODEL_FILE_PATH, MODEL_WEIGHTS_PATH\n    )\n    end = time.time()\n    total = end - start\n    return total\n\n# %% [markdown]\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\n# %%\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.value.types.real import Real\n\n# Evaluate, identifier has to be the same one defined in the Spec.\nmeasurement = ExternalMeasurement(\"predicting cpu time\", Real, time_model)\nresult = measurement.evaluate()\n\n# Inspect value\nprint(result)\n\n# Save to artifact store\nresult.save(force=True)\n\n\n",
+    "description": "During normal operation, running on the operational platform, the model returns an output within two seconds.",
+    "inputs": "existing ML model, sample image",
+    "output": "cpu time"
+}
