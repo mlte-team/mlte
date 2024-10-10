@@ -4,7 +4,7 @@
     <!-- API call -->
     <div class="chatgptcall">
       <p>
-        Explainability refers to the ability to describe the decisions of a machine learning model in a way that is understandable to theend users.
+        Explainability refers to the ability to describe the decisions of a machine learning model in a way that is understandable to the end users.
         <span class="AIgeneratedtext">{{ response }} </span>
       </p>
     </div>
@@ -17,12 +17,7 @@
       <span class="info-icon">i</span>
       <div class="tooltip">edit this...</div>
     </div>
-    <USelect
-      placeholder="Select an option..."
-      :options="['Offline Inference (model generates predictions which are then cached on a server)', 'Real-time Inference (model infers predictions on demand)']"
-      icon="i-heroicons-magnifying-glass-20-solid"
-      v-model="deploymentInfrastructure"
-    />
+    <UInput size="sm" />
     <br />
 
     <!-- Deployment Infrastructure -->
@@ -31,21 +26,12 @@
       <span class="info-icon">i</span>
       <div class="tooltip">Select where your model will be deployed</div>
     </div>
-    <USelect
-      placeholder="Select an option..."
-      :options="['Cloud (enables scalable, remote access to computational resources and storage for inference)', 'On-premise (model runs on local, in-house servers, offering full control over the environment but requiring in-house maintenance)', 'Edge (allow real-time predictions and low-latency while minimizing the need for data transmission to centralized servers)', 'To Be Defined']"
-      icon="i-heroicons-magnifying-glass-20-solid"
-      v-model="infrastructureDetails"
-    />
+    <UInput size="sm" />
     <br />
 
     <!-- Inference Latency Metrics -->
     <label><b>Indicate the goal of the explanations in your system</b></label>
-    <div class="info-container">
-      <span class="info-icon">i</span>
-      <div class="tooltip">Enter the average time (in seconds) that you expect for inference to complete under normal conditions.</div>
-    </div>
-    <UInput v-model="averageLatency" placeholder="X seconds" />
+    <UInput size="sm" />
     <br />
 
     <!-- Dynamic Sentence -->
