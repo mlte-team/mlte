@@ -49,6 +49,3 @@ docs/site
 /store*/
 pgdata/
 *.whl
-
-/certs/*
-!/certs/readme.txt

@@ -7,8 +7,7 @@ This document describes some of the development practices used within `MLTE`.
 Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first (see https://python-poetry.org/docs/#installation). Once it is installed, you can set up your environment like this (note the inclusion of dev dependency groups below):
 
 ```bash
-$ python -m venv .venv
-$ source .venv/bin/activate
+$ poetry shell
 $ poetry install --with qa,test,build,docs
 ```
 
@@ -34,7 +33,7 @@ $ poetry install --with demo-mac
 
 You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `source .venv/bin/activate` (see above), you can run all the commands below without the `poetry run` prefix.
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `poetry shell` (see above), you can run all the commands below without the `poetry run` prefix.
 
 ### Import Sorting
 
