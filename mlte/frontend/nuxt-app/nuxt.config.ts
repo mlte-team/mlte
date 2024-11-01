@@ -9,15 +9,9 @@ export default defineNuxtConfig({
   ssr: false,
   css: ["@/assets/css/styles.css", "@/assets/uswds/css/styles.css"],
 
-  nitro: {
-    routeRules: {
-      "/api/**": { proxy: "http://localhost:8080/api/**" },
-    },
-  },
-
   runtimeConfig: {
     public: {
-      apiPath: "http://localhost:8080/api",
+      apiPath: "", // Overwritten by `mlte/frontend/nuxt-app/.env`
       version: pkg.version,
     },
   },
