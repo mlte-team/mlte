@@ -28,3 +28,5 @@ mlte/frontend/nuxt-app/.nuxt/
 mlte/frontend/nuxt-app/.output/
 mlte/frontend/nuxt-app/dist/
 mlte/frontend/nuxt-app/node_modules/
+mlte/frontend/nuxt-app/assets/uswds
+mlte/frontend/nuxt-app/sass

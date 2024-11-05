@@ -5,3 +5,5 @@ rm dist/mlte_python-*.gz
 cd mlte/frontend/nuxt-app && npm run build
 cd ../../../
 poetry build
+
+twine check dist/*

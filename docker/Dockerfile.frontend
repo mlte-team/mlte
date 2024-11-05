@@ -5,7 +5,7 @@
 FROM mlte-base
 
 # Set up node.
-RUN apt-get install -y npm
+RUN apt-get update && apt-get install -y npm
 
 # Set up dependencies.
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
@@ -16,7 +16,6 @@ RUN npm install && npm cache clean --force
 # Setup USWDS design dependencies.
 COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
 COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
-RUN npx gulp compile
 RUN npx gulp init
 
 # Install Python deps.
