@@ -5,7 +5,7 @@
 FROM mlte-base
 
 # Set up node.
-RUN apt-get install -y npm
+RUN apt-get update && apt-get install -y npm
 
 # Set up dependencies.
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
