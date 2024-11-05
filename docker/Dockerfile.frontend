@@ -16,7 +16,6 @@ RUN npm install && npm cache clean --force
 # Setup USWDS design dependencies.
 COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
 COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
-RUN npx gulp compile
 RUN npx gulp init
 
 # Install Python deps.
