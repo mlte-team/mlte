@@ -11,7 +11,7 @@ This readme briefly explains how to use this set of dockerfiles for a Docker-bas
  1. Pre-requisite: if you want to build the containers from a wheel from the current code in your local repo, run ``bash build.sh`` from the root of this repo.
  1. Copy all files in this folder to the server to be deployed, in the same folder structure: ``./docker/deployment``
  1. Create proper .env configuration files for all components in the system:
-    1. Modify the ``.env.posgres`` file with appropriate values for this deployment for ``POSTGRES_USER``, ``POSTGRES_PASSWORD``, and ``POSTRGRES_DB``, as defined in the official PostgreSQL Docker Hub image.
+    1. Modify the ``.env.postgres`` file with appropriate values for this deployment for ``POSTGRES_USER``, ``POSTGRES_PASSWORD``, and ``POSTRGRES_DB``, as defined in the official PostgreSQL Docker Hub image.
     1. Modify the ``.env.backend`` file with the proper config for the deployed Backend:
        - ``JWT_SECRET_KEY`` should be configured to a deployment-specific secret.
        - ``STORE_URI`` should have the ``postgresql://`` prefix, and the rest should match the user, password and DB name in the ``.env.postgres`` file.

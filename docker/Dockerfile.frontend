@@ -26,6 +26,7 @@ RUN poetry install --no-root
 
 # Create static server.
 COPY mlte/frontend/nuxt-app /mnt/app/mlte/frontend/nuxt-app
+COPY docker/deployment/.env.frontend /mnt/app/mlte/frontend/nuxt-app/.env
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
 RUN npm run build
 

@@ -11,7 +11,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiPath: "", // Overwritten by `mlte/frontend/nuxt-app/.env`
+      apiPath: "http://localhost:8080/api",
       version: pkg.version,
     },
   },
