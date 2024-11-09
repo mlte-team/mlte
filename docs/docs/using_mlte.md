@@ -34,41 +34,52 @@ set_store(f"local://{store_path}")
 
 ### 2. Define a `Specification`
 
-A `Specification` (or `Spec`) represents the requirements the model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. However, the process is the same for both stages. Here we define a `Spec` using accuracy as a performance metric. We also add in further initial testing capacity by including a confusion matrix and class distribution.
+A `Specification` (or `Spec`) represents the requirements the model must meet in order to be acceptable for use in the system into which it will be integrated. Full `Spec` definition will be completed in [SDMT](#system-dependent-model-testing-sdmt); in IMT, we use it in a preliminary fashion so the development team can do an initial round of model testing. However, the process is the same for both stages. Here we define a `Spec` using storage cost and fairness as properties.
 
 ```python
 from mlte.spec.spec import Spec
+from mlte.property.costs.storage_cost import StorageCost
+from mlte.property.fairness.fairness import Fairness
 
-from mlte.property.functionality import TaskEfficacy
+from mlte.measurement.storage import LocalObjectSize
+from demo.scenarios.values.multiple_accuracy import MultipleAccuracy
 
-spec = Spec(properties={
-    TaskEfficacy("Important to understand if the model is useful for this case"): 
-                    {"accuracy": Real.greater_or_equal_to(0.98),
-                     "confusion matrix": ConfusionMatrix.misclassification_count_less_than(2),
-                     "class distribution": Image.ignore("Inspect the image.")}
-    })
+spec = Spec(
+    properties={
+        Fairness(
+            "Important check if model performs well accross different populations"
+        ): {
+            "accuracy across gardens": MultipleAccuracy.all_accuracies_more_or_equal_than(
+                0.9
+            )
+        },
+        StorageCost("Critical since model will be in an embedded device"): {
+            "model size": LocalObjectSize.value().less_than(150000000)
+        }
+    }
+)
 spec.save(parents=True, force=True)
 ```
 
 ### 3. Collect Evidence
 
-After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. Here we collect evidence by wrapping the output from scikit-learn's <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score" target="_blank">accuracy_score</a> with a builtin `MLTE` type (Real). 
+After building the `Spec`, `MLTE` allows you to collect evidence to attest to whether or not the model realizes the desired properties. In this example, we wrap the output from `accuracy_score` with a custom `Result` type to cope with the output of a third-party library that is not supported by a MLTE builtin.
 
 ```python
-from sklearn.metrics import accuracy_score
+from demo.scenarios.values.multiple_accuracy import MultipleAccuracy
+from mlte.measurement.external_measurement import ExternalMeasurement
 
-from mlte.value.types.real import Real
-from mlte.measurement import ExternalMeasurement
-
-# Evaluate performance
-accuracy_measurement = ExternalMeasurement("accuracy", Real, accuracy_score)
-accuracy = accuracy_measurement.evaluate(y_test, y_pred)
+# Evaluate accuracy, identifier has to be the same one defined in the Spec.
+accuracy_measurement = ExternalMeasurement(
+    "accuracy across gardens", MultipleAccuracy, calculate_model_performance_acc
+)
+accuracy = accuracy_measurement.evaluate(split_data[0], split_data[1])
 
 # Inspect value
 print(accuracy)
 
 # Save to artifact store
-accuracy.save(parents=True)
+accuracy.save(force=True)
 ```
 
 *Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
@@ -78,22 +89,23 @@ accuracy.save(parents=True)
 Now that we have evidence and a `Spec`, we can create a `SpecValidator` and add all the `Value`s we have. With that we can generate a `ValidatedSpec` which contains validated results or *findings*.
 
 ```python
-from mlte.spec import Spec, SpecValidator
-from mlte.value.types.real import Real
+from mlte.spec.spec import Spec
+from mlte.validation.spec_validator import SpecValidator
+from mlte.value.artifact import Value
 
 # Load the specification
 spec = Spec.load()
 
-# Add values to the validator.
+# Add all values to the validator.
 spec_validator = SpecValidator(spec)
-spec_validator.add_value(Real.load("accuracy"))
-
+spec_validator.add_values(Value.load_all())
 
 # Validate requirements and get validated details.
 validated_spec = spec_validator.validate()
+validated_spec.save(force=True)
 
-# ValidatedSpec also supports persistence
-validated_spec.save()
+# We want to see the validation results in the Notebook, regardless of them being saved.
+validated_spec.print_results()
 ```
 
 ### 5. Examine Findings
@@ -132,15 +144,29 @@ def build_report() -> Report:
 Once the descriptive portions of the report are defined, you can render the report to examine your findings.
 
 ```python
-from mlte.report import render
+from mlte.report.artifact import (
+    Report,
+    CommentDescriptor,
+    QuantitiveAnalysisDescriptor,
+)
+from mlte.negotiation.artifact import NegotiationCard
 
-# Build the base report
-report = build_report()
-# Attach the validated specification
-report.spec = validated_spec
+report = Report(
+    validated_spec_id=validated_spec.identifier,
+    comments=[
+        CommentDescriptor(
+            content="This model should not be used for nefarious purposes."
+        )
+    ],
+    quantitative_analysis=QuantitiveAnalysisDescriptor(
+        content="Insert graph here."
+    ),
+)
 
-# Save the report as an HTML document
-report.to_html(REPORTS_DIR / "report.html", local=True)
+negotiation_card = NegotiationCard.load()
+report = report.populate_from(negotiation_card)
+
+report.save(force=True, parents=True)
 ```
 
 IMT is an iterative process - the development team will likely repeat it several times given the exploratory nature of many machine learning projects.
@@ -157,7 +183,7 @@ Once the negotiation is complete and the contents of the Negotiation Card have b
 
 ## System Dependent Model Testing (SDMT)
 
-SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated Negotiation Card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. This follows the same process described in [IMT](#internal-model-testing-imt), with more emphasis on building out the specification. As such, this section will focus on the specification and will offer more detail on collecting different types of evidence.
+SDMT ensures that a model will function as intended when it is part of a larger system. Using the updated Negotiation Card, development teams must define a `Specification` (`Spec`) that evaluates all relevant dimensions for the overall system to function. This follows the same process described in [IMT](#internal-model-testing-imt), with more emphasis on building out the specification. 
 
 Teams can search the Test Catalog to find examples of how different quality attributes were tested by other teams. Note that MLTE comes with a sample test catalog simply for reference. The goal is for organizations to create and populate their own Test catalogs over time.
 
@@ -171,147 +197,73 @@ A `Spec` represents the requirements and corresponding thresholds (or validators
 ```python
 from mlte.spec.spec import Spec
 
-from mlte.property.costs import (
-    StorageCost,
-    TrainingComputeCost,
-    TrainingMemoryCost
-)
-from mlte.property.functionality import TaskEfficacy
+# The Properties we want to validate, associated with our scenarios.
+from mlte.property.costs.storage_cost import StorageCost
+from mlte.property.fairness.fairness import Fairness
+from mlte.property.robustness.robustness import Robustness
+from mlte.property.costs.predicting_memory_cost import PredictingMemoryCost
 
-
+# The Value types we will use to validate each condition.
 from mlte.measurement.storage import LocalObjectSize
-from mlte.measurement.cpu import LocalProcessCPUUtilization
 from mlte.measurement.memory import LocalProcessMemoryConsumption
-from confusion_matrix import ConfusionMatrix
-from mlte.value.types.real import Real
 from mlte.value.types.image import Image
+from mlte.value.types.real import Real
+from demo.scenarios.values.multiple_accuracy import MultipleAccuracy
+from demo.scenarios.values.ranksums import RankSums
+from demo.scenarios.values.multiple_ranksums import MultipleRanksums
+from demo.scenarios.properties.resilience import Resilience
+from demo.scenarios.properties.accuracy import Accuracy
+from demo.scenarios.values.string import String
 
-spec = Spec(properties={
-    TaskEfficacy("Important to understand if the model is useful for this case"): 
-                    {"accuracy": Real.greater_or_equal_to(0.98),
-                     "confusion matrix": ConfusionMatrix.misclassification_count_less_than(2),
-                     "class distribution": Image.ignore("Inspect the image.")},
-    StorageCost("Critical since model will be in an embedded decice"): 
-                    {"model size": LocalObjectSize.value().less_than(3000)},
-    TrainingMemoryCost("Useful to evaluate resources needed"): 
-                    {"training memory": LocalProcessMemoryConsumption.value().average_consumption_less_than(0.9)},
-    TrainingComputeCost("Useful to evaluate resources needed"): 
-                    {"training cpu": LocalProcessCPUUtilization.value().max_utilization_less_than(5.0)}
-    })
+
+# The full spec. Note that the Robustness Property contains conditions for both Robustness scenarios.
+spec = Spec(
+    properties={
+        Fairness(
+            "Important check if model performs well accross different populations"
+        ): {
+            "accuracy across gardens": MultipleAccuracy.all_accuracies_more_or_equal_than(
+                0.9
+            )
+        },
+        Robustness("Robust against blur and noise"): {
+            "ranksums blur2x8": RankSums.p_value_greater_or_equal_to(0.05 / 3),
+            "ranksums blur5x8": RankSums.p_value_greater_or_equal_to(0.05 / 3),
+            "ranksums blur0x8": RankSums.p_value_greater_or_equal_to(0.05 / 3),
+            "multiple ranksums for clade2": MultipleRanksums.all_p_values_greater_or_equal_than(
+                0.05
+            ),
+            "multiple ranksums between clade2 and 3": MultipleRanksums.all_p_values_greater_or_equal_than(
+                0.05
+            ),
+        },
+        StorageCost("Critical since model will be in an embedded device"): {
+            "model size": LocalObjectSize.value().less_than(150000000)
+        },
+        PredictingMemoryCost(
+            "Useful to evaluate resources needed when predicting"
+        ): {
+            "predicting memory": LocalProcessMemoryConsumption.value().average_consumption_less_than(
+                512000.0
+            )
+        }
+    }
+)
 spec.save(parents=True, force=True)
 ```
 
 ### Collecting Evidence
 
-After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we demonstrate a few different ways to collect evidence. Note that these examples do not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
-
-#### Evidence: MLTE Measurements
-
-The simplest use case is to import a MLTE-defined `Measurement`, which is then invoked to produce a `Value`. This value can then be inspected and automatically saved to the artifact store. Following are two examples of this type of evidence collection.
+After building the `Spec`, teams must collect evidence to attest to whether or not the model realizes the desired properties. Here we show one way to collect evidence. Note that this example does not include data and model training code, but those can be found in the full `MLTE` <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.
 
 ```python
 from mlte.measurement.storage import LocalObjectSize
 from mlte.value.types.integer import Integer
 
-# Create a measurement
 store_measurement = LocalObjectSize("model size")
-# Execute the measurement
-size: Integer = store_measurement.evaluate(MODELS_DIR / "model_demo.pkl")
-
-# Inspec values
+size: Integer = store_measurement.evaluate(MODELS_DIR)
 print(size)
-
-# Save to artifact store
-size.save()
-```
-
-```python
-script = Path.cwd() / "train.py"
-args = [
-    "--dataset-dir", str(DATASETS_DIR.absolute()),
-    "--models-dir", str(MODELS_DIR.absolute())
-]
-
-from mlte.measurement import ProcessMeasurement
-from mlte.measurement.cpu import LocalProcessCPUUtilization, CPUStatistics
-
-# Create a measurement
-cpu_measurement = LocalProcessCPUUtilization("training cpu")
-# Execute the measurement
-cpu_stats: CPUStatistics = cpu_measurement.evaluate(ProcessMeasurement.start_script(script, args))
-
-# Inspect values
-print(cpu_stats)
-
-# Save to artifact store
-cpu_stats.save()
-```
-
-#### Evidence: External Measurements
-
-Given the existence of many libraries that offer easy evaluation of machine learning models, `MLTE` is built to be able to integrate results from any external library. In this example, we simply wrap the output from accuracy_score with a builtin `MLTE` type (Real) to integrate it with our collection of evidence.
- 
-```python
-from sklearn.metrics import accuracy_score
-
-from mlte.value.types.real import Real
-from mlte.measurement import ExternalMeasurement
-
-# Evaluate performance
-accuracy_measurement = ExternalMeasurement("accuracy", Real, accuracy_score)
-accuracy = accuracy_measurement.evaluate(y_test, y_pred)
-
-# Inspect value
-print(accuracy)
-
-# Save to artifact store
-accuracy.save(parents=True)
-```
-
-#### Evidence: Custom Types for External Measurements
-
-`MLTE` also allows users to define custom types to cope with the output of a third-party library that is not supported by a `MLTE` builtin.
-
-```python
-from sklearn.metrics import confusion_matrix
-from confusion_matrix import ConfusionMatrix
-from mlte.measurement import ExternalMeasurement
-
-# Generate value
-matrix_measurement = ExternalMeasurement("confusion matrix", ConfusionMatrix, confusion_matrix)
-matrix = matrix_measurement.evaluate(y_test, y_pred)
-
-# Inspect
-print(matrix)
-
-# Save to artifact store
-matrix.save(parents=True)
-```
-
-#### Evidence: Alternative Media in Measurements
-
-In addition to typical evaluation outputs, `MLTE` also allows for integration of other forms of media in the evidence collection process.
-
-```python
-import matplotlib.pyplot as plt
-
-from mlte.measurement import ExternalMeasurement
-from mlte.value.types.image import Image
-
-x = ["Setosa", "Versicolour", "Virginica"]
-y = [sum(1 for value in y_pred if value == target) for target in [0, 1, 2]]
-
-plt.bar(x, y)
-plt.title("Distribution of Predicted Classes")
-plt.xlabel("Class Label")
-plt.xticks([0, 1, 2])
-plt.ylabel("Occurrences")
-plt.savefig(MEDIA_DIR / "classes.png")
-
-img_collector = ExternalMeasurement("class distribution", Image)
-img = img_collector.ingest(MEDIA_DIR / "classes.png")
-
-img.save()
+size.save(force=True)
 ```
 
 ## Communicate ML Evaluation Results
@@ -319,47 +271,31 @@ img.save()
 To communicate results and examine findings, `MLTE` produces a report that encapsulates all knowledge gained about the model and the system as a consequence of the evaluation process. Teams can import content from the Negotiation Card using the `MLTE` UI, and the fields can be customized as needed. The report is most easily generated using the UI, but can also be defined via code as demonstrated below.
 
 ```python
-import time
-from mlte.report import Report, Dataset, User, UseCase, Limitation
+from mlte.report.artifact import (
+    Report,
+    CommentDescriptor,
+    QuantitiveAnalysisDescriptor,
+)
+from mlte.negotiation.artifact import NegotiationCard
 
-def unix_timestamp() -> str:
-    return f"{int(time.time())}"
+report = Report(
+    validated_spec_id=validated_spec.identifier,
+    comments=[
+        CommentDescriptor(
+            content="This model should not be used for nefarious purposes."
+        )
+    ],
+    quantitative_analysis=QuantitiveAnalysisDescriptor(
+        content="Insert graph here."
+    ),
+)
 
-def build_report() -> Report:
-    report = Report()
-    report.metadata.project_name = "Your Project"
-    report.metadata.authors = ["Jane Doe", "Joe Smith"]
-    report.metadata.timestamp = unix_timestamp()
+negotiation_card = NegotiationCard.load()
+report = report.populate_from(negotiation_card)
 
-    report.model_details.name = "IrisClassifier"
-
-    report.model_specification.domain = "Classification"
-    report.model_specification.data = [
-        Dataset("Dataset0", "https://github.com/mlte-team", "This is one training dataset."),
-        Dataset("Dataset1", "https://github.com/mlte-team", "This is the other one we used."),
-    ]
-
-    report.considerations.users = [
-        User("Botanist", "A professional botanist."),
-        User("Explorer", "A weekend-warrior outdoor explorer."),
-    ]
-    return report
+report.save(force=True, parents=True)
 ```
 *Note that this example only includes a few of the report fields; a full `MLTE` report in code can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo notebooks</a>.*
-
-Once the descriptive portions of the report are defined, you can render the report to examine your findings.
-
-```python
-from mlte.report import render
-
-# Build the base report
-report = build_report()
-# Attach the validated specification
-report.spec = validated_spec
-
-# Save the report as an HTML document
-report.to_html(REPORTS_DIR / "report.html", local=True)
-```
 
 If the model performs as desired, teams can consider the evaluation complete. However, it is very common that teams will need to iterate through [IMT](#internal-model-testing-imt) and [SDMT](#system-dependent-model-testing-sdmt) several times before they are satisfied with the results and ready to communicate with stakeholders.
 
