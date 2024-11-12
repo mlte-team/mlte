@@ -6,6 +6,7 @@
 assets
 demo
 docker
+!docker/deployment/.env.frontend
 docs
 store
 test

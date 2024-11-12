@@ -75,6 +75,7 @@ async function submit() {
     formBody.push(encodedKey + "=" + encodedValue);
   }
   formBody = formBody.join("&");
+  let expiresInTemp = 0;
 
   try {
     await $fetch(config.public.apiPath + "/token", {
@@ -90,12 +91,12 @@ async function submit() {
       },
       onResponse({ response }) {
         if (response.ok) {
+          expiresInTemp = response?._data?.expires_in;
           const token = useCookie("token", {
-            secure: true,
-            maxAge: response?._data?.expires_in,
+            maxAge: expiresInTemp,
           });
           const user = useCookie("user", {
-            maxAge: response?._data?.expires_in,
+            maxAge: expiresInTemp,
           });
           token.value = response?._data?.access_token;
           user.value = username.value;
@@ -118,7 +119,11 @@ async function submit() {
       },
       onResponse({ response }) {
         if (response.ok) {
-          const userRole = useCookie("userRole");
+          const userRole = useCookie("userRole",
+            {
+              maxAge: expiresInTemp,
+            }
+          );
           userRole.value = response._data.role;
         }
       },
@@ -128,6 +133,9 @@ async function submit() {
     });
 
     navigateTo("/");
-  } catch {}
+  } catch (exception) {
+    console.log("Error in login: ")
+    console.log(exception)
+  }
 }
 </script>

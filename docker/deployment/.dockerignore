@@ -1,6 +1,0 @@
-.env*
-.gitignore
-Dockerfile*
-*.yaml
-*.sh
-*.MD
