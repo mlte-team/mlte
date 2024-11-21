@@ -25,6 +25,22 @@ class ResultModel(BaseModel):
     """Evidence metadata associated with the value."""
 
 
+class ValidatorModel(BaseModel):
+    """A description of a validator for a test."""
+
+    bool_exp: Optional[str]
+    """A text-encoded, dilled-serialized version of the callback to execute when checking the bool condition."""
+
+    success: str
+    """A string to be used when recording that the validation was succesful."""
+
+    failure: str
+    """A string to be used when recording that the validation was not succesful."""
+
+    ignore: str
+    """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
+
+
 class ValidatedSpecModel(BaseModel):
     """The model implementation for the ValidatedSpec artifact."""
 
