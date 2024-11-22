@@ -3,14 +3,13 @@ mlte/validation/validator.py
 
 The validation base class.
 """
+
 from __future__ import annotations
 
-import base64
 import typing
 from typing import Any, Callable, Optional
 
-import dill
-
+from mlte._private import serializing
 from mlte.validation.model import ValidatorModel
 from mlte.validation.result import Failure, Ignore, Result, Success
 
@@ -64,25 +63,12 @@ class Validator:
         :return: The serialized model object.
         """
         return ValidatorModel(
-            bool_exp=self.encode_callable(self.bool_exp)
+            bool_exp=serializing.encode_callable(self.bool_exp)
             if self.bool_exp
             else None,
             success=self.success,
             failure=self.failure,
             ignore=self.ignore,
-        )
-
-    @staticmethod
-    def encode_callable(callable: Callable[[Any], bool]) -> str:
-        """Encodes the callable as a base64 string."""
-        return base64.b64encode(dill.dumps(callable)).decode("utf-8")
-
-    @staticmethod
-    def decode_callable(encoded_callable: str) -> Callable[[Any], bool]:
-        """Decodes the callable from a base64 string."""
-        return typing.cast(
-            Callable[[Any], bool],
-            dill.loads(base64.b64decode(encoded_callable)),
         )
 
     @classmethod
@@ -95,7 +81,10 @@ class Validator:
         :return: The deserialized Validator
         """
         validator: Validator = Validator(
-            bool_exp=cls.decode_callable(model.bool_exp)
+            bool_exp=typing.cast(
+                Callable[[Any], bool],
+                serializing.decode_callable(model.bool_exp),
+            )
             if model.bool_exp
             else None,
             success=model.success,
