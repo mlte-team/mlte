@@ -1,6 +1,6 @@
 {
   "name": "nuxt-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "build": "nuxi generate",
@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/node": "^18",
-    "@uswds/compile": "^1.0.0",
+    "@uswds/compile": "^1.0.1",
     "eslint": "^8.45.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.27.5",
