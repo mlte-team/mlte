@@ -74,7 +74,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
     def create_model(self, model: ModelCreate) -> Model:
         url = f"{self.url}{API_PREFIX}/model"
-        res = self.client.post(url, json=model.model_dump())
+        res = self.client.post(url, json=model.to_json())
         self.client.raise_for_response(res)
 
         return Model(**res.json())
@@ -102,7 +102,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
     def create_version(self, model_id: str, version: VersionCreate) -> Version:
         url = f"{self.url}{API_PREFIX}/model/{model_id}/version"
-        res = self.client.post(url, json=version.model_dump())
+        res = self.client.post(url, json=version.to_json())
         self.client.raise_for_response(res)
 
         return Version(**res.json())
@@ -146,7 +146,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
             url,
             json=WriteArtifactRequest(
                 artifact=artifact, force=force, parents=parents
-            ).model_dump(),
+            ).to_json(),
         )
         self.client.raise_for_response(res)
 
@@ -185,7 +185,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
         url = f"{_url(self.url, model_id, version_id)}/artifact/search"
-        res = self.client.post(url, json=query.model_dump())
+        res = self.client.post(url, json=query.to_json())
         self.client.raise_for_response(res)
 
         return [ArtifactModel(**object) for object in res.json()]

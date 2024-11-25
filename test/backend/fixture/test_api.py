@@ -127,10 +127,10 @@ class TestAPI:
         # NOTE: Assumes user is using default test password.
         user_store.storage.users[user.username] = User(
             hashed_password=user_generator.TEST_API_HASHED_PASS,
-            **user.model_dump(),
+            **user.to_json(),
         )
         basic_user = BasicUser(
-            **user_store.storage.users[user.username].model_dump()
+            **user_store.storage.users[user.username].to_json()
         )
         user_store.session().user_mapper.edit(basic_user)
 
@@ -167,7 +167,7 @@ class TestAPI:
     ) -> dict[str, Any]:
         """Create the given entity using an admin."""
         admin_client = self.get_test_client_for_admin()
-        res = admin_client.post(f"{uri}", json=entity.model_dump())
+        res = admin_client.post(f"{uri}", json=entity.to_json())
         assert res.status_code == codes.OK
         return typing.cast(Dict[str, Any], res.json())
 

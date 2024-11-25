@@ -109,7 +109,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         new_entry = self._convert_to_local(entry)
 
         url = f"{self.base_url}/{local_catalog_id}/entry"
-        res = self.client.post(url, json=new_entry.model_dump())
+        res = self.client.post(url, json=new_entry.to_json())
         self.client.raise_for_response(res)
 
         local_entry = CatalogEntry(**(res.json()))
@@ -121,7 +121,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         edited_entry = self._convert_to_local(entry)
 
         url = f"{self.base_url}/{local_catalog_id}/entry"
-        res = self.client.put(url, json=edited_entry.model_dump())
+        res = self.client.put(url, json=edited_entry.to_json())
         self.client.raise_for_response(res)
 
         local_entry = CatalogEntry(**(res.json()))
