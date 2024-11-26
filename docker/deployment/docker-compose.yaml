@@ -15,6 +15,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+        required: false
     volumes:
       - ./store:/mnt/store        
     env_file:
@@ -48,6 +49,7 @@ services:
       - mlte-network
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    profiles: [rdbs_store]
     env_file:
       - ./.env.postgres
 volumes:
