@@ -49,7 +49,7 @@ services:
       - mlte-network
     volumes:
       - ./pgdata:/var/lib/postgresql/data
-    profiles: [rdbs_store]
+    profiles: [rdbs]
     env_file:
       - ./.env.postgres
 volumes:

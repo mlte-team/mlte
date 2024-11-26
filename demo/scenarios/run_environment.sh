@@ -8,8 +8,7 @@ mkdir -p store/models/$MODEL/$VERSION
 cp ../sample_store/models/$MODEL/$VERSION/*.json ./store/models/$MODEL/$VERSION
 
 # Set env vars to not use a relational DB, but a file store.
-export BACKEND_ENVFILE=../../demo/scenarios/.env.backend.demo
-export COMPOSE_PROFILES=
+export STORE_TYPE=fs
 
 # We will use dockerized versions of frontend and backend. This will also build them if needed.
 cd ../../docker/deployment
