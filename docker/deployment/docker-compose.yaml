@@ -47,7 +47,7 @@ services:
     networks:
       - mlte-network
     volumes:
-      - ./pgdata:/var/lib/postgresql/data    
+      - ./pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env.postgres
 volumes:
