@@ -1,12 +1,12 @@
 """
-mlte/model/api/serialization_exception.py
+mlte/model/api/serialization_error.py
 
 Exception used for serialization issues.
 """
 from __future__ import annotations
 
 
-class SerializationException(TypeError):
+class SerializationError(TypeError):
     """Exception used for JSON serialization issues."""
 
     def __init__(self, error: TypeError, object: str):

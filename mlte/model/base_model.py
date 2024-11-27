@@ -11,7 +11,7 @@ from typing import Any, Dict
 
 import pydantic
 
-from mlte.model.serialization_exception import SerializationException
+from mlte.model.serialization_error import SerializationError
 
 
 class BaseModel(pydantic.BaseModel):
@@ -28,7 +28,7 @@ class BaseModel(pydantic.BaseModel):
         try:
             _ = json.dumps(json_object)
         except TypeError as e:
-            raise SerializationException(e, str(type(self)))
+            raise SerializationError(e, str(type(self)))
 
         return json_object
 

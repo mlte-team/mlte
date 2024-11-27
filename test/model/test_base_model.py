@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from mlte.model.base_model import BaseModel
-from mlte.model.serialization_exception import SerializationException
+from mlte.model.serialization_error import SerializationError
 
 
 class ModelTest(BaseModel):
@@ -39,5 +39,5 @@ def test_to_json_to_str_not_serializable():
     test_obj = ModelTest()
     test_obj.obj = NonSerializable()
 
-    with pytest.raises(SerializationException):
+    with pytest.raises(SerializationError):
         _ = test_obj.to_json()
