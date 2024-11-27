@@ -17,6 +17,13 @@ Before building the images, the proper configuration needs to be set up. For bui
        - `STORE_URI` should have the `postgresql://` prefix, and the rest should match the user, password and DB name in the `.env.postgres` file.
     1. Modify the `.env.frontend` file with the proper config for the deployed Frontend:
        - `NUXT_PUBLIC_API_PATH` should point to the external IP of where the Backend is deployed, if this is not only used for a local deployment. Note also that the port should match the port defined in `BACKEND_PORT` in the `.env.backend` file (which it does by default). This is currently only needed for build option 2.
+  1. Alternatively, for local or test deployments, you can set the following environment variables:
+    - `STORE_TYPE` to use the default local configs for one of two types of artifact stores: `rdbs` or `fs`. This also turns off the RDBS container if `fs` is used.
+    - `HOST_FS_STORE` to indicate a non-default path for a file system type of store, if used (defaults to `./store/`)
+  1. Alternatively, instead of modifying the default env files, you can also set the following environment variables if you want to define your env vars in new env files:
+    - `BACKEND_ENVFILE` with the path to an env file with all env var values for the backend.
+    - `FRONTEND_ENVFILE` with the path to an env file with all env var values for the frontend.
+    - `POSTGRES_ENVFILE` with the path to an env file with all env var values for the postgres DB, if any.
 
 ## Building docker images
 

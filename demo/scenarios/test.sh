@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 poetry run pytest --nbmake ./demo/scenarios/1_requirements.ipynb
 poetry run pytest --nbmake ./demo/scenarios/2_evidence.ipynb
 poetry run pytest --nbmake ./demo/scenarios/2a_evidence_fairness.ipynb
