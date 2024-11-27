@@ -15,10 +15,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+        required: false
     volumes:
-      - ./store:/mnt/store        
+      - ${HOST_FS_STORE}:/mnt/store        
     env_file:
-      - ./.env.backend
+      - ${BACKEND_ENVFILE}
   frontend:
     build:
       context: ../../
@@ -33,7 +34,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     env_file:
-      - ./.env.frontend
+      - ${FRONTEND_ENVFILE}
   postgres:
     image: postgres:16.3
     container_name: mlte_postgres
@@ -47,7 +48,8 @@ services:
     networks:
       - mlte-network
     volumes:
-      - ./pgdata:/var/lib/postgresql/data    
+      - ./pgdata:/var/lib/postgresql/data
+    profiles: [rdbs]
     env_file:
       - ./.env.postgres
 volumes:
