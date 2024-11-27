@@ -6,13 +6,11 @@ The interface for measurement validation.
 
 from __future__ import annotations
 
-import base64
 import inspect
 import typing
 from typing import Any, Callable, List, Type
 
-import dill
-
+from mlte._private import serializing
 from mlte.spec.model import ConditionModel
 from mlte.validation.result import Result
 from mlte.value.artifact import Value
@@ -108,14 +106,9 @@ class Condition:
         return ConditionModel(
             name=self.name,
             arguments=self.arguments,
-            callback=Condition.encode_callback(self.callback),
+            callback=serializing.encode_callable(self.callback),
             value_class=self.value_class,
         )
-
-    @staticmethod
-    def encode_callback(callback: Callable[[Value], Result]) -> str:
-        """Encodes the callback as a base64 string."""
-        return base64.b64encode(dill.dumps(callback)).decode("utf-8")
 
     @classmethod
     def from_model(cls, model: ConditionModel) -> Condition:
@@ -129,7 +122,7 @@ class Condition:
         condition: Condition = Condition(
             model.name,
             model.arguments,
-            dill.loads(base64.b64decode(str(model.callback).encode("utf-8"))),
+            serializing.decode_callable(model.callback),
             model.value_class,
         )
         return condition
