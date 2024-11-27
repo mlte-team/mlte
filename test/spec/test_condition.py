@@ -6,7 +6,13 @@ Unit tests for Conditions.
 
 from __future__ import annotations
 
+from typing import Any
+
+import pytest
+
+from mlte._private import serializing
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.model.serialization_error import SerializationError
 from mlte.spec.condition import Condition
 from mlte.spec.model import ConditionModel
 from mlte.validation.result import Failure, Success
@@ -16,8 +22,24 @@ from mlte.value.types.real import Real
 class TestValue:
     """Test value class to test build_condition method."""
 
+    data: Any
+
     @classmethod
     def in_between(cls, arg1: float, arg2: float) -> Condition:
+        """Checks if the value is in between the arguments."""
+        condition: Condition = Condition.build_condition(
+            lambda real: Success(
+                f"Real magnitude {real.value} between {arg1} and {arg2}"
+            )
+            if real.value > arg1 and real.value < arg2
+            else Failure(
+                f"Real magnitude {real.value} not between {arg1} and {arg2}"
+            )
+        )
+        return condition
+
+    @classmethod
+    def in_between_complex(cls, arg1: float, arg2: TestValue) -> Condition:
         """Checks if the value is in between the arguments."""
         condition: Condition = Condition.build_condition(
             lambda real: Success(
@@ -43,7 +65,7 @@ def test_condition_model() -> None:
         ConditionModel(
             name="greater_than",
             arguments=[1, 2],
-            callback=Condition.encode_callback(
+            callback=serializing.encode_callable(
                 lambda real: Success("Real magnitude 2 less than threshold 3")
                 if 3 < 4
                 else Failure("Real magnitude 2 exceeds threshold 1")
@@ -87,3 +109,11 @@ def test_call_condition():
 
     result = condition(Real(ev, 11.0))
     assert str(result) == "Failure"
+
+
+def test_non_serializable_argument():
+    test_value = TestValue()
+    condition = test_value.in_between_complex(1.0, test_value)
+
+    with pytest.raises(SerializationError):
+        _ = condition.to_model().to_json()

@@ -4,6 +4,7 @@ mlte/spec/model.py
 Model implementation for the Spec artifact.
 """
 
+import json
 from typing import Any, Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
@@ -24,6 +25,18 @@ class ConditionModel(BaseModel):
 
     value_class: str
     """A string indicating the full module and class name of the Value used to generate this condition."""
+
+    def args_to_json_str(self) -> str:
+        """
+        Serialize the model arguments field into a string.
+        :return: The JSON str representation of the model
+        """
+        # First convert whole thing, to see if arguments will trigger error (and if so, just let it bubble up).
+        self.to_json()
+
+        # Now convert only the actual arguments.
+        json_args = json.dumps(self.arguments)
+        return json_args
 
 
 class PropertyModel(BaseModel):

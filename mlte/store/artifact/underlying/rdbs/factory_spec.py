@@ -47,7 +47,7 @@ def create_spec_db_from_model(
             condition_obj = DBCondition(
                 name=condition.name,
                 measurement_id=measurement_id,
-                arguments=json.dumps(condition.arguments),
+                arguments=condition.args_to_json_str(),
                 callback=condition.callback,
                 value_class=condition.value_class,
                 property=property_obj,
