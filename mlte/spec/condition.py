@@ -66,6 +66,7 @@ class Condition:
 
     @staticmethod
     def build_condition(test: Callable[[Value], Result]) -> Condition:
+        """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get info about the caller from inspection.
         curr_frame = inspect.currentframe()
         if curr_frame is None:
