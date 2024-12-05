@@ -56,7 +56,3 @@ class BaseModel(pydantic.BaseModel):
         if not isinstance(other, BaseModel):
             return False
         return self._equal(other)
-
-    def __neq__(self, other: object) -> bool:
-        """Test instance for inequality."""
-        return not self.__eq__(other)

@@ -81,10 +81,6 @@ class Artifact(metaclass=abc.ABCMeta):
             return False
         return self._equal(other)
 
-    def __neq__(self, other: object) -> bool:
-        """Test instance for inequality."""
-        return not self.__eq__(other)
-
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
         A method that artifact subclasses can override to enforce pre-save invariants.

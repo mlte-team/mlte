@@ -141,7 +141,3 @@ class Condition:
             return False
         reference: Condition = other
         return self.to_model() == reference.to_model()
-
-    def __neq__(self, other: Condition) -> bool:
-        """Compare Condition instances for inequality."""
-        return not self.__eq__(other)

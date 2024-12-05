@@ -93,10 +93,6 @@ class Result(metaclass=abc.ABCMeta):
             return False
         return self.to_model() == other.to_model()
 
-    def __neq__(self, other: object) -> bool:
-        """Inequality comparison."""
-        return not self.__eq__(other)
-
 
 class Success(Result):
     """Indicates successful measurement validation."""
