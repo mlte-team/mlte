@@ -34,9 +34,9 @@ class ConditionModel(BaseModel):
         # First convert whole thing, to see if arguments will trigger error (and if so, just let it bubble up).
         self.to_json()
 
-        # Now convert only the actual arguments.
-        json_args = json.dumps(self.arguments)
-        return json_args
+        # Now convert only the actual arguments not only to JSON, but to a JSON string.
+        json_str_args = json.dumps(self.arguments)
+        return json_str_args
 
 
 class PropertyModel(BaseModel):
