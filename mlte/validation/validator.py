@@ -6,6 +6,7 @@ The validation base class.
 
 from __future__ import annotations
 
+import json
 import typing
 from typing import Any, Callable, Optional
 
@@ -39,10 +40,10 @@ class Validator:
         """
         Generates a result based on the arguments received, and the configured params in the Validator.
 
-        :param args: Arguments to pass to the boolean expression to be evaluated in this specific case.
+        :param args, kwargs: Arguments to pass to the boolean expression to be evaluated in this specific case.
         :return: A Result with a message with details of the validation result.
         """
-        values = f" - values: {args}, {kwargs}"
+        values = f"- values: {json.dumps(args) if len(args)>0 else ''}{', ' if len(args)>0 and len(kwargs)>0 else''}{json.dumps(kwargs) if len(kwargs)>0 else ''}"
         result = (
             Ignore(self.ignore)
             if self.bool_exp is None
