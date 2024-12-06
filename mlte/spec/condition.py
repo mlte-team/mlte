@@ -8,11 +8,11 @@ from __future__ import annotations
 
 import inspect
 import typing
-from typing import Any, Callable, List, Type
+from typing import Any, Callable, List, Optional, Type
 
-from mlte._private import serializing
-from mlte.spec.model import ConditionModel
+from mlte.validation.model_condition import ConditionModel
 from mlte.validation.result import Result
+from mlte.validation.validator import Validator
 from mlte.value.artifact import Value
 
 
@@ -26,7 +26,7 @@ class Condition:
         self,
         name: str,
         arguments: List[Any],
-        callback: Callable[[Value], Result],
+        validator: Validator,
         value_class: str = "",
     ):
         """
@@ -34,7 +34,7 @@ class Condition:
 
         :param name: The name of the name method, for documenting purposes.
         :param arguments: The list of arguments passed to the callable.
-        :param callback: The callable that implements validation.
+        :param validator: The Validator that implements validation.
         :param value_class: The full module + class name of the Value that generated this condition.
         """
 
@@ -44,8 +44,8 @@ class Condition:
         self.arguments: List[Any] = arguments
         """The arguments used when validating the condition."""
 
-        self.callback: Callable[[Value], Result] = callback
-        """The callback that implements validation."""
+        self.validator: Validator = validator
+        """The validator that implements validation."""
 
         self.value_class: str = (
             value_class
@@ -56,16 +56,23 @@ class Condition:
 
     def __call__(self, value: Value) -> Result:
         """
-        Invoke the validation callback
+        Invoke the validation
 
         :param value: The value of measurement evaluation
 
         :return: The result of measurement validation
         """
-        return self.callback(value)._with_evidence_metadata(value.metadata)
+        return self.validator.validate(value)._with_evidence_metadata(
+            value.metadata
+        )
 
     @staticmethod
-    def build_condition(test: Callable[[Value], Result]) -> Condition:
+    def build_condition(
+        bool_exp: Optional[Callable[[Any], bool]],
+        success: str = "Success message not set",
+        failure: str = "Failure message not set",
+        ignore: str = "Default message not set",
+    ) -> Condition:
         """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get info about the caller from inspection.
         curr_frame = inspect.currentframe()
@@ -87,6 +94,11 @@ class Condition:
         cls: Type[Value] = arguments["cls"]
         cls_str = f"{cls.__module__}.{cls.__name__}"
 
+        # Build the test.
+        validator = Validator(
+            bool_exp=bool_exp, success=success, failure=failure, ignore=ignore
+        )
+
         # Validation args include all caller arguments except for the value class type.
         validation_args = []
         for arg_key, arg_value in arguments.items():
@@ -94,7 +106,7 @@ class Condition:
                 validation_args.append(arg_value)
 
         condition: Condition = Condition(
-            validation_name, validation_args, test, cls_str
+            validation_name, validation_args, validator, cls_str
         )
         return condition
 
@@ -107,7 +119,7 @@ class Condition:
         return ConditionModel(
             name=self.name,
             arguments=self.arguments,
-            callback=serializing.encode_callable(self.callback),
+            validator=self.validator.to_model(),
             value_class=self.value_class,
         )
 
@@ -123,7 +135,7 @@ class Condition:
         condition: Condition = Condition(
             model.name,
             model.arguments,
-            serializing.decode_callable(model.callback),
+            Validator.from_model(model.validator),
             model.value_class,
         )
         return condition

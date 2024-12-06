@@ -4,7 +4,7 @@ test/validation/test_validator.py
 Unit tests for Validator.
 """
 
-from mlte.validation.model import ValidatorModel
+from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.validator import Validator
 
 

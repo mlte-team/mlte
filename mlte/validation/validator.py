@@ -11,14 +11,14 @@ import typing
 from typing import Any, Callable, Optional
 
 from mlte._private import serializing
-from mlte.validation.model import ValidatorModel
+from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.result import Failure, Ignore, Result, Success
 
 
 class Validator:
     def __init__(
         self,
-        bool_exp: Optional[Callable[[Any], bool]],
+        bool_exp: Optional[Callable[[Any], bool]] = None,
         success: str = "Success message not set",
         failure: str = "Failure message not set",
         ignore: str = "Default message not set",

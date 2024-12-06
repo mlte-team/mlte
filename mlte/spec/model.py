@@ -4,39 +4,11 @@ mlte/spec/model.py
 Model implementation for the Spec artifact.
 """
 
-import json
-from typing import Any, Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
-
-
-class ConditionModel(BaseModel):
-    """A description of a condition for a property."""
-
-    name: str
-    """A decriptive name for the condition, usually the method name used to call it."""
-
-    arguments: List[Any] = []
-    """The arguments used when validating the condition."""
-
-    callback: str
-    """A text-encoded, dilled-serialized version of the callback to execute when validating this condition."""
-
-    value_class: str
-    """A string indicating the full module and class name of the Value used to generate this condition."""
-
-    def args_to_json_str(self) -> str:
-        """
-        Serialize the model arguments field into a string.
-        :return: The JSON str representation of the model
-        """
-        # First convert whole thing, to see if arguments will trigger error (and if so, just let it bubble up).
-        self.to_json()
-
-        # Now convert only the actual arguments not only to JSON, but to a JSON string.
-        json_str_args = json.dumps(self.arguments)
-        return json_str_args
+from mlte.validation.model_condition import ConditionModel
 
 
 class PropertyModel(BaseModel):

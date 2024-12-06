@@ -13,9 +13,8 @@
           "title": "Arguments",
           "type": "array"
         },
-        "callback": {
-          "title": "Callback",
-          "type": "string"
+        "validator": {
+          "$ref": "#/$defs/ValidatorModel"
         },
         "value_class": {
           "title": "Value Class",
@@ -24,7 +23,7 @@
       },
       "required": [
         "name",
-        "callback",
+        "validator",
         "value_class"
       ],
       "title": "ConditionModel",
@@ -79,6 +78,42 @@
         "module"
       ],
       "title": "PropertyModel",
+      "type": "object"
+    },
+    "ValidatorModel": {
+      "description": "A description of a validator for a test.",
+      "properties": {
+        "bool_exp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp"
+        },
+        "success": {
+          "title": "Success",
+          "type": "string"
+        },
+        "failure": {
+          "title": "Failure",
+          "type": "string"
+        },
+        "ignore": {
+          "title": "Ignore",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bool_exp",
+        "success",
+        "failure",
+        "ignore"
+      ],
+      "title": "ValidatorModel",
       "type": "object"
     }
   },

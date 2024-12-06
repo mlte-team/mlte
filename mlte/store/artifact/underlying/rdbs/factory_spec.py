@@ -10,7 +10,7 @@ import json
 from sqlalchemy.orm import Session
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
+from mlte.spec.model import PropertyModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
@@ -22,6 +22,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.validation.model import ResultModel, ValidatedSpecModel
+from mlte.validation.model_condition import ConditionModel
 
 # -------------------------------------------------------------------------
 # Spec Factory Methods
@@ -48,7 +49,7 @@ def create_spec_db_from_model(
                 name=condition.name,
                 measurement_id=measurement_id,
                 arguments=condition.args_to_json_str(),
-                callback=condition.callback,
+                callback=json.dumps(condition.validator.to_json()),
                 value_class=condition.value_class,
                 property=property_obj,
             )
@@ -70,7 +71,7 @@ def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
                 conditions={
                     condition.measurement_id: ConditionModel(
                         name=condition.name,
-                        callback=condition.callback,
+                        validator=json.loads(condition.validator),
                         value_class=condition.value_class,
                         arguments=json.loads(condition.arguments),
                     )

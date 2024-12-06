@@ -68,7 +68,7 @@ class DBCondition(DBBase):
     measurement_id: Mapped[str]
     name: Mapped[str]
     arguments: Mapped[str]  # Json string of the aray of arguments.
-    callback: Mapped[str]
+    validator: Mapped[str]
     value_class: Mapped[str]
     property_id: Mapped[int] = mapped_column(ForeignKey("property.id"))
 
