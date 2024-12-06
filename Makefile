@@ -116,4 +116,4 @@ vet:
 # All actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 .PHONY: ci
-ci: clean gen qa docs test
+ci: clean gen check docs test

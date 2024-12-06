@@ -9,6 +9,8 @@ import json
 import typing
 from typing import List, Optional, Tuple
 
+# The json-fix library is loaded to patch json.dumps so it automatically calls
+#  a .__json__ method if defined in a class being serialized.
 import json_fix  # noqa
 from sqlalchemy import select
 from sqlalchemy.orm import Session
