@@ -45,12 +45,22 @@ class Validator:
         :param args, kwargs: Arguments to pass to the boolean expression to be evaluated in this specific case.
         :return: A Result with a message with details of the validation result.
         """
+        result_value: Optional[bool]
+        if self.bool_exp is None:
+            result_value = None
+        else:
+            result_value = self.bool_exp(*args, **kwargs)
+            if not isinstance(result_value, bool):
+                raise ValueError(
+                    "Configured bool expression does not return a bool."
+                )
+
         values = f"- values: {json.dumps(args) if len(args)>0 else ''}{', ' if len(args)>0 and len(kwargs)>0 else''}{json.dumps(kwargs) if len(kwargs)>0 else ''}"
         result = (
             Ignore(self.ignore)
             if self.bool_exp is None
             else Success(f"{self.success} {values}")
-            if self.bool_exp(*args, **kwargs)
+            if result_value
             else Failure(f"{self.failure} {values}")
         )
         return result
