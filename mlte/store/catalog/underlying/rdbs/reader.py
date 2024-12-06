@@ -9,6 +9,7 @@ import json
 import typing
 from typing import List, Optional, Tuple
 
+import json_fix  # noqa
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 

@@ -19,7 +19,7 @@ from mlte.measurement.memory import (
 )
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
-from mlte.validation.result import Failure, Success
+from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
@@ -72,7 +72,7 @@ def test_memory_validate_success() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], lambda _: Success())(stats)
+    vr = Condition("Succeed", [], Validator(lambda _: True))(stats)
     assert bool(vr)
 
     assert vr.metadata is not None
@@ -87,7 +87,7 @@ def test_memory_validate_failure() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], lambda _: Failure())(stats)
+    vr = Condition("Fail", [], Validator(lambda _: False))(stats)
     assert not bool(vr)
 
     assert vr.metadata is not None

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 
+import json_fix  # noqa
 from sqlalchemy.orm import Session
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
@@ -49,7 +50,7 @@ def create_spec_db_from_model(
                 name=condition.name,
                 measurement_id=measurement_id,
                 arguments=condition.args_to_json_str(),
-                callback=json.dumps(condition.validator.to_json()),
+                validator=json.dumps(condition.validator.to_json()),
                 value_class=condition.value_class,
                 property=property_obj,
             )

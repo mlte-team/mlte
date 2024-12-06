@@ -20,7 +20,7 @@ from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
-from mlte.validation.result import Failure, Success
+from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
@@ -82,7 +82,7 @@ def test_cpu_nix_validate_success() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], lambda _: Success())(stats)
+    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True))(stats)  # type: ignore
     assert bool(vr)
 
     # Data is accessible from validation result
@@ -99,7 +99,7 @@ def test_cpu_nix_validate_failure() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], lambda _: Failure())(stats)
+    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False))(stats)  # type: ignore
     assert not bool(vr)
 
     # Data is accessible from validation result

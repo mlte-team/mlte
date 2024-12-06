@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from typing import Any, Dict
 
+import json_fix  # noqa
 import pydantic
 
 from mlte.model.serialization_error import SerializationError

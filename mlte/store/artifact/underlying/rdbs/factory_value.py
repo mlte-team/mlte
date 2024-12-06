@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import json
 
+import json_fix  # noqa
+
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import DBEvidenceMetadata

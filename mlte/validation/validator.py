@@ -10,6 +10,8 @@ import json
 import typing
 from typing import Any, Callable, Optional
 
+import json_fix  # noqa
+
 from mlte._private import serializing
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.result import Failure, Ignore, Result, Success

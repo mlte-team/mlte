@@ -7,6 +7,8 @@ Model implementation for the Validator and Condition.
 import json
 from typing import Any, Optional
 
+import json_fix  # noqa
+
 from mlte.model.base_model import BaseModel
 
 
@@ -14,7 +16,7 @@ class ValidatorModel(BaseModel):
     """A description of a validator for a test."""
 
     bool_exp: Optional[str]
-    """A text-encoded, dilled-serialized version of the callback to execute when checking the bool condition."""
+    """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
     success: str
     """A string to be used when recording that the validation was succesful."""
