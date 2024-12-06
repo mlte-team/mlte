@@ -94,7 +94,7 @@ class Condition:
         cls: Type[Value] = arguments["cls"]
         cls_str = f"{cls.__module__}.{cls.__name__}"
 
-        # Build the test.
+        # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
             bool_exp=bool_exp, success=success, failure=failure, ignore=ignore
         )

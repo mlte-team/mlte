@@ -28,13 +28,9 @@ class TestValue:
     def in_between(cls, arg1: float, arg2: float) -> Condition:
         """Checks if the value is in between the arguments."""
         condition: Condition = Condition.build_condition(
-            lambda real: Success(
-                f"Real magnitude {real.value} between {arg1} and {arg2}"
-            )
-            if real.value > arg1 and real.value < arg2
-            else Failure(
-                f"Real magnitude {real.value} not between {arg1} and {arg2}"
-            )
+            bool_exp=lambda real: real.value > arg1 and real.value < arg2,
+            success=f"Real magnitude is between {arg1} and {arg2}",
+            failure=f"Real magnitude is not between {arg1} and {arg2}",
         )
         return condition
 
