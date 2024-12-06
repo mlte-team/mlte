@@ -42,8 +42,8 @@ class ConditionModel(BaseModel):
     validator: ValidatorModel
     """A serialized version of the validator to execute when validating this condition."""
 
-    value_class: str
-    """A string indicating the full module and class name of the Value used to generate this condition."""
+    value_class: Optional[str]
+    """A string indicating the full module and class name of the Value used to generate this condition, if any."""
 
     def args_to_json_str(self) -> str:
         """

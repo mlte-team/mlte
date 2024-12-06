@@ -17,8 +17,15 @@
           "$ref": "#/$defs/ValidatorModel"
         },
         "value_class": {
-          "title": "Value Class",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value Class"
         }
       },
       "required": [

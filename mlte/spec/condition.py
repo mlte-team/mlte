@@ -27,7 +27,7 @@ class Condition:
         name: str,
         arguments: List[Any],
         validator: Validator,
-        value_class: str = "",
+        value_class: Optional[str] = None,
     ):
         """
         Initialize a Condition instance.
@@ -35,7 +35,7 @@ class Condition:
         :param name: The name of the name method, for documenting purposes.
         :param arguments: The list of arguments passed to the callable.
         :param validator: The Validator that implements validation.
-        :param value_class: The full module + class name of the Value that generated this condition.
+        :param value_class: The full module + class name of the Value that generated this condition, if any.
         """
 
         self.name: str = name
@@ -47,12 +47,8 @@ class Condition:
         self.validator: Validator = validator
         """The validator that implements validation."""
 
-        self.value_class: str = (
-            value_class
-            if value_class != ""
-            else f"{Value.__module__}.{Value.__name__}"
-        )
-        """Value type class where this Condition came from."""
+        self.value_class: Optional[str] = value_class
+        """Value type class where this Condition came from, if any."""
 
     def __call__(self, value: Value) -> Result:
         """
