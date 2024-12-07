@@ -200,16 +200,37 @@
           "title": "Bool Exp"
         },
         "success": {
-          "title": "Success",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Success"
         },
         "failure": {
-          "title": "Failure",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Failure"
         },
         "ignore": {
-          "title": "Ignore",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ignore"
         }
       },
       "required": [

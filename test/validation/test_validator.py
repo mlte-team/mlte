@@ -55,7 +55,10 @@ def test_validate_success() -> None:
 
     result = validator.validate(x, y)
 
-    assert result.message == validator.success + f" - values: [{x}, {y}]"
+    assert (
+        validator.success is not None
+        and result.message == validator.success + f" - values: [{x}, {y}]"
+    )
 
 
 def test_validate_success_kwargs() -> None:
@@ -68,7 +71,8 @@ def test_validate_success_kwargs() -> None:
     result = validator.validate(x=x, y=y)
 
     assert (
-        result.message
+        validator.success is not None
+        and result.message
         == validator.success + f' - values: {{"x": {x}, "y": {y}}}'
     )
 
@@ -83,7 +87,9 @@ def test_validate_success_args_and_kwargs() -> None:
     result = validator.validate(x, y=y)
 
     assert (
-        result.message == validator.success + f' - values: [{x}], {{"y": {y}}}'
+        validator.success is not None
+        and result.message
+        == validator.success + f' - values: [{x}], {{"y": {y}}}'
     )
 
 
@@ -96,7 +102,10 @@ def test_validate_failure() -> None:
 
     result = validator.validate(x, y)
 
-    assert result.message == validator.failure + f" - values: [{x}, {y}]"
+    assert (
+        validator.failure is not None
+        and result.message == validator.failure + f" - values: [{x}, {y}]"
+    )
 
 
 def test_validate_ignore() -> None:
