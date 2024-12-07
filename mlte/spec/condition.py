@@ -65,9 +65,9 @@ class Condition:
     @staticmethod
     def build_condition(
         bool_exp: Optional[Callable[[Any], bool]],
-        success: str = "Success message not set",
-        failure: str = "Failure message not set",
-        ignore: str = "Default message not set",
+        success: Optional[str] = None,
+        failure: Optional[str] = None,
+        ignore: Optional[str] = None,
     ) -> Condition:
         """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get info about the caller from inspection.

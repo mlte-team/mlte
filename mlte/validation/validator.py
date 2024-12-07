@@ -23,9 +23,9 @@ class Validator:
     def __init__(
         self,
         bool_exp: Optional[Callable[[Any], bool]] = None,
-        success: str = "Success message not set",
-        failure: str = "Failure message not set",
-        ignore: str = "Default message not set",
+        success: Optional[str] = None,
+        failure: Optional[str] = None,
+        ignore: Optional[str] = None,
     ):
         """
         Constructor.
@@ -35,6 +35,19 @@ class Validator:
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param ignore: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
         """
+        if success is not None and failure is None:
+            raise ValueError(
+                "If success message is defined, failure message has to be defined as well"
+            )
+        if success is None and failure is not None:
+            raise ValueError(
+                "If failure message is defined, success message has to be defined as well"
+            )
+        if success is None and failure is None and ignore is None:
+            raise ValueError(
+                "All messages can't be empty, either ignore or success and failure have to be defined"
+            )
+
         self.bool_exp = bool_exp
         self.success = success
         self.failure = failure
@@ -60,7 +73,7 @@ class Validator:
         values = f"- values: {json.dumps(args) if len(args)>0 else ''}{', ' if len(args)>0 and len(kwargs)>0 else''}{json.dumps(kwargs) if len(kwargs)>0 else ''}"
         result = (
             Ignore(self.ignore)
-            if self.bool_exp is None
+            if self.bool_exp is None and self.ignore is not None
             else Success(f"{self.success} {values}")
             if result_value
             else Failure(f"{self.failure} {values}")

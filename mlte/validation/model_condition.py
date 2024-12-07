@@ -20,13 +20,13 @@ class ValidatorModel(BaseModel):
     bool_exp: Optional[str]
     """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
-    success: str
+    success: Optional[str]
     """A string to be used when recording that the validation was succesful."""
 
-    failure: str
+    failure: Optional[str]
     """A string to be used when recording that the validation was not succesful."""
 
-    ignore: str
+    ignore: Optional[str]
     """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
 
 
