@@ -80,3 +80,37 @@ def test_save_load(
 
     loaded = Integer.load_with("id.value", context=ctx, store=store)
     assert loaded == i
+
+
+def test_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    lt_cond = Integer.less_than(3)
+
+    res = lt_cond(Integer(m, 2))
+    assert bool(res)
+
+    res = lt_cond(Integer(m, 4))
+    assert not bool(res)
+
+    res = lt_cond(Integer(m, 3))
+    assert not bool(res)
+
+
+def test_less_or_equal_to() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    lt_cond = Integer.less_or_equal_to(3)
+
+    res = lt_cond(Integer(m, 2))
+    assert bool(res)
+
+    res = lt_cond(Integer(m, 4))
+    assert not bool(res)
+
+    res = lt_cond(Integer(m, 3))
+    assert bool(res)

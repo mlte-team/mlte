@@ -85,3 +85,15 @@ def test_save_load(
 
     # NOTE(Kyle): No equality test implemented.
     _ = Image.load_with("id.value", context=ctx, store=store)
+
+
+def test_ignore() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    msg = "Just writing some data"
+    cond = Image.ignore(msg)
+
+    res = cond(Image(m, ""))
+    assert res.message == msg
