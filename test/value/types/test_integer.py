@@ -87,15 +87,15 @@ def test_less_than() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Integer.less_than(3)
+    cond = Integer.less_than(3)
 
-    res = lt_cond(Integer(m, 2))
+    res = cond(Integer(m, 2))
     assert bool(res)
 
-    res = lt_cond(Integer(m, 4))
+    res = cond(Integer(m, 4))
     assert not bool(res)
 
-    res = lt_cond(Integer(m, 3))
+    res = cond(Integer(m, 3))
     assert not bool(res)
 
 
@@ -104,13 +104,13 @@ def test_less_or_equal_to() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Integer.less_or_equal_to(3)
+    cond = Integer.less_or_equal_to(3)
 
-    res = lt_cond(Integer(m, 2))
+    res = cond(Integer(m, 2))
     assert bool(res)
 
-    res = lt_cond(Integer(m, 4))
+    res = cond(Integer(m, 4))
     assert not bool(res)
 
-    res = lt_cond(Integer(m, 3))
+    res = cond(Integer(m, 3))
     assert bool(res)

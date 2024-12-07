@@ -86,15 +86,15 @@ def test_less_than() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Real.less_than(3.2)
+    cond = Real.less_than(3.2)
 
-    res = lt_cond(Real(m, 3.1))
+    res = cond(Real(m, 3.1))
     assert bool(res)
 
-    res = lt_cond(Real(m, 4))
+    res = cond(Real(m, 4))
     assert not bool(res)
 
-    res = lt_cond(Real(m, 3.2))
+    res = cond(Real(m, 3.2))
     assert not bool(res)
 
 
@@ -103,15 +103,15 @@ def test_less_or_equal_to() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Real.less_or_equal_to(3.2)
+    cond = Real.less_or_equal_to(3.2)
 
-    res = lt_cond(Real(m, 3.1))
+    res = cond(Real(m, 3.1))
     assert bool(res)
 
-    res = lt_cond(Real(m, 4))
+    res = cond(Real(m, 4))
     assert not bool(res)
 
-    res = lt_cond(Real(m, 3.2))
+    res = cond(Real(m, 3.2))
     assert bool(res)
 
 
@@ -120,15 +120,15 @@ def test_greater_than() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Real.greater_than(3.2)
+    cond = Real.greater_than(3.2)
 
-    res = lt_cond(Real(m, 3.1))
+    res = cond(Real(m, 3.1))
     assert not bool(res)
 
-    res = lt_cond(Real(m, 4))
+    res = cond(Real(m, 4))
     assert bool(res)
 
-    res = lt_cond(Real(m, 3.2))
+    res = cond(Real(m, 3.2))
     assert not bool(res)
 
 
@@ -137,13 +137,13 @@ def test_greater_or_equal_to() -> None:
         measurement_type="typename", identifier=Identifier(name="id")
     )
 
-    lt_cond = Real.greater_or_equal_to(3.2)
+    cond = Real.greater_or_equal_to(3.2)
 
-    res = lt_cond(Real(m, 3.1))
+    res = cond(Real(m, 3.1))
     assert not bool(res)
 
-    res = lt_cond(Real(m, 4))
+    res = cond(Real(m, 4))
     assert bool(res)
 
-    res = lt_cond(Real(m, 3.2))
+    res = cond(Real(m, 3.2))
     assert bool(res)

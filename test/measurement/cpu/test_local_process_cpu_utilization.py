@@ -137,3 +137,37 @@ def test_result_save_load(
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
+
+
+def test_max_utilization_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = CPUStatistics.max_utilization_less_than(3)
+
+    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(CPUStatistics(m, avg=2, max=4, min=1))
+    assert not bool(res)
+
+    res = cond(CPUStatistics(m, avg=2, max=3, min=1))
+    assert not bool(res)
+
+
+def test_avg_utilization_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = CPUStatistics.average_utilization_less_than(3)
+
+    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
+    assert not bool(res)
+
+    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
+    assert bool(res)
