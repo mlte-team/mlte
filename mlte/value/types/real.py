@@ -12,7 +12,6 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
 from mlte.value.artifact import Value
 from mlte.value.model import RealValueModel, ValueModel, ValueType
 
@@ -86,13 +85,9 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda real: Success(
-                f"Real magnitude {real.value} less than threshold {value}"
-            )
-            if real.value < value
-            else Failure(
-                f"Real magnitude {real.value} exceeds threshold {value}"
-            ),
+            bool_exp=lambda real: real.value < value,
+            success=f"Real magnitude is less than threshold {value}",
+            failure=f"Real magnitude exceeds threshold {value}",
         )
         return condition
 
@@ -105,14 +100,9 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda real: Success(
-                f"Real magnitude {real.value} "
-                f"less than or equal to threshold {value}"
-            )
-            if real.value <= value
-            else Failure(
-                f"Real magnitude {real.value} exceeds threshold {value}"
-            ),
+            bool_exp=lambda real: real.value <= value,
+            success=f"Real magnitude is less than or equal to threshold {value}",
+            failure=f"Real magnitude exceeds threshold {value}",
         )
         return condition
 
@@ -125,13 +115,9 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda real: Success(
-                f"Real magnitude {real.value} greater than threshold {value}"
-            )
-            if real.value > value
-            else Failure(
-                f"Real magnitude {real.value} below threshold {value}"
-            ),
+            bool_exp=lambda real: real.value > value,
+            success=f"Real magnitude is greater than threshold {value}",
+            failure=f"Real magnitude is below threshold {value}",
         )
         return condition
 
@@ -144,11 +130,8 @@ class Real(Value):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda real: Success(
-                f"Real magnitude {real.value} "
-                f"greater than or equal to threshold {value}"
-            )
-            if real.value >= value
-            else Failure(f"Real magnitude {real.value} below threshold {value}")
+            bool_exp=lambda real: real.value >= value,
+            success=f"Real magnitude is greater than or equal to threshold {value}",
+            failure=f"Real magnitude is below threshold {value}",
         )
         return condition
