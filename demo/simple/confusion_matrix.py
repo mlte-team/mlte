@@ -47,20 +47,20 @@ class ConfusionMatrix(ValueBase):
 
     @property
     def misclassifications(self) -> int:
-        count = 0
+        count: int = 0
         for i in range(len(self.matrix)):
             row = self.matrix[i]
             for j in range(len(row)):
                 if i == j:
                     continue
                 count += row[j]
-        return count
+        return int(count)
 
     @classmethod
     def misclassification_count_less_than(cls, threshold: int) -> Condition:
         condition: Condition = Condition.build_condition(
             bool_exp=lambda cm: cm.misclassifications <= threshold,
             success=f"Misclass count is less than threshold {threshold}",
-            failure=f"Misclassification count exceeds threshold {threshold}"
+            failure=f"Misclassification count exceeds threshold {threshold}",
         )
         return condition
