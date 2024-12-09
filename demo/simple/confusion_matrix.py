@@ -59,12 +59,8 @@ class ConfusionMatrix(ValueBase):
     @classmethod
     def misclassification_count_less_than(cls, threshold: int) -> Condition:
         condition: Condition = Condition.build_condition(
-            lambda cm: Success(
-                f"Misclass count {cm.misclassifications} less than threshold {threshold}"
-            )
-            if cm.misclassifications <= threshold
-            else Failure(
-                f"Misclassification count {cm.misclassifications} exceeds threshold {threshold}"
-            ),
+            bool_exp=lambda cm: cm.misclassifications <= threshold,
+            success=f"Misclass count is less than threshold {threshold}",
+            failure=f"Misclassification count exceeds threshold {threshold}"
         )
         return condition

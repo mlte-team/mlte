@@ -9,7 +9,6 @@ import numpy as np
 
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
 from mlte.value.base import ValueBase
 
 
@@ -48,13 +47,9 @@ class MultipleRanksums(ValueBase):
     def all_p_values_greater_or_equal_than(cls, threshold: float) -> Condition:
         """Checks if the p-value for multiple ranksums is below given threshold."""
         condition: Condition = Condition.build_condition(
-            lambda value: Success(
-                f"All p-values are equal to or over threshold {value.get_total_p_value_threshold(threshold)}"
-            )
-            if len(value.get_low_p_values(threshold)) == 0
-            else Failure(
-                f"One or more p-values are below threshold {value.get_total_p_value_threshold(threshold)}: {value.get_low_p_values(threshold)}"
-            ),
+            bool_exp=lambda value: len(value.get_low_p_values(threshold)) == 0,
+            success=f"All p-values are equal to or over threshold {threshold}",
+            failure=f"One or more p-values are below threshold {threshold}",
         )
         return condition
 
