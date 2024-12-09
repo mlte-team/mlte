@@ -292,7 +292,9 @@ def make_complete_spec_model() -> SpecModel:
                     "accuracy": ConditionModel(
                         name="less_than",
                         arguments=[3.0],
-                        validator=Validator().to_model(),
+                        validator=Validator(
+                            success="Yay", failure="oh"
+                        ).to_model(),
                         value_class="mlte.value.types.real.Real",
                     )
                 },

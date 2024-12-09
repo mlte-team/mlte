@@ -50,13 +50,13 @@ def test_condition_model() -> None:
         ConditionModel(
             name="less_than",
             arguments=[3.0],
-            validator=Validator().to_model(),
+            validator=Validator(success="Yay", failure="oh").to_model(),
             value_class="mlte.value.types.real.Real",
         ),
         ConditionModel(
             name="greater_than",
             arguments=[1, 2],
-            validator=Validator().to_model(),
+            validator=Validator(success="Yay", failure="oh").to_model(),
             value_class="mlte.value.types.real.Real",
         ),
     ]
