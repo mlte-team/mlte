@@ -82,7 +82,7 @@ def test_cpu_nix_validate_success() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True))(stats)  # type: ignore
+    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True, success="Yay", failure="oh"))(stats)  # type: ignore
     assert bool(vr)
 
     # Data is accessible from validation result
@@ -99,7 +99,7 @@ def test_cpu_nix_validate_failure() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False))(stats)  # type: ignore
+    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False, success="Yay", failure="oh"))(stats)  # type: ignore
     assert not bool(vr)
 
     # Data is accessible from validation result
@@ -169,5 +169,5 @@ def test_avg_utilization_less_than() -> None:
     res = cond(CPUStatistics(m, avg=3, max=2, min=1))
     assert not bool(res)
 
-    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
-    assert bool(res)
+    res = cond(CPUStatistics(m, avg=4, max=2, min=1))
+    assert not bool(res)

@@ -72,7 +72,9 @@ def test_memory_validate_success() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], Validator(lambda _: True, success="yay", failure="oh"))(stats)
+    vr = Condition(
+        "Succeed", [], Validator(lambda _: True, success="yay", failure="oh")
+    )(stats)
     print(vr)
     assert bool(vr)
 
@@ -88,7 +90,9 @@ def test_memory_validate_failure() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], Validator(lambda _: False, success="yay", failure="oh"))(stats)
+    vr = Condition(
+        "Fail", [], Validator(lambda _: False, success="yay", failure="oh")
+    )(stats)
     assert not bool(vr)
 
     assert vr.metadata is not None
