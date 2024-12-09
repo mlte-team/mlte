@@ -27,11 +27,11 @@ class Real(Value):
         :param metadata: The generating measurement's metadata
         :param value: The real value
         """
-        assert isinstance(value, float) or isinstance(value, int), "Argument must be `float`."
+        assert isinstance(value, float), "Argument must be `float`."
 
         super().__init__(self, metadata)
 
-        self.value = float(value)
+        self.value = value
         """The wrapped real value."""
 
     def to_model(self) -> ArtifactModel:

@@ -64,7 +64,7 @@ class Condition:
 
     @staticmethod
     def build_condition(
-        bool_exp: Optional[Callable[[Any], bool]],
+        bool_exp: Optional[Callable[[Any], bool]] = None,
         success: Optional[str] = None,
         failure: Optional[str] = None,
         ignore: Optional[str] = None,

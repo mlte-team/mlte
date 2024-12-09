@@ -15,7 +15,6 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import Ignore
 from mlte.value.artifact import Value
 from mlte.value.model import ImageValueModel, ValueModel, ValueType
 
@@ -90,7 +89,5 @@ class Image(Value):
         :param reason: The reason for ignoring the image
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
-            lambda _: Ignore(reason),
-        )
+        condition: Condition = Condition.build_condition(ignore=reason)
         return condition
