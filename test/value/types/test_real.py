@@ -91,7 +91,7 @@ def test_less_than() -> None:
     res = cond(Real(m, 3.1))
     assert bool(res)
 
-    res = cond(Real(m, 4))
+    res = cond(Real(m, 4.0))
     assert not bool(res)
 
     res = cond(Real(m, 3.2))
@@ -108,7 +108,7 @@ def test_less_or_equal_to() -> None:
     res = cond(Real(m, 3.1))
     assert bool(res)
 
-    res = cond(Real(m, 4))
+    res = cond(Real(m, 4.0))
     assert not bool(res)
 
     res = cond(Real(m, 3.2))
@@ -125,7 +125,7 @@ def test_greater_than() -> None:
     res = cond(Real(m, 3.1))
     assert not bool(res)
 
-    res = cond(Real(m, 4))
+    res = cond(Real(m, 4.0))
     assert bool(res)
 
     res = cond(Real(m, 3.2))
@@ -142,7 +142,7 @@ def test_greater_or_equal_to() -> None:
     res = cond(Real(m, 3.1))
     assert not bool(res)
 
-    res = cond(Real(m, 4))
+    res = cond(Real(m, 4.0))
     assert bool(res)
 
     res = cond(Real(m, 3.2))
