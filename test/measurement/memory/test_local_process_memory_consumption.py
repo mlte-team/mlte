@@ -142,8 +142,8 @@ def test_avg_consumption_less_than() -> None:
     res = cond(MemoryStatistics(m, avg=2, max=2, min=1))
     assert bool(res)
 
-    res = cond(MemoryStatistics(m, avg=3, max=2, min=1))
+    res = cond(MemoryStatistics(m, avg=4, max=2, min=1))
     assert not bool(res)
 
     res = cond(MemoryStatistics(m, avg=3, max=2, min=1))
-    assert bool(res)
+    assert not bool(res)
