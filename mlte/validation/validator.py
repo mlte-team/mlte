@@ -6,15 +6,11 @@ The validation base class.
 
 from __future__ import annotations
 
-import json
 import typing
 from typing import Any, Callable, Optional
 
-# The json-fix library is loaded to patch json.dumps so it automatically calls
-#  a .__json__ method if defined in a class being serialized.
-import json_fix  # noqa
-
 from mlte._private import serializing
+from mlte._private.fixed_json import json
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.result import Failure, Info, Result, Success
 

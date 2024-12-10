@@ -6,14 +6,11 @@ Base model implementation for all MLTE models.
 
 from __future__ import annotations
 
-import json
 from typing import Any, Dict
 
-# The json-fix library is loaded to patch json.dumps so it automatically calls
-#  a .__json__ method if defined in a class being serialized.
-import json_fix  # noqa
 import pydantic
 
+from mlte._private.fixed_json import json
 from mlte.model.serialization_error import SerializationError
 
 

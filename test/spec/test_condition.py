@@ -10,12 +10,23 @@ from typing import Any
 
 import pytest
 
+from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.model.serialization_error import SerializationError
 from mlte.spec.condition import Condition
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.validator import Validator
 from mlte.value.types.real import Real
+
+
+class JsonValue:
+    """A non serializable value that imports __json__"""
+
+    value: Any
+
+    def __json__(self):
+        """Hack method to make Artifacts serializable to JSON if importing json-fix before json.dumps."""
+        return {"value": "myvalue"}
 
 
 class TestValue:
@@ -40,6 +51,16 @@ class TestValue:
             bool_exp=lambda real: real.value > arg1 and real.value < arg2,
             success=f"Real magnitude is between {arg1} and {arg2}",
             failure=f"Real magnitude is not between {arg1} and {arg2}",
+        )
+        return condition
+
+    @classmethod
+    def json_method(cls, arg1: JsonValue) -> Condition:
+        """Checks if the value is in between the arguments."""
+        condition: Condition = Condition.build_condition(
+            bool_exp=lambda real: real == 1,
+            success=f"Success: {arg1}",
+            failure=f"Failure: {arg1}",
         )
         return condition
 
@@ -117,8 +138,15 @@ def test_round_trip() -> None:
 
 
 def test_non_serializable_argument():
-    test_value = TestValue()
-    condition = test_value.in_between_complex(1.0, test_value)
+    condition = TestValue.in_between_complex(1.0, TestValue())
 
     with pytest.raises(SerializationError):
         _ = condition.to_model().to_json()
+
+
+def test_json_fix_serializable_argument():
+    test_value = JsonValue()
+    condition = TestValue.json_method(test_value)
+
+    json_data = condition.to_model().to_json()
+    _ = json.dumps(json_data)

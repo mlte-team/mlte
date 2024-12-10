@@ -4,13 +4,9 @@ mlte/validation/model_condition.py
 Model implementation for the Validator and Condition.
 """
 
-import json
 from typing import Any, Optional
 
-# The json-fix library is loaded to patch json.dumps so it automatically calls
-#  a .__json__ method if defined in a class being serialized.
-import json_fix  # noqa
-
+from mlte._private.fixed_json import json
 from mlte.model.base_model import BaseModel
 
 

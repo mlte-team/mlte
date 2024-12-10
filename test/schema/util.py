@@ -2,12 +2,13 @@
 test/schema/util.py
 """
 
-import json
 import os
 import pkgutil
 from typing import Any, Dict, Optional
 
 import jsonschema
+
+from mlte._private.fixed_json import json
 
 # The identifier for the latest schema for Value
 VALUE_LATEST_SCHEMA_VERSION = "0.0.1"
