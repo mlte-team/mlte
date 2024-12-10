@@ -127,7 +127,7 @@ class Spec(Artifact):
         """
         Returns a particular qa category with the given id.
 
-        :param qa_category: The qa category itself, or its identifier
+        :param qa_category_id: The qa category itself, or its identifier
         :return: The qa category object.
         """
         qa_categories = [
