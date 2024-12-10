@@ -59,10 +59,10 @@
       :options="propertyCategoryOptions"
     >
       <template #label>
-        Property Category
+        Quality Attribute Category
         <InfoIcon>
-          High-level property that the test example is validating, e.g.,
-          functional correctness, performance, robustness.
+          High-level qa category that the test example is 
+          validating, e.g., functional correctness, performance, robustness.
         </InfoIcon>
       </template>
       <template #error-message>Not defined</template>
@@ -70,9 +70,9 @@
 
     <UsaTextInput v-model="modelValue.property">
       <template #label>
-        Property
+        Quality Attribute
         <InfoIcon>
-          More specific property that the test example is validating, e.g.,
+          More specific quality attribute that the test example is validating, e.g.,
           accuracy, inference time, robustness to image blur.
         </InfoIcon>
       </template>

@@ -1,7 +1,7 @@
 {
   "$defs": {
     "ConditionModel": {
-      "description": "A description of a condition for a property.",
+      "description": "A description of a condition for a qa category.",
       "properties": {
         "name": {
           "title": "Name",
@@ -30,8 +30,8 @@
       "title": "ConditionModel",
       "type": "object"
     },
-    "PropertyModel": {
-      "description": "A description of a property.",
+    "QACategoryModel": {
+      "description": "A description of a qa category.",
       "properties": {
         "name": {
           "title": "Name",
@@ -78,7 +78,7 @@
         "name",
         "module"
       ],
-      "title": "PropertyModel",
+      "title": "QACategoryModel",
       "type": "object"
     }
   },
@@ -96,7 +96,7 @@
     "properties": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/PropertyModel"
+        "$ref": "#/$defs/QACategoryModel"
       },
       "default": [],
       "title": "Properties"

@@ -1,9 +1,9 @@
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Monitorability(Property):
+class Monitorability(QACategory):
     """
-    The Monitorability property reflects  monitoring requirements.
+    The Monitorability qa category reflects  monitoring requirements.
     """
 
     def __init__(self, rationale: str):
@@ -11,7 +11,7 @@ class Monitorability(Property):
         super().__init__(
             instance=self,
             description="""
-                The Monitorability property assesses the monitoring requirements of a
+                The Monitorability qa category assesses the monitoring requirements of a
                 model and system. These requirements may be expressed in a variety of ways,
                 including requriements on line formats in log files, timestamps, and log content. 
                 """,

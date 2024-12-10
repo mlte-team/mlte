@@ -12,9 +12,9 @@ from typing import Dict, List, Union
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 from mlte.spec.condition import Condition
-from mlte.spec.model import PropertyModel, SpecModel
+from mlte.spec.model import QACategoryModel, SpecModel
 
 DEFAULT_SPEC_ID = "default.spec"
 
@@ -36,27 +36,27 @@ def _unique(collection: List[str]) -> bool:
 
 class Spec(Artifact):
     """
-    The Spec class integrates properties, measurements,
+    The Spec class integrates qa categories, measurements,
     and the results of measurement evaluation and validation.
     """
 
     def __init__(
         self,
         identifier: str = DEFAULT_SPEC_ID,
-        properties: Dict[Property, Dict[str, Condition]] = {},
+        qa_categories: Dict[QACategory, Dict[str, Condition]] = {},
     ):
         """
         Initialize a Spec instance.
 
-        :param properties: The collection of properties that compose the spec, with their conditions keyed by measurement id.
+        :param qa_categories: The collection of qa_categories that compose the spec, with their conditions keyed by measurement id.
         """
         super().__init__(identifier, ArtifactType.SPEC)
 
-        self.properties = properties
-        """The collection of properties that compose the Spec."""
+        self.qa_categories = qa_categories
+        """The collection of qa categories that compose the Spec."""
 
-        if not _unique([p.name for p in self.properties.keys()]):
-            raise RuntimeError("All properties in Spec must be unique.")
+        if not _unique([p.name for p in self.qa_categories.keys()]):
+            raise RuntimeError("All qa_categories in Spec must be unique.")
 
     # -------------------------------------------------------------------------
     # Serialization.
@@ -67,9 +67,11 @@ class Spec(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=SpecModel(
-                properties=[
-                    self._to_property_model(property)
-                    for property, _ in self.properties.items()
+                qa_categories=[
+                    self._to_qa_category_model(
+                        qa_category
+                    )
+                    for qa_category, _ in self.qa_categories.items()
                 ],
             ),
         )
@@ -81,34 +83,45 @@ class Spec(Artifact):
         body = typing.cast(SpecModel, model.body)
         return Spec(
             identifier=model.header.identifier,
-            properties=Spec.to_property_dict(body.properties),
+            qa_categories=Spec.to_qa_category_dict(
+                body.qa_categories
+            ),
         )
 
-    def _to_property_model(self, property: Property) -> PropertyModel:
+    def _to_qa_category_model(
+        self, qa_category: QACategory
+    ) -> QACategoryModel:
         """
-        Generate a property model. This just uses Property.to_model, but adds the list of conditions.
+        Generate a qa category model. This just uses QACategory.to_model, but adds the list of conditions.
 
-        :param property: The property of interest
-        :return: The property model
+        :param qa_category: The qa category of interest
+        :return: The qa category model
         """
-        property_model: PropertyModel = property.to_model()
-        property_model.conditions = {
+        qa_category_model: QACategoryModel = (
+            qa_category.to_model()
+        )
+        qa_category_model.conditions = {
             measurement_id: condition.to_model()
-            for measurement_id, condition in self.properties[property].items()
+            for measurement_id, condition in self.qa_categories[
+                qa_category
+            ].items()
         }
-        return property_model
+        return qa_category_model
 
     @classmethod
-    def to_property_dict(
-        cls, property_models: List[PropertyModel]
-    ) -> Dict[Property, Dict[str, Condition]]:
-        """Converts a list of property models, into a dict of properties and conditions."""
+    def to_qa_category_dict(
+        cls,
+        qa_category_models: List[QACategoryModel],
+    ) -> Dict[QACategory, Dict[str, Condition]]:
+        """Converts a list of qa category models, into a dict of properties and conditions."""
         return {
-            Property.from_model(property_model): {
+            QACategory.from_model(
+                qa_category_model
+            ): {
                 measurement_id: Condition.from_model(condition_model)
-                for measurement_id, condition_model in property_model.conditions.items()
+                for measurement_id, condition_model in qa_category_model.conditions.items()
             }
-            for property_model in property_models
+            for qa_category_model in qa_category_models
         }
 
     @staticmethod
@@ -117,36 +130,51 @@ class Spec(Artifact):
         return DEFAULT_SPEC_ID
 
     # -------------------------------------------------------------------------
-    # Property Manipulation
+    # Quality Attribute Category Manipulation
     # -------------------------------------------------------------------------
 
-    def get_property(self, property_id: str) -> Property:
+    def get_qa_category(
+        self, qa_category_id: str
+    ) -> QACategory:
         """
-        Returns a particular property with the given id.
+        Returns a particular qa category with the given id.
 
-        :param property_id: The property itself, or its identifier
-        :return: The property object.
+        :param qa_category: The qa category itself, or its identifier
+        :return: The qa category object.
         """
         properties = [
-            prop for prop in self.properties if prop.name == property_id
+            prop
+            for prop in self.qa_categories
+            if prop.name == qa_category_id
         ]
         if len(properties) == 0:
-            raise RuntimeError(f"Property {property_id} was not found in list.")
+            raise RuntimeError(
+                f"QA category {qa_category_id} was not found in list."
+            )
         if len(properties) > 1:
             raise RuntimeError(
-                f"Multiple properties with same id were found: {property_id}"
+                f"Multiple properties with same id were found: {qa_category_id}"
             )
         return properties[0]
 
-    def has_property(self, property: Union[Property, str]) -> bool:
+    def has_qa_category(
+        self, qa_category: Union[QACategory, str]
+    ) -> bool:
         """
-        Determine if the spec contains a particular property.
+        Determine if the spec contains a particular qa category.
 
-        :param property: The property itself, or its identifier
-        :return: `True` if the spec has the property, `False` otherwise
+        :param qa_category: The qa category itself, or its identifier
+        :return: `True` if the spec has the qa category, `False` otherwise
         """
-        target_name = property if isinstance(property, str) else property.name
-        return any(property.name == target_name for property in self.properties)
+        target_name = (
+            qa_category
+            if isinstance(qa_category, str)
+            else qa_category.name
+        )
+        return any(
+            qa_category.name == target_name
+            for qa_category in self.qa_categories
+        )
 
     # -------------------------------------------------------------------------
     # Equality Testing
