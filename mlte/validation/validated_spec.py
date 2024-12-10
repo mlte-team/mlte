@@ -102,9 +102,7 @@ class ValidatedSpec(Artifact):
             identifier=model.header.identifier,
             spec=Spec(
                 body.spec_identifier,
-                Spec.to_qa_category_dict(
-                    body.spec.qa_categories
-                )
+                Spec.to_qa_category_dict(body.spec.qa_categories)
                 if body.spec is not None
                 else {},
             ),

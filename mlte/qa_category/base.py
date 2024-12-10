@@ -62,9 +62,7 @@ class QACategory(metaclass=abc.ABCMeta):
         )
 
     @classmethod
-    def from_model(
-        cls, model: QACategoryModel
-    ) -> QACategory:
+    def from_model(cls, model: QACategoryModel) -> QACategory:
         """
         Load a QACategory instance from a model.
 
@@ -85,9 +83,7 @@ class QACategory(metaclass=abc.ABCMeta):
         except Exception:
             raise RuntimeError(f"Module {module_path} not found")
         try:
-            class_: Type[QACategory] = getattr(
-                qa_category_module, classname
-            )
+            class_: Type[QACategory] = getattr(qa_category_module, classname)
         except AttributeError:
             raise RuntimeError(
                 f"QACategory {model.name} in module {module_path} not found"
