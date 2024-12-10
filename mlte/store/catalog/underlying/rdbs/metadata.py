@@ -58,8 +58,8 @@ class DBCatalogEntry(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tags: Mapped[str]
-    property_category: Mapped[Optional[str]]
-    property: Mapped[Optional[str]]
+    qa_category: Mapped[Optional[str]]
+    quality_attribute: Mapped[Optional[str]]
     code: Mapped[str]
     description: Mapped[Optional[str]]
     inputs: Mapped[Optional[str]]
@@ -78,7 +78,7 @@ class DBCatalogEntry(DBBase):
     catalog_entry_type: Mapped[DBCatalogEntryType] = relationship()
 
     def __repr__(self) -> str:
-        return f"CatalogEntry(id={self.id!r}, description={self.description!r}, code={self.code!r}, property_category={self.property_category}, property={self.property!r})"
+        return f"CatalogEntry(id={self.id!r}, description={self.description!r}, code={self.code!r}, qa_category={self.qa_category}, quality_attribute={self.quality_attribute!r})"
 
 
 # -------------------------------------------------------------------------

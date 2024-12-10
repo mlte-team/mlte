@@ -1,13 +1,13 @@
 """
-Robustness property definition.
+Robustness qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Robustness(Property):
+class Robustness(QACategory):
     """
-    Definition of the Robustness property.
+    Definition of the Robustness qa category.
     """
 
     def __init__(self, rationale: str):

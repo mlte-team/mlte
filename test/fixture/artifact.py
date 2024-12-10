@@ -35,7 +35,11 @@ from mlte.report.model import (
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.spec.model import ConditionModel, PropertyModel, SpecModel
+from mlte.spec.model import (
+    ConditionModel,
+    QACategoryModel,
+    SpecModel,
+)
 from mlte.validation.model import ResultModel, ValidatedSpecModel
 from mlte.value.model import IntegerValueModel, ValueModel
 from mlte.value.types.integer import Integer
@@ -156,7 +160,7 @@ def _make_validated_spec(complete: bool) -> ValidatedSpecModel:
     Make a minimal validated spec, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    # TODO: Make a complete VSpec that is properly connected to Spec and Properties, which is not trivial.
+    # TODO: Make a complete VSpec that is properly connected to Spec and QACategories, which is not trivial.
     # Maybe create in DB here? Find way to make this work for better coverage.
     return ValidatedSpecModel()
 
@@ -280,12 +284,12 @@ def make_complete_spec_model() -> SpecModel:
     :return: The artifact model
     """
     return SpecModel(
-        properties=[
-            PropertyModel(
+        qa_categories=[
+            QACategoryModel(
                 name="TaskEfficacy",
-                description="Property for useful things.",
+                description="QA category for useful things.",
                 rationale="Because I say so",
-                module="mlte.properties.functionality.task_efficacy",
+                module="mlte.qa_category.functionality.task_efficacy",
                 conditions={
                     "accuracy": ConditionModel(
                         name="less_than",

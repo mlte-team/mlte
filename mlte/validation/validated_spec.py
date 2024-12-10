@@ -47,14 +47,14 @@ class ValidatedSpec(Artifact):
         """The spec that we validated."""
 
         self.results = results
-        """The validation results for the spec, by property."""
+        """The validation results for the spec, by qa category."""
 
         # Check that all conditions have results.
-        for property, conditions in self.spec.properties.items():
+        for category, conditions in self.spec.qa_categories.items():
             for measurement_id in conditions.keys():
                 if (
-                    property.name not in self.results
-                    or measurement_id not in self.results[property.name]
+                    category.name not in self.results
+                    or measurement_id not in self.results[category.name]
                 ):
                     raise RuntimeError(
                         f"Id '{measurement_id}' does not have a result."
@@ -102,7 +102,9 @@ class ValidatedSpec(Artifact):
             identifier=model.header.identifier,
             spec=Spec(
                 body.spec_identifier,
-                Spec.to_property_dict(body.spec.properties)
+                Spec.to_qa_category_dict(
+                    body.spec.qa_categories
+                )
                 if body.spec is not None
                 else {},
             ),
@@ -116,12 +118,12 @@ class ValidatedSpec(Artifact):
         )
 
     def print_results(self, type: str = "all"):
-        """Prints the validated results per property, can be filtered by result type."""
+        """Prints the validated results per qa category, can be filtered by result type."""
         if type not in ["all", "Success", "Failure", "Ignore"]:
             raise RuntimeError(f"Invalid type: {type}")
 
-        for property, details in self.results.items():
-            print(f"Property: {property}")
+        for category, details in self.results.items():
+            print(f"Quality attribute category: {category}")
             for id, result in details.items():
                 if type == "all" or type == str(result):
                     print(
