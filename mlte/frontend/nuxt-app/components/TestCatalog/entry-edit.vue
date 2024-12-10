@@ -55,20 +55,20 @@
     </div>
 
     <UsaSelect
-      v-model="modelValue.property_category"
-      :options="propertyCategoryOptions"
+      v-model="modelValue.qa_category"
+      :options="QACategoryOptions"
     >
       <template #label>
         Quality Attribute Category
         <InfoIcon>
-          High-level qa category that the test example is 
+          High-level quality attribute category that the test example is 
           validating, e.g., functional correctness, performance, robustness.
         </InfoIcon>
       </template>
       <template #error-message>Not defined</template>
     </UsaSelect>
 
-    <UsaTextInput v-model="modelValue.property">
+    <UsaTextInput v-model="modelValue.quality_attribute">
       <template #label>
         Quality Attribute
         <InfoIcon>
@@ -161,8 +161,8 @@ const props = defineProps({
         catalog_id: "",
       },
       tags: [],
-      property_category: "",
-      property: "",
+      qa_category: "",
+      quality_attribute: "",
       code_type: "",
       code: "",
       description: "",
@@ -229,7 +229,7 @@ const tagOptions = ref([
   { name: "Tabular", selected: false },
   { name: "Time Series", selected: false },
 ]);
-const propertyCategoryOptions = ref([
+const QACategoryOptions = ref([
   { value: "Explainability", text: "Explainability" },
   { value: "Fairness", text: "Fairness" },
   { value: "Functional Correctness", text: "Functional Correctness" },

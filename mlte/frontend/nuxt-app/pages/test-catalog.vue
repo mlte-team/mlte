@@ -17,9 +17,9 @@
 
       <div class="inline-input-right">
         <label class="usa-label" style="margin-top: 0px">
-          Search by Property Category
+          Search by Quality Attribute Category
         </label>
-        <UsaTextInput v-model="propertySearchValue" @keyup.enter="search()" />
+        <UsaTextInput v-model="QACategorySearchValue" @keyup.enter="search()" />
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
@@ -51,12 +51,12 @@ const token = useCookie("token");
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
-const propertySearchValue = ref("");
+const QACategorySearchValue = ref("");
 const entryList = ref<{
   header: object;
   tags: Array<string>;
-  property_category: string;
-  property: string;
+  qa_category: string;
+  quality_attribute: string;
   code_type: string;
   code: string;
   description: string;
@@ -94,9 +94,9 @@ async function populateFullEntryList() {
 }
 
 async function search() {
-  if (tagSearchValue.value === "" && propertySearchValue.value === "") {
+  if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
-  } else if (propertySearchValue.value === "") {
+  } else if (QACategorySearchValue.value === "") {
     await $fetch(config.public.apiPath + "/catalogs/entry/search", {
       retry: 0,
       method: "POST",
@@ -132,8 +132,8 @@ async function search() {
       body: {
         filter: {
           type: "property",
-          name: "property_category",
-          value: propertySearchValue.value,
+          name: "qa_category",
+          value: QACategorySearchValue.value,
         },
       },
       onRequestError() {
@@ -166,8 +166,8 @@ async function search() {
             },
             {
               type: "property",
-              name: "property_category",
-              value: propertySearchValue.value,
+              name: "qa_category",
+              value: QACategorySearchValue.value,
             },
           ],
         },
@@ -197,8 +197,8 @@ function resetSelectedEntry() {
       catalog_id: "",
     },
     tags: [],
-    property_category: "",
-    property: "",
+    qa_category: "",
+    quality_attribute: "",
     code_type: "",
     code: "",
     description: "",
