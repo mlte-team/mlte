@@ -69,9 +69,7 @@ def test_condition_model() -> None:
 
 def test_build_condition():
     """Tests that the build_condition method builds the expected condition."""
-    test_value = TestValue()
-
-    condition = test_value.in_between(1, 10)
+    condition = TestValue.in_between(1, 10)
 
     assert (
         condition.name == "in_between"
@@ -80,10 +78,19 @@ def test_build_condition():
     )
 
 
+def test_save_load_condition():
+    """Tests that the build_condition method generates a condition that can be saved and loaded."""
+    condition = TestValue.in_between(1.0, 10.0)
+
+    json_str = condition.to_model().to_json()
+    loaded = Condition.from_model(ConditionModel.from_json(json_str))
+
+    assert condition == loaded
+
+
 def test_call_condition():
     """Check execution of condition."""
-    test_value = TestValue()
-    condition = test_value.in_between(1.0, 10.0)
+    condition = TestValue.in_between(1.0, 10.0)
     ev = EvidenceMetadata(
         measurement_type="measure1", identifier=Identifier(name="id")
     )
@@ -96,6 +103,17 @@ def test_call_condition():
 
     result = condition(Real(ev, 11.0))
     assert str(result) == "Failure"
+
+
+def test_round_trip() -> None:
+    """Condition can be converted to model and back."""
+
+    condition = TestValue.in_between(1, 10)
+
+    model = condition.to_model()
+    loaded = Condition.from_model(model)
+
+    assert condition == loaded
 
 
 def test_non_serializable_argument():

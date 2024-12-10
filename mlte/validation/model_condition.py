@@ -26,7 +26,7 @@ class ValidatorModel(BaseModel):
     failure: Optional[str]
     """A string to be used when recording that the validation was not succesful."""
 
-    ignore: Optional[str]
+    info: Optional[str]
     """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
 
 

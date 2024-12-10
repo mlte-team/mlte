@@ -85,7 +85,7 @@ def test_ignore() -> None:
     local_path = str(get_sample_image_path())
 
     msg = "Just writing some data"
-    cond = Image.ignore(msg)
+    cond = Image.register_info(msg)
 
     res = cond(Image(m, local_path))
     assert res.message == msg

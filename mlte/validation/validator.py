@@ -16,7 +16,7 @@ import json_fix  # noqa
 
 from mlte._private import serializing
 from mlte.validation.model_condition import ValidatorModel
-from mlte.validation.result import Failure, Ignore, Result, Success
+from mlte.validation.result import Failure, Info, Result, Success
 
 
 class Validator:
@@ -25,7 +25,7 @@ class Validator:
         bool_exp: Optional[Callable[[Any], bool]] = None,
         success: Optional[str] = None,
         failure: Optional[str] = None,
-        ignore: Optional[str] = None,
+        info: Optional[str] = None,
     ):
         """
         Constructor.
@@ -33,7 +33,7 @@ class Validator:
         :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
-        :param ignore: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
+        :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
         """
         if success is not None and failure is None:
             raise ValueError(
@@ -43,15 +43,15 @@ class Validator:
             raise ValueError(
                 "If failure message is defined, success message has to be defined as well"
             )
-        if success is None and failure is None and ignore is None:
+        if success is None and failure is None and info is None:
             raise ValueError(
-                "All messages can't be empty, either ignore or success and failure have to be defined"
+                "All messages can't be empty, either info or success and failure have to be defined"
             )
 
         self.bool_exp = bool_exp
         self.success = success
         self.failure = failure
-        self.ignore = ignore
+        self.info = info
 
     def validate(self, *args, **kwargs) -> Result:
         """
@@ -72,8 +72,8 @@ class Validator:
 
         values = f"- values: {json.dumps(args) if len(args)>0 else ''}{', ' if len(args)>0 and len(kwargs)>0 else''}{json.dumps(kwargs) if len(kwargs)>0 else ''}"
         result = (
-            Ignore(self.ignore)
-            if self.bool_exp is None and self.ignore is not None
+            Info(self.info)
+            if self.bool_exp is None and self.info is not None
             else Success(f"{self.success} {values}")
             if result_value
             else Failure(f"{self.failure} {values}")
@@ -96,7 +96,7 @@ class Validator:
             else None,
             success=self.success,
             failure=self.failure,
-            ignore=self.ignore,
+            info=self.info,
         )
 
     @classmethod
@@ -117,7 +117,7 @@ class Validator:
             else None,
             success=model.success,
             failure=model.failure,
-            ignore=model.ignore,
+            info=model.info,
         )
         return validator
 

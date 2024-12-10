@@ -67,7 +67,7 @@ class Condition:
         bool_exp: Optional[Callable[[Any], bool]] = None,
         success: Optional[str] = None,
         failure: Optional[str] = None,
-        ignore: Optional[str] = None,
+        info: Optional[str] = None,
     ) -> Condition:
         """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get info about the caller from inspection.
@@ -92,7 +92,7 @@ class Condition:
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
-            bool_exp=bool_exp, success=success, failure=failure, ignore=ignore
+            bool_exp=bool_exp, success=success, failure=failure, info=info
         )
 
         # Validation args include all caller arguments except for the value class type.

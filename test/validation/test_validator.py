@@ -13,7 +13,7 @@ def get_sample_validator() -> Validator:
         bool_exp=lambda x, y: x > y,  # type: ignore
         success="Test was succesful!",
         failure="Test failed :(",
-        ignore="Only data was attached",
+        info="Only data was attached",
     )
     return validator
 
@@ -25,7 +25,7 @@ def test_validator_model() -> None:
             bool_exp="ASJDH12384jahsd",
             success="Test was succesful!",
             failure="Test failed :(",
-            ignore="Only data was attached",
+            info="Only data was attached",
         ),
     ]
 
@@ -118,4 +118,4 @@ def test_validate_ignore() -> None:
 
     result = validator.validate(x, y)
 
-    assert result.message == validator.ignore
+    assert result.message == validator.info

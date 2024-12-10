@@ -221,7 +221,7 @@
           ],
           "title": "Failure"
         },
-        "ignore": {
+        "info": {
           "anyOf": [
             {
               "type": "string"
@@ -230,14 +230,14 @@
               "type": "null"
             }
           ],
-          "title": "Ignore"
+          "title": "Info"
         }
       },
       "required": [
         "bool_exp",
         "success",
         "failure",
-        "ignore"
+        "info"
       ],
       "title": "ValidatorModel",
       "type": "object"
