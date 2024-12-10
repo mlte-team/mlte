@@ -36,7 +36,7 @@
       </p>
       <UsaTextInput v-model="requirement.quality">
         <template #label>
-          <b>System Quality:</b> What is the model qa category to be tested, such
+          <b>System Quality:</b> What is the model quaity attribute category to be tested, such
           as accuracy, performance, robustness, fairness, or resource
           consumption?
           <InfoIcon>
@@ -54,7 +54,7 @@
       <UsaTextInput v-model="requirement.stimulus">
         <template #label>
           <b>Stimulus:</b> What is the input to the model, the action, or the
-          event that will enable testing of the qa category, such as input data,
+          event that will enable testing of the quality attribute category, such as input data,
           system event, or user operation?
           <InfoIcon>
             A condition arriving at the system/model (e.g., data,
