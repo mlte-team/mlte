@@ -24,7 +24,7 @@
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">Property</th>
+          <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
           <th data-sortable scope="col" role="columnheader">Evidence ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>
@@ -51,7 +51,7 @@
             {{ finding.status }}
           </td>
           <td v-else>{{ finding.status }}</td>
-          <td>{{ finding.property }}</td>
+          <td>{{ finding.qa_category }}</td>
           <td>{{ finding.measurement }}</td>
           <td>{{ finding.evidence_id }}</td>
           <td>{{ finding.message }}</td>

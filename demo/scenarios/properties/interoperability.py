@@ -1,9 +1,9 @@
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Interoperability(Property):
+class Interoperability(QACategory):
     """
-    The Interoperability property reflects contract requirements on model interfaces.
+    The Interoperability qa category reflects contract requirements on model interfaces.
     """
 
     def __init__(self, rationale: str):
@@ -11,8 +11,8 @@ class Interoperability(Property):
         super().__init__(
             instance=self,
             description="""
-                The Interoperability property evaluates the requirements on the interfaces to a model and system. 
-                These requirements may be expressed in a variety of ways,
+                The Interoperability qa category evaluates the requirements on the 
+                interfaces to a model and system. These requirements may be expressed in a variety of ways,
                 including requriements on line formats in log files, timestamps, and log content. 
                 """,
             rationale=rationale,

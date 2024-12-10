@@ -47,7 +47,7 @@ class SpecValidator:
 
     def add_value(self, value: Value):
         """
-        Adds a value associated to a property and measurements.
+        Adds a value associated to a qa category and measurements.
 
         :param value: The value to add to the internal list.
         """
@@ -59,7 +59,7 @@ class SpecValidator:
 
     def validate(self) -> ValidatedSpec:
         """
-        Validates the internal properties given its requirements and the stored values, and generates a ValidatedSpec from it.
+        Validates the internal qa categories given its requirements and the stored values, and generates a ValidatedSpec from it.
 
         :return: The validated specification
         """
@@ -70,10 +70,10 @@ class SpecValidator:
         """
         Validates a set of stored Values, and generates Results.
 
-        :return: A dictionary having results for each id, separated by property id.
+        :return: A dictionary having results for each id, separated by qa category id.
         """
         # Check that all conditions have values to be validated.
-        for conditions in self.spec.properties.values():
+        for conditions in self.spec.qa_categories.values():
             for measurement_id in conditions.keys():
                 if measurement_id not in self.values:
                     raise RuntimeError(
@@ -82,10 +82,10 @@ class SpecValidator:
 
         # Validate and aggregate the results.
         results: Dict[str, Dict[str, Result]] = {}
-        for property, conditions in self.spec.properties.items():
-            results[property.name] = {}
+        for category, conditions in self.spec.qa_categories.items():
+            results[category.name] = {}
             for measurement_id, condition in conditions.items():
-                results[property.name][measurement_id] = condition(
+                results[category.name][measurement_id] = condition(
                     self.values[measurement_id]
                 )
         return results

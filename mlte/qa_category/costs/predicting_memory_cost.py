@@ -1,13 +1,13 @@
 """
-PredictingMemoryCost property definition.
+PredictingMemoryCost qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class PredictingMemoryCost(Property):
+class PredictingMemoryCost(QACategory):
     """
-    The PredictingMemoryCost property reflects the cost
+    The PredictingMemoryCost qa category reflects the cost
     of model predicting associated with memory resources.
     """
 
@@ -18,11 +18,11 @@ class PredictingMemoryCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The PredictingMemoryCost property assesses the
+                The PredictingMemoryCost qa category assesses the
                 memory requirements of model predicting. This might
-                be measured by the memory requirements of property
+                be measured by the memory requirements of qa category
                 processes that run locally, or the cost of memory
-                resources required for property processes that run
+                resources required for qa category processes that run
                 on on-demand cloud infrastructure.
                 """,
             rationale=rationale,

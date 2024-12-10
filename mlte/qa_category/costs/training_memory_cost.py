@@ -1,15 +1,15 @@
 """
-mlte/property/costs/training_memory_cost.py
+mlte/qa_category/costs/training_memory_cost.py
 
-TrainingMemoryCost property definition.
+TrainingMemoryCost qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class TrainingMemoryCost(Property):
+class TrainingMemoryCost(QACategory):
     """
-    The TrainingMemoryCost property reflects the cost
+    The TrainingMemoryCost qa category reflects the cost
     of model training associated with memory resources.
     """
 
@@ -20,7 +20,7 @@ class TrainingMemoryCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The TrainingMemoryCost property assesses the
+                The TrainingMemoryCost qa category assesses the
                 memory requirements of model training. This might
                 be measured by the memory requirements of training
                 processes that run locally, or the cost of memory

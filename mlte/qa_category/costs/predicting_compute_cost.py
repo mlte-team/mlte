@@ -1,13 +1,13 @@
 """
-PredictingComputeCost property definition.
+PredictingComputeCost qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class PredictingComputeCost(Property):
+class PredictingComputeCost(QACategory):
     """
-    The PredictingComputeCost property reflects the costs
+    The PredictingComputeCost qa category reflects the costs
     of model predicting associated with compute resources.
     """
 
@@ -18,12 +18,13 @@ class PredictingComputeCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The PredictingComputeCost property assesses the
+                The PredictingComputeCost qa category assesses the
                 computational requirements of model predicting.
                 This might be measured in terms of CPU utilization
-                for property processes that run locally, or the cost
-                of compute resources required for property processes
-                that run on on-demand cloud infrastructure.
+                for qa category processes that run locally,
+                or the cost of compute resources required for qa
+                category processes that run on on-demand cloud
+                infrastructure.
                 """,
             rationale=rationale,
         )

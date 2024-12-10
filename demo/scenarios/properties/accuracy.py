@@ -1,9 +1,9 @@
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Accuracy(Property):
+class Accuracy(QACategory):
     """
-    The Accuracy property reflects the overall functional accuracy of a model.
+    The Accuracy qa category reflects the overall functional accuracy of a model.
     """
 
     def __init__(self, rationale: str):
@@ -11,7 +11,7 @@ class Accuracy(Property):
         super().__init__(
             instance=self,
             description="""
-                The Accuracy property assesses the total predictive performance requirements of a
+                The Accuracy qa category assesses the total predictive performance requirements of a
                 model and system. These requirements are typically given as a single real valued number. 
                 """,
             rationale=rationale,

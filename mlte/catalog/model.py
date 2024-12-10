@@ -53,11 +53,11 @@ class CatalogEntry(Filtrable):
     tags: List[str] = []
     """Tags for the problem for the entry."""
 
-    property_category: Optional[str] = None
-    """The property category or QA for the entry."""
+    qa_category: Optional[str] = None
+    """The qa category for the entry."""
 
-    property: Optional[str] = None
-    """The property for the entry."""
+    quality_attribute: Optional[str] = None
+    """The quality attribute for the entry."""
 
     code_type: CatalogEntryType
     """The code type the entry."""

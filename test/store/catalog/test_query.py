@@ -21,8 +21,8 @@ from mlte.store.query import (
 )
 
 
-class PropertyCategoryPropertyFilter(PropertyFilter):
-    name: str = "property_category"
+class QACategoryPropertyFilter(PropertyFilter):
+    name: str = "qa_category"
 
 
 def create_test_entry(
@@ -69,11 +69,11 @@ def test_type_match() -> None:
     assert not filter.match(entry)
 
 
-def test_property_match() -> None:
+def test_qa_category_match() -> None:
     """The filter matches expected entries."""
     entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
     entry.tags = ["type1", "type2"]
-    entry.property_category = "cat1"
+    entry.qa_category = "cat1"
 
     filter1 = TagFilter(name="tags", value="type1")
     assert filter1.match(entry)
@@ -84,10 +84,10 @@ def test_property_match() -> None:
     filter1 = TagFilter(name="tags", value="type3")
     assert not filter1.match(entry)
 
-    filter3 = PropertyCategoryPropertyFilter(value="cat1")
+    filter3 = QACategoryPropertyFilter(value="cat1")
     assert filter3.match(entry)
 
-    filter3 = PropertyCategoryPropertyFilter(value="cat3")
+    filter3 = QACategoryPropertyFilter(value="cat3")
     assert not filter3.match(entry)
 
 

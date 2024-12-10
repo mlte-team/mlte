@@ -12,10 +12,10 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.measurement.storage import LocalObjectSize
-from mlte.property.costs.storage_cost import StorageCost
+from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
-from test.spec.extended_property import ExtendedProperty
+from test.spec.extended_qa_category import ExtendedQACategory
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -24,7 +24,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 
     s = Spec(
         identifier="spec",
-        properties={
+        qa_categories={
             StorageCost("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
             }
@@ -42,7 +42,7 @@ def test_save_load_default(
     store, ctx = store_with_context
 
     s = Spec(
-        properties={
+        qa_categories={
             StorageCost("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
             }
@@ -62,24 +62,24 @@ def test_load_failure(
         _ = Spec.load_with("spec", context=ctx, store=store)
 
 
-def test_non_unique_properties():
+def test_non_unique_qa_categories():
     with pytest.raises(RuntimeError):
         _ = Spec(
-            properties={
+            qa_categories={
                 StorageCost("rationale"): {},
                 StorageCost("rationale2"): {},
             },
         )
 
 
-def test_save_load_extended_property(
+def test_save_load_extended_qa_category(
     store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ):
     store, ctx = store_with_context
 
     s = Spec(
-        properties={
-            ExtendedProperty("rationale"): {
+        qa_categories={
+            ExtendedQACategory("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
             }
         },

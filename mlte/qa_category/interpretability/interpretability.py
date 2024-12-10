@@ -1,13 +1,13 @@
 """
-Interpretability property definition.
+Interpretability qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Interpretability(Property):
+class Interpretability(QACategory):
     """
-    The Interpretability property
+    The Interpretability qa category
     """
 
     def __init__(self, rationale: str):

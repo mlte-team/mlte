@@ -1,15 +1,15 @@
 """
-mlte/property/costs/storage_cost.py
+mlte/qa_category/costs/storage_cost.py
 
-StorageCost property definition.
+StorageCost qa category definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class StorageCost(Property):
+class StorageCost(QACategory):
     """
-    The StorageCost property reflects the cost of model storage.
+    The StorageCost qa category reflects the cost of model storage.
     """
 
     def __init__(self, rationale: str):
@@ -17,7 +17,7 @@ class StorageCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The StorageCost property assesses the storage requirements of a
+                The StorageCost qa category assesses the storage requirements of a
                 model. These requirements may be expressed in a variety of ways,
                 including the physical size of the model when it is persisted
                 to stable storage, or the number of parameters it contains.
