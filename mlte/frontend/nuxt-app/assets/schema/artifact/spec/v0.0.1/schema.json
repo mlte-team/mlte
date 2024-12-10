@@ -79,6 +79,7 @@
         "module"
       ],
       "title": "QACategoryModel",
+      "title": "QACategoryModel",
       "type": "object"
     }
   },
@@ -96,6 +97,7 @@
     "qa_categories": {
       "default": [],
       "items": {
+        "$ref": "#/$defs/QACategoryModel"
         "$ref": "#/$defs/QACategoryModel"
       },
       "title": "Qa Categories",

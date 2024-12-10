@@ -58,6 +58,8 @@ class CatalogEntry(Filtrable):
 
     quality_attribute: Optional[str] = None
     """The quality attribute for the entry."""
+    quality_attribute: Optional[str] = None
+    """The quality attribute for the entry."""
 
     code_type: CatalogEntryType
     """The code type the entry."""

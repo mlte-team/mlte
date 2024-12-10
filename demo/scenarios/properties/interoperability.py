@@ -1,6 +1,8 @@
 from mlte.qa_category.base import QACategory
+from mlte.qa_category.base import QACategory
 
 
+class Interoperability(QACategory):
 class Interoperability(QACategory):
     """
     The Interoperability QA category reflects contract requirements on model interfaces.

@@ -98,6 +98,7 @@
       "type": "array"
     },
     "qa_category": {
+    "qa_category": {
       "anyOf": [
         {
           "type": "string"
@@ -110,6 +111,7 @@
       "title": "Qa Category"
     },
     "quality_attribute": {
+    "quality_attribute": {
       "anyOf": [
         {
           "type": "string"
@@ -119,6 +121,7 @@
         }
       ],
       "default": null,
+      "title": "Quality Attribute"
       "title": "Quality Attribute"
     },
     "code_type": {
