@@ -9,7 +9,7 @@ from mlte.qa_category.base import QACategory
 
 class ExtendedQACategory(QACategory):
     """
-    The ExtendedQACategory qa category is a 
+    The ExtendedQACategory qa category is a
      qa category not defined in the default qa category package.
     """
 

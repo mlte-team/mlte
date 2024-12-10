@@ -72,7 +72,9 @@ class DBCondition(DBBase):
     value_class: Mapped[str]
     qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
 
-    qa_category: Mapped[DBQACategory] = relationship(back_populates="conditions")
+    qa_category: Mapped[DBQACategory] = relationship(
+        back_populates="conditions"
+    )
 
     def __repr__(self) -> str:
         return f"Condition(id={self.id!r}, name={self.name!r}, arguments={self.arguments!r}, value_class={self.value_class!r}, qa_category={self.qa_category!r})"

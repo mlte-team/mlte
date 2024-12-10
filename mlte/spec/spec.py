@@ -68,9 +68,7 @@ class Spec(Artifact):
             header=self.build_artifact_header(),
             body=SpecModel(
                 qa_categories=[
-                    self._to_qa_category_model(
-                        qa_category
-                    )
+                    self._to_qa_category_model(qa_category)
                     for qa_category, _ in self.qa_categories.items()
                 ],
             ),
@@ -83,23 +81,17 @@ class Spec(Artifact):
         body = typing.cast(SpecModel, model.body)
         return Spec(
             identifier=model.header.identifier,
-            qa_categories=Spec.to_qa_category_dict(
-                body.qa_categories
-            ),
+            qa_categories=Spec.to_qa_category_dict(body.qa_categories),
         )
 
-    def _to_qa_category_model(
-        self, qa_category: QACategory
-    ) -> QACategoryModel:
+    def _to_qa_category_model(self, qa_category: QACategory) -> QACategoryModel:
         """
         Generate a qa category model. This just uses QACategory.to_model, but adds the list of conditions.
 
         :param qa_category: The qa category of interest
         :return: The qa category model
         """
-        qa_category_model: QACategoryModel = (
-            qa_category.to_model()
-        )
+        qa_category_model: QACategoryModel = qa_category.to_model()
         qa_category_model.conditions = {
             measurement_id: condition.to_model()
             for measurement_id, condition in self.qa_categories[
@@ -115,9 +107,7 @@ class Spec(Artifact):
     ) -> Dict[QACategory, Dict[str, Condition]]:
         """Converts a list of qa category models, into a dict of properties and conditions."""
         return {
-            QACategory.from_model(
-                qa_category_model
-            ): {
+            QACategory.from_model(qa_category_model): {
                 measurement_id: Condition.from_model(condition_model)
                 for measurement_id, condition_model in qa_category_model.conditions.items()
             }
@@ -133,33 +123,29 @@ class Spec(Artifact):
     # Quality Attribute Category Manipulation
     # -------------------------------------------------------------------------
 
-    def get_qa_category(
-        self, qa_category_id: str
-    ) -> QACategory:
+    def get_qa_category(self, qa_category_id: str) -> QACategory:
         """
         Returns a particular qa category with the given id.
 
         :param qa_category: The qa category itself, or its identifier
         :return: The qa category object.
         """
-        properties = [
-            prop
-            for prop in self.qa_categories
-            if prop.name == qa_category_id
+        qa_categories = [
+            category
+            for category in self.qa_categories
+            if category.name == qa_category_id
         ]
-        if len(properties) == 0:
+        if len(qa_categories) == 0:
             raise RuntimeError(
                 f"QA category {qa_category_id} was not found in list."
             )
-        if len(properties) > 1:
+        if len(qa_categories) > 1:
             raise RuntimeError(
                 f"Multiple properties with same id were found: {qa_category_id}"
             )
-        return properties[0]
+        return qa_categories[0]
 
-    def has_qa_category(
-        self, qa_category: Union[QACategory, str]
-    ) -> bool:
+    def has_qa_category(self, qa_category: Union[QACategory, str]) -> bool:
         """
         Determine if the spec contains a particular qa category.
 
@@ -167,9 +153,7 @@ class Spec(Artifact):
         :return: `True` if the spec has the qa category, `False` otherwise
         """
         target_name = (
-            qa_category
-            if isinstance(qa_category, str)
-            else qa_category.name
+            qa_category if isinstance(qa_category, str) else qa_category.name
         )
         return any(
             qa_category.name == target_name

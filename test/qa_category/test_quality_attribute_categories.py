@@ -5,26 +5,14 @@ Unit tests for model QA categories.
 """
 
 from mlte.qa_category.base import QACategory
-from mlte.qa_category.costs.predicting_compute_cost import (
-    PredictingComputeCost,
-)
-from mlte.qa_category.costs.predicting_memory_cost import (
-    PredictingMemoryCost,
-)
+from mlte.qa_category.costs.predicting_compute_cost import PredictingComputeCost
+from mlte.qa_category.costs.predicting_memory_cost import PredictingMemoryCost
 from mlte.qa_category.costs.storage_cost import StorageCost
-from mlte.qa_category.costs.training_compute_cost import (
-    TrainingComputeCost,
-)
-from mlte.qa_category.costs.training_memory_cost import (
-    TrainingMemoryCost,
-)
+from mlte.qa_category.costs.training_compute_cost import TrainingComputeCost
+from mlte.qa_category.costs.training_memory_cost import TrainingMemoryCost
 from mlte.qa_category.fairness.fairness import Fairness
-from mlte.qa_category.functionality.task_efficacy import (
-    TaskEfficacy,
-)
-from mlte.qa_category.interpretability.interpretability import (
-    Interpretability,
-)
+from mlte.qa_category.functionality.task_efficacy import TaskEfficacy
+from mlte.qa_category.interpretability.interpretability import Interpretability
 from mlte.qa_category.robustness.robustness import Robustness
 
 
@@ -67,7 +55,10 @@ def test_training_memory_cost():
 def test_task_efficacy():
     p = TaskEfficacy("test")
     assert_qa_category(
-        p, "TaskEfficacy", "test", "mlte.qa_category.functionality.task_efficacy"
+        p,
+        "TaskEfficacy",
+        "test",
+        "mlte.qa_category.functionality.task_efficacy",
     )
 
 
@@ -93,7 +84,9 @@ def test_predicting_memory_cost():
 
 def test_fairness():
     p = Fairness("test")
-    assert_qa_category(p, "Fairness", "test", "mlte.qa_category.fairness.fairness")
+    assert_qa_category(
+        p, "Fairness", "test", "mlte.qa_category.fairness.fairness"
+    )
 
 
 def test_robustness():

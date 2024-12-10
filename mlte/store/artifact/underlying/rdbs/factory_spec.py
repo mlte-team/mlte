@@ -10,11 +10,7 @@ import json
 from sqlalchemy.orm import Session
 
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.spec.model import (
-    ConditionModel,
-    QACategoryModel,
-    SpecModel,
-)
+from mlte.spec.model import ConditionModel, QACategoryModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
@@ -45,9 +41,7 @@ def create_spec_db_from_model(
             module=qa_category.module,
             spec=spec_obj,
         )
-        spec_obj.qa_categories.append(
-            qa_category_obj
-        )
+        spec_obj.qa_categories.append(qa_category_obj)
 
         for (
             measurement_id,
