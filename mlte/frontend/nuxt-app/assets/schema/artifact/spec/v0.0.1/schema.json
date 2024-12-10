@@ -93,13 +93,13 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "properties": {
-      "type": "array",
+    "qa_categories": {
+      "default": [],
       "items": {
         "$ref": "#/$defs/QACategoryModel"
       },
-      "default": [],
-      "title": "Properties"
+      "title": "Qa Categories",
+      "type": "array"
     }
   },
   "title": "SpecModel",
