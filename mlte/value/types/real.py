@@ -77,61 +77,61 @@ class Real(Value):
         return self._equal(other)
 
     @classmethod
-    def less_than(cls, value: float) -> Condition:
+    def less_than(cls, threshold: float) -> Condition:
         """
-        Determine if real is strictly less than `value`.
+        Determine if real is strictly less than `threshold`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            bool_exp=lambda real: real.value < value,
-            success=f"Real magnitude is less than threshold {value}",
-            failure=f"Real magnitude exceeds threshold {value}",
+            bool_exp=lambda real: real.value < threshold,
+            success=f"Real magnitude is less than threshold {threshold}",
+            failure=f"Real magnitude exceeds threshold {threshold}",
         )
         return condition
 
     @classmethod
-    def less_or_equal_to(cls, value: float) -> Condition:
+    def less_or_equal_to(cls, threshold: float) -> Condition:
         """
-        Determine if real is less than or equal to `value`.
+        Determine if real is less than or equal to `threshold`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            bool_exp=lambda real: real.value <= value,
-            success=f"Real magnitude is less than or equal to threshold {value}",
-            failure=f"Real magnitude exceeds threshold {value}",
+            bool_exp=lambda real: real.value <= threshold,
+            success=f"Real magnitude is less than or equal to threshold {threshold}",
+            failure=f"Real magnitude exceeds threshold {threshold}",
         )
         return condition
 
     @classmethod
-    def greater_than(cls, value: float) -> Condition:
+    def greater_than(cls, threshold: float) -> Condition:
         """
-        Determine if real is strictly greater than `value`.
+        Determine if real is strictly greater than `threshold`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            bool_exp=lambda real: real.value > value,
-            success=f"Real magnitude is greater than threshold {value}",
-            failure=f"Real magnitude is below threshold {value}",
+            bool_exp=lambda real: real.value > threshold,
+            success=f"Real magnitude is greater than threshold {threshold}",
+            failure=f"Real magnitude is below threshold {threshold}",
         )
         return condition
 
     @classmethod
-    def greater_or_equal_to(cls, value: float) -> Condition:
+    def greater_or_equal_to(cls, threshold: float) -> Condition:
         """
-        Determine if real is greater than or equal to `value`.
+        Determine if real is greater than or equal to `threshold`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            bool_exp=lambda real: real.value >= value,
-            success=f"Real magnitude is greater than or equal to threshold {value}",
-            failure=f"Real magnitude is below threshold {value}",
+            bool_exp=lambda real: real.value >= threshold,
+            success=f"Real magnitude is greater than or equal to threshold {threshold}",
+            failure=f"Real magnitude is below threshold {threshold}",
         )
         return condition

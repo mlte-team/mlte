@@ -79,31 +79,31 @@ class Integer(Value):
         return f"{self.value}"
 
     @classmethod
-    def less_than(cls, value: int) -> Condition:
+    def less_than(cls, threshold: int) -> Condition:
         """
         Determine if integer is strictly less than `value`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda integer: integer.value < value,
-            success=f"Integer magnitude is less than threshold {value}",
-            failure=f"Integer magnitude exceeds threshold {value}",
+            bool_exp=lambda integer: integer.value < threshold,
+            success=f"Integer magnitude is less than threshold {threshold}",
+            failure=f"Integer magnitude exceeds threshold {threshold}",
         )
         return condition
 
     @classmethod
-    def less_or_equal_to(cls, value: int) -> Condition:
+    def less_or_equal_to(cls, threshold: int) -> Condition:
         """
         Determine if integer is less than or equal to `value`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            bool_exp=lambda integer: integer.value <= value,
-            success=f"Integer magnitude is less than or equal to threshold {value}",
-            failure=f"Integer magnitude exceeds threshold {value}",
+            bool_exp=lambda integer: integer.value <= threshold,
+            success=f"Integer magnitude is less than or equal to threshold {threshold}",
+            failure=f"Integer magnitude exceeds threshold {threshold}",
         )
         return condition
