@@ -16,6 +16,7 @@ from mlte.model.serialization_error import SerializationError
 from mlte.spec.condition import Condition
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.validator import Validator
+from mlte.value.types.integer import Integer
 from mlte.value.types.real import Real
 
 
@@ -131,6 +132,12 @@ def test_round_trip() -> None:
 
     condition = TestValue.in_between(1, 10)
 
+    model = condition.to_model()
+    loaded = Condition.from_model(model)
+
+    assert condition == loaded
+
+    condition = Integer.less_than(3)
     model = condition.to_model()
     loaded = Condition.from_model(model)
 
