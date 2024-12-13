@@ -1,4 +1,4 @@
-poetry run pytest --nbmake ./demo/simple/negotiation.ipynb
-poetry run pytest --nbmake ./demo/simple/requirements.ipynb
-poetry run pytest --nbmake ./demo/simple/evidence.ipynb
-poetry run pytest --nbmake ./demo/simple/report.ipynb
+poetry run pytest --nbmake ./demo/simple/1_negotiation.ipynb
+poetry run pytest --nbmake ./demo/simple/2_requirements.ipynb
+poetry run pytest --nbmake ./demo/simple/3_evidence.ipynb
+poetry run pytest --nbmake ./demo/simple/4_report.ipynb
