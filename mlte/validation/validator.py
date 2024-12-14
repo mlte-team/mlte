@@ -6,6 +6,7 @@ The validation base class.
 
 from __future__ import annotations
 
+import inspect
 import typing
 from typing import Any, Callable, Optional
 
@@ -48,6 +49,11 @@ class Validator:
         self.success = success
         self.failure = failure
         self.info = info
+        self.bool_exp_str = (
+            inspect.getsource(bool_exp).strip()
+            if bool_exp is not None
+            else None
+        )
 
     def validate(self, *args, **kwargs) -> Result:
         """
@@ -93,6 +99,7 @@ class Validator:
             success=self.success,
             failure=self.failure,
             info=self.info,
+            bool_exp_str=self.bool_exp_str,
         )
 
     @classmethod

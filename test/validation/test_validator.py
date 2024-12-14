@@ -14,6 +14,7 @@ def get_sample_validator() -> Validator:
         success="Test was succesful!",
         failure="Test failed :(",
         info="Only data was attached",
+        bool_exp_str="test()",
     )
     return validator
 
@@ -26,6 +27,7 @@ def test_validator_model() -> None:
             success="Test was succesful!",
             failure="Test failed :(",
             info="Only data was attached",
+            bool_exp_str="test()",
         ),
     ]
 

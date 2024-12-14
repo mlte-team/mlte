@@ -144,6 +144,17 @@ def test_round_trip() -> None:
     assert condition == loaded
 
 
+def test_bool_exp_str() -> None:
+    """Condition can be converted to model and back."""
+
+    condition = TestValue.in_between(1, 10)
+
+    assert (
+        condition.validator.bool_exp_str
+        == "bool_exp=lambda real: real.value > arg1 and real.value < arg2,"
+    )
+
+
 def test_non_serializable_argument():
     condition = TestValue.in_between_complex(1.0, TestValue())
 

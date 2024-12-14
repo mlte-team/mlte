@@ -231,13 +231,25 @@
             }
           ],
           "title": "Info"
+        },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
         }
       },
       "required": [
         "bool_exp",
         "success",
         "failure",
-        "info"
+        "info",
+        "bool_exp_str"
       ],
       "title": "ValidatorModel",
       "type": "object"

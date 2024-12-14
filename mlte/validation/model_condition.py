@@ -25,6 +25,9 @@ class ValidatorModel(BaseModel):
     info: Optional[str]
     """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
 
+    bool_exp_str: Optional[str]
+    """A string representation of the code for the bool expression to check for."""
+
 
 class ConditionModel(BaseModel):
     """A description of a condition for a property."""
