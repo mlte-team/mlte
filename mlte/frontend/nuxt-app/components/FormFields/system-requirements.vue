@@ -36,7 +36,7 @@
       </p>
       <UsaTextInput v-model="requirement.quality">
         <template #label>
-          <b>System Quality:</b> What is the model quaity attribute category to be tested, such
+          <b>System Quality:</b> What is the model quality attribute category to be tested, such
           as accuracy, performance, robustness, fairness, or resource
           consumption?
           <InfoIcon>
