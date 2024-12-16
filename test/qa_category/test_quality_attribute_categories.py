@@ -1,7 +1,7 @@
 """
 test/qa_category/test_qa_categories.py
 
-Unit tests for model QA categories.
+Unit tests for model QACategory.
 """
 
 from mlte.qa_category.base import QACategory

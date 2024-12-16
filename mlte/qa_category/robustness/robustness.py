@@ -1,5 +1,5 @@
 """
-Robustness qa category definition.
+Robustness QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -7,7 +7,7 @@ from mlte.qa_category.base import QACategory
 
 class Robustness(QACategory):
     """
-    Definition of the Robustness qa category.
+    Definition of the Robustness QACategory.
     """
 
     def __init__(self, rationale: str):

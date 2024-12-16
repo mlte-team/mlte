@@ -156,7 +156,7 @@ def _make_validated_spec(complete: bool) -> ValidatedSpecModel:
     Make a minimal validated spec, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    # TODO: Make a complete VSpec that is properly connected to Spec and QACategories, which is not trivial.
+    # TODO: Make a complete VSpec that is properly connected to Spec and QACategory, which is not trivial.
     # Maybe create in DB here? Find way to make this work for better coverage.
     return ValidatedSpecModel()
 
@@ -283,7 +283,7 @@ def make_complete_spec_model() -> SpecModel:
         qa_categories=[
             QACategoryModel(
                 name="TaskEfficacy",
-                description="QA category for useful things.",
+                description="QACategory for useful things.",
                 rationale="Because I say so",
                 module="mlte.qa_category.functionality.task_efficacy",
                 conditions={

@@ -47,7 +47,7 @@ class ValidatedSpec(Artifact):
         """The spec that we validated."""
 
         self.results = results
-        """The validation results for the spec, by qa category."""
+        """The validation results for the spec, by QACategory."""
 
         # Check that all conditions have results.
         for category, conditions in self.spec.qa_categories.items():
@@ -116,7 +116,7 @@ class ValidatedSpec(Artifact):
         )
 
     def print_results(self, type: str = "all"):
-        """Prints the validated results per qa category, can be filtered by result type."""
+        """Prints the validated results per QACategory, can be filtered by result type."""
         if type not in ["all", "Success", "Failure", "Ignore"]:
             raise RuntimeError(f"Invalid type: {type}")
 

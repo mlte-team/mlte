@@ -1,7 +1,7 @@
 """
 mlte/qa_category/costs/training_memory_cost.py
 
-TrainingMemoryCost qa category definition.
+TrainingMemoryCost QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -9,7 +9,7 @@ from mlte.qa_category.base import QACategory
 
 class TrainingMemoryCost(QACategory):
     """
-    The TrainingMemoryCost qa category reflects the cost
+    The TrainingMemoryCost QACategory reflects the cost
     of model training associated with memory resources.
     """
 
@@ -20,7 +20,7 @@ class TrainingMemoryCost(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The TrainingMemoryCost qa category assesses the
+                The TrainingMemoryCost QACategory assesses the
                 memory requirements of model training. This might
                 be measured by the memory requirements of training
                 processes that run locally, or the cost of memory

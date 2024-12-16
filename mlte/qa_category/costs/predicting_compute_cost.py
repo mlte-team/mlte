@@ -1,5 +1,5 @@
 """
-PredictingComputeCost qa category definition.
+PredictingComputeCost QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -7,7 +7,7 @@ from mlte.qa_category.base import QACategory
 
 class PredictingComputeCost(QACategory):
     """
-    The PredictingComputeCost qa category reflects the costs
+    The PredictingComputeCost QACategory reflects the costs
     of model predicting associated with compute resources.
     """
 
@@ -18,12 +18,12 @@ class PredictingComputeCost(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The PredictingComputeCost qa category assesses the
+                The PredictingComputeCost QACategory assesses the
                 computational requirements of model predicting.
                 This might be measured in terms of CPU utilization
-                for qa category processes that run locally,
-                or the cost of compute resources required for qa
-                category processes that run on on-demand cloud
+                for QACategory processes that run locally,
+                or the cost of compute resources required for QACategory
+                processes that run on on-demand cloud
                 infrastructure.
                 """,
             rationale=rationale,

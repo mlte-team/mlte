@@ -1,5 +1,5 @@
 """
-Fairness qa category definition.
+Fairness QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -7,7 +7,7 @@ from mlte.qa_category.base import QACategory
 
 class Fairness(QACategory):
     """
-    Defintion of the Fairness qa category.
+    Defintion of the Fairness QACategory.
     """
 
     def __init__(self, rationale: str):

@@ -68,7 +68,7 @@ def create_db_artifact(
     )
 
     if artifact.header.type == ArtifactType.SPEC:
-        # Create a DBSpec and its internal lists: qa categories, and inside them, conditions.
+        # Create a DBSpec and its internal lists: QACategory, and inside them, conditions.
         spec = typing.cast(SpecModel, artifact.body)
         return create_spec_db_from_model(spec, artifact_header)
     elif artifact.header.type == ArtifactType.VALIDATED_SPEC:

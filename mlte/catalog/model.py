@@ -54,7 +54,7 @@ class CatalogEntry(Filtrable):
     """Tags for the problem for the entry."""
 
     qa_category: Optional[str] = None
-    """The qa category for the entry."""
+    """The QA category for the entry."""
 
     quality_attribute: Optional[str] = None
     """The quality attribute for the entry."""

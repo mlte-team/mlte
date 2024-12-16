@@ -58,7 +58,7 @@ class DBQACategory(DBBase):
     results: Mapped[List[DBResult]] = relationship(back_populates="qa_category")
 
     def __repr__(self) -> str:
-        return f"QA_category(id={self.id!r}, name={self.name!r}, description={self.description!r}, rationale={self.rationale!r}, module={self.module!r})"
+        return f"QACategory(id={self.id!r}, name={self.name!r}, description={self.description!r}, rationale={self.rationale!r}, module={self.module!r})"
 
 
 class DBCondition(DBBase):
