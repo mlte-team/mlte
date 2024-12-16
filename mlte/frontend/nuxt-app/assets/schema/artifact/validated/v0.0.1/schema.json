@@ -1,7 +1,7 @@
 {
   "$defs": {
     "ConditionModel": {
-      "description": "A description of a condition for a QA category.",
+      "description": "A description of a condition for a QACategory.",
       "properties": {
         "name": {
           "title": "Name",
@@ -75,7 +75,7 @@
       "type": "object"
     },
     "QACategoryModel": {
-      "description": "A description of a QA category.",
+      "description": "A description of a quality attribute category.",
       "properties": {
         "name": {
           "title": "Name",
@@ -172,7 +172,7 @@
           "items": {
             "$ref": "#/$defs/QACategoryModel"
           },
-          "title": "QA Categories",
+          "title": "Qa Categories",
           "type": "array"
         }
       },
