@@ -9,8 +9,8 @@ from mlte.qa_category.base import QACategory
 
 class ExtendedQACategory(QACategory):
     """
-    The ExtendedQACategory qa category is a
-     qa category not defined in the default qa category package.
+    The ExtendedQACategory QACategory is a
+    QACategory not defined in the default QACategory package.
     """
 
     def __init__(self, rationale: str):
@@ -18,7 +18,7 @@ class ExtendedQACategory(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The ExtendedQACategory qa category is just for testing purposes.
+                The ExtendedQACategory QACategory is just for testing purposes.
                 """,
             rationale=rationale,
         )

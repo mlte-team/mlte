@@ -3,7 +3,7 @@ from mlte.qa_category.base import QACategory
 
 class Accuracy(QACategory):
     """
-    The Accuracy qa category reflects the overall functional accuracy of a model.
+    The Accuracy QA category reflects the overall functional accuracy of a model.
     """
 
     def __init__(self, rationale: str):
@@ -11,7 +11,7 @@ class Accuracy(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The Accuracy qa category assesses the total predictive performance requirements of a
+                The Accuracy QA category assesses the total predictive performance requirements of a
                 model and system. These requirements are typically given as a single real valued number. 
                 """,
             rationale=rationale,

@@ -107,7 +107,7 @@
         }
       ],
       "default": null,
-      "title": "Qa Category"
+      "title": "QA Category"
     },
     "quality_attribute": {
       "anyOf": [

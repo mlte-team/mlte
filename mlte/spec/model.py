@@ -11,7 +11,7 @@ from mlte.model import BaseModel
 
 
 class ConditionModel(BaseModel):
-    """A description of a condition for a qa category."""
+    """A description of a condition for a QACategory."""
 
     name: str
     """A decriptive name for the condition, usually the method name used to call it."""
@@ -27,22 +27,22 @@ class ConditionModel(BaseModel):
 
 
 class QACategoryModel(BaseModel):
-    """A description of a qa category."""
+    """A description of a quality attribute category."""
 
     name: str
-    """A name for the qa category."""
+    """A name for the QACategory."""
 
     description: Optional[str] = None
-    """A general description of this qa category type."""
+    """A general description of this QACategory type."""
 
     rationale: Optional[str] = None
-    """The rationale for this qa category being important in this situation."""
+    """The rationale for this QACategory being important in this situation."""
 
     conditions: Dict[str, ConditionModel] = {}
-    """A dictionary of conditions, keyed by measurement id, to be validated for this qa category."""
+    """A dictionary of conditions, keyed by measurement id, to be validated for this QACategory."""
 
     module: str
-    """The full package and module path of the QualityAttributeCategor class."""
+    """The full package and module path of the QACategory class."""
 
 
 class SpecModel(BaseModel):
@@ -52,7 +52,7 @@ class SpecModel(BaseModel):
     """Union discriminator."""
 
     qa_categories: List[QACategoryModel] = []
-    """A list of quality attribute categories for this spec."""
+    """A list of QACategory for this spec."""
 
 
 SpecModel.model_rebuild()

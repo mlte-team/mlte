@@ -3,7 +3,7 @@ from mlte.qa_category.base import QACategory
 
 class Monitorability(QACategory):
     """
-    The Monitorability qa category reflects  monitoring requirements.
+    The Monitorability QA category reflects  monitoring requirements.
     """
 
     def __init__(self, rationale: str):
@@ -11,7 +11,7 @@ class Monitorability(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The Monitorability qa category assesses the monitoring requirements of a
+                The Monitorability QA category assesses the monitoring requirements of a
                 model and system. These requirements may be expressed in a variety of ways,
                 including requriements on line formats in log files, timestamps, and log content. 
                 """,

@@ -47,7 +47,7 @@ class SpecValidator:
 
     def add_value(self, value: Value):
         """
-        Adds a value associated to a qa category and measurements.
+        Adds a value associated to a QACategory and measurements.
 
         :param value: The value to add to the internal list.
         """
@@ -59,7 +59,7 @@ class SpecValidator:
 
     def validate(self) -> ValidatedSpec:
         """
-        Validates the internal qa categories given its requirements and the stored values, and generates a ValidatedSpec from it.
+        Validates the internal QACategory given its requirements and the stored values, and generates a ValidatedSpec from it.
 
         :return: The validated specification
         """
@@ -70,7 +70,7 @@ class SpecValidator:
         """
         Validates a set of stored Values, and generates Results.
 
-        :return: A dictionary having results for each id, separated by qa category id.
+        :return: A dictionary having results for each id, separated by QACategory id.
         """
         # Check that all conditions have values to be validated.
         for conditions in self.spec.qa_categories.values():

@@ -1,7 +1,7 @@
 """
 mlte/qa_category/functionality/task_efficacy.py
 
-TaskEfficacy qa category definition.
+TaskEfficacy QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -9,7 +9,7 @@ from mlte.qa_category.base import QACategory
 
 class TaskEfficacy(QACategory):
     """
-    The TaskEfficacy qa category assesses the ability of
+    The TaskEfficacy QACategory assesses the ability of
     a model to perform the task for which it is designed.
     """
 
@@ -18,9 +18,9 @@ class TaskEfficacy(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The TaskEfficacy qa category assesses a model's ability
+                The TaskEfficacy QACategory assesses a model's ability
                 to correctly perform instances of its task. The means
-                of measurement for this qa category will vary by both
+                of measurement for this QACategory will vary by both
                 domain and task. Examples include accuracy, error rate,
                 and average precision, but many others are possible.
                 """,

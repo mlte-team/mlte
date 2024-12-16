@@ -1,7 +1,7 @@
 """
 mlte/qa_category/costs/training_compute_cost.py
 
-TrainingComputeCost qa category definition.
+TrainingComputeCost QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -9,7 +9,7 @@ from mlte.qa_category.base import QACategory
 
 class TrainingComputeCost(QACategory):
     """
-    The TrainingComputeCost qa category reflects the costs
+    The TrainingComputeCost QACategory reflects the costs
     of model training associated with compute resources.
     """
 
@@ -20,7 +20,7 @@ class TrainingComputeCost(QACategory):
         super().__init__(
             instance=self,
             description="""
-                The TrainingComputeCost qa category assesses the
+                The TrainingComputeCost QACategory assesses the
                 computational requirements of model training.
                 This might be measured in terms of CPU utilization
                 for training processes that run locally, or the cost

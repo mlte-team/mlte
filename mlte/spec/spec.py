@@ -36,7 +36,7 @@ def _unique(collection: List[str]) -> bool:
 
 class Spec(Artifact):
     """
-    The Spec class integrates qa categories, measurements,
+    The Spec class integrates QACategory, measurements,
     and the results of measurement evaluation and validation.
     """
 
@@ -48,15 +48,15 @@ class Spec(Artifact):
         """
         Initialize a Spec instance.
 
-        :param qa_categories: The collection of qa_categories that compose the spec, with their conditions keyed by measurement id.
+        :param qa_categories: The collection of QACategory that compose the spec, with their conditions keyed by measurement id.
         """
         super().__init__(identifier, ArtifactType.SPEC)
 
         self.qa_categories = qa_categories
-        """The collection of qa categories that compose the Spec."""
+        """The collection of QACategory that compose the Spec."""
 
         if not _unique([p.name for p in self.qa_categories.keys()]):
-            raise RuntimeError("All qa_categories in Spec must be unique.")
+            raise RuntimeError("All QACategory in Spec must be unique.")
 
     # -------------------------------------------------------------------------
     # Serialization.
@@ -86,10 +86,10 @@ class Spec(Artifact):
 
     def _to_qa_category_model(self, qa_category: QACategory) -> QACategoryModel:
         """
-        Generate a qa category model. This just uses QACategory.to_model, but adds the list of conditions.
+        Generate a QACategory model. This just uses QACategory.to_model, but adds the list of conditions.
 
-        :param qa_category: The qa category of interest
-        :return: The qa category model
+        :param qa_category: The QACategory of interest
+        :return: The QACategory model
         """
         qa_category_model: QACategoryModel = qa_category.to_model()
         qa_category_model.conditions = {
@@ -105,7 +105,7 @@ class Spec(Artifact):
         cls,
         qa_category_models: List[QACategoryModel],
     ) -> Dict[QACategory, Dict[str, Condition]]:
-        """Converts a list of qa category models, into a dict of properties and conditions."""
+        """Converts a list of QACategory models, into a dict of properties and conditions."""
         return {
             QACategory.from_model(qa_category_model): {
                 measurement_id: Condition.from_model(condition_model)
@@ -125,10 +125,10 @@ class Spec(Artifact):
 
     def get_qa_category(self, qa_category_id: str) -> QACategory:
         """
-        Returns a particular qa category with the given id.
+        Returns a particular QACategory with the given id.
 
-        :param qa_category_id: The qa category itself, or its identifier
-        :return: The qa category object.
+        :param qa_category_id: The QACategory itself, or its identifier
+        :return: The QACategory object.
         """
         qa_categories = [
             category
@@ -147,10 +147,10 @@ class Spec(Artifact):
 
     def has_qa_category(self, qa_category: Union[QACategory, str]) -> bool:
         """
-        Determine if the spec contains a particular qa category.
+        Determine if the spec contains a particular QACategory.
 
-        :param qa_category: The qa category itself, or its identifier
-        :return: `True` if the spec has the qa category, `False` otherwise
+        :param qa_category: The QACategory itself, or its identifier
+        :return: `True` if the spec has the QACategory, `False` otherwise
         """
         target_name = (
             qa_category if isinstance(qa_category, str) else qa_category.name

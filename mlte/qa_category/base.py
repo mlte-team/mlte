@@ -1,7 +1,7 @@
 """
 mlte/qa_category/base.py
 
-The superclass for all model qa categories.
+The superclass for all model QACategory.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from mlte.spec.model import QACategoryModel
 
 
 class QACategory(metaclass=abc.ABCMeta):
-    """The QACategory type represents an abstract model qa category."""
+    """The QACategory type represents an abstract model QA category."""
 
     @classmethod
     def __subclasshook__(cls, subclass):
@@ -33,26 +33,26 @@ class QACategory(metaclass=abc.ABCMeta):
         Initialize a QACategory instance.
 
         :param instance: The derived QACategory we are constructing from.
-        :param description: The description of the qa category
-        :param rationale: The rationale for using the qa category
+        :param description: The description of the QACategory
+        :param rationale: The rationale for using the QACategory
         """
         self.name: str = instance.__class__.__name__
-        """The name of the qa category."""
+        """The name of the QACategory."""
 
         self.description: str = cleantext(description)
-        """The description of the qa category."""
+        """The description of the QACategory."""
 
         self.rationale: str = rationale
-        """The rationale for using the qa category."""
+        """The rationale for using the QACategory."""
 
         self.module: str = instance.__module__
-        """The name of the module the qa category is defined in."""
+        """The name of the module the QACategory is defined in."""
 
     def to_model(self) -> QACategoryModel:
         """
         Return a QACategory as a model.
 
-        :return: The qa category as its model.
+        :return: The QACategory as its model.
         """
         return QACategoryModel(
             name=self.name,
@@ -68,7 +68,7 @@ class QACategory(metaclass=abc.ABCMeta):
 
         :param model: The model with the QACategory info.
 
-        :return: The loaded qa category
+        :return: The loaded QACategory
         """
         if model.name == "":
             raise RuntimeError(
@@ -89,5 +89,5 @@ class QACategory(metaclass=abc.ABCMeta):
                 f"QACategory {model.name} in module {module_path} not found"
             )
 
-        # Instantiate the qa category
+        # Instantiate the QACategory
         return class_(model.rationale)  # type: ignore

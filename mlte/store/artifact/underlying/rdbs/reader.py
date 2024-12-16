@@ -271,7 +271,7 @@ class DBReader:
         )
         if qa_category_id is None:
             raise errors.ErrorNotFound(
-                f"Quality Attribute Category with name {qa_category_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
+                f"Quality attribute category with name {qa_category_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
             )
         else:
             return qa_category_id

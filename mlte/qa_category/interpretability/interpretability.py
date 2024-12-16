@@ -1,5 +1,5 @@
 """
-Interpretability qa category definition.
+Interpretability QACategory definition.
 """
 
 from mlte.qa_category.base import QACategory
@@ -7,7 +7,7 @@ from mlte.qa_category.base import QACategory
 
 class Interpretability(QACategory):
     """
-    The Interpretability qa category
+    The Interpretability QACategory
     """
 
     def __init__(self, rationale: str):
