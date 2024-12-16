@@ -98,7 +98,7 @@
       "items": {
         "$ref": "#/$defs/QACategoryModel"
       },
-      "title": "Qa Categories",
+      "title": "QA Categories",
       "type": "array"
     }
   },

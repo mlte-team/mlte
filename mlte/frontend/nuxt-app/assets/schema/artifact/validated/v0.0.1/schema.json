@@ -174,7 +174,7 @@
             "$ref": "#/$defs/QACategoryModel"
             "$ref": "#/$defs/QACategoryModel"
           },
-          "title": "Qa Categories",
+          "title": "QA Categories",
           "type": "array"
         }
       },
