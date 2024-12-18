@@ -41,7 +41,7 @@ class ValidatedSpecModel(BaseModel):
     """A link to the actual Spec details."""
 
     results: Dict[str, Dict[str, ResultModel]] = {}
-    """A list of validation results, for each measurement id, grouped by property."""
+    """A list of validation results, for each measurement id, grouped by QACategory."""
 
 
 ValidatedSpecModel.model_rebuild()

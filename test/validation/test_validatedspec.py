@@ -12,7 +12,7 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.property.costs.storage_cost import StorageCost
+from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Result
@@ -26,7 +26,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     spec = Spec(
-        properties={StorageCost("rationale"): {"id": Integer.less_than(3)}}
+        qa_categories={StorageCost("rationale"): {"id": Integer.less_than(3)}}
     )
     specValidator = SpecValidator(spec)
 
@@ -46,10 +46,10 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     assert r == validatedSpec
 
 
-def test_no_result_and_no_property():
-    # Spec does not have Result for condition, not even a property.
+def test_no_result_and_no_qa_category():
+    # Spec does not have Result for condition, not even a qa category.
     spec = Spec(
-        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        qa_categories={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
 
     results: Dict[str, Dict[str, Result]] = {}
@@ -60,7 +60,7 @@ def test_no_result_and_no_property():
 def test_no_result():
     # Spec does not have Result for condition.
     spec = Spec(
-        properties={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+        qa_categories={StorageCost("rationale"): {"test": Integer.less_than(3)}}
     )
 
     results: Dict[str, Dict[str, Result]] = {"StorageCost": {}}

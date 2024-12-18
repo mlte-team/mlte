@@ -1,13 +1,13 @@
 """
-PredictingMemoryCost property definition.
+PredictingMemoryCost QACategory definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class PredictingMemoryCost(Property):
+class PredictingMemoryCost(QACategory):
     """
-    The PredictingMemoryCost property reflects the cost
+    The PredictingMemoryCost QACategory reflects the cost
     of model predicting associated with memory resources.
     """
 
@@ -18,11 +18,11 @@ class PredictingMemoryCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The PredictingMemoryCost property assesses the
+                The PredictingMemoryCost QACategory assesses the
                 memory requirements of model predicting. This might
-                be measured by the memory requirements of property
+                be measured by the memory requirements of QACategory
                 processes that run locally, or the cost of memory
-                resources required for property processes that run
+                resources required for QACategory processes that run
                 on on-demand cloud infrastructure.
                 """,
             rationale=rationale,

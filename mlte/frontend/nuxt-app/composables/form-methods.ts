@@ -24,15 +24,15 @@ export function loadFindings(proxyObject: object) {
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
   const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.spec.properties.forEach((property) => {
+  validatedSpec.body.spec.qa_categories.forEach((qa_category) => {
     // TODO(Kyle): This is not portable to some browsers.
     const results = new Map(
-      Object.entries(validatedSpec.body.results[property.name]),
+      Object.entries(validatedSpec.body.results[qa_category.name]),
     );
     results.forEach((value) => {
       const finding = {
         status: value.type,
-        property: property.name,
+        qa_category: qa_category.name,
         measurement: value.metadata.measurement_type,
         evidence_id: value.metadata.identifier.name,
         message: value.message,

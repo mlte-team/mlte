@@ -1,15 +1,15 @@
 """
-mlte/property/costs/training_compute_cost.py
+mlte/qa_category/costs/training_compute_cost.py
 
-TrainingComputeCost property definition.
+TrainingComputeCost QACategory definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class TrainingComputeCost(Property):
+class TrainingComputeCost(QACategory):
     """
-    The TrainingComputeCost property reflects the costs
+    The TrainingComputeCost QACategory reflects the costs
     of model training associated with compute resources.
     """
 
@@ -20,7 +20,7 @@ class TrainingComputeCost(Property):
         super().__init__(
             instance=self,
             description="""
-                The TrainingComputeCost property assesses the
+                The TrainingComputeCost QACategory assesses the
                 computational requirements of model training.
                 This might be measured in terms of CPU utilization
                 for training processes that run locally, or the cost

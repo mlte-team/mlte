@@ -11,7 +11,7 @@ from mlte.model import BaseModel
 
 
 class ConditionModel(BaseModel):
-    """A description of a condition for a property."""
+    """A description of a condition for a QACategory."""
 
     name: str
     """A decriptive name for the condition, usually the method name used to call it."""
@@ -26,23 +26,23 @@ class ConditionModel(BaseModel):
     """A string indicating the full module and class name of the Value used to generate this condition."""
 
 
-class PropertyModel(BaseModel):
-    """A description of a property."""
+class QACategoryModel(BaseModel):
+    """A description of a quality attribute category."""
 
     name: str
-    """A name for the property."""
+    """A name for the QACategory."""
 
     description: Optional[str] = None
-    """A general description of this property type."""
+    """A general description of this QACategory type."""
 
     rationale: Optional[str] = None
-    """The rationale for this property being important in this situation."""
+    """The rationale for this QACategory being important in this situation."""
 
     conditions: Dict[str, ConditionModel] = {}
-    """A dictionary of conditions, keyed by measurement id, to be validated for this property."""
+    """A dictionary of conditions, keyed by measurement id, to be validated for this QACategory."""
 
     module: str
-    """The full package and module path of the Property class."""
+    """The full package and module path of the QACategory class."""
 
 
 class SpecModel(BaseModel):
@@ -51,8 +51,8 @@ class SpecModel(BaseModel):
     artifact_type: Literal[ArtifactType.SPEC] = ArtifactType.SPEC
     """Union discriminator."""
 
-    properties: List[PropertyModel] = []
-    """A list of properties for this spec."""
+    qa_categories: List[QACategoryModel] = []
+    """A list of QACategory for this spec."""
 
 
 SpecModel.model_rebuild()

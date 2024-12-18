@@ -1,13 +1,13 @@
 """
-Fairness property definition.
+Fairness QACategory definition.
 """
 
-from mlte.property.base import Property
+from mlte.qa_category.base import QACategory
 
 
-class Fairness(Property):
+class Fairness(QACategory):
     """
-    Defintion of the Fairness property.
+    Defintion of the Fairness QACategory.
     """
 
     def __init__(self, rationale: str):

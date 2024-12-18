@@ -38,8 +38,8 @@ A `Specification` (or `Spec`) represents the requirements the model must meet in
 
 ```python
 from mlte.spec.spec import Spec
-from mlte.property.costs.storage_cost import StorageCost
-from mlte.property.fairness.fairness import Fairness
+from mlte.qa_category.costs.storage_cost import StorageCost
+from mlte.qa_category.fairness.fairness import Fairness
 
 from mlte.measurement.storage import LocalObjectSize
 from demo.scenarios.values.multiple_accuracy import MultipleAccuracy
@@ -198,10 +198,10 @@ A `Spec` represents the requirements and corresponding thresholds (or validators
 from mlte.spec.spec import Spec
 
 # The Properties we want to validate, associated with our scenarios.
-from mlte.property.costs.storage_cost import StorageCost
-from mlte.property.fairness.fairness import Fairness
-from mlte.property.robustness.robustness import Robustness
-from mlte.property.costs.predicting_memory_cost import PredictingMemoryCost
+from mlte.qa_category.costs.storage_cost import StorageCost
+from mlte.qa_category.fairness.fairness import Fairness
+from mlte.qa_category.robustness.robustness import Robustness
+from mlte.qa_category.costs.predicting_memory_cost import PredictingMemoryCost
 
 # The Value types we will use to validate each condition.
 from mlte.measurement.storage import LocalObjectSize
