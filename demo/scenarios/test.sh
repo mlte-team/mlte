@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Remove everything from temp stores to avoid outdated data.
-rm -r ./store/models
-mkdir -p ./store/models
-
 poetry run pytest --nbmake ./demo/scenarios/1_requirements.ipynb
 poetry run pytest --nbmake ./demo/scenarios/2_evidence.ipynb
 poetry run pytest --nbmake ./demo/scenarios/2a_evidence_fairness.ipynb
