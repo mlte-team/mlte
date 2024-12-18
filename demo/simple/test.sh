@@ -5,9 +5,6 @@ CURR_FOLDER="./demo/simple"
 rm -r ${CURR_FOLDER}/store/models
 mkdir -p ${CURR_FOLDER}/store/models
 
-# Copy sample negotiation card to store.
-source copy_nc.sh
-
 poetry run pytest --nbmake ${CURR_FOLDER}/1_negotiation.ipynb
 poetry run pytest --nbmake ${CURR_FOLDER}/2_requirements.ipynb
 poetry run pytest --nbmake ${CURR_FOLDER}/3_evidence.ipynb
