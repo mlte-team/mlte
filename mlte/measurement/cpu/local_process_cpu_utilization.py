@@ -15,7 +15,6 @@ from mlte._private.platform import is_windows
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
 from mlte.value.base import ValueBase
 
 # -----------------------------------------------------------------------------
@@ -101,17 +100,9 @@ class CPUStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda stats: Success(
-                f"Maximum utilization {stats.max:.2f} "
-                f"below threshold {threshold:.2f}"
-            )
-            if stats.max < threshold
-            else Failure(
-                (
-                    f"Maximum utilization {stats.max:.2f} "
-                    f"exceeds threshold {threshold:.2f}"
-                )
-            ),
+            bool_exp=lambda stats: stats.max < threshold,
+            success=f"Maximum utilization below threshold {threshold:.2f}",
+            failure=f"Maximum utilization exceeds threshold {threshold:.2f}",
         )
         return condition
 
@@ -125,17 +116,9 @@ class CPUStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda stats: Success(
-                f"Average utilization {stats.max:.2f} "
-                f"below threshold {threshold:.2f}"
-            )
-            if stats.avg < threshold
-            else Failure(
-                (
-                    f"Average utilization {stats.avg:.2f} "
-                    "exceeds threshold {threshold:.2f}"
-                )
-            ),
+            bool_exp=lambda stats: stats.avg < threshold,
+            success=f"Average utilization below threshold {threshold:.2f}",
+            failure=f"Average utilization exceeds threshold {threshold:.2f}",
         )
         return condition
 

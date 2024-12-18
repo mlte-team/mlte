@@ -61,7 +61,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     test_client = test_api.get_test_client()
     user = get_sample_user()
 
-    res = test_client.post(f"{USER_URI}", json=user.model_dump())
+    res = test_client.post(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.OK
     _ = BasicUser(**res.json())
 
@@ -86,7 +86,7 @@ def test_create_no_permission(
     test_client = test_api.get_test_client()
     user = get_sample_user()
 
-    res = test_client.post(f"{USER_URI}", json=user.model_dump())
+    res = test_client.post(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -104,9 +104,9 @@ def test_edit_no_pass(test_api_fixture, api_user: UserWithPassword) -> None:
     create_sample_user_using_admin(test_api)
 
     # Edit user.
-    user_w_pass = BasicUser(**user.model_dump())
+    user_w_pass = BasicUser(**user.to_json())
     user_w_pass.email = email2
-    res = test_client.put(f"{USER_URI}", json=user_w_pass.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user_w_pass.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -129,7 +129,7 @@ def test_edit_pass(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Edit user.
     user.email = email2
-    res = test_client.put(f"{USER_URI}", json=user.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -154,7 +154,7 @@ def test_edit_pass_no_permission(
 
     # Edit user.
     user.email = email2
-    res = test_client.put(f"{USER_URI}", json=user.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -392,7 +392,7 @@ def test_list_user_groups_me(
         Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
     )
     user_store = state.user_store.session()
-    user_store.user_mapper.edit(BasicUser(**api_user.model_dump()))
+    user_store.user_mapper.edit(BasicUser(**api_user.to_json()))
 
     res = test_client.get(f"{USER_URI}/me/models")
     assert res.status_code == codes.OK

@@ -13,18 +13,24 @@
           "title": "Arguments",
           "type": "array"
         },
-        "callback": {
-          "title": "Callback",
-          "type": "string"
+        "validator": {
+          "$ref": "#/$defs/ValidatorModel"
         },
         "value_class": {
-          "title": "Value Class",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value Class"
         }
       },
       "required": [
         "name",
-        "callback",
+        "validator",
         "value_class"
       ],
       "title": "ConditionModel",
@@ -79,6 +85,75 @@
         "module"
       ],
       "title": "PropertyModel",
+      "type": "object"
+    },
+    "ValidatorModel": {
+      "description": "A description of a validator for a test.",
+      "properties": {
+        "bool_exp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp"
+        },
+        "success": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Success"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Failure"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Info"
+        },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
+        }
+      },
+      "required": [
+        "bool_exp",
+        "success",
+        "failure",
+        "info",
+        "bool_exp_str"
+      ],
+      "title": "ValidatorModel",
       "type": "object"
     }
   },

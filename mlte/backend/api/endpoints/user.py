@@ -113,7 +113,7 @@ def create_user(
                 ResourceType.USER,
                 new_user.username,
                 user_store,
-                BasicUser(**new_user.model_dump()),
+                BasicUser(**new_user.to_json()),
             )
 
             stored_user = user_store.user_mapper.read(new_user.username)
@@ -214,7 +214,7 @@ def list_users_details(
             usernames = user_store.user_mapper.list()
             for username in usernames:
                 user_details = BasicUser(
-                    **user_store.user_mapper.read(username).model_dump()
+                    **user_store.user_mapper.read(username).to_json()
                 )
                 detailed_users.append(user_details)
             return detailed_users
@@ -269,7 +269,7 @@ def list_user_models(
                 # Get all models, and filter out only the ones the user has read permissions for.
                 user_models: List[str] = []
                 user = BasicUser(
-                    **user_store.user_mapper.read(username).model_dump()
+                    **user_store.user_mapper.read(username).to_json()
                 )
                 all_models = artifact_store.list_models()
                 for model_id in all_models:

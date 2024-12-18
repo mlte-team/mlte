@@ -14,8 +14,6 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.value.artifact import Value
 from mlte.value.model import ArrayValueModel, ValueModel, ValueType
-from mlte.value.types.integer import Integer
-from mlte.value.types.real import Real
 
 
 class Array(Value):
@@ -72,33 +70,3 @@ class Array(Value):
         if not isinstance(other, Array):
             return False
         return self._equal(other)
-
-    def get_as_real(self, position: int) -> Real:
-        """
-        Return a value from the given position, as a Real value type.
-        :param position: The position to get the value from.
-        """
-        if position >= len(self.array):
-            raise IndexError(
-                f"Position {position} is not in array of size {len(self.array)}"
-            )
-        return_value = Real(self.metadata, float(self.array[position]))
-
-        # Add suffix to id based on position.
-        return_value.identifier = f"{return_value.identifier}.{position}"
-        return return_value
-
-    def get_as_integer(self, position: int) -> Integer:
-        """
-        Return a value from the given position, as an Integer value type.
-        :param position: The position to get the value from.
-        """
-        if position >= len(self.array):
-            raise IndexError(
-                f"Position {position} is not in array of size {len(self.array)}"
-            )
-        return_value = Integer(self.metadata, int(self.array[position]))
-
-        # Add suffix to id based on position.
-        return_value.identifier = f"{return_value.identifier}.{position}"
-        return return_value

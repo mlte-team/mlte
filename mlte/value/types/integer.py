@@ -12,7 +12,6 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
 from mlte.value.artifact import Value
 from mlte.value.model import IntegerValueModel, ValueModel, ValueType
 
@@ -80,40 +79,31 @@ class Integer(Value):
         return f"{self.value}"
 
     @classmethod
-    def less_than(cls, value: int) -> Condition:
+    def less_than(cls, threshold: int) -> Condition:
         """
         Determine if integer is strictly less than `value`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda integer: Success(
-                f"Integer magnitude {integer.value} less than threshold {value}"
-            )
-            if integer.value < value
-            else Failure(
-                f"Integer magnitude {integer.value} exceeds threshold {value}"
-            )
+            bool_exp=lambda integer: integer.value < threshold,
+            success=f"Integer magnitude is less than threshold {threshold}",
+            failure=f"Integer magnitude exceeds threshold {threshold}",
         )
         return condition
 
     @classmethod
-    def less_or_equal_to(cls, value: int) -> Condition:
+    def less_or_equal_to(cls, threshold: int) -> Condition:
         """
         Determine if integer is less than or equal to `value`.
 
-        :param value: The threshold value
+        :param threshold: The threshold value
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda integer: Success(
-                f"Integer magnitude {integer.value} "
-                f"less than or equal to threshold {value}"
-            )
-            if integer.value <= value
-            else Failure(
-                f"Integer magnitude {integer.value} exceeds threshold {value}"
-            ),
+            bool_exp=lambda integer: integer.value <= threshold,
+            success=f"Integer magnitude is less than or equal to threshold {threshold}",
+            failure=f"Integer magnitude exceeds threshold {threshold}",
         )
         return condition

@@ -19,7 +19,7 @@ from mlte.measurement.memory import (
 )
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
-from mlte.validation.result import Failure, Success
+from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
@@ -72,7 +72,10 @@ def test_memory_validate_success() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], lambda _: Success())(stats)
+    vr = Condition(
+        "Succeed", [], Validator(lambda _: True, success="yay", failure="oh")
+    )(stats)
+    print(vr)
     assert bool(vr)
 
     assert vr.metadata is not None
@@ -87,7 +90,9 @@ def test_memory_validate_failure() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], lambda _: Failure())(stats)
+    vr = Condition(
+        "Fail", [], Validator(lambda _: False, success="yay", failure="oh")
+    )(stats)
     assert not bool(vr)
 
     assert vr.metadata is not None
@@ -112,3 +117,37 @@ def test_result_save_load(
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
+
+
+def test_max_consumption_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = MemoryStatistics.max_consumption_less_than(3)
+
+    res = cond(MemoryStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(MemoryStatistics(m, avg=2, max=4, min=1))
+    assert not bool(res)
+
+    res = cond(MemoryStatistics(m, avg=2, max=3, min=1))
+    assert not bool(res)
+
+
+def test_avg_consumption_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = MemoryStatistics.average_consumption_less_than(3)
+
+    res = cond(MemoryStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(MemoryStatistics(m, avg=4, max=2, min=1))
+    assert not bool(res)
+
+    res = cond(MemoryStatistics(m, avg=3, max=2, min=1))
+    assert not bool(res)
