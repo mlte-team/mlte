@@ -96,12 +96,12 @@ class FileSystemUserMappper(UserMapper):
         """A reference to underlying storage."""
 
         self.group_mapper = group_mapper
-        """Refernce to group mapper, to get updated groups when needed."""
+        """Reference to group mapper, to get updated groups when needed."""
 
         self.storage.set_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
         )
-        """Set the subfodler for this resrouce."""
+        """Set the subfodler for this resource."""
 
     def create(self, user: UserWithPassword) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
