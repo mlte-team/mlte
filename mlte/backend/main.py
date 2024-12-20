@@ -19,6 +19,7 @@ from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.user import factory as user_store_factory
+from mlte.store.custom_list import factory as custom_list_store_factory
 
 # Application exit codes
 EXIT_SUCCESS = 0
@@ -96,6 +97,10 @@ def run(
             f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
         )
         state.add_catalog_store_from_uri(uri, id)
+    
+    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
+    custom_list_store = custom_list_store_factory.create_custom_list_store(store_uri)
+    state.set_custom_list_store(custom_list_store)
 
     # Set the token signing key.
     state.set_token_key(jwt_secret)
