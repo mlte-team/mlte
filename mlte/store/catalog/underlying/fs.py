@@ -19,7 +19,7 @@ from mlte.store.catalog.store import (
 from mlte.store.common.fs_storage import FileSystemStorage
 
 # -----------------------------------------------------------------------------
-# LocalFileSystemStore
+# FileSystemCatalogStore
 # -----------------------------------------------------------------------------
 
 
@@ -27,7 +27,7 @@ class FileSystemCatalogStore(CatalogStore):
     """A local file system implementation of the MLTE catalog store."""
 
     BASE_CATALOGS_FOLDER = "catalogs"
-    """Base fodler to store catalog entries in."""
+    """Base folder to store catalog entries in."""
 
     DEFAULT_CATALOG_FOLDER = "catalog"
     """A default name for a catalog folder."""
@@ -56,7 +56,7 @@ class FileSystemCatalogStore(CatalogStore):
 
 
 # -----------------------------------------------------------------------------
-# LocalFileSystemStoreSession
+# FileSystemCatalogStoreSession
 # -----------------------------------------------------------------------------
 
 
