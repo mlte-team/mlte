@@ -3,9 +3,7 @@
 MODEL="OxfordFlower"
 VERSION="0.0.1"
 
-# Copy sample negotiation card to our working store space. Create folders if needed.
-mkdir -p store/models/$MODEL/$VERSION
-cp ../sample_store/models/$MODEL/$VERSION/*.json ./store/models/$MODEL/$VERSION
+source copy_nc.sh
 
 # Set env vars to not use a relational DB, but a file store, and point to the one here.
 export STORE_TYPE=fs
