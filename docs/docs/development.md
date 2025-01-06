@@ -7,11 +7,8 @@ This document describes some of the development practices used within `MLTE`.
 Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first (see https://python-poetry.org/docs/#installation). Once it is installed, you can set up your environment like this (note the inclusion of dev dependency groups below):
 
 ```bash
-$ poetry shell
 $ poetry install --with qa,test,build,docs
 ```
-
-Instead of activating the environment, you can also choose to use `poetry run` to run specific commands.
 
 Now you are ready to start working on `MLTE`!
 
@@ -33,38 +30,42 @@ $ poetry install --with demo-mac
 
 You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with `poetry shell` (see above), you can run all the commands below without the `poetry run` prefix.
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with, you can run all the commands below without the `poetry run` prefix. 
+
+To manually activate your environment, run:
+
+```bash
+$ source .venv/bin/activate
+```
 
 ### Import Sorting
 
 We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
 
 ```bash
-$ poetry run make isort
+$ make isort
 ```
 
-Alternatively, you can run `isort` manually from the project root:
+If you just want to check the sorting of the imports, without making any changes, you can run this:
 
 ```bash
-$ poetry run isort mlte/
-$ poetry run isort test/
+$ make check-isort
 ```
 
-Code that does not satisfy the formatter will be rejected from pull requests.
+Code that does not satisfy the sorter will be rejected from pull requests.
 
 ### Source Formatting
 
 We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
 
 ```bash
-$ poetry run make format
+$ make format
 ```
 
-Alternatively, you can run `black` manually from the project root:
+If you just want to check the format, without making any changes, you can run this:
 
 ```bash
-$ poetry run black mlte/
-$ poetry run black test/
+$ make check-format
 ```
 
 Code that does not satisfy the formatter will be rejected from pull requests.
@@ -74,14 +75,7 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
 
 ```bash
-$ poetry run make lint
-```
-
-Alternatively, you can run `flake8` manually from the project root:
-
-```bash
-$ poetry run flake8 mlte/
-$ poetry run flake8 test/
+$ make lint
 ```
 
 Code that does not satisfy the linter will be rejected from pull requests.
@@ -91,14 +85,7 @@ Code that does not satisfy the linter will be rejected from pull requests.
 We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
 
 ```bash
-$ poetry run make typecheck
-```
-
-Alternatively, you can run `mypy` manually from the project root:
-
-```bash
-$ poetry run mypy mlte/
-$ poetry run mypy test/
+$ make typecheck
 ```
 
 Code that does not satisfy static type-checking will be rejected from pull requests.
@@ -108,7 +95,7 @@ Code that does not satisfy static type-checking will be rejected from pull reque
 More details in the [Documentation](#documentation) section, but to run document generation from the make command, run this: 
 
 ```bash
-$ poetry run make docs
+$ make docs
 ```
 
 ### Unit Tests
@@ -116,7 +103,7 @@ $ poetry run make docs
 We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
 
 ```bash
-$ poetry run make test
+$ make test
 ```
 
 Alternatively, you can run the tests manually from the project root:
@@ -130,7 +117,7 @@ Unit test failures result in build failures in CI.
 To test the Juypter notebooks present in the demo folders, run:
 
 ```bash
-$ poetry run make demo-test
+$ make demo-test
 ```
 
 ### Model Schema Generation
@@ -138,23 +125,24 @@ $ poetry run make demo-test
 The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
 
 ```bash
-$ poetry run make gen
+$ make schema
 ```
 
-Alternatively, you can run this manually from the project root:
+If you just want to check the schemas, without making any changes, you can run this:
 
 ```bash
-$ poetry run python tools/schema.py generate mlte --verbose
+$ make check-schema
 ```
 
-Unit test failures result in build failures in CI.
+Schema failures result in build failures in CI.
 
 ### Make Shorthand Commands
 
 There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
 
-* `poetry run make qa`: executes the source sorting, formatting, source linting, and static type checking commands.
-* `poetry run make ci`: executes the same commands as `qa`, but also runs `gen` to generate updated schemas if needed, and runs `test` to execute the unit tests.
+* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands.
+* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands.
+* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
 
 
 ## Front End
