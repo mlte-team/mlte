@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y npm
 # Set up dependencies.
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
 COPY mlte/frontend/nuxt-app/package.json /mnt/app/mlte/frontend/nuxt-app/package.json
-#RUN npm i --package-lock-only
-RUN npm install && npm cache clean --force
+COPY mlte/frontend/nuxt-app/package-lock.json /mnt/app/mlte/frontend/nuxt-app/package-lock.json
+RUN npm ci && npm cache clean --force
 
 # Setup USWDS design dependencies.
 COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
