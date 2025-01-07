@@ -1,9 +1,9 @@
 Pre-Demo Steps:
- - Execute Demo steps from https://mlte.readthedocs.io/en/latest/development/#quickstart. 
- - Ensure that Docker daemon is running.
- - Execute run_environment.sh from demo/scenarios.
- - (Optional) Install wget
- - Execute all notebooks so that the results can be seen in the notebooks themselves.
+ - Execute the Requirements and Demos steps from https://mlte.readthedocs.io/en/latest/development/#quickstart. 
+ - (Optional) Install wget.
+ - Execute all notebooks so that the results can be seen in the notebooks themselves. This can be done in VSCode, or in another program that runs Jupyter Notebooks. Be sure to run the notebooks in the virtual environment created at the beginning, so that all dependencies are installed.
+ - Ensure that the Docker daemon is running.
+ - Execute run_environment.sh from demo/scenarios to get the frontend and backend working.
 
 Demo:
  - Start with slides explaining what MLTE is.
@@ -11,6 +11,6 @@ Demo:
  - Log into frontend (browser, localhost:8000), show Negotiation Card. Explain important parts of negotiation card and how it is refined.
  - Open the Jupyter Notebook with Spec (the one in demo/scenarios/1_requirements.ipynb. Skip the Negotiation Card definition, but do show the context initialization, and then the Spec definition. Walk though it without getting into too many details.
  - Go back to frontend. Show Test Catalog, and show how people would use it find an example of how to measure certain QAS.
- - Open one Jupyter Notebooks with QAS test measurements, the demo/scenarios/2a_evidence_fairness one, and walk through it.
+ - Open one of the Jupyter Notebooks with QAS test measurements, the demo/scenarios/2a_evidence_fairness one, and walk through it.
  - Open the demo/scenarios/3_report.ipynb Notebook, and show the process for validating and generating the report.
  - Go back to frontend, and show the report results.

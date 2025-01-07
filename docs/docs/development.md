@@ -2,9 +2,18 @@
 
 This document describes some of the development practices used within `MLTE`.
 
-## Quickstart
+## Requirements
 
-Use `poetry` to create a Python virtual environment and install the required runtime and development packages. This requires you to install `poetry` on your system first (see https://python-poetry.org/docs/#installation). Once it is installed, you can set up your environment like this (note the inclusion of dev dependency groups below):
+ - MLTE uses `poetry` to handle the required runtime and development packages. The first step is to install `poetry` on your system. See https://python-poetry.org/docs/#installation. 
+ - You also need to set up a virtual Python environment where poetry will work on. While inside the root of the repository, execute this command:
+
+```bash
+$ python -m venv .venv
+```
+
+## Dev Environment Setup
+
+Once poetry and the virtual env are setup, you can set up dev dependencies like this:
 
 ```bash
 $ poetry install --with qa,test,build,docs
