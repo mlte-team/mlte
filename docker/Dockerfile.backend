@@ -8,6 +8,7 @@ FROM mlte-base
 WORKDIR /mnt/app
 COPY pyproject.toml /mnt/app
 COPY poetry.lock /mnt/app
+COPY README.md /mnt/app
 RUN poetry install --no-root
 
 # Copy and install mlte

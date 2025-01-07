@@ -22,7 +22,6 @@ tools
 build.sh
 LICENSE
 Makefile
-README.md
 
 mlte/frontend/nuxt-app/package-lock.json
 mlte/frontend/nuxt-app/.nuxt/
