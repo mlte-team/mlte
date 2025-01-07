@@ -1,5 +1,5 @@
 Pre-Demo Steps:
- - Execute the Requirements and Demos steps from https://mlte.readthedocs.io/en/latest/development/#quickstart. 
+ - Execute the Requirements and Demos steps from the Setup seciton in https://mlte.readthedocs.io/en/latest/development/#quickstart. 
  - (Optional) Install wget.
  - Execute all notebooks so that the results can be seen in the notebooks themselves. This can be done in VSCode, or in another program that runs Jupyter Notebooks. Be sure to run the notebooks in the virtual environment created at the beginning, so that all dependencies are installed.
  - Ensure that the Docker daemon is running.
