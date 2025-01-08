@@ -114,7 +114,7 @@
         <slot name="default" />
         <footer>
           <p class="footer-text-left">
-            <b>MLTE - 2024</b>
+            <b>MLTE - {{currentDate.getFullYear()}}</b>
           </p>
           <div class="footer-text-right">
             <a
@@ -155,6 +155,8 @@ const token = useCookie("token");
 const user = useCookie("user");
 const userRole = useCookie("userRole");
 const version = config.public.version;
+
+const currentDate = new Date();
 </script>
 
 <style>

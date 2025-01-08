@@ -31,7 +31,7 @@ class Filter(BaseModel):
     """Definition of a filter interface."""
 
     @abstractmethod
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         raise NotImplementedError(
             "Can't call match without a specific implementation."
         )
@@ -43,8 +43,8 @@ class CompositeFilter(Filter):
     filters: List[SupportedFilter]
 
 
-class Filtrable(BaseModel):
-    """Definition of a filtrable interface."""
+class Filterable(BaseModel):
+    """Definition of a filterable interface."""
 
     @abstractmethod
     def get_identifier(self) -> str:
@@ -105,7 +105,7 @@ class AllFilter(Filter):
     type: Literal[FilterType.ALL] = FilterType.ALL
     """An identifier for the filter type."""
 
-    def match(self, _: Filtrable) -> bool:
+    def match(self, _: Filterable) -> bool:
         return True
 
 
@@ -115,7 +115,7 @@ class NoneFilter(Filter):
     type: Literal[FilterType.NONE] = FilterType.NONE
     """An identifier for the filter type."""
 
-    def match(self, _: Filtrable) -> bool:
+    def match(self, _: Filterable) -> bool:
         return False
 
 
@@ -128,7 +128,7 @@ class IdentifierFilter(Filter):
     id: str
     """The identifier to match."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return bool(item.get_identifier() == self.id)
 
 
@@ -141,7 +141,7 @@ class TypeFilter(Filter):
     item_type: Any
     """The type to match."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return bool(item.get_type() == self.item_type)
 
 
@@ -157,7 +157,7 @@ class TagFilter(Filter):
     value: Any
     """The property to match."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return self.value in item.get_tags(self.name)
 
 
@@ -173,7 +173,7 @@ class PropertyFilter(Filter):
     value: Any
     """The property to match."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return bool(self.value in item.get_property(self.name))
 
 
@@ -183,7 +183,7 @@ class AndFilter(CompositeFilter):
     type: Literal[FilterType.AND] = FilterType.AND
     """An identifier for the filter type."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return all(filter.match(item) for filter in self.filters)
 
 
@@ -193,7 +193,7 @@ class OrFilter(CompositeFilter):
     type: Literal[FilterType.OR] = FilterType.OR
     """An identifier for the filter type."""
 
-    def match(self, item: Filtrable) -> bool:
+    def match(self, item: Filterable) -> bool:
         return any(filter.match(item) for filter in self.filters)
 
 

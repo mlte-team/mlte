@@ -13,7 +13,7 @@ from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
 from mlte.spec.model import SpecModel
-from mlte.store.query import Filtrable
+from mlte.store.query import Filterable
 from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import ValueModel
 
@@ -36,7 +36,7 @@ class ArtifactHeaderModel(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
 
-class ArtifactModel(Filtrable):
+class ArtifactModel(Filterable):
     """The base model for all MLTE artifacts."""
 
     header: ArtifactHeaderModel
