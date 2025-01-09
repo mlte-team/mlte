@@ -1,6 +1,27 @@
 # Automation of various common tasks
 
 # -----------------------------------------------------------------------------
+# Schema Generation / Vetting
+# -----------------------------------------------------------------------------
+
+.PHONY: schema
+schema:
+	poetry run python tools/schema.py generate mlte --verbose
+
+.PHONY: check-schema
+check-schema:
+	poetry run python tools/schema.py vet mlte --verbose
+
+# -----------------------------------------------------------------------------
+# Doc building/checking.
+# -----------------------------------------------------------------------------
+
+# Doc generation.
+.PHONY: docs
+docs:
+	cd docs && poetry run mkdocs build --strict
+
+# -----------------------------------------------------------------------------
 # QA
 # -----------------------------------------------------------------------------
 
@@ -48,36 +69,12 @@ lint:
 	poetry run flake8 test/
 	poetry run flake8 tools/
 
-.PHONY: check-lint
-check-lint: lint
-
 # Typecheck all source code
 .PHONY: typecheck
 typecheck:
 	poetry run mypy mlte/
 	poetry run mypy test/
 	poetry run mypy tools/
-
-.PHONY: check-typecheck
-check-typecheck: typecheck
-
-# Doc generation.
-.PHONY: docs
-docs:
-	cd docs && poetry run mkdocs build --strict
-
-# Clean cache files
-.PHONY: clean
-clean: 
-	rm -r -f .mypy_cache .pytest_cache
-
-# All quality assurance
-.PHONY: qa
-qa: isort format lint typecheck
-
-# Check all QA tasks
-.PHONY: check
-check: check-isort check-format check-lint check-typecheck
 
 # -----------------------------------------------------------------------------
 # Unit Tests
@@ -88,11 +85,6 @@ check: check-isort check-format check-lint check-typecheck
 test:
 	poetry run pytest --cov=mlte test 
 
-# Open coverage results in a browser
-.PHONY: cov-results
-cov-results:
-	coverage html && open htmlcov/index.html
-
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
@@ -100,20 +92,21 @@ demo-test:
 	bash demo/scenarios/test.sh
 
 # -----------------------------------------------------------------------------
-# Schema Generation / Vetting
+# Shorthand actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 
-.PHONY: gen
-gen:
-	poetry run python tools/schema.py generate mlte --verbose
+# All quality assurance, as well as schema generation
+.PHONY: qa
+qa: schema isort format lint typecheck docs
 
-.PHONY: vet
-vet:
-	poetry run python tools/schema.py vet mlte --verbose
+# Check all QA tasks
+.PHONY: check-qa
+check-qa: check-schema check-isort check-format lint typecheck docs
 
+# Clean cache files
+.PHONY: clean
+clean: 
+	rm -r -f .mypy_cache .pytest_cache
 
-# -----------------------------------------------------------------------------
-# All actions and checks needed to update and review for pushing.
-# -----------------------------------------------------------------------------
 .PHONY: ci
-ci: clean gen qa docs test
+ci: clean check-qa test

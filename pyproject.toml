@@ -9,7 +9,7 @@ description = "An infrastructure for machine learning test and evaluation."
 authors = ["MLTE Engineers"]
 readme = "README.md"
 packages = [
-  { include = "mlte" }
+  { include = "mlte", format = ["sdist", "wheel"] }
 ]
 
 include = [
