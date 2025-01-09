@@ -5,9 +5,9 @@ MLTE custom list store interface implementation
 """
 from __future__ import annotations
 
-from typing import List
+from typing import List, cast
 
-from mlte.store.base import ResourceMapper, StoreSession
+from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
 from mlte.custom_list.model import CustomList, CustomListEntry
 
 # -----------------------------------------------------------------------------
@@ -24,6 +24,12 @@ class CustomListStoreSession(StoreSession):
     custom_list_entry_mapper: CustomListEntryMapper
     """Mapper for the custom list entry resource."""
 
+
+class ManagedCustomListSession(ManagedSession):
+    """A simple context manager for store sessions."""
+
+    def __enter__(self) -> CustomListStoreSession:
+        return cast(CustomListStoreSession, self.session)
 
 class CustomListMapper(ResourceMapper):
     """An interface for mapping CRUD actions to custom lists."""
