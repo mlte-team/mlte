@@ -11,6 +11,7 @@ import os
 from typing import Optional
 import json
 
+from mlte.store import error
 import mlte.store.custom_list.qa_categories as qa_category_entries
 import mlte.store.custom_list.quality_attributes as quality_attribute_entries
 from mlte.store.base import StoreType, StoreURI
@@ -42,7 +43,6 @@ class InitialCustomLists:
         )
 
         with ManagedCustomListSession(custom_list_store.session()) as session:
-            qa_category_ids = session.custom_list_entry_mapper.list("qa_categories")
             # Input all initial QA Category entries
             num_categories = 0
             qa_categories = importlib.resources.files(qa_category_entries)
@@ -52,11 +52,14 @@ class InitialCustomLists:
                         if file.is_file() and file.name.endswith("json"):
                             with open(file.path) as open_file:
                                 entry = CustomListEntry(**json.load(open_file))
-                                session.custom_list_entry_mapper.create("qa_categories", entry)
+                                try:
+                                    session.custom_list_entry_mapper.create("qa_categories", entry)
+                                except error.ErrorAlreadyExists:
+                                    # If default values are already there we dont want to overwrite any changes
+                                    pass
                                 num_categories += 1
             print(f"Loaded {num_categories} QA Categories for initial list")
 
-            qa_ids = session.custom_list_entry_mapper.list("quality_attributes")
             # Input all initial Quality Attribute entries
             num_attributes = 0
             quality_attributes = importlib.resources.files(quality_attribute_entries)
@@ -66,7 +69,11 @@ class InitialCustomLists:
                         if file.is_file() and file.name.endswith("json"):
                             with open(file.path) as open_file:
                                 entry = CustomListEntry(**json.load(open_file))
-                                session.custom_list_entry_mapper.create("quality_attributes", entry)
+                                try: 
+                                    session.custom_list_entry_mapper.create("quality_attributes", entry)
+                                except error.ErrorAlreadyExists:
+                                    # If default values are already there we dont want to overwrite any changes
+                                    pass
                                 num_attributes += 1
             print(f"Loaded {num_attributes} Quality Attributes for initial list")
             
