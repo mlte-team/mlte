@@ -4,22 +4,12 @@
 
 FROM mlte-base
 
-# Install deps.
-WORKDIR /mnt/app
-COPY pyproject.toml /mnt/app
-COPY poetry.lock /mnt/app
-COPY README.md /mnt/app
-RUN poetry install --no-root
-
-# Copy and install mlte
-COPY mlte /mnt/app/mlte
-RUN poetry install
-
-# Create the default storage location
+# Create the default storage location.
 RUN mkdir /mnt/store
 
-# Run the mlte backend server
-ENTRYPOINT ["poetry", "run", "mlte", "backend"]
+# Install MLTE.
+WORKDIR /mnt/app/
+RUN poetry install
 
-# By default, run a local filesystem store
-#CMD ["--store-uri", "fs:///mnt/store"]
+# Set the MLTE backend server as the entry point.
+ENTRYPOINT ["poetry", "run", "mlte", "backend"]
