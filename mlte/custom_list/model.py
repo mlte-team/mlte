@@ -22,7 +22,7 @@ class CustomList(BaseModel):
 class CustomListEntry(BaseModel):
     """A model class representing a custom list entry."""
 
-    namme: str
+    name: str
     """A name to uniquely identify the entry."""
 
     description: str
