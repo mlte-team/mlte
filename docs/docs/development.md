@@ -311,6 +311,7 @@ Currently, `MLTE` supports the following Python versions:
 - `3.9`
 - `3.10`
 - `3.11`
+- `3.12`
 
 <a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to repeat this step to contribute to `MLTE`.
 
@@ -330,16 +331,7 @@ python --version
 Python 3.9.16
 ```
 
-With the proper version activated, use `poetry` as described in [QuickStart](#quickstart) to create a virtual environment and install dependencies.
-
-```bash
-# Check QA mechanisms
-make check
-# Run tests
-make test
-```
-
-Once all QA checks and unit tests pass, we can be assured that the environment dependencies are properly specified.
+With the proper version activated, use `poetry` as described in [Setup](#setup) to create a virtual environment and install dependencies.
 
 ## Contributing
 
