@@ -4,10 +4,31 @@ This document describes some of the development practices used within `MLTE`.
 
 ## Setup
 
+### Python Version Support
+
+Currently, `MLTE` supports Python versions between `3.9` and `3.11`, both included.
+
+If you don't have one of those versions installed, or you want to target a specific one that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
+
+- Install `pyenv` as described in this link: https://github.com/pyenv/pyenv
+- Install the desired Python version (in this example, 3.9):
+
+```bash
+$ pyenv install 3.9
+```
+
+- While inside the root repository folder, run this command to set that Python version to be used when executed in that folder:
+
+```bash
+$ pyenv local 3.9
+```
+
+- You can use `python --version` to check if it worked.
+
 ### Requirements
 
- - MLTE uses `poetry` to handle the required runtime and development packages. The first step is to install `poetry` on your system. See https://python-poetry.org/docs/#installation. 
- - You also need to set up a virtual Python environment where poetry will work on. While inside the root of the repository, execute this command:
+ - MLTE uses `poetry` to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
 
 ```bash
 $ python -m venv .venv
@@ -303,43 +324,6 @@ Stop the containers with:
 # From inside the docker/deployment folder
 bash stop.sh
 ```
-
-## Python Version Support
-
-Currently, `MLTE` supports the following Python versions:
-
-- `3.9`
-- `3.10`
-- `3.11`
-
-<a href="https://github.com/pyenv/pyenv" target="_blank">`pyenv`</a> can be used to manage multiple Python versions locally. The following procedure can be used to ensure you are running the Python version you need. This procedure only needs to be performed once, during initial version establishment, meaning you _probably_ don't need to repeat this step to contribute to `MLTE`.
-
-### Establishing Dependencies for a Particular Python Version
-
-Install the desired version with:
-
-```bash
-export VERSION=3.9
-
-# Install the desired version
-pyenv install $VERSION
-# Activate the desired version
-pyenv local $VERSION
-# Confirm the version
-python --version
-Python 3.9.16
-```
-
-With the proper version activated, use `poetry` as described in [QuickStart](#quickstart) to create a virtual environment and install dependencies.
-
-```bash
-# Check QA mechanisms
-make check
-# Run tests
-make test
-```
-
-Once all QA checks and unit tests pass, we can be assured that the environment dependencies are properly specified.
 
 ## Contributing
 
