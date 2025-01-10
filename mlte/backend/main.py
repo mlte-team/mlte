@@ -100,10 +100,11 @@ def run(
         state.add_catalog_store_from_uri(uri, id)
     
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
-    initial_custom_lists = InitialCustomLists.setup_initial_custom_lists(
+    # TODO: allow for separate config of uri here
+    custom_list_store = InitialCustomLists.setup_custom_list_store(
         stores_uri=artifact_store.uri
     )
-    state.set_custom_list_store(initial_custom_lists)
+    state.set_custom_list_store(custom_list_store)
 
     # Set the token signing key.
     state.set_token_key(jwt_secret)

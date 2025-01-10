@@ -9,6 +9,7 @@ from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
 # from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 # from mlte.store.custom_list.underlying.rdbs.store import RelationalDBCustomListStore
+# from mlte.store.custom_list.underlying.rdbs.store import HttpCustomListStore
 
 def create_custom_list_store(uri: str) -> CustomListStore:
     """

@@ -15,7 +15,7 @@ from .fixture import (
 )
 from test.store.custom_list.fixture import create_test_store, get_test_list, get_test_entry # noqa
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from mlte.custom_list.model import CustomList, CustomListEntry
+from mlte.custom_list.model import CustomListModel, CustomListEntryModel
 
 
 # -----------------------------------------------------------------------------
@@ -40,10 +40,10 @@ def test_custom_list(
     store: CustomListStore = create_test_store(store_fixture_name)
 
     test_list = get_test_list()
-    new_entries: List[CustomListEntry] = [
-        CustomListEntry(name="new entry1", description="new description1"),
-        CustomListEntry(name="new entry2", description="new description2"),
-        CustomListEntry(name="new entry3", description="new description3")
+    new_entries: List[CustomListEntryModel] = [
+        CustomListEntryModel(name="new entry1", description="new description1"),
+        CustomListEntryModel(name="new entry2", description="new description2"),
+        CustomListEntryModel(name="new entry3", description="new description3")
     ]
     
     with ManagedCustomListSession(store.session()) as custom_list_store:

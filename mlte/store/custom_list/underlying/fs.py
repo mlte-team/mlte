@@ -8,7 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
-from mlte.custom_list.model import CustomList, CustomListEntry
+from mlte.custom_list.model import CustomListModel, CustomListEntryModel
 from mlte.store.base import StoreURI
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import CustomListStoreSession, CustomListMapper, CustomListEntryMapper
@@ -82,32 +82,32 @@ class FileSystemCustomListMapper(CustomListMapper):
         )
         """Set the subfolder for this resource."""
 
-    def create(self, custom_list: CustomList) -> CustomList:
+    def create(self, custom_list: CustomListModel) -> CustomListModel:
         self.storage.ensure_resource_does_not_exist(custom_list.name)
         return self._write_list(custom_list)
     
-    def edit(self, custom_list: CustomList) -> CustomList:
+    def edit(self, custom_list: CustomListModel) -> CustomListModel:
         self.storage.ensure_resource_exists(custom_list.name)
         return self._write_list(custom_list)
     
-    def read(self, list_name: str) -> CustomList:
+    def read(self, list_name: str) -> CustomListModel:
         return self._read_list(list_name)
     
     def list(self) -> List[str]:
         return self.storage.list_resources()
     
-    def delete(self, list_name: str) -> CustomList:
+    def delete(self, list_name: str) -> CustomListModel:
         self.storage.ensure_resource_exists(list_name)
         custom_list = self._read_list(list_name)
         self.storage.delete_resource(list_name)
         return custom_list
     
-    def _read_list(self, name: str) -> CustomList:
+    def _read_list(self, name: str) -> CustomListModel:
         """Reads a custom list."""
         self.storage.ensure_resource_exists(name)
-        return CustomList(**self.storage.read_resource(name))
+        return CustomListModel(**self.storage.read_resource(name))
     
-    def _write_list(self, custom_list: CustomList) -> CustomList:
+    def _write_list(self, custom_list: CustomListModel) -> CustomListModel:
         """Writes a custom list to storage."""
         self.storage.write_resource(custom_list.name, custom_list.model_dump())
         return self._read_list(custom_list.name)
@@ -125,17 +125,17 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
     
-    def create(self, custom_list_name: str, custom_list_entry: CustomListEntry) -> CustomListEntry:
+    def create(self, custom_list_name: str, custom_list_entry: CustomListEntryModel) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_does_not_exist(custom_list_entry.name)
         return self._write_entry(custom_list_entry)
 
-    def edit(self, custom_list_name: str, custom_list_entry: CustomListEntry) -> CustomListEntry:
+    def edit(self, custom_list_name: str, custom_list_entry: CustomListEntryModel) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(custom_list_entry.name)
         return self._write_entry(custom_list_entry)
 
-    def read(self, custom_list_name: str, entry_name: str) -> CustomListEntry:
+    def read(self, custom_list_name: str, entry_name: str) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         return self._read_entry(entry_name)
     
@@ -143,28 +143,24 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self._set_base_path(custom_list_name)
         return self.storage.list_resources()
     
-    def delete(self, custom_list_name: str, entry_name: str) -> CustomListEntry:
+    def delete(self, custom_list_name: str, entry_name: str) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
         self.storage.delete_resource(entry_name)
         return entry
 
-    def _read_entry(self, entry_name: str) -> CustomListEntry:
+    def _read_entry(self, entry_name: str) -> CustomListEntryModel:
         """Reads a custom list entry."""
         self.storage.ensure_resource_exists(entry_name)
-        return CustomListEntry(**self.storage.read_resource(entry_name))
+        return CustomListEntryModel(**self.storage.read_resource(entry_name))
 
-    def _write_entry(self, entry: CustomListEntry) -> CustomListEntry:
+    def _write_entry(self, entry: CustomListEntryModel) -> CustomListEntryModel:
         """Writes a custom list entry to storage."""
         self.storage.write_resource(entry.name, entry.model_dump())
         return self._read_entry(entry.name)
 
     def _set_base_path(self, custom_list_name: str) -> None:
-        if custom_list_name in CustomListStore.CustomListNames._value2member_map_:
-            self.storage.set_base_path(
-                Path(self.storage.sub_folder, custom_list_name)
-            )
-        else:
-            print("Invalid custom list name")
-            # TODO : Handle this case
+        self.storage.set_base_path(
+            Path(self.storage.sub_folder, custom_list_name)
+        )
