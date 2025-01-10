@@ -18,6 +18,7 @@ _LOG_LEVELS = ["DEBUG", "WARNING", "INFO", "ERROR", "CRITICAL"]
 
 # Default address for Frontend.
 DEFAULT_FRONTEND_ADDRESS = "http://localhost:8000"
+DEFAULT_DEV_FRONTEND_ADDRESS = "http://localhost:3000"
 
 
 class Settings(BaseSettings):
@@ -68,7 +69,10 @@ class Settings(BaseSettings):
             raise ValueError(f"Unsupported log level: {v}.")
         return v
 
-    ALLOWED_ORIGINS: List[str] = [DEFAULT_FRONTEND_ADDRESS]
+    ALLOWED_ORIGINS: List[str] = [
+        DEFAULT_FRONTEND_ADDRESS,
+        DEFAULT_DEV_FRONTEND_ADDRESS,
+    ]
     """A list of allowed CORS origins."""
 
     JWT_SECRET_KEY: str = (

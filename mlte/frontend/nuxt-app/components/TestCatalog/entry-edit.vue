@@ -125,7 +125,7 @@
 
     <UsaTextInput v-model="modelValue.output">
       <template #label>
-        Ouptut
+        Output
         <InfoIcon>
           Output of the test example, e.g., value, log entry, database entry,
           alert.

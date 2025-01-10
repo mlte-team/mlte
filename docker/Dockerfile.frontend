@@ -2,39 +2,40 @@
 #
 # Image definition for MLTE frontend container.
 
-FROM mlte-base
+# First build the static website in a separate image.
+FROM mlte-python AS build
 
-# Set up node.
+# Set up Node.js
 RUN apt-get update && apt-get install -y npm
 
-# Set up dependencies.
+# Install Javascript dependencies.
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
 COPY mlte/frontend/nuxt-app/package.json /mnt/app/mlte/frontend/nuxt-app/package.json
-#RUN npm i --package-lock-only
-RUN npm install && npm cache clean --force
+COPY mlte/frontend/nuxt-app/package-lock.json /mnt/app/mlte/frontend/nuxt-app/package-lock.json
+RUN npm ci && npm cache clean --force
 
-# Setup USWDS design dependencies.
+# Build USWDS design dependencies.
 COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
 COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
 RUN npx gulp init
 
-# Install Python deps.
-WORKDIR /mnt/app
-COPY pyproject.toml /mnt/app
-COPY poetry.lock /mnt/app
-RUN poetry install --no-root
-
-# Create static server.
+# Build the static website, including .env file with specific configs for frontend.
 COPY mlte/frontend/nuxt-app /mnt/app/mlte/frontend/nuxt-app
 COPY docker/deployment/.env.frontend /mnt/app/mlte/frontend/nuxt-app/.env
 WORKDIR /mnt/app/mlte/frontend/nuxt-app
 RUN npm run build
 
-# Copy and install rest of MLTE.
-COPY mlte /mnt/app/mlte
+###############################################################################
+
+# Create the final frontend image, with the static website.
+FROM mlte-base
+
+# Copy the static web site back into the MLTE folder structure.
+COPY --from=build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte/frontend/nuxt-app/.output
+
+# Install MLTE.
 WORKDIR /mnt/app/
 RUN poetry install
 
-# Run the mlte frontend server
-WORKDIR /mnt/app
+# Set the MLTE frontend server as the entry point.
 ENTRYPOINT ["poetry", "run", "mlte", "ui"]

@@ -6,4 +6,4 @@ cd mlte/frontend/nuxt-app && npm run build
 cd ../../../
 poetry build
 
-twine check dist/*
+poetry run twine check dist/*

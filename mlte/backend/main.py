@@ -62,6 +62,7 @@ def run(
     # Resolve hosts and validate resolved origins.
     allowed_origins = util.resolve_hosts(allowed_origins)
     _ = _validate_origins(allowed_origins)
+    logging.info(f"Allowed origins: {allowed_origins}")
 
     # The global FastAPI application
     app = app_factory.create(allowed_origins)

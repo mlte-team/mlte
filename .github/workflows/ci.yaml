@@ -26,15 +26,15 @@ jobs:
       - name: Format with black
         run: make check-format
       - name: Lint with flake8
-        run: make check-lint
+        run: make lint
       - name: Typecheck with mypy
-        run: make check-typecheck
+        run: make typecheck
       - name: Check docs
         run: make docs 
       - name: Execute unit tests
         run: make test
       - name: Vet schemas
-        run: make vet
+        run: make check-schema
 
   docker:
     runs-on: ubuntu-latest
