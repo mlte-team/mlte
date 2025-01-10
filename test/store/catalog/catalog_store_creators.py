@@ -1,7 +1,7 @@
 """
 test/store/catalog/catalog_store_creators.py
 
-Fixtures for MLTE artifact store unit tests.
+Fixtures for MLTE catalog store unit tests.
 """
 
 from __future__ import annotations

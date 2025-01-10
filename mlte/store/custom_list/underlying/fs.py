@@ -146,7 +146,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def delete(self, custom_list_name: str, entry_name: str) -> CustomListEntry:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(entry_name)
-        entry = self._read_list(entry_name)
+        entry = self._read_entry(entry_name)
         self.storage.delete_resource(entry_name)
         return entry
 

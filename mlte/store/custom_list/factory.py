@@ -23,6 +23,8 @@ def create_custom_list_store(uri: str) -> CustomListStore:
         return RelationalDBCustomListStore(parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemCustomListStore(parsed_uri)
+    if parsed_uri.type == StoreType.REMOTE_HTTP:
+        return HttpCustomListStore(uri=parsed_uri)
     else:
         raise Exception(
             f"Store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
