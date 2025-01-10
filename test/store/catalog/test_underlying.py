@@ -41,7 +41,7 @@ def test_init_store(store_fixture_name: str, create_test_store) -> None:  # noqa
 def test_catalog_entry(
     store_fixture_name: str, create_test_store  # noqa
 ) -> None:
-    """An artifact store supports catalog entry operations."""
+    """A catalog store supports catalog entry operations."""
     store: CatalogStore = create_test_store(store_fixture_name)
 
     test_entry = get_test_entry_for_store(store_name=store_fixture_name)
