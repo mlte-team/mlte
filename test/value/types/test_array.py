@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from typing import Tuple
 
-import pytest
-
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.measurement import Measurement
@@ -83,30 +81,3 @@ def test_save_load(
 
     loaded = Array.load_with("id.value", context=ctx, store=store)
     assert loaded == o
-
-
-def test_get_as_real():
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
-    )
-
-    array = Array(m, [1.0, 2.2, 3.3])
-    int_val = array.get_as_integer(0)
-    real_val = array.get_as_real(1)
-
-    assert int_val.value == 1
-    assert str(int_val.identifier) == "id.value.0"
-
-    assert real_val.value == 2.2
-    assert str(real_val.identifier) == "id.value.1"
-
-
-def test_get_invalid_position():
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
-    )
-
-    array = Array(m, [1.1, 2.2, 3.3])
-
-    with pytest.raises(IndexError):
-        _ = array.get_as_real(5)

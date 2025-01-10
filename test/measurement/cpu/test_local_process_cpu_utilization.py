@@ -20,7 +20,7 @@ from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
-from mlte.validation.result import Failure, Success
+from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
@@ -82,7 +82,7 @@ def test_cpu_nix_validate_success() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], lambda _: Success())(stats)
+    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True, success="Yay", failure="oh"))(stats)  # type: ignore
     assert bool(vr)
 
     # Data is accessible from validation result
@@ -99,7 +99,7 @@ def test_cpu_nix_validate_failure() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], lambda _: Failure())(stats)
+    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False, success="Yay", failure="oh"))(stats)  # type: ignore
     assert not bool(vr)
 
     # Data is accessible from validation result
@@ -137,3 +137,37 @@ def test_result_save_load(
     assert r.avg == stats.avg
     assert r.min == stats.min
     assert r.max == stats.max
+
+
+def test_max_utilization_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = CPUStatistics.max_utilization_less_than(3)
+
+    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(CPUStatistics(m, avg=2, max=4, min=1))
+    assert not bool(res)
+
+    res = cond(CPUStatistics(m, avg=2, max=3, min=1))
+    assert not bool(res)
+
+
+def test_avg_utilization_less_than() -> None:
+    m = EvidenceMetadata(
+        measurement_type="typename", identifier=Identifier(name="id")
+    )
+
+    cond = CPUStatistics.average_utilization_less_than(3)
+
+    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    assert bool(res)
+
+    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
+    assert not bool(res)
+
+    res = cond(CPUStatistics(m, avg=4, max=2, min=1))
+    assert not bool(res)

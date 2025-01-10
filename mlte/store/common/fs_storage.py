@@ -5,12 +5,12 @@ Common functions for file-based stores.
 """
 from __future__ import annotations
 
-import json
 import shutil
 from pathlib import Path
 from typing import Any, Dict, List
 
 import mlte.store.error as errors
+from mlte._private.fixed_json import json
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.common.storage import Storage
 

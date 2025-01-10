@@ -7,11 +7,11 @@ MLTE sample catalog to come with installation.
 from __future__ import annotations
 
 import importlib.resources
-import json
 import os
 from typing import Optional
 
 import mlte.store.catalog.sample as sample_entries
+from mlte._private.fixed_json import json
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.factory import create_catalog_store

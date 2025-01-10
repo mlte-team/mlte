@@ -6,15 +6,13 @@ The interface for measurement validation.
 
 from __future__ import annotations
 
-import base64
 import inspect
 import typing
-from typing import Any, Callable, List, Type
+from typing import Any, Callable, List, Optional, Type
 
-import dill
-
-from mlte.spec.model import ConditionModel
+from mlte.validation.model_condition import ConditionModel
 from mlte.validation.result import Result
+from mlte.validation.validator import Validator
 from mlte.value.artifact import Value
 
 
@@ -28,16 +26,16 @@ class Condition:
         self,
         name: str,
         arguments: List[Any],
-        callback: Callable[[Value], Result],
-        value_class: str = "",
+        validator: Validator,
+        value_class: Optional[str] = None,
     ):
         """
         Initialize a Condition instance.
 
         :param name: The name of the name method, for documenting purposes.
         :param arguments: The list of arguments passed to the callable.
-        :param callback: The callable that implements validation.
-        :param value_class: The full module + class name of the Value that generated this condition.
+        :param validator: The Validator that implements validation.
+        :param value_class: The full module + class name of the Value that generated this condition, if any.
         """
 
         self.name: str = name
@@ -46,28 +44,32 @@ class Condition:
         self.arguments: List[Any] = arguments
         """The arguments used when validating the condition."""
 
-        self.callback: Callable[[Value], Result] = callback
-        """The callback that implements validation."""
+        self.validator: Validator = validator
+        """The validator that implements validation."""
 
-        self.value_class: str = (
-            value_class
-            if value_class != ""
-            else f"{Value.__module__}.{Value.__name__}"
-        )
-        """Value type class where this Condition came from."""
+        self.value_class: Optional[str] = value_class
+        """Value type class where this Condition came from, if any."""
 
     def __call__(self, value: Value) -> Result:
         """
-        Invoke the validation callback
+        Invoke the validation
 
         :param value: The value of measurement evaluation
 
         :return: The result of measurement validation
         """
-        return self.callback(value)._with_evidence_metadata(value.metadata)
+        return self.validator.validate(value)._with_evidence_metadata(
+            value.metadata
+        )
 
     @staticmethod
-    def build_condition(test: Callable[[Value], Result]) -> Condition:
+    def build_condition(
+        bool_exp: Optional[Callable[[Any], bool]] = None,
+        success: Optional[str] = None,
+        failure: Optional[str] = None,
+        info: Optional[str] = None,
+    ) -> Condition:
+        """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get info about the caller from inspection.
         curr_frame = inspect.currentframe()
         if curr_frame is None:
@@ -88,6 +90,11 @@ class Condition:
         cls: Type[Value] = arguments["cls"]
         cls_str = f"{cls.__module__}.{cls.__name__}"
 
+        # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
+        validator = Validator(
+            bool_exp=bool_exp, success=success, failure=failure, info=info
+        )
+
         # Validation args include all caller arguments except for the value class type.
         validation_args = []
         for arg_key, arg_value in arguments.items():
@@ -95,7 +102,7 @@ class Condition:
                 validation_args.append(arg_value)
 
         condition: Condition = Condition(
-            validation_name, validation_args, test, cls_str
+            validation_name, validation_args, validator, cls_str
         )
         return condition
 
@@ -108,14 +115,9 @@ class Condition:
         return ConditionModel(
             name=self.name,
             arguments=self.arguments,
-            callback=Condition.encode_callback(self.callback),
+            validator=self.validator.to_model(),
             value_class=self.value_class,
         )
-
-    @staticmethod
-    def encode_callback(callback: Callable[[Value], Result]) -> str:
-        """Encodes the callback as a base64 string."""
-        return base64.b64encode(dill.dumps(callback)).decode("utf-8")
 
     @classmethod
     def from_model(cls, model: ConditionModel) -> Condition:
@@ -129,7 +131,7 @@ class Condition:
         condition: Condition = Condition(
             model.name,
             model.arguments,
-            dill.loads(base64.b64decode(str(model.callback).encode("utf-8"))),
+            Validator.from_model(model.validator),
             model.value_class,
         )
         return condition
@@ -148,7 +150,3 @@ class Condition:
             return False
         reference: Condition = other
         return self.to_model() == reference.to_model()
-
-    def __neq__(self, other: Condition) -> bool:
-        """Compare Condition instances for inequality."""
-        return not self.__eq__(other)

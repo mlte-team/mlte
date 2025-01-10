@@ -156,7 +156,7 @@ class FileSystemUserMappper(UserMapper):
 
     def _write_user(self, user: User) -> User:
         """Writes a user to storage."""
-        self.storage.write_resource(user.username, user.model_dump())
+        self.storage.write_resource(user.username, user.to_json())
         return user
 
 
@@ -211,7 +211,7 @@ class FileSystemGroupMappper(GroupMapper):
 
     def _write_group(self, group: Group) -> Group:
         """Writes a Group to storage."""
-        self.storage.write_resource(group.name, group.model_dump())
+        self.storage.write_resource(group.name, group.to_json())
         return self._read_group(group.name)
 
 
@@ -266,7 +266,5 @@ class FileSystemPermissionMappper(PermissionMapper):
 
     def _write_permission(self, permission: Permission) -> Permission:
         """Writes a Permission to storage."""
-        self.storage.write_resource(
-            permission.to_str(), permission.model_dump()
-        )
+        self.storage.write_resource(permission.to_str(), permission.to_json())
         return self._read_permission(permission.to_str())

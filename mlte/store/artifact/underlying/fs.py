@@ -195,7 +195,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
             self._artifact_path(
                 model_id, version_id, artifact.header.identifier
             ),
-            artifact.model_dump(),
+            artifact.to_json(),
         )
         return artifact
 

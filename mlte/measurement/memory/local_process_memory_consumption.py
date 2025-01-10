@@ -15,7 +15,6 @@ import psutil
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
 from mlte.value.base import ValueBase
 
 # -----------------------------------------------------------------------------
@@ -101,17 +100,9 @@ class MemoryStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda stats: Success(
-                f"Maximum consumption {stats.max} "
-                f"below threshold {threshold}"
-            )
-            if stats.max < threshold
-            else Failure(
-                (
-                    f"Maximum consumption {stats.max} "
-                    f"exceeds threshold {threshold}"
-                )
-            ),
+            bool_exp=lambda stats: stats.max < threshold,
+            success=f"Maximum consumption below threshold {threshold}",
+            failure=f"Maximum consumption exceeds threshold {threshold}",
         )
         return condition
 
@@ -125,17 +116,9 @@ class MemoryStatistics(ValueBase):
         :return: The Condition that can be used to validate a Value.
         """
         condition: Condition = Condition.build_condition(
-            lambda stats: Success(
-                f"Average consumption {stats.avg} "
-                f"below threshold {threshold}"
-            )
-            if stats.avg <= threshold
-            else Failure(
-                (
-                    f"Average consumption {stats.avg} "
-                    f"exceeds threshold {threshold}"
-                )
-            ),
+            bool_exp=lambda stats: stats.avg < threshold,
+            success=f"Average consumption below threshold {threshold}",
+            failure=f"Average consumption exceeds threshold {threshold}",
         )
         return condition
 
