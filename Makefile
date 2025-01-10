@@ -77,6 +77,20 @@ typecheck:
 	poetry run mypy tools/
 
 # -----------------------------------------------------------------------------
+# Frontend QA
+# -----------------------------------------------------------------------------
+
+# Lint frontend source code
+.PHONY: lint-frontend
+lint-frontend:
+	cd mlte/frontend/nuxt-app && npm run lint
+
+# Typecheck frontend source code
+.PHONY: typecheck-frontend
+typecheck-frontend:
+	cd mlte/frontend/nuxt-app && npx vue-tsc
+
+# -----------------------------------------------------------------------------
 # Unit Tests
 # -----------------------------------------------------------------------------
 

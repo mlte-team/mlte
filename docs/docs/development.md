@@ -189,37 +189,40 @@ $ npx gulp compile
 $ npx gulp init
 ```
 
-If there are issues with `npm install`, try this instead:
-
-```bash
-$ npm install --ignore-scripts
-$ npm install
-$ npx gulp compile
-$ npx gulp init
-```
-
 Now the environment is set up and the front end can be run with the following command:
 
 ```bash
 $ npm run dev
 ```
 
-This will run the front end at `http://localhost:3000` so be sure to specify that as an allowed origin when running the backend. The backend can be run with a command like this one (using a file system store, in the local ./store folder):
+This will run the front end at `http://localhost:3000`. The backend can be run with a command like this one (using a file system store, in the local ./store folder):
 
 ```bash
-$ mlte backend --store-uri fs://store --allowed-origins http://localhost:3000
+$ mlte backend --store-uri fs://store
 ```
 
 ### Front End Formatting and Linting
 
-We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run locally from the root of the nuxt application.
+We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
+
+```bash
+$ make lint-frontend
+```
+
+Or manually from the root of the nuxt application:
 
 ```bash
 $ npm run lint
 ```
 
 ### Front End Static Type Checking
-All typescript code takes advantage of static typing. This type checking can be done by running the following command:
+All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
+
+```bash
+$ make typecheck-frontend
+```
+
+Or manually from the root of the nuxt application:
 
 ```bash
 $ npx vue-tsc
@@ -259,11 +262,7 @@ Bumping the version for a new release can be accomplished with:
 $ bumpversion patch
 ```
 
-where `patch` may be replaced with `minor` or `major` as appropriate for the release. You may need to use:
-
-```bash
-$ bumpversion --allow-dirty patch
-```
+where `patch` may be replaced with `minor` or `major` as appropriate for the release. Be sure to have no other pending changes or this may fail. Also, bupmversion will change all instances of the current version to the new one in the files it has been configured to do so, so if you have other text in these files which happens to match the current version, it will be incorrectly changed. Manually inspect changes after running this tool, and discard any incorrect ones.
 
 ### Publishing
 
