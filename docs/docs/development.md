@@ -6,7 +6,7 @@ This document describes some of the development practices used within `MLTE`.
 
 ### Python Version Support
 
-Currently, `MLTE` supports Python versions between `3.9` and `3.11`, both included.
+Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both included.
 
 If you don't have one of those versions installed, or you want to target a specific one that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
