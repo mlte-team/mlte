@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from mlte.custom_list.model import CustomList, CustomListEntry
+from mlte.custom_list.model import CustomListModel, CustomListEntryModel
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
@@ -61,13 +61,13 @@ def create_test_store(tmpdir_factory) -> typing.Callable[[str], CustomListStore]
 def get_test_list(
     name: str = DEFAULT_LIST_NAME,
     entries: List[str] = DEFAULT_LIST_ENTRIES,
-) -> CustomList:
+) -> CustomListModel:
     """Helper to get a list structure."""
-    return CustomList(name=name, entries=entries)
+    return CustomListModel(name=name, entries=entries)
 
 def get_test_entry(
     name: str = DEFAULT_LIST_ENTRY_NAME,
     description: str = DEFAULT_LIST_ENTRY_DESCRIPTION,
-) -> CustomListEntry:
+) -> CustomListEntryModel:
     """Helper to get a list entry structure."""
-    return CustomListEntry(name=name, description=description)
+    return CustomListEntryModel(name=name, description=description)

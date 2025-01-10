@@ -18,7 +18,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import CustomListStoreSession, ManagedCustomListSession
-from mlte.custom_list.model import CustomListEntry
+from mlte.custom_list.model import CustomListEntryModel
 
 class InitialCustomLists:
     """Initial lists populated with pre-defined quality attributes and QA categories."""
@@ -27,16 +27,16 @@ class InitialCustomLists:
     """Default root folder for all built-in stores."""
 
     @staticmethod
-    def setup_initial_custom_lists(
+    def setup_custom_list_store(
         stores_uri: Optional[StoreURI] = None,
     ) -> CustomListStore:
         """
-        Sets up the initial custom lists.
+        Sets up a custom list store with the initial custom lists.
 
         :param store_uri: The URI of the store being used (i.e., base folder, base DB, etc).
-        :return: The initial custom list store.
+        :return: A custom list store populated with the initial entries.
         """
-        # Create the actual initial custom lists.
+        # Create the initial custom lists.
         print(f"Creating initial custom lists at URI: {stores_uri}")
         custom_list_store = create_custom_list_store(
             stores_uri.uri
@@ -51,7 +51,7 @@ class InitialCustomLists:
                     for file in files:
                         if file.is_file() and file.name.endswith("json"):
                             with open(file.path) as open_file:
-                                entry = CustomListEntry(**json.load(open_file))
+                                entry = CustomListEntryModel(**json.load(open_file))
                                 try:
                                     session.custom_list_entry_mapper.create("qa_categories", entry)
                                 except error.ErrorAlreadyExists:
@@ -68,7 +68,7 @@ class InitialCustomLists:
                     for file in files:
                         if file.is_file() and file.name.endswith("json"):
                             with open(file.path) as open_file:
-                                entry = CustomListEntry(**json.load(open_file))
+                                entry = CustomListEntryModel(**json.load(open_file))
                                 try: 
                                     session.custom_list_entry_mapper.create("quality_attributes", entry)
                                 except error.ErrorAlreadyExists:
