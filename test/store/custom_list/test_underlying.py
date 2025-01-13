@@ -9,9 +9,12 @@ import pytest
 import mlte.store.error as errors
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from test.store.custom_list.fixture import get_test_entry, get_test_list, custom_list_stores, create_test_store  # noqa
-
-from .fixture import custom_list_stores
+from test.store.custom_list.fixture import (  # noqa
+    create_test_store,
+    custom_list_stores,
+    get_test_entry,
+    get_test_list,
+)
 
 # -----------------------------------------------------------------------------
 # Tests
