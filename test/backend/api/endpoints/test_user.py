@@ -12,7 +12,7 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.context.model import ModelCreate
+from mlte.context.model import Model
 from mlte.store.user.policy import Policy
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import MODEL_URI
@@ -340,11 +340,11 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Create test models.
     m1_id = "m1"
-    test_api.admin_create_entity(ModelCreate(identifier=m1_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m1_id), MODEL_URI)
     m2_id = "m2"
-    test_api.admin_create_entity(ModelCreate(identifier=m2_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m2_id), MODEL_URI)
     m3_id = "m3"
-    test_api.admin_create_entity(ModelCreate(identifier=m3_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
     user.groups.extend(
@@ -378,11 +378,11 @@ def test_list_user_groups_me(
 
     # Create test models.
     m1_id = "m1"
-    test_api.admin_create_entity(ModelCreate(identifier=m1_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m1_id), MODEL_URI)
     m2_id = "m2"
-    test_api.admin_create_entity(ModelCreate(identifier=m2_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m2_id), MODEL_URI)
     m3_id = "m3"
-    test_api.admin_create_entity(ModelCreate(identifier=m3_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
     api_user.groups.extend(

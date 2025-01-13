@@ -12,7 +12,7 @@ from typing import Dict, List
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.query import Query
@@ -72,7 +72,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_model(self, model: ModelCreate) -> Model:
+    def create_model(self, model: Model) -> Model:
         if model.identifier in self.storage.models:
             raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
         self.storage.models[model.identifier] = ModelWithVersions(
@@ -96,7 +96,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
         del self.storage.models[model_id]
         return popped
 
-    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+    def create_version(self, model_id: str, version: Version) -> Version:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
