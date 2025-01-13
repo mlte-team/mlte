@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import typing
 from typing import Generator, List
-from pathlib import Path
 
 import pytest
 
@@ -17,13 +16,9 @@ from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
 from test.store.custom_list.custom_list_store_creators import create_fs_store
+from mlte.custom_list.custom_list_names import CustomListName
 
-DEFAULT_LIST_NAME = "test_list"
-DEFAULT_LIST_ENTRIES = [
-    {"name": "entry1", "description": "description1"},
-    {"name": "entry2", "description": "description2"},
-    {"name": "entry3", "description": "description3"},
-]
+DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_LIST_ENTRY_NAME = "test entry"
 DEFAULT_LIST_ENTRY_DESCRIPTION = "test description"
 
@@ -60,7 +55,7 @@ def create_test_store(tmpdir_factory) -> typing.Callable[[str], CustomListStore]
 
 def get_test_list(
     name: str = DEFAULT_LIST_NAME,
-    entries: List[str] = DEFAULT_LIST_ENTRIES,
+    entries: List[str] = [],
 ) -> CustomListModel:
     """Helper to get a list structure."""
     return CustomListModel(name=name, entries=entries)

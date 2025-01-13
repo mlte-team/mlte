@@ -5,7 +5,6 @@ MLTE custom list store implementation
 """
 
 from __future__ import annotations
-from strenum import StrEnum
 
 from mlte.store.base import Store, StoreSession
 from mlte.store.base import StoreURI
@@ -20,11 +19,6 @@ class CustomListStore(Store):
     """
     An abstract custom list store
     """
-
-    class CustomListNames(StrEnum):
-        """Custom lists."""
-        QA_CATEGORIES = "qa_categories"
-        QUALITY_ATTRIBUTES = "quality_attributes"
 
     def __init__(self, uri: StoreURI):
         """Base constructor"""

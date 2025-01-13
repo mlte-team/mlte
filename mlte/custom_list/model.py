@@ -8,11 +8,12 @@ from __future__ import annotations
 from typing import List
 
 from mlte.model import BaseModel
+from mlte.custom_list.custom_list_names import CustomListName
 
 class CustomListModel(BaseModel):
     """A model class representing a custom list."""
 
-    name: str
+    name: CustomListName
     """An name to uniquely identify the list."""
 
     entries: List[CustomListEntryModel] = []
