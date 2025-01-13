@@ -18,7 +18,8 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import CustomListStoreSession, ManagedCustomListSession
-from mlte.custom_list.model import CustomListEntryModel
+from mlte.custom_list.model import CustomListEntryModel, CustomListModel
+from mlte.custom_list.custom_list_names import CustomListName
 
 class InitialCustomLists:
     """Initial lists populated with pre-defined quality attributes and QA categories."""
@@ -53,7 +54,7 @@ class InitialCustomLists:
                             with open(file.path) as open_file:
                                 entry = CustomListEntryModel(**json.load(open_file))
                                 try:
-                                    session.custom_list_entry_mapper.create("qa_categories", entry)
+                                    session.custom_list_entry_mapper.create(CustomListName.QA_CATEGORIES, entry)
                                 except error.ErrorAlreadyExists:
                                     # If default values are already there we dont want to overwrite any changes
                                     pass
@@ -70,7 +71,7 @@ class InitialCustomLists:
                             with open(file.path) as open_file:
                                 entry = CustomListEntryModel(**json.load(open_file))
                                 try: 
-                                    session.custom_list_entry_mapper.create("quality_attributes", entry)
+                                    session.custom_list_entry_mapper.create(CustomListName.QUALITY_ATTRIBUTES, entry)
                                 except error.ErrorAlreadyExists:
                                     # If default values are already there we dont want to overwrite any changes
                                     pass
