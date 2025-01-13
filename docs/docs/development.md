@@ -27,7 +27,7 @@ $ pyenv local 3.9
 
 ### Requirements
 
- - MLTE uses `poetry` to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - MLTE uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
  - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
 
 ```bash
