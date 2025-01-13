@@ -1,8 +1,6 @@
 from mlte.qa_category.base import QACategory
-from mlte.qa_category.base import QACategory
 
 
-class Monitorability(QACategory):
 class Monitorability(QACategory):
     """
     The Monitorability QA category reflects  monitoring requirements.
