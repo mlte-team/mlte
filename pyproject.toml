@@ -9,6 +9,7 @@ description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
+dynamic = ["dependencies"]
 
 [project.urls]
 repository = "https://github.com/mlte-team/mlte"
@@ -18,8 +19,9 @@ documentation = "https://mlte.readthedocs.io/"
 mlte = "mlte.cli:run"
 
 [tool.poetry]
+requires-poetry = ">=2.0.1"
 packages = [
-  { include = "mlte", format = ["sdist", "wheel"] }
+  { include = "mlte"}
 ]
 include = [
   "mlte/frontend/nuxt-app/.output/public/**/*"
@@ -101,7 +103,7 @@ nbmake = "^1.5.4"
 
 [tool.poetry.group.build.dependencies]
 bump2version = "^1.0.1"
-twine = "^5.1.1"
+twine = "^6.0.1"
 
 [tool.isort]
 profile="black"
