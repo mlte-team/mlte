@@ -1762,6 +1762,17 @@ files = [
 ]
 
 [[package]]
+name = "json-fix"
+version = "1.0.0"
+description = "allow custom class json behavior on builtin json object"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "json_fix-1.0.0-py3-none-any.whl", hash = "sha256:1b7d622572f3c7dd653ce9e5a87a4c645a437be7ee622bc916bccb145789055b"},
+    {file = "json_fix-1.0.0.tar.gz", hash = "sha256:625b3fc2f7c7c8855eb3e6669c366163cc9b95dbf8e8568fa07f42a65b8d4672"},
+]
+
+[[package]]
 name = "jsonpointer"
 version = "3.0.0"
 description = "Identify specific nodes in a JSON document (RFC 6901)"
@@ -5447,4 +5458,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.1,<3.12"
-content-hash = "ca0b715f539f5e3d8e51f6a4f9b4405f5112f7f0fa1c70cf7af19afebac565ca"
+content-hash = "fa18fe26d315d70516b9fc3729998e8fb470f4567036baaadb688046c8e505ea"

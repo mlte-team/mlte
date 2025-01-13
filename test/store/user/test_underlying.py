@@ -140,7 +140,7 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
         # Test editing user info w/out changing password.
         hashed_password = read_user.hashed_password
         test_user.password = "password that should be ignored"
-        test_user2 = BasicUser(**test_user.model_dump())
+        test_user2 = BasicUser(**test_user.to_json())
         test_user2.full_name = name2
         _ = user_store.user_mapper.edit(test_user2)
         read_user = user_store.user_mapper.read(test_user2.username)

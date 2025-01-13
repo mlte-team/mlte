@@ -128,5 +128,5 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
 
     def _write_entry(self, entry: CatalogEntry) -> CatalogEntry:
         """Writes a entry to storage."""
-        self.storage.write_resource(entry.header.identifier, entry.model_dump())
+        self.storage.write_resource(entry.header.identifier, entry.to_json())
         return self._read_entry(entry.header.identifier)

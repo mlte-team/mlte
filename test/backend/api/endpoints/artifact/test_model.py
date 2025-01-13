@@ -70,7 +70,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
     model = ModelCreate(identifier="model")
 
-    res = test_client.post(MODEL_URI, json=model.model_dump())
+    res = test_client.post(MODEL_URI, json=model.to_json())
     assert res.status_code == codes.OK
     _ = Model(**res.json())
 
@@ -94,7 +94,7 @@ def test_create_no_permission(
 
     model = ModelCreate(identifier="model")
 
-    res = test_client.post(MODEL_URI, json=model.model_dump())
+    res = test_client.post(MODEL_URI, json=model.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -115,7 +115,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{MODEL_URI}/{model.identifier}")
     assert res.status_code == codes.OK
     read = Model(**res.json())
-    assert read == Model(**model.model_dump(), versions=[])
+    assert read == Model(**model.to_json(), versions=[])
 
 
 @pytest.mark.parametrize(

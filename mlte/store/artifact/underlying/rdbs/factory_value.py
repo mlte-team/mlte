@@ -5,8 +5,7 @@ Conversions between schema and internal models.
 """
 from __future__ import annotations
 
-import json
-
+from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import DBEvidenceMetadata

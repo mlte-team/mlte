@@ -4,7 +4,8 @@ mlte/backend/api/models/catalog_model.py
 Catalog data.
 """
 
-from pydantic import BaseModel
+
+from mlte.model.base_model import BaseModel
 
 
 class CatalogReply(BaseModel):
