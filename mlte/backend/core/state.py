@@ -10,8 +10,8 @@ from typing import Optional
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.store import CatalogStore
-from mlte.store.user.store import UserStore
 from mlte.store.custom_list.store import CustomListStore
+from mlte.store.user.store import UserStore
 
 
 class State:

@@ -7,8 +7,9 @@ from __future__ import annotations
 
 from typing import List
 
-from mlte.model import BaseModel
 from mlte.custom_list.custom_list_names import CustomListName
+from mlte.model import BaseModel
+
 
 class CustomListModel(BaseModel):
     """A model class representing a custom list."""

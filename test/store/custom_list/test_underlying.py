@@ -6,17 +6,12 @@ Unit tests for the underlying custom list store implementations.
 
 import pytest
 
-from typing import List
-
 import mlte.store.error as errors
 from mlte.store.custom_list.store import CustomListStore
-from .fixture import (
-    custom_list_stores
-)
-from test.store.custom_list.fixture import create_test_store, get_test_list, get_test_entry # noqa
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from mlte.custom_list.model import CustomListModel, CustomListEntryModel
+from test.store.custom_list.fixture import get_test_entry, get_test_list, custom_list_stores, create_test_store  # noqa
 
+from .fixture import custom_list_stores
 
 # -----------------------------------------------------------------------------
 # Tests
@@ -38,34 +33,46 @@ def test_custom_list_entry(
 ) -> None:
     """An custom list store supports custom list entry operations."""
     store: CustomListStore = create_test_store(store_fixture_name)
-    
+
     test_list = get_test_list()
     test_entry = get_test_entry()
     new_description = "new_description"
-    
+
     with ManagedCustomListSession(store.session()) as custom_list_store:
-        original_entries = custom_list_store.custom_list_entry_mapper.list(test_list.name)
+        original_entries = custom_list_store.custom_list_entry_mapper.list(
+            test_list.name
+        )
 
         # Test creating an entry.
-        custom_list_store.custom_list_entry_mapper.create(test_list.name, test_entry)
+        custom_list_store.custom_list_entry_mapper.create(
+            test_list.name, test_entry
+        )
         read_entry = custom_list_store.custom_list_entry_mapper.read(
             test_list.name, test_entry.name
         )
         assert test_entry == read_entry
 
         # Test listing entries.
-        entries = custom_list_store.custom_list_entry_mapper.list(test_list.name)
+        entries = custom_list_store.custom_list_entry_mapper.list(
+            test_list.name
+        )
         assert len(entries) == 1 + len(original_entries)
 
         # Test editing entry.
         test_entry.description = new_description
-        _ = custom_list_store.custom_list_entry_mapper.edit(test_list.name, test_entry)
+        _ = custom_list_store.custom_list_entry_mapper.edit(
+            test_list.name, test_entry
+        )
         read_entry = custom_list_store.custom_list_entry_mapper.read(
             test_list.name, test_entry.name
         )
         assert read_entry.description == new_description
 
         # Test deleting a list.
-        custom_list_store.custom_list_entry_mapper.delete(test_list.name, test_entry.name)
+        custom_list_store.custom_list_entry_mapper.delete(
+            test_list.name, test_entry.name
+        )
         with pytest.raises(errors.ErrorNotFound):
-            custom_list_store.custom_list_entry_mapper.read(test_list.name, test_entry.name)
+            custom_list_store.custom_list_entry_mapper.read(
+                test_list.name, test_entry.name
+            )

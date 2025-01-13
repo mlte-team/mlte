@@ -8,12 +8,15 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
-from mlte.custom_list.model import CustomListModel, CustomListEntryModel
-from mlte.store.base import StoreURI
-from mlte.store.custom_list.store import CustomListStore
-from mlte.store.custom_list.store_session import CustomListStoreSession, CustomListMapper, CustomListEntryMapper
-from mlte.store.common.fs_storage import FileSystemStorage
 from mlte.custom_list.custom_list_names import CustomListName
+from mlte.custom_list.model import CustomListEntryModel
+from mlte.store.base import StoreURI
+from mlte.store.common.fs_storage import FileSystemStorage
+from mlte.store.custom_list.store import CustomListStore
+from mlte.store.custom_list.store_session import (
+    CustomListEntryMapper,
+    CustomListStoreSession,
+)
 
 # -----------------------------------------------------------------------------
 # FileSystemCustomListStore
@@ -41,7 +44,7 @@ class FileSystemCustomListStore(CustomListStore):
         :return: The session handle
         """
         return FileSystemCustomListStoreSession(storage=self.storage)
-    
+
 
 # -----------------------------------------------------------------------------
 # FileSystemCustomListStoreSession
@@ -72,33 +75,45 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def __init__(self, storage: FileSystemStorage) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
-    
-    def create(self, custom_list_name: CustomListName, custom_list_entry: CustomListEntryModel) -> CustomListEntryModel:
+
+    def create(
+        self,
+        custom_list_name: CustomListName,
+        custom_list_entry: CustomListEntryModel,
+    ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_does_not_exist(custom_list_entry.name)
         return self._write_entry(custom_list_entry)
 
-    def edit(self, custom_list_name: CustomListName, custom_list_entry: CustomListEntryModel) -> CustomListEntryModel:
+    def edit(
+        self,
+        custom_list_name: CustomListName,
+        custom_list_entry: CustomListEntryModel,
+    ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(custom_list_entry.name)
         return self._write_entry(custom_list_entry)
 
-    def read(self, custom_list_name: CustomListName, entry_name: str) -> CustomListEntryModel:
+    def read(
+        self, custom_list_name: CustomListName, entry_name: str
+    ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         return self._read_entry(entry_name)
-    
+
     def list(self, custom_list_name: CustomListName) -> List[str]:
         self._set_base_path(custom_list_name)
         return self.storage.list_resources()
-    
-    def delete(self, custom_list_name: CustomListName, entry_name: str) -> CustomListEntryModel:
+
+    def delete(
+        self, custom_list_name: CustomListName, entry_name: str
+    ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
         self.storage.delete_resource(entry_name)
         return entry
 
-    def _read_entry(self, entry_name: CustomListName) -> CustomListEntryModel:
+    def _read_entry(self, entry_name: str) -> CustomListEntryModel:
         """Reads a custom list entry."""
         self.storage.ensure_resource_exists(entry_name)
         return CustomListEntryModel(**self.storage.read_resource(entry_name))

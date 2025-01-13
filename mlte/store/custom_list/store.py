@@ -6,8 +6,7 @@ MLTE custom list store implementation
 
 from __future__ import annotations
 
-from mlte.store.base import Store, StoreSession
-from mlte.store.base import StoreURI
+from mlte.store.base import Store, StoreURI
 from mlte.store.custom_list.store_session import CustomListStoreSession
 
 # -----------------------------------------------------------------------------

@@ -18,9 +18,8 @@ from mlte.backend.core.state import state
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.sample_catalog import SampleCatalog
-from mlte.store.user import factory as user_store_factory
-from mlte.store.custom_list import factory as custom_list_store_factory
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
+from mlte.store.user import factory as user_store_factory
 
 # Application exit codes
 EXIT_SUCCESS = 0
@@ -98,7 +97,7 @@ def run(
             f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
         )
         state.add_catalog_store_from_uri(uri, id)
-    
+
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
     custom_list_store = InitialCustomLists.setup_custom_list_store(
