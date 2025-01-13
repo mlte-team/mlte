@@ -6,7 +6,7 @@
 
 ![Version Badge](https://img.shields.io/badge/release-v1.0.2-e19b38)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Tests](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/turingcompl33t/mlte/actions/workflows/ci.yaml)
+[![Tests](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml)
 [![Documentation Status](https://readthedocs.org/projects/mlte/badge/?version=latest)](https://mlte.readthedocs.io/en/latest/?badge=latest)
 
 ### Getting Started
