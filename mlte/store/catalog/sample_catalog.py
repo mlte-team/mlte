@@ -6,12 +6,11 @@ MLTE sample catalog to come with installation.
 
 from __future__ import annotations
 
-import importlib.resources
-import json
 import os
 from typing import Optional
 
 import mlte.store.catalog.sample as sample_entries
+from mlte._private.reflection import get_json_resources
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.factory import create_catalog_store
@@ -20,7 +19,6 @@ from mlte.store.catalog.store import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )
-from mlte._private.reflection import get_json_resources
 
 
 class SampleCatalog:
@@ -86,9 +84,7 @@ class SampleCatalog:
         num_entries = 0
         for json_data in get_json_resources(sample_entries):
             entry = CatalogEntry(**json_data)
-            entry.header.catalog_id = (
-                SampleCatalog.SAMPLE_CATALOG_ID
-            )
+            entry.header.catalog_id = SampleCatalog.SAMPLE_CATALOG_ID
             catalog_session.entry_mapper.create(entry)
             num_entries += 1
         print(f"Loaded {num_entries} entries for sample catalog.")
