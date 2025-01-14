@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -101,21 +101,21 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         )
         """Set the subfodler for this resrouce."""
 
-    def create(self, entry: CatalogEntry) -> CatalogEntry:
+    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         self.storage.ensure_resource_does_not_exist(entry.header.identifier)
         return self._write_entry(entry)
 
-    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         self.storage.ensure_resource_exists(entry.header.identifier)
         return self._write_entry(entry)
 
-    def read(self, entry_id: str) -> CatalogEntry:
+    def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         return self._read_entry(entry_id)
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return self.storage.list_resources()
 
-    def delete(self, entry_id: str) -> CatalogEntry:
+    def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:
         self.storage.ensure_resource_exists(entry_id)
         entry = self._read_entry(entry_id)
         self.storage.delete_resource(entry_id)

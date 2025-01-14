@@ -46,7 +46,7 @@ def create_catalog_entry(
                 )
 
             return catalog_session.entry_mapper.create_with_header(
-                entry, current_user.username
+                entry, user=current_user.username
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(
