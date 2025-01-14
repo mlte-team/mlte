@@ -72,7 +72,7 @@ $ source .venv/bin/activate
 
 ### Import Sorting
 
-We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
+We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. You can run this locally with:
 
 ```bash
 $ make isort
@@ -88,7 +88,7 @@ Code that does not satisfy the sorter will be rejected from pull requests.
 
 ### Source Formatting
 
-We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
+We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. You can run the formatter locally with:
 
 ```bash
 $ make format
@@ -104,7 +104,7 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 
 ### Source Linting
 
-We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
+We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. You can run the linter locally with:
 
 ```bash
 $ make lint
@@ -114,7 +114,7 @@ Code that does not satisfy the linter will be rejected from pull requests.
 
 ### Static Type Checking
 
-We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
+We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. You can run the type-checker locally with:
 
 ```bash
 $ make typecheck
@@ -132,7 +132,7 @@ $ make docs
 
 ### Unit Tests
 
-We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
+We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. You can run unit tests locally with:
 
 ```bash
 $ make test
@@ -154,7 +154,7 @@ $ make demo-test
 
 ### Model Schema Generation
 
-The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
+The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. You can do this locally with:
 
 ```bash
 $ make schema
