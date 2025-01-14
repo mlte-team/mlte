@@ -48,10 +48,10 @@ def test_custom_list_entry(
 
         # Test creating an entry.
         custom_list_store.custom_list_entry_mapper.create(
-            test_list.name, test_entry
+            test_entry, test_list.name
         )
         read_entry = custom_list_store.custom_list_entry_mapper.read(
-            test_list.name, test_entry.name
+            test_entry.name, test_list.name
         )
         assert test_entry == read_entry
 
@@ -64,18 +64,18 @@ def test_custom_list_entry(
         # Test editing entry.
         test_entry.description = new_description
         _ = custom_list_store.custom_list_entry_mapper.edit(
-            test_list.name, test_entry
+            test_entry, test_list.name
         )
         read_entry = custom_list_store.custom_list_entry_mapper.read(
-            test_list.name, test_entry.name
+            test_entry.name, test_list.name
         )
         assert read_entry.description == new_description
 
         # Test deleting a list.
         custom_list_store.custom_list_entry_mapper.delete(
-            test_list.name, test_entry.name
+            test_entry.name, test_list.name
         )
         with pytest.raises(errors.ErrorNotFound):
             custom_list_store.custom_list_entry_mapper.read(
-                test_list.name, test_entry.name
+                test_entry.name, test_list.name
             )

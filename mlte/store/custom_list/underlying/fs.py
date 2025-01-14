@@ -78,8 +78,8 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def create(
         self,
-        custom_list_name: CustomListName,
         custom_list_entry: CustomListEntryModel,
+        custom_list_name: CustomListName,
     ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_does_not_exist(custom_list_entry.name)
@@ -87,15 +87,15 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def edit(
         self,
-        custom_list_name: CustomListName,
         custom_list_entry: CustomListEntryModel,
+        custom_list_name: CustomListName,
     ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(custom_list_entry.name)
         return self._write_entry(custom_list_entry)
 
     def read(
-        self, custom_list_name: CustomListName, entry_name: str
+        self, entry_name: str, custom_list_name: CustomListName
     ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         return self._read_entry(entry_name)
@@ -105,7 +105,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         return self.storage.list_resources()
 
     def delete(
-        self, custom_list_name: CustomListName, entry_name: str
+        self, entry_name: str, custom_list_name: CustomListName
     ) -> CustomListEntryModel:
         self._set_base_path(custom_list_name)
         self.storage.ensure_resource_exists(entry_name)
@@ -124,6 +124,12 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         return self._read_entry(entry.name)
 
     def _set_base_path(self, custom_list_name: CustomListName) -> None:
+        """
+        Sets the path to the list specified in the param.
+        
+        This method sets the base path of the mapper to the path of the list given as a param. 
+        This has to happen before each request to ensure that the operation happens on the correct list.
+        """
         self.storage.set_base_path(
             Path(self.storage.sub_folder, custom_list_name)
         )

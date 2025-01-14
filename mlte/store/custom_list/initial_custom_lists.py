@@ -57,7 +57,7 @@ class InitialCustomLists:
                                 )
                                 try:
                                     session.custom_list_entry_mapper.create(
-                                        CustomListName.QA_CATEGORIES, entry
+                                        entry, CustomListName.QA_CATEGORIES
                                     )
                                 except error.ErrorAlreadyExists:
                                     # If default values are already there we dont want to overwrite any changes
@@ -82,7 +82,7 @@ class InitialCustomLists:
                                 )
                                 try:
                                     session.custom_list_entry_mapper.create(
-                                        CustomListName.QUALITY_ATTRIBUTES, entry
+                                        entry, CustomListName.QUALITY_ATTRIBUTES
                                     )
                                 except error.ErrorAlreadyExists:
                                     # If default values are already there we dont want to overwrite any changes
