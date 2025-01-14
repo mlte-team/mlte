@@ -115,7 +115,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{MODEL_URI}/{model.identifier}")
     assert res.status_code == codes.OK
     read = Model(**res.json())
-    assert read == Model(**model.to_json(), versions=[])
+    assert read == Model(**model.to_json())
 
 
 @pytest.mark.parametrize(
