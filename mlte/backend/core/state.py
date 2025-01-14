@@ -10,6 +10,7 @@ from typing import Optional
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.store import CatalogStore
+from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user.store import UserStore
 
 
@@ -30,6 +31,9 @@ class State:
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
         """The list of catalog store instances maintained by the state object."""
 
+        self._custom_list_store: Optional[CustomListStore] = None
+        """The custom list store instance maintained by the state object."""
+
         self._jwt_secret_key: str = ""
         """Secret key used to sign authentication tokens."""
 
@@ -38,7 +42,7 @@ class State:
         self._artifact_store = store
 
     def set_user_store(self, store: UserStore):
-        """Set the globally-configured backend artifact store."""
+        """Set the globally-configured backend user store."""
         self._user_store = store
 
     def add_catalog_store(
@@ -52,6 +56,10 @@ class State:
     ):
         """Adds to the the globally-configured backend list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
+
+    def set_custom_list_store(self, store: CustomListStore):
+        """Set the globally-configured backend custom list store."""
+        self._custom_list_store = store
 
     def set_token_key(self, token_key: str):
         """Sets the globally used token secret key."""

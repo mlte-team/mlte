@@ -1,5 +1,11 @@
+from __future__ import annotations
+
 import importlib
-from typing import Any, Type
+import importlib.resources
+import json
+import os
+from types import ModuleType
+from typing import Any, Generator, Type
 
 
 def load_class(class_path: str) -> Type[Any]:
@@ -24,3 +30,14 @@ def load_class(class_path: str) -> Type[Any]:
         )
 
     return class_type
+
+
+def get_json_resources(package: ModuleType) -> Generator[Any, None, None]:
+    """Load set of json files represented as a module and return a generator of their data."""
+    resources = importlib.resources.files(package)
+    with importlib.resources.as_file(resources) as resources_path:
+        with os.scandir(resources_path) as files:
+            for file in files:
+                if file.is_file() and file.name.endswith("json"):
+                    with open(file.path) as open_file:
+                        yield json.load(open_file)

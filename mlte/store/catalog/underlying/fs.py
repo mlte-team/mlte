@@ -19,7 +19,7 @@ from mlte.store.catalog.store import (
 from mlte.store.common.fs_storage import FileSystemStorage
 
 # -----------------------------------------------------------------------------
-# LocalFileSystemStore
+# FileSystemCatalogStore
 # -----------------------------------------------------------------------------
 
 
@@ -27,7 +27,7 @@ class FileSystemCatalogStore(CatalogStore):
     """A local file system implementation of the MLTE catalog store."""
 
     BASE_CATALOGS_FOLDER = "catalogs"
-    """Base fodler to store catalog entries in."""
+    """Base folder to store catalog entries in."""
 
     DEFAULT_CATALOG_FOLDER = "catalog"
     """A default name for a catalog folder."""
@@ -56,7 +56,7 @@ class FileSystemCatalogStore(CatalogStore):
 
 
 # -----------------------------------------------------------------------------
-# LocalFileSystemStoreSession
+# FileSystemCatalogStoreSession
 # -----------------------------------------------------------------------------
 
 
@@ -99,7 +99,7 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         self.storage.set_base_path(
             Path(self.storage.sub_folder, self.ENTRIES_FOLDER)
         )
-        """Set the subfodler for this resrouce."""
+        """Set the subfolder for this resource."""
 
     def create(self, entry: CatalogEntry) -> CatalogEntry:
         self.storage.ensure_resource_does_not_exist(entry.header.identifier)
@@ -127,6 +127,6 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         return CatalogEntry(**self.storage.read_resource(entry_id))
 
     def _write_entry(self, entry: CatalogEntry) -> CatalogEntry:
-        """Writes a entry to storage."""
+        """Writes an entry to storage."""
         self.storage.write_resource(entry.header.identifier, entry.model_dump())
         return self._read_entry(entry.header.identifier)

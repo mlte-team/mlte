@@ -174,7 +174,10 @@ class ResourceMapper:
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
 
-    def create(self, new_resource: Any) -> Any:
+    def create(
+        self,
+        new_resource: Any,
+    ) -> Any:
         """
         Create a new resource.
         :param new_resource: The data to create the resource
