@@ -126,8 +126,8 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def _set_base_path(self, custom_list_name: CustomListName) -> None:
         """
         Sets the path to the list specified in the param.
-        
-        This method sets the base path of the mapper to the path of the list given as a param. 
+
+        This method sets the base path of the mapper to the path of the list given as a param.
         This has to happen before each request to ensure that the operation happens on the correct list.
         """
         self.storage.set_base_path(

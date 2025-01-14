@@ -20,6 +20,7 @@ from mlte.store.catalog.store import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )
+from mlte._private.reflection import get_json_resources
 
 
 class SampleCatalog:
@@ -83,17 +84,11 @@ class SampleCatalog:
     def _populate_catalog(catalog_session: CatalogStoreSession) -> None:
         """Load all entry files from entry folder and put them into sample catalog."""
         num_entries = 0
-        resources = importlib.resources.files(sample_entries)
-        with importlib.resources.as_file(resources) as resources_path:
-            with os.scandir(resources_path) as files:
-                print("Loading sample catalog entries.")
-                for file in files:
-                    if file.is_file() and file.name.endswith("json"):
-                        with open(file.path) as open_file:
-                            entry = CatalogEntry(**json.load(open_file))
-                            entry.header.catalog_id = (
-                                SampleCatalog.SAMPLE_CATALOG_ID
-                            )
-                            catalog_session.entry_mapper.create(entry)
-                            num_entries += 1
-                print(f"Loaded {num_entries} entries for sample catalog.")
+        for json_data in get_json_resources(sample_entries):
+            entry = CatalogEntry(**json_data)
+            entry.header.catalog_id = (
+                SampleCatalog.SAMPLE_CATALOG_ID
+            )
+            catalog_session.entry_mapper.create(entry)
+            num_entries += 1
+        print(f"Loaded {num_entries} entries for sample catalog.")
