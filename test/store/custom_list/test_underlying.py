@@ -61,7 +61,7 @@ def test_custom_list_entry(
         )
         assert len(entries) == 1 + len(original_entries)
 
-        # Test editing entry.
+        # Test editing an entry.
         test_entry.description = new_description
         _ = custom_list_store.custom_list_entry_mapper.edit(
             test_entry, test_list.name
@@ -71,7 +71,7 @@ def test_custom_list_entry(
         )
         assert read_entry.description == new_description
 
-        # Test deleting a list.
+        # Test deleting an entry.
         custom_list_store.custom_list_entry_mapper.delete(
             test_entry.name, test_list.name
         )
