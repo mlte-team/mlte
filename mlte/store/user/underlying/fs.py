@@ -6,7 +6,7 @@ Implementation of local file system artifact store.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List, Union
+from typing import Any, List, Union
 
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
@@ -103,7 +103,7 @@ class FileSystemUserMappper(UserMapper):
         )
         """Set the subfodler for this resrouce."""
 
-    def create(self, user: UserWithPassword) -> User:
+    def create(self, user: UserWithPassword, context: Any = None) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
 
         new_user = user.to_hashed_user()
@@ -113,7 +113,9 @@ class FileSystemUserMappper(UserMapper):
 
         return self._write_user(new_user)
 
-    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
+    def edit(
+        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+    ) -> User:
         # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
         self.storage.ensure_resource_exists(user.username)
 
@@ -125,7 +127,7 @@ class FileSystemUserMappper(UserMapper):
 
         return self._write_user(updated_user)
 
-    def read(self, username: str) -> User:
+    def read(self, username: str, context: Any = None) -> User:
         user = self._read_user(username)
 
         # Now get updated info for each group.
@@ -136,10 +138,10 @@ class FileSystemUserMappper(UserMapper):
 
         return user
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return self.storage.list_resources()
 
-    def delete(self, username: str) -> User:
+    def delete(self, username: str, context: Any = None) -> User:
         self.storage.ensure_resource_exists(username)
         user = self._read_user(username)
         self.storage.delete_resource(username)
@@ -180,21 +182,21 @@ class FileSystemGroupMappper(GroupMapper):
         )
         """Set the subfodler for this resrouce."""
 
-    def create(self, group: Group) -> Group:
+    def create(self, group: Group, context: Any = None) -> Group:
         self.storage.ensure_resource_does_not_exist(group.name)
         return self._write_group(group)
 
-    def edit(self, group: Group) -> Group:
+    def edit(self, group: Group, context: Any = None) -> Group:
         self.storage.ensure_resource_exists(group.name)
         return self._write_group(group)
 
-    def read(self, group_name: str) -> Group:
+    def read(self, group_name: str, context: Any = None) -> Group:
         return self._read_group(group_name)
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return self.storage.list_resources()
 
-    def delete(self, group_name: str) -> Group:
+    def delete(self, group_name: str, context: Any = None) -> Group:
         self.storage.ensure_resource_exists(group_name)
         group = self._read_group(group_name)
         self.storage.delete_resource(group_name)
@@ -235,21 +237,21 @@ class FileSystemPermissionMappper(PermissionMapper):
         )
         """Set the subfodler for this resrouce."""
 
-    def create(self, permission: Permission) -> Permission:
+    def create(self, permission: Permission, context: Any = None) -> Permission:
         self.storage.ensure_resource_does_not_exist(permission.to_str())
         return self._write_permission(permission)
 
-    def edit(self, permission: Permission) -> Permission:
+    def edit(self, permission: Permission, context: Any = None) -> Permission:
         self.storage.ensure_resource_exists(permission.to_str())
         return self._write_permission(permission)
 
-    def read(self, permission_str: str) -> Permission:
+    def read(self, permission_str: str, context: Any = None) -> Permission:
         return self._read_permission(permission_str)
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return self.storage.list_resources()
 
-    def delete(self, permission_str: str) -> Permission:
+    def delete(self, permission_str: str, context: Any = None) -> Permission:
         self.storage.ensure_resource_exists(permission_str)
         permission = self._read_permission(permission_str)
         self.storage.delete_resource(permission_str)

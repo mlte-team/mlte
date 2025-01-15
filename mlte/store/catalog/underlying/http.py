@@ -6,7 +6,7 @@ Implementation of HTTP catalog store group.
 
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry
@@ -103,7 +103,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self.base_url = f"{self.url}{API_PREFIX}/{ResourceType.CATALOG.value}"
         """Base URL used in mapper."""
 
-    def create(self, entry: CatalogEntry) -> CatalogEntry:
+    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         new_entry = self._convert_to_local(entry)
@@ -115,7 +115,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_entry = CatalogEntry(**(res.json()))
         return self._convert_to_remote(local_entry)
 
-    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         edited_entry = self._convert_to_local(entry)
@@ -127,7 +127,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_entry = CatalogEntry(**(res.json()))
         return self._convert_to_remote(local_entry)
 
-    def read(self, catalog_and_entry_id: str) -> CatalogEntry:
+    def read(
+        self, catalog_and_entry_id: str, context: Any = None
+    ) -> CatalogEntry:
         catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
         url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
         res = self.client.get(url)
@@ -136,11 +138,13 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_entry = CatalogEntry(**(res.json()))
         return self._convert_to_remote(local_entry)
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         entries = self.list_details()
         return [entry.header.identifier for entry in entries]
 
-    def delete(self, catalog_and_entry_id: str) -> CatalogEntry:
+    def delete(
+        self, catalog_and_entry_id: str, context: Any = None
+    ) -> CatalogEntry:
         local_catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
 
         url = f"{self.base_url}/{local_catalog_id}/entry/{entry_id}"
@@ -152,6 +156,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
 
     def list_details(
         self,
+        context: Any = None,
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[CatalogEntry]:
