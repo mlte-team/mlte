@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # type: ignore
 
 from mlte.model.shared import (
     GoalDescriptor,
