@@ -72,7 +72,7 @@ class Validator:
                     "Configured bool expression does not return a bool."
                 )
 
-        values = f"- values: {json.dumps(args) if len(args)>0 else ''}{', ' if len(args)>0 and len(kwargs)>0 else''}{json.dumps(kwargs) if len(kwargs)>0 else ''}"
+        values = f"- values: {json.dumps(args) if len(args) > 0 else ''}{', ' if len(args) > 0 and len(kwargs) > 0 else ''}{json.dumps(kwargs) if len(kwargs) > 0 else ''}"
         result = (
             Info(self.info)
             if self.bool_exp is None and self.info is not None
