@@ -113,13 +113,15 @@ class CatalogStoreGroupSession(StoreSession):
                 )
 
             catalog_session = self.sessions[catalog_id]
-            return catalog_session.entry_mapper.list_details(limit, offset)
+            return catalog_session.entry_mapper.list_details(
+                limit=limit, offset=offset
+            )
         else:
             # Go over all catalogs, reading from each one, and grouping results.
             results: List[CatalogEntry] = []
             for catalog_id, session in self.sessions.items():
                 partial_results = session.entry_mapper.list_details(
-                    limit, offset
+                    limit=limit, offset=offset
                 )
                 results.extend(partial_results)
             return results[offset : offset + limit]

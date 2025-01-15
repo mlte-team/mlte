@@ -5,7 +5,7 @@ Common utilities for store implementations.
 """
 
 import mlte.store.error as errors
-from mlte.context.model import ModelCreate, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStoreSession
 
 
@@ -21,11 +21,11 @@ def create_parents(
     :param version_id: The version identifier
     """
     try:
-        session.create_model(ModelCreate(identifier=model_id))
+        session.create_model(Model(identifier=model_id))
     except errors.ErrorAlreadyExists:
         pass
 
     try:
-        session.create_version(model_id, VersionCreate(identifier=version_id))
+        session.create_version(model_id, Version(identifier=version_id))
     except errors.ErrorAlreadyExists:
         pass

@@ -15,7 +15,7 @@ import mlte.store.error as errors
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.user.policy import Policy
 from mlte.user.model import ResourceType
 
@@ -26,7 +26,7 @@ router = APIRouter()
 @router.post("")
 def create_model(
     *,
-    model: ModelCreate,
+    model: Model,
     current_user: AuthorizedUser,
 ) -> Model:
     """
@@ -147,7 +147,7 @@ def delete_model(
 def create_version(
     *,
     model_id: str,
-    version: VersionCreate,
+    version: Version,
     current_user: AuthorizedUser,
 ) -> Version:
     """

@@ -12,7 +12,7 @@ from typing import List
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
@@ -66,7 +66,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_model(self, model: ModelCreate) -> Model:
+    def create_model(self, model: Model) -> Model:
         try:
             self.storage.create_folder(
                 Path(self.storage.base_path, model.identifier)
@@ -92,7 +92,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self.storage.delete_folder(Path(self.storage.base_path, model_id))
         return model
 
-    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+    def create_version(self, model_id: str, version: Version) -> Version:
         self._ensure_model_exists(model_id)
 
         try:

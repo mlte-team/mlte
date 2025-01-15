@@ -7,7 +7,7 @@ Implementation of relational database system catalog store.
 from __future__ import annotations
 
 import typing
-from typing import List
+from typing import Any, List
 
 from sqlalchemy import Engine
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -96,7 +96,7 @@ class RDBEntryMapper(CatalogEntryMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, entry: CatalogEntry) -> CatalogEntry:
+    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_entry(entry.header.identifier, session)
@@ -114,7 +114,7 @@ class RDBEntryMapper(CatalogEntryMapper):
                 )
                 return stored_entry
 
-    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
             _, entry_obj = DBReader.get_entry(entry.header.identifier, session)
 
@@ -127,17 +127,17 @@ class RDBEntryMapper(CatalogEntryMapper):
             )
             return stored_entry
 
-    def read(self, entry_id: str) -> CatalogEntry:
+    def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
             catalog_entry, _ = DBReader.get_entry(entry_id, session)
             return catalog_entry
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_entries(session)
             return [entry.header.identifier for entry in entries]
 
-    def delete(self, entry_id: str) -> CatalogEntry:
+    def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
             catalog_entry, entry_obj = DBReader.get_entry(entry_id, session)
             session.delete(entry_obj)
