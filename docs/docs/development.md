@@ -52,12 +52,6 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 $ poetry install --with demo
 ```
 
-If using macOS, also install this additional group:
-
-```bash
-$ poetry install --with demo-mac
-```
-
 ## Project Development Commands
 
 You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
