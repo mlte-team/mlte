@@ -31,24 +31,24 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-fastapi = "0.115.6"
-pydantic-settings = "2.7.1"
-pydantic = "2.10.5"
-requests = "2.32.3"
-uvicorn = "0.34.0"
-httpx = "0.28.1"
-dill = "0.3.9"
-psutil = "6.1.1"
-SQLAlchemy = "2.0.37"
-SQLAlchemy-Utils = "0.41.2"
-psycopg2-binary = "2.9.10"
-python-multipart = "0.0.20"
-cryptography = "43.0.3"
-python-jose = "3.3.0"
-bcrypt = "4.2.1"
-StrEnum = "0.4.15"
-json-fix = "1.0.0"
-pip-system-certs = "4.0.0"
+fastapi = "^0.115.6"
+pydantic-settings = "^2.7.1"
+pydantic = "^2.10.5"
+requests = "^2.32.3"
+uvicorn = "^0.34.0"
+httpx = "^0.28.1"
+dill = "^0.3.9"
+psutil = "^6.1.1"
+SQLAlchemy = "^2.0.37"
+SQLAlchemy-Utils = "^0.41.2"
+psycopg2-binary = "^2.9.10"
+python-multipart = "^0.0.20"
+cryptography = "^43.0.3"
+python-jose = "^3.3.0"
+bcrypt = "^4.2.1"
+StrEnum = "^0.4.15"
+json-fix = "^1.0.0"
+pip-system-certs = "^4.0.0"
 
 [tool.poetry.group.demo]
 optional = true
@@ -66,14 +66,14 @@ optional = true
 optional = true
 
 [tool.poetry.group.demo.dependencies]
-numpy = "2.0.2"
-pandas = "2.2.2"
-pandas-stubs = "2.2.1.240316"
-scikit-learn = "1.6.1"
-matplotlib = "3.9.4"
-ipykernel = "6.29.5"
-notebook = "7.3.2"
-tensorflow = "2.18.0"
+numpy = "^2.0.2"
+pandas = "^2.2.2"
+pandas-stubs = "^2.2.1.240316"
+scikit-learn = "^1.6.1"
+matplotlib = "^3.9.4"
+ipykernel = "^6.29.5"
+notebook = "^7.3.2"
+tensorflow = "~2.18.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "*"
