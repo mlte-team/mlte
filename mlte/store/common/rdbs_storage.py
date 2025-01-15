@@ -3,6 +3,7 @@ mlte/store/common/rdbs/store.py
 
 Base RDBS store.
 """
+
 from __future__ import annotations
 
 from typing import Callable, Optional

@@ -3,6 +3,7 @@ mlte/user/authentication.py
 
 Handling of passwords.
 """
+
 import bcrypt
 
 

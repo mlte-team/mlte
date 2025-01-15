@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_user.py
 
 Test the API for user operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, List

@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_group.py
 
 Test the API for group operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, List

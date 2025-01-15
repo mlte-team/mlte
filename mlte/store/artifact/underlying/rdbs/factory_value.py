@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/factory_value.py
 
 Conversions between schema and internal models.
 """
+
 from __future__ import annotations
 
 from mlte._private.fixed_json import json

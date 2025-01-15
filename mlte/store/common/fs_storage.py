@@ -3,6 +3,7 @@ mlte/store/common/fs.py
 
 Common functions for file-based stores.
 """
+
 from __future__ import annotations
 
 import shutil

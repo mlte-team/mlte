@@ -3,6 +3,7 @@ mlte/store/catalog/underlying/fs.py
 
 Implementation of local file system catalog store.
 """
+
 from __future__ import annotations
 
 import os

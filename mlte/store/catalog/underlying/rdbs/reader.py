@@ -3,6 +3,7 @@ mlte/store/catalog/underlying/rdbs/reader.py
 
 DB utils for getting catalog related data from the DB.
 """
+
 from __future__ import annotations
 
 import typing

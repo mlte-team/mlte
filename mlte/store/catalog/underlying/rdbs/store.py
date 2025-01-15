@@ -3,6 +3,7 @@ mlte/store/catalog/underlying/rdbs/store.py
 
 Implementation of relational database system catalog store.
 """
+
 from __future__ import annotations
 
 import typing

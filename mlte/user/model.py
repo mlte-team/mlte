@@ -3,6 +3,7 @@ mlte/user/model.py
 
 Model implementation for a User.
 """
+
 from __future__ import annotations
 
 from typing import List, Optional, Union

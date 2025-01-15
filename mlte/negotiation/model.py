@@ -20,9 +20,9 @@ from mlte.model.shared import NegotiationCardDataModel
 class NegotiationCardModel(BaseModel):
     """The model implementation for the NegotiationCard artifact."""
 
-    artifact_type: Literal[
+    artifact_type: Literal[ArtifactType.NEGOTIATION_CARD] = (
         ArtifactType.NEGOTIATION_CARD
-    ] = ArtifactType.NEGOTIATION_CARD
+    )
 
     """Union discriminator."""
 

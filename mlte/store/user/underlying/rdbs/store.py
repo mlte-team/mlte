@@ -3,6 +3,7 @@ mlte/store/user/underlying/rdbs/store.py
 
 Implementation of relational database system user store.
 """
+
 from __future__ import annotations
 
 import typing
