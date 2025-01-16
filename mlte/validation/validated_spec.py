@@ -102,9 +102,11 @@ class ValidatedSpec(Artifact):
             identifier=model.header.identifier,
             spec=Spec(
                 body.spec_identifier,
-                Spec.to_property_dict(body.spec.properties)
-                if body.spec is not None
-                else {},
+                (
+                    Spec.to_property_dict(body.spec.properties)
+                    if body.spec is not None
+                    else {}
+                ),
             ),
             results={
                 prop_name: {

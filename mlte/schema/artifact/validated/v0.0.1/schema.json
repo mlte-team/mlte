@@ -167,9 +167,6 @@
         "artifact_type": {
           "const": "spec",
           "default": "spec",
-          "enum": [
-            "spec"
-          ],
           "title": "Artifact Type",
           "type": "string"
         },
@@ -260,9 +257,6 @@
     "artifact_type": {
       "const": "validated_spec",
       "default": "validated_spec",
-      "enum": [
-        "validated_spec"
-      ],
       "title": "Artifact Type",
       "type": "string"
     },

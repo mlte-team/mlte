@@ -3,6 +3,7 @@ mlte/backend/api/auth/jwt.py
 
 Handling of JWT tokens.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone

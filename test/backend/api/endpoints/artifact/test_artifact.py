@@ -3,6 +3,7 @@ test/backend/api/endpoints/artifact/test_artifact.py
 
 Test the API for artifacts.
 """
+
 from __future__ import annotations
 
 import typing

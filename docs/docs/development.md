@@ -6,7 +6,7 @@ This document describes some of the development practices used within `MLTE`.
 
 ### Python Version Support
 
-Currently, `MLTE` supports Python versions between `3.9` and `3.11`, both included.
+Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both included.
 
 If you don't have one of those versions installed, or you want to target a specific one that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
@@ -27,7 +27,7 @@ $ pyenv local 3.9
 
 ### Requirements
 
- - MLTE uses `poetry` to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - MLTE uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
  - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
 
 ```bash
@@ -52,12 +52,6 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 $ poetry install --with demo
 ```
 
-If using macOS, also install this additional group:
-
-```bash
-$ poetry install --with demo-mac
-```
-
 ## Project Development Commands
 
 You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
@@ -72,7 +66,7 @@ $ source .venv/bin/activate
 
 ### Import Sorting
 
-We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run this locally with:
+We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. You can run this locally with:
 
 ```bash
 $ make isort
@@ -88,7 +82,7 @@ Code that does not satisfy the sorter will be rejected from pull requests.
 
 ### Source Formatting
 
-We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the formatter locally with:
+We format all Python code in this project with the <a href="https://github.com/psf/black" target="_blank">`black`</a> source formatter. You can run the formatter locally with:
 
 ```bash
 $ make format
@@ -104,7 +98,7 @@ Code that does not satisfy the formatter will be rejected from pull requests.
 
 ### Source Linting
 
-We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the linter locally with:
+We lint all Python code in this project with the <a href="https://flake8.pycqa.org/en/latest/" target="_blank">`flake8`</a> source linter. You can run the linter locally with:
 
 ```bash
 $ make lint
@@ -114,7 +108,7 @@ Code that does not satisfy the linter will be rejected from pull requests.
 
 ### Static Type Checking
 
-We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run the type-checker locally with:
+We run static type-checking with <a href="http://mypy-lang.org/" target="_blank">`mypy`</a>. You can run the type-checker locally with:
 
 ```bash
 $ make typecheck
@@ -132,7 +126,7 @@ $ make docs
 
 ### Unit Tests
 
-We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can run unit tests locally with:
+We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. You can run unit tests locally with:
 
 ```bash
 $ make test
@@ -154,7 +148,7 @@ $ make demo-test
 
 ### Model Schema Generation
 
-The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. Assuming you have followed the instructions in the [Quickstart](#quickstart), you can do this locally with:
+The artifacts used by `MLTE` have schemas that are used to validate them. These schemas need to be updated if their internal structure (code) changes. You can do this locally with:
 
 ```bash
 $ make schema

@@ -4,7 +4,6 @@ test/schema/test_validatedspec_schema.py
 Unit tests for ValidatedSpec schema.
 """
 
-
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.property.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec

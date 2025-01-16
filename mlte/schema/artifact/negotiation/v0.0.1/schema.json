@@ -735,9 +735,6 @@
     "artifact_type": {
       "const": "negotiation_card",
       "default": "negotiation_card",
-      "enum": [
-        "negotiation_card"
-      ],
       "title": "Artifact Type",
       "type": "string"
     },

@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/factory_nc.py
 
 Conversions between schema and internal models.
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -170,11 +171,11 @@ def create_negotiation_data_model_from_db(
                 fn=negotiation_card_data_obj.sys_risks_fn,
                 other=negotiation_card_data_obj.sys_risks_other,
             ),
-            problem_type=ProblemType(
-                negotiation_card_data_obj.sys_problem_type.name
-            )
-            if negotiation_card_data_obj.sys_problem_type is not None
-            else None,
+            problem_type=(
+                ProblemType(negotiation_card_data_obj.sys_problem_type.name)
+                if negotiation_card_data_obj.sys_problem_type is not None
+                else None
+            ),
             goals=_build_goal_descriptors(negotiation_card_data_obj.sys_goals),
         ),
         data=_build_data_descriptors(
@@ -233,13 +234,15 @@ def create_report_db_from_model(
     report_obj = DBReport(
         artifact_header=artifact_header,
         negotiation_card_data=negotiation_card_data_obj,
-        validated_spec=DBReader.get_validated_spec(
-            report.validated_spec_id,
-            artifact_header.version_id,
-            session,
-        )
-        if report.validated_spec_id is not None
-        else None,
+        validated_spec=(
+            DBReader.get_validated_spec(
+                report.validated_spec_id,
+                artifact_header.version_id,
+                session,
+            )
+            if report.validated_spec_id is not None
+            else None
+        ),
         comments=[],
         quantitative_analysis_content=report.quantitative_analysis.content,
     )
@@ -260,9 +263,11 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
 
     body = ReportModel(
         nc_data=negotiation_card_data,
-        validated_spec_id=report_obj.validated_spec.artifact_header.identifier
-        if report_obj.validated_spec is not None
-        else None,
+        validated_spec_id=(
+            report_obj.validated_spec.artifact_header.identifier
+            if report_obj.validated_spec is not None
+            else None
+        ),
         comments=[
             CommentDescriptor(content=comment.content)
             for comment in report_obj.comments

@@ -6,9 +6,6 @@
         "type": {
           "const": "all",
           "default": "all",
-          "enum": [
-            "all"
-          ],
           "title": "Type",
           "type": "string"
         }
@@ -54,9 +51,6 @@
         "type": {
           "const": "and",
           "default": "and",
-          "enum": [
-            "and"
-          ],
           "title": "Type",
           "type": "string"
         }
@@ -73,9 +67,6 @@
         "type": {
           "const": "identifier",
           "default": "identifier",
-          "enum": [
-            "identifier"
-          ],
           "title": "Type",
           "type": "string"
         },
@@ -96,9 +87,6 @@
         "type": {
           "const": "none",
           "default": "none",
-          "enum": [
-            "none"
-          ],
           "title": "Type",
           "type": "string"
         }
@@ -144,9 +132,6 @@
         "type": {
           "const": "or",
           "default": "or",
-          "enum": [
-            "or"
-          ],
           "title": "Type",
           "type": "string"
         }
@@ -163,9 +148,6 @@
         "type": {
           "const": "property",
           "default": "property",
-          "enum": [
-            "property"
-          ],
           "title": "Type",
           "type": "string"
         },
@@ -190,9 +172,6 @@
         "type": {
           "const": "tag",
           "default": "tag",
-          "enum": [
-            "tag"
-          ],
           "title": "Type",
           "type": "string"
         },
@@ -217,9 +196,6 @@
         "type": {
           "const": "type",
           "default": "type",
-          "enum": [
-            "type"
-          ],
           "title": "Type",
           "type": "string"
         },

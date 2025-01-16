@@ -3,6 +3,7 @@ mlte/backend/api/auth/http_auth_exception.py
 
 Exception used for authentication issues.
 """
+
 from __future__ import annotations
 
 from fastapi import HTTPException, Request

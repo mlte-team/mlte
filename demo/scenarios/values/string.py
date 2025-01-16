@@ -1,6 +1,7 @@
 """
 Implementation of String value.
 """
+
 from __future__ import annotations
 
 from typing import Any

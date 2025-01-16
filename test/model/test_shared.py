@@ -6,7 +6,7 @@ Unit tests for shared model components.
 
 from typing import Any, Dict
 
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # type: ignore
 
 from mlte.model.shared import (
     DataClassification,

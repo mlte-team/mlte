@@ -3,6 +3,7 @@ test/artifact/test_artifact.py
 
 Unit tests for MLTE artifact protocol implementation.
 """
+
 from typing import Tuple
 
 import pytest

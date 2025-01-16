@@ -4,7 +4,6 @@ test/user/test_auth.py
 Test the password operations.
 """
 
-
 from mlte.user import passwords
 
 

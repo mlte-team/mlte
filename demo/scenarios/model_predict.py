@@ -44,19 +44,13 @@ def parse_args():
     )
     # --model file example: model_f3_a.json
     parser.add_argument(
-        "--model", help="The json formatted model file.", required=True
-    )
-    # --weights file example: model_f_a.h5
-    parser.add_argument(
-        "--weights",
-        help="The file that contains the model weights.",
-        required=True,
+        "--model", help="The keras formatted model file.", required=True
     )
     args = parser.parse_args()
     return args
 
 
-def run_model(image_folder_path, model_file, weights_file):
+def run_model(image_folder_path, model_file):
     """
     This script gets performance metrics (elapsed time and memory consumption) for running inference on a model.
     It does NOT check accurate predictions - it simply runs the inference on the provided dataset and outputs statics
@@ -70,7 +64,6 @@ def run_model(image_folder_path, model_file, weights_file):
     import tensorflow as tf
 
     print_and_log(f"TensorFlow version: {tf.__version__}")
-    from tensorflow.keras.models import model_from_json
 
     # Load dataset
     dataset = tf.keras.utils.image_dataset_from_directory(
@@ -85,13 +78,7 @@ def run_model(image_folder_path, model_file, weights_file):
     ru1 = getrusage(RUSAGE_SELF).ru_maxrss
 
     # Load model
-    json_file = open(model_file, "r")
-    loaded_model_json = json_file.read()
-    loaded_model = model_from_json(loaded_model_json)
-    json_file.close()
-
-    # Load weights into new model
-    loaded_model.load_weights(weights_file)
+    loaded_model = tf.keras.models.load_model(model_file)
     print_and_log("Loaded model from disk!")
 
     ru2 = getrusage(RUSAGE_SELF).ru_maxrss
@@ -99,10 +86,8 @@ def run_model(image_folder_path, model_file, weights_file):
     print_and_log(loaded_model.summary())
 
     mfile_size = os.path.getsize(model_file)
-    wfile_size = os.path.getsize(weights_file)
 
-    print_and_log(f"Size of model json file ({model_file}): {mfile_size} bytes")
-    print_and_log(f"Size of weights file ({weights_file}): {wfile_size} bytes")
+    print_and_log(f"Size of model file ({model_file}): {mfile_size} bytes")
     print_and_log(
         f"Memory used for the entire model loading process: {ru2 - ru1} {r_mem_units_str}."
     )
@@ -208,6 +193,5 @@ if __name__ == "__main__":
     args = parse_args()
     image_folder = args.images
     model_file = args.model
-    weights_file = args.weights
 
-    run_model(image_folder, model_file, weights_file)
+    run_model(image_folder, model_file)

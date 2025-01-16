@@ -4,7 +4,6 @@ test/measurement/cpu/test_local_process_cpu_utilization.py
 Unit test for LocalProcessCPUUtilization measurement.
 """
 
-
 import os
 import subprocess
 import threading

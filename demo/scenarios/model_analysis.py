@@ -1,19 +1,9 @@
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.keras.models import model_from_json
 
 
-def load_model(model_filename: str, weights_filename: str):
-    # Load model
-    json_file = open(model_filename, "r")
-    loaded_model_json = json_file.read()
-    loaded_model = model_from_json(loaded_model_json)
-    json_file.close()
-
-    # Load weights into new model
-    loaded_model.load_weights(weights_filename)
-
-    return loaded_model
+def load_model(model_filename: str):
+    return tf.keras.models.load_model(model_filename)
 
 
 def run_model(im, loaded_model):

@@ -3,6 +3,7 @@ test/measurement/storage/test_local_object_size.py
 
 Unit test for LocalObjectSize measurement.
 """
+
 from __future__ import annotations
 
 import typing

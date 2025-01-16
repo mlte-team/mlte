@@ -1,6 +1,7 @@
 """
 Implementation of RankSums value.
 """
+
 from __future__ import annotations
 
 from mlte.spec.condition import Condition

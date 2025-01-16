@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/factory_spec.py
 
 Conversions between schema and internal models.
 """
+
 from __future__ import annotations
 
 from sqlalchemy.orm import Session
@@ -97,11 +98,15 @@ def create_v_spec_db_from_model(
     validated_spec_obj = DBValidatedSpec(
         artifact_header=artifact_header,
         results=[],
-        spec=DBReader.get_spec(
-            validated_spec.spec_identifier, artifact_header.version_id, session
-        )
-        if validated_spec.spec_identifier != ""
-        else None,
+        spec=(
+            DBReader.get_spec(
+                validated_spec.spec_identifier,
+                artifact_header.version_id,
+                session,
+            )
+            if validated_spec.spec_identifier != ""
+            else None
+        ),
     )
     for property_name, results in validated_spec.results.items():
         for measurement_id, result in results.items():
@@ -116,13 +121,15 @@ def create_v_spec_db_from_model(
                     session,
                 ),
                 validated_spec=validated_spec_obj,
-                evidence_metadata=DBEvidenceMetadata(
-                    identifier=measurement_id,
-                    measurement_type=result.metadata.measurement_type,
-                    info=result.metadata.info,
-                )
-                if result.metadata is not None
-                else None,
+                evidence_metadata=(
+                    DBEvidenceMetadata(
+                        identifier=measurement_id,
+                        measurement_type=result.metadata.measurement_type,
+                        info=result.metadata.info,
+                    )
+                    if result.metadata is not None
+                    else None
+                ),
             )
             validated_spec_obj.results.append(result_obj)
     return validated_spec_obj
@@ -133,30 +140,36 @@ def create_v_spec_model_from_db(
 ) -> ValidatedSpecModel:
     """Creates the internal model object from the corresponding DB object."""
     body = ValidatedSpecModel(
-        results={
-            property.name: {
-                result.measurement_id: ResultModel(
-                    type=result.type,
-                    message=result.message,
-                    metadata=EvidenceMetadata(
-                        measurement_type=result.evidence_metadata.measurement_type,
-                        identifier=Identifier(
-                            name=result.evidence_metadata.identifier
+        results=(
+            {
+                property.name: {
+                    result.measurement_id: ResultModel(
+                        type=result.type,
+                        message=result.message,
+                        metadata=EvidenceMetadata(
+                            measurement_type=result.evidence_metadata.measurement_type,
+                            identifier=Identifier(
+                                name=result.evidence_metadata.identifier
+                            ),
                         ),
-                    ),
-                )
-                for result in validated_obj.results
-                if result.property.name == property.name
+                    )
+                    for result in validated_obj.results
+                    if result.property.name == property.name
+                }
+                for property in validated_obj.spec.properties
             }
-            for property in validated_obj.spec.properties
-        }
-        if validated_obj.spec is not None
-        else {},
-        spec_identifier=validated_obj.spec.artifact_header.identifier
-        if validated_obj.spec is not None
-        else "",
-        spec=create_spec_model_from_db(validated_obj.spec)
-        if validated_obj.spec is not None
-        else None,
+            if validated_obj.spec is not None
+            else {}
+        ),
+        spec_identifier=(
+            validated_obj.spec.artifact_header.identifier
+            if validated_obj.spec is not None
+            else ""
+        ),
+        spec=(
+            create_spec_model_from_db(validated_obj.spec)
+            if validated_obj.spec is not None
+            else None
+        ),
     )
     return body

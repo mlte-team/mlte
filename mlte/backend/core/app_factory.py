@@ -3,6 +3,7 @@ mlte/backend/app_factory.py
 
 Web application factory.
 """
+
 from __future__ import annotations
 
 from fastapi import FastAPI

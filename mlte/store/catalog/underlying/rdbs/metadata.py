@@ -3,6 +3,7 @@ mlte/store/catalog/underlying/rdbs/metadata.py
 
 Definition of the metadata (DB schema) for the catalog store.
 """
+
 from __future__ import annotations
 
 from typing import Optional

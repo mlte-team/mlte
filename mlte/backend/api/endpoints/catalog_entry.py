@@ -3,6 +3,7 @@ mlte/backend/api/endpoints/catalog.py
 
 Test Catalog Entry CRUD endpoint.
 """
+
 from __future__ import annotations
 
 from typing import List

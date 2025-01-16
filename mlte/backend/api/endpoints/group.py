@@ -3,6 +3,7 @@ mlte/backend/api/endpoints/group.py
 
 Group CRUD endpoint.
 """
+
 from __future__ import annotations
 
 from typing import List

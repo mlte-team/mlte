@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_catalog_entry.py
 
 Test the API for catalog operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, Optional

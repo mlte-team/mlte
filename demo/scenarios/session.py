@@ -29,10 +29,7 @@ MEDIA_DIR = Path.cwd() / "media"
 os.makedirs(MEDIA_DIR, exist_ok=True)
 
 # The json file of the model to load
-MODEL_FILE_PATH = MODELS_DIR / "model_f3_a.json"
-
-# The weights file for the model
-MODEL_WEIGHTS_PATH = MODELS_DIR / "model_f_a.h5"
+MODEL_FILE_PATH = MODELS_DIR / "oxford_flower_model.keras"
 
 # This is the external script that will load and run the model for inference/prediction.
 MODEL_SCRIPT = Path.cwd() / "model_predict.py"
@@ -41,6 +38,4 @@ MODEL_ARGS = [
     SAMPLE_DATASET_DIR,
     "--model",
     MODEL_FILE_PATH,
-    "--weights",
-    MODEL_WEIGHTS_PATH,
 ]
