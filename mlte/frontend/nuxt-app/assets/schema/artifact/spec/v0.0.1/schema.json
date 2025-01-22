@@ -144,6 +144,36 @@
             }
           ],
           "title": "Bool Exp Str"
+        },
+        "creator_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Method"
+        },
+        "creator_class": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Class"
+        },
+        "creator_args": {
+          "default": [],
+          "items": {},
+          "title": "Creator Args",
+          "type": "array"
         }
       },
       "required": [

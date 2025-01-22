@@ -73,15 +73,16 @@ class Condition:
         """Creates a Condition using the provided test, extracting context info from the method that called us."""
         # Get method info, passing our caller as argument.
         curr_frame = inspect.currentframe()
-        method_info = ClassMethodInfo.get_class_method_data(
-            caller_function=(
-                curr_frame.f_back if curr_frame is not None else None
-            )
-        )
+        caller_function = curr_frame.f_back if curr_frame is not None else None
+        method_info = ClassMethodInfo.get_class_method_data(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
-        validator = Validator(
-            bool_exp=bool_exp, success=success, failure=failure, info=info
+        validator = Validator.build_validator(
+            bool_exp=bool_exp,
+            success=success,
+            failure=failure,
+            info=info,
+            caller_function=caller_function,
         )
 
         condition: Condition = Condition(
