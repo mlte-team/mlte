@@ -17,6 +17,10 @@ from mlte.validation.result import Failure, Info, Result, Success
 
 
 class Validator:
+    """
+    Class that represents a validation, including condition, and results for success or failure.
+    """
+
     def __init__(
         self,
         bool_exp: Optional[Callable[[Any], bool]] = None,
@@ -49,36 +53,45 @@ class Validator:
         self.success = success
         self.failure = failure
         self.info = info
+
         self.bool_exp_str = (
             inspect.getsource(bool_exp).strip()
             if bool_exp is not None
             else None
         )
+        """We also store the bool expression as a string from its code, for tracking purposes."""
 
     def validate(self, *args, **kwargs) -> Result:
         """
-        Generates a result based on the arguments received, and the configured params in the Validator.
+        Generates a result based on the arguments received, and the configured attributes in the Validator.
 
         :param args, kwargs: Arguments to pass to the boolean expression to be evaluated in this specific case.
-        :return: A Result with a message with details of the validation result.
+        :return: A Result, including a message with details about the validation result.
         """
-        result_value: Optional[bool]
-        if self.bool_exp is None:
-            result_value = None
-        else:
-            result_value = self.bool_exp(*args, **kwargs)
-            if not isinstance(result_value, bool):
+        if self.bool_exp is None and self.info is None:
+            raise RuntimeError(
+                "Can't validate, Validator has no bool expression and is also missing informational message that is used in those cases."
+            )
+
+        # First execute bool expression (if any), and get its boolean result.
+        executed_bool_exp_value: Optional[bool] = None
+        if self.bool_exp is not None:
+            executed_bool_exp_value = self.bool_exp(*args, **kwargs)
+            if not isinstance(executed_bool_exp_value, bool):
                 raise ValueError(
                     "Configured bool expression does not return a bool."
                 )
 
+        # Stringify arguments so that result's message can include generic information about arguments used when validating.
         values = f"- values: {json.dumps(args) if len(args) > 0 else ''}{', ' if len(args) > 0 and len(kwargs) > 0 else ''}{json.dumps(kwargs) if len(kwargs) > 0 else ''}"
+
+        # Create the result to be returned.
         result = (
             Info(self.info)
             if self.bool_exp is None and self.info is not None
             else (
                 Success(f"{self.success} {values}")
-                if result_value
+                if executed_bool_exp_value
                 else Failure(f"{self.failure} {values}")
             )
         )
