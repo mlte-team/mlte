@@ -78,11 +78,10 @@ class Validator:
         # Get method info, passing our caller as argument.
         if caller_function is None:
             curr_frame = inspect.currentframe()
-            method_info = ClassMethodInfo.get_class_method_data(
-                caller_function=(
-                    curr_frame.f_back if curr_frame is not None else None
-                )
+            caller_function = (
+                curr_frame.f_back if curr_frame is not None else None
             )
+        method_info = ClassMethodInfo.get_class_method_data(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
@@ -150,14 +149,14 @@ class Validator:
             failure=self.failure,
             info=self.info,
             bool_exp_str=self.bool_exp_str,
+            creator_class=(
+                self.creator.method_class if self.creator is not None else None
+            ),
             creator_method=(
                 self.creator.method_name if self.creator is not None else None
             ),
             creator_args=(
                 self.creator.arguments if self.creator is not None else []
-            ),
-            creator_class=(
-                self.creator.method_class if self.creator is not None else None
             ),
         )
 

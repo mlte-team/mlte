@@ -240,18 +240,6 @@
           ],
           "title": "Bool Exp Str"
         },
-        "creator_method": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Creator Method"
-        },
         "creator_class": {
           "anyOf": [
             {
@@ -263,6 +251,18 @@
           ],
           "default": null,
           "title": "Creator Class"
+        },
+        "creator_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Method"
         },
         "creator_args": {
           "default": [],

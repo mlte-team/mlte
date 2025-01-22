@@ -28,11 +28,11 @@ class ValidatorModel(BaseModel):
     bool_exp_str: Optional[str]
     """A string representation of the code for the bool expression to check for."""
 
-    creator_method: Optional[str] = None
-    """The name of the method used to create this validator, if any."""
-
     creator_class: Optional[str] = None
     """The name of the class used to create this validator, if any."""
+
+    creator_method: Optional[str] = None
+    """The name of the method used to create this validator, if any."""
 
     creator_args: list[Any] = []
     """The arguments of the method used to create this validator, if any."""
