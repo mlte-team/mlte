@@ -196,6 +196,17 @@
           ],
           "title": "Bool Exp"
         },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
+        },
         "success": {
           "anyOf": [
             {
@@ -228,17 +239,6 @@
             }
           ],
           "title": "Info"
-        },
-        "bool_exp_str": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Bool Exp Str"
         },
         "creator_class": {
           "anyOf": [
@@ -273,10 +273,10 @@
       },
       "required": [
         "bool_exp",
+        "bool_exp_str",
         "success",
         "failure",
-        "info",
-        "bool_exp_str"
+        "info"
       ],
       "title": "ValidatorModel",
       "type": "object"

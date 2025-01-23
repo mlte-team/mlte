@@ -16,6 +16,9 @@ class ValidatorModel(BaseModel):
     bool_exp: Optional[str]
     """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
+    bool_exp_str: Optional[str]
+    """A string representation of the code for the bool expression to check for."""
+
     success: Optional[str]
     """A string to be used when recording that the validation was succesful."""
 
@@ -24,9 +27,6 @@ class ValidatorModel(BaseModel):
 
     info: Optional[str]
     """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
-
-    bool_exp_str: Optional[str]
-    """A string representation of the code for the bool expression to check for."""
 
     creator_class: Optional[str] = None
     """The name of the class used to create this validator, if any."""
