@@ -38,7 +38,7 @@ class Validator:
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-        :param creator: Information about the class and method that created this validator.
+        :param creator: Information about the class and method that created this validator, if any.
         """
         if success is not None and failure is None:
             raise ValueError(
@@ -74,7 +74,17 @@ class Validator:
         info: Optional[str] = None,
         caller_function: Optional[FrameType] = None,
     ) -> Validator:
-        """Creates a Validator using the provided test, extracting context info from the method that called us."""
+        """
+        Creates a Validator using the provided test, extracting context info from the method that called us.
+
+        :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
+        :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
+        :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
+        :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
+        :param caller_function: A FarmeType with data about method that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
+
+        :returns: A Validator, potentially with caller creator information.
+        """
         # Get method info, passing our caller as argument.
         if caller_function is None:
             curr_frame = inspect.currentframe()
