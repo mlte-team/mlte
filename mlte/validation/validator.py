@@ -81,7 +81,7 @@ class Validator:
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-        :param caller_function: A FarmeType with data about method that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
+        :param caller_function: A FrameType with data about method that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
 
         :returns: A Validator, potentially with caller creator information.
         """
