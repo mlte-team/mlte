@@ -4,17 +4,22 @@ test/validation/test_validator.py
 Unit tests for Validator.
 """
 
+from mlte._private.function_info import FunctionInfo
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.validator import Validator
 
 
-def get_sample_validator() -> Validator:
+def get_sample_validator(add_creator: bool = False) -> Validator:
     validator = Validator(
         bool_exp=lambda x, y: x > y,  # type: ignore
         success="Test was succesful!",
         failure="Test failed :(",
         info="Only data was attached",
     )
+
+    if add_creator:
+        validator.creator = FunctionInfo.get_function_info()
+
     return validator
 
 
@@ -23,10 +28,20 @@ def test_validator_model() -> None:
     conditions = [
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
+            bool_exp_str="test()",
             success="Test was succesful!",
             failure="Test failed :(",
             info="Only data was attached",
+        ),
+        ValidatorModel(
+            bool_exp="ASJDH12384jahsd",
             bool_exp_str="test()",
+            success="Test was succesful!",
+            failure="Test failed :(",
+            info="Only data was attached",
+            creator_class="TestClass",
+            creator_function="test_validator_model",
+            creator_args=[2.3],
         ),
     ]
 
@@ -40,11 +55,30 @@ def test_round_trip() -> None:
     """Validator can be converted to model and back."""
 
     validator = get_sample_validator()
-
     model = validator.to_model()
     loaded_validator = Validator.from_model(model)
-
     assert validator == loaded_validator
+
+    validator2 = get_sample_validator(add_creator=True)
+    model = validator2.to_model()
+    loaded_validator = Validator.from_model(model)
+    assert validator2 == loaded_validator
+
+
+def test_build_validator():
+    """Tests that the build_validator method builds the expected validator."""
+    validator = Validator.build_validator(
+        bool_exp=lambda x: x == 1, success="Yay!", failure="Aww"
+    )
+
+    assert validator.bool_exp_str == "lambda x: x == 1"
+    assert validator.success == "Yay!"
+    assert validator.failure == "Aww"
+    assert validator.info is None
+    assert validator.creator is not None
+    assert validator.creator.function_class == ""
+    assert validator.creator.function_name == "test_build_validator"
+    assert validator.creator.arguments == []
 
 
 def test_validate_success() -> None:
