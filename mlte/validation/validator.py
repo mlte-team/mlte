@@ -13,7 +13,7 @@ from typing import Any, Callable, Optional
 
 from mlte._private import reflection, serializing
 from mlte._private.fixed_json import json
-from mlte._private.method_info import ClassMethodInfo
+from mlte._private.function_info import FunctionInfo
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.result import Failure, Info, Result, Success
 
@@ -30,7 +30,7 @@ class Validator:
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
-        creator: Optional[ClassMethodInfo] = None,
+        creator: Optional[FunctionInfo] = None,
     ):
         """
         Constructor.
@@ -76,23 +76,23 @@ class Validator:
         caller_function: Optional[FrameType] = None,
     ) -> Validator:
         """
-        Creates a Validator using the provided test, extracting context info from the method that called us.
+        Creates a Validator using the provided test, extracting context info from the function that called us.
 
         :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-        :param caller_function: A FrameType with data about method that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
+        :param caller_function: A FrameType with data about function that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
 
         :returns: A Validator, potentially with caller creator information.
         """
-        # Get method info, passing our caller as argument.
+        # Get function info, passing our caller as argument.
         if caller_function is None:
             curr_frame = inspect.currentframe()
             caller_function = (
                 curr_frame.f_back if curr_frame is not None else None
             )
-        method_info = ClassMethodInfo.get_class_method_data(caller_function)
+        function_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
@@ -100,7 +100,7 @@ class Validator:
             success=success,
             failure=failure,
             info=info,
-            creator=method_info,
+            creator=function_info,
         )
         return validator
 
@@ -161,10 +161,12 @@ class Validator:
             info=self.info,
             bool_exp_str=self.bool_exp_str,
             creator_class=(
-                self.creator.method_class if self.creator is not None else None
+                self.creator.function_class
+                if self.creator is not None
+                else None
             ),
-            creator_method=(
-                self.creator.method_name if self.creator is not None else None
+            creator_function=(
+                self.creator.function_name if self.creator is not None else None
             ),
             creator_args=(
                 self.creator.arguments if self.creator is not None else []
@@ -193,12 +195,12 @@ class Validator:
             failure=model.failure,
             info=model.info,
             creator=(
-                ClassMethodInfo(
-                    model.creator_method,
+                FunctionInfo(
+                    model.creator_function,
                     model.creator_args,
                     model.creator_class,
                 )
-                if model.creator_method is not None
+                if model.creator_function is not None
                 and model.creator_class is not None
                 else None
             ),

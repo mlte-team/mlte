@@ -5,57 +5,57 @@ from types import FrameType
 from typing import Any, Optional, Type
 
 
-class ClassMethodInfo:
+class FunctionInfo:
     """
-    Class to extract info about current class, method and arguments.
+    Class to extract info about current class, function and arguments.
     """
 
     def __init__(
-        self, method_name: str, arguments: list[Any], method_class: str
+        self, function_name: str, arguments: list[Any], function_class: str
     ):
         """
-        Initialize a ClassMethodInfo instance.
+        Initialize a FunctionInfo instance.
 
-        :param method_name: The name of the method that called us.
-        :param arguments: The list of arguments passed to the method.
-        :param method_class: The full module + class name of the object that contains the method.
+        :param function_name: The name of the function that called us.
+        :param arguments: The list of arguments passed to the function.
+        :param function_class: The full module + class name of the object that contains the function, if any.
         """
 
-        self.method_name: str = method_name
-        """The human-readable string for the name method."""
+        self.function_name: str = function_name
+        """The human-readable string for the name function."""
 
         self.arguments: list[Any] = arguments
-        """The arguments used when calling the method."""
+        """The arguments used when calling the function."""
 
-        self.method_class: str = method_class
-        """Class where this method was called came from."""
+        self.function_class: str = function_class
+        """Class where this function was called came from."""
 
     @staticmethod
-    def get_class_method_data(
+    def get_function_info(
         caller_function: Optional[FrameType] = None,
-    ) -> ClassMethodInfo:
+    ) -> FunctionInfo:
         """
-        Extracting context info from current class method that called us.
+        Extracting context info from current function that called us.
 
         :param caller_function: The frame of the function to review, if any. If not provided, we inspect to get our caller.
 
-        :return: A ClassMethodInfo with information about the method.
+        :return: A FunctionInfo with information about the calling function.
         """
         # Get context info about the caller from inspection.
         if caller_function is None:
             curr_frame = inspect.currentframe()
             if curr_frame is None:
                 raise Exception(
-                    "Unexpected error reading caller method data: empty frame."
+                    "Unexpected error reading caller function data: empty frame."
                 )
             caller_function = curr_frame.f_back
             if caller_function is None:
                 raise Exception(
-                    "Unexpected error reading caller method data: empty function."
+                    "Unexpected error reading caller function data: empty function."
                 )
 
         # Get function name of caller.
-        method_name = caller_function.f_code.co_name
+        function_name = caller_function.f_code.co_name
 
         # Get args. Args include all caller arguments except for the value class type.
         arguments = caller_function.f_locals
@@ -72,5 +72,5 @@ class ClassMethodInfo:
             cls_str = f"{cls.__module__}.{cls.__name__}"
 
         # Return the full info.
-        info = ClassMethodInfo(method_name, filtered_args, cls_str)
+        info = FunctionInfo(function_name, filtered_args, cls_str)
         return info

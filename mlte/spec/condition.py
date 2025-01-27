@@ -10,7 +10,7 @@ import inspect
 import typing
 from typing import Any, Callable, List, Optional
 
-from mlte._private.method_info import ClassMethodInfo
+from mlte._private.function_info import FunctionInfo
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.result import Result
 from mlte.validation.validator import Validator
@@ -74,7 +74,7 @@ class Condition:
         # Get method info, passing our caller as argument.
         curr_frame = inspect.currentframe()
         caller_function = curr_frame.f_back if curr_frame is not None else None
-        method_info = ClassMethodInfo.get_class_method_data(caller_function)
+        method_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator.build_validator(
@@ -86,10 +86,10 @@ class Condition:
         )
 
         condition: Condition = Condition(
-            method_info.method_name,
+            method_info.function_name,
             method_info.arguments,
             validator,
-            method_info.method_class,
+            method_info.function_class,
         )
         return condition
 

@@ -31,11 +31,11 @@ class ValidatorModel(BaseModel):
     creator_class: Optional[str] = None
     """The name of the class used to create this validator, if any."""
 
-    creator_method: Optional[str] = None
-    """The name of the method used to create this validator, if any."""
+    creator_function: Optional[str] = None
+    """The name of the function used to create this validator, if any."""
 
     creator_args: list[Any] = []
-    """The arguments of the method used to create this validator, if any."""
+    """The arguments of the function used to create this validator, if any."""
 
 
 class ConditionModel(BaseModel):

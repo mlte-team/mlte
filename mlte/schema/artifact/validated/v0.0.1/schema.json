@@ -252,7 +252,7 @@
           "default": null,
           "title": "Creator Class"
         },
-        "creator_method": {
+        "creator_function": {
           "anyOf": [
             {
               "type": "string"
@@ -262,7 +262,7 @@
             }
           ],
           "default": null,
-          "title": "Creator Method"
+          "title": "Creator Function"
         },
         "creator_args": {
           "default": [],
