@@ -32,7 +32,7 @@ class ClassMethodInfo:
 
     @staticmethod
     def get_class_method_data(
-        caller_function: Optional[FrameType],
+        caller_function: Optional[FrameType] = None,
     ) -> ClassMethodInfo:
         """
         Extracting context info from current class method that called us.
@@ -66,9 +66,10 @@ class ClassMethodInfo:
 
         # Build the class info as a string.
         if "cls" not in arguments:
-            raise Exception("'cls' argument is needed in method arguments.")
-        cls: Type[object] = arguments["cls"]
-        cls_str = f"{cls.__module__}.{cls.__name__}"
+            cls_str = ""
+        else:
+            cls: Type[object] = arguments["cls"]
+            cls_str = f"{cls.__module__}.{cls.__name__}"
 
         # Return the full info.
         info = ClassMethodInfo(method_name, filtered_args, cls_str)
