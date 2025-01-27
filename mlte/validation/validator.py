@@ -11,7 +11,7 @@ import typing
 from types import FrameType
 from typing import Any, Callable, Optional
 
-from mlte._private import serializing
+from mlte._private import reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.method_info import ClassMethodInfo
 from mlte.validation.model_condition import ValidatorModel
@@ -25,6 +25,7 @@ class Validator:
 
     def __init__(
         self,
+        *,
         bool_exp: Optional[Callable[[Any], bool]] = None,
         success: Optional[str] = None,
         failure: Optional[str] = None,
@@ -60,7 +61,7 @@ class Validator:
         self.creator = creator
 
         self.bool_exp_str = (
-            inspect.getsource(bool_exp).strip()
+            reflection.get_lambda_code(bool_exp)
             if bool_exp is not None
             else None
         )
