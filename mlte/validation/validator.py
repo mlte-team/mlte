@@ -61,7 +61,7 @@ class Validator:
         self.creator = creator
 
         self.bool_exp_str = (
-            reflection.get_lambda_code(bool_exp)
+            reflection.get_lambda_code("bool_exp", bool_exp)
             if bool_exp is not None
             else None
         )

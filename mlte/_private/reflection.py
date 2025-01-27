@@ -30,21 +30,9 @@ def load_class(class_path: str) -> Type[Any]:
     return class_type
 
 
-def get_lambda_code(lambda_expression: Any) -> str:
+def get_lambda_code(lambda_var: str, lambda_expression: Any) -> str:
     """Returns the code for a given lambda expression as a string."""
     code_string = inspect.getsource(lambda_expression).lstrip()
-
-    class LambdaGetter(ast.NodeTransformer):
-        def __init__(self):
-            super().__init__()
-            self.lambda_sources = []
-
-        def visit_Lambda(self, node):
-            self.lambda_sources.append(astunparse.unparse(node).strip()[1:-1])
-
-        def get(self, code_string):
-            tree = ast.parse(code_string)
-            self.visit(tree)
-            return self.lambda_sources
-
-    return str(LambdaGetter().get(code_string)[0])
+    start = code_string.find(f"{lambda_var}=") + len(f"{lambda_var}=")
+    end = code_string.find(",", start)
+    return code_string[start:end]
