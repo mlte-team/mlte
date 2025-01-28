@@ -5,8 +5,8 @@ Group,Count,Common Name,Other Name,Risk,Kingdom,Phylum,Class,Phylum,Clade1,Clade
 3,40,canterbury bells,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Campanulaceae,,Campanula
 7,40,moon orchild,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Epidendroideae,Phalaenopsis
 21,40,fire lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Colchicaceae,,Gloriosa
-27,40,prince of whales feather,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Amaranthaceae,,Amaranthus
-34,40, mexican aster,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cosmos
+27,40,prince of wales feather,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Amaranthaceae,,Amaranthus
+34,40,mexican aster,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cosmos
 45,40,bolero deep blue,texas bluebell,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Gentianaceae,,Eustoma
 16,41,globe flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Trollus
 25,41,grape hyacinth,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Asparagaceae,Scilloideae,Muscari
@@ -35,7 +35,7 @@ Group,Count,Common Name,Other Name,Risk,Kingdom,Phylum,Class,Phylum,Clade1,Clade
 64,52,silverbush,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Convolvulaceae,,Convolvulus
 63,54,black-eyed susan,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Rudbeckia
 62,55,japanese anemone,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Eriocapitella
-4,56,swear pea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Fabales,Fabaceae,,Lathyrus
+4,56,sweet pea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Fabales,Fabaceae,,Lathyrus
 20,56,arum lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Alismatales,Araceae,Aroideae,Zantedeschia
 38,56,great masterwort,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Apiales,Apiaceae,,Astrantia
 86,58,tree mallow,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Malva
