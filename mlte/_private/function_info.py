@@ -57,18 +57,19 @@ class FunctionInfo:
         # Get function name of caller.
         function_name = caller_function.f_code.co_name
 
-        # Get args. Args include all caller arguments except for the value class type.
-        arguments = caller_function.f_locals
+        # Get args. Args will include all caller arguments except for caller class or object.
+        arg_keys, _, _, arg_values = inspect.getargvalues(caller_function)
         filtered_args = []
-        for arg_key, arg_value in arguments.items():
-            if arg_key != "cls":
-                filtered_args.append(arg_value)
+        for arg_key in arg_keys:
+            print(f"{arg_key}={arg_values[arg_key]}")
+            if arg_key != "cls" and arg_key != "self":
+                filtered_args.append(arg_values[arg_key])
 
         # Build the class info as a string.
-        if "cls" not in arguments:
+        if "cls" not in arg_keys:
             cls_str = ""
         else:
-            cls: Type[object] = arguments["cls"]
+            cls: Type[object] = arg_values["cls"]
             cls_str = f"{cls.__module__}.{cls.__name__}"
 
         # Return the full info.
