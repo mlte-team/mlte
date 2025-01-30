@@ -76,6 +76,7 @@ def get_lambda_code(lambda_func: Any, lambda_pos: int = 0):
                 # If we got an syntax error due to the source code line where
                 # the lambda was defined not being a fully parseable line,
                 # get the lambda plus any code after it (better than nothing).
+                # TODO: see if it's worth to find a smarter solution.
                 match = re.search(r"\b(?:lambda)\b.*?:", code_string)
                 if match:
                     lambda_start = match.start()
