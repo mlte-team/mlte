@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.spec.model import ConditionModel, QACategoryModel, SpecModel
+from mlte.spec.model import QACategoryModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
@@ -143,30 +143,36 @@ def create_v_spec_model_from_db(
 ) -> ValidatedSpecModel:
     """Creates the internal model object from the corresponding DB object."""
     body = ValidatedSpecModel(
-        results={
-            qa_category.name: {
-                result.measurement_id: ResultModel(
-                    type=result.type,
-                    message=result.message,
-                    metadata=EvidenceMetadata(
-                        measurement_type=result.evidence_metadata.measurement_type,
-                        identifier=Identifier(
-                            name=result.evidence_metadata.identifier
+        results=(
+            {
+                qa_category.name: {
+                    result.measurement_id: ResultModel(
+                        type=result.type,
+                        message=result.message,
+                        metadata=EvidenceMetadata(
+                            measurement_type=result.evidence_metadata.measurement_type,
+                            identifier=Identifier(
+                                name=result.evidence_metadata.identifier
+                            ),
                         ),
-                    ),
-                )
-                for result in validated_obj.results
-                if result.qa_category.name == qa_category.name
+                    )
+                    for result in validated_obj.results
+                    if result.qa_category.name == qa_category.name
+                }
+                for qa_category in validated_obj.spec.qa_categories
             }
-            for qa_category in validated_obj.spec.qa_categories
-        }
-        if validated_obj.spec is not None
-        else {},
-        spec_identifier=validated_obj.spec.artifact_header.identifier
-        if validated_obj.spec is not None
-        else "",
-        spec=create_spec_model_from_db(validated_obj.spec)
-        if validated_obj.spec is not None
-        else None,
+            if validated_obj.spec is not None
+            else {}
+        ),
+        spec_identifier=(
+            validated_obj.spec.artifact_header.identifier
+            if validated_obj.spec is not None
+            else ""
+        ),
+        spec=(
+            create_spec_model_from_db(validated_obj.spec)
+            if validated_obj.spec is not None
+            else None
+        ),
     )
     return body

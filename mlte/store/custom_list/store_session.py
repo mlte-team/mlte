@@ -3,6 +3,7 @@ mlte/store/custom_list/store_session.py
 
 MLTE custom list store interface implementation
 """
+
 from __future__ import annotations
 
 from typing import List, cast

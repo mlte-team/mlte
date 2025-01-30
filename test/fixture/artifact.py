@@ -35,7 +35,7 @@ from mlte.report.model import (
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.spec.model import ConditionModel, QACategoryModel, SpecModel
+from mlte.spec.model import QACategoryModel, SpecModel
 from mlte.validation.model import ResultModel, ValidatedSpecModel
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.validator import Validator

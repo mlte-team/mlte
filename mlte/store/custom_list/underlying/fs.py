@@ -3,6 +3,7 @@ mlte/store/custom_list/underlying/fs.py
 
 Implementation of local file system custom list store.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
