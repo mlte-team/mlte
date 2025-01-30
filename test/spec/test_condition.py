@@ -151,7 +151,7 @@ def test_bool_exp_str() -> None:
 
     assert (
         condition.validator.bool_exp_str
-        == "lambda real: real.value > arg1 and real.value < arg2"
+        == "lambda real: ((real.value > arg1) and (real.value < arg2))"
     )
 
 

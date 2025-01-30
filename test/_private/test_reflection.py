@@ -92,4 +92,4 @@ def test_complex_source_line():
     )
 
     lambda_str = get_lambda_code(test.lambda_exp)
-    assert lambda_str == 'lambda z: z*3 if z > 0 else -z, new_str="a")'
+    assert lambda_str == 'lambda z: z * 3 if z > 0 else -z, new_str="a"'

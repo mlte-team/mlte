@@ -67,11 +67,15 @@ def test_round_trip() -> None:
 
 def test_build_validator():
     """Tests that the build_validator method builds the expected validator."""
+    # fmt: off
     validator = Validator.build_validator(
-        bool_exp=lambda x: x == 1, success="Yay!", failure="Aww"
+        bool_exp=lambda x: x == 1,
+        success="Yay!",
+        failure="Aww"
     )
+    # fmt: on
 
-    assert validator.bool_exp_str == "lambda x: x == 1"
+    assert validator.bool_exp_str == "lambda x: (x == 1)"
     assert validator.success == "Yay!"
     assert validator.failure == "Aww"
     assert validator.info is None
