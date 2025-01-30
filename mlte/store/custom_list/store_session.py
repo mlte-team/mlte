@@ -30,8 +30,7 @@ class ManagedCustomListSession(ManagedSession):
         return cast(CustomListStoreSession, self.session)
 
 
-# TODO : Have this inherit from ResourceMapper and figure out how to handle the mismatch in params
-class CustomListEntryMapper:
+class CustomListEntryMapper(ResourceMapper):
     """An interface for mapping CRUD actions to custom list entries."""
 
     def create(
