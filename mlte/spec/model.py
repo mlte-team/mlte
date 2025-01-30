@@ -4,26 +4,11 @@ mlte/spec/model.py
 Model implementation for the Spec artifact.
 """
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
-
-
-class ConditionModel(BaseModel):
-    """A description of a condition for a QACategory."""
-
-    name: str
-    """A decriptive name for the condition, usually the method name used to call it."""
-
-    arguments: List[Any] = []
-    """The arguments used when validating the condition."""
-
-    callback: str
-    """A text-encoded, dilled-serialized version of the callback to execute when validating this condition."""
-
-    value_class: str
-    """A string indicating the full module and class name of the Value used to generate this condition."""
+from mlte.validation.model_condition import ConditionModel
 
 
 class QACategoryModel(BaseModel):

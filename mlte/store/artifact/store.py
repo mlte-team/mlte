@@ -10,7 +10,7 @@ import time
 from typing import List, Optional, cast
 
 from mlte.artifact.model import ArtifactModel
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.base import ManagedSession, Store, StoreSession
 from mlte.store.query import Query
 
@@ -47,7 +47,7 @@ class ArtifactStoreSession(StoreSession):
     # Interface: Context
     # -------------------------------------------------------------------------
 
-    def create_model(self, model: ModelCreate) -> Model:
+    def create_model(self, model: Model) -> Model:
         """
         Create a MLTE model.
         :param model: The model data to create the model
@@ -86,7 +86,7 @@ class ArtifactStoreSession(StoreSession):
             "Cannot invoke method on abstract ArtifactStoreSession."
         )
 
-    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+    def create_version(self, model_id: str, version: Version) -> Version:
         """
         Create a MLTE model version.
         :param model_id: The identifier for the model

@@ -6,7 +6,7 @@ Implementation of in-memory user store.
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
@@ -107,7 +107,7 @@ class InMemoryUserMapper(UserMapper):
         self.group_mapper = group_mapper
         """A reference to the group mapper, to get updated group info if needed."""
 
-    def create(self, user: UserWithPassword) -> User:
+    def create(self, user: UserWithPassword, context: Any = None) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
@@ -120,7 +120,9 @@ class InMemoryUserMapper(UserMapper):
         self.storage.users[user.username] = stored_user
         return stored_user
 
-    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
+    def edit(
+        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+    ) -> User:
         if user.username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {user.username}")
 
@@ -133,7 +135,7 @@ class InMemoryUserMapper(UserMapper):
         self.storage.users[user.username] = updated_user
         return curr_user
 
-    def read(self, username: str) -> User:
+    def read(self, username: str, context: Any = None) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
         user = self.storage.users[username]
@@ -146,10 +148,10 @@ class InMemoryUserMapper(UserMapper):
 
         return user
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return [username for username in self.storage.users.keys()]
 
-    def delete(self, username: str) -> User:
+    def delete(self, username: str, context: Any = None) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
 
@@ -165,28 +167,28 @@ class InMemoryGroupMapper(GroupMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, group: Group) -> Group:
+    def create(self, group: Group, context: Any = None) -> Group:
         if group.name in self.storage.groups:
             raise errors.ErrorAlreadyExists(f"Group {group.name}")
         self.storage.groups[group.name] = group
         return group
 
-    def edit(self, updated_group: Group) -> Group:
+    def edit(self, updated_group: Group, context: Any = None) -> Group:
         if updated_group.name not in self.storage.groups:
             raise errors.ErrorNotFound(f"Group {updated_group.name}")
 
         self.storage.groups[updated_group.name] = updated_group
         return self.read(updated_group.name)
 
-    def read(self, group_name: str) -> Group:
+    def read(self, group_name: str, context: Any = None) -> Group:
         if group_name not in self.storage.groups:
             raise errors.ErrorNotFound(f"Group {group_name}")
         return self.storage.groups[group_name]
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return [group_name for group_name in self.storage.groups.keys()]
 
-    def delete(self, group_name: str) -> Group:
+    def delete(self, group_name: str, context: Any = None) -> Group:
         if group_name not in self.storage.groups:
             raise errors.ErrorNotFound(f"Group {group_name}")
 
@@ -202,23 +204,23 @@ class InMemoryPermissionMapper(PermissionMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, permission: Permission) -> Permission:
+    def create(self, permission: Permission, context: Any = None) -> Permission:
         if permission.to_str() in self.storage.permissions:
             raise errors.ErrorAlreadyExists(f"Permission {permission.to_str()}")
         self.storage.permissions[permission.to_str()] = permission
         return permission
 
-    def read(self, permission_str: str) -> Permission:
+    def read(self, permission_str: str, context: Any = None) -> Permission:
         if permission_str not in self.storage.permissions:
             raise errors.ErrorNotFound(f"Permission {permission_str}")
         return self.storage.permissions[permission_str]
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return [
             permission_str for permission_str in self.storage.permissions.keys()
         ]
 
-    def delete(self, permission_str: str) -> Permission:
+    def delete(self, permission_str: str, context: Any = None) -> Permission:
         if permission_str not in self.storage.permissions:
             raise errors.ErrorNotFound(f"Permission {permission_str}")
 

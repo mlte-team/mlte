@@ -74,7 +74,7 @@
             {{ finding.status }}
           </td>
           <td
-            v-else-if="finding.status == 'Ignore'"
+            v-else-if="finding.status == 'Info'"
             style="background-color: rgba(255, 243, 205, 255)"
           >
             {{ finding.status }}

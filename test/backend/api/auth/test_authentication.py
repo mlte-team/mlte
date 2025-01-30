@@ -4,7 +4,6 @@ test/backend/auth/test_authentication.py
 Test the authentication operations
 """
 
-
 import pytest
 
 from mlte.backend.api.auth import authentication

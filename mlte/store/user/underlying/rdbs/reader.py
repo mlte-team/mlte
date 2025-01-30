@@ -3,6 +3,7 @@ mlte/store/user/underlying/rdbs/reader.py
 
 DB utils for getting user related data from the DB.
 """
+
 from __future__ import annotations
 
 from typing import List, Tuple

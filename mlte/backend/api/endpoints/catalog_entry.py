@@ -3,6 +3,7 @@ mlte/backend/api/endpoints/catalog.py
 
 Test Catalog Entry CRUD endpoint.
 """
+
 from __future__ import annotations
 
 from typing import List
@@ -46,7 +47,7 @@ def create_catalog_entry(
                 )
 
             return catalog_session.entry_mapper.create_with_header(
-                entry, current_user.username
+                entry, user=current_user.username
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(

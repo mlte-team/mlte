@@ -19,6 +19,24 @@ from test.spec.extended_qa_category import ExtendedQACategory
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
+def test_round_trip() -> None:
+    """Condition can be converted to model and back."""
+
+    spec = Spec(
+        identifier="spec",
+        properties={
+            StorageCost("rationale"): {
+                "test": LocalObjectSize.value().less_than(3)
+            }
+        },
+    )
+
+    model = spec.to_model()
+    loaded = Spec.from_model(model)
+
+    assert spec == loaded
+
+
 def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 

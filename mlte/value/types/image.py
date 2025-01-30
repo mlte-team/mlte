@@ -15,7 +15,6 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.validation.result import Ignore
 from mlte.value.artifact import Value
 from mlte.value.model import ImageValueModel, ValueModel, ValueType
 
@@ -84,13 +83,11 @@ class Image(Value):
         )
 
     @classmethod
-    def ignore(cls, reason: str) -> Condition:
+    def register_info(cls, info: str) -> Condition:
         """
-        Ignore an image value.
-        :param reason: The reason for ignoring the image
+        Register info about an image value.
+        :param info: The information to record.
         :return: The Condition that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
-            lambda _: Ignore(reason),
-        )
+        condition: Condition = Condition.build_condition(info=info)
         return condition

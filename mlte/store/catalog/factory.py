@@ -4,7 +4,6 @@ mlte/store/catalog/factory.py
 Top-level functions for catalog store creation.
 """
 
-
 from typing import Optional
 
 from mlte.store.base import StoreType, StoreURI

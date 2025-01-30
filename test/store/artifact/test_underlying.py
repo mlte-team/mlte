@@ -9,7 +9,7 @@ import pytest
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.model import ModelCreate, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import (
     ArtifactStore,
     ArtifactStoreSession,
@@ -57,7 +57,7 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     model_id = "model"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
+        handle.create_model(Model(identifier=model_id))
 
         _ = handle.read_model(model_id)
 
@@ -80,7 +80,7 @@ def test_model_list(
     model_id = "model0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.create_model(ModelCreate(identifier=model_id))
+        _ = handle.create_model(Model(identifier=model_id))
 
         models = handle.list_models()
         assert len(models) == 1
@@ -98,9 +98,9 @@ def test_version(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
+        handle.create_model(Model(identifier=model_id))
 
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         _ = handle.read_version(model_id, version_id)
 
@@ -124,13 +124,11 @@ def test_two_versions_same_id_same_model(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         with pytest.raises(errors.ErrorAlreadyExists):
-            handle.create_version(
-                model_id, VersionCreate(identifier=version_id)
-            )
+            handle.create_version(model_id, Version(identifier=version_id))
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -145,12 +143,12 @@ def test_two_versions_same_id_different_model(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_model(ModelCreate(identifier=model2_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_model(Model(identifier=model2_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         # No assert needed, just ensure that this doesn't throw an exception.
-        handle.create_version(model2_id, VersionCreate(identifier=version_id))
+        handle.create_version(model2_id, Version(identifier=version_id))
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -164,8 +162,8 @@ def test_version_list(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         versions = handle.list_versions(model_id)
         assert len(versions) == 1
@@ -211,8 +209,8 @@ def test_search(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         a0 = ArtifactFactory.make(artifact_type, "id0", complete=complete)
         a1 = ArtifactFactory.make(artifact_type, "id1", complete=complete)
@@ -242,8 +240,8 @@ def test_artifact(
     user = TEST_API_USERNAME
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         artifact = ArtifactFactory.make(
             artifact_type, artifact_id, complete=complete
@@ -342,8 +340,8 @@ def test_artifact_overwrite(
     artifact_id = "myid"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(ModelCreate(identifier=model_id))
-        handle.create_version(model_id, VersionCreate(identifier=version_id))
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
 
         artifact = ArtifactFactory.make(
             artifact_type, artifact_id, complete=complete

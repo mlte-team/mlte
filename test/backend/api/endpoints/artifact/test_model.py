@@ -9,7 +9,7 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.context.model import Model, ModelCreate
+from mlte.context.model import Model
 from mlte.store.user.policy import Policy
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import ResourceType, UserWithPassword
@@ -25,10 +25,10 @@ MODEL_URI = f"{settings.API_PREFIX}{MODEL_ENDPOINT}"
 # -----------------------------------------------------------------------------
 
 
-def get_sample_model() -> ModelCreate:
+def get_sample_model() -> Model:
     """Creates a simple test model."""
     model_id = "m0"
-    return ModelCreate(identifier=model_id)
+    return Model(identifier=model_id)
 
 
 def create_sample_model_using_admin(test_api: TestAPI) -> None:
@@ -39,7 +39,7 @@ def create_sample_model_using_admin(test_api: TestAPI) -> None:
 def create_fake_model_using_admin(test_api: TestAPI) -> None:
     """Create fake model used in wrong permission tests."""
     test_api.admin_create_entity(
-        ModelCreate(identifier=user_generator.FAKE_ID), MODEL_URI
+        Model(identifier=user_generator.FAKE_ID), MODEL_URI
     )
 
 
@@ -68,9 +68,9 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    model = ModelCreate(identifier="model")
+    model = Model(identifier="model")
 
-    res = test_client.post(MODEL_URI, json=model.model_dump())
+    res = test_client.post(MODEL_URI, json=model.to_json())
     assert res.status_code == codes.OK
     _ = Model(**res.json())
 
@@ -92,9 +92,9 @@ def test_create_no_permission(
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    model = ModelCreate(identifier="model")
+    model = Model(identifier="model")
 
-    res = test_client.post(MODEL_URI, json=model.model_dump())
+    res = test_client.post(MODEL_URI, json=model.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -115,7 +115,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{MODEL_URI}/{model.identifier}")
     assert res.status_code == codes.OK
     read = Model(**res.json())
-    assert read == Model(**model.model_dump(), versions=[])
+    assert read == Model(**model.to_json())
 
 
 @pytest.mark.parametrize(

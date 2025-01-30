@@ -37,6 +37,8 @@ from mlte.report.model import (
 )
 from mlte.spec.model import ConditionModel, QACategoryModel, SpecModel
 from mlte.validation.model import ResultModel, ValidatedSpecModel
+from mlte.validation.model_condition import ConditionModel
+from mlte.validation.validator import Validator
 from mlte.value.model import IntegerValueModel, ValueModel
 from mlte.value.types.integer import Integer
 
@@ -290,7 +292,9 @@ def make_complete_spec_model() -> SpecModel:
                     "accuracy": ConditionModel(
                         name="less_than",
                         arguments=[3.0],
-                        callback="invalid^#*@&^ASD@#",
+                        validator=Validator(
+                            success="Yay", failure="oh"
+                        ).to_model(),
                         value_class="mlte.value.types.real.Real",
                     )
                 },

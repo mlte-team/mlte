@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/metadata.py
 
 Definition of the metadata (DB schema) for the artifact store.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Optional

@@ -7,7 +7,7 @@ Test the API for version operations.
 import pytest
 
 from mlte.backend.api import codes
-from mlte.context.model import Version, VersionCreate
+from mlte.context.model import Version
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import (
     MODEL_URI,
@@ -27,10 +27,10 @@ VERSION_URI = f"{MODEL_URI}" + "/{}" + f"{VERSION_ENDPOINT}"
 # -----------------------------------------------------------------------------
 
 
-def get_sample_version() -> VersionCreate:
+def get_sample_version() -> Version:
     """Creates a simple test version."""
     version_id = "1.1"
-    return VersionCreate(identifier=version_id)
+    return Version(identifier=version_id)
 
 
 def create_sample_version_using_admin(test_api: TestAPI) -> None:
@@ -60,10 +60,10 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     create_fake_model_using_admin(test_api)
     test_client = test_api.get_test_client()
 
-    version = VersionCreate(identifier=version_id)
+    version = Version(identifier=version_id)
     res = test_client.post(
         VERSION_URI.format(model.identifier),
-        json=version.model_dump(),
+        json=version.to_json(),
     )
     assert res.status_code == codes.OK
     _ = Version(**res.json())
@@ -86,10 +86,10 @@ def test_create_no_permission(
     create_fake_model_using_admin(test_api)
     test_client = test_api.get_test_client()
 
-    version = VersionCreate(identifier=version_id)
+    version = Version(identifier=version_id)
     res = test_client.post(
         VERSION_URI.format(model.identifier),
-        json=version.model_dump(),
+        json=version.to_json(),
     )
     assert res.status_code == codes.FORBIDDEN
 
@@ -116,7 +116,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     )
     assert res.status_code == codes.OK
     read = Version(**res.json())
-    assert read == Version(**version.model_dump())
+    assert read == Version(**version.to_json())
 
 
 @pytest.mark.parametrize(

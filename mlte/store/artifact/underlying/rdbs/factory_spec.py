@@ -3,12 +3,12 @@ mlte/store/artifact/underlying/rdbs/factory_spec.py
 
 Conversions between schema and internal models.
 """
-from __future__ import annotations
 
-import json
+from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
+from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.spec.model import ConditionModel, QACategoryModel, SpecModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
@@ -22,6 +22,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.validation.model import ResultModel, ValidatedSpecModel
+from mlte.validation.model_condition import ConditionModel
 
 # -------------------------------------------------------------------------
 # Spec Factory Methods
@@ -50,8 +51,8 @@ def create_spec_db_from_model(
             condition_obj = DBCondition(
                 name=condition.name,
                 measurement_id=measurement_id,
-                arguments=json.dumps(condition.arguments),
-                callback=condition.callback,
+                arguments=condition.args_to_json_str(),
+                validator=json.dumps(condition.validator.to_json()),
                 value_class=condition.value_class,
                 qa_category=qa_category_obj,
             )
@@ -73,7 +74,7 @@ def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
                 conditions={
                     condition.measurement_id: ConditionModel(
                         name=condition.name,
-                        callback=condition.callback,
+                        validator=json.loads(condition.validator),
                         value_class=condition.value_class,
                         arguments=json.loads(condition.arguments),
                     )
@@ -100,11 +101,15 @@ def create_v_spec_db_from_model(
     validated_spec_obj = DBValidatedSpec(
         artifact_header=artifact_header,
         results=[],
-        spec=DBReader.get_spec(
-            validated_spec.spec_identifier, artifact_header.version_id, session
-        )
-        if validated_spec.spec_identifier != ""
-        else None,
+        spec=(
+            DBReader.get_spec(
+                validated_spec.spec_identifier,
+                artifact_header.version_id,
+                session,
+            )
+            if validated_spec.spec_identifier != ""
+            else None
+        ),
     )
     for qa_category_name, results in validated_spec.results.items():
         for measurement_id, result in results.items():
@@ -119,13 +124,15 @@ def create_v_spec_db_from_model(
                     session,
                 ),
                 validated_spec=validated_spec_obj,
-                evidence_metadata=DBEvidenceMetadata(
-                    identifier=measurement_id,
-                    measurement_type=result.metadata.measurement_type,
-                    info=result.metadata.info,
-                )
-                if result.metadata is not None
-                else None,
+                evidence_metadata=(
+                    DBEvidenceMetadata(
+                        identifier=measurement_id,
+                        measurement_type=result.metadata.measurement_type,
+                        info=result.metadata.info,
+                    )
+                    if result.metadata is not None
+                    else None
+                ),
             )
             validated_spec_obj.results.append(result_obj)
     return validated_spec_obj

@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_user.py
 
 Test the API for user operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, List
@@ -12,7 +13,7 @@ import pytest
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.context.model import ModelCreate
+from mlte.context.model import Model
 from mlte.store.user.policy import Policy
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import MODEL_URI
@@ -61,7 +62,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     test_client = test_api.get_test_client()
     user = get_sample_user()
 
-    res = test_client.post(f"{USER_URI}", json=user.model_dump())
+    res = test_client.post(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.OK
     _ = BasicUser(**res.json())
 
@@ -86,7 +87,7 @@ def test_create_no_permission(
     test_client = test_api.get_test_client()
     user = get_sample_user()
 
-    res = test_client.post(f"{USER_URI}", json=user.model_dump())
+    res = test_client.post(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -104,9 +105,9 @@ def test_edit_no_pass(test_api_fixture, api_user: UserWithPassword) -> None:
     create_sample_user_using_admin(test_api)
 
     # Edit user.
-    user_w_pass = BasicUser(**user.model_dump())
+    user_w_pass = BasicUser(**user.to_json())
     user_w_pass.email = email2
-    res = test_client.put(f"{USER_URI}", json=user_w_pass.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user_w_pass.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -129,7 +130,7 @@ def test_edit_pass(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Edit user.
     user.email = email2
-    res = test_client.put(f"{USER_URI}", json=user.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -154,7 +155,7 @@ def test_edit_pass_no_permission(
 
     # Edit user.
     user.email = email2
-    res = test_client.put(f"{USER_URI}", json=user.model_dump())
+    res = test_client.put(f"{USER_URI}", json=user.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -340,11 +341,11 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Create test models.
     m1_id = "m1"
-    test_api.admin_create_entity(ModelCreate(identifier=m1_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m1_id), MODEL_URI)
     m2_id = "m2"
-    test_api.admin_create_entity(ModelCreate(identifier=m2_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m2_id), MODEL_URI)
     m3_id = "m3"
-    test_api.admin_create_entity(ModelCreate(identifier=m3_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
     user.groups.extend(
@@ -378,11 +379,11 @@ def test_list_user_groups_me(
 
     # Create test models.
     m1_id = "m1"
-    test_api.admin_create_entity(ModelCreate(identifier=m1_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m1_id), MODEL_URI)
     m2_id = "m2"
-    test_api.admin_create_entity(ModelCreate(identifier=m2_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m2_id), MODEL_URI)
     m3_id = "m3"
-    test_api.admin_create_entity(ModelCreate(identifier=m3_id), MODEL_URI)
+    test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
     api_user.groups.extend(
@@ -392,7 +393,7 @@ def test_list_user_groups_me(
         Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
     )
     user_store = state.user_store.session()
-    user_store.user_mapper.edit(BasicUser(**api_user.model_dump()))
+    user_store.user_mapper.edit(BasicUser(**api_user.to_json()))
 
     res = test_client.get(f"{USER_URI}/me/models")
     assert res.status_code == codes.OK

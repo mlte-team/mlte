@@ -3,16 +3,17 @@ mlte/cli/cli.py
 
 Top-level command line interface.
 """
+
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 import traceback
 from importlib.metadata import PackageNotFoundError, version
 
 import mlte.backend.main as backend
 import mlte.frontend as frontend
+from mlte._private.fixed_json import json
 from mlte.backend.core.config import settings as backend_settings
 from mlte.frontend.config import settings as frontend_settings
 

@@ -3,10 +3,11 @@ mlte/store/user/underlying/rdbs/store.py
 
 Implementation of relational database system user store.
 """
+
 from __future__ import annotations
 
 import typing
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -117,7 +118,7 @@ class RDBUserMapper(UserMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, user: UserWithPassword) -> User:
+    def create(self, user: UserWithPassword, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -134,7 +135,9 @@ class RDBUserMapper(UserMapper):
                 stored_user, _ = DBReader.get_user(user.username, session)
                 return stored_user
 
-    def edit(self, user: Union[UserWithPassword, BasicUser]) -> User:
+    def edit(
+        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+    ) -> User:
         with Session(self.storage.engine) as session:
             curr_user, user_obj = DBReader.get_user(user.username, session)
             updated_user = update_user_data(curr_user, user)
@@ -146,12 +149,12 @@ class RDBUserMapper(UserMapper):
             stored_user, _ = DBReader.get_user(user.username, session)
             return stored_user
 
-    def read(self, username: str) -> User:
+    def read(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
             user, _ = DBReader.get_user(username, session)
             return user
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         users: List[str] = []
         with Session(self.storage.engine) as session:
             user_objs = session.scalars(select(DBUser))
@@ -159,7 +162,7 @@ class RDBUserMapper(UserMapper):
                 users.append(user_obj.username)
         return users
 
-    def delete(self, username: str) -> User:
+    def delete(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
             user, user_obj = DBReader.get_user(username, session)
             session.delete(user_obj)
@@ -198,7 +201,7 @@ class RDBGroupMapper(GroupMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, new_group: Group) -> Group:
+    def create(self, new_group: Group, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_group(new_group.name, session)
@@ -212,7 +215,7 @@ class RDBGroupMapper(GroupMapper):
                 session.commit()
                 return new_group
 
-    def edit(self, updated_group: Group) -> Group:
+    def edit(self, updated_group: Group, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
             _, group_obj = DBReader.get_group(updated_group.name, session)
 
@@ -222,12 +225,12 @@ class RDBGroupMapper(GroupMapper):
 
             return updated_group
 
-    def read(self, group_name: str) -> Group:
+    def read(self, group_name: str, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
             group, _ = DBReader.get_group(group_name, session)
             return group
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         groups: List[str] = []
         with Session(self.storage.engine) as session:
             group_objs = session.scalars(select(DBGroup))
@@ -235,7 +238,7 @@ class RDBGroupMapper(GroupMapper):
                 groups.append(group_obj.name)
         return groups
 
-    def delete(self, group_name: str) -> Group:
+    def delete(self, group_name: str, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
             group, group_obj = DBReader.get_group(group_name, session)
             session.delete(group_obj)
@@ -276,7 +279,9 @@ class RDBPermissionMapper(PermissionMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, new_permission: Permission) -> Permission:
+    def create(
+        self, new_permission: Permission, context: Any = None
+    ) -> Permission:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_permission(new_permission, session)
@@ -296,19 +301,19 @@ class RDBPermissionMapper(PermissionMapper):
                 session.commit()
                 return new_permission
 
-    def read(self, permission: str) -> Permission:
+    def read(self, permission: str, context: Any = None) -> Permission:
         with Session(self.storage.engine) as session:
             perm, _ = DBReader.get_permission(
                 Permission.from_str(permission), session
             )
             return perm
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         with Session(self.storage.engine) as session:
             permissions, _ = DBReader.get_permissions(session)
             return [permission.to_str() for permission in permissions]
 
-    def delete(self, permission: str) -> Permission:
+    def delete(self, permission: str, context: Any = None) -> Permission:
         with Session(self.storage.engine) as session:
             perm, permission_obj = DBReader.get_permission(
                 Permission.from_str(permission), session

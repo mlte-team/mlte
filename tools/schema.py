@@ -167,7 +167,7 @@ def vet_one(config: Config, mlte_path: Path) -> None:
     with path.open("r") as f:
         expected = json.load(f)
 
-    diff = deepdiff.DeepDiff(expected, config.generate())
+    diff = deepdiff.DeepDiff(expected, config.generate())  # type: ignore
     if not len(diff) == 0:
         raise RuntimeError(f"Schema at {path} is not up to date.")
 

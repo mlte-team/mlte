@@ -93,10 +93,6 @@ class Result(metaclass=abc.ABCMeta):
             return False
         return self.to_model() == other.to_model()
 
-    def __neq__(self, other: object) -> bool:
-        """Inequality comparison."""
-        return not self.__eq__(other)
-
 
 class Success(Result):
     """Indicates successful measurement validation."""
@@ -138,21 +134,21 @@ class Failure(Result):
         return "Failure"
 
 
-class Ignore(Result):
-    """Indicates ignored measurement validation."""
+class Info(Result):
+    """Indicates an informational resut of measurement validation, not validated."""
 
     def __init__(self, message: str):
         """
-        Initialize an Ignore validatation result instance.
+        Initialize an Info validatation result instance.
 
-        :param message: Message indicating the reason validation is ignored
+        :param message: Message indicating the reason validation is info
         """
         super().__init__(message)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
-        raise RuntimeError("Boolean conversion for Ignore() is ambiguous.")
+        raise RuntimeError("Boolean conversion for Info() is ambiguous.")
 
     def __str__(self) -> str:
         """String representation."""
-        return "Ignore"
+        return "Info"

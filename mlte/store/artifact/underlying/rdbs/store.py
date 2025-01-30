@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/store.py
 
 Implementation of relational database system artifact store.
 """
+
 from __future__ import annotations
 
 import typing
@@ -14,7 +15,7 @@ from sqlalchemy.orm import DeclarativeBase, Session
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
@@ -88,7 +89,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_model(self, model: ModelCreate) -> Model:
+    def create_model(self, model: Model) -> Model:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_model(model.identifier, session)
@@ -125,7 +126,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             session.commit()
             return model
 
-    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+    def create_version(self, model_id: str, version: Version) -> Version:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_version(

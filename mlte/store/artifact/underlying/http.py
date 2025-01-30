@@ -12,7 +12,7 @@ from typing import List, Optional
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.models.artifact_model import WriteArtifactRequest
 from mlte.backend.core.config import settings
-from mlte.context.model import Model, ModelCreate, Version, VersionCreate
+from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
@@ -72,9 +72,9 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     # Structural Elements
     # -------------------------------------------------------------------------
 
-    def create_model(self, model: ModelCreate) -> Model:
+    def create_model(self, model: Model) -> Model:
         url = f"{self.url}{API_PREFIX}/model"
-        res = self.client.post(url, json=model.model_dump())
+        res = self.client.post(url, json=model.to_json())
         self.client.raise_for_response(res)
 
         return Model(**res.json())
@@ -100,9 +100,9 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
         return Model(**res.json())
 
-    def create_version(self, model_id: str, version: VersionCreate) -> Version:
+    def create_version(self, model_id: str, version: Version) -> Version:
         url = f"{self.url}{API_PREFIX}/model/{model_id}/version"
-        res = self.client.post(url, json=version.model_dump())
+        res = self.client.post(url, json=version.to_json())
         self.client.raise_for_response(res)
 
         return Version(**res.json())
@@ -146,7 +146,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
             url,
             json=WriteArtifactRequest(
                 artifact=artifact, force=force, parents=parents
-            ).model_dump(),
+            ).to_json(),
         )
         self.client.raise_for_response(res)
 
@@ -185,7 +185,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
         url = f"{_url(self.url, model_id, version_id)}/artifact/search"
-        res = self.client.post(url, json=query.model_dump())
+        res = self.client.post(url, json=query.to_json())
         self.client.raise_for_response(res)
 
         return [ArtifactModel(**object) for object in res.json()]

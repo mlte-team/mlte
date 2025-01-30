@@ -768,9 +768,6 @@
     "artifact_type": {
       "const": "report",
       "default": "report",
-      "enum": [
-        "report"
-      ],
       "title": "Artifact Type",
       "type": "string"
     },

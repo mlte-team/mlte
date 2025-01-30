@@ -116,7 +116,7 @@ class ValidatedSpec(Artifact):
         )
 
     def print_results(self, type: str = "all"):
-        """Prints the validated results per QACategory, can be filtered by result type."""
+        """Prints the validated results per property, can be filtered by result type."""
         if type not in ["all", "Success", "Failure", "Ignore"]:
             raise RuntimeError(f"Invalid type: {type}")
 

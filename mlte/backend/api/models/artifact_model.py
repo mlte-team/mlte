@@ -8,9 +8,8 @@ for additional meta-models like these. This worked well for write request;
 should the other endpoints be refactored to look more like this one?
 """
 
-from pydantic import BaseModel
-
 from mlte.artifact.model import ArtifactModel
+from mlte.model.base_model import BaseModel
 
 USER_ME_ID = "me"
 """Special ID used to identify the currently logged in user."""

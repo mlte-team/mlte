@@ -3,6 +3,7 @@ mlte/store/artifact/underlying/rdbs/metadata_nc.py
 
 Definition of the metadata (DB schema) for negotiation card and report elements in the artifact store.
 """
+
 from __future__ import annotations
 
 from typing import List, Optional

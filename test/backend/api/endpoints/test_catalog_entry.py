@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_catalog_entry.py
 
 Test the API for catalog operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -57,7 +58,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     entry = get_test_entry(creator=api_user.username)
 
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
-    res = test_client.post(f"{url}", json=entry.model_dump())
+    res = test_client.post(f"{url}", json=entry.to_json())
     assert res.status_code == codes.OK
     _ = CatalogEntry(**res.json())
 
@@ -77,7 +78,7 @@ def test_create_no_permissions(
     entry = get_test_entry()
 
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
-    res = test_client.post(f"{url}", json=entry.model_dump())
+    res = test_client.post(f"{url}", json=entry.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -98,7 +99,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     # Edit entry.
     entry.description = desc2
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
-    res = test_client.put(f"{url}", json=entry.model_dump())
+    res = test_client.put(f"{url}", json=entry.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -131,7 +132,7 @@ def test_edit_no_permission(
     # Edit entry.
     entry.description = desc2
     url = get_entry_uri(catalog_id=entry.header.catalog_id)
-    res = test_client.put(f"{url}", json=entry.model_dump())
+    res = test_client.put(f"{url}", json=entry.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -340,7 +341,7 @@ def test_search(
     create_entry_using_admin(entry, test_api)
 
     url = get_entry_uri()
-    res = test_client.post(f"{url}/search", json=Query().model_dump())
+    res = test_client.post(f"{url}/search", json=Query().to_json())
     assert res.status_code == codes.OK
 
     collection = res.json()

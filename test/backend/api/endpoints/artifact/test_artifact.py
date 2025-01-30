@@ -3,6 +3,7 @@ test/backend/api/endpoints/artifact/test_artifact.py
 
 Test the API for artifacts.
 """
+
 from __future__ import annotations
 
 import typing
@@ -89,7 +90,7 @@ def test_write(
     r = WriteArtifactRequest(artifact=a)
     res = test_client.post(
         ARTIFACT_URI.format(model.identifier, version.identifier),
-        json=r.model_dump(),
+        json=r.to_json(),
     )
     assert res.status_code == codes.OK
 
@@ -188,7 +189,7 @@ def test_search(
 
     res = test_client.post(
         f"{ARTIFACT_URI.format(model.identifier, version.identifier)}/search",
-        json=Query().model_dump(),
+        json=Query().to_json(),
     )
     assert res.status_code == codes.OK
 

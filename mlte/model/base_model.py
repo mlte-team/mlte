@@ -10,16 +10,27 @@ from typing import Any, Dict
 
 import pydantic
 
+from mlte._private.fixed_json import json
+from mlte.model.serialization_error import SerializationError
+
 
 class BaseModel(pydantic.BaseModel):
     """The base model for all MLTE models."""
 
     def to_json(self) -> Dict[str, Any]:
         """
-        Serialize the model.
+        Serialize the model. Also check if the result is serializable.
         :return: The JSON representation of the model
         """
-        return self.model_dump()
+        json_object = self.model_dump()
+
+        # Check if object can't be serialized.
+        try:
+            _ = json.dumps(json_object)
+        except TypeError as e:
+            raise SerializationError(e, str(type(self)))
+
+        return json_object
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> BaseModel:
@@ -45,7 +56,3 @@ class BaseModel(pydantic.BaseModel):
         if not isinstance(other, BaseModel):
             return False
         return self._equal(other)
-
-    def __neq__(self, other: object) -> bool:
-        """Test instance for inequality."""
-        return not self.__eq__(other)

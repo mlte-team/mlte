@@ -6,7 +6,7 @@ Implementation of in-memory catalog store.
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
@@ -93,31 +93,31 @@ class InMemoryCatalogEntryMapper(CatalogEntryMapper):
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, entry: CatalogEntry) -> CatalogEntry:
+    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         if entry.header.identifier in self.storage.entries:
             raise errors.ErrorAlreadyExists(f"Entry {entry.header.identifier}")
 
         self.storage.entries[entry.header.identifier] = entry
         return entry
 
-    def edit(self, entry: CatalogEntry) -> CatalogEntry:
+    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         if entry.header.identifier not in self.storage.entries:
             raise errors.ErrorNotFound(f"Entry {entry.header.identifier}")
 
         self.storage.entries[entry.header.identifier] = entry
         return entry
 
-    def read(self, entry_id: str) -> CatalogEntry:
+    def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         if entry_id not in self.storage.entries:
             raise errors.ErrorNotFound(f"Entry {entry_id}")
 
         entry = self.storage.entries[entry_id]
         return entry
 
-    def list(self) -> List[str]:
+    def list(self, context: Any = None) -> List[str]:
         return [username for username in self.storage.entries.keys()]
 
-    def delete(self, entry_id: str) -> CatalogEntry:
+    def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:
         if entry_id not in self.storage.entries:
             raise errors.ErrorNotFound(f"Entry {entry_id}")
 

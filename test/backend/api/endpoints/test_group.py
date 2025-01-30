@@ -3,6 +3,7 @@ test/backend/api/endpoints/test_group.py
 
 Test the API for group operations.
 """
+
 from __future__ import annotations
 
 from typing import Any, List
@@ -89,7 +90,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
     test_client = test_api.get_test_client()
     group = get_test_group()
 
-    res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
+    res = test_client.post(f"{GROUP_URI}", json=group.to_json())
     assert res.status_code == codes.OK
     _ = Group(**res.json())
 
@@ -108,7 +109,7 @@ def test_create_no_permissions(
     test_client = test_api.get_test_client()
     group = get_test_group()
 
-    res = test_client.post(f"{GROUP_URI}", json=group.model_dump())
+    res = test_client.post(f"{GROUP_URI}", json=group.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 
@@ -134,7 +135,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 
     # Edit group.
     group.permissions.append(p3)
-    res = test_client.put(f"{GROUP_URI}", json=group.model_dump())
+    res = test_client.put(f"{GROUP_URI}", json=group.to_json())
     assert res.status_code == codes.OK
 
     # Read it back.
@@ -166,7 +167,7 @@ def test_edit_no_permission(
 
     # Edit group.
     group.permissions.append(p3)
-    res = test_client.put(f"{GROUP_URI}", json=group.model_dump())
+    res = test_client.put(f"{GROUP_URI}", json=group.to_json())
     assert res.status_code == codes.FORBIDDEN
 
 

@@ -6,9 +6,6 @@
         "value_type": {
           "const": "array",
           "default": "array",
-          "enum": [
-            "array"
-          ],
           "title": "Value Type",
           "type": "string"
         },
@@ -74,9 +71,6 @@
         "value_type": {
           "const": "image",
           "default": "image",
-          "enum": [
-            "image"
-          ],
           "title": "Value Type",
           "type": "string"
         },
@@ -97,9 +91,6 @@
         "value_type": {
           "const": "integer",
           "default": "integer",
-          "enum": [
-            "integer"
-          ],
           "title": "Value Type",
           "type": "string"
         },
@@ -120,9 +111,6 @@
         "value_type": {
           "const": "opaque",
           "default": "opaque",
-          "enum": [
-            "opaque"
-          ],
           "title": "Value Type",
           "type": "string"
         },
@@ -143,9 +131,6 @@
         "value_type": {
           "const": "real",
           "default": "real",
-          "enum": [
-            "real"
-          ],
           "title": "Value Type",
           "type": "string"
         },
@@ -166,9 +151,6 @@
     "artifact_type": {
       "const": "value",
       "default": "value",
-      "enum": [
-        "value"
-      ],
       "title": "Artifact Type",
       "type": "string"
     },

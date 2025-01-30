@@ -4,6 +4,7 @@ mlte/store/artifact/underlying/rdbs/metadata_spec.py
 Definition of the metadata (DB schema) for spec and validated spec in the artifact store,
 as well as converstions between schema and internal models.
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -68,7 +69,7 @@ class DBCondition(DBBase):
     measurement_id: Mapped[str]
     name: Mapped[str]
     arguments: Mapped[str]  # Json string of the aray of arguments.
-    callback: Mapped[str]
+    validator: Mapped[str]
     value_class: Mapped[str]
     qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
 
