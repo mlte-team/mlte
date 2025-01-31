@@ -121,7 +121,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def _write_entry(self, entry: CustomListEntryModel) -> CustomListEntryModel:
         """Writes a custom list entry to storage."""
-        self.storage.write_resource(entry.name, entry.model_dump())
+        self.storage.write_resource(entry.name, entry.to_json())
         return self._read_entry(entry.name)
 
     def _set_base_path(self, custom_list_name: CustomListName) -> None:
