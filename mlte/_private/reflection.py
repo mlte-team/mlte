@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import ast
 import importlib
+import importlib.resources
 import inspect
+import json
+import os
 import re
-from typing import Any, Type
+from types import ModuleType
+from typing import Any, Generator, Type
 
 import astunparse
 
@@ -31,12 +37,15 @@ def load_class(class_path: str) -> Type[Any]:
     return class_type
 
 
-def get_lambda_code1(lambda_var: str, lambda_expression: Any) -> str:
-    """Returns the code for a given lambda expression as a string."""
-    code_string = inspect.getsource(lambda_expression).lstrip()
-    start = code_string.find(f"{lambda_var}=") + len(f"{lambda_var}=")
-    end = code_string.find(",", start)
-    return code_string[start:end]
+def get_json_resources(package: ModuleType) -> Generator[Any, None, None]:
+    """Load set of json files represented as a module and return a generator of their data."""
+    resources = importlib.resources.files(package)
+    with importlib.resources.as_file(resources) as resources_path:
+        with os.scandir(resources_path) as files:
+            for file in files:
+                if file.is_file() and file.name.endswith("json"):
+                    with open(file.path) as open_file:
+                        yield json.load(open_file)
 
 
 def get_lambda_code(lambda_func: Any, lambda_pos: int = 0):

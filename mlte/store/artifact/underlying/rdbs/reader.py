@@ -30,7 +30,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     DBReport,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
-    DBProperty,
+    DBQACategory,
     DBSpec,
     DBValidatedSpec,
 )
@@ -255,27 +255,27 @@ class DBReader:
             return property_obj
 
     @staticmethod
-    def get_property_id(
-        property_name: str,
+    def get_qa_category_id(
+        qa_category_name: str,
         spec_identifier: str,
         version_id: int,
         session: Session,
     ) -> int:
-        """Gets the id of the property with the given name for the indicated Spec."""
-        property_id = session.scalar(
-            select(DBProperty.id)
-            .where(DBProperty.name == property_name)
-            .where(DBSpec.id == DBProperty.spec_id)
+        """Gets the id of the qa category with the given name for the indicated Spec."""
+        qa_category_id = session.scalar(
+            select(DBQACategory.id)
+            .where(DBQACategory.name == qa_category_name)
+            .where(DBSpec.id == DBQACategory.spec_id)
             .where(DBSpec.artifact_header_id == DBArtifactHeader.id)
             .where(DBArtifactHeader.identifier == spec_identifier)
             .where(DBArtifactHeader.version_id == version_id)
         )
-        if property_id is None:
+        if qa_category_id is None:
             raise errors.ErrorNotFound(
-                f"Property with name {property_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
+                f"Quality attribute category with name {qa_category_name} for Spec with identifier {spec_identifier} was not found in the artifact store."
             )
         else:
-            return property_id
+            return qa_category_id
 
     @staticmethod
     def get_problem_type(type: ProblemType, session: Session) -> DBProblemType:

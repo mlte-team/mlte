@@ -36,7 +36,7 @@ class FileSystemUserStore(UserStore):
     """A local file system implementation of the MLTE user store."""
 
     BASE_USERS_FOLDER = "users"
-    """Base fodler to store users store in."""
+    """Base folder to store users store in."""
 
     def __init__(self, uri: StoreURI) -> None:
         self.storage = FileSystemStorage(
@@ -97,12 +97,12 @@ class FileSystemUserMappper(UserMapper):
         """A reference to underlying storage."""
 
         self.group_mapper = group_mapper
-        """Refernce to group mapper, to get updated groups when needed."""
+        """Reference to group mapper, to get updated groups when needed."""
 
         self.storage.set_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
         )
-        """Set the subfodler for this resrouce."""
+        """Set the subfolder for this resource."""
 
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
@@ -181,7 +181,7 @@ class FileSystemGroupMappper(GroupMapper):
         self.storage.set_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.GROUPS_FOLDER)
         )
-        """Set the subfodler for this resrouce."""
+        """Set the subfolder for this resource."""
 
     def create(self, group: Group, context: Any = None) -> Group:
         self.storage.ensure_resource_does_not_exist(group.name)
@@ -236,7 +236,7 @@ class FileSystemPermissionMappper(PermissionMapper):
         self.storage.set_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.PERMISSIONS_FOLDER)
         )
-        """Set the subfodler for this resrouce."""
+        """Set the subfolder for this resource."""
 
     def create(self, permission: Permission, context: Any = None) -> Permission:
         self.storage.ensure_resource_does_not_exist(permission.to_str())

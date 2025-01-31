@@ -27,7 +27,7 @@ class LocalFileSystemStore(ArtifactStore):
     """A local file system implementation of the MLTE artifact store."""
 
     BASE_MODELS_FOLDER = "models"
-    """Base fodler to store models in."""
+    """Base folder to store models in."""
 
     def __init__(self, uri: StoreURI) -> None:
         super().__init__(uri=uri)
