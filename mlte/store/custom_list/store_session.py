@@ -37,29 +37,33 @@ class CustomListEntryMapper(ResourceMapper):
     def create(
         self,
         new_custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName,
+        custom_list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
         self,
         updated_custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName,
+        custom_list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def read(
-        self, custom_list_entry_name: str, custom_list_name: CustomListName
+        self,
+        custom_list_entry_name: str,
+        custom_list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def list(
         self,
-        custom_list_name: CustomListName,
+        custom_list_name: CustomListName | None = None,
     ) -> List[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(
-        self, custom_list_entry_name: str, custom_list_name: CustomListName
+        self,
+        custom_list_entry_name: str,
+        custom_list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)

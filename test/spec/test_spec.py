@@ -24,7 +24,7 @@ def test_round_trip() -> None:
 
     spec = Spec(
         identifier="spec",
-        properties={
+        qa_categories={
             StorageCost("rationale"): {
                 "test": LocalObjectSize.value().less_than(3)
             }
