@@ -93,7 +93,7 @@ def run(
 
     # Add all configured catalog stores.
     for id, uri in catalog_uris.items():
-        print(
+        logging.info(
             f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
         )
         state.add_catalog_store_from_uri(uri, id)

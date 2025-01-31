@@ -101,6 +101,17 @@
           ],
           "title": "Bool Exp"
         },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
+        },
         "success": {
           "anyOf": [
             {
@@ -134,7 +145,7 @@
           ],
           "title": "Info"
         },
-        "bool_exp_str": {
+        "creator_class": {
           "anyOf": [
             {
               "type": "string"
@@ -143,15 +154,34 @@
               "type": "null"
             }
           ],
-          "title": "Bool Exp Str"
+          "default": null,
+          "title": "Creator Class"
+        },
+        "creator_function": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Function"
+        },
+        "creator_args": {
+          "default": [],
+          "items": {},
+          "title": "Creator Args",
+          "type": "array"
         }
       },
       "required": [
         "bool_exp",
+        "bool_exp_str",
         "success",
         "failure",
-        "info",
-        "bool_exp_str"
+        "info"
       ],
       "title": "ValidatorModel",
       "type": "object"

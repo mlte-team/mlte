@@ -4,6 +4,7 @@ mlte/backend/api/auth/authorization.py
 Setup of OAuth based authorization checks.
 """
 
+import logging
 from json import JSONDecodeError
 
 from fastapi import Depends, HTTPException, Request
@@ -104,7 +105,7 @@ def is_authorized(current_user: BasicUser, resource: Permission) -> bool:
 
         # Check to find if the current user has permissions through any of its groups.
         # print(current_user.groups)
-        print(f"Resource: {resource}")
+        logging.info(f"Checking authorization for resource: {resource}")
         for group in current_user.groups:
             # print(group)
             for permission in group.permissions:

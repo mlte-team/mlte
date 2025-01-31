@@ -4,6 +4,8 @@ mlte/backend/api/auth/authentication.py
 Authentication handling.
 """
 
+import logging
+
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user import passwords
 
@@ -17,7 +19,7 @@ def authenticate_user(
         user = user_store_session.user_mapper.read(username)
     except Exception as ex:
         # Assume any exception means we couldn't load user it.
-        print(
+        logging.error(
             f"Error reading user; type is: {ex.__class__.__name__}, error is: {ex}"
         )
         return False

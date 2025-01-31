@@ -8,8 +8,9 @@ from __future__ import annotations
 
 import inspect
 import typing
-from typing import Any, Callable, List, Optional, Type
+from typing import Any, Callable, List, Optional
 
+from mlte._private.function_info import FunctionInfo
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.result import Result
 from mlte.validation.validator import Validator
@@ -33,7 +34,7 @@ class Condition:
         Initialize a Condition instance.
 
         :param name: The name of the name method, for documenting purposes.
-        :param arguments: The list of arguments passed to the callable.
+        :param arguments: The list of arguments/thresholds passed to the callable.
         :param validator: The Validator that implements validation.
         :param value_class: The full module + class name of the Value that generated this condition, if any.
         """
@@ -42,7 +43,7 @@ class Condition:
         """The human-readable identifier for the name method."""
 
         self.arguments: List[Any] = arguments
-        """The arguments used when validating the condition."""
+        """The threshold arguments used when creating the condition."""
 
         self.validator: Validator = validator
         """The validator that implements validation."""
@@ -70,39 +71,25 @@ class Condition:
         info: Optional[str] = None,
     ) -> Condition:
         """Creates a Condition using the provided test, extracting context info from the method that called us."""
-        # Get info about the caller from inspection.
+        # Get method info, passing our caller as argument.
         curr_frame = inspect.currentframe()
-        if curr_frame is None:
-            raise Exception("Unexpected error reading validation method data.")
-        caller_function = curr_frame.f_back
-        if caller_function is None:
-            raise Exception("Unexpected error reading validation method data.")
-
-        # Get function name and arguments of callers.
-        validation_name = caller_function.f_code.co_name
-        arguments = caller_function.f_locals
-
-        # Build the class info as a string.
-        if "cls" not in arguments:
-            raise Exception(
-                "'cls' argument is needed in validation method arguments."
-            )
-        cls: Type[Value] = arguments["cls"]
-        cls_str = f"{cls.__module__}.{cls.__name__}"
+        caller_function = curr_frame.f_back if curr_frame is not None else None
+        method_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
-        validator = Validator(
-            bool_exp=bool_exp, success=success, failure=failure, info=info
+        validator = Validator.build_validator(
+            bool_exp=bool_exp,
+            success=success,
+            failure=failure,
+            info=info,
+            caller_function=caller_function,
         )
 
-        # Validation args include all caller arguments except for the value class type.
-        validation_args = []
-        for arg_key, arg_value in arguments.items():
-            if arg_key != "cls":
-                validation_args.append(arg_value)
-
         condition: Condition = Condition(
-            validation_name, validation_args, validator, cls_str
+            method_info.function_name,
+            method_info.arguments,
+            validator,
+            method_info.function_class,
         )
         return condition
 

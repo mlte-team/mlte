@@ -73,7 +73,11 @@ def test_memory_validate_success() -> None:
     stats = m.evaluate(p.pid)
 
     vr = Condition(
-        "Succeed", [], Validator(lambda _: True, success="yay", failure="oh")
+        name="test",
+        arguments=[],
+        validator=Validator(
+            bool_exp=lambda _: True, success="yay", failure="oh"
+        ),
     )(stats)
     print(vr)
     assert bool(vr)
@@ -91,7 +95,11 @@ def test_memory_validate_failure() -> None:
     stats = m.evaluate(p.pid)
 
     vr = Condition(
-        "Fail", [], Validator(lambda _: False, success="yay", failure="oh")
+        name="test",
+        arguments=[],
+        validator=Validator(
+            bool_exp=lambda _: False, success="yay", failure="oh"
+        ),
     )(stats)
     assert not bool(vr)
 
