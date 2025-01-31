@@ -30,7 +30,7 @@ class ValidatorModel(BaseModel):
 
 
 class ConditionModel(BaseModel):
-    """A description of a condition for a property."""
+    """A description of a condition for a QACategory."""
 
     name: str
     """A decriptive name for the condition, usually the method name used to call it."""

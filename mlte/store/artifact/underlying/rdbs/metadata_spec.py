@@ -34,16 +34,16 @@ class DBSpec(DBBase):
     artifact_header: Mapped[DBArtifactHeader] = relationship(
         back_populates="body_spec", cascade="all"
     )
-    properties: Mapped[List[DBProperty]] = relationship(
+    qa_categories: Mapped[List[DBQACategory]] = relationship(
         back_populates="spec", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"Spec(id={self.id!r}, artifact_header={self.artifact_header!r}, properties={self.properties!r})"
+        return f"Spec(id={self.id!r}, artifact_header={self.artifact_header!r}, qa_categories={self.qa_categories!r})"
 
 
-class DBProperty(DBBase):
-    __tablename__ = "property"
+class DBQACategory(DBBase):
+    __tablename__ = "qa_category"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
@@ -52,14 +52,14 @@ class DBProperty(DBBase):
     module: Mapped[str]
     spec_id: Mapped[int] = mapped_column(ForeignKey("spec.id"))
 
-    spec: Mapped[DBSpec] = relationship(back_populates="properties")
+    spec: Mapped[DBSpec] = relationship(back_populates="qa_categories")
     conditions: Mapped[List[DBCondition]] = relationship(
-        cascade="all, delete-orphan", back_populates="property"
+        cascade="all, delete-orphan", back_populates="qa_category"
     )
-    results: Mapped[List[DBResult]] = relationship(back_populates="property")
+    results: Mapped[List[DBResult]] = relationship(back_populates="qa_category")
 
     def __repr__(self) -> str:
-        return f"Property(id={self.id!r}, name={self.name!r}, description={self.description!r}, rationale={self.rationale!r}, module={self.module!r})"
+        return f"QACategory(id={self.id!r}, name={self.name!r}, description={self.description!r}, rationale={self.rationale!r}, module={self.module!r})"
 
 
 class DBCondition(DBBase):
@@ -71,12 +71,14 @@ class DBCondition(DBBase):
     arguments: Mapped[str]  # Json string of the aray of arguments.
     validator: Mapped[str]
     value_class: Mapped[str]
-    property_id: Mapped[int] = mapped_column(ForeignKey("property.id"))
+    qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
 
-    property: Mapped[DBProperty] = relationship(back_populates="conditions")
+    qa_category: Mapped[DBQACategory] = relationship(
+        back_populates="conditions"
+    )
 
     def __repr__(self) -> str:
-        return f"Condition(id={self.id!r}, name={self.name!r}, arguments={self.arguments!r}, value_class={self.value_class!r}, property={self.property!r})"
+        return f"Condition(id={self.id!r}, name={self.name!r}, arguments={self.arguments!r}, value_class={self.value_class!r}, qa_category={self.qa_category!r})"
 
 
 # -------------------------------------------------------------------------
@@ -112,7 +114,7 @@ class DBResult(DBBase):
     measurement_id: Mapped[str]
     type: Mapped[str]
     message: Mapped[str]
-    property_id: Mapped[int] = mapped_column(ForeignKey("property.id"))
+    qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
     validated_spec_id: Mapped[int] = mapped_column(
         ForeignKey("validated_spec.id")
     )
@@ -123,7 +125,7 @@ class DBResult(DBBase):
     validated_spec: Mapped[DBValidatedSpec] = relationship(
         back_populates="results"
     )
-    property: Mapped[DBProperty] = relationship(back_populates="results")
+    qa_category: Mapped[DBQACategory] = relationship(back_populates="results")
 
     def __repr__(self) -> str:
         return f"Result(id={self.id!r}, type={self.type!r}, message={self.message!r}, evidence_metadata={self.evidence_metadata!r})"

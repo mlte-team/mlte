@@ -97,7 +97,7 @@
       "title": "Tags",
       "type": "array"
     },
-    "property_category": {
+    "qa_category": {
       "anyOf": [
         {
           "type": "string"
@@ -107,9 +107,9 @@
         }
       ],
       "default": null,
-      "title": "Property Category"
+      "title": "Qa Category"
     },
-    "property": {
+    "quality_attribute": {
       "anyOf": [
         {
           "type": "string"
@@ -119,7 +119,7 @@
         }
       ],
       "default": null,
-      "title": "Property"
+      "title": "Quality Attribute"
     },
     "code_type": {
       "$ref": "#/$defs/CatalogEntryType"
