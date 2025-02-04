@@ -32,8 +32,11 @@ def custom_list_stores() -> Generator[str, None, None]:
     """
     # for store_fixture_name in StoreType:
     #     yield store_fixture_name.value
-    for store_fixture_name in [StoreType.LOCAL_FILESTYSTEM.value, StoreType.LOCAL_MEMORY.value]:
-        yield store_fixture_name.value
+    for store_fixture_name in [
+        StoreType.LOCAL_FILESYSTEM.value,
+        StoreType.LOCAL_MEMORY.value,
+    ]:
+        yield store_fixture_name
 
 
 @pytest.fixture(scope="function")
