@@ -109,9 +109,9 @@ label_dict = {
 }
 
 
-def load_base_results(data_folder: str) -> pd.DataFrame:
+def load_base_results(data_folder: str,test_filename: str) -> pd.DataFrame:
     df_results = pd.read_csv(
-        path.join(data_folder, "FlowerModelv1_TestSetResults.csv")
+        path.join(data_folder, test_filename)
     )
     df_results.drop(columns=["Unnamed: 0"], inplace=True)
     return df_results
@@ -120,16 +120,17 @@ def load_base_results(data_folder: str) -> pd.DataFrame:
 def load_taxonomy(data_folder: str) -> pd.DataFrame:
     """Loads taxonomy info about the flowers and returns a dict with it."""
     df_labels = pd.read_csv(
-        path.join(data_folder, "OxfordFlowerLabels.csv"), header=1
+        path.join(data_folder, "OxfordFlowerLabels.csv"), header=0
     )
+    #print(df_labels.head())
     df_labels.drop(columns=["Phylum", "Class"], inplace=True)
     df_labels.rename(columns={"Phylum.1": "Phylum"}, inplace=True)
-    df_labels.drop([0], inplace=True)
+    #df_labels.drop([0], inplace=True)
     # df_labels['Common Name'] = df_labels['Common Name'].str.strip()
     df_labels["Label Name"] = df_labels["Common Name"].replace(
         " ", "_", regex=True
     )
-    df_labels.head()
+    print(df_labels)
 
     df_dict = pd.DataFrame.from_dict(
         {"Label": list(label_dict), "Label Name": label_dict.values()}
@@ -140,12 +141,12 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
     df_info = df_labels.merge(
         df_dict, how="outer", left_on="Label Name", right_on="Label Name"
     )
-    df_info["Clade1"].fillna("None", inplace=True)
-    df_info["Clade2"].fillna("None", inplace=True)
-    df_info["Clade 3"].fillna("None", inplace=True)
-    df_info["Subfamily"].fillna("None", inplace=True)
-    df_info["Genus"].fillna("None", inplace=True)
-    df_info["Risk"].fillna("None", inplace=True)
+    df_info.fillna({"Clade1":"None"}, inplace=True) 
+    df_info.fillna({"Clade2":"None"}, inplace=True)
+    df_info.fillna({"Clade3":"None"}, inplace=True)
+    df_info.fillna({"Subfamily":"None"}, inplace=True)
+    df_info.fillna({"Genus":"None"}, inplace=True)
+    df_info.fillna({"Risk":"None"}, inplace=True)
 
     df_info
     print(len(df_info), len(df_labels), len(df_dict))
