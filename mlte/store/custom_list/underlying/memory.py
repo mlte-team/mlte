@@ -53,6 +53,8 @@ class MemoryCustomListStorage:
 
     def __init__(self) -> None:
         self.custom_lists: Dict[CustomListName, Dict[str, CustomListEntryModel]] = {}
+        for list_name in CustomListName:
+            self.custom_lists[list_name] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -64,6 +66,9 @@ class InMemoryCustomListStoreSession(CustomListStoreSession):
     """An in-memory implementation of the MLTE custom list store."""
 
     def __init__(self, *, storage: MemoryCustomListStorage) -> None:
+        self.storage = storage
+        """The storage."""
+
         self.custom_list_entry_mapper = InMemoryCustomListEntryMapper(
             storage=storage
         )
@@ -82,13 +87,9 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         self,
         *,
         storage: MemoryCustomListStorage,
-        entry_mapper: InMemoryCustomListEntryMapper,
     ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
-
-        self.entry_mapper = entry_mapper
-        """A reference to the entry mapper, to get updated entry info if needed."""
 
     def create(
         self,
