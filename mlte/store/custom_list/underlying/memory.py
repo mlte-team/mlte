@@ -52,7 +52,7 @@ class MemoryCustomListStorage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
-        self.custom_lists: Dict[CustomListName, CustomListModel] = {}
+        self.custom_lists: Dict[CustomListName, Dict[str, CustomListEntryModel]] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -92,75 +92,61 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
 
     def create(
         self,
-        custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName | None = None,
+        entry: CustomListEntryModel,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
-        self._check_custom_list_exists(custom_list_name)
-        if custom_list_entry.name in [
-            entry.name for entry in self.storage.custom_lists[custom_list_name]
-        ]:
+        self._check_custom_list_exists(list_name)
+        if entry.name in self.storage.custom_lists[list_name]:
             raise errors.ErrorAlreadyExists(
-                f"Custom List Entry {custom_list_entry.name}"
+                f"Custom List Entry {entry.name}"
             )
 
-        self.storage.custom_lists[custom_list_name].append(custom_list_entry)
+        self.storage.custom_lists[list_name][entry.name] = entry
 
     def edit(
         self,
-        custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName | None = None,
+        entry: CustomListEntryModel,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
-        self._check_custom_list_exists(custom_list_name)
-        if custom_list_entry.name not in [
-            entry.name for entry in self.storage.custom_lists[custom_list_name]
-        ]:
+        self._check_custom_list_exists(list_name)
+        if entry.name not in self.storage.custom_lists[list_name]:
             raise errors.ErrorNotFound(
-                f"Custom List Entry {custom_list_entry.name}"
+                f"Custom List Entry {entry.name}"
             )
 
-        self.storage.custom_lists[custom_list_name] = list(
-            map(
-                lambda x: (
-                    custom_list_entry if x.name == custom_list_entry.name else x
-                ),
-                self.storage.custom_lists[custom_list_name],
-            )
-        )
+        self.storage.custom_lists[list_name][entry.name] = entry
+        return entry
 
     def read(
-        self, entry_name: str, custom_list_name: CustomListName | None = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
-        self._check_custom_list_exists(custom_list_name)
-        if entry_name not in [
-            entry.name for entry in self.storage.custom_lists[custom_list_name]
-        ]:
+        self._check_custom_list_exists(list_name)
+        if entry_name.name not in self.storage.custom_lists[list_name]:
             raise errors.ErrorNotFound(f"Custom List Entry {entry_name}")
 
-        return self.storage.custom_lists[custom_list_name][
-            [entry.name for entry in self.storage.custom_lists[custom_list_name]].index(entry_name)
-        ]
+        entry = self.storage.custom_lists[list_name][entry_name]
+        return entry
     
-    def list(self, custom_list_name: CustomListName | None = None) -> List[str]:
-        self._check_custom_list_exists(custom_list_name)
-        return self.storage.custom_lists[custom_list_name]
+    def list(self, list_name: CustomListName | None = None) -> List[str]:
+        self._check_custom_list_exists(list_name)
+        return [entry_name for entry_name in self.storage.custom_lists[list_name].keys()]
 
     def delete(
-        self, entry_name: str, custom_list_name: CustomListName | None = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
-        self._check_custom_list_exists(custom_list_name)
-        if entry_name not in [
-            entry.name for entry in self.storage.custom_lists[custom_list_name]
-        ]:
+        self._check_custom_list_exists(list_name)
+        if entry_name.name not in self.storage.custom_lists[list_name]:
             raise errors.ErrorNotFound(f"Custom List Entry {entry_name}")
         
-        popped = self.storage.custom_lists[custom_list_name].pop([entry.name for entry in self.storage.custom_lists[custom_list_name]].index(entry_name))
+        popped = self.storage.custom_lists[list_name][entry_name]
+        del self.storage.custom_lists[list_name][entry_name]
         return popped
 
     def _check_custom_list_exists(
-        self, custom_list_name: CustomListName | None
+        self, list_name: CustomListName | None
     ) -> None:
         """Checks if the custom lists exists within the store."""
-        if custom_list_name is None:
+        if list_name is None:
             raise ValueError("CustomListName cannot be None")
-        elif custom_list_name not in self.storage.custom_lists:
-            raise ValueError("CustomListName does not exist")
+        elif list_name not in self.storage.custom_lists:
+            raise ValueError(f"CustomListName, {list_name}, does not exist")
