@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Sets up the proper profiles and env files depending on the store type configured, defaulting to rdbs.
 export COMPOSE_PROFILES="${STORE_TYPE:=rdbs}"

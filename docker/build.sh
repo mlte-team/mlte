@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 # Build base first.
 cd ..
 docker build -t mlte-python . -f docker/Dockerfile.python
