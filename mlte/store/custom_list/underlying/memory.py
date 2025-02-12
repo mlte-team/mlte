@@ -6,7 +6,7 @@ Implementation of in-memory custom list store.
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import CustomListName
@@ -97,7 +97,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         entry: CustomListEntryModel,
-        list_name: CustomListName | None = None,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         self._check_custom_list_exists(list_name)
         if list_name is not None:
@@ -114,7 +114,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     def edit(
         self,
         entry: CustomListEntryModel,
-        list_name: CustomListName | None = None,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         self._check_custom_list_exists(list_name)
         if list_name is not None:
@@ -127,7 +127,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         raise ValueError("CustomListName cannot be None")
 
     def read(
-        self, entry_name: str, list_name: CustomListName | None = None
+        self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         self._check_custom_list_exists(list_name)
         if list_name is not None:
@@ -139,7 +139,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
 
         raise ValueError("CustomListName cannot be None")
 
-    def list(self, list_name: CustomListName | None = None) -> List[str]:
+    def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         self._check_custom_list_exists(list_name)
         if list_name is not None:
             return [
@@ -150,7 +150,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         raise ValueError("CustomListName cannot be None")
 
     def delete(
-        self, entry_name: str, list_name: CustomListName | None = None
+        self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         self._check_custom_list_exists(list_name)
         if list_name is not None:
@@ -164,7 +164,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         raise ValueError("CustomListName cannot be None")
 
     def _check_custom_list_exists(
-        self, list_name: CustomListName | None
+        self, list_name: Optional[CustomListName]
     ) -> None:
         """Checks if the custom lists exists within the store."""
         if list_name not in self.storage.custom_lists:

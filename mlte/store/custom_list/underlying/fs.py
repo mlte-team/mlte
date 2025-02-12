@@ -7,7 +7,7 @@ Implementation of local file system custom list store.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
@@ -80,7 +80,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         entry: CustomListEntryModel,
-        list_name: CustomListName | None = None,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         self._set_base_path(list_name)
         self.storage.ensure_resource_does_not_exist(entry.name)
@@ -89,24 +89,24 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def edit(
         self,
         entry: CustomListEntryModel,
-        list_name: CustomListName | None = None,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry.name)
         return self._write_entry(entry)
 
     def read(
-        self, entry_name: str, list_name: CustomListName | None = None
+        self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         self._set_base_path(list_name)
         return self._read_entry(entry_name)
 
-    def list(self, list_name: CustomListName | None = None) -> List[str]:
+    def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         self._set_base_path(list_name)
         return self.storage.list_resources()
 
     def delete(
-        self, entry_name: str, list_name: CustomListName | None = None
+        self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry_name)
@@ -124,7 +124,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self.storage.write_resource(entry.name, entry.to_json())
         return self._read_entry(entry.name)
 
-    def _set_base_path(self, list_name: CustomListName | None) -> None:
+    def _set_base_path(self, list_name: Optional[CustomListName]) -> None:
         """
         Sets the path to the list specified in the param.
 

@@ -6,7 +6,7 @@ MLTE custom list store interface implementation
 
 from __future__ import annotations
 
-from typing import List, cast
+from typing import List, Optional, cast
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
@@ -37,33 +37,33 @@ class CustomListEntryMapper(ResourceMapper):
     def create(
         self,
         new_custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName | None = None,
+        custom_list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
         self,
         updated_custom_list_entry: CustomListEntryModel,
-        custom_list_name: CustomListName | None = None,
+        custom_list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def read(
         self,
         custom_list_entry_name: str,
-        custom_list_name: CustomListName | None = None,
+        custom_list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def list(
         self,
-        custom_list_name: CustomListName | None = None,
+        custom_list_name: Optional[CustomListName] = None,
     ) -> List[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(
         self,
         custom_list_entry_name: str,
-        custom_list_name: CustomListName | None = None,
+        custom_list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
