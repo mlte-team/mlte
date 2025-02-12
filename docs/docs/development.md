@@ -27,7 +27,7 @@ $ pyenv local 3.9
 
 ### Requirements
 
- - MLTE uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - `MLTE` uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
  - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
 
 ```bash
@@ -228,7 +228,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
+We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
 We maintain a group of requirements for building the documentation under the `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 
