@@ -100,7 +100,9 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self._check_entry_in_list(entry.name, list_name)
+        if entry.name in self.storage.custom_lists[list_name]:
+            raise errors.ErrorAlreadyExists(f"Custom List Entry {entry.name}")
+        
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
 
