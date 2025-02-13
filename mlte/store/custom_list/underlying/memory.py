@@ -100,9 +100,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        if entry.name in self.storage.custom_lists[list_name]:
-            raise errors.ErrorAlreadyExists(f"Custom List Entry {entry.name}")
-
+        self._check_entry_in_list(entry.name, list_name)
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
 
@@ -112,9 +110,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        if entry.name not in self.storage.custom_lists[list_name]:
-            raise errors.ErrorNotFound(f"Custom List Entry {entry.name}")
-
+        self._check_entry_in_list(entry.name, list_name)
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
 
@@ -122,9 +118,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        if entry_name not in self.storage.custom_lists[list_name]:
-            raise errors.ErrorNotFound(f"Custom List Entry {entry_name}")
-
+        self._check_entry_in_list(entry_name, list_name)
         entry = self.storage.custom_lists[list_name][entry_name]
         return entry
 
@@ -139,9 +133,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        if entry_name not in self.storage.custom_lists[list_name]:
-            raise errors.ErrorNotFound(f"Custom List Entry {entry_name}")
-
+        self._check_entry_in_list(entry_name, list_name)
         popped = self.storage.custom_lists[list_name][entry_name]
         del self.storage.custom_lists[list_name][entry_name]
         return popped
@@ -156,3 +148,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
             )
         else:
             return list_name
+
+    def _check_entry_in_list(self, entry_name: str, list_name: CustomListName):
+        if entry_name not in self.storage.custom_lists[list_name]:
+            raise errors.ErrorNotFound(f"Custom List Entry {entry_name}")
