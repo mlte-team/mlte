@@ -30,6 +30,8 @@ def custom_list_stores() -> Generator[str, None, None]:
     Yield catalog store fixture names.
     :return: Store fixture name
     """
+    # TODO : Adjust this to return all store types when they are implemented.
+    #           Currently just returns the ones that are implemented
     # for store_fixture_name in StoreType:
     #     yield store_fixture_name.value
     for store_fixture_name in [
