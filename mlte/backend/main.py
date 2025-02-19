@@ -100,10 +100,16 @@ def run(
 
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here
-    custom_list_store = InitialCustomLists.setup_custom_list_store(
-        stores_uri=artifact_store.uri
-    )
-    state.set_custom_list_store(custom_list_store)
+    # TODO: Remove this check once RDBS and HTTP are implemented
+    parsed_uri = StoreURI.from_string(artifact_store.uri.uri)
+    if (
+        parsed_uri.type == StoreType.LOCAL_MEMORY
+        or parsed_uri.type == StoreType.LOCAL_FILESYSTEM
+    ):
+        custom_list_store = InitialCustomLists.setup_custom_list_store(
+            stores_uri=artifact_store.uri
+        )
+        state.set_custom_list_store(custom_list_store)
 
     # Set the token signing key.
     state.set_token_key(jwt_secret)
