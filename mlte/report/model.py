@@ -8,7 +8,7 @@ from typing import List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
-from mlte.model.shared import NegotiationCardDataModel
+from mlte.negotiation.model import NegotiationCardDataModel
 
 
 class CommentDescriptor(BaseModel):

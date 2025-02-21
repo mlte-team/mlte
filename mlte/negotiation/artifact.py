@@ -12,14 +12,14 @@ from typing import List
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.model.shared import (
+from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardDataModel,
+    NegotiationCardModel,
     QASDescriptor,
     SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
 

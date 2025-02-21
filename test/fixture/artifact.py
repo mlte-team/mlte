@@ -13,7 +13,7 @@ from typing import List, Optional, Union
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.model.shared import (
+from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
     FieldDescriptor,
@@ -24,12 +24,12 @@ from mlte.model.shared import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardDataModel,
+    NegotiationCardModel,
     ProblemType,
     QASDescriptor,
     RiskDescriptor,
     SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,

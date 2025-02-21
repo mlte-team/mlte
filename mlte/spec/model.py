@@ -21,7 +21,7 @@ class TestCaseModel(BaseModel):
     qas_list: list[str] = {}
     """A list of ids of Qualit Attribute Scenarios that this case is addressing."""
 
-    measurement: Optional[MeasurementModel] = None
+    # measurement: Optional[MeasurementModel] = None
     """Measurement to be used with this test case."""
 
     validator: Optional[ValidatorModel] = None

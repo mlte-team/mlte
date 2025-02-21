@@ -1,7 +1,9 @@
 """
 TestSuite contains a collection of TestCases.
 """
+
 from __future__ import annotations
+
 import typing
 
 from mlte.artifact.artifact import Artifact
@@ -14,14 +16,12 @@ from mlte.spec.test_case import TestCase
 
 class TestSuite(Artifact):
     """
-    The TestSuite contains a collection of TestCases to be 
+    The TestSuite contains a collection of TestCases to be
     measured and validated.
     """
 
     def __init__(
-        self,
-        identifier: str = DEFAULT_SPEC_ID,
-        test_cases: list[TestCase] = []
+        self, identifier: str = DEFAULT_SPEC_ID, test_cases: list[TestCase] = []
     ):
         """
         Initialize a TestSuite instance.
@@ -56,8 +56,7 @@ class TestSuite(Artifact):
             header=self.build_artifact_header(),
             body=TestSuiteModel(
                 test_cases=[
-                    test_case.to_model()
-                    for test_case in self.test_cases
+                    test_case.to_model() for test_case in self.test_cases
                 ],
             ),
         )
@@ -69,7 +68,10 @@ class TestSuite(Artifact):
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(
             identifier=model.header.identifier,
-            test_cases=[TestCase.from_model(test_case_model) for test_case_model in body.test_cases],
+            test_cases=[
+                TestCase.from_model(test_case_model)
+                for test_case_model in body.test_cases
+            ],
         )
 
     # -------------------------------------------------------------------------
@@ -79,7 +81,7 @@ class TestSuite(Artifact):
     def __str__(self) -> str:
         """Return a string representation of TestCase."""
         return f"TestSuite contains {len(self.test_cases)} test cases"
-    
+
     def __eq__(self, other: object) -> bool:
         """Compare TestSuite instances for equality."""
         if not isinstance(other, TestSuite):

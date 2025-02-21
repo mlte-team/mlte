@@ -1,6 +1,7 @@
 """
 TestCase defines structure for all tests to be defined for a TestSpec.
 """
+
 from __future__ import annotations
 
 from typing import Optional
@@ -90,7 +91,7 @@ class TestCase:
             goal=model.goal,
             qas_list=model.qas_list,
             measurement=Measurement.from_model(model.measurement),
-            validator=Validator.from_model(model.validator)
+            validator=Validator.from_model(model.validator),
         )
         return test_case
 
@@ -101,7 +102,7 @@ class TestCase:
     def __str__(self) -> str:
         """Return a string representation of TestCase."""
         return f"{self.name}: {self.goal} ({self.qas_list})"
-    
+
     def __eq__(self, other: object) -> bool:
         """Compare TestCase instances for equality."""
         if not isinstance(other, TestCase):

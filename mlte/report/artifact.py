@@ -15,14 +15,14 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.model.shared import (
+from mlte.negotiation.artifact import NegotiationCard
+from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardDataModel,
     QASDescriptor,
     SystemDescriptor,
 )
-from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,
