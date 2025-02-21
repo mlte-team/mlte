@@ -12,13 +12,13 @@ from typing import Optional
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.model.modellable import Modellable
+from mlte.model.serializable import Serializable
 from mlte.session.session import session
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 
 
-class Artifact(Modellable):
+class Artifact(Serializable):
     """
     The MLTE artifact protocol implementation.
 

@@ -1,5 +1,5 @@
 """
-Modellable interface.
+Serializable interface.
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ import mlte._private.meta as meta
 from mlte.model.base_model import BaseModel
 
 
-class Modellable(ABC):
+class Serializable(ABC):
     """
     Interface to define classes that can be converted into a Pydantic model.
     """
@@ -22,26 +22,26 @@ class Modellable(ABC):
 
     @abstractmethod
     def to_model(self) -> BaseModel:
-        """Serialize an Modellable to its corresponding model."""
+        """Serialize an Serializable to its corresponding model."""
         raise NotImplementedError(
-            "to_model() not implemented for abstract Modellable."
+            "to_model() not implemented for abstract Serializable."
         )
 
     @classmethod
     @abstractmethod
     def from_model(cls, model: BaseModel) -> Any:
-        """Deserialize an Modellable from its corresponding model."""
+        """Deserialize an Serializable from its corresponding model."""
         raise NotImplementedError(
-            "from_model() not implemented for abstract Modellable."
+            "from_model() not implemented for abstract Serializable."
         )
 
     def __json__(self):
-        """Hack method to make Modellable serializable to JSON if importing json-fix before json.dumps."""
+        """Hack method to make Serializable serializable to JSON if importing json-fix before json.dumps."""
         return self.to_model().to_json()
 
-    def _equal(a: Modellable, b: Modellable) -> bool:
+    def _equal(a: Serializable, b: Serializable) -> bool:
         """
-        Compare Modellable instances for equality.
+        Compare Serializable instances for equality.
 
         :param a: Input instance
         :param b: Input instance
@@ -51,6 +51,6 @@ class Modellable(ABC):
 
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""
-        if not isinstance(other, Modellable):
+        if not isinstance(other, Serializable):
             return False
         return self._equal(other)
