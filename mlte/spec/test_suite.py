@@ -50,7 +50,7 @@ class TestSuite(Artifact):
     # Model serialization.
     # -------------------------------------------------------------------------
 
-    def to_model(self) -> TestSuiteModel:
+    def to_model(self) -> ArtifactModel:
         """Convert a TestSuite artifact to its corresponding model."""
         return ArtifactModel(
             header=self.build_artifact_header(),

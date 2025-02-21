@@ -12,7 +12,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import SpecModel
+from mlte.spec.model import TestSuiteModel
 from mlte.store.query import Filterable
 from mlte.validation.model import ValidatedSpecModel
 from mlte.value.model import ValueModel
@@ -45,7 +45,7 @@ class ArtifactModel(Filterable):
     body: Union[
         NegotiationCardModel,
         ValueModel,
-        SpecModel,
+        TestSuiteModel,
         ValidatedSpecModel,
         ReportModel,
     ] = Field(..., discriminator="artifact_type")
