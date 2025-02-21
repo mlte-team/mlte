@@ -14,6 +14,7 @@ from typing import Union
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model.base_model import BaseModel
 from mlte.spec.condition import Condition
 from mlte.value.artifact import Value
 from mlte.value.model import ImageValueModel, ValueModel, ValueType
@@ -67,12 +68,13 @@ class Image(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Image:
+    def from_model(cls, model: BaseModel) -> Image:
         """
         Convert an opaque value model to its corresponding artifact.
         :param model: The model representation
         :return: The real value
         """
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 

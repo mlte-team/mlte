@@ -15,6 +15,7 @@ the link between the statically-typed MLTE value system and dynamic extensions.
 from __future__ import annotations
 
 import abc
+import typing
 from typing import Any, Dict
 
 import mlte._private.meta as meta
@@ -22,6 +23,7 @@ import mlte.value.artifact as artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model.base_model import BaseModel
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
 
@@ -71,12 +73,13 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> ValueBase:  # noqa[override]
+    def from_model(cls, model: BaseModel) -> ValueBase:  # noqa[override]
         """
         Deserialize a value from its corresponding model.
         :param model: The artifact model
         :return: The deserialized artifact
         """
+        model = typing.cast(ArtifactModel, model)
         assert (
             model.body.artifact_type == ArtifactType.VALUE
         ), "Broken precondition."

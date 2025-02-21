@@ -6,6 +6,7 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
+import typing
 from typing import Optional
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
@@ -107,7 +108,7 @@ class Artifact(Modellable):
         """
         self.pre_save_hook(context, store)
 
-        artifact_model = self.to_model()
+        artifact_model = typing.cast(ArtifactModel, self.to_model())
         with ManagedArtifactSession(store.session()) as handle:
             handle.write_artifact_with_header(
                 context.model,
@@ -150,12 +151,15 @@ class Artifact(Modellable):
             identifier = cls.get_default_id()
 
         with ManagedArtifactSession(store.session()) as handle:
-            artifact = cls.from_model(
-                handle.read_artifact(
-                    context.model,
-                    context.version,
-                    identifier,
-                )
+            artifact = typing.cast(
+                Artifact,
+                cls.from_model(
+                    handle.read_artifact(
+                        context.model,
+                        context.version,
+                        identifier,
+                    )
+                ),
             )
 
         artifact.post_load_hook(context, store)

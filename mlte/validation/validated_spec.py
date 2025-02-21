@@ -12,6 +12,7 @@ from typing import Dict
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.model.base_model import BaseModel
 from mlte.spec.model import SpecModel
 from mlte.spec.spec import Spec
 from mlte.validation.model import ValidatedSpecModel
@@ -65,7 +66,7 @@ class ValidatedSpec(Artifact):
         Generates a model representation of the ValidatedSpec.
         :return: The serialized model
         """
-        spec_artifact_model = self.spec.to_model()
+        spec_artifact_model = typing.cast(ArtifactModel, self.spec.to_model())
         spec_body_model: SpecModel = typing.cast(
             SpecModel, spec_artifact_model.body
         )
@@ -86,12 +87,13 @@ class ValidatedSpec(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> ValidatedSpec:
+    def from_model(cls, model: BaseModel) -> ValidatedSpec:
         """
         Deserialize ValidatedSpec content from model.
         :param model: The model
         :return: The deserialized specification
         """
+        model = typing.cast(ArtifactModel, model)
         assert (
             model.header.type == ArtifactType.VALIDATED_SPEC
         ), "Broken precondition."

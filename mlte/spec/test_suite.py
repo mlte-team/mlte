@@ -9,6 +9,7 @@ import typing
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.model.base_model import BaseModel
 from mlte.spec.model import TestSuiteModel
 from mlte.spec.spec import DEFAULT_SPEC_ID
 from mlte.spec.test_case import TestCase
@@ -62,8 +63,9 @@ class TestSuite(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> TestSuite:
+    def from_model(cls, model: BaseModel) -> TestSuite:
         """Convert a TestSuite model to its corresponding artifact."""
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(

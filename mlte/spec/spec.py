@@ -12,6 +12,7 @@ from typing import Dict, List, Union
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.model.base_model import BaseModel
 from mlte.qa_category.base import QACategory
 from mlte.spec.condition import Condition
 from mlte.spec.model import QACategoryModel, SpecModel
@@ -75,8 +76,9 @@ class Spec(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Spec:
+    def from_model(cls, model: BaseModel) -> Spec:
         """Convert a negotiation card model to its corresponding artifact."""
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
         body = typing.cast(SpecModel, model.body)
         return Spec(

@@ -12,6 +12,7 @@ from typing import Any, Dict
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model.base_model import BaseModel
 from mlte.value.artifact import Value
 from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
@@ -49,12 +50,13 @@ class Opaque(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Opaque:
+    def from_model(cls, model: BaseModel) -> Opaque:
         """
         Convert an opaque value model to its corresponding artifact.
         :param model: The model representation
         :return: The real value
         """
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 

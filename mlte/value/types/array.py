@@ -12,6 +12,7 @@ from typing import Any, List
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model.base_model import BaseModel
 from mlte.value.artifact import Value
 from mlte.value.model import ArrayValueModel, ValueModel, ValueType
 
@@ -47,12 +48,13 @@ class Array(Value):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Array:
+    def from_model(cls, model: BaseModel) -> Array:
         """
         Convert an array value model to its corresponding artifact.
         :param model: The model representation
         :return: The array value
         """
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
         body = typing.cast(ValueModel, model.body)
 

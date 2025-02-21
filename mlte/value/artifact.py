@@ -16,6 +16,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.model.base_model import BaseModel
 from mlte.store.artifact.store import ArtifactStore
 from mlte.value.model import ValueModel
 
@@ -55,7 +56,7 @@ class Value(Artifact, metaclass=abc.ABCMeta):
         raise NotImplementedError("Value.to_mode()")
 
     @classmethod
-    def from_model(cls, _: ArtifactModel) -> Value:
+    def from_model(cls, _: BaseModel) -> Value:
         """
         Convert a value model to its corresponding artifact.
         NOTE: To cope with polymorphism, the Value artifact type

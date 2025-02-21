@@ -15,6 +15,7 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
+from mlte.model.base_model import BaseModel
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import (
     DataDescriptor,
@@ -124,8 +125,9 @@ class Report(Artifact):
         super().post_load_hook(context, store)
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> Report:
+    def from_model(cls, model: BaseModel) -> Report:
         """Convert a report model to its corresponding artifact."""
+        model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.REPORT, "Broken precondition."
         body = typing.cast(ReportModel, model.body)
         return Report(
