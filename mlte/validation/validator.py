@@ -14,11 +14,13 @@ from typing import Any, Callable, Optional
 from mlte._private import reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
+from mlte.model.base_model import BaseModel
+from mlte.model.serializable import Serializable
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.result import Failure, Info, Result, Success
 
 
-class Validator:
+class Validator(Serializable):
     """
     Class that represents a validation, including condition, and results for success or failure.
     """
@@ -174,7 +176,7 @@ class Validator:
         )
 
     @classmethod
-    def from_model(cls, model: ValidatorModel) -> Validator:
+    def from_model(cls, model: BaseModel) -> Validator:
         """
         Deserialize a Validator from a model.
 
@@ -182,6 +184,7 @@ class Validator:
 
         :return: The deserialized Validator
         """
+        model = typing.cast(ValidatorModel, model)
         validator: Validator = Validator(
             bool_exp=(
                 typing.cast(
@@ -212,8 +215,7 @@ class Validator:
     # -------------------------------------------------------------------------
 
     def __eq__(self, other: object) -> bool:
-        """Compare Validator instances for equality."""
+        """Test instance for equality."""
         if not isinstance(other, Validator):
             return False
-        reference: Validator = other
-        return self.to_model() == reference.to_model()
+        return self._equal(other)
