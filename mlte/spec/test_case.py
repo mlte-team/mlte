@@ -92,8 +92,16 @@ class TestCase:
             name=model.name,
             goal=model.goal,
             qas_list=model.qas_list,
-            measurement=Measurement.from_model(model.measurement),
-            validator=Validator.from_model(model.validator),
+            measurement=(
+                Measurement.from_model(model.measurement)
+                if model.measurement
+                else None
+            ),
+            validator=(
+                Validator.from_model(model.validator)
+                if model.validator
+                else None
+            ),
         )
         return test_case
 
