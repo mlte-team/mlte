@@ -73,8 +73,10 @@ class TestCase:
             name=self.name,
             goal=self.goal,
             qas_list=self.qas_list,
-            measurement=self.measurement.to_model(),
-            validator=self.validator.to_model(),
+            measurement=(
+                self.measurement.to_model() if self.measurement else None
+            ),
+            validator=self.validator.to_model() if self.validator else None,
         )
 
     @classmethod

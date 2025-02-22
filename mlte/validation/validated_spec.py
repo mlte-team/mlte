@@ -66,7 +66,7 @@ class ValidatedSpec(Artifact):
         Generates a model representation of the ValidatedSpec.
         :return: The serialized model
         """
-        spec_artifact_model = typing.cast(ArtifactModel, self.spec.to_model())
+        spec_artifact_model = self.spec.to_model()
         spec_body_model: SpecModel = typing.cast(
             SpecModel, spec_artifact_model.body
         )
