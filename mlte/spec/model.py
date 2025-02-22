@@ -7,6 +7,7 @@ Model implementation for the Spec artifact.
 from typing import Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
+from mlte.measurement.model import MeasurementModel
 from mlte.model import BaseModel
 from mlte.validation.model_condition import ConditionModel, ValidatorModel
 
@@ -21,7 +22,7 @@ class TestCaseModel(BaseModel):
     qas_list: list[str] = []
     """A list of ids of Qualit Attribute Scenarios that this case is addressing."""
 
-    # measurement: Optional[MeasurementModel] = None
+    measurement: Optional[MeasurementModel] = None
     """Measurement to be used with this test case."""
 
     validator: Optional[ValidatorModel] = None
