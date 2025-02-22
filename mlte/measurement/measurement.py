@@ -117,7 +117,7 @@ class Measurement(Serializable, ABC):
         )
 
         measurement: Measurement = measurement_class(
-            cls, "", model.measurement_function
+            measurement, "", model.measurement_function
         )
         return measurement
 
