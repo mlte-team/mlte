@@ -128,7 +128,7 @@ def create_v_spec_db_from_model(
                     DBEvidenceMetadata(
                         identifier=measurement_id,
                         measurement_type=result.metadata.measurement_type,
-                        info=result.metadata.info,
+                        info=result.metadata.function,
                     )
                     if result.metadata is not None
                     else None

@@ -27,7 +27,7 @@ def create_value_db_from_model(
         evidence_metadata=DBEvidenceMetadata(
             identifier=str(value.metadata.identifier),
             measurement_type=value.metadata.measurement_type,
-            info=value.metadata.info,
+            info=value.metadata.function,
         ),
         value_class=value.value_class,
         value_type=value.value.value_type.value,

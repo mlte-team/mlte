@@ -63,7 +63,7 @@ def test_evaluate_external() -> None:
         EvidenceMetadata(
             measurement_type="ExternalMeasurement",
             identifier=Identifier(name="test_id"),
-            info="function: test.measurement.test_external_measurement._dummy_calculation",
+            function="function: test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )
@@ -87,7 +87,7 @@ def test_evaluate_external_base() -> None:
         EvidenceMetadata(
             measurement_type="ExternalMeasurement",
             identifier=Identifier(name="test_id"),
-            info="function: test.measurement.test_external_measurement._dummy_calculation",
+            function="function: test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )

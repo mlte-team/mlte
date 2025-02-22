@@ -46,7 +46,7 @@
         "identifier": {
           "$ref": "#/$defs/Identifier"
         },
-        "info": {
+        "function": {
           "anyOf": [
             {
               "type": "string"
@@ -56,7 +56,7 @@
             }
           ],
           "default": null,
-          "title": "Info"
+          "title": "Function"
         }
       },
       "required": [

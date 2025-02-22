@@ -42,7 +42,7 @@ class EvidenceMetadata(BaseModel):
     identifier: Identifier
     """The identifier for the evidence."""
 
-    info: Optional[str] = None
+    function: Optional[str] = None
     """Additional unstructured information to be stored with the metadata."""
 
     def get_id(self) -> str:
@@ -52,8 +52,8 @@ class EvidenceMetadata(BaseModel):
     def __str__(self) -> str:
         """Return a string representation of a EvidenceMetadata."""
         representation = f"{self.measurement_type}-{self.identifier}"
-        if self.info is not None:
-            representation += f"-{self.info}"
+        if self.function is not None:
+            representation += f"-{self.function}"
         return representation
 
     def __eq__(self, other: object) -> bool:

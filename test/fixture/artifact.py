@@ -319,7 +319,7 @@ def make_complete_validated_spec_model() -> ValidatedSpecModel:
                     metadata=EvidenceMetadata(
                         measurement_type="ExternalMeasurement",
                         identifier=Identifier(name="accuracy"),
-                        info="function: skleran.accu()",
+                        function="function: skleran.accu()",
                     ),
                 )
             },
