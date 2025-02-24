@@ -41,7 +41,10 @@ def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = LocalProcessMemoryConsumption("id")
 
-    assert m.metadata.measurement_type == "mlte.measurement.memory.local_process_memory_consumption.LocalProcessMemoryConsumption"
+    assert (
+        m.metadata.measurement_type
+        == "mlte.measurement.memory.local_process_memory_consumption.LocalProcessMemoryConsumption"
+    )
 
 
 def test_memory_evaluate() -> None:

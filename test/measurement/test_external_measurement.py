@@ -52,6 +52,7 @@ def _dummy_calculation(x: int, y: int):
     """
     return (x + y) * 2
 
+
 # -----------------------------------------------------------------------------
 # Tests
 # -----------------------------------------------------------------------------
@@ -61,7 +62,10 @@ def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = ExternalMeasurement("test_id", Integer)
 
-    assert m.metadata.measurement_type == "mlte.measurement.external_measurement.ExternalMeasurement"
+    assert (
+        m.metadata.measurement_type
+        == "mlte.measurement.external_measurement.ExternalMeasurement"
+    )
 
 
 def test_evaluate_external() -> None:
@@ -72,9 +76,9 @@ def test_evaluate_external() -> None:
     expected_value = _dummy_calculation(x, y)
     expected_result = Integer(
         EvidenceMetadata(
-            measurement_type="ExternalMeasurement",
+            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
             identifier=Identifier(name="test_id"),
-            function="function: test.measurement.test_external_measurement._dummy_calculation",
+            function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )
@@ -83,8 +87,6 @@ def test_evaluate_external() -> None:
     result = measurement.evaluate(x, y)
 
     assert isinstance(result, Integer)
-    print(result.to_model())
-    print(expected_result.to_model())
     assert result == expected_result
 
 
@@ -96,9 +98,9 @@ def test_evaluate_external_base() -> None:
     expected_value = _dummy_calculation(x, y)
     expected_result = BigInteger(
         EvidenceMetadata(
-            measurement_type="ExternalMeasurement",
+            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
             identifier=Identifier(name="test_id"),
-            function="function: test.measurement.test_external_measurement._dummy_calculation",
+            function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )
@@ -107,6 +109,8 @@ def test_evaluate_external_base() -> None:
     result = measurement.evaluate(x, y)
 
     assert isinstance(result, BigInteger)
+    print(result.to_model())
+    print(expected_result.to_model())
     assert result == expected_result
 
 
@@ -116,7 +120,7 @@ def test_evaluate_ingest() -> None:
     expected_value = 1000
     expected_result = Integer(
         EvidenceMetadata(
-            measurement_type="ExternalMeasurement",
+            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
             identifier=Identifier(name="test_id"),
         ),
         expected_value,
@@ -135,7 +139,7 @@ def test_evaluate_ingest_base() -> None:
     expected_value = 1000
     expected_result = BigInteger(
         EvidenceMetadata(
-            measurement_type="ExternalMeasurement",
+            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
             identifier=Identifier(name="test_id"),
         ),
         expected_value,

@@ -41,7 +41,10 @@ def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = LocalProcessCPUUtilization("id")
 
-    assert m.metadata.measurement_type == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
+    assert (
+        m.metadata.measurement_type
+        == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
+    )
 
 
 @pytest.mark.skipif(

@@ -121,7 +121,10 @@ def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = LocalObjectSize("id")
 
-    assert m.metadata.measurement_type == "mlte.measurement.storage.local_object_size.LocalObjectSize"
+    assert (
+        m.metadata.measurement_type
+        == "mlte.measurement.storage.local_object_size.LocalObjectSize"
+    )
 
 
 def test_file(tmp_path):

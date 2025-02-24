@@ -317,9 +317,9 @@ def make_complete_validated_spec_model() -> ValidatedSpecModel:
                     type="Success",
                     message="The RF accuracy is greater than 3",
                     metadata=EvidenceMetadata(
-                        measurement_type="ExternalMeasurement",
+                        measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
                         identifier=Identifier(name="accuracy"),
-                        function="function: skleran.accu()",
+                        function="skleran.accu()",
                     ),
                 )
             },
