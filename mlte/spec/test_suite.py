@@ -29,7 +29,7 @@ class TestSuite(Artifact):
 
         :param test_cases: The collection of test cases.
         """
-        super().__init__(identifier, ArtifactType.SPEC)
+        super().__init__(identifier, ArtifactType.TEST_SUITE)
 
         self.test_cases = test_cases
         """The collection of TestCases that compose the TestSuite."""
@@ -66,7 +66,9 @@ class TestSuite(Artifact):
     def from_model(cls, model: BaseModel) -> TestSuite:
         """Convert a TestSuite model to its corresponding artifact."""
         model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.SPEC, "Broken precondition."
+        assert (
+            model.header.type == ArtifactType.TEST_SUITE
+        ), "Broken precondition."
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(
             identifier=model.header.identifier,

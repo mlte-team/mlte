@@ -23,6 +23,9 @@ class ArtifactType(StrEnum):
     SPEC = "spec"
     """The specification artifact type."""
 
+    TEST_SUITE = "test_suite"
+    """The specification artifact type."""
+
     VALIDATED_SPEC = "validated_spec"
     """The validated specification artifact type."""
 

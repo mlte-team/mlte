@@ -32,7 +32,7 @@ class TestCaseModel(BaseModel):
 class TestSuiteModel(BaseModel):
     """The model implementation for the TestSuite artifact."""
 
-    artifact_type: Literal[ArtifactType.SPEC] = ArtifactType.SPEC
+    artifact_type: Literal[ArtifactType.TEST_SUITE] = ArtifactType.TEST_SUITE
     """Union discriminator."""
 
     test_cases: List[TestCaseModel] = []

@@ -37,8 +37,8 @@ class Measurement(Serializable, ABC):
         """
         Initialize a new Measurement instance.
 
-        :param instance: The invoking instance (Measurement subclass)
         :param identifier: A unique identifier for the instance
+        :param function: The name of an external function, if any, being used.
         """
         self.metadata = EvidenceMetadata(
             measurement_type=meta.get_class_path(self.__class__),
