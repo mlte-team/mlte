@@ -43,7 +43,7 @@ class ConfusionMatrix(ValueBase):
         return self._equal(other)
 
     def __str__(self) -> str:
-        return f"{self.matrix}"
+        return f"{self.matrix}".replace("\n", ", ")
 
     @property
     def misclassifications(self) -> int:
