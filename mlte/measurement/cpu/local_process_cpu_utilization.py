@@ -137,7 +137,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
 
         :param identifier: A unique identifier for the measurement
         """
-        super().__init__(self, identifier)
+        super().__init__(identifier)
         if is_windows():
             raise RuntimeError(
                 f"Measurement {self.metadata.identifier} is not supported on Windows."

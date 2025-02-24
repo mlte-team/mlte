@@ -52,6 +52,17 @@ def _dummy_calculation(x: int, y: int):
     """
     return (x + y) * 2
 
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+
+
+def test_constructor_type():
+    """ "Checks that the constructor sets up type properly."""
+    m = ExternalMeasurement("test_id", Integer)
+
+    assert m.metadata.measurement_type == "mlte.measurement.external_measurement.ExternalMeasurement"
+
 
 def test_evaluate_external() -> None:
     """An external measurement can be evaluated to a MLTE builtin."""

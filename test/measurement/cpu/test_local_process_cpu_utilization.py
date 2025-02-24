@@ -37,6 +37,13 @@ def spin_for(seconds: int):
     return prog
 
 
+def test_constructor_type():
+    """ "Checks that the constructor sets up type properly."""
+    m = LocalProcessCPUUtilization("id")
+
+    assert m.metadata.measurement_type == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
+
+
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )

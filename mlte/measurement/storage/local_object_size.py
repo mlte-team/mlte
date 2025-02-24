@@ -20,7 +20,7 @@ class LocalObjectSize(Measurement):
 
         :param identifier: A unique identifier for the measurement
         """
-        super().__init__(self, identifier)
+        super().__init__(identifier)
 
     def __call__(self, path: str) -> Integer:
         """

@@ -44,13 +44,13 @@ class ProcessMeasurement(Measurement):
         """
         return job.spawn_job(process, arguments)
 
-    def __init__(self, instance: ProcessMeasurement, identifier: str):
+    def __init__(self, identifier: str):
         """
         Initialize a new ProcessMeasurement measurement.
 
         :param identifier: A unique identifier for the measurement
         """
-        super().__init__(instance, identifier)
+        super().__init__(identifier)
         self.thread: Optional[threading.Thread] = None
         self.stored_value: Optional[Value] = None
         self.error: str = ""

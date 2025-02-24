@@ -18,7 +18,7 @@ from test.store.artifact.fixture import store_with_context  # noqa
 
 class DummyMeasurementArray(Measurement):
     def __init__(self, identifier: str):
-        super().__init__(self, identifier)
+        super().__init__(identifier)
 
     def __call__(self) -> Array:
         return Array(self.metadata, [1, 2, 3])

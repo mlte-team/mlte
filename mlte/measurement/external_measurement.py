@@ -26,7 +26,7 @@ class ExternalMeasurement(Measurement):
         :param value_type: The type of the Value this measurement will return.
         :param function: The function to be used when evaluating.
         """
-        super().__init__(self, identifier)
+        super().__init__(identifier)
 
         if not issubclass(value_type, Value):
             raise Exception(

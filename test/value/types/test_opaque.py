@@ -20,7 +20,7 @@ from test.store.artifact.fixture import store_with_context  # noqa
 
 class DummyMeasurementOpaque(Measurement):
     def __init__(self, identifier: str):
-        super().__init__(self, identifier)
+        super().__init__(identifier)
 
     def __call__(self) -> Opaque:
         return Opaque(self.metadata, {"value": 1})

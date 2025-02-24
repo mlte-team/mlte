@@ -31,7 +31,6 @@ class Measurement(Serializable, ABC):
 
     def __init__(
         self,
-        instance: Measurement,
         identifier: str,
         function: Optional[str] = None,
     ):
@@ -42,7 +41,7 @@ class Measurement(Serializable, ABC):
         :param identifier: A unique identifier for the instance
         """
         self.metadata = EvidenceMetadata(
-            measurement_type=type(instance).__name__,
+            measurement_type=meta.get_class_path(self.__class__),
             identifier=Identifier(name=identifier),
             function=function,
         )
@@ -118,7 +117,7 @@ class Measurement(Serializable, ABC):
 
         # TODO: figure out how to change identifier and instance cases to make this actually load
         measurement: Measurement = measurement_class(
-            measurement, "", model.measurement_function
+            "", model.measurement_function
         )
         return measurement
 
