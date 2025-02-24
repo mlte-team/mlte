@@ -116,6 +116,7 @@ class Measurement(Serializable, ABC):
             model.measurement_class
         )
 
+        # TODO: figure out how to change identifier and instance cases to make this actually load
         measurement: Measurement = measurement_class(
             measurement, "", model.measurement_function
         )
