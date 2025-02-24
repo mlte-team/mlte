@@ -11,7 +11,7 @@ from typing import List, Optional
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
-from mlte.model.shared import DataClassification, ProblemType
+from mlte.negotiation.model import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
