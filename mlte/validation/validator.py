@@ -143,7 +143,7 @@ class Validator:
         Stringify arguments so that result's message can include generic information about arguments used when validating.
         """
         # First ensure args are turned to string separately, to allow them to use their own str()
-        MAX_STRING_LENGTH = 200
+        MAX_STRING_LENGTH = 300
         str_args = [
             (
                 str(arg)
