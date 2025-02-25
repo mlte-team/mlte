@@ -9,7 +9,7 @@ from typing import Any, List, Optional
 from strenum import StrEnum
 
 from mlte.model import BaseModel
-from mlte.store.query import Filtrable
+from mlte.store.query import Filterable
 
 
 class CatalogEntryType(StrEnum):
@@ -44,7 +44,7 @@ class CatalogEntryHeader(BaseModel):
     """The id of the catalog this entry came from."""
 
 
-class CatalogEntry(Filtrable):
+class CatalogEntry(Filterable):
     """The base model for MLTE catalog entries."""
 
     header: CatalogEntryHeader
@@ -53,11 +53,11 @@ class CatalogEntry(Filtrable):
     tags: List[str] = []
     """Tags for the problem for the entry."""
 
-    property_category: Optional[str] = None
-    """The property category or QA for the entry."""
+    qa_category: Optional[str] = None
+    """The QA category for the entry."""
 
-    property: Optional[str] = None
-    """The property for the entry."""
+    quality_attribute: Optional[str] = None
+    """The quality attribute for the entry."""
 
     code_type: CatalogEntryType
     """The code type the entry."""

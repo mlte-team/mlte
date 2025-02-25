@@ -48,6 +48,7 @@ python-jose = "^3.3.0"
 bcrypt = "^4.2.1"
 StrEnum = "^0.4.15"
 json-fix = "^1.0.0"
+astunparse = "^1.6.3"
 pip-system-certs = "^4.0.0"
 
 [tool.poetry.group.demo]

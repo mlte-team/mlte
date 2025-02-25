@@ -37,7 +37,7 @@ class ManagedUserSession(ManagedSession):
 
 
 class UserMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store users."""
+    """An interface for mapping CRUD actions to store users."""
 
     def create(self, new_user: UserWithPassword, context: Any = None) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)

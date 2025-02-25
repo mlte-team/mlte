@@ -1,7 +1,7 @@
 {
   "$defs": {
     "ConditionModel": {
-      "description": "A description of a condition for a property.",
+      "description": "A description of a condition for a QACategory.",
       "properties": {
         "name": {
           "title": "Name",
@@ -80,8 +80,8 @@
       "title": "Identifier",
       "type": "object"
     },
-    "PropertyModel": {
-      "description": "A description of a property.",
+    "QACategoryModel": {
+      "description": "A description of a quality attribute category.",
       "properties": {
         "name": {
           "title": "Name",
@@ -128,7 +128,7 @@
         "name",
         "module"
       ],
-      "title": "PropertyModel",
+      "title": "QACategoryModel",
       "type": "object"
     },
     "ResultModel": {
@@ -170,13 +170,13 @@
           "title": "Artifact Type",
           "type": "string"
         },
-        "properties": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/PropertyModel"
-          },
+        "qa_categories": {
           "default": [],
-          "title": "Properties"
+          "items": {
+            "$ref": "#/$defs/QACategoryModel"
+          },
+          "title": "Qa Categories",
+          "type": "array"
         }
       },
       "title": "SpecModel",
@@ -195,6 +195,17 @@
             }
           ],
           "title": "Bool Exp"
+        },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
         },
         "success": {
           "anyOf": [
@@ -229,7 +240,7 @@
           ],
           "title": "Info"
         },
-        "bool_exp_str": {
+        "creator_class": {
           "anyOf": [
             {
               "type": "string"
@@ -238,15 +249,34 @@
               "type": "null"
             }
           ],
-          "title": "Bool Exp Str"
+          "default": null,
+          "title": "Creator Class"
+        },
+        "creator_function": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Function"
+        },
+        "creator_args": {
+          "default": [],
+          "items": {},
+          "title": "Creator Args",
+          "type": "array"
         }
       },
       "required": [
         "bool_exp",
+        "bool_exp_str",
         "success",
         "failure",
-        "info",
-        "bool_exp_str"
+        "info"
       ],
       "title": "ValidatorModel",
       "type": "object"

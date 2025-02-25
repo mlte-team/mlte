@@ -37,7 +37,7 @@ class UserStore(Store):
     def __init__(self, uri: StoreURI, add_default_data: bool = True):
         """Base constructor."""
         super().__init__(uri=uri)
-        "Store uri."
+        """Store uri."""
 
         # Sets up default user and permissions.
         if add_default_data:
