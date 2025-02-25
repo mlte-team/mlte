@@ -127,20 +127,37 @@ class Validator(Serializable):
                     "Configured bool expression does not return a bool."
                 )
 
-        # Stringify arguments so that result's message can include generic information about arguments used when validating.
-        values = f"- values: {json.dumps(args) if len(args) > 0 else ''}{', ' if len(args) > 0 and len(kwargs) > 0 else ''}{json.dumps(kwargs) if len(kwargs) > 0 else ''}"
-
         # Create the result to be returned.
+        values_str = self._args_to_string(*args, **kwargs)
         result = (
             Info(self.info)
             if self.bool_exp is None and self.info is not None
             else (
-                Success(f"{self.success} {values}")
+                Success(f"{self.success} {values_str}")
                 if executed_bool_exp_value
-                else Failure(f"{self.failure} {values}")
+                else Failure(f"{self.failure} {values_str}")
             )
         )
         return result
+
+    def _args_to_string(self, *args, **kwargs) -> str:
+        """
+        Stringify arguments so that result's message can include generic information about arguments used when validating.
+        """
+        # First ensure args are turned to string separately, to allow them to use their own str()
+        str_args = [str(arg) for arg in args]
+        str_kwargs = {key: str(arg) for key, arg in kwargs.items()}
+
+        # Now string them together, depending on whether we got args of each type.
+        values = "- values: "
+        if len(args) > 0:
+            values = values + f"{json.dumps(str_args)}"
+        if len(args) > 0 and len(kwargs) > 0:
+            values = values + f"{', '}"
+        if len(kwargs) > 0:
+            values = values + f"{json.dumps(str_kwargs)}"
+
+        return values
 
     # -------------------------------------------------------------------------
     # Model handling.

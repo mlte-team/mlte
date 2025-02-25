@@ -5,8 +5,10 @@ Unit tests for Validator.
 """
 
 from mlte._private.function_info import FunctionInfo
+from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.validator import Validator
+from mlte.value.types.integer import Integer
 
 
 def get_sample_validator(add_creator: bool = False) -> Validator:
@@ -96,7 +98,7 @@ def test_validate_success() -> None:
 
     assert (
         validator.success is not None
-        and result.message == validator.success + f" - values: [{x}, {y}]"
+        and result.message == validator.success + f' - values: ["{x}", "{y}"]'
     )
 
 
@@ -112,7 +114,7 @@ def test_validate_success_kwargs() -> None:
     assert (
         validator.success is not None
         and result.message
-        == validator.success + f' - values: {{"x": {x}, "y": {y}}}'
+        == validator.success + f' - values: {{"x": "{x}", "y": "{y}"}}'
     )
 
 
@@ -128,7 +130,7 @@ def test_validate_success_args_and_kwargs() -> None:
     assert (
         validator.success is not None
         and result.message
-        == validator.success + f' - values: [{x}], {{"y": {y}}}'
+        == validator.success + f' - values: ["{x}"], {{"y": "{y}"}}'
     )
 
 
@@ -143,7 +145,7 @@ def test_validate_failure() -> None:
 
     assert (
         validator.failure is not None
-        and result.message == validator.failure + f" - values: [{x}, {y}]"
+        and result.message == validator.failure + f' - values: ["{x}", "{y}"]'
     )
 
 
@@ -158,3 +160,23 @@ def test_validate_ignore() -> None:
     result = validator.validate(x, y)
 
     assert result.message == validator.info
+
+
+def test_validate_success_with_value() -> None:
+    """The validate() method works as expected with a Value."""
+
+    validator = Integer.less_or_equal_to(2).validator
+
+    result = validator.validate(
+        Integer(
+            value=1,
+            metadata=EvidenceMetadata(
+                measurement_type="test", identifier=Identifier(name="test")
+            ),
+        )
+    )
+
+    assert (
+        validator.success is not None
+        and result.message == validator.success + ' - values: ["1"]'
+    )
