@@ -1,134 +1,45 @@
 {
   "$defs": {
-    "ConditionModel": {
-      "description": "A description of a condition for a QACategory.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "arguments": {
-          "default": [],
-          "items": {},
-          "title": "Arguments",
-          "type": "array"
-        },
-        "validator": {
-          "$ref": "#/$defs/ValidatorModel"
-        },
-        "value_class": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Value Class"
-        }
-      },
-      "required": [
-        "name",
-        "validator",
-        "value_class"
-      ],
-      "title": "ConditionModel",
-      "type": "object"
-    },
     "EvidenceMetadata": {
-      "description": "A simple wrapper for evidence metadata.",
+      "description": "A simple wrapper model for evidence metadata.",
       "properties": {
-        "measurement_type": {
-          "title": "Measurement Type",
+        "test_case_id": {
+          "title": "Test Case Id",
           "type": "string"
         },
-        "identifier": {
-          "$ref": "#/$defs/Identifier"
-        },
-        "function": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Function"
+        "measurement": {
+          "$ref": "#/$defs/MeasurementMetadata"
         }
       },
       "required": [
-        "measurement_type",
-        "identifier"
+        "test_case_id",
+        "measurement"
       ],
       "title": "EvidenceMetadata",
       "type": "object"
     },
-    "Identifier": {
-      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
+    "MeasurementMetadata": {
+      "description": "Info about a Measurement.",
       "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "Identifier",
-      "type": "object"
-    },
-    "QACategoryModel": {
-      "description": "A description of a quality attribute category.",
-      "properties": {
-        "name": {
-          "title": "Name",
+        "measurement_class": {
+          "title": "Measurement Class",
           "type": "string"
         },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
+        "output_class": {
+          "title": "Output Class",
+          "type": "string"
         },
-        "rationale": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Rationale"
-        },
-        "conditions": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ConditionModel"
-          },
+        "additional_data": {
           "default": {},
-          "title": "Conditions",
+          "title": "Additional Data",
           "type": "object"
-        },
-        "module": {
-          "title": "Module",
-          "type": "string"
         }
       },
       "required": [
-        "name",
-        "module"
+        "measurement_class",
+        "output_class"
       ],
-      "title": "QACategoryModel",
+      "title": "MeasurementMetadata",
       "type": "object"
     },
     "ResultModel": {
@@ -142,7 +53,7 @@
           "title": "Message",
           "type": "string"
         },
-        "metadata": {
+        "evidence_metadata": {
           "anyOf": [
             {
               "$ref": "#/$defs/EvidenceMetadata"
@@ -156,133 +67,13 @@
       "required": [
         "type",
         "message",
-        "metadata"
+        "evidence_metadata"
       ],
       "title": "ResultModel",
       "type": "object"
-    },
-    "SpecModel": {
-      "description": "The model implementation for the Spec artifact.",
-      "properties": {
-        "artifact_type": {
-          "const": "spec",
-          "default": "spec",
-          "title": "Artifact Type",
-          "type": "string"
-        },
-        "qa_categories": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/QACategoryModel"
-          },
-          "title": "Qa Categories",
-          "type": "array"
-        }
-      },
-      "title": "SpecModel",
-      "type": "object"
-    },
-    "ValidatorModel": {
-      "description": "A description of a validator for a test.",
-      "properties": {
-        "bool_exp": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Bool Exp"
-        },
-        "bool_exp_str": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Bool Exp Str"
-        },
-        "success": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Success"
-        },
-        "failure": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Failure"
-        },
-        "info": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Info"
-        },
-        "creator_class": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Creator Class"
-        },
-        "creator_function": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Creator Function"
-        },
-        "creator_args": {
-          "default": [],
-          "items": {},
-          "title": "Creator Args",
-          "type": "array"
-        }
-      },
-      "required": [
-        "bool_exp",
-        "bool_exp_str",
-        "success",
-        "failure",
-        "info"
-      ],
-      "title": "ValidatorModel",
-      "type": "object"
     }
   },
-  "description": "The model implementation for the ValidatedSpec artifact.",
+  "description": "The model implementation for the TestResults artifact.",
   "properties": {
     "artifact_type": {
       "const": "validated_spec",
@@ -290,34 +81,20 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "spec_identifier": {
+    "test_suite_id": {
       "default": "",
-      "title": "Spec Identifier",
+      "title": "Test Suite Id",
       "type": "string"
-    },
-    "spec": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/SpecModel"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null
     },
     "results": {
       "additionalProperties": {
-        "additionalProperties": {
-          "$ref": "#/$defs/ResultModel"
-        },
-        "type": "object"
+        "$ref": "#/$defs/ResultModel"
       },
       "default": {},
       "title": "Results",
       "type": "object"
     }
   },
-  "title": "ValidatedSpecModel",
+  "title": "TestResultsModel",
   "type": "object"
 }

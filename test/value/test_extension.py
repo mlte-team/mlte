@@ -11,9 +11,9 @@ from typing import Any, Dict, List, Tuple
 import pytest
 
 from mlte.context.context import Context
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.store.artifact.store import ArtifactStore
-from mlte.value.base import ValueBase
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -21,7 +21,7 @@ class ConfusionMatrix(ValueBase):
     """A sample extension value type."""
 
     def __init__(self, metadata: EvidenceMetadata, matrix: List[List[int]]):
-        super().__init__(self, metadata)
+        super().__init__(metadata)
 
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
@@ -45,7 +45,7 @@ class BadInteger(ValueBase):
     """An extension value that does not implement the interface."""
 
     def __init__(self, metadata: EvidenceMetadata, integer: int):
-        super().__init__(self, metadata)
+        super().__init__(metadata)
 
         self.integer = integer
 
@@ -53,7 +53,7 @@ class BadInteger(ValueBase):
 def test_serde() -> None:
     """Confusion matrix can be serialized and deserialized."""
     em = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
 
@@ -66,7 +66,7 @@ def test_serde() -> None:
 def test_model() -> None:
     """Confusion matrix can round trip to and from model."""
     em = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
 
@@ -83,7 +83,7 @@ def test_save_load(
     store, ctx = store_with_context
 
     em = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
 
@@ -96,7 +96,7 @@ def test_save_load(
 def test_subclass_fail() -> None:
     """A value type that fails to meet the interface cannot be instantiated."""
     em = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     with pytest.raises(TypeError):
         _ = BadInteger(em, 1)  # type: ignore

@@ -9,8 +9,8 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from mlte._private.fixed_json import json
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.spec.model import QACategoryModel, SpecModel
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.spec.model import QACategoryModel, TestSuiteModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBCondition,
@@ -21,7 +21,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBValidatedSpec,
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
-from mlte.validation.model import ResultModel, ValidatedSpecModel
+from mlte.validation.model import ResultModel, TestResultsModel
 from mlte.validation.model_condition import ConditionModel
 
 # -------------------------------------------------------------------------
@@ -30,7 +30,7 @@ from mlte.validation.model_condition import ConditionModel
 
 
 def create_spec_db_from_model(
-    spec: SpecModel, artifact_header: DBArtifactHeader
+    spec: TestSuiteModel, artifact_header: DBArtifactHeader
 ) -> DBSpec:
     """Creates the DB object from the corresponding internal model."""
     spec_obj = DBSpec(artifact_header=artifact_header, qa_categories=[])
@@ -61,10 +61,10 @@ def create_spec_db_from_model(
     return spec_obj
 
 
-def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
+def create_spec_model_from_db(spec_obj: DBSpec) -> TestSuiteModel:
     """Creates the internal model object from the corresponding DB object."""
     # Creating a Spec from DB data.
-    body = SpecModel(
+    body = TestSuiteModel(
         qa_categories=[
             QACategoryModel(
                 name=category.name,
@@ -93,7 +93,7 @@ def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
 
 
 def create_v_spec_db_from_model(
-    validated_spec: ValidatedSpecModel,
+    validated_spec: TestResultsModel,
     artifact_header: DBArtifactHeader,
     session: Session,
 ) -> DBValidatedSpec:
@@ -103,11 +103,11 @@ def create_v_spec_db_from_model(
         results=[],
         spec=(
             DBReader.get_spec(
-                validated_spec.spec_identifier,
+                validated_spec.test_suite_id,
                 artifact_header.version_id,
                 session,
             )
-            if validated_spec.spec_identifier != ""
+            if validated_spec.test_suite_id != ""
             else None
         ),
     )
@@ -119,7 +119,7 @@ def create_v_spec_db_from_model(
                 message=result.message,
                 qa_category_id=DBReader.get_qa_category_id(
                     qa_category_name,
-                    validated_spec.spec_identifier,
+                    validated_spec.test_suite_id,
                     artifact_header.version_id,
                     session,
                 ),
@@ -140,20 +140,18 @@ def create_v_spec_db_from_model(
 
 def create_v_spec_model_from_db(
     validated_obj: DBValidatedSpec,
-) -> ValidatedSpecModel:
+) -> TestResultsModel:
     """Creates the internal model object from the corresponding DB object."""
-    body = ValidatedSpecModel(
+    body = TestResultsModel(
         results=(
             {
                 qa_category.name: {
                     result.measurement_id: ResultModel(
                         type=result.type,
                         message=result.message,
-                        metadata=EvidenceMetadata(
-                            measurement_type=result.evidence_metadata.measurement_type,
-                            identifier=Identifier(
-                                name=result.evidence_metadata.identifier
-                            ),
+                        measurement_id=EvidenceMetadata(
+                            measurement_class=result.evidence_metadata.measurement_type,
+                            test_case_id=result.evidence_metadata.identifier,
                         ),
                     )
                     for result in validated_obj.results
@@ -164,12 +162,12 @@ def create_v_spec_model_from_db(
             if validated_obj.spec is not None
             else {}
         ),
-        spec_identifier=(
+        test_suite_id=(
             validated_obj.spec.artifact_header.identifier
             if validated_obj.spec is not None
             else ""
         ),
-        spec=(
+        test_suite=(
             create_spec_model_from_db(validated_obj.spec)
             if validated_obj.spec is not None
             else None

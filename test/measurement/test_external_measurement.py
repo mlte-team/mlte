@@ -10,17 +10,17 @@ from typing import Any, Dict
 
 import pytest
 
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
 from mlte.measurement.external_measurement import ExternalMeasurement
-from mlte.value.base import ValueBase
-from mlte.value.types.integer import Integer
 
 
 class BigInteger(ValueBase):
     """A sample extension value type."""
 
     def __init__(self, metadata: EvidenceMetadata, integer: int):
-        super().__init__(self, metadata)
+        super().__init__(metadata)
         self.integer = integer
 
     def serialize(self) -> Dict[str, Any]:
@@ -76,9 +76,9 @@ def test_evaluate_external() -> None:
     expected_value = _dummy_calculation(x, y)
     expected_result = Integer(
         EvidenceMetadata(
-            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
-            identifier=Identifier(name="test_id"),
-            function="test.measurement.test_external_measurement._dummy_calculation",
+            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+            test_case_id=Identifier(name="test_id"),
+            measurement_function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )
@@ -98,9 +98,9 @@ def test_evaluate_external_base() -> None:
     expected_value = _dummy_calculation(x, y)
     expected_result = BigInteger(
         EvidenceMetadata(
-            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
-            identifier=Identifier(name="test_id"),
-            function="test.measurement.test_external_measurement._dummy_calculation",
+            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+            test_case_id=Identifier(name="test_id"),
+            measurement_function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
     )
@@ -120,8 +120,8 @@ def test_evaluate_ingest() -> None:
     expected_value = 1000
     expected_result = Integer(
         EvidenceMetadata(
-            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
-            identifier=Identifier(name="test_id"),
+            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+            test_case_id=Identifier(name="test_id"),
         ),
         expected_value,
     )
@@ -139,8 +139,8 @@ def test_evaluate_ingest_base() -> None:
     expected_value = 1000
     expected_result = BigInteger(
         EvidenceMetadata(
-            measurement_type="mlte.measurement.external_measurement.ExternalMeasurement",
-            identifier=Identifier(name="test_id"),
+            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+            test_case_id=Identifier(name="test_id"),
         ),
         expected_value,
     )

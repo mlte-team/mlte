@@ -55,7 +55,7 @@ class DBReader:
         ArtifactType.VALIDATED_SPEC: DBValidatedSpec,
         ArtifactType.NEGOTIATION_CARD: DBNegotiationCard,
         ArtifactType.REPORT: DBReport,
-        ArtifactType.VALUE: DBValue,
+        ArtifactType.EVIDENCE: DBValue,
     }
 
     @staticmethod

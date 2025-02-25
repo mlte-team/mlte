@@ -4,6 +4,8 @@ import inspect
 from types import FrameType
 from typing import Any, Optional, Type
 
+from mlte._private.meta import get_full_path
+
 
 class FunctionInfo:
     """
@@ -70,7 +72,7 @@ class FunctionInfo:
             cls_str = ""
         else:
             cls: Type[object] = arg_values["cls"]
-            cls_str = f"{cls.__module__}.{cls.__name__}"
+            cls_str = f"{get_full_path(cls)}"
 
         # Return the full info.
         info = FunctionInfo(function_name, filtered_args, cls_str)

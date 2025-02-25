@@ -12,9 +12,9 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
-from mlte.value.types.integer import Integer
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -29,7 +29,7 @@ class DummyMeasurementInteger(Measurement):
 def test_success():
     """Integer construction works for valid input type."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     i = Integer(m, 1)
     assert i.value == 1
@@ -38,7 +38,7 @@ def test_success():
 def test_fail():
     """Integer construction fails for invalid input type."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     with pytest.raises(AssertionError):
         _ = Integer(m, 3.14)  # type: ignore
@@ -56,7 +56,7 @@ def test_measurement():
 def test_serde() -> None:
     """Integer can be converted to model and back."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     i = Integer(m, 1)
 
@@ -73,7 +73,7 @@ def test_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     i = Integer(m, 1)
     i.save_with(ctx, store)
@@ -84,7 +84,7 @@ def test_save_load(
 
 def test_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Integer.less_than(3)
@@ -101,7 +101,7 @@ def test_less_than() -> None:
 
 def test_less_or_equal_to() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Integer.less_or_equal_to(3)

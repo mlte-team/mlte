@@ -7,8 +7,8 @@ Storage capacity measurement for locally-stored objects.
 import os
 from typing import Type
 
+from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
-from mlte.value.types.integer import Integer
 
 
 class LocalObjectSize(Measurement):
@@ -35,7 +35,7 @@ class LocalObjectSize(Measurement):
 
         # If the object is just a file, return it immediately
         if os.path.isfile(path):
-            return Integer(self.metadata, os.path.getsize(path))
+            return Integer(os.path.getsize(path))
 
         # Otherwise, the object must be directory
         assert os.path.isdir(path), "Broken invariant."
@@ -47,9 +47,9 @@ class LocalObjectSize(Measurement):
                 if not os.path.islink(path):
                     total_size += os.path.getsize(path)
 
-        return Integer(self.metadata, total_size)
+        return Integer(total_size)
 
     @classmethod
-    def value(self) -> Type[Integer]:
+    def output_evidence(self) -> Type[Integer]:
         """Returns the class type object for the Value produced by the Measurement."""
         return Integer

@@ -204,6 +204,6 @@
       "type": "array"
     }
   },
-  "title": "SpecModel",
+  "title": "Spec",
   "type": "object"
 }

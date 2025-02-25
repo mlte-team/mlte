@@ -6,9 +6,9 @@ Unit tests for Validator.
 
 from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.validator import Validator
-from mlte.value.types.integer import Integer
 
 
 def get_sample_validator(add_creator: bool = False) -> Validator:

@@ -8,57 +8,67 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional, Type
 
+from mlte._private.meta import get_full_path
+from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
-from mlte.value.artifact import Value
+from mlte.measurement.model import MeasurementMetadata
+
+EXTERNAL_FUNCTION_KEY = "function"
+"""Key to store external function used by this measurement."""
 
 
 class ExternalMeasurement(Measurement):
     def __init__(
         self,
-        identifier: str,
-        value_type: type,
+        test_case_id: str,
+        output_evidence_type: type,
         function: Optional[Callable[..., Any]] = None,
     ):
         """
         Initialize a new ExternalMeasurement measurement.
 
         :param identifier: A unique identifier for the instance
-        :param value_type: The type of the Value this measurement will return.
+        :param output_evidence_type: The type of the Evidence this measurement will return.
         :param function: The function to be used when evaluating.
         """
-        super().__init__(identifier)
-
-        if not issubclass(value_type, Value):
+        if not issubclass(output_evidence_type, Evidence):
             raise Exception(
-                f"Value type provided is not a subtype of Value: {value_type}"
+                f"Evidence type provided is not a subtype of Evidence: {output_evidence_type}"
             )
-        self.value_type: type = value_type
-
-        if function is not None:
-            # Store the function module+name as additional metadata info, for better traceability.
-            self.metadata.function = (
-                f"{function.__module__}.{function.__name__}"
-            )
+        self.output_evidence_type: type = output_evidence_type
+        """The output Evidence type that calls to evaluate will return."""
 
         self.function: Optional[Callable[..., Any]] = function
         """Store the callable function itself."""
 
-    def __call__(self, *args, **kwargs) -> Value:
+        # Call base constructor.
+        super().__init__(test_case_id=test_case_id)
+
+    # Overriden.
+    def generate_metadata(self) -> MeasurementMetadata:
+        """Returns Measurement metadata with additional info."""
+        metadata = super().generate_metadata()
+        metadata.additional_data[EXTERNAL_FUNCTION_KEY] = get_full_path(
+            self.function
+        )
+        return metadata
+
+    def __call__(self, *args, **kwargs) -> Evidence:
         """Evaluate a measurement and return values without semantics."""
         if self.function is None:
             raise Exception("Can't evaluate, no function was set.")
 
-        value: Value = self.value_type(
-            self.metadata, self.function(*args, **kwargs)
+        evidence: Evidence = self.output_evidence_type(
+            self.function(*args, **kwargs)
         )
-        return value
+        return evidence
 
-    def ingest(self, *args, **kwargs) -> Value:
-        """Ingest data without evaluating a function, to wrap it as the configured Value type. Currently works the same as evaluate()."""
-        value: Value = self.value_type(self.metadata, *args, **kwargs)
-        return value
+    def ingest(self, *args, **kwargs) -> Evidence:
+        """Ingest data without evaluating a function, to wrap it as the configured Evidence type. Currently works the same as evaluate()."""
+        evidence: Evidence = self.output_evidence_type(*args, **kwargs)
+        return evidence
 
     @classmethod
-    def value(self) -> Type[Value]:
-        """Returns the class type object for the Value produced by the Measurement."""
-        return self.value_type
+    def output_evidence(self) -> Type[Evidence]:
+        """Returns the class type object for the Evidence produced by the Measurement."""
+        return self.output_evidence_type

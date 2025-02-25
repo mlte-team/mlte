@@ -10,9 +10,9 @@ from typing import Tuple
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.array import Array
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
-from mlte.value.types.array import Array
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -38,7 +38,7 @@ def test_equality():
     """Array instances can be compared for equality."""
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     a = Array(m, [1, 2, 3])
@@ -57,7 +57,7 @@ def test_equality():
 def test_serde() -> None:
     """Array can be converted to model and back."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     o = Array(m, [1, 2, 3])
 
@@ -74,7 +74,7 @@ def test_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     o = Array(m, [1, 2, 3])
     o.save_with(ctx, store)

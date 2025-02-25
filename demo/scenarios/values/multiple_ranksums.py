@@ -8,9 +8,9 @@ from typing import Any, Dict
 
 import numpy as np
 
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.value.base import ValueBase
 
 
 class MultipleRanksums(ValueBase):
@@ -22,7 +22,7 @@ class MultipleRanksums(ValueBase):
         array: np.ndarray,
         num_pops: int = 1,
     ):
-        super().__init__(self, evidence_metadata)
+        super().__init__(evidence_metadata)
 
         self.array = array
         """The array to store data in."""

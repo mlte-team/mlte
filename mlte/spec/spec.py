@@ -15,7 +15,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.qa_category.base import QACategory
 from mlte.spec.condition import Condition
-from mlte.spec.model import QACategoryModel, SpecModel
+from mlte.spec.model import QACategoryModel, TestSuiteModel
 
 DEFAULT_SPEC_ID = "default.spec"
 
@@ -67,7 +67,7 @@ class Spec(Artifact):
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
             header=self.build_artifact_header(),
-            body=SpecModel(
+            body=TestSuiteModel(
                 qa_categories=[
                     self._to_qa_category_model(qa_category)
                     for qa_category, _ in self.qa_categories.items()
@@ -80,7 +80,7 @@ class Spec(Artifact):
         """Convert a negotiation card model to its corresponding artifact."""
         model = typing.cast(ArtifactModel, model)
         assert model.header.type == ArtifactType.SPEC, "Broken precondition."
-        body = typing.cast(SpecModel, model.body)
+        body = typing.cast(TestSuiteModel, model.body)
         return Spec(
             identifier=model.header.identifier,
             qa_categories=Spec.to_qa_category_dict(body.qa_categories),

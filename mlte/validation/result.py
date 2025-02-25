@@ -6,8 +6,8 @@ The result of measurement validation.
 
 from __future__ import annotations
 
-import abc
 import sys
+from abc import ABC
 from typing import Optional
 
 import mlte._private.meta as meta
@@ -19,7 +19,7 @@ from mlte.validation.model import ResultModel
 # -----------------------------------------------------------------------------
 
 
-class Result(metaclass=abc.ABCMeta):
+class Result(ABC):
     """The base class for measurement validation results."""
 
     @classmethod
@@ -28,20 +28,18 @@ class Result(metaclass=abc.ABCMeta):
         return meta.has_callables(subclass, "__bool__", "__str__")
 
     def __init__(self, message: str):
-        """
-        Initialize a Result instance.
-        """
+        """Initialize a Result instance."""
 
         self.message = message
         """The message indicating the reason for status."""
 
-        self.metadata: Optional[EvidenceMetadata] = None
+        self.evidence_metadata: Optional[EvidenceMetadata] = None
         """
-        The information about the measurement from which this was obtained.
+        The measurement id from which this was obtained.
         """
 
     def _with_evidence_metadata(
-        self, evidence_metadata: EvidenceMetadata
+        self, evidence_metadata: EvidenceMetadata | None
     ) -> Result:
         """
         Set the `metadata` field of the Result
@@ -52,11 +50,11 @@ class Result(metaclass=abc.ABCMeta):
         the Result so that we can use the metadata
         information later when it is used to generate a report.
 
-        :param evidence_metadata: The evidence metadata of the
+        :param measurement_id: The evidence id
         Value from which was this instance was generated.
         :return: The Result instance (`self`)
         """
-        self.metadata = evidence_metadata
+        self.evidence_metadata = evidence_metadata
         return self
 
     def to_model(self) -> ResultModel:
@@ -66,7 +64,9 @@ class Result(metaclass=abc.ABCMeta):
         :return: The model.
         """
         return ResultModel(
-            type=f"{self}", message=self.message, metadata=self.metadata
+            type=f"{self}",
+            message=self.message,
+            evidence_metadata=self.evidence_metadata,
         )
 
     @classmethod
@@ -82,13 +82,12 @@ class Result(metaclass=abc.ABCMeta):
         result_class = getattr(results_module, result_type)
 
         result: Result = result_class(model.message)
-        if model.metadata is not None:
-            result = result._with_evidence_metadata(model.metadata)
+        result = result._with_evidence_metadata(model.evidence_metadata)
         return result
 
     def __eq__(self, other: object) -> bool:
         """Equality comparison."""
-        assert self.metadata is not None, "Broken precondition."
+        assert self.evidence_metadata is not None, "Broken precondition."
         if not isinstance(other, Result):
             return False
         return self.to_model() == other.to_model()

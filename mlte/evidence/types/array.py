@@ -11,24 +11,22 @@ from typing import Any, List
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.artifact import Evidence
+from mlte.evidence.model import ArrayValueModel, EvidenceModel, EvidenceType
 from mlte.model.base_model import BaseModel
-from mlte.value.artifact import Value
-from mlte.value.model import ArrayValueModel, ValueModel, ValueType
 
 
-class Array(Value):
+class Array(Evidence):
     """
     Array implements the Value interface for a numpy array of values.
     """
 
-    def __init__(self, metadata: EvidenceMetadata, array: List[Any]):
+    def __init__(self, array: List[Any]):
         """
         Initialize an Array instance.
-        :param metadata: The generating measurement's metadata
         :param array: The numpy array.
         """
-        super().__init__(self, metadata)
+        super().__init__()
 
         self.array: List[Any] = array
         """Underlying values represented as numpy array."""
@@ -38,13 +36,8 @@ class Array(Value):
         Convert an array value artifact to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
-            header=self.build_artifact_header(),
-            body=ValueModel(
-                metadata=self.metadata,
-                value_class=self.get_class_path(),
-                value=ArrayValueModel(data=self.array),
-            ),
+        return self._to_artifact_model(
+            value_model=ArrayValueModel(data=self.array)
         )
 
     @classmethod
@@ -55,13 +48,19 @@ class Array(Value):
         :return: The array value
         """
         model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
-        body = typing.cast(ValueModel, model.body)
+        assert (
+            model.header.type == ArtifactType.EVIDENCE
+        ), "Broken Precondition."
+        body = typing.cast(EvidenceModel, model.body)
 
-        assert body.value.value_type == ValueType.ARRAY, "Broken Precondition."
-        return Array(
-            metadata=body.metadata,
-            array=body.value.data,
+        assert (
+            body.value.value_type == EvidenceType.ARRAY
+        ), "Broken Precondition."
+        return typing.cast(
+            Array,
+            Array(
+                array=body.value.data,
+            ).with_metadata(body.metadata),
         )
 
     def __str__(self) -> str:

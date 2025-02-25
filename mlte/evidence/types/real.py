@@ -10,27 +10,25 @@ import typing
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.artifact import Evidence
+from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
 from mlte.model.base_model import BaseModel
 from mlte.spec.condition import Condition
-from mlte.value.artifact import Value
-from mlte.value.model import RealValueModel, ValueModel, ValueType
 
 
-class Real(Value):
+class Real(Evidence):
     """
     Real implements the Value interface for a single real value.
     """
 
-    def __init__(self, metadata: EvidenceMetadata, value: float):
+    def __init__(self, value: float):
         """
         Initialize a Real instance.
-        :param metadata: The generating measurement's metadata
         :param value: The real value
         """
         assert isinstance(value, float), "Argument must be `float`."
 
-        super().__init__(self, metadata)
+        super().__init__()
 
         self.value = value
         """The wrapped real value."""
@@ -40,15 +38,8 @@ class Real(Value):
         Convert a real value artifact to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
-            header=self.build_artifact_header(),
-            body=ValueModel(
-                metadata=self.metadata,
-                value_class=self.get_class_path(),
-                value=RealValueModel(
-                    real=self.value,
-                ),
-            ),
+        return self._to_artifact_model(
+            value_model=RealValueModel(real=self.value)
         )
 
     @classmethod
@@ -59,13 +50,19 @@ class Real(Value):
         :return: The real value
         """
         model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
-        body = typing.cast(ValueModel, model.body)
+        assert (
+            model.header.type == ArtifactType.EVIDENCE
+        ), "Broken Precondition."
+        body = typing.cast(EvidenceModel, model.body)
 
-        assert body.value.value_type == ValueType.REAL, "Broken Precondition."
-        return Real(
-            metadata=body.metadata,
-            value=body.value.real,
+        assert (
+            body.value.value_type == EvidenceType.REAL
+        ), "Broken Precondition."
+        return typing.cast(
+            Real,
+            Real(
+                value=body.value.real,
+            ).with_metadata(body.metadata),
         )
 
     def __str__(self) -> str:

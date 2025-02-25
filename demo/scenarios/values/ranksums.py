@@ -4,8 +4,8 @@ Implementation of RankSums value.
 
 from __future__ import annotations
 
+from mlte.evidence.types.array import Array
 from mlte.spec.condition import Condition
-from mlte.value.types.array import Array
 
 
 class RankSums(Array):

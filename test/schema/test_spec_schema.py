@@ -4,9 +4,9 @@ test/schema/test_spec_schema.py
 Unit tests for Spec schema.
 """
 
+from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.value.types.integer import Integer
 
 from . import util as util
 

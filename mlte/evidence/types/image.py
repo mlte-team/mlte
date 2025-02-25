@@ -13,21 +13,19 @@ from typing import Union
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.artifact import Evidence
+from mlte.evidence.model import EvidenceModel, EvidenceType, ImageValueModel
 from mlte.model.base_model import BaseModel
 from mlte.spec.condition import Condition
-from mlte.value.artifact import Value
-from mlte.value.model import ImageValueModel, ValueModel, ValueType
 
 
-class Image(Value):
+class Image(Evidence):
     """
     Image implements the Value interface for image media.
     """
 
     def __init__(
         self,
-        metadata: EvidenceMetadata,
         image: Union[str, Path, bytes],
     ):
         """
@@ -43,7 +41,7 @@ class Image(Value):
                 image = f.read()
         assert isinstance(image, bytes), "Broken invariant."
 
-        super().__init__(self, metadata)
+        super().__init__()
 
         # TODO(Kyle): Unsure if storing media inline is the
         # right way to go here (not scalable); reassess this.
@@ -56,14 +54,9 @@ class Image(Value):
         Convert an image value artifact to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
-            header=self.build_artifact_header(),
-            body=ValueModel(
-                metadata=self.metadata,
-                value_class=self.get_class_path(),
-                value=ImageValueModel(
-                    data=base64.encodebytes(self.image).decode("utf-8"),
-                ),
+        return self._to_artifact_model(
+            value_model=ImageValueModel(
+                data=base64.encodebytes(self.image).decode("utf-8"),
             ),
         )
 
@@ -75,13 +68,19 @@ class Image(Value):
         :return: The real value
         """
         model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
-        body = typing.cast(ValueModel, model.body)
+        assert (
+            model.header.type == ArtifactType.EVIDENCE
+        ), "Broken Precondition."
+        body = typing.cast(EvidenceModel, model.body)
 
-        assert body.value.value_type == ValueType.IMAGE, "Broken Precondition."
-        return Image(
-            metadata=body.metadata,
-            image=base64.decodebytes(body.value.data.encode("utf-8")),
+        assert (
+            body.value.value_type == EvidenceType.IMAGE
+        ), "Broken Precondition."
+        return typing.cast(
+            Image,
+            Image(
+                image=base64.decodebytes(body.value.data.encode("utf-8")),
+            ).with_metadata(body.metadata),
         )
 
     @classmethod

@@ -22,47 +22,21 @@
       "type": "object"
     },
     "EvidenceMetadata": {
-      "description": "A simple wrapper for evidence metadata.",
+      "description": "A simple wrapper model for evidence metadata.",
       "properties": {
-        "measurement_type": {
-          "title": "Measurement Type",
+        "test_case_id": {
+          "title": "Test Case Id",
           "type": "string"
         },
-        "identifier": {
-          "$ref": "#/$defs/Identifier"
-        },
-        "function": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Function"
+        "measurement": {
+          "$ref": "#/$defs/MeasurementMetadata"
         }
       },
       "required": [
-        "measurement_type",
-        "identifier"
+        "test_case_id",
+        "measurement"
       ],
       "title": "EvidenceMetadata",
-      "type": "object"
-    },
-    "Identifier": {
-      "description": "Identifier is a simple class that standardizes\nthe manner in which Measurements, Values, and\nResults are uniquely identified throughout\ntheir lifetimes.",
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "Identifier",
       "type": "object"
     },
     "ImageValueModel": {
@@ -103,6 +77,30 @@
         "integer"
       ],
       "title": "IntegerValueModel",
+      "type": "object"
+    },
+    "MeasurementMetadata": {
+      "description": "Info about a Measurement.",
+      "properties": {
+        "measurement_class": {
+          "title": "Measurement Class",
+          "type": "string"
+        },
+        "output_class": {
+          "title": "Output Class",
+          "type": "string"
+        },
+        "additional_data": {
+          "default": {},
+          "title": "Additional Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "measurement_class",
+        "output_class"
+      ],
+      "title": "MeasurementMetadata",
       "type": "object"
     },
     "OpaqueValueModel": {
@@ -146,19 +144,19 @@
       "type": "object"
     }
   },
-  "description": "The model implementation for MLTE values.",
+  "description": "The model implementation for MLTE evidence.",
   "properties": {
     "artifact_type": {
-      "const": "value",
-      "default": "value",
+      "const": "evidence",
+      "default": "evidence",
       "title": "Artifact Type",
       "type": "string"
     },
     "metadata": {
       "$ref": "#/$defs/EvidenceMetadata"
     },
-    "value_class": {
-      "title": "Value Class",
+    "evidence_class": {
+      "title": "Evidence Class",
       "type": "string"
     },
     "value": {
@@ -194,9 +192,9 @@
   },
   "required": [
     "metadata",
-    "value_class",
+    "evidence_class",
     "value"
   ],
-  "title": "ValueModel",
+  "title": "EvidenceModel",
   "type": "object"
 }

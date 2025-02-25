@@ -7,13 +7,13 @@ Model implementation for the Spec artifact.
 from typing import Dict, List, Literal, Optional
 
 from mlte.artifact.type import ArtifactType
-from mlte.measurement.model import MeasurementModel
+from mlte.measurement.model import MeasurementMetadata
 from mlte.model import BaseModel
 from mlte.validation.model_condition import ConditionModel, ValidatorModel
 
 
 class TestCaseModel(BaseModel):
-    name: str
+    identifier: str
     """A name/id for the test case."""
 
     goal: str
@@ -22,7 +22,7 @@ class TestCaseModel(BaseModel):
     qas_list: list[str] = []
     """A list of ids of Qualit Attribute Scenarios that this case is addressing."""
 
-    measurement: Optional[MeasurementModel] = None
+    measurement: Optional[MeasurementMetadata] = None
     """Measurement to be used with this test case."""
 
     validator: Optional[ValidatorModel] = None
@@ -35,7 +35,7 @@ class TestSuiteModel(BaseModel):
     artifact_type: Literal[ArtifactType.TEST_SUITE] = ArtifactType.TEST_SUITE
     """Union discriminator."""
 
-    test_cases: List[TestCaseModel] = []
+    test_cases: list[TestCaseModel] = []
 
 
 class QACategoryModel(BaseModel):
@@ -57,7 +57,7 @@ class QACategoryModel(BaseModel):
     """The full package and module path of the QACategory class."""
 
 
-class SpecModel(BaseModel):
+class Spec(BaseModel):
     """The model implementation for the Spec artifact."""
 
     artifact_type: Literal[ArtifactType.SPEC] = ArtifactType.SPEC
@@ -67,4 +67,4 @@ class SpecModel(BaseModel):
     """A list of QACategory for this spec."""
 
 
-SpecModel.model_rebuild()
+TestSuiteModel.model_rebuild()

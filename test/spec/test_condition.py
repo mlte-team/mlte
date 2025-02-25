@@ -12,12 +12,12 @@ import pytest
 
 from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
+from mlte.evidence.types.real import Real
 from mlte.model.serialization_error import SerializationError
 from mlte.spec.condition import Condition
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.validator import Validator
-from mlte.value.types.integer import Integer
-from mlte.value.types.real import Real
 
 
 class JsonValue:
@@ -73,13 +73,13 @@ def test_condition_model() -> None:
             name="less_than",
             arguments=[3.0],
             validator=Validator(success="Yay", failure="oh").to_model(),
-            value_class="mlte.value.types.real.Real",
+            value_class="mlte.evidence.types.real.Real",
         ),
         ConditionModel(
             name="greater_than",
             arguments=[1, 2],
             validator=Validator(success="Yay", failure="oh").to_model(),
-            value_class="mlte.value.types.real.Real",
+            value_class="mlte.evidence.types.real.Real",
         ),
     ]
 
@@ -114,7 +114,7 @@ def test_call_condition():
     """Check execution of condition."""
     condition = TestValue.in_between(1.0, 10.0)
     ev = EvidenceMetadata(
-        measurement_type="measure1", identifier=Identifier(name="id")
+        measurement_class="measure1", test_case_id=Identifier(name="id")
     )
 
     result = condition(Real(ev, 3.0))

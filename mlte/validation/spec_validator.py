@@ -1,42 +1,38 @@
 """
-mlte/spec/spec_validator.py
-
-Class in charge of validating a Spec.
+Class in charge of validating a TestSuite.
 """
 
 from __future__ import annotations
 
-from typing import Dict, List
-
-from mlte.spec.spec import Spec
+from mlte.evidence.artifact import Evidence
+from mlte.spec.test_suite import TestSuite
 from mlte.validation.result import Result
-from mlte.validation.validated_spec import ValidatedSpec
-from mlte.value.artifact import Value
+from mlte.validation.test_results import TestResults
 
 # -----------------------------------------------------------------------------
-# SpecValidator
+# TestSuiteValidator
 # -----------------------------------------------------------------------------
 
 
-class SpecValidator:
+class TestSuiteValidator:
     """
-    Helper class to validate a spec.
+    Helper class to validate a test suite.
     """
 
-    def __init__(self, spec: Spec):
+    def __init__(self, test_suite: TestSuite):
         """
-        Initialize a SpecValidator instance.
+        Initialize a TestSuiteValidator instance.
 
-        :param spec: The specification to be validated
+        :param test_suite: The test suite to be validated
         """
 
-        self.spec = spec
+        self.test_suite = test_suite
         """The specification to be validated."""
 
-        self.values: Dict[str, Value] = {}
+        self.values: dict[str, Evidence] = {}
         """Where values will be gathered for validation."""
 
-    def add_values(self, values: List[Value]):
+    def add_values(self, values: list[Evidence]):
         """
         Adds multiple values.
 
@@ -45,47 +41,36 @@ class SpecValidator:
         for value in values:
             self.add_value(value)
 
-    def add_value(self, value: Value):
+    def add_value(self, value: Evidence):
         """
-        Adds a value associated to a QACategory and measurements.
+        Adds a value associated to a test case.
 
         :param value: The value to add to the internal list.
         """
-        if value.metadata.get_id() in self.values:
+        if value.metadata.test_case_id in self.values:
             raise RuntimeError(
-                f"Can't have two values with the same id: {value.metadata.get_id()}"
+                f"Can't have two values with the same id: {value.metadata.test_case_id}"
             )
-        self.values[value.metadata.get_id()] = value
+        self.values[value.metadata.test_case_id] = value
 
-    def validate(self) -> ValidatedSpec:
+    def validate(self) -> TestResults:
         """
-        Validates the internal QACategory given its requirements and the stored values, and generates a ValidatedSpec from it.
+        Validates the internal Values given its validators, and generates a TestResults from it.
 
-        :return: The validated specification
-        """
-        results = self._validate_results()
-        return ValidatedSpec(spec=self.spec, results=results)
-
-    def _validate_results(self) -> Dict[str, Dict[str, Result]]:
-        """
-        Validates a set of stored Values, and generates Results.
-
-        :return: A dictionary having results for each id, separated by QACategory id.
+        :return: The results of the test validation.
         """
         # Check that all conditions have values to be validated.
-        for conditions in self.spec.qa_categories.values():
-            for measurement_id in conditions.keys():
-                if measurement_id not in self.values:
-                    raise RuntimeError(
-                        f"Id '{measurement_id}' does not have a value that can be validated."
-                    )
+        for test_case_id in self.test_suite.test_cases.keys():
+            if test_case_id not in self.values:
+                raise RuntimeError(
+                    f"Test Case '{test_case_id}' does not have a value that can be validated."
+                )
 
         # Validate and aggregate the results.
-        results: Dict[str, Dict[str, Result]] = {}
-        for category, conditions in self.spec.qa_categories.items():
-            results[category.name] = {}
-            for measurement_id, condition in conditions.items():
-                results[category.name][measurement_id] = condition(
-                    self.values[measurement_id]
-                )
-        return results
+        results: dict[str, Result] = {}
+        for test_case_id, test_case in self.test_suite.test_cases.items():
+            results[test_case_id] = test_case.validate(
+                self.values[test_case_id]
+            )
+
+        return TestResults(test_suite=self.test_suite, results=results)

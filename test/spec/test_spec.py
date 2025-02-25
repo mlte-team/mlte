@@ -26,7 +26,7 @@ def test_round_trip() -> None:
         identifier="spec",
         qa_categories={
             StorageCost("rationale"): {
-                "test": LocalObjectSize.value().less_than(3)
+                "test": LocalObjectSize.output_evidence().less_than(3)
             }
         },
     )
@@ -44,7 +44,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
         identifier="spec",
         qa_categories={
             StorageCost("rationale"): {
-                "test": LocalObjectSize.value().less_than(3)
+                "test": LocalObjectSize.output_evidence().less_than(3)
             }
         },
     )
@@ -62,7 +62,7 @@ def test_save_load_default(
     s = Spec(
         qa_categories={
             StorageCost("rationale"): {
-                "test": LocalObjectSize.value().less_than(3)
+                "test": LocalObjectSize.output_evidence().less_than(3)
             }
         },
     )
@@ -98,7 +98,7 @@ def test_save_load_extended_qa_category(
     s = Spec(
         qa_categories={
             ExtendedQACategory("rationale"): {
-                "test": LocalObjectSize.value().less_than(3)
+                "test": LocalObjectSize.output_evidence().less_than(3)
             }
         },
     )

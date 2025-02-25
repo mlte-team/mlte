@@ -123,7 +123,7 @@ def test_result_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     stats = MemoryStatistics(m, 50, 10, 800)
     stats.save_with(ctx, store)
@@ -139,7 +139,7 @@ def test_result_save_load(
 
 def test_max_consumption_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = MemoryStatistics.max_consumption_less_than(3)
@@ -156,7 +156,7 @@ def test_max_consumption_less_than() -> None:
 
 def test_avg_consumption_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = MemoryStatistics.average_consumption_less_than(3)

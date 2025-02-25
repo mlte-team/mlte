@@ -10,9 +10,10 @@ from sqlalchemy.orm import Session
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.evidence.model import EvidenceModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import SpecModel
+from mlte.spec.model import TestSuiteModel
 from mlte.store.artifact.underlying.rdbs.factory_nc import (
     create_negotiation_db_from_model,
     create_negotiation_model_from_db,
@@ -42,8 +43,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBValidatedSpec,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
-from mlte.validation.model import ValidatedSpecModel
-from mlte.value.model import ValueModel
+from mlte.validation.model import TestResultsModel
 
 # -------------------------------------------------------------------------
 # DB artifact factory.
@@ -69,11 +69,11 @@ def create_db_artifact(
 
     if artifact.header.type == ArtifactType.SPEC:
         # Create a DBSpec and its internal lists: QACategory, and inside them, conditions.
-        spec = typing.cast(SpecModel, artifact.body)
+        spec = typing.cast(TestSuiteModel, artifact.body)
         return create_spec_db_from_model(spec, artifact_header)
     elif artifact.header.type == ArtifactType.VALIDATED_SPEC:
         # Create a DBValidatedSpec db object.
-        validated_spec = typing.cast(ValidatedSpecModel, artifact.body)
+        validated_spec = typing.cast(TestResultsModel, artifact.body)
         return create_v_spec_db_from_model(
             validated_spec, artifact_header, session
         )
@@ -87,9 +87,9 @@ def create_db_artifact(
         # Create a DBReport object and all its subpieces.
         report = typing.cast(ReportModel, artifact.body)
         return create_report_db_from_model(report, artifact_header, session)
-    elif artifact.header.type == ArtifactType.VALUE:
+    elif artifact.header.type == ArtifactType.EVIDENCE:
         # Create a DBValue object and all its subpieces.
-        value = typing.cast(ValueModel, artifact.body)
+        value = typing.cast(EvidenceModel, artifact.body)
         return create_value_db_from_model(value, artifact_header)
     else:
         raise Exception(
@@ -120,11 +120,11 @@ def create_artifact_from_db(
     )
 
     body: typing.Union[
-        SpecModel,
-        ValidatedSpecModel,
+        TestSuiteModel,
+        TestResultsModel,
         NegotiationCardModel,
         ReportModel,
-        ValueModel,
+        EvidenceModel,
     ]
     if artifact_header.type == ArtifactType.SPEC:
         # Creating a Spec from DB data.
@@ -146,7 +146,7 @@ def create_artifact_from_db(
         # Creating a Report from DB data.
         report_obj = typing.cast(DBReport, artifact_header_obj.body_report)
         body = create_report_model_from_db(report_obj)
-    elif artifact_header.type == ArtifactType.VALUE:
+    elif artifact_header.type == ArtifactType.EVIDENCE:
         # Creating a Value from DB data.
         value_obj = typing.cast(DBValue, artifact_header_obj.body_value)
         body = create_value_model_from_db(value_obj)

@@ -11,10 +11,10 @@ import typing
 from typing import Any, Callable, List, Optional
 
 from mlte._private.function_info import FunctionInfo
+from mlte.evidence.artifact import Evidence
 from mlte.validation.model_condition import ConditionModel
 from mlte.validation.result import Result
 from mlte.validation.validator import Validator
-from mlte.value.artifact import Value
 
 
 class Condition:
@@ -51,7 +51,7 @@ class Condition:
         self.value_class: Optional[str] = value_class
         """Value type class where this Condition came from, if any."""
 
-    def __call__(self, value: Value) -> Result:
+    def __call__(self, value: Evidence) -> Result:
         """
         Invoke the validation
 

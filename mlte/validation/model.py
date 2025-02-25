@@ -4,12 +4,11 @@ mlte/validation/model.py
 Model implementation for the ValidatedSpec artifact.
 """
 
-from typing import Dict, Literal, Optional
+from typing import Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
-from mlte.spec.model import SpecModel
 
 
 class ResultModel(BaseModel):
@@ -21,12 +20,12 @@ class ResultModel(BaseModel):
     message: str
     """The message indicating the reason for status."""
 
-    metadata: Optional[EvidenceMetadata]
-    """Evidence metadata associated with the value."""
+    evidence_metadata: Optional[EvidenceMetadata]
+    """Metadata about the evidence this came from."""
 
 
-class ValidatedSpecModel(BaseModel):
-    """The model implementation for the ValidatedSpec artifact."""
+class TestResultsModel(BaseModel):
+    """The model implementation for the TestResults artifact."""
 
     artifact_type: Literal[ArtifactType.VALIDATED_SPEC] = (
         ArtifactType.VALIDATED_SPEC
@@ -34,14 +33,11 @@ class ValidatedSpecModel(BaseModel):
 
     """Union discriminator."""
 
-    spec_identifier: str = ""
-    """The identifier of the Spec this ValidatedSpec came from."""
+    test_suite_id: str = ""
+    """The identifier of the TestSuite this TestResults came from."""
 
-    spec: Optional[SpecModel] = None
-    """A link to the actual Spec details."""
-
-    results: Dict[str, Dict[str, ResultModel]] = {}
-    """A list of validation results, for each measurement id, grouped by QACategory."""
+    results: dict[str, ResultModel] = {}
+    """A list of validation results, for each test case."""
 
 
-ValidatedSpecModel.model_rebuild()
+TestResultsModel.model_rebuild()

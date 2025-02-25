@@ -11,11 +11,11 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
+from mlte.evidence.model import EvidenceType
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.value.model import ValueType
 
 # Needed to avoid circular import issues from relationships between tables classes.
 if TYPE_CHECKING:
@@ -71,7 +71,7 @@ class DBValue(DBBase):
 def init_value_types(session: Session):
     """Initializes the table with the configured value types."""
     if session.scalars(select(DBValueType)).first() is None:
-        types = [e.value for e in ValueType]
+        types = [e.value for e in EvidenceType]
         for type in types:
             type_obj = DBValueType(name=type)
             session.add(type_obj)

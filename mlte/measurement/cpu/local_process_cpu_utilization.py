@@ -8,14 +8,15 @@ from __future__ import annotations
 
 import subprocess
 import time
+import typing
 from subprocess import SubprocessError
 from typing import Any, Dict, Type
 
 from mlte._private.platform import is_windows
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.spec.condition import Condition
-from mlte.value.base import ValueBase
 
 # -----------------------------------------------------------------------------
 # CPUStatistics
@@ -31,7 +32,6 @@ class CPUStatistics(ValueBase):
 
     def __init__(
         self,
-        evidence_metadata: EvidenceMetadata,
         avg: float,
         min: float,
         max: float,
@@ -44,7 +44,7 @@ class CPUStatistics(ValueBase):
         :param min: The minimum utilization
         :param max: The maximum utilization
         """
-        super().__init__(self, evidence_metadata)
+        super().__init__()
 
         self.avg = avg
         """The average CPU utilization, as a proportion."""
@@ -75,11 +75,13 @@ class CPUStatistics(ValueBase):
 
         :return: The deserialized instance
         """
-        return CPUStatistics(
-            evidence_metadata,
-            avg=data["avg"],
-            min=data["min"],
-            max=data["max"],
+        return typing.cast(
+            CPUStatistics,
+            CPUStatistics(
+                avg=data["avg"],
+                min=data["min"],
+                max=data["max"],
+            ).with_metadata(evidence_metadata),
         )
 
     def __str__(self) -> str:
@@ -140,7 +142,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         super().__init__(identifier)
         if is_windows():
             raise RuntimeError(
-                f"Measurement {self.metadata.identifier} is not supported on Windows."
+                f"Measurement for {self.evidence_metadata.test_case_id} is not supported on Windows."
             )
 
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
@@ -160,15 +162,17 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             stats.append(util / 100.0)
             time.sleep(poll_interval)
 
-        return CPUStatistics(
-            self.metadata,
-            avg=sum(stats) / len(stats),
-            min=min(stats),
-            max=max(stats),
+        return typing.cast(
+            CPUStatistics,
+            CPUStatistics(
+                avg=sum(stats) / len(stats),
+                min=min(stats),
+                max=max(stats),
+            ).with_metadata(self.evidence_metadata),
         )
 
     @classmethod
-    def value(self) -> Type[CPUStatistics]:
+    def output_evidence(self) -> Type[CPUStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return CPUStatistics
 

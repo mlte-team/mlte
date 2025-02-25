@@ -2,22 +2,28 @@
 Model implementation for the Measurement artifact.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from mlte.model.base_model import BaseModel
 
 
-class MeasurementModel(BaseModel):
-    """A description of a validator for a test."""
+class MeasurementMetadata(BaseModel):
+    """Info about a Measurement."""
 
     measurement_class: str
     """The module/name of the class used for this measurement."""
 
-    measurement_function: Optional[str] = None
-    """The module/name of the function used execute the measurement, if external."""
-
-    measurement_args: list[Any] = []
-    """The arguments of the function used to execute the measurement."""
-
     output_class: str
     """The module/class of the output produced by this measurement."""
+
+    additional_data: dict[str, Any] = {}
+    """Additional metadata to add."""
+
+    def __str__(self) -> str:
+        """Return a string representation."""
+        representation = (
+            f"{self.measurement_class} - output class: {self.output_class}"
+        )
+        for key, additional_data in self.additional_data.items():
+            representation += f"; {key}: {additional_data}"
+        return representation

@@ -12,9 +12,9 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.real import Real
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
-from mlte.value.types.real import Real
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -29,7 +29,7 @@ class DummyMeasurementReal(Measurement):
 def test_success():
     """Integer construction works for valid input."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     r = Real(m, 3.14)
     assert r.value == 3.14
@@ -38,7 +38,7 @@ def test_success():
 def test_fail():
     """Real construction fails for invalid input."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     with pytest.raises(AssertionError):
         _ = Real(m, 1)
@@ -55,7 +55,7 @@ def test_measurement():
 def test_serde() -> None:
     """Real can be converted to model and back."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     r = Real(m, 3.14)
 
@@ -72,7 +72,7 @@ def test_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     i = Real(m, 3.14)
     i.save_with(ctx, store)
@@ -83,7 +83,7 @@ def test_save_load(
 
 def test_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Real.less_than(3.2)
@@ -100,7 +100,7 @@ def test_less_than() -> None:
 
 def test_less_or_equal_to() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Real.less_or_equal_to(3.2)
@@ -117,7 +117,7 @@ def test_less_or_equal_to() -> None:
 
 def test_greater_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Real.greater_than(3.2)
@@ -134,7 +134,7 @@ def test_greater_than() -> None:
 
 def test_greater_or_equal_to() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = Real.greater_or_equal_to(3.2)

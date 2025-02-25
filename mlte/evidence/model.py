@@ -1,7 +1,7 @@
 """
 mlte/value/model.py
 
-Model implementation for MLTE value types.
+Model implementation for MLTE evidence.
 """
 
 from __future__ import annotations
@@ -16,8 +16,8 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
 
 
-class ValueType(StrEnum):
-    """An enumeration over supported value types."""
+class EvidenceType(StrEnum):
+    """An ennumeration over supported evidence types."""
 
     INTEGER = "integer"
     """An integral type."""
@@ -35,16 +35,16 @@ class ValueType(StrEnum):
     """An array of values."""
 
 
-class ValueModel(BaseModel):
-    """The model implementation for MLTE values."""
+class EvidenceModel(BaseModel):
+    """The model implementation for MLTE evidence."""
 
-    artifact_type: Literal[ArtifactType.VALUE] = ArtifactType.VALUE
+    artifact_type: Literal[ArtifactType.EVIDENCE] = ArtifactType.EVIDENCE
     """Union discriminator."""
 
     metadata: EvidenceMetadata
-    """Evidence metadata associated with the value."""
+    """Evidence information (id and measurement it came from)."""
 
-    value_class: str
+    evidence_class: str
     """Full path to class that implements this value."""
 
     value: Union[
@@ -60,7 +60,7 @@ class ValueModel(BaseModel):
 class IntegerValueModel(BaseModel):
     """The model implementation for MLTE integer values."""
 
-    value_type: Literal[ValueType.INTEGER] = ValueType.INTEGER
+    value_type: Literal[EvidenceType.INTEGER] = EvidenceType.INTEGER
     """An identitifier for the value type."""
 
     integer: int
@@ -70,7 +70,7 @@ class IntegerValueModel(BaseModel):
 class RealValueModel(BaseModel):
     """The model implementation for MLTE real values."""
 
-    value_type: Literal[ValueType.REAL] = ValueType.REAL
+    value_type: Literal[EvidenceType.REAL] = EvidenceType.REAL
     """An identitifier for the value type."""
 
     real: float
@@ -80,7 +80,7 @@ class RealValueModel(BaseModel):
 class OpaqueValueModel(BaseModel):
     """The model implementation for MLTE opaque values."""
 
-    value_type: Literal[ValueType.OPAQUE] = ValueType.OPAQUE
+    value_type: Literal[EvidenceType.OPAQUE] = EvidenceType.OPAQUE
     """An identitifier for the value type."""
 
     data: Dict[str, Any]
@@ -90,7 +90,7 @@ class OpaqueValueModel(BaseModel):
 class ImageValueModel(BaseModel):
     """The model implementation for MLTE image values."""
 
-    value_type: Literal[ValueType.IMAGE] = ValueType.IMAGE
+    value_type: Literal[EvidenceType.IMAGE] = EvidenceType.IMAGE
     """An identitifier for the value type."""
 
     data: str
@@ -100,19 +100,19 @@ class ImageValueModel(BaseModel):
 class ArrayValueModel(BaseModel):
     """The model implementation for MLTE array values."""
 
-    value_type: Literal[ValueType.ARRAY] = ValueType.ARRAY
+    value_type: Literal[EvidenceType.ARRAY] = EvidenceType.ARRAY
     """An identitifier for the value type."""
 
     data: List[Any]
     """The array to capture."""
 
 
-ValueModel.model_rebuild()
+EvidenceModel.model_rebuild()
 
 
 # Value type mapping to models.
-VALUE_MODEL_CLASS: dict[
-    ValueType,
+EVIDENCE_MODEL_CLASS: dict[
+    EvidenceType,
     Union[
         type[IntegerValueModel],
         type[RealValueModel],
@@ -121,13 +121,13 @@ VALUE_MODEL_CLASS: dict[
         type[ArrayValueModel],
     ],
 ] = {
-    ValueType.INTEGER: IntegerValueModel,
-    ValueType.REAL: RealValueModel,
-    ValueType.OPAQUE: OpaqueValueModel,
-    ValueType.IMAGE: ImageValueModel,
-    ValueType.ARRAY: ArrayValueModel,
+    EvidenceType.INTEGER: IntegerValueModel,
+    EvidenceType.REAL: RealValueModel,
+    EvidenceType.OPAQUE: OpaqueValueModel,
+    EvidenceType.IMAGE: ImageValueModel,
+    EvidenceType.ARRAY: ArrayValueModel,
 }
 
 
-def get_model_class(type: ValueType):
-    return VALUE_MODEL_CLASS[type]
+def get_model_class(type: EvidenceType):
+    return EVIDENCE_MODEL_CLASS[type]

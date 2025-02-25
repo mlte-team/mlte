@@ -4,30 +4,33 @@ TestCase defines structure for all tests to be defined for a TestSpec.
 
 from __future__ import annotations
 
+import typing
 from typing import Optional
 
+from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
+from mlte.model.base_model import BaseModel
+from mlte.model.serializable import Serializable
 from mlte.spec.model import TestCaseModel
 from mlte.validation.result import Result
 from mlte.validation.validator import Validator
-from mlte.value.artifact import Value
 
 
-class TestCase:
+class TestCase(Serializable):
     """
     Class that contains all information about a test case.
     """
 
     def __init__(
         self,
-        name: str,
+        identifier: str,
         goal: str,
         qas_list: list[str],
         measurement: Optional[Measurement] = None,
         validator: Optional[Validator] = None,
     ):
-        self.name = name
-        """Name or id given to the test case."""
+        self.identifier = identifier
+        """Unique id or name given to the test case."""
 
         self.goal = goal
         """Goal for the TestCase, reason for it."""
@@ -41,7 +44,7 @@ class TestCase:
         self.validator = validator
         """Used to validate this test case."""
 
-    def measure(self, *args, **kwargs) -> Value:
+    def measure(self, *args, **kwargs) -> Evidence:
         """Executes the configured measurement with the given params."""
         if self.measurement is None:
             raise RuntimeError(
@@ -50,7 +53,7 @@ class TestCase:
 
         return self.measurement.evaluate(*args, **kwargs)
 
-    def validate(self, value: Value) -> Result:
+    def validate(self, value: Evidence) -> Result:
         """Executes the configured validator with the given Value."""
         if self.validator is None:
             raise RuntimeError(
@@ -70,17 +73,19 @@ class TestCase:
         :return: The serialized model object.
         """
         return TestCaseModel(
-            name=self.name,
+            identifier=self.identifier,
             goal=self.goal,
             qas_list=self.qas_list,
             measurement=(
-                self.measurement.to_model() if self.measurement else None
+                self.measurement.generate_metadata()
+                if self.measurement
+                else None
             ),
             validator=self.validator.to_model() if self.validator else None,
         )
 
     @classmethod
-    def from_model(cls, model: TestCaseModel) -> TestCase:
+    def from_model(cls, model: BaseModel) -> TestCase:
         """
         Deserialize a TestCase from a model.
 
@@ -88,12 +93,15 @@ class TestCase:
 
         :return: The deserialized TestCase
         """
+        model = typing.cast(TestCaseModel, model)
         test_case: TestCase = TestCase(
-            name=model.name,
+            identifier=model.identifier,
             goal=model.goal,
             qas_list=model.qas_list,
             measurement=(
-                Measurement.from_model(model.measurement)
+                Measurement.from_metadata(
+                    model=model.measurement, test_case_id=model.identifier
+                )
                 if model.measurement
                 else None
             ),
@@ -111,11 +119,10 @@ class TestCase:
 
     def __str__(self) -> str:
         """Return a string representation of TestCase."""
-        return f"{self.name}: {self.goal} ({self.qas_list})"
+        return f"{self.identifier}: {self.goal} ({self.qas_list})"
 
     def __eq__(self, other: object) -> bool:
-        """Compare TestCase instances for equality."""
+        """Test instance for equality."""
         if not isinstance(other, TestCase):
             return False
-        reference: TestCase = other
-        return self.to_model() == reference.to_model()
+        return self._equal(other)

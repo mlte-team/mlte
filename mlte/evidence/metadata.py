@@ -1,63 +1,22 @@
 """
-mlte/evidence/metadata.py
-
 EvidenceMetadata class definition.
 """
 
 from __future__ import annotations
 
-from typing import Optional
-
+from mlte.measurement.model import MeasurementMetadata
 from mlte.model.base_model import BaseModel
 
 
-class Identifier(BaseModel):
-    """
-    Identifier is a simple class that standardizes
-    the manner in which Measurements, Values, and
-    Results are uniquely identified throughout
-    their lifetimes.
-    """
-
-    name: str
-    """The name of the object."""
-
-    def __eq__(self, other: object) -> bool:
-        """Compare two Identifier instances for equality."""
-        if not isinstance(other, Identifier):
-            return False
-        return super().__eq__(other)
-
-    def __str__(self) -> str:
-        """Return a string representation of Identifier."""
-        return f"{self.name}"
-
-
 class EvidenceMetadata(BaseModel):
-    """A simple wrapper for evidence metadata."""
+    """A simple wrapper model for evidence metadata."""
 
-    measurement_type: str
-    """The name of the measurement class type."""
+    test_case_id: str
+    """The identifier of the test case this evidence is associated to."""
 
-    identifier: Identifier
-    """The identifier for the evidence."""
-
-    function: Optional[str] = None
-    """Additional unstructured information to be stored with the metadata."""
-
-    def get_id(self) -> str:
-        """Returns the id as a string."""
-        return str(self.identifier)
+    measurement: MeasurementMetadata
+    """Information about the measurement used to get this evidence."""
 
     def __str__(self) -> str:
         """Return a string representation of a EvidenceMetadata."""
-        representation = f"{self.measurement_type}-{self.identifier}"
-        if self.function is not None:
-            representation += f"-{self.function}"
-        return representation
-
-    def __eq__(self, other: object) -> bool:
-        """Compare instances for equality."""
-        if not isinstance(other, EvidenceMetadata):
-            return False
-        return super().__eq__(other)
+        return f"Id: {self.test_case_id} - {self.measurement}"

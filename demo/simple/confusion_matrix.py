@@ -11,17 +11,17 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
 from mlte.validation.result import Failure, Success
-from mlte.value.base import ValueBase
 
 
 class ConfusionMatrix(ValueBase):
     """A sample extension value type."""
 
     def __init__(self, metadata: EvidenceMetadata, matrix: np.ndarray):
-        super().__init__(self, metadata)
+        super().__init__(metadata)
 
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""

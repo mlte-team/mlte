@@ -77,18 +77,18 @@ CONFIGS = [
         sub_path="artifact",
     ),
     Config(
-        model=ModelImport(path="mlte.value.model", model="ValueModel"),
+        model=ModelImport(path="mlte.evidence.model", model="EvidenceModel"),
         output_path="value/v0.0.1",
         sub_path="artifact",
     ),
     Config(
-        model=ModelImport(path="mlte.spec.model", model="SpecModel"),
+        model=ModelImport(path="mlte.spec.model", model="Spec"),
         output_path="spec/v0.0.1",
         sub_path="artifact",
     ),
     Config(
         model=ModelImport(
-            path="mlte.validation.model", model="ValidatedSpecModel"
+            path="mlte.validation.model", model="TestResultsModel"
         ),
         output_path="validated/v0.0.1",
         sub_path="artifact",

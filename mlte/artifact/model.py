@@ -9,13 +9,13 @@ from typing import Any, Optional, Union
 from pydantic import ConfigDict, Field
 
 from mlte.artifact.type import ArtifactType
+from mlte.evidence.model import EvidenceModel
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import SpecModel, TestSuiteModel
+from mlte.spec.model import TestSuiteModel
 from mlte.store.query import Filterable
-from mlte.validation.model import ValidatedSpecModel
-from mlte.value.model import ValueModel
+from mlte.validation.model import TestResultsModel
 
 
 class ArtifactHeaderModel(BaseModel):
@@ -44,11 +44,11 @@ class ArtifactModel(Filterable):
 
     body: Union[
         NegotiationCardModel,
-        ValueModel,
+        EvidenceModel,
         TestSuiteModel,
-        ValidatedSpecModel,
+        TestResultsModel,
         ReportModel,
-        SpecModel,
+        TestSuiteModel,
     ] = Field(..., discriminator="artifact_type")
     """The artifact body."""
 

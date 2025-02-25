@@ -18,10 +18,10 @@ def test_spec_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
         make_complete_spec_model(),
-        model.SpecModel(),
+        model.TestSuiteModel(),
     ]
 
     for object in objects:
         s = object.to_json()
-        d = model.SpecModel.from_json(s)
+        d = model.TestSuiteModel.from_json(s)
         assert d == object

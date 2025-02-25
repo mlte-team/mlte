@@ -14,20 +14,20 @@ the link between the statically-typed MLTE value system and dynamic extensions.
 
 from __future__ import annotations
 
-import abc
 import typing
+from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 import mlte._private.meta as meta
-import mlte.value.artifact as artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.model import EvidenceType, OpaqueValueModel
 from mlte.model.base_model import BaseModel
-from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
 
-class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
+class ValueBase(Evidence, ABC):
     """The base class for MLTE value extensions."""
 
     @classmethod
@@ -35,7 +35,7 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         """Define the interface for all Value subclasses."""
         return meta.has_callables(subclass, "serialize", "deserialize")
 
-    @abc.abstractmethod
+    @abstractmethod
     def serialize(self) -> Dict[str, Any]:
         """
         Serialize the value to a JSON-compatible dictionary.
@@ -44,7 +44,7 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         raise NotImplementedError("ValueBase.serialize()")
 
     @classmethod
-    @abc.abstractmethod
+    @abstractmethod
     def deserialize(
         cls, metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> ValueBase:
@@ -61,15 +61,8 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         Serialize a value to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
-            header=self.build_artifact_header(),
-            body=ValueModel(
-                metadata=self.metadata,
-                value_class=self.get_class_path(),
-                value=OpaqueValueModel(
-                    data=self.serialize(),
-                ),
-            ),
+        return self._to_artifact_model(
+            value_model=OpaqueValueModel(data=self.serialize())
         )
 
     @classmethod
@@ -81,9 +74,9 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
         """
         model = typing.cast(ArtifactModel, model)
         assert (
-            model.body.artifact_type == ArtifactType.VALUE
+            model.body.artifact_type == ArtifactType.EVIDENCE
         ), "Broken precondition."
         assert (
-            model.body.value.value_type == ValueType.OPAQUE
+            model.body.value.value_type == EvidenceType.OPAQUE
         ), "Broken precondition."
         return cls.deserialize(model.body.metadata, model.body.value.data)

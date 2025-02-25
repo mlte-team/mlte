@@ -12,9 +12,9 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
-from mlte.value.types.opaque import Opaque
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -52,7 +52,7 @@ def test_equality():
     """Opaque instances can be compared for equality."""
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     a = Opaque(m, {"foo": "bar"})
@@ -75,7 +75,7 @@ def test_equality():
 def test_serde() -> None:
     """Opaque can be converted to model and back."""
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     o = Opaque(m, {"value": 1})
 
@@ -92,7 +92,7 @@ def test_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     o = Opaque(m, {"foo": "bar"})
     o.save_with(ctx, store)

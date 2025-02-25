@@ -11,8 +11,8 @@ import time
 from typing import List, Optional
 
 from mlte._private import job
+from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
-from mlte.value.artifact import Value
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement
@@ -52,7 +52,7 @@ class ProcessMeasurement(Measurement):
         """
         super().__init__(identifier)
         self.thread: Optional[threading.Thread] = None
-        self.stored_value: Optional[Value] = None
+        self.stored_value: Optional[Evidence] = None
         self.error: str = ""
 
     def evaluate_async(self, pid: int, *args, **kwargs):
@@ -80,7 +80,7 @@ class ProcessMeasurement(Measurement):
         except Exception as e:
             self.error = f"Could not evaluate process: {e}"
 
-    def wait_for_output(self, poll_interval: int = 1) -> Value:
+    def wait_for_output(self, poll_interval: int = 1) -> Evidence:
         """
         Needed to get the output of a measurement executed in parallel using evaluate_async. Waits for the thread to finish.
 

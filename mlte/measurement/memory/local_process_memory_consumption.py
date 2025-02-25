@@ -8,14 +8,15 @@ from __future__ import annotations
 
 import subprocess
 import time
+import typing
 from typing import Any, Dict, Type
 
 import psutil
 
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.spec.condition import Condition
-from mlte.value.base import ValueBase
 
 # -----------------------------------------------------------------------------
 # Memory Statistics
@@ -31,7 +32,6 @@ class MemoryStatistics(ValueBase):
 
     def __init__(
         self,
-        evidence_metadata: EvidenceMetadata,
         avg: int,
         min: int,
         max: int,
@@ -44,7 +44,7 @@ class MemoryStatistics(ValueBase):
         :param min: The minimum memory consumption, in KB
         :param max: The maximum memory consumption, in KB
         """
-        super().__init__(self, evidence_metadata)
+        super().__init__()
 
         self.avg = avg
         """The average memory consumption (KB)."""
@@ -75,11 +75,13 @@ class MemoryStatistics(ValueBase):
 
         :return: The deserialized instance
         """
-        return MemoryStatistics(
-            evidence_metadata,
-            avg=data["avg"],
-            min=data["min"],
-            max=data["max"],
+        return typing.cast(
+            MemoryStatistics,
+            MemoryStatistics(
+                avg=data["avg"],
+                min=data["min"],
+                max=data["max"],
+            ).with_metadata(evidence_metadata),
         )
 
     def __str__(self) -> str:
@@ -155,15 +157,17 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             stats.append(kb)
             time.sleep(poll_interval)
 
-        return MemoryStatistics(
-            self.metadata,
-            avg=int(sum(stats) / len(stats)),
-            min=min(stats),
-            max=max(stats),
+        return typing.cast(
+            MemoryStatistics,
+            MemoryStatistics(
+                avg=int(sum(stats) / len(stats)),
+                min=min(stats),
+                max=max(stats),
+            ).with_metadata(self.evidence_metadata),
         )
 
     @classmethod
-    def value(self) -> Type[MemoryStatistics]:
+    def output_evidence(self) -> Type[MemoryStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return MemoryStatistics
 

@@ -17,8 +17,8 @@ class ArtifactType(StrEnum):
     NEGOTIATION_CARD = "negotiation_card"
     """The negotiation card artifact type."""
 
-    VALUE = "value"
-    """The value card artifact type."""
+    EVIDENCE = "evidence"
+    """The evidence card artifact type."""
 
     SPEC = "spec"
     """The specification artifact type."""

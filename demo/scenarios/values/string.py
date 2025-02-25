@@ -6,16 +6,16 @@ from __future__ import annotations
 
 from typing import Any
 
+from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.spec.condition import Condition
-from mlte.value.base import ValueBase
 
 
 class String(ValueBase):
     """An string value."""
 
     def __init__(self, evidence_metadata: EvidenceMetadata, value: str):
-        super().__init__(self, evidence_metadata)
+        super().__init__(evidence_metadata)
 
         self.value = value
         """The attribute to store the string in."""

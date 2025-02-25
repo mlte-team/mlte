@@ -12,15 +12,15 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
+from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.session.session import set_context, set_store
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
-from mlte.validation.validated_spec import ValidatedSpec
-from mlte.value.types.integer import Integer
-from mlte.value.types.real import Real
+from mlte.validation.test_results import TestResults
 from test.store.artifact.fixture import store_with_context  # noqa
 from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
 
@@ -47,14 +47,14 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     n2 = NegotiationCard("test-card2")
     s1 = Spec("test-spec1")
     s2 = Spec("test-spec2")
-    vs1 = ValidatedSpec("test-validated1", s1)
-    vs2 = ValidatedSpec("test-validated2", s2)
+    vs1 = TestResults("test-validated1", s1)
+    vs2 = TestResults("test-validated2", s2)
     m1 = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id1")
+        measurement_class="typename", test_case_id=Identifier(name="id1")
     )
     v1 = Integer(m1, 10)
     m2 = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id2")
+        measurement_class="typename", test_case_id=Identifier(name="id2")
     )
     v2 = Real(m2, 3.14)
     r1 = Report("r1")

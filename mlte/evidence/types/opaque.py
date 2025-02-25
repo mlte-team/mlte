@@ -11,24 +11,22 @@ from typing import Any, Dict
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.artifact import Evidence
+from mlte.evidence.model import EvidenceModel, EvidenceType, OpaqueValueModel
 from mlte.model.base_model import BaseModel
-from mlte.value.artifact import Value
-from mlte.value.model import OpaqueValueModel, ValueModel, ValueType
 
 
-class Opaque(Value):
+class Opaque(Evidence):
     """
     The 'default' Value instance for measurements that do not provide their own.
     """
 
-    def __init__(self, metadata: EvidenceMetadata, data: Dict[str, Any]):
+    def __init__(self, data: Dict[str, Any]):
         """
         Initialize an Opaque instance.
-        :param metadata: The generating measurement's metadata
         :param data: The output of the measurement
         """
-        super().__init__(self, metadata)
+        super().__init__()
 
         self.data = data
         """The raw output from measurement execution."""
@@ -38,15 +36,8 @@ class Opaque(Value):
         Convert an opaque value artifact to its corresponding model.
         :return: The artifact model
         """
-        return ArtifactModel(
-            header=self.build_artifact_header(),
-            body=ValueModel(
-                metadata=self.metadata,
-                value_class=self.get_class_path(),
-                value=OpaqueValueModel(
-                    data=self.data,
-                ),
-            ),
+        return self._to_artifact_model(
+            value_model=OpaqueValueModel(data=self.data)
         )
 
     @classmethod
@@ -57,13 +48,16 @@ class Opaque(Value):
         :return: The real value
         """
         model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.VALUE, "Broken Precondition."
-        body = typing.cast(ValueModel, model.body)
+        assert (
+            model.header.type == ArtifactType.EVIDENCE
+        ), "Broken Precondition."
+        body = typing.cast(EvidenceModel, model.body)
 
-        assert body.value.value_type == ValueType.OPAQUE, "Broken Precondition."
-        return Opaque(
-            metadata=body.metadata,
-            data=body.value.data,
+        assert (
+            body.value.value_type == EvidenceType.OPAQUE
+        ), "Broken Precondition."
+        return typing.cast(
+            Opaque, Opaque(data=body.value.data).with_metadata(body.metadata)
         )
 
     def __getitem__(self, key: str) -> Any:

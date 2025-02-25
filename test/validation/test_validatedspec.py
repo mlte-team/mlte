@@ -12,13 +12,13 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.result import Result
-from mlte.validation.spec_validator import SpecValidator
-from mlte.validation.validated_spec import ValidatedSpec
-from mlte.value.types.integer import Integer
+from mlte.validation.spec_validator import TestSuiteValidator
+from mlte.validation.test_results import TestResults
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -28,12 +28,12 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     spec = Spec(
         qa_categories={StorageCost("rationale"): {"id": Integer.less_than(3)}}
     )
-    specValidator = SpecValidator(spec)
+    specValidator = TestSuiteValidator(spec)
 
     # A dummy value
     i = Integer(
         EvidenceMetadata(
-            measurement_type="typename", identifier=Identifier(name="id")
+            measurement_class="typename", test_case_id=Identifier(name="id")
         ),
         1,
     )
@@ -42,7 +42,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     validatedSpec = specValidator.validate()
     validatedSpec.save_with(ctx, store)
 
-    r = ValidatedSpec.load_with(context=ctx, store=store)
+    r = TestResults.load_with(context=ctx, store=store)
     assert r == validatedSpec
 
 
@@ -54,7 +54,7 @@ def test_no_result_and_no_qa_category():
 
     results: Dict[str, Dict[str, Result]] = {}
     with pytest.raises(RuntimeError):
-        _ = ValidatedSpec(spec=spec, results=results)
+        _ = TestResults(test_suite=spec, results=results)
 
 
 def test_no_result():
@@ -65,4 +65,4 @@ def test_no_result():
 
     results: Dict[str, Dict[str, Result]] = {"StorageCost": {}}
     with pytest.raises(RuntimeError):
-        _ = ValidatedSpec(spec=spec, results=results)
+        _ = TestResults(test_suite=spec, results=results)

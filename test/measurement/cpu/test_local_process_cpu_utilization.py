@@ -134,7 +134,7 @@ def test_result_save_load(
     store, ctx = store_with_context
 
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
     stats = CPUStatistics(m, 0.5, 0.1, 0.8)
     stats.save_with(ctx, store)
@@ -150,7 +150,7 @@ def test_result_save_load(
 
 def test_max_utilization_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = CPUStatistics.max_utilization_less_than(3)
@@ -167,7 +167,7 @@ def test_max_utilization_less_than() -> None:
 
 def test_avg_utilization_less_than() -> None:
     m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+        measurement_class="typename", test_case_id=Identifier(name="id")
     )
 
     cond = CPUStatistics.average_utilization_less_than(3)
