@@ -1,4 +1,5 @@
 {
     "name": "Reliability",
-    "description": "Reliability"
+    "description": "Reliability",
+    "parent": "robustness"
 }

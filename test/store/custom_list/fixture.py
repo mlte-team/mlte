@@ -23,6 +23,7 @@ from test.store.custom_list.custom_list_store_creators import (
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_ENTRY_NAME = "test entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
+DEFAULT_PARENT = "test parent"
 
 
 def custom_list_stores() -> Generator[str, None, None]:
@@ -76,6 +77,9 @@ def get_test_list(
 def get_test_entry(
     name: str = DEFAULT_ENTRY_NAME,
     description: str = DEFAULT_ENTRY_DESCRIPTION,
+    parent: str = DEFAULT_PARENT,
 ) -> CustomListEntryModel:
     """Helper to get a list entry structure."""
-    return CustomListEntryModel(name=name, description=description)
+    return CustomListEntryModel(
+        name=name, description=description, parent=parent
+    )

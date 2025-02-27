@@ -30,3 +30,6 @@ class CustomListEntryModel(BaseModel):
 
     description: str
     """A description of the the entry."""
+
+    parent: str
+    """ID of parent."""
