@@ -61,8 +61,6 @@ def run_model(image_folder_path, model_file):
     # getrusage returns Kibibytes on linux and bytes on MacOS
     r_mem_units_str = "KiB" if sys.platform.startswith("linux") else "bytes"
 
-    import tensorflow as tf
-
     print_and_log(f"TensorFlow version: {tf.__version__}")
 
     # Load dataset
@@ -79,11 +77,11 @@ def run_model(image_folder_path, model_file):
 
     # Load model
     loaded_model = tf.keras.models.load_model(model_file)
-    print_and_log("Loaded model from disk!")
+    logging.info("Loaded model from disk!")
 
     ru2 = getrusage(RUSAGE_SELF).ru_maxrss
 
-    print_and_log(loaded_model.summary())
+    # logging.info(loaded_model.summary())
 
     mfile_size = os.path.getsize(model_file)
 

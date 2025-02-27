@@ -84,3 +84,7 @@ class ValueBase(artifact.Value, metaclass=abc.ABCMeta):
             model.body.value.value_type == ValueType.OPAQUE
         ), "Broken precondition."
         return cls.deserialize(model.body.metadata, model.body.value.data)
+
+    def __str__(self) -> str:
+        """Return a string representation, by default serializing it."""
+        return f"{self.serialize()}"
