@@ -82,7 +82,7 @@ CONFIGS = [
         sub_path="artifact",
     ),
     Config(
-        model=ModelImport(path="mlte.spec.model", model="Spec"),
+        model=ModelImport(path="mlte.spec.model", model="TestSuiteModel"),
         output_path="spec/v0.0.1",
         sub_path="artifact",
     ),

@@ -27,8 +27,8 @@ class ResultModel(BaseModel):
 class TestResultsModel(BaseModel):
     """The model implementation for the TestResults artifact."""
 
-    artifact_type: Literal[ArtifactType.VALIDATED_SPEC] = (
-        ArtifactType.VALIDATED_SPEC
+    artifact_type: Literal[ArtifactType.TEST_RESULTS] = (
+        ArtifactType.TEST_RESULTS
     )
 
     """Union discriminator."""

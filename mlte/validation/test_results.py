@@ -40,7 +40,7 @@ class TestResults(Artifact):
         :param test_suite: The TestSuite
         :param results: The validation Results for the TestSuite
         """
-        super().__init__(identifier, ArtifactType.VALIDATED_SPEC)
+        super().__init__(identifier, ArtifactType.TEST_RESULTS)
 
         self.test_suite_id = (
             test_suite.identifier if test_suite is not None else ""
@@ -87,7 +87,7 @@ class TestResults(Artifact):
         """
         model = typing.cast(ArtifactModel, model)
         assert (
-            model.header.type == ArtifactType.VALIDATED_SPEC
+            model.header.type == ArtifactType.TEST_RESULTS
         ), "Broken precondition."
         body = typing.cast(TestResultsModel, model.body)
 

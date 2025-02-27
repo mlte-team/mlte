@@ -53,7 +53,7 @@ class DBEvidence(DBBase):
     data_json: Mapped[str]
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_value", cascade="all"
+        back_populates="body_evidence", cascade="all"
     )
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
         back_populates="evidence", cascade="all, delete-orphan"

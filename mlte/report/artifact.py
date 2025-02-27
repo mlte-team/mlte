@@ -110,7 +110,7 @@ class Report(Artifact):
                     f"Validated specification with identifier {self.validated_spec_id} not found."
                 )
 
-        if not artifact.header.type == ArtifactType.VALIDATED_SPEC:
+        if not artifact.header.type == ArtifactType.TEST_RESULTS:
             raise RuntimeError(
                 f"Validated specification with identifier {self.validated_spec_id} not found."
             )

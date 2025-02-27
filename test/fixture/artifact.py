@@ -108,7 +108,7 @@ def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
         return _make_value(id, complete)
     if type == ArtifactType.SPEC:
         return _make_spec(complete)
-    if type == ArtifactType.VALIDATED_SPEC:
+    if type == ArtifactType.TEST_RESULTS:
         return _make_validated_spec(complete)
     if type == ArtifactType.REPORT:
         return _make_report(complete)

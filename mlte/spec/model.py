@@ -1,15 +1,13 @@
 """
-mlte/spec/model.py
-
-Model implementation for the Spec artifact.
+Model implementation for the TestSuite artifact.
 """
 
-from typing import Dict, List, Literal, Optional
+from typing import Literal, Optional
 
 from mlte.artifact.type import ArtifactType
 from mlte.measurement.model import MeasurementMetadata
 from mlte.model import BaseModel
-from mlte.validation.model_condition import ConditionModel, ValidatorModel
+from mlte.validation.model_condition import ValidatorModel
 
 
 class TestCaseModel(BaseModel):
@@ -36,35 +34,3 @@ class TestSuiteModel(BaseModel):
     """Union discriminator."""
 
     test_cases: list[TestCaseModel] = []
-
-
-class QACategoryModel(BaseModel):
-    """A description of a quality attribute category."""
-
-    name: str
-    """A name for the QACategory."""
-
-    description: Optional[str] = None
-    """A general description of this QACategory type."""
-
-    rationale: Optional[str] = None
-    """The rationale for this QACategory being important in this situation."""
-
-    conditions: Dict[str, ConditionModel] = {}
-    """A dictionary of conditions, keyed by measurement id, to be validated for this QACategory."""
-
-    module: str
-    """The full package and module path of the QACategory class."""
-
-
-class Spec(BaseModel):
-    """The model implementation for the Spec artifact."""
-
-    artifact_type: Literal[ArtifactType.SPEC] = ArtifactType.SPEC
-    """Union discriminator."""
-
-    qa_categories: List[QACategoryModel] = []
-    """A list of QACategory for this spec."""
-
-
-TestSuiteModel.model_rebuild()

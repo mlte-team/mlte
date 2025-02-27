@@ -79,8 +79,8 @@
   "description": "The model implementation for the TestResults artifact.",
   "properties": {
     "artifact_type": {
-      "const": "validated_spec",
-      "default": "validated_spec",
+      "const": "test_results",
+      "default": "test_results",
       "title": "Artifact Type",
       "type": "string"
     },

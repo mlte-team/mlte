@@ -235,7 +235,7 @@ def create_report_db_from_model(
         artifact_header=artifact_header,
         negotiation_card_data=negotiation_card_data_obj,
         validated_spec=(
-            DBReader.get_validated_spec(
+            DBReader.get_test_results(
                 report.validated_spec_id,
                 artifact_header.version_id,
                 session,

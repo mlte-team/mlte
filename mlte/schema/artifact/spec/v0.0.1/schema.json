@@ -1,90 +1,78 @@
 {
   "$defs": {
-    "ConditionModel": {
-      "description": "A description of a condition for a QACategory.",
+    "MeasurementMetadata": {
+      "description": "Info about a Measurement.",
       "properties": {
-        "name": {
-          "title": "Name",
+        "measurement_class": {
+          "title": "Measurement Class",
           "type": "string"
         },
-        "arguments": {
-          "default": [],
-          "items": {},
-          "title": "Arguments",
-          "type": "array"
-        },
-        "validator": {
-          "$ref": "#/$defs/ValidatorModel"
-        },
-        "value_class": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Value Class"
-        }
-      },
-      "required": [
-        "name",
-        "validator",
-        "value_class"
-      ],
-      "title": "ConditionModel",
-      "type": "object"
-    },
-    "QACategoryModel": {
-      "description": "A description of a quality attribute category.",
-      "properties": {
-        "name": {
-          "title": "Name",
+        "output_class": {
+          "title": "Output Class",
           "type": "string"
         },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Description"
-        },
-        "rationale": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Rationale"
-        },
-        "conditions": {
+        "additional_data": {
           "additionalProperties": {
-            "$ref": "#/$defs/ConditionModel"
+            "type": "string"
           },
           "default": {},
-          "title": "Conditions",
+          "title": "Additional Data",
           "type": "object"
-        },
-        "module": {
-          "title": "Module",
-          "type": "string"
         }
       },
       "required": [
-        "name",
-        "module"
+        "measurement_class",
+        "output_class"
       ],
-      "title": "QACategoryModel",
+      "title": "MeasurementMetadata",
+      "type": "object"
+    },
+    "TestCaseModel": {
+      "properties": {
+        "identifier": {
+          "title": "Identifier",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "qas_list": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Qas List",
+          "type": "array"
+        },
+        "measurement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeasurementMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "validator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValidatorModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "identifier",
+        "goal"
+      ],
+      "title": "TestCaseModel",
       "type": "object"
     },
     "ValidatorModel": {
@@ -187,23 +175,23 @@
       "type": "object"
     }
   },
-  "description": "The model implementation for the Spec artifact.",
+  "description": "The model implementation for the TestSuite artifact.",
   "properties": {
     "artifact_type": {
-      "const": "spec",
-      "default": "spec",
+      "const": "test_suite",
+      "default": "test_suite",
       "title": "Artifact Type",
       "type": "string"
     },
-    "qa_categories": {
+    "test_cases": {
       "default": [],
       "items": {
-        "$ref": "#/$defs/QACategoryModel"
+        "$ref": "#/$defs/TestCaseModel"
       },
-      "title": "Qa Categories",
+      "title": "Test Cases",
       "type": "array"
     }
   },
-  "title": "Spec",
+  "title": "TestSuiteModel",
   "type": "object"
 }
