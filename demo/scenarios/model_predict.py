@@ -7,8 +7,8 @@ from resource import *
 from typing import Optional
 
 import garden
-
 import tensorflow as tf
+
 
 def setup_log():
     logging.basicConfig(
@@ -81,7 +81,7 @@ def run_model(image_folder_path, model_file):
 
     ru2 = getrusage(RUSAGE_SELF).ru_maxrss
 
-    #logging.info(loaded_model.summary())
+    # logging.info(loaded_model.summary())
 
     mfile_size = os.path.getsize(model_file)
 

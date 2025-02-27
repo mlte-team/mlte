@@ -128,7 +128,7 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
     df_labels["Label Name"] = df_labels["Common Name"].replace(
         " ", "_", regex=True
     )
-    #print(df_labels)
+    # print(df_labels)
 
     df_dict = pd.DataFrame.from_dict(
         {"Label": list(label_dict), "Label Name": label_dict.values()}
