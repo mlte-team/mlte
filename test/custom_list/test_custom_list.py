@@ -67,13 +67,13 @@ def test_custom_list_name_dict() -> None:
     )
 
     with pytest.raises(Exception):
-        test_dict[CustomListName.QA_CATEGORIES] = "value"
+        test_dict[CustomListName.QA_CATEGORIES] = "value"  # type: ignore
 
     with pytest.raises(Exception):
-        test_dict["key"] = CustomListName.QA_CATEGORIEs
+        test_dict["key"] = CustomListName.QA_CATEGORIES  # type: ignore
 
     with pytest.raises(Exception):
-        test_dict["key"] = "value"
+        test_dict["key"] = "value"  # type: ignore
 
     with pytest.raises(Exception):
-        test_dict["key"]
+        test_dict["key"]  # type: ignore

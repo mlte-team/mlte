@@ -6,7 +6,7 @@ Enum of the predefined custom list names.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from strenum import StrEnum
 
@@ -18,7 +18,7 @@ class CustomListName(StrEnum):
     QUALITY_ATTRIBUTES = "quality_attributes"
 
 
-class CustomListNameDict(dict):
+class CustomListNameDict(dict[Any, Any]):
     def __setitem__(
         self: "CustomListNameDict",
         key: CustomListName,
