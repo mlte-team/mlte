@@ -6,12 +6,7 @@ import time
 from resource import *
 from typing import Optional
 
-
-
 import garden
-import tensorflow as tf
-
-
 
 import tensorflow as tf
 
@@ -65,8 +60,6 @@ def run_model(image_folder_path, model_file):
 
     # getrusage returns Kibibytes on linux and bytes on MacOS
     r_mem_units_str = "KiB" if sys.platform.startswith("linux") else "bytes"
-
-    import tensorflow as tf
 
     print_and_log(f"TensorFlow version: {tf.__version__}")
 
