@@ -1,4 +1,5 @@
 {
     "name": "Safety",
-    "description": "Safety"
+    "description": "Safety",
+    "parent": ""
 }
