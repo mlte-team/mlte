@@ -6,9 +6,14 @@ import time
 from resource import *
 from typing import Optional
 
+
+
 import garden
 import tensorflow as tf
 
+
+
+import tensorflow as tf
 
 def setup_log():
     logging.basicConfig(
@@ -79,11 +84,11 @@ def run_model(image_folder_path, model_file):
 
     # Load model
     loaded_model = tf.keras.models.load_model(model_file)
-    print_and_log("Loaded model from disk!")
+    logging.info("Loaded model from disk!")
 
     ru2 = getrusage(RUSAGE_SELF).ru_maxrss
 
-    print_and_log(loaded_model.summary())
+    #logging.info(loaded_model.summary())
 
     mfile_size = os.path.getsize(model_file)
 
