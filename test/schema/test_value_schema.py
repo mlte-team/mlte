@@ -4,19 +4,17 @@ test/schema/test_value_schema.py
 Unit tests for Value schema.
 """
 
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.opaque import Opaque
 from mlte.evidence.types.real import Real
+from test.value.types.helper import get_sample_evidence_metadata
 
 from . import util as util
 
 
 def test_real():
     r = Real(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        get_sample_evidence_metadata(),
         3.14,
     )
 
@@ -26,9 +24,7 @@ def test_real():
 
 def test_integer():
     r = Integer(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        get_sample_evidence_metadata(),
         3,
     )
 
@@ -38,9 +34,7 @@ def test_integer():
 
 def test_opaque():
     r = Opaque(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        get_sample_evidence_metadata(),
         {"foo": "bar"},
     )
 

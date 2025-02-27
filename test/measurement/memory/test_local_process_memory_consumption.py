@@ -12,7 +12,6 @@ import typing
 from typing import Tuple
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
@@ -21,6 +20,7 @@ from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 from ...support.meta import path_to_support
 
@@ -42,7 +42,7 @@ def test_constructor_type():
     m = LocalProcessMemoryConsumption("id")
 
     assert (
-        m.metadata.measurement_type
+        m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.memory.local_process_memory_consumption.LocalProcessMemoryConsumption"
     )
 
@@ -122,10 +122,7 @@ def test_result_save_load(
 ) -> None:
     store, ctx = store_with_context
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    stats = MemoryStatistics(m, 50, 10, 800)
+    stats = MemoryStatistics(get_sample_evidence_metadata(), 50, 10, 800)
     stats.save_with(ctx, store)
 
     r: MemoryStatistics = typing.cast(
@@ -138,9 +135,7 @@ def test_result_save_load(
 
 
 def test_max_consumption_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = get_sample_evidence_metadata()
 
     cond = MemoryStatistics.max_consumption_less_than(3)
 
@@ -155,9 +150,7 @@ def test_max_consumption_less_than() -> None:
 
 
 def test_avg_consumption_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = get_sample_evidence_metadata()
 
     cond = MemoryStatistics.average_consumption_less_than(3)
 

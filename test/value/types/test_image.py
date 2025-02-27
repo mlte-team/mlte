@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Tuple
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.image import Image
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -25,9 +25,7 @@ def test_from_str():
 
     local_path = str(get_sample_image_path())
     _ = Image(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
         local_path,
     )
 
@@ -37,9 +35,7 @@ def test_from_path():
 
     local_path = get_sample_image_path()
     _ = Image(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
         local_path,
     )
 
@@ -52,9 +48,7 @@ def test_from_bytes():
     with local_path.open("rb") as f:
         image = f.read()
     _ = Image(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
         image,
     )
 
@@ -67,9 +61,7 @@ def test_save_load(
 
     local_path = get_sample_image_path()
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = EvidenceMetadata(measurement_class="typename", test_case_id="id")
     i = Image(m, local_path)
     i.save_with(ctx, store)
 
@@ -78,9 +70,7 @@ def test_save_load(
 
 
 def test_ignore() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = EvidenceMetadata(measurement_class="typename", test_case_id="id")
 
     local_path = str(get_sample_image_path())
 

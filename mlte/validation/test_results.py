@@ -43,7 +43,7 @@ class TestResults(Artifact):
         super().__init__(identifier, ArtifactType.VALIDATED_SPEC)
 
         self.test_suite_id = (
-            test_suite.identifier if test_suite is not None else None
+            test_suite.identifier if test_suite is not None else ""
         )
         """The id of the TestSuite that we validated."""
 
@@ -51,11 +51,12 @@ class TestResults(Artifact):
         """The validation results for the test_suite, by test case."""
 
         # Check that all tests have results.
-        for test_case_id, _ in test_suite.test_cases.items():
-            if test_case_id not in results:
-                raise RuntimeError(
-                    f"Test Case '{test_case_id}' does not have a result."
-                )
+        if test_suite:
+            for test_case_id, _ in test_suite.test_cases.items():
+                if test_case_id not in results:
+                    raise RuntimeError(
+                        f"Test Case '{test_case_id}' does not have a result."
+                    )
 
     # -------------------------------------------------------------------------
     # Model serialization.

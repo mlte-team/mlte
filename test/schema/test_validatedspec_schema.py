@@ -4,7 +4,7 @@ test/schema/test_validatedspec_schema.py
 Unit tests for ValidatedSpec schema.
 """
 
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
@@ -19,9 +19,7 @@ def test_schema():
     )
     specValidator = TestSuiteValidator(spec)
     i = Integer(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="test")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="test"),
         1,
     )
     specValidator.add_value(i)

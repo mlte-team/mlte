@@ -2,8 +2,6 @@
 Model implementation for the Measurement artifact.
 """
 
-from typing import Any
-
 from mlte.model.base_model import BaseModel
 
 
@@ -16,7 +14,7 @@ class MeasurementMetadata(BaseModel):
     output_class: str
     """The module/class of the output produced by this measurement."""
 
-    additional_data: dict[str, Any] = {}
+    additional_data: dict[str, str] = {}
     """Additional metadata to add."""
 
     def __str__(self) -> str:

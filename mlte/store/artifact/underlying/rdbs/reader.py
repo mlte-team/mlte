@@ -32,9 +32,9 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBQACategory,
     DBSpec,
-    DBValidatedSpec,
+    DBTestResults,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
+from mlte.store.artifact.underlying.rdbs.metadata_value import DBEvidence
 
 
 class DBReader:
@@ -45,17 +45,17 @@ class DBReader:
         ArtifactType,
         Union[
             type[DBSpec],
-            type[DBValidatedSpec],
+            type[DBTestResults],
             type[DBNegotiationCard],
             type[DBReport],
-            type[DBValue],
+            type[DBEvidence],
         ],
     ] = {
         ArtifactType.SPEC: DBSpec,
-        ArtifactType.VALIDATED_SPEC: DBValidatedSpec,
+        ArtifactType.VALIDATED_SPEC: DBTestResults,
         ArtifactType.NEGOTIATION_CARD: DBNegotiationCard,
         ArtifactType.REPORT: DBReport,
-        ArtifactType.EVIDENCE: DBValue,
+        ArtifactType.EVIDENCE: DBEvidence,
     }
 
     @staticmethod
@@ -123,7 +123,7 @@ class DBReader:
         session: Session,
     ) -> Tuple[
         ArtifactModel,
-        Union[DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue],
+        Union[DBSpec, DBTestResults, DBNegotiationCard, DBReport, DBEvidence],
     ]:
         """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
         # First get the class of the artifact we are trying to read, so we can use the ORM by passing the DB object type.
@@ -133,7 +133,7 @@ class DBReader:
         # Get artifact.
         artifact_class = DBReader.get_artifact_class(artifact_type)
         artifact_obj: Union[
-            DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue
+            DBSpec, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
         ] = session.scalar(
             select(artifact_class)
             .where(DBVersion.model_id == DBModel.id)
@@ -164,7 +164,9 @@ class DBReader:
         """Loads and returns a list with all the artifacts of the given type, for the given model/version."""
         artifact_class = DBReader.get_artifact_class(artifact_type)
         artifact_objs: ScalarResult[
-            Union[DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue]
+            Union[
+                DBSpec, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
+            ]
         ] = session.scalars(
             (
                 select(artifact_class)
@@ -205,10 +207,10 @@ class DBReader:
         artifact_type: ArtifactType,
     ) -> Union[
         type[DBSpec],
-        type[DBValidatedSpec],
+        type[DBTestResults],
         type[DBNegotiationCard],
         type[DBReport],
-        type[DBValue],
+        type[DBEvidence],
     ]:
         """Gets the DB class of the artifact header provided."""
         if artifact_type in DBReader.SUPPORTED_ARTIFACT_DB_CLASSES:
@@ -239,11 +241,11 @@ class DBReader:
     @staticmethod
     def get_validated_spec(
         validated_spec_identifier: str, version_id: int, session: Session
-    ) -> DBValidatedSpec:
+    ) -> DBTestResults:
         """Gets the Spec with the given identifier."""
         property_obj = session.scalar(
-            select(DBValidatedSpec)
-            .where(DBValidatedSpec.artifact_header_id == DBArtifactHeader.id)
+            select(DBTestResults)
+            .where(DBTestResults.artifact_header_id == DBArtifactHeader.id)
             .where(DBArtifactHeader.identifier == validated_spec_identifier)
             .where(DBArtifactHeader.version_id == version_id)
         )

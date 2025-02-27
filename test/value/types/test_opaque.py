@@ -11,11 +11,11 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 class DummyMeasurementOpaque(Measurement):
@@ -23,7 +23,7 @@ class DummyMeasurementOpaque(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Opaque:
-        return Opaque(self.metadata, {"value": 1})
+        return Opaque(self.evidence_metadata, {"value": 1})
 
 
 def test_measurement():
@@ -51,9 +51,7 @@ def test_measurement():
 def test_equality():
     """Opaque instances can be compared for equality."""
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = get_sample_evidence_metadata()
 
     a = Opaque(m, {"foo": "bar"})
     b = Opaque(m, {"foo": "bar"})
@@ -74,10 +72,7 @@ def test_equality():
 
 def test_serde() -> None:
     """Opaque can be converted to model and back."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    o = Opaque(m, {"value": 1})
+    o = Opaque(get_sample_evidence_metadata(), {"value": 1})
 
     model = o.to_model()
     e = Opaque.from_model(model)
@@ -91,10 +86,7 @@ def test_save_load(
     """Opaque can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    o = Opaque(m, {"foo": "bar"})
+    o = Opaque(get_sample_evidence_metadata(), {"foo": "bar"})
     o.save_with(ctx, store)
 
     loaded = Opaque.load_with("id.value", context=ctx, store=store)

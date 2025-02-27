@@ -30,6 +30,9 @@
           "type": "string"
         },
         "additional_data": {
+          "additionalProperties": {
+            "type": "string"
+          },
           "default": {},
           "title": "Additional Data",
           "type": "object"

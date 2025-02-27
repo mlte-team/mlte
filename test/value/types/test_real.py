@@ -11,11 +11,11 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.evidence.types.real import Real
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 class DummyMeasurementReal(Measurement):
@@ -23,25 +23,19 @@ class DummyMeasurementReal(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Real:
-        return Real(self.metadata, 3.14)
+        return Real(self.evidence_metadata, 3.14)
 
 
 def test_success():
     """Integer construction works for valid input."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    r = Real(m, 3.14)
+    r = Real(get_sample_evidence_metadata(), 3.14)
     assert r.value == 3.14
 
 
 def test_fail():
     """Real construction fails for invalid input."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
     with pytest.raises(AssertionError):
-        _ = Real(m, 1)
+        _ = Real(get_sample_evidence_metadata(), 1)
 
 
 def test_measurement():
@@ -54,10 +48,7 @@ def test_measurement():
 
 def test_serde() -> None:
     """Real can be converted to model and back."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    r = Real(m, 3.14)
+    r = Real(get_sample_evidence_metadata(), 3.14)
 
     model = r.to_model()
     e = Real.from_model(model)
@@ -71,10 +62,7 @@ def test_save_load(
     """Real can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    i = Real(m, 3.14)
+    i = Real(get_sample_evidence_metadata(), 3.14)
     i.save_with(ctx, store)
 
     loaded = Real.load_with("id.value", context=ctx, store=store)
@@ -82,10 +70,7 @@ def test_save_load(
 
 
 def test_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-
+    m = get_sample_evidence_metadata()
     cond = Real.less_than(3.2)
 
     res = cond(Real(m, 3.1))
@@ -99,10 +84,7 @@ def test_less_than() -> None:
 
 
 def test_less_or_equal_to() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-
+    m = get_sample_evidence_metadata()
     cond = Real.less_or_equal_to(3.2)
 
     res = cond(Real(m, 3.1))
@@ -116,10 +98,7 @@ def test_less_or_equal_to() -> None:
 
 
 def test_greater_than() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-
+    m = get_sample_evidence_metadata()
     cond = Real.greater_than(3.2)
 
     res = cond(Real(m, 3.1))
@@ -133,10 +112,7 @@ def test_greater_than() -> None:
 
 
 def test_greater_or_equal_to() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-
+    m = get_sample_evidence_metadata()
     cond = Real.greater_or_equal_to(3.2)
 
     res = cond(Real(m, 3.1))

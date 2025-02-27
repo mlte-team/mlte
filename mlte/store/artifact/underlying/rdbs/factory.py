@@ -23,12 +23,12 @@ from mlte.store.artifact.underlying.rdbs.factory_nc import (
 from mlte.store.artifact.underlying.rdbs.factory_spec import (
     create_spec_db_from_model,
     create_spec_model_from_db,
-    create_v_spec_db_from_model,
+    create_test_results_db_from_model,
     create_v_spec_model_from_db,
 )
 from mlte.store.artifact.underlying.rdbs.factory_value import (
-    create_value_db_from_model,
-    create_value_model_from_db,
+    create_evidence_db_from_model,
+    create_evidence_model_from_db,
 )
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
@@ -40,9 +40,9 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
 )
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBSpec,
-    DBValidatedSpec,
+    DBTestResults,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
+from mlte.store.artifact.underlying.rdbs.metadata_value import DBEvidence
 from mlte.validation.model import TestResultsModel
 
 # -------------------------------------------------------------------------
@@ -56,7 +56,7 @@ def create_db_artifact(
     version_id: int,
     session: Session,
 ) -> typing.Union[
-    DBSpec, DBValidatedSpec, DBNegotiationCard, DBReport, DBValue
+    DBSpec, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
 ]:
     """Converts an internal model to its corresponding DB object for artifacts."""
     artifact_header = DBArtifactHeader(
@@ -74,7 +74,7 @@ def create_db_artifact(
     elif artifact.header.type == ArtifactType.VALIDATED_SPEC:
         # Create a DBValidatedSpec db object.
         validated_spec = typing.cast(TestResultsModel, artifact.body)
-        return create_v_spec_db_from_model(
+        return create_test_results_db_from_model(
             validated_spec, artifact_header, session
         )
     elif artifact.header.type == ArtifactType.NEGOTIATION_CARD:
@@ -90,7 +90,7 @@ def create_db_artifact(
     elif artifact.header.type == ArtifactType.EVIDENCE:
         # Create a DBValue object and all its subpieces.
         value = typing.cast(EvidenceModel, artifact.body)
-        return create_value_db_from_model(value, artifact_header)
+        return create_evidence_db_from_model(value, artifact_header)
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact.header.type}"
@@ -133,7 +133,7 @@ def create_artifact_from_db(
     elif artifact_header.type == ArtifactType.VALIDATED_SPEC:
         # Creating a ValidatedSpec from DB data.
         validated_obj = typing.cast(
-            DBValidatedSpec, artifact_header_obj.body_validated_spec
+            DBTestResults, artifact_header_obj.body_validated_spec
         )
         body = create_v_spec_model_from_db(validated_obj)
     elif artifact_header.type == ArtifactType.NEGOTIATION_CARD:
@@ -148,8 +148,8 @@ def create_artifact_from_db(
         body = create_report_model_from_db(report_obj)
     elif artifact_header.type == ArtifactType.EVIDENCE:
         # Creating a Value from DB data.
-        value_obj = typing.cast(DBValue, artifact_header_obj.body_value)
-        body = create_value_model_from_db(value_obj)
+        value_obj = typing.cast(DBEvidence, artifact_header_obj.body_value)
+        body = create_evidence_model_from_db(value_obj)
 
     else:
         raise Exception(

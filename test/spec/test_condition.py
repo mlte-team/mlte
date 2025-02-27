@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from mlte._private.fixed_json import json
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.model.serialization_error import SerializationError
@@ -113,9 +113,7 @@ def test_save_load_condition():
 def test_call_condition():
     """Check execution of condition."""
     condition = TestValue.in_between(1.0, 10.0)
-    ev = EvidenceMetadata(
-        measurement_class="measure1", test_case_id=Identifier(name="id")
-    )
+    ev = EvidenceMetadata(measurement_class="measure1", test_case_id="id")
 
     result = condition(Real(ev, 3.0))
     assert str(result) == "Success"

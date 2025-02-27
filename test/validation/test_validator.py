@@ -5,8 +5,9 @@ Unit tests for Validator.
 """
 
 from mlte._private.function_info import FunctionInfo
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
+from mlte.measurement.model import MeasurementMetadata
 from mlte.validation.model_condition import ValidatorModel
 from mlte.validation.validator import Validator
 
@@ -171,7 +172,12 @@ def test_validate_success_with_value() -> None:
         Integer(
             value=1,
             metadata=EvidenceMetadata(
-                measurement_type="test", identifier=Identifier(name="test")
+                test_case_id="test",
+                measurement=MeasurementMetadata(
+                    measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                    output_class="mlte.evidence.types.real.Real",
+                    additional_data={"function": "skleran.accu()"},
+                ),
             ),
         )
     )

@@ -11,7 +11,6 @@ from typing import Dict, Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
@@ -20,6 +19,7 @@ from mlte.validation.result import Result
 from mlte.validation.spec_validator import TestSuiteValidator
 from mlte.validation.test_results import TestResults
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
@@ -32,9 +32,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 
     # A dummy value
     i = Integer(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id")
-        ),
+        get_sample_evidence_metadata(),
         1,
     )
     specValidator.add_value(i)

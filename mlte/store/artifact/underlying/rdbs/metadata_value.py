@@ -27,7 +27,7 @@ else:
 
 
 # -------------------------------------------------------------------------
-# Value Elements
+# Evidence/Value Elements
 # -------------------------------------------------------------------------
 
 
@@ -41,14 +41,14 @@ class DBValueType(DBBase):
         return f"ValueType(id={self.id!r}, name={self.name!r})"
 
 
-class DBValue(DBBase):
-    __tablename__ = "value"
+class DBEvidence(DBBase):
+    __tablename__ = "evidence"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
         ForeignKey("artifact_header.id")
     )
-    value_class: Mapped[str]
+    evidence_class: Mapped[str]
     value_type: Mapped[str]
     data_json: Mapped[str]
 
@@ -56,11 +56,11 @@ class DBValue(DBBase):
         back_populates="body_value", cascade="all"
     )
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
-        back_populates="value", cascade="all, delete-orphan"
+        back_populates="evidence", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"Value(id={self.id!r}, artifact_header={self.artifact_header!r}, value_class={self.value_class!r}, data_json={self.data_json!r})"
+        return f"Evidence(id={self.id!r}, artifact_header={self.artifact_header!r}, evidence_class={self.evidence_class!r}, data_json={self.data_json!r})"
 
 
 # -------------------------------------------------------------------------

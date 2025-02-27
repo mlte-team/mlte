@@ -12,9 +12,10 @@ from typing import List, Optional, Union
 
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
+from mlte.measurement.model import MeasurementMetadata
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -131,9 +132,7 @@ def _make_value(id: str, complete: bool) -> EvidenceModel:
     Make a minimal value, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name=id)
-    )
+    m = EvidenceMetadata(measurement_class="typename", test_case_id=id)
 
     return EvidenceModel(
         metadata=m,
@@ -319,9 +318,12 @@ def make_complete_validated_spec_model() -> TestResultsModel:
                     type="Success",
                     message="The RF accuracy is greater than 3",
                     measurement_id=EvidenceMetadata(
-                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-                        test_case_id=Identifier(name="accuracy"),
-                        measurement_function="skleran.accu()",
+                        test_case_id="accuracy",
+                        measurement=MeasurementMetadata(
+                            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                            output_class="mlte.evidence.types.real.Real",
+                            additional_data={"function": "skleran.accu()"},
+                        ),
                     ),
                 )
             },

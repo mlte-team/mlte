@@ -16,7 +16,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBValidatedSpec
+from mlte.store.artifact.underlying.rdbs.metadata_spec import DBTestResults
 
 # -------------------------------------------------------------------------
 # Negotiation Card
@@ -134,7 +134,7 @@ class DBReport(DBBase):
     validated_spec_id: Mapped[Optional[str]] = mapped_column(
         ForeignKey("validated_spec.id", ondelete="SET NULL")
     )
-    validated_spec: Mapped[DBValidatedSpec] = relationship()
+    validated_spec: Mapped[DBTestResults] = relationship()
 
     # Comments
     comments: Mapped[List[DBCommentDescriptor]] = relationship(

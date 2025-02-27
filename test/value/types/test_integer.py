@@ -11,11 +11,11 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 class DummyMeasurementInteger(Measurement):
@@ -23,25 +23,20 @@ class DummyMeasurementInteger(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Integer:
-        return Integer(self.metadata, 1)
+        return Integer(self.evidence_metadata, 1)
 
 
 def test_success():
     """Integer construction works for valid input type."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    i = Integer(m, 1)
+    i = Integer(get_sample_evidence_metadata(), 1)
     assert i.value == 1
 
 
 def test_fail():
     """Integer construction fails for invalid input type."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+
     with pytest.raises(AssertionError):
-        _ = Integer(m, 3.14)  # type: ignore
+        _ = Integer(get_sample_evidence_metadata(), 3.14)  # type: ignore
 
 
 def test_measurement():
@@ -55,10 +50,7 @@ def test_measurement():
 
 def test_serde() -> None:
     """Integer can be converted to model and back."""
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    i = Integer(m, 1)
+    i = Integer(get_sample_evidence_metadata(), 1)
 
     model = i.to_model()
     e = Integer.from_model(model)
@@ -72,10 +64,7 @@ def test_save_load(
     """Integer can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    i = Integer(m, 1)
+    i = Integer(get_sample_evidence_metadata(), 1)
     i.save_with(ctx, store)
 
     loaded = Integer.load_with("id.value", context=ctx, store=store)
@@ -83,9 +72,7 @@ def test_save_load(
 
 
 def test_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = get_sample_evidence_metadata()
 
     cond = Integer.less_than(3)
 
@@ -100,9 +87,7 @@ def test_less_than() -> None:
 
 
 def test_less_or_equal_to() -> None:
-    m = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
+    m = get_sample_evidence_metadata()
 
     cond = Integer.less_or_equal_to(3)
 

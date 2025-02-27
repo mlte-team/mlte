@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
@@ -34,9 +34,7 @@ def test_no_requirement():
     specValidator = TestSuiteValidator(spec)
 
     i = Integer(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="id2")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="id2"),
         1,
     )
     specValidator.add_value(i)
@@ -52,9 +50,7 @@ def test_success():
     specValidator = TestSuiteValidator(spec)
 
     i = Integer(
-        EvidenceMetadata(
-            measurement_class="typename", test_case_id=Identifier(name="test")
-        ),
+        EvidenceMetadata(measurement_class="typename", test_case_id="test"),
         1,
     )
     specValidator.add_value(i)

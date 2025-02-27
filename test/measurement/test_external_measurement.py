@@ -11,7 +11,7 @@ from typing import Any, Dict
 import pytest
 
 from mlte.evidence.base import ValueBase
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.external_measurement import ExternalMeasurement
 
@@ -63,7 +63,7 @@ def test_constructor_type():
     m = ExternalMeasurement("test_id", Integer)
 
     assert (
-        m.metadata.measurement_type
+        m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.external_measurement.ExternalMeasurement"
     )
 
@@ -77,7 +77,7 @@ def test_evaluate_external() -> None:
     expected_result = Integer(
         EvidenceMetadata(
             measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id=Identifier(name="test_id"),
+            test_case_id="test_id",
             measurement_function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
@@ -99,7 +99,7 @@ def test_evaluate_external_base() -> None:
     expected_result = BigInteger(
         EvidenceMetadata(
             measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id=Identifier(name="test_id"),
+            test_case_id="test_id",
             measurement_function="test.measurement.test_external_measurement._dummy_calculation",
         ),
         expected_value,
@@ -121,7 +121,7 @@ def test_evaluate_ingest() -> None:
     expected_result = Integer(
         EvidenceMetadata(
             measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id=Identifier(name="test_id"),
+            test_case_id="test_id",
         ),
         expected_value,
     )
@@ -140,7 +140,7 @@ def test_evaluate_ingest_base() -> None:
     expected_result = BigInteger(
         EvidenceMetadata(
             measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id=Identifier(name="test_id"),
+            test_case_id="test_id",
         ),
         expected_value,
     )

@@ -12,9 +12,10 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.base import ValueBase
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 class ConfusionMatrix(ValueBase):
@@ -52,23 +53,19 @@ class BadInteger(ValueBase):
 
 def test_serde() -> None:
     """Confusion matrix can be serialized and deserialized."""
-    em = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
+    cm = ConfusionMatrix(get_sample_evidence_metadata(), [[1, 2], [3, 4]])
 
     serialized = cm.serialize()
 
-    deserialized = ConfusionMatrix.deserialize(em, serialized)
+    deserialized = ConfusionMatrix.deserialize(
+        get_sample_evidence_metadata(), serialized
+    )
     assert deserialized == cm
 
 
 def test_model() -> None:
     """Confusion matrix can round trip to and from model."""
-    em = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
+    cm = ConfusionMatrix(get_sample_evidence_metadata(), [[1, 2], [3, 4]])
 
     m = cm.to_model()
 
@@ -82,10 +79,7 @@ def test_save_load(
     """Confusion matrix can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    em = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
-    cm = ConfusionMatrix(em, [[1, 2], [3, 4]])
+    cm = ConfusionMatrix(get_sample_evidence_metadata(), [[1, 2], [3, 4]])
 
     cm.save_with(ctx, store)
 
@@ -95,8 +89,5 @@ def test_save_load(
 
 def test_subclass_fail() -> None:
     """A value type that fails to meet the interface cannot be instantiated."""
-    em = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id")
-    )
     with pytest.raises(TypeError):
-        _ = BadInteger(em, 1)  # type: ignore
+        _ = BadInteger(get_sample_evidence_metadata(), 1)  # type: ignore

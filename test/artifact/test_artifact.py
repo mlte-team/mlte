@@ -11,7 +11,7 @@ import pytest
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
+from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
@@ -49,13 +49,9 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     s2 = Spec("test-spec2")
     vs1 = TestResults("test-validated1", s1)
     vs2 = TestResults("test-validated2", s2)
-    m1 = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id1")
-    )
+    m1 = EvidenceMetadata(measurement_class="typename", test_case_id="id1")
     v1 = Integer(m1, 10)
-    m2 = EvidenceMetadata(
-        measurement_class="typename", test_case_id=Identifier(name="id2")
-    )
+    m2 = EvidenceMetadata(measurement_class="typename", test_case_id="id2")
     v2 = Real(m2, 3.14)
     r1 = Report("r1")
     r2 = Report("r2")
