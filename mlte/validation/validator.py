@@ -16,7 +16,7 @@ from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
-from mlte.validation.model_condition import ValidatorModel
+from mlte.validation.model_validator import ValidatorModel
 from mlte.validation.result import Failure, Info, Result, Success
 
 

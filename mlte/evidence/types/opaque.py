@@ -56,9 +56,7 @@ class Opaque(Evidence):
         assert (
             body.value.value_type == EvidenceType.OPAQUE
         ), "Broken Precondition."
-        return typing.cast(
-            Opaque, Opaque(data=body.value.data).with_metadata(body.metadata)
-        )
+        return Opaque(data=body.value.data).with_metadata(body.metadata)
 
     def __getitem__(self, key: str) -> Any:
         """

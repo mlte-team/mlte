@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import subprocess
 import time
-import typing
 from subprocess import SubprocessError
 from typing import Any, Dict, Type
 
@@ -16,7 +15,7 @@ from mlte._private.platform import is_windows
 from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
 # CPUStatistics
@@ -75,14 +74,11 @@ class CPUStatistics(ValueBase):
 
         :return: The deserialized instance
         """
-        return typing.cast(
-            CPUStatistics,
-            CPUStatistics(
-                avg=data["avg"],
-                min=data["min"],
-                max=data["max"],
-            ).with_metadata(evidence_metadata),
-        )
+        return CPUStatistics(
+            avg=data["avg"],
+            min=data["min"],
+            max=data["max"],
+        ).with_metadata(evidence_metadata)
 
     def __str__(self) -> str:
         """Return a string representation of CPUStatistics."""
@@ -93,36 +89,36 @@ class CPUStatistics(ValueBase):
         return s
 
     @classmethod
-    def max_utilization_less_than(cls, threshold: float) -> Condition:
+    def max_utilization_less_than(cls, threshold: float) -> Validator:
         """
-        Construct and invoke a condition for maximum CPU utilization.
+        Construct and invoke a validator for maximum CPU utilization.
 
         :param threshold: The threshold value for maximum utilization, as percentage
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda stats: stats.max < threshold,
             success=f"Maximum utilization below threshold {threshold:.2f}",
             failure=f"Maximum utilization exceeds threshold {threshold:.2f}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def average_utilization_less_than(cls, threshold: float) -> Condition:
+    def average_utilization_less_than(cls, threshold: float) -> Validator:
         """
-        Construct and invoke a condition for average CPU utilization.
+        Construct and invoke a validator for average CPU utilization.
 
         :param threshold: The threshold value for average utilization, as percentage
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda stats: stats.avg < threshold,
             success=f"Average utilization below threshold {threshold:.2f}",
             failure=f"Average utilization exceeds threshold {threshold:.2f}",
         )
-        return condition
+        return validator
 
 
 # -----------------------------------------------------------------------------
@@ -162,14 +158,11 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             stats.append(util / 100.0)
             time.sleep(poll_interval)
 
-        return typing.cast(
-            CPUStatistics,
-            CPUStatistics(
-                avg=sum(stats) / len(stats),
-                min=min(stats),
-                max=max(stats),
-            ).with_metadata(self.evidence_metadata),
-        )
+        return CPUStatistics(
+            avg=sum(stats) / len(stats),
+            min=min(stats),
+            max=max(stats),
+        ).with_metadata(self.evidence_metadata)
 
     @classmethod
     def output_evidence(self) -> Type[CPUStatistics]:

@@ -13,7 +13,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, IntegerValueModel
 from mlte.model.base_model import BaseModel
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 
 class Integer(Evidence):
@@ -57,12 +57,7 @@ class Integer(Evidence):
         assert (
             body.value.value_type == EvidenceType.INTEGER
         ), "Broken Precondition."
-        return typing.cast(
-            Integer,
-            Integer(
-                value=body.value.integer,
-            ).with_metadata(body.metadata),
-        )
+        return Integer(value=body.value.integer).with_metadata(body.metadata)
 
     def __eq__(self, other: object) -> bool:
         """Comparison between Integer values."""
@@ -75,31 +70,31 @@ class Integer(Evidence):
         return f"{self.value}"
 
     @classmethod
-    def less_than(cls, threshold: int) -> Condition:
+    def less_than(cls, threshold: int) -> Validator:
         """
         Determine if integer is strictly less than `value`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda integer: integer.value < threshold,
             success=f"Integer magnitude is less than threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def less_or_equal_to(cls, threshold: int) -> Condition:
+    def less_or_equal_to(cls, threshold: int) -> Validator:
         """
         Determine if integer is less than or equal to `value`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda integer: integer.value <= threshold,
             success=f"Integer magnitude is less than or equal to threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
         )
-        return condition
+        return validator

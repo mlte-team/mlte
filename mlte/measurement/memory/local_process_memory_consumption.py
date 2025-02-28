@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import subprocess
 import time
-import typing
 from typing import Any, Dict, Type
 
 import psutil
@@ -16,7 +15,7 @@ import psutil
 from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
 # Memory Statistics
@@ -75,14 +74,11 @@ class MemoryStatistics(ValueBase):
 
         :return: The deserialized instance
         """
-        return typing.cast(
-            MemoryStatistics,
-            MemoryStatistics(
-                avg=data["avg"],
-                min=data["min"],
-                max=data["max"],
-            ).with_metadata(evidence_metadata),
-        )
+        return MemoryStatistics(
+            avg=data["avg"],
+            min=data["min"],
+            max=data["max"],
+        ).with_metadata(evidence_metadata)
 
     def __str__(self) -> str:
         """Return a string representation of MemoryStatistics."""
@@ -93,36 +89,36 @@ class MemoryStatistics(ValueBase):
         return s
 
     @classmethod
-    def max_consumption_less_than(cls, threshold: int) -> Condition:
+    def max_consumption_less_than(cls, threshold: int) -> Validator:
         """
-        Construct and invoke a condition for maximum memory consumption.
+        Construct and invoke a validator for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption, in KB
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda stats: stats.max < threshold,
             success=f"Maximum consumption below threshold {threshold}",
             failure=f"Maximum consumption exceeds threshold {threshold}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def average_consumption_less_than(cls, threshold: float) -> Condition:
+    def average_consumption_less_than(cls, threshold: float) -> Validator:
         """
-        Construct and invoke a condition for average memory consumption.
+        Construct and invoke a validator for average memory consumption.
 
         :param threshold: The threshold value for average consumption, in KB
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda stats: stats.avg < threshold,
             success=f"Average consumption below threshold {threshold}",
             failure=f"Average consumption exceeds threshold {threshold}",
         )
-        return condition
+        return validator
 
 
 # -----------------------------------------------------------------------------
@@ -157,14 +153,11 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             stats.append(kb)
             time.sleep(poll_interval)
 
-        return typing.cast(
-            MemoryStatistics,
-            MemoryStatistics(
-                avg=int(sum(stats) / len(stats)),
-                min=min(stats),
-                max=max(stats),
-            ).with_metadata(self.evidence_metadata),
-        )
+        return MemoryStatistics(
+            avg=int(sum(stats) / len(stats)),
+            min=min(stats),
+            max=max(stats),
+        ).with_metadata(self.evidence_metadata)
 
     @classmethod
     def output_evidence(self) -> Type[MemoryStatistics]:

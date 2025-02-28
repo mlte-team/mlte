@@ -13,7 +13,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
 from mlte.model.base_model import BaseModel
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 
 class Real(Evidence):
@@ -58,12 +58,7 @@ class Real(Evidence):
         assert (
             body.value.value_type == EvidenceType.REAL
         ), "Broken Precondition."
-        return typing.cast(
-            Real,
-            Real(
-                value=body.value.real,
-            ).with_metadata(body.metadata),
-        )
+        return Real(value=body.value.real).with_metadata(body.metadata)
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""
@@ -76,61 +71,61 @@ class Real(Evidence):
         return self._equal(other)
 
     @classmethod
-    def less_than(cls, threshold: float) -> Condition:
+    def less_than(cls, threshold: float) -> Validator:
         """
         Determine if real is strictly less than `threshold`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value < threshold,
             success=f"Real magnitude is less than threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def less_or_equal_to(cls, threshold: float) -> Condition:
+    def less_or_equal_to(cls, threshold: float) -> Validator:
         """
         Determine if real is less than or equal to `threshold`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value <= threshold,
             success=f"Real magnitude is less than or equal to threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def greater_than(cls, threshold: float) -> Condition:
+    def greater_than(cls, threshold: float) -> Validator:
         """
         Determine if real is strictly greater than `threshold`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value > threshold,
             success=f"Real magnitude is greater than threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
         )
-        return condition
+        return validator
 
     @classmethod
-    def greater_or_equal_to(cls, threshold: float) -> Condition:
+    def greater_or_equal_to(cls, threshold: float) -> Validator:
         """
         Determine if real is greater than or equal to `threshold`.
 
         :param threshold: The threshold value
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value >= threshold,
             success=f"Real magnitude is greater than or equal to threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
         )
-        return condition
+        return validator

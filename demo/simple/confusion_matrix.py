@@ -13,8 +13,7 @@ import pandas as pd
 
 from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
+from mlte.validation.validator import Validator
 
 
 class ConfusionMatrix(ValueBase):
@@ -57,8 +56,8 @@ class ConfusionMatrix(ValueBase):
         return int(count)
 
     @classmethod
-    def misclassification_count_less_than(cls, threshold: int) -> Condition:
-        condition: Condition = Condition.build_condition(
+    def misclassification_count_less_than(cls, threshold: int) -> Validator:
+        condition: Validator = Validator.build_validator(
             bool_exp=lambda cm: cm.misclassifications <= threshold,
             success=f"Misclass count is less than threshold {threshold}",
             failure=f"Misclassification count exceeds threshold {threshold}",

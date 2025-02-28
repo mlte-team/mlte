@@ -10,7 +10,7 @@ import numpy as np
 
 from mlte.evidence.base import ValueBase
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 
 class MultipleRanksums(ValueBase):
@@ -45,14 +45,14 @@ class MultipleRanksums(ValueBase):
         )
 
     @classmethod
-    def all_p_values_greater_or_equal_than(cls, threshold: float) -> Condition:
+    def all_p_values_greater_or_equal_than(cls, threshold: float) -> Validator:
         """Checks if the p-value for multiple ranksums is below given threshold."""
-        condition: Condition = Condition.build_condition(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda value: len(value.get_low_p_values(threshold)) == 0,
             success=f"All p-values are equal to or over threshold {threshold}",
             failure=f"One or more p-values are below threshold {threshold}",
         )
-        return condition
+        return validator
 
     def get_total_p_value_threshold(self, threshold: float) -> float:
         return threshold / self.num_pops

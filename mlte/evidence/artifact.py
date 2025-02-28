@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import typing
 from abc import ABC, abstractmethod
+from typing import TypeVar
 
 from mlte._private.meta import get_full_path
 from mlte._private.reflection import load_class
@@ -20,6 +21,9 @@ from mlte.store.artifact.store import ArtifactStore
 
 DEFAULT_EVIDENCE_ID = "default.evidence"
 """This is supposed to be a temporary id, not for permanent use."""
+
+T = TypeVar("T", bound="Evidence")
+"""Needed for generic return of type."""
 
 
 class Evidence(Artifact, ABC):
@@ -40,7 +44,7 @@ class Evidence(Artifact, ABC):
         self.typename: str = get_full_path(self.__class__)
         """The class type of the evidence itself."""
 
-    def with_metadata(self, evidence_medatada: EvidenceMetadata) -> Evidence:
+    def with_metadata(self: T, evidence_medatada: EvidenceMetadata) -> T:
         """Sets the evidence metadata, returns updated object."""
         self.metadata = evidence_medatada
 
@@ -68,7 +72,7 @@ class Evidence(Artifact, ABC):
             body=EvidenceModel(
                 metadata=self.metadata,
                 evidence_class=get_full_path(self.__class__),
-                value=value_model,
+                value=value_model,  # type: ignore
             ),
         )
         return model

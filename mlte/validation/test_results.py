@@ -5,12 +5,12 @@ TestResults class implementation.
 from __future__ import annotations
 
 import typing
-from typing import Optional
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
+from mlte.spec.model import TestSuiteModel
 from mlte.spec.test_suite import TestSuite
 from mlte.validation.model import TestResultsModel
 from mlte.validation.result import Result
@@ -29,8 +29,8 @@ class TestResults(Artifact):
 
     def __init__(
         self,
+        test_suite: TestSuite,
         identifier: str = DEFAULT_VALIDATED_SPEC_ID,
-        test_suite: Optional[TestSuite] = None,
         results: dict[str, Result] = {},
     ):
         """
@@ -42,9 +42,7 @@ class TestResults(Artifact):
         """
         super().__init__(identifier, ArtifactType.TEST_RESULTS)
 
-        self.test_suite_id = (
-            test_suite.identifier if test_suite is not None else ""
-        )
+        self.test_suite = test_suite
         """The id of the TestSuite that we validated."""
 
         self.results = results
@@ -70,7 +68,10 @@ class TestResults(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=TestResultsModel(
-                test_suite_id=self.test_suite_id,
+                test_suite_id=self.test_suite.identifier,
+                test_suite=typing.cast(
+                    TestSuiteModel, self.test_suite.to_model()
+                ),
                 results={
                     test_case_id: result.to_model()
                     for test_case_id, result in self.results.items()
@@ -94,7 +95,7 @@ class TestResults(Artifact):
         # Build the TestSuite and TestResults
         return TestResults(
             identifier=model.header.identifier,
-            test_suite_id=body.test_suite_id,
+            test_suite=TestSuite.from_model(body.test_suite),
             results={
                 test_case_id: Result.from_model(test_result_model)
                 for test_case_id, test_result_model in body.results.items()

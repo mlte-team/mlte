@@ -16,7 +16,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, ImageValueModel
 from mlte.model.base_model import BaseModel
-from mlte.spec.condition import Condition
+from mlte.validation.validator import Validator
 
 
 class Image(Evidence):
@@ -76,19 +76,16 @@ class Image(Evidence):
         assert (
             body.value.value_type == EvidenceType.IMAGE
         ), "Broken Precondition."
-        return typing.cast(
-            Image,
-            Image(
-                image=base64.decodebytes(body.value.data.encode("utf-8")),
-            ).with_metadata(body.metadata),
-        )
+        return Image(
+            image=base64.decodebytes(body.value.data.encode("utf-8"))
+        ).with_metadata(body.metadata)
 
     @classmethod
-    def register_info(cls, info: str) -> Condition:
+    def register_info(cls, info: str) -> Validator:
         """
         Register info about an image value.
         :param info: The information to record.
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used.
         """
-        condition: Condition = Condition.build_condition(info=info)
-        return condition
+        validator: Validator = Validator.build_validator(info=info)
+        return validator

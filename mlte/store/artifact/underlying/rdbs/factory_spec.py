@@ -20,7 +20,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.validation.model import ResultModel, TestResultsModel
-from mlte.validation.model_condition import ValidatorModel
+from mlte.validation.model_validator import ValidatorModel
 
 # -------------------------------------------------------------------------
 # TestSuite Factory Methods

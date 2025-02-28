@@ -56,12 +56,7 @@ class Array(Evidence):
         assert (
             body.value.value_type == EvidenceType.ARRAY
         ), "Broken Precondition."
-        return typing.cast(
-            Array,
-            Array(
-                array=body.value.data,
-            ).with_metadata(body.metadata),
-        )
+        return Array(array=body.value.data).with_metadata(body.metadata)
 
     def __str__(self) -> str:
         return str(self.array)
