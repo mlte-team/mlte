@@ -82,18 +82,14 @@ def test_memory_validate_success() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition(
-        name="test",
-        arguments=[],
-        validator=Validator(
-            bool_exp=lambda _: True, success="yay", failure="oh"
-        ),
-    )(stats)
-    print(vr)
+    validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
+    vr = validator.validate(stats)
     assert bool(vr)
 
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
+    assert vr.evidence_metadata is not None
+    assert vr.evidence_metadata.measurement.measurement_class, type(
+        MemoryStatistics
+    ).__name__
 
 
 def test_memory_validate_failure() -> None:
@@ -122,7 +118,9 @@ def test_result_save_load(
 ) -> None:
     store, ctx = store_with_context
 
-    stats = MemoryStatistics(get_sample_evidence_metadata(), 50, 10, 800)
+    stats = MemoryStatistics(50, 10, 800).with_metadata(
+        get_sample_evidence_metadata()
+    )
     stats.save_with(ctx, store)
 
     r: MemoryStatistics = typing.cast(
@@ -137,28 +135,40 @@ def test_result_save_load(
 def test_max_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = MemoryStatistics.max_consumption_less_than(3)
+    validator = MemoryStatistics.max_consumption_less_than(3)
 
-    res = cond(MemoryStatistics(m, avg=2, max=2, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
     assert bool(res)
 
-    res = cond(MemoryStatistics(m, avg=2, max=4, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=4, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(MemoryStatistics(m, avg=2, max=3, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=3, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
 
 def test_avg_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = MemoryStatistics.average_consumption_less_than(3)
+    validator = MemoryStatistics.average_consumption_less_than(3)
 
-    res = cond(MemoryStatistics(m, avg=2, max=2, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
     assert bool(res)
 
-    res = cond(MemoryStatistics(m, avg=4, max=2, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=4, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(MemoryStatistics(m, avg=3, max=2, min=1))
+    res = validator.validate(
+        MemoryStatistics(avg=3, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)

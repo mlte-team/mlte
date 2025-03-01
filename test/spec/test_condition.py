@@ -16,7 +16,7 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.model.serialization_error import SerializationError
 from mlte.spec.condition import Condition
-from mlte.validation.model_condition import ConditionModel
+from mlte.validation.model_validator import ConditionModel
 from mlte.validation.validator import Validator
 
 

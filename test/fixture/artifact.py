@@ -38,9 +38,8 @@ from mlte.report.model import (
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.spec.model import QACategoryModel, TestSuiteModel
+from mlte.spec.model import TestCaseModel, TestSuiteModel
 from mlte.validation.model import ResultModel, TestResultsModel
-from mlte.validation.model_condition import ConditionModel
 from mlte.validation.validator import Validator
 
 
@@ -106,7 +105,7 @@ def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
         return _make_negotiation_card(complete)
     if type == ArtifactType.EVIDENCE:
         return _make_value(id, complete)
-    if type == ArtifactType.SPEC:
+    if type == ArtifactType.TEST_SUITE:
         return _make_spec(complete)
     if type == ArtifactType.TEST_RESULTS:
         return _make_validated_spec(complete)
@@ -151,7 +150,7 @@ def _make_spec(complete: bool) -> TestSuiteModel:
     if not complete:
         return TestSuiteModel()
     else:
-        return make_complete_spec_model()
+        return make_complete_test_suite_model()
 
 
 def _make_validated_spec(complete: bool) -> TestResultsModel:
@@ -277,56 +276,50 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
     )
 
 
-def make_complete_spec_model() -> TestSuiteModel:
+def make_complete_test_suite_model() -> TestSuiteModel:
     """
-    Make a filled in Spec model.
+    Make a filled in TestSuite model.
     :return: The artifact model
     """
     return TestSuiteModel(
-        qa_categories=[
-            QACategoryModel(
-                name="TaskEfficacy",
-                description="QACategory for useful things.",
-                rationale="Because I say so",
+        test_cases=[
+            TestCaseModel(
+                identifier="Test1",
+                goal="QACategory for useful things.",
                 module="mlte.qa_category.functionality.task_efficacy",
-                conditions={
-                    "accuracy": ConditionModel(
-                        name="less_than",
-                        arguments=[3.0],
-                        validator=Validator(
-                            success="Yay", failure="oh"
-                        ).to_model(),
-                        value_class="mlte.evidence.types.real.Real",
-                    )
-                },
+                validator=Validator(
+                    bool_exp=lambda x: x < 3, success="Yay", failure="oh"
+                ).to_model(),
+                measurement=MeasurementMetadata(
+                    measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                    output_class="mlte.evidence.type.Real",
+                ),
             )
         ],
     )
 
 
-def make_complete_validated_spec_model() -> TestResultsModel:
+def make_complete_test_results_model() -> TestResultsModel:
     """
-    Make a filled in ValidatedSpec model.
+    Make a filled in TestResults model.
     :return: The artifact model
     """
     return TestResultsModel(
         test_suite_id="",
-        test_suite=make_complete_spec_model(),
+        test_suite=make_complete_test_suite_model(),
         results={
-            "TaskEfficacy": {
-                "accuracy": ResultModel(
-                    type="Success",
-                    message="The RF accuracy is greater than 3",
-                    measurement_id=EvidenceMetadata(
-                        test_case_id="accuracy",
-                        measurement=MeasurementMetadata(
-                            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-                            output_class="mlte.evidence.types.real.Real",
-                            additional_data={"function": "skleran.accu()"},
-                        ),
+            "accuracy": ResultModel(
+                type="Success",
+                message="The RF accuracy is greater than 3",
+                evidence_metadata=EvidenceMetadata(
+                    test_case_id="accuracy",
+                    measurement=MeasurementMetadata(
+                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                        output_class="mlte.evidence.types.real.Real",
+                        additional_data={"function": "skleran.accu()"},
                     ),
-                )
-            },
+                ),
+            )
         },
     )
 

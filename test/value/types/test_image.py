@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import Tuple
 
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.image import Image
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 def get_sample_image_path() -> Path:
@@ -24,20 +24,14 @@ def test_from_str():
     """Image can be loaded from filesystem path as string."""
 
     local_path = str(get_sample_image_path())
-    _ = Image(
-        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
-        local_path,
-    )
+    _ = Image(local_path).with_metadata(get_sample_evidence_metadata())
 
 
 def test_from_path():
     """Image can be loaded from filesystem path as Path."""
 
     local_path = get_sample_image_path()
-    _ = Image(
-        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
-        local_path,
-    )
+    _ = Image(local_path).with_metadata(get_sample_evidence_metadata())
 
 
 def test_from_bytes():
@@ -47,10 +41,7 @@ def test_from_bytes():
 
     with local_path.open("rb") as f:
         image = f.read()
-    _ = Image(
-        EvidenceMetadata(measurement_class="typename", test_case_id="id"),
-        image,
-    )
+    _ = Image(image).with_metadata(get_sample_evidence_metadata())
 
 
 def test_save_load(
@@ -61,8 +52,7 @@ def test_save_load(
 
     local_path = get_sample_image_path()
 
-    m = EvidenceMetadata(measurement_class="typename", test_case_id="id")
-    i = Image(m, local_path)
+    i = Image(local_path).with_metadata(get_sample_evidence_metadata())
     i.save_with(ctx, store)
 
     # NOTE(Kyle): No equality test implemented.
@@ -70,12 +60,12 @@ def test_save_load(
 
 
 def test_ignore() -> None:
-    m = EvidenceMetadata(measurement_class="typename", test_case_id="id")
-
     local_path = str(get_sample_image_path())
 
     msg = "Just writing some data"
-    cond = Image.register_info(msg)
+    validator = Image.register_info(msg)
 
-    res = cond(Image(m, local_path))
+    res = validator.validate(
+        Image(local_path).with_metadata(get_sample_evidence_metadata())
+    )
     assert res.message == msg

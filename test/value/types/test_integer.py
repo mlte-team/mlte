@@ -23,12 +23,12 @@ class DummyMeasurementInteger(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Integer:
-        return Integer(self.evidence_metadata, 1)
+        return Integer(1).with_metadata(self.evidence_metadata)
 
 
 def test_success():
     """Integer construction works for valid input type."""
-    i = Integer(get_sample_evidence_metadata(), 1)
+    i = Integer(1).with_metadata(get_sample_evidence_metadata())
     assert i.value == 1
 
 
@@ -36,7 +36,7 @@ def test_fail():
     """Integer construction fails for invalid input type."""
 
     with pytest.raises(AssertionError):
-        _ = Integer(get_sample_evidence_metadata(), 3.14)  # type: ignore
+        _ = Integer(3.14).with_metadata(get_sample_evidence_metadata())  # type: ignore
 
 
 def test_measurement():
@@ -50,7 +50,7 @@ def test_measurement():
 
 def test_serde() -> None:
     """Integer can be converted to model and back."""
-    i = Integer(get_sample_evidence_metadata(), 1)
+    i = Integer(1).with_metadata(get_sample_evidence_metadata())
 
     model = i.to_model()
     e = Integer.from_model(model)
@@ -64,7 +64,7 @@ def test_save_load(
     """Integer can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    i = Integer(get_sample_evidence_metadata(), 1)
+    i = Integer(1).with_metadata(get_sample_evidence_metadata())
     i.save_with(ctx, store)
 
     loaded = Integer.load_with("id.value", context=ctx, store=store)
@@ -74,28 +74,28 @@ def test_save_load(
 def test_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = Integer.less_than(3)
+    validator = Integer.less_than(3)
 
-    res = cond(Integer(m, 2))
+    res = validator.validate(Integer(2).with_metadata(m))
     assert bool(res)
 
-    res = cond(Integer(m, 4))
+    res = validator.validate(Integer(4).with_metadata(m))
     assert not bool(res)
 
-    res = cond(Integer(m, 3))
+    res = validator.validate(Integer(3).with_metadata(m))
     assert not bool(res)
 
 
 def test_less_or_equal_to() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = Integer.less_or_equal_to(3)
+    validator = Integer.less_or_equal_to(3)
 
-    res = cond(Integer(m, 2))
+    res = validator.validate(Integer(2).with_metadata(m))
     assert bool(res)
 
-    res = cond(Integer(m, 4))
+    res = validator.validate(Integer(4).with_metadata(m))
     assert not bool(res)
 
-    res = cond(Integer(m, 3))
+    res = validator.validate(Integer(3).with_metadata(m))
     assert bool(res)

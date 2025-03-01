@@ -8,7 +8,7 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.qa_category.costs.storage_cost import StorageCost
 from mlte.spec.spec import Spec
-from mlte.validation.spec_validator import TestSuiteValidator
+from mlte.validation.test_suite_validator import TestSuiteValidator
 
 from . import util as util
 

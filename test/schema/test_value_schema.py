@@ -13,20 +13,16 @@ from . import util as util
 
 
 def test_real():
-    r = Real(
-        get_sample_evidence_metadata(),
-        3.14,
-    )
+    r = Real(3.14)
+    r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
     util.validate_value_schema(doc["body"])
 
 
 def test_integer():
-    r = Integer(
-        get_sample_evidence_metadata(),
-        3,
-    )
+    r = Integer(3)
+    r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
     util.validate_value_schema(doc["body"])
@@ -34,9 +30,9 @@ def test_integer():
 
 def test_opaque():
     r = Opaque(
-        get_sample_evidence_metadata(),
         {"foo": "bar"},
     )
+    r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
     util.validate_value_schema(doc["body"])

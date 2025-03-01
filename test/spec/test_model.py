@@ -7,7 +7,7 @@ Unit tests for specification model.
 from __future__ import annotations
 
 from mlte.spec.model import TestSuiteModel
-from test.fixture.artifact import make_complete_spec_model
+from test.fixture.artifact import make_complete_test_suite_model
 
 # -----------------------------------------------------------------------------
 # SpecModel
@@ -17,7 +17,7 @@ from test.fixture.artifact import make_complete_spec_model
 def test_spec_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
-        make_complete_spec_model(),
+        make_complete_test_suite_model(),
         TestSuiteModel(),
     ]
 

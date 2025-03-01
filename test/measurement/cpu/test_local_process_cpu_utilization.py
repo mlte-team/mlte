@@ -16,7 +16,6 @@ import pytest
 from mlte._private.platform import is_nix, is_windows
 from mlte.context.context import Context
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
-from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -42,7 +41,7 @@ def test_constructor_type():
     m = LocalProcessCPUUtilization("id")
 
     assert (
-        m.metadata.measurement_type
+        m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
     )
 
@@ -91,12 +90,14 @@ def test_cpu_nix_validate_success() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True, success="Yay", failure="oh"))(stats)  # type: ignore
+    vr = Validator(bool_exp=lambda _: True, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert bool(vr)
 
     # Data is accessible from validation result
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
+    assert vr.evidence_metadata is not None
+    assert vr.evidence_metadata.measurement.measurement_class, type(
+        CPUStatistics
+    ).__name__
 
 
 @pytest.mark.skipif(
@@ -108,12 +109,14 @@ def test_cpu_nix_validate_failure() -> None:
 
     stats = m.evaluate(p.pid)
 
-    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False, success="Yay", failure="oh"))(stats)  # type: ignore
+    vr = Validator(bool_exp=lambda _: False, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert not bool(vr)
 
     # Data is accessible from validation result
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
+    assert vr.evidence_metadata is not None
+    assert vr.evidence_metadata.measurement.measurement_class, type(
+        CPUStatistics
+    ).__name__
 
 
 @pytest.mark.skipif(
@@ -133,7 +136,9 @@ def test_result_save_load(
 ) -> None:
     store, ctx = store_with_context
 
-    stats = CPUStatistics(get_sample_evidence_metadata(), 0.5, 0.1, 0.8)
+    stats = CPUStatistics(0.5, 0.1, 0.8).with_metadata(
+        get_sample_evidence_metadata()
+    )
     stats.save_with(ctx, store)
 
     r: CPUStatistics = typing.cast(
@@ -148,28 +153,40 @@ def test_result_save_load(
 def test_max_utilization_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = CPUStatistics.max_utilization_less_than(3)
+    validator = CPUStatistics.max_utilization_less_than(3)
 
-    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
     assert bool(res)
 
-    res = cond(CPUStatistics(m, avg=2, max=4, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=4, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(CPUStatistics(m, avg=2, max=3, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=3, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
 
 def test_avg_utilization_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    cond = CPUStatistics.average_utilization_less_than(3)
+    validator = CPUStatistics.average_utilization_less_than(3)
 
-    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
     assert bool(res)
 
-    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=3, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(CPUStatistics(m, avg=4, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=4, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)

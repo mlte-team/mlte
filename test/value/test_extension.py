@@ -21,9 +21,7 @@ from test.value.types.helper import get_sample_evidence_metadata
 class ConfusionMatrix(ValueBase):
     """A sample extension value type."""
 
-    def __init__(self, metadata: EvidenceMetadata, matrix: List[List[int]]):
-        super().__init__(metadata)
-
+    def __init__(self, matrix: List[List[int]]):
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
 
@@ -34,7 +32,7 @@ class ConfusionMatrix(ValueBase):
     def deserialize(
         metadata: EvidenceMetadata, data: Dict[str, Any]
     ) -> ConfusionMatrix:
-        return ConfusionMatrix(metadata, data["matrix"])
+        return ConfusionMatrix(data["matrix"]).with_metadata(metadata)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ConfusionMatrix):
@@ -45,9 +43,7 @@ class ConfusionMatrix(ValueBase):
 class BadInteger(ValueBase):
     """An extension value that does not implement the interface."""
 
-    def __init__(self, metadata: EvidenceMetadata, integer: int):
-        super().__init__(metadata)
-
+    def __init__(self, integer: int):
         self.integer = integer
 
 

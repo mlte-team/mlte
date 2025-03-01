@@ -7,7 +7,7 @@ Unit tests for validated specification model.
 from __future__ import annotations
 
 import mlte.validation.model as model
-from test.fixture.artifact import make_complete_validated_spec_model
+from test.fixture.artifact import make_complete_test_results_model
 
 # -----------------------------------------------------------------------------
 # SpecModel
@@ -17,7 +17,7 @@ from test.fixture.artifact import make_complete_validated_spec_model
 def test_validated_spec_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
-        make_complete_validated_spec_model(),
+        make_complete_test_results_model(),
         model.TestResultsModel(),
     ]
 

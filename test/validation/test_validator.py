@@ -8,7 +8,7 @@ from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
-from mlte.validation.model_condition import ValidatorModel
+from mlte.validation.model_validator import ValidatorModel
 from mlte.validation.validator import Validator
 
 
@@ -166,12 +166,11 @@ def test_validate_ignore() -> None:
 def test_validate_success_with_value() -> None:
     """The validate() method works as expected with a Value."""
 
-    validator = Integer.less_or_equal_to(2).validator
+    validator = Integer.less_or_equal_to(2)
 
     result = validator.validate(
-        Integer(
-            value=1,
-            metadata=EvidenceMetadata(
+        Integer(value=1).with_metadata(
+            evidence_metadata=EvidenceMetadata(
                 test_case_id="test",
                 measurement=MeasurementMetadata(
                     measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",

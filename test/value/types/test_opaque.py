@@ -23,7 +23,7 @@ class DummyMeasurementOpaque(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Opaque:
-        return Opaque(self.evidence_metadata, {"value": 1})
+        return Opaque({"value": 1}).with_metadata(self.evidence_metadata)
 
 
 def test_measurement():
@@ -53,26 +53,26 @@ def test_equality():
 
     m = get_sample_evidence_metadata()
 
-    a = Opaque(m, {"foo": "bar"})
-    b = Opaque(m, {"foo": "bar"})
+    a = Opaque({"foo": "bar"}).with_metadata(m)
+    b = Opaque({"foo": "bar"}).with_metadata(m)
     assert a == b
 
-    a = Opaque(m, {"foo": [1, 2, 3]})
-    b = Opaque(m, {"foo": [1, 2, 3]})
+    a = Opaque({"foo": [1, 2, 3]}).with_metadata(m)
+    b = Opaque({"foo": [1, 2, 3]}).with_metadata(m)
     assert a == b
 
-    a = Opaque(m, {"foo": [1, 2, 3]})
-    b = Opaque(m, {"foo": [3, 2, 1]})
+    a = Opaque({"foo": [1, 2, 3]}).with_metadata(m)
+    b = Opaque({"foo": [3, 2, 1]}).with_metadata(m)
     assert a != b
 
-    a = Opaque(m, {"foo": {"bar": {"baz": 1}}})
-    b = Opaque(m, {"foo": {"bar": {"baz": 2}}})
+    a = Opaque({"foo": {"bar": {"baz": 1}}}).with_metadata(m)
+    b = Opaque({"foo": {"bar": {"baz": 2}}}).with_metadata(m)
     assert a != b
 
 
 def test_serde() -> None:
     """Opaque can be converted to model and back."""
-    o = Opaque(get_sample_evidence_metadata(), {"value": 1})
+    o = Opaque({"value": 1}).with_metadata(get_sample_evidence_metadata())
 
     model = o.to_model()
     e = Opaque.from_model(model)
@@ -86,7 +86,7 @@ def test_save_load(
     """Opaque can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    o = Opaque(get_sample_evidence_metadata(), {"foo": "bar"})
+    o = Opaque({"foo": "bar"}).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)
 
     loaded = Opaque.load_with("id.value", context=ctx, store=store)

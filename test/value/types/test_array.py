@@ -21,7 +21,7 @@ class DummyMeasurementArray(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Array:
-        return Array(self.evidence_metadata, [1, 2, 3])
+        return Array([1, 2, 3]).with_metadata(self.evidence_metadata)
 
 
 def test_measurement():
@@ -39,22 +39,22 @@ def test_equality():
 
     m = get_sample_evidence_metadata()
 
-    a = Array(m, [1, 2, 3])
-    b = Array(m, [1, 2, 3])
+    a = Array([1, 2, 3]).with_metadata(m)
+    b = Array([1, 2, 3]).with_metadata(m)
     assert a == b
 
-    a = Array(m, [1.1, 2.2, 3.3])
-    b = Array(m, [1.1, 2.2, 3.3])
+    a = Array([1.1, 2.2, 3.3]).with_metadata(m)
+    b = Array([1.1, 2.2, 3.3]).with_metadata(m)
     assert a == b
 
-    a = Array(m, ["a", "b", "c"])
-    b = Array(m, ["a", "b", "c"])
+    a = Array(["a", "b", "c"]).with_metadata(m)
+    b = Array(["a", "b", "c"]).with_metadata(m)
     assert a == b
 
 
 def test_serde() -> None:
     """Array can be converted to model and back."""
-    o = Array(get_sample_evidence_metadata(), [1, 2, 3])
+    o = Array([1, 2, 3]).with_metadata(get_sample_evidence_metadata())
 
     model = o.to_model()
     e = Array.from_model(model)
@@ -68,7 +68,7 @@ def test_save_load(
     """Array can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    o = Array(get_sample_evidence_metadata(), [1, 2, 3])
+    o = Array([1, 2, 3]).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)
 
     loaded = Array.load_with("id.value", context=ctx, store=store)

@@ -44,12 +44,12 @@ class Evidence(Artifact, ABC):
         self.typename: str = get_full_path(self.__class__)
         """The class type of the evidence itself."""
 
-    def with_metadata(self: T, evidence_medatada: EvidenceMetadata) -> T:
+    def with_metadata(self: T, evidence_metadata: EvidenceMetadata) -> T:
         """Sets the evidence metadata, returns updated object."""
-        self.metadata = evidence_medatada
+        self.metadata = evidence_metadata
 
         # Also set an identifier associated to the metadata.
-        self.identifier = f"{evidence_medatada.test_case_id}.evidence"
+        self.identifier = f"{evidence_metadata.test_case_id}.evidence"
 
         return self
 
