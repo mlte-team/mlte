@@ -17,7 +17,7 @@ from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.session.session import set_context, set_store
-from mlte.spec.spec import Spec
+from mlte.spec.test_suite import TestSuite
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
 from mlte.validation.test_results import TestResults
@@ -45,8 +45,8 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     """Fills a sample store."""
     n1 = NegotiationCard("test-card")
     n2 = NegotiationCard("test-card2")
-    s1 = Spec("test-spec1")
-    s2 = Spec("test-spec2")
+    s1 = TestSuite("test-spec1")
+    s2 = TestSuite("test-spec2")
     vs1 = TestResults("test-validated1", s1)
     vs2 = TestResults("test-validated2", s2)
     m1 = EvidenceMetadata(measurement_class="typename", test_case_id="id1")

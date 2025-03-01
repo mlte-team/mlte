@@ -6,17 +6,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from mlte.evidence.base import ValueBase
+from mlte.evidence.external import ExternalEvidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation.validator import Validator
 
 
-class String(ValueBase):
+class String(ExternalEvidence):
     """An string value."""
 
-    def __init__(self, evidence_metadata: EvidenceMetadata, value: str):
-        super().__init__(evidence_metadata)
-
+    def __init__(self, value: str):
         self.value = value
         """The attribute to store the string in."""
 
@@ -26,10 +24,8 @@ class String(ValueBase):
         return doc
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, json_: dict[str, Any]
-    ) -> String:
-        return String(evidence_metadata, json_["value"])
+    def deserialize(json_: dict[str, Any]) -> String:
+        return String(json_["value"])
 
     @classmethod
     def contains(cls, substring: str) -> Validator:

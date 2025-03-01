@@ -13,11 +13,13 @@ from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
 
-EXTERNAL_FUNCTION_KEY = "function"
-"""Key to store external function used by this measurement."""
-
 
 class ExternalMeasurement(Measurement):
+    """Base measurement class when the evaluated function is an external function."""
+
+    EXTERNAL_FUNCTION_KEY = "function"
+    """Key to store external function used by this measurement."""
+
     def __init__(
         self,
         test_case_id: str,
@@ -48,7 +50,7 @@ class ExternalMeasurement(Measurement):
     def generate_metadata(self) -> MeasurementMetadata:
         """Returns Measurement metadata with additional info."""
         metadata = super().generate_metadata()
-        metadata.additional_data[EXTERNAL_FUNCTION_KEY] = get_full_path(
+        metadata.additional_data[self.EXTERNAL_FUNCTION_KEY] = get_full_path(
             self.function
         )
         return metadata

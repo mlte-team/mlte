@@ -11,12 +11,12 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 
-from mlte.evidence.base import ValueBase
+from mlte.evidence.external import ExternalEvidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation.validator import Validator
 
 
-class ConfusionMatrix(ValueBase):
+class ConfusionMatrix(ExternalEvidence):
     """A sample extension value type."""
 
     def __init__(self, metadata: EvidenceMetadata, matrix: np.ndarray):

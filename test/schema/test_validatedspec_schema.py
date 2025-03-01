@@ -1,29 +1,24 @@
 """
-test/schema/test_validatedspec_schema.py
-
-Unit tests for ValidatedSpec schema.
+Unit tests for TestResults schema.
 """
 
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
-from mlte.qa_category.costs.storage_cost import StorageCost
-from mlte.spec.spec import Spec
+from mlte.spec.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
+from test.fixture.artifact import make_complete_test_suite_model
+from test.value.types.helper import get_sample_evidence_metadata
 
 from . import util as util
 
 
 def test_schema():
-    spec = Spec(
-        qa_categories={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+    test_suite = TestSuite.from_model(make_complete_test_suite_model())
+    test_suite_validator = TestSuiteValidator(test_suite)
+    i = Integer(1).with_metadata(
+        get_sample_evidence_metadata(test_case_id="Test1")
     )
-    specValidator = TestSuiteValidator(spec)
-    i = Integer(
-        EvidenceMetadata(measurement_class="typename", test_case_id="test"),
-        1,
-    )
-    specValidator.add_value(i)
-    validatedSpec = specValidator.validate()
+    test_suite_validator.add_value(i)
+    test_results = test_suite_validator.validate()
 
-    doc = validatedSpec.to_model().to_json()
+    doc = test_results.to_model().to_json()
     util.validate_validatedspec_schema(doc["body"])

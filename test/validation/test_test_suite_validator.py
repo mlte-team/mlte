@@ -31,8 +31,7 @@ def test_success():
     test_suite = TestSuite.from_model(make_complete_test_suite_model())
     test_suite_validator = TestSuiteValidator(test_suite)
 
-    m = get_sample_evidence_metadata()
-    m.test_case_id = "Test1"
+    m = get_sample_evidence_metadata(test_case_id="Test1")
 
     i = Integer(1).with_metadata(m)
     test_suite_validator.add_value(i)

@@ -29,8 +29,9 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     test_suite_validator = TestSuiteValidator(test_suite)
 
     # A dummy value
-    i = Integer(1).with_metadata(get_sample_evidence_metadata())
-    i.metadata.test_case_id = "Test1"
+    i = Integer(1).with_metadata(
+        get_sample_evidence_metadata(test_case_id="Test1")
+    )
     test_suite_validator.add_value(i)
 
     validatedSpec = test_suite_validator.validate()

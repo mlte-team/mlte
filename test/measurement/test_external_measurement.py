@@ -10,27 +10,25 @@ from typing import Any, Dict
 
 import pytest
 
-from mlte.evidence.base import ValueBase
+from mlte.evidence.external import ExternalEvidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.external_measurement import ExternalMeasurement
+from mlte.measurement.model import MeasurementMetadata
 
 
-class BigInteger(ValueBase):
+class BigInteger(ExternalEvidence):
     """A sample extension value type."""
 
-    def __init__(self, metadata: EvidenceMetadata, integer: int):
-        super().__init__(metadata)
+    def __init__(self, integer: int):
         self.integer = integer
 
     def serialize(self) -> Dict[str, Any]:
         return {"integer": self.integer}
 
     @staticmethod
-    def deserialize(
-        metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> BigInteger:
-        return BigInteger(metadata, data["integer"])
+    def deserialize(data: Dict[str, Any]) -> BigInteger:
+        return BigInteger(data["integer"])
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BigInteger):
@@ -51,6 +49,20 @@ def _dummy_calculation(x: int, y: int):
     :rtype: int
     """
     return (x + y) * 2
+
+
+def get_sample_metadata() -> EvidenceMetadata:
+    """Sample for tests."""
+    return EvidenceMetadata(
+        measurement=MeasurementMetadata(
+            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+            output_class="BigInt",
+            additional_data={
+                ExternalMeasurement.EXTERNAL_FUNCTION_KEY: "test.measurement.test_external_measurement._dummy_calculation"
+            },
+        ),
+        test_case_id="test_id",
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -74,13 +86,8 @@ def test_evaluate_external() -> None:
     x = 1
     y = 2
     expected_value = _dummy_calculation(x, y)
-    expected_result = Integer(
-        EvidenceMetadata(
-            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id="test_id",
-            measurement_function="test.measurement.test_external_measurement._dummy_calculation",
-        ),
-        expected_value,
+    expected_result = Integer(expected_value).with_metadata(
+        get_sample_metadata()
     )
 
     measurement = ExternalMeasurement("test_id", Integer, _dummy_calculation)
@@ -96,13 +103,8 @@ def test_evaluate_external_base() -> None:
     x = 1
     y = 2
     expected_value = _dummy_calculation(x, y)
-    expected_result = BigInteger(
-        EvidenceMetadata(
-            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id="test_id",
-            measurement_function="test.measurement.test_external_measurement._dummy_calculation",
-        ),
-        expected_value,
+    expected_result = BigInteger(expected_value).with_metadata(
+        get_sample_metadata()
     )
 
     measurement = ExternalMeasurement("test_id", BigInteger, _dummy_calculation)
@@ -118,12 +120,8 @@ def test_evaluate_ingest() -> None:
     """An external measurement can be used to ingest a value directly."""
 
     expected_value = 1000
-    expected_result = Integer(
-        EvidenceMetadata(
-            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id="test_id",
-        ),
-        expected_value,
+    expected_result = Integer(expected_value).with_metadata(
+        get_sample_metadata()
     )
 
     measurement = ExternalMeasurement("test_id", Integer)
@@ -137,12 +135,8 @@ def test_evaluate_ingest_base() -> None:
     """An external measurement can be used to ingest an extension value."""
 
     expected_value = 1000
-    expected_result = BigInteger(
-        EvidenceMetadata(
-            measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            test_case_id="test_id",
-        ),
-        expected_value,
+    expected_result = BigInteger(expected_value).with_metadata(
+        get_sample_metadata()
     )
 
     measurement = ExternalMeasurement("test_id", BigInteger)

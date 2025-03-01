@@ -12,8 +12,7 @@ from subprocess import SubprocessError
 from typing import Any, Dict, Type
 
 from mlte._private.platform import is_windows
-from mlte.evidence.base import ValueBase
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.validation.validator import Validator
 
@@ -22,7 +21,7 @@ from mlte.validation.validator import Validator
 # -----------------------------------------------------------------------------
 
 
-class CPUStatistics(ValueBase):
+class CPUStatistics(ExternalEvidence):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
@@ -63,9 +62,7 @@ class CPUStatistics(ValueBase):
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> CPUStatistics:
+    def deserialize(data: Dict[str, Any]) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
 
@@ -78,7 +75,7 @@ class CPUStatistics(ValueBase):
             avg=data["avg"],
             min=data["min"],
             max=data["max"],
-        ).with_metadata(evidence_metadata)
+        )
 
     def __str__(self) -> str:
         """Return a string representation of CPUStatistics."""

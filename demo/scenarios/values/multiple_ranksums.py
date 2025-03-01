@@ -4,45 +4,37 @@ Implementation of MultipleRaknsums value.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
-from mlte.evidence.base import ValueBase
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.external import ExternalEvidence
 from mlte.validation.validator import Validator
 
 
-class MultipleRanksums(ValueBase):
+class MultipleRanksums(ExternalEvidence):
     """An array with multiple ranksums."""
 
     def __init__(
         self,
-        evidence_metadata: EvidenceMetadata,
         array: np.ndarray,
         num_pops: int = 1,
     ):
-        super().__init__(evidence_metadata)
-
         self.array = array
         """The array to store data in."""
 
         self.num_pops: int = num_pops
         """Number of populations or groups.."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         doc: dict[str, Any] = {}
         doc["array"] = [val for val in self.array]
         doc["num_pops"] = self.num_pops
         return doc
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, json_: dict[str, Any]
-    ) -> MultipleRanksums:
-        return MultipleRanksums(
-            evidence_metadata, np.asarray(json_["array"]), json_["num_pops"]
-        )
+    def deserialize(json_: dict[str, Any]) -> MultipleRanksums:
+        return MultipleRanksums(np.asarray(json_["array"]), json_["num_pops"])
 
     @classmethod
     def all_p_values_greater_or_equal_than(cls, threshold: float) -> Validator:

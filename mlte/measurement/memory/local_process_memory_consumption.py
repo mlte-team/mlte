@@ -12,8 +12,7 @@ from typing import Any, Dict, Type
 
 import psutil
 
-from mlte.evidence.base import ValueBase
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.validation.validator import Validator
 
@@ -22,7 +21,7 @@ from mlte.validation.validator import Validator
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(ValueBase):
+class MemoryStatistics(ExternalEvidence):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
@@ -63,9 +62,7 @@ class MemoryStatistics(ValueBase):
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> MemoryStatistics:
+    def deserialize(data: Dict[str, Any]) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
@@ -78,7 +75,7 @@ class MemoryStatistics(ValueBase):
             avg=data["avg"],
             min=data["min"],
             max=data["max"],
-        ).with_metadata(evidence_metadata)
+        )
 
     def __str__(self) -> str:
         """Return a string representation of MemoryStatistics."""
