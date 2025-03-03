@@ -3,6 +3,13 @@ from pathlib import Path
 
 from mlte.session import set_context, set_store
 
+# Suppress TensorFlow logs
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["XLA_FLAGS"] = "--xla_gpu_cuda_data_dir=/dev/null"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
+
 # This script sets up the session context used for all steps of this demo, as well as
 # global constants about folders and model to use.
 

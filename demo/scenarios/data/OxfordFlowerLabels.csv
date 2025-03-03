@@ -1,105 +1,103 @@
-﻿,,,,,Scientific Name,,,,,,,,,,
-Group,Count,Common Name,Other Name,Risk,Kingdom,Phylum,Class,Phylum,Clade1,Clade2,Clade 3,Order ,Family,Subfamily,Genus
-,,,,,,,,,,,,,,,
-1,40,primrose,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,,Primula
-3,40,canterbury bells,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Campanulaceae,,Campanula
-7,40,moon orchild,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Epidendroideae,Phalaenopsis
-21,40,fire lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Colchicaceae,,Gloriosa
-27,40,prince of whales feather,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Amaranthaceae,,Amaranthus
-34,40, mexican aster,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cosmos
-45,40,bolero deep blue,texas bluebell,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Gentianaceae,,Eustoma
-16,41,globe flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Trollus
-25,41,grape hyacinth,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Asparagaceae,Scilloideae,Muscari
-26,41,corn poppy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,,Papaver
-39,41,siam tulip,,NT,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Curcuma
-79,41,toad lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Liliaceae,Calochortoideae,Tricyrtis
-24,42,red ginger,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Alpinia
-67,42,spring crocus,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Crocus
-35,43,alpine sea holly,,NT,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Apiales,Apiaceae,,Eryngium
-6,45,tiger lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Liliaceae,Liliodeae,Lilium
-10,45,globe thistle,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Carduoideae,Echinops
-32,45,garden phlox,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Polemoniaceae,,Phlox
-9,46,monkshood,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Aconitum
-33,46,love in the mist,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Nigella
-93,46,ball moss,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Poales,Bromeliaceae,,Tillandsia
-14,48,spear thistle,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cirsium
-102,48,blackberry lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Iris
-13,49,king protea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Proteales,Proteaceae,,Protea
-15,49,yellow iris,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Iris
-19,49,ballon flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Campanulaceae,Campanuloideae,Platycodon
-49,49,oxeye daisy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Leucanthemum
-100,49,blanket flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Gaillardia
-50,50,common dandelion,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Cichorioideae,Taraxacum
-61,50,cautleya spicata,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Cautleya
-31,52,carnation,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Caaryphyllaceae,,Dianthis
-64,52,silverbush,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Convolvulaceae,,Convolvulus
-63,54,black-eyed susan,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Rudbeckia
-62,55,japanese anemone,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Eriocapitella
-4,56,swear pea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Fabales,Fabaceae,,Lathyrus
-20,56,arum lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Alismatales,Araceae,Aroideae,Zantedeschia
-38,56,great masterwort,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Apiales,Apiaceae,,Astrantia
-86,58,tree mallow,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Malva
-101,58,trumpet creeper,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Bignoniaceae,,Capsis
-22,59,pincushion flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Dipsacales,Caprifolicaceae,,Scabiosa
-42,59,daffodil,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Narcissus
-2,60,hard-leaved pocket orchid,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Cypripedioideae,Paphiopedilum
-54,61,sunflower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Helianthus
-66,61,osteospermum,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Osteospermum
-70,62,tree poppy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,Papaveroideae,Dendromecon
-85,63,desert rose,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Rosales,Rosaceae,,Rosa
-87,63,magnolia,,,Plantae,,,Tracheophytes,Angiosperms,Magnoliids,,Magnoliales,Magnoliaceae,,Magnolia
-99,63,bromelia,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Poales,Bromeliaceae,Bromelioideae,Bromelia
-5,65,english marigold,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Calendula
-28,66,stemless gentain,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Gentianaceae,,Gentiana
-92,66,bee balm,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Lamiaceae,Nepeoideae,Monarda
-97,66,mallow,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Malva
-40,67,lenten rose,hellebore,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Helleborus
-47,67,marigold,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Calendula
-57,67,gaura,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Myrtales,Onagraceae,Onagroideae,Gaura
-59,67,orange dahlia,mexican sunflower,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Tithonia
-68,68,bearded iris,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,Iridoideae,Iris
-69,68,windflower,anemone,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Anemone
-48,71,buttercup,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Ranunculus
-55,71,pelargonium,hibiscus,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Gentianales,Gentianaceae,,Pelargonium
-36,75,cattleya,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Epidendroideae,Cattleya
-91,76,hippesatrum,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Hippeastrum
-29,78,artichoke,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cynara
-71,78,gazania,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Gazania
-18,82,peruvian lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Alstromeriaceae,,Alstroemeria
-90,82,canna lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Cannaceae,,Canna
-98,82,mexican petunia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Acanthaceae,,Ruellia
-8,85,bird of paradise,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Strelitziaceae,,Strelitzia
-17,85,purple coneflower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Echinacea
-30,85,sweet william,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Caryophyllaceae,,Dianthis
-52,85,wild pansy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Magnoliales,Violaceae,,Viola
-84,86,columbine,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Thailctroideae,Aquilegia
-11,87,snapdragon,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Plantaginaceae,,Antirrhium
-12,87,coltsfoot,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Tussilago
-23,91,fritillary,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Liliaceae,Liliodeae,Fritillaria
-96,91,camellia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Theaceae,,Camellia
-44,93,poinsettia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malpighiales,Euphorbiaceae,,Euphorbia
-53,93,primula,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,Primuloideae,Primula
-72,96,azalea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Ericaceae,,Rhododendron
-65,102,california poppy,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,,Eschscholzia
-80,105,anthurium,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Alismatales,Araceae,Pothoideae,Anthurium
-76,107,morning glory,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Convolvulaceae,,Ipomoea
-37,108,cape flower,guernesy lily,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Nerine
-56,109,bishop of llandaf dahlia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Dahlia
-60,109,dahlia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Dahlia
-82,112,clematis,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Clematis
-58,114,geranium,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Geraniales,Geraniaceae,,Geranium
-75,120,thorn apple, jimsonweed,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Solanaceae,,Datura
-41,127,barberton daisy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Gerbera
-95,128,bougainvillea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Nyctaginaceae,,Bougainvillea
-43,130,sword lily,gladiolus,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,Crocideae,Gladiolus
-83,131,hibiscus,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Hibiscus
-78,137,lotus,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Proteales,Nelumbonaceae,,Nelumbo
-88,154,cyclamen,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,Myrisinoideae,Cyclamen
-94,162,foxglove,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Plantaginaceae,,Digitalis
-81,166,frangipani,plumeria,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Apocynaceae,,Plumeria
-74,171,rose,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Rosales,Rosaceae,Rosoideae,Rosa
-89,184,watercress,nasturtium,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Brassicales,Brassicaeae,,Nasturtium
-73,194,water lily,,,Plantae,,,Tracheophytes,Angiosperms,,,Nymphaeales,Nymphaeaceae,,
-46,196,wallflower,erysimum,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Brassicales,Brassicaeae,,Erysimum
-77,251,passion flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malpighiales,Passifloraceae,,Passiflora
-51,258,petunia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Solanaceae,Petuniodeae,Petunia
+,Group,Count,Common Name,Other Name,Risk,Kingdom,Phylum,Class,Phylum.1,Clade1,Clade2,Clade3,Order,Family,Subfamily,Genus
+0,73,40,primrose,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,,Primula
+1,22,40,canterbury_bells,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Campanulaceae,,Campanula
+2,63,40,moon_orchid,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Epidendroideae,Phalaenopsis
+3,37,40,fire_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Colchicaceae,,Gloriosa
+4,75,40,prince_of_wales_feather,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Amaranthaceae,,Amaranthus
+5,60,40,mexican_aster,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cosmos
+6,15,40,bolero_deep_blue,texas bluebell,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Gentianaceae,,Eustoma
+7,45,41,globe_flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Trollus
+8,47,41,grape_hyacinth,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Asparagaceae,Scilloideae,Muscari
+9,31,41,corn_poppy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,,Papaver
+10,79,41,siam_tulip,,NT,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Curcuma
+11,92,41,toad_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monstemless_gentianocots,,Liliales,Liliaceae,Calochortoideae,Tricyrtis
+12,77,42,red_ginger,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Alpinia
+13,83,42,spring_crocus,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Crocus
+14,0,43,alpine_sea_holly,,NT,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Apiales,Apiaceae,,Eryngium
+15,90,45,tiger_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Liliaceae,Liliodeae,Lilium
+16,46,45,globe_thistle,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Carduoideae,Echinops
+17,41,45,garden_phlox,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Polemoniaceae,,Phlox
+18,62,46,monkshood,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Aconitum
+19,56,46,love_in_the_mist,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Nigella
+20,5,46,ball_moss,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Poales,Bromeliaceae,,Tillandsia
+21,82,48,spear_thistle,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cirsium
+22,13,48,blackberry_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Iris
+23,53,49,king_protea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Proteales,Proteaceae,,Protea
+24,101,49,yellow_iris,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,,Iris
+25,6,49,balloon_flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Campanulaceae,Campanuloideae,Platycodon
+26,66,49,oxeye_daisy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Leucanthemum
+27,14,49,blanket_flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Gaillardia
+28,30,50,common_dandelion,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Cichorioideae,Taraxacum
+29,26,50,cautleya_spicata,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Zingiberaceae,,Cautleya
+30,24,52,carnation,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Caaryphyllaceae,,Dianthis
+31,80,52,silverbush,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Convolvulaceae,,Convolvulus
+32,12,54,black-eyed_susan,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Rudbeckia
+33,52,55,japanese_anemone,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,,Eriocapitella
+34,86,56,sweet_pea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Fabales,Fabaceae,,Lathyrus
+35,3,56,arum_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Alismatales,Araceae,Aroideae,Zantedeschia
+36,48,56,great_masterwort,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Apiales,Apiaceae,,Astrantia
+37,93,58,tree_mallow,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Malva
+38,95,58,trumpet_creeper,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Bignoniaceae,,Capsis
+39,71,59,pincushion_flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Dipsacales,Caprifolicaceae,,Scabiosa
+40,33,59,daffodil,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Narcissus
+41,49,60,hard-leaved_pocket_orchid,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Cypripedioideae,Paphiopedilum
+42,85,61,sunflower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Helianthus
+43,65,61,osteospermum,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Osteospermum
+44,94,62,tree_poppy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,Papaveroideae,Dendromecon
+45,35,63,desert_rose,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Rosales,Rosaceae,,Rosa
+46,57,63,magnolia,,,Plantae,,,Tracheophytes,Angiosperms,Magnoliids,,Magnoliales,Magnoliaceae,,Magnolia
+47,17,63,bromelia,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Poales,Bromeliaceae,Bromelioideae,Bromelia
+48,36,65,english_marigold,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Calendula
+49,84,66,stemless_gentian,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Gentianaceae,,Gentiana
+50,9,66,bee_balm,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Lamiaceae,Nepeoideae,Monarda
+51,58,66,mallow,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Malva
+52,54,67,lenten_rose,hellebore,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Helleborus
+53,59,67,marigold,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Calendula
+54,42,67,gaura,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Myrtales,Onagraceae,Onagroideae,Gaura
+55,91,67,tithonia,mexican sunflower,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Tithonia
+56,8,68,bearded_iris,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,Iridoideae,Iris
+57,100,68,windflower,anemone,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Anemone
+58,18,71,buttercup,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Ranunculus
+59,68,71,pelargonium,hibiscus,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Gentianales,Gentianaceae,,Pelargonium
+60,25,75,cattleya,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Orchidaceae,Epidendroideae,Cattleya
+61,51,76,hippeastrum,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Hippeastrum
+62,2,78,artichoke,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Cynara
+63,43,78,gazania,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Gazania
+64,69,82,peruvian_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Alstromeriaceae,,Alstroemeria
+65,21,82,canna_lily,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Cannaceae,,Canna
+66,61,82,mexican_petunia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Acanthaceae,,Ruellia
+67,10,85,bird_of_paradise,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,Commelinids,Zingiberales,Strelitziaceae,,Strelitzia
+68,76,85,purple_coneflower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Echinacea
+69,87,85,sweet_william,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Caryophyllaceae,,Dianthis
+70,99,85,wild_pansy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Magnoliales,Violaceae,,Viola
+71,29,86,columbine,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Thailctroideae,Aquilegia
+72,81,87,snapdragon,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Plantaginaceae,,Antirrhium
+73,28,87,coltsfoot,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Tussilago
+74,40,91,fritillary,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Liliales,Liliaceae,Liliodeae,Fritillaria
+75,20,91,camellia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Theaceae,,Camellia
+76,72,93,poinsettia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malpighiales,Euphorbiaceae,,Euphorbia
+77,74,93,primula,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,Primuloideae,Primula
+78,4,96,azalea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Ericaceae,,Rhododendron
+79,19,102,california_poppy,,G4,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Papaveraceae,,Eschscholzia
+80,1,105,anthurium,,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Alismatales,Araceae,Pothoideae,Anthurium
+81,64,107,morning_glory,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Convolvulaceae,,Ipomoea
+82,23,108,cape_flower,guernesy lily,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Amaryllidaceae,Amaryllidoideae,Nerine
+83,11,109,bishop_of_llandaf_dahlia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Dahlia
+84,34,109,dahlia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,Asteroideae,Dahlia
+85,27,112,clematis,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Ranunculales,Ranunculaceae,Ranunculoideae,Clematis
+86,44,114,geranium,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Geraniales,Geraniaceae,,Geranium
+87,89,120,thorn_apple, jimsonweed,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Solanaceae,,Datura
+88,7,127,barberton_daisy,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Asterales,Asteraceae,,Gerbera
+89,16,128,bougainvillea,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Caryophyllales,Nyctaginaceae,,Bougainvillea
+90,88,130,sword_lily,gladiolus,,Plantae,,,Tracheophytes,Angiosperms,Monocots,,Asparagales,Iridaceae,Crocideae,Gladiolus
+91,50,131,hibiscus,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malvales,Malvaceae,Malvoideae,Hibiscus
+92,55,137,lotus,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,,Proteales,Nelumbonaceae,,Nelumbo
+93,32,154,cyclamen,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Ericales,Primulaceae,Myrisinoideae,Cyclamen
+94,38,162,foxglove,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Lamiales,Plantaginaceae,,Digitalis
+95,39,166,frangipani,plumeria,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Gentianales,Apocynaceae,,Plumeria
+96,78,171,rose,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Rosales,Rosaceae,Rosoideae,Rosa
+97,98,184,watercress,nasturtium,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Brassicales,Brassicaeae,,Nasturtium
+98,97,194,water_lily,,,Plantae,,,Tracheophytes,Angiosperms,,,Nymphaeales,Nymphaeaceae,,
+99,96,196,wallflower,erysimum,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Brassicales,Brassicaeae,,Erysimum
+100,67,251,passion_flower,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Rosids,Malpighiales,Passifloraceae,,Passiflora
+101,70,258,petunia,,,Plantae,,,Tracheophytes,Angiosperms,Eudicots,Asterids,Solanales,Solanaceae,Petuniodeae,Petunia
