@@ -97,7 +97,7 @@ typecheck-frontend:
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest --cov=mlte test 
+	poetry run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
 
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
