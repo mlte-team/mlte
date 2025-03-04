@@ -57,10 +57,7 @@ def test_custom_list_name_dict() -> None:
     """Test that CustomListNameDict takes keys and values as CustomListNames."""
     test_dict = CustomListNameDict()
 
-    test_dict[CustomListName.QA_CATEGORIES] = None
     test_dict[CustomListName.QUALITY_ATTRIBUTES] = CustomListName.QA_CATEGORIES
-
-    assert test_dict[CustomListName.QA_CATEGORIES] is None
     assert (
         test_dict[CustomListName.QUALITY_ATTRIBUTES]
         == CustomListName.QA_CATEGORIES

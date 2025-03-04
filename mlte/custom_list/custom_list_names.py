@@ -6,7 +6,7 @@ Enum of the predefined custom list names.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from strenum import StrEnum
 
@@ -22,10 +22,10 @@ class CustomListNameDict(dict[Any, Any]):
     def __setitem__(
         self: "CustomListNameDict",
         key: CustomListName,
-        value: Optional[CustomListName],
+        value: CustomListName,
     ):
-        if isinstance(key, CustomListName) and (
-            isinstance(value, CustomListName) or value is None
+        if isinstance(key, CustomListName) and isinstance(
+            value, CustomListName
         ):
             super().__setitem__(key, value)
         else:
@@ -41,7 +41,6 @@ class CustomListNameDict(dict[Any, Any]):
 class CustomListParentMappings:
     parent_mappings = CustomListNameDict()
 
-    parent_mappings[CustomListName.QA_CATEGORIES] = None
     parent_mappings[CustomListName.QUALITY_ATTRIBUTES] = (
         CustomListName.QA_CATEGORIES
     )
