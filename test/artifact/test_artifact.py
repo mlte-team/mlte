@@ -11,7 +11,6 @@ import pytest
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
@@ -23,6 +22,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.validation.test_results import TestResults
 from test.store.artifact.fixture import store_with_context  # noqa
 from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 def test_save_load_session() -> None:
@@ -45,14 +45,14 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     """Fills a sample store."""
     n1 = NegotiationCard("test-card")
     n2 = NegotiationCard("test-card2")
-    s1 = TestSuite("test-spec1")
-    s2 = TestSuite("test-spec2")
-    vs1 = TestResults("test-validated1", s1)
-    vs2 = TestResults("test-validated2", s2)
-    m1 = EvidenceMetadata(measurement_class="typename", test_case_id="id1")
-    v1 = Integer(m1, 10)
-    m2 = EvidenceMetadata(measurement_class="typename", test_case_id="id2")
-    v2 = Real(m2, 3.14)
+    s1 = TestSuite(identifier="test-spec1")
+    s2 = TestSuite(identifier="test-spec2")
+    vs1 = TestResults(identifier="test-validated1", test_suite=s1)
+    vs2 = TestResults(identifier="test-validated2", test_suite=s2)
+    m1 = get_sample_evidence_metadata(test_case_id="id1")
+    v1 = Integer(10).with_metadata(m1)
+    m2 = get_sample_evidence_metadata(test_case_id="id2")
+    v2 = Real(3.14).with_metadata(m2)
     r1 = Report("r1")
     r2 = Report("r2")
 

@@ -10,6 +10,7 @@ import random
 import string
 from typing import List, Optional, Union
 
+from mlte._private.meta import get_full_path
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
@@ -41,6 +42,7 @@ from mlte.report.model import (
 from mlte.spec.model import TestCaseModel, TestSuiteModel
 from mlte.validation.model import ResultModel, TestResultsModel
 from mlte.validation.validator import Validator
+from test.value.types.helper import get_sample_evidence_metadata
 
 
 def _random_id(length: int = 5) -> str:
@@ -131,14 +133,12 @@ def _make_value(id: str, complete: bool) -> EvidenceModel:
     Make a minimal value, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    m = EvidenceMetadata(measurement_class="typename", test_case_id=id)
+    m = get_sample_evidence_metadata(test_case_id=id)
 
     return EvidenceModel(
         metadata=m,
-        evidence_class=Integer.get_class_path(),
-        value=IntegerValueModel(
-            integer=1,
-        ),
+        evidence_class=get_full_path(Integer),
+        value=IntegerValueModel(integer=1),
     )
 
 
@@ -286,7 +286,6 @@ def make_complete_test_suite_model() -> TestSuiteModel:
             TestCaseModel(
                 identifier="Test1",
                 goal="QACategory for useful things.",
-                module="mlte.qa_category.functionality.task_efficacy",
                 validator=Validator(
                     bool_exp=lambda x: x < 3, success="Yay", failure="oh"
                 ).to_model(),
