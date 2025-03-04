@@ -1,7 +1,6 @@
 # Machine Learning Test and Evaluation (MLTE) Framework
 
-![MLTE Diagram](img/MLTE_Diagram_Dark.png)
-*Note: This diagram will be updated in Fall 2024*
+![MLTE Diagram](img/MLTE_Diagram_Feb_2025.png)
 
 ## Negotiate Model Quality Requirements (IMT Negotiation)
 
