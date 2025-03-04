@@ -4,15 +4,28 @@ test/validation/test_validator.py
 Unit tests for Validator.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
+import pytest
+
+from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
+from mlte.model.serialization_error import SerializationError
 from mlte.validation.model_validator import ValidatorModel
 from mlte.validation.validator import Validator
 
+# -----------------------------------------------------------------------------
+# Helpers.
+# -----------------------------------------------------------------------------
+
 
 def get_sample_validator(add_creator: bool = False) -> Validator:
+    """Returns a sample validator to be used in tests."""
     validator = Validator(
         bool_exp=lambda x, y: x > y,  # type: ignore
         success="Test was succesful!",
@@ -24,6 +37,57 @@ def get_sample_validator(add_creator: bool = False) -> Validator:
         validator.creator = FunctionInfo.get_function_info()
 
     return validator
+
+
+class JsonValue:
+    """A non serializable value that imports __json__"""
+
+    value: Any
+
+    def __json__(self):
+        """Hack method to make Artifacts serializable to JSON if importing json-fix before json.dumps."""
+        return {"value": "myvalue"}
+
+
+class TestValue:
+    """Test value class to test build_validator method."""
+
+    data: Any
+
+    @classmethod
+    def in_between(cls, arg1: float, arg2: float) -> Validator:
+        """Checks if the value is in between the arguments."""
+        validator: Validator = Validator.build_validator(
+            bool_exp=lambda real: real.value > arg1 and real.value < arg2,
+            success=f"Real magnitude is between {arg1} and {arg2}",
+            failure=f"Real magnitude is not between {arg1} and {arg2}",
+        )
+        return validator
+
+    @classmethod
+    def in_between_complex(cls, arg1: float, arg2: TestValue) -> Validator:
+        """Checks if the value is in between the arguments."""
+        validator: Validator = Validator.build_validator(
+            bool_exp=lambda real: real.value > arg1 and real.value < arg2,
+            success=f"Real magnitude is between {arg1} and {arg2}",
+            failure=f"Real magnitude is not between {arg1} and {arg2}",
+        )
+        return validator
+
+    @classmethod
+    def json_method(cls, arg1: JsonValue) -> Validator:
+        """Checks if the value is in between the arguments."""
+        validator: Validator = Validator.build_validator(
+            bool_exp=lambda real: real == 1,
+            success=f"Success: {arg1}",
+            failure=f"Failure: {arg1}",
+        )
+        return validator
+
+
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
 
 
 def test_validator_model() -> None:
@@ -86,6 +150,22 @@ def test_build_validator():
     assert validator.creator.function_class == ""
     assert validator.creator.function_name == "test_build_validator"
     assert validator.creator.arguments == []
+
+
+def test_serialize_from_build():
+    """Tests that the build method generates a validator that can be serialized."""
+    # fmt: off
+    validator = Validator.build_validator(
+        bool_exp=lambda x: x == 1,
+        success="Yay!",
+        failure="Aww"
+    )
+    # fmt: on
+
+    json_str = validator.to_model().to_json()
+    loaded = Validator.from_model(ValidatorModel.from_json(json_str))
+
+    assert validator == loaded
 
 
 def test_validate_success() -> None:
@@ -163,8 +243,8 @@ def test_validate_ignore() -> None:
     assert result.message == validator.info
 
 
-def test_validate_success_with_value() -> None:
-    """The validate() method works as expected with a Value."""
+def test_validate_success_with_evidence() -> None:
+    """The validate() method works as expected with Evidence."""
 
     validator = Integer.less_or_equal_to(2)
 
@@ -185,3 +265,18 @@ def test_validate_success_with_value() -> None:
         validator.success is not None
         and result.message == validator.success + ' - values: ["1"]'
     )
+
+
+def test_non_serializable_argument():
+    validator = TestValue.in_between_complex(1.0, TestValue())
+
+    with pytest.raises(SerializationError):
+        _ = validator.to_model().to_json()
+
+
+def test_json_fix_serializable_argument():
+    test_value = JsonValue()
+    validator = TestValue.json_method(test_value)
+
+    json_data = validator.to_model().to_json()
+    _ = json.dumps(json_data)
