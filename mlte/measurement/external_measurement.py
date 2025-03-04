@@ -6,7 +6,7 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, Optional
 
 from mlte._private.meta import get_full_path
 from mlte.evidence.artifact import Evidence
@@ -50,9 +50,14 @@ class ExternalMeasurement(Measurement):
     def generate_metadata(self) -> MeasurementMetadata:
         """Returns Measurement metadata with additional info."""
         metadata = super().generate_metadata()
+
+        # Override default class with external-measurement specific one.
+        metadata.output_class = self.output_evidence_type
+
+        # Add specific function being used.
         metadata.additional_data[self.EXTERNAL_FUNCTION_KEY] = get_full_path(
             self.function
-        )
+        ) if self.function is not None else None
         return metadata
 
     def __call__(self, *args, **kwargs) -> Evidence:
@@ -68,9 +73,5 @@ class ExternalMeasurement(Measurement):
     def ingest(self, *args, **kwargs) -> Evidence:
         """Ingest data without evaluating a function, to wrap it as the configured Evidence type. Currently works the same as evaluate()."""
         evidence: Evidence = self.output_evidence_type(*args, **kwargs)
+        evidence = evidence.with_metadata(self.evidence_metadata)
         return evidence
-
-    @classmethod
-    def output_type(cls) -> Type[Evidence]:
-        """Returns the class type object for the Evidence produced by the Measurement."""
-        return self.output_evidence_type
