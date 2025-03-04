@@ -145,7 +145,15 @@ class Validator(Serializable):
         Stringify arguments so that result's message can include generic information about arguments used when validating.
         """
         # First ensure args are turned to string separately, to allow them to use their own str()
-        str_args = [str(arg) for arg in args]
+        MAX_STRING_LENGTH = 300
+        str_args = [
+            (
+                str(arg)
+                if len(str(arg)) < MAX_STRING_LENGTH
+                else str(arg)[:MAX_STRING_LENGTH] + "..."
+            )
+            for arg in args
+        ]
         str_kwargs = {key: str(arg) for key, arg in kwargs.items()}
 
         # Now string them together, depending on whether we got args of each type.
