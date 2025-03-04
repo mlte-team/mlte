@@ -19,7 +19,7 @@ from mlte.validation.test_results import TestResults
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.fixture.artifact import make_complete_test_suite_model
 from test.store.artifact.fixture import store_with_context  # noqa
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa

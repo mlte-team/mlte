@@ -12,7 +12,7 @@ from mlte.evidence.types.integer import Integer
 from mlte.spec.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.fixture.artifact import make_complete_test_suite_model
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def test_no_requirement():

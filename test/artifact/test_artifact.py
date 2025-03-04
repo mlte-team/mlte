@@ -22,7 +22,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.validation.test_results import TestResults
 from test.store.artifact.fixture import store_with_context  # noqa
 from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def test_save_load_session() -> None:

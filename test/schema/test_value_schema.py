@@ -7,7 +7,7 @@ Unit tests for Value schema.
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.opaque import Opaque
 from mlte.evidence.types.real import Real
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 from . import util as util
 

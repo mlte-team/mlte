@@ -13,7 +13,7 @@ from mlte.evidence.types.array import Array
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 class DummyMeasurementArray(Measurement):

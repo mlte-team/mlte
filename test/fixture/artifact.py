@@ -42,7 +42,7 @@ from mlte.report.model import (
 from mlte.spec.model import TestCaseModel, TestSuiteModel
 from mlte.validation.model import ResultModel, TestResultsModel
 from mlte.validation.validator import Validator
-from test.value.types.helper import get_sample_evidence_metadata
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def _random_id(length: int = 5) -> str:
