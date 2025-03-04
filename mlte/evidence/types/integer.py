@@ -1,7 +1,5 @@
 """
-mlte/value/types/integer.py
-
-A Value instance for a scalar, integral value.
+An Evidence instance for a scalar, integral value.
 """
 
 from __future__ import annotations

@@ -17,7 +17,7 @@ def test_schema():
     i = Integer(1).with_metadata(
         get_sample_evidence_metadata(test_case_id="Test1")
     )
-    test_suite_validator.add_value(i)
+    test_suite_validator.add_evidence(i)
     test_results = test_suite_validator.validate()
 
     doc = test_results.to_model().to_json()

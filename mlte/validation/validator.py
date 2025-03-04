@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import inspect
 import typing
-from types import FrameType
 from typing import Any, Callable, Optional
 
 from mlte._private import reflection, serializing
@@ -75,7 +74,6 @@ class Validator(Serializable):
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
-        caller_function: Optional[FrameType] = None,
     ) -> Validator:
         """
         Creates a Validator using the provided test, extracting context info from the function that called us.
@@ -84,16 +82,12 @@ class Validator(Serializable):
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-        :param caller_function: A FrameType with data about function that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
 
         :returns: A Validator, potentially with caller creator information.
         """
         # Get function info, passing our caller as argument.
-        if caller_function is None:
-            curr_frame = inspect.currentframe()
-            caller_function = (
-                curr_frame.f_back if curr_frame is not None else None
-            )
+        curr_frame = inspect.currentframe()
+        caller_function = curr_frame.f_back if curr_frame is not None else None
         function_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.

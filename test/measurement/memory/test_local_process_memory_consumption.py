@@ -16,7 +16,6 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
-from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -100,17 +99,15 @@ def test_memory_validate_failure() -> None:
     # Blocks until process exit
     stats = m.evaluate(p.pid)
 
-    vr = Condition(
-        name="test",
-        arguments=[],
-        validator=Validator(
-            bool_exp=lambda _: False, success="yay", failure="oh"
-        ),
-    )(stats)
+    vr = Validator(
+        bool_exp=lambda _: False, success="yay", failure="oh"
+    ).validate(stats)
     assert not bool(vr)
 
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(MemoryStatistics).__name__
+    assert vr.evidence_metadata is not None
+    assert vr.evidence_metadata.measurement.measurement_class, type(
+        MemoryStatistics
+    ).__name__
 
 
 def test_result_save_load(

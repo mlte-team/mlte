@@ -57,9 +57,9 @@ class ConfusionMatrix(ExternalEvidence):
 
     @classmethod
     def misclassification_count_less_than(cls, threshold: int) -> Validator:
-        condition: Validator = Validator.build_validator(
+        validator: Validator = Validator.build_validator(
             bool_exp=lambda cm: cm.misclassifications <= threshold,
             success=f"Misclass count is less than threshold {threshold}",
             failure=f"Misclassification count exceeds threshold {threshold}",
         )
-        return condition
+        return validator

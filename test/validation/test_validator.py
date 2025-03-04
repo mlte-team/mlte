@@ -92,7 +92,7 @@ class TestValue:
 
 def test_validator_model() -> None:
     """A Validator model can be serialized and deserialized."""
-    conditions = [
+    validators = [
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
             bool_exp_str="test()",
@@ -112,7 +112,7 @@ def test_validator_model() -> None:
         ),
     ]
 
-    for object in conditions:
+    for object in validators:
         s = object.to_json()
         d = ValidatorModel.from_json(s)
         assert d == object

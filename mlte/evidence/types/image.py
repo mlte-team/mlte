@@ -1,7 +1,5 @@
 """
-mlte/value/types/image.py
-
-A Value instance for image media.
+A Evidence instance for image media.
 """
 
 from __future__ import annotations

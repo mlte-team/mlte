@@ -32,7 +32,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     i = Integer(1).with_metadata(
         get_sample_evidence_metadata(test_case_id="Test1")
     )
-    test_suite_validator.add_value(i)
+    test_suite_validator.add_evidence(i)
 
     validatedSpec = test_suite_validator.validate()
     validatedSpec.save_with(ctx, store)
@@ -42,7 +42,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 
 
 def test_no_result():
-    # TestSuite does not have Result for condition.
+    # TestSuite does not have Result for evidence.
     test_suite = TestSuite.from_model(make_complete_test_suite_model())
 
     results: Dict[str, Result] = {}

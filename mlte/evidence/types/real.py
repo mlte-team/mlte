@@ -1,7 +1,5 @@
 """
-mlte/value/types/real.py
-
-An Value instance for a scalar, real value.
+An Evidence instance for a scalar, real value.
 """
 
 from __future__ import annotations

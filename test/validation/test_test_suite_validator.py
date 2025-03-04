@@ -16,12 +16,12 @@ from test.value.types.helper import get_sample_evidence_metadata
 
 
 def test_no_requirement():
-    # Test Sute Validator does not have value for condition.
+    # Test Sute Validator does not have value for evidence.
     test_suite = TestSuite.from_model(make_complete_test_suite_model())
     test_suite_validator = TestSuiteValidator(test_suite)
 
     i = Integer(1).with_metadata(get_sample_evidence_metadata())
-    test_suite_validator.add_value(i)
+    test_suite_validator.add_evidence(i)
 
     with pytest.raises(RuntimeError):
         _ = test_suite_validator.validate()
@@ -34,7 +34,7 @@ def test_success():
     m = get_sample_evidence_metadata(test_case_id="Test1")
 
     i = Integer(1).with_metadata(m)
-    test_suite_validator.add_value(i)
+    test_suite_validator.add_evidence(i)
 
     test_results = test_suite_validator.validate()
     assert test_results is not None

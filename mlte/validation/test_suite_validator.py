@@ -29,48 +29,48 @@ class TestSuiteValidator:
         self.test_suite = test_suite
         """The specification to be validated."""
 
-        self.values: dict[str, Evidence] = {}
-        """Where values will be gathered for validation."""
+        self.evidence: dict[str, Evidence] = {}
+        """Where evidence will be gathered for validation."""
 
-    def add_values(self, values: list[Evidence]):
+    def add_evidence_list(self, evidence_list: list[Evidence]):
         """
-        Adds multiple values.
+        Adds multiple evidence values.
 
-        :param values: The list of values to add to the internal list.
+        :param evidence_list: The list of evidence to add to the internal list.
         """
-        for value in values:
-            self.add_value(value)
+        for evidence in evidence_list:
+            self.add_evidence(evidence)
 
-    def add_value(self, value: Evidence):
+    def add_evidence(self, evidence: Evidence):
         """
-        Adds a value associated to a test case.
+        Adds Evidence associated to a test case.
 
-        :param value: The value to add to the internal list.
+        :param evidence: The evidence to add to the internal list.
         """
-        if value.metadata.test_case_id in self.values:
+        if evidence.metadata.test_case_id in self.evidence:
             raise RuntimeError(
-                f"Can't have two values with the same id: {value.metadata.test_case_id}"
+                f"Can't have two values with the same id: {evidence.metadata.test_case_id}"
             )
-        self.values[value.metadata.test_case_id] = value
+        self.evidence[evidence.metadata.test_case_id] = evidence
 
     def validate(self) -> TestResults:
         """
-        Validates the internal Values given its validators, and generates a TestResults from it.
+        Validates the internal Evidence given its validators, and generates a TestResults from it.
 
         :return: The results of the test validation.
         """
-        # Check that all conditions have values to be validated.
+        # Check that all test cases have evidence to be validated.
         for test_case_id in self.test_suite.test_cases.keys():
-            if test_case_id not in self.values:
+            if test_case_id not in self.evidence:
                 raise RuntimeError(
-                    f"Test Case '{test_case_id}' does not have a value that can be validated."
+                    f"Test Case '{test_case_id}' does not have evidence that can be validated."
                 )
 
         # Validate and aggregate the results.
         results: dict[str, Result] = {}
         for test_case_id, test_case in self.test_suite.test_cases.items():
             results[test_case_id] = test_case.validate(
-                self.values[test_case_id]
+                self.evidence[test_case_id]
             )
 
         return TestResults(test_suite=self.test_suite, results=results)

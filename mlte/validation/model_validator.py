@@ -23,7 +23,7 @@ class ValidatorModel(BaseModel):
     """A string to be used when recording that the validation was not succesful."""
 
     info: Optional[str]
-    """A string to be used when recording that the validation was not checked against a condition, just recorded information."""
+    """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
     creator_class: Optional[str] = None
     """The name of the class used to create this validator, if any."""

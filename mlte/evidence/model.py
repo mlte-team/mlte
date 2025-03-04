@@ -1,6 +1,4 @@
 """
-mlte/value/model.py
-
 Model implementation for MLTE evidence.
 """
 
@@ -45,7 +43,7 @@ class EvidenceModel(BaseModel):
     """Evidence information (id and measurement it came from)."""
 
     evidence_class: str
-    """Full path to class that implements this value."""
+    """Full path to class that implements this evidence."""
 
     value: Union[
         "IntegerValueModel",

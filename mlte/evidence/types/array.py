@@ -1,7 +1,5 @@
 """
-mlte/value/types/array.py
-
-Implementation of Array value.
+Implementation of Array Evidence.
 """
 
 from __future__ import annotations

@@ -1,7 +1,5 @@
 """
-mlte/value/types/opaque.py
-
-An opaque evaluation value, without semantics.
+An opaque evaluation evidence, without semantics.
 """
 
 from __future__ import annotations
