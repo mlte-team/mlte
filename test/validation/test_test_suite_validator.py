@@ -1,7 +1,5 @@
 """
-test/validation/test_specvalidator.py
-
-Unit tests for SpecValidator functionality.
+Unit tests for TestSuiteValidator functionality.
 """
 
 from __future__ import annotations
@@ -9,6 +7,7 @@ from __future__ import annotations
 import pytest
 
 from mlte.evidence.types.integer import Integer
+from mlte.spec.test_case import TestCase
 from mlte.spec.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
@@ -28,7 +27,12 @@ def test_no_requirement():
 
 
 def test_success():
-    test_suite = TestSuite.from_model(make_complete_test_suite_model())
+    test_suite = TestSuite(
+        test_cases={
+            test_case.identifier: TestCase.from_model(test_case)
+            for test_case in make_complete_test_suite_model().test_cases
+        }
+    )
     test_suite_validator = TestSuiteValidator(test_suite)
 
     m = get_sample_evidence_metadata(test_case_id="Test1")
