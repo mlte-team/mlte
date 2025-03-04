@@ -143,7 +143,7 @@ def test_result_save_load(
 
     r: CPUStatistics = typing.cast(
         CPUStatistics,
-        CPUStatistics.load_with("id.value", context=ctx, store=store),
+        CPUStatistics.load_with("test_id.evidence", context=ctx, store=store),
     )
     assert r.avg == stats.avg
     assert r.min == stats.min

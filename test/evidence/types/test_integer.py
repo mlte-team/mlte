@@ -67,7 +67,7 @@ def test_save_load(
     i = Integer(1).with_metadata(get_sample_evidence_metadata())
     i.save_with(ctx, store)
 
-    loaded = Integer.load_with("id.value", context=ctx, store=store)
+    loaded = Integer.load_with("test_id.evidence", context=ctx, store=store)
     assert loaded == i
 
 

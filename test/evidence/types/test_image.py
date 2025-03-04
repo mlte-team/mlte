@@ -17,7 +17,7 @@ from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def get_sample_image_path() -> Path:
-    return Path("test/value/types/flower3.jpg")
+    return Path("test/evidence/types/flower3.jpg")
 
 
 def test_from_str():
@@ -56,7 +56,7 @@ def test_save_load(
     i.save_with(ctx, store)
 
     # NOTE(Kyle): No equality test implemented.
-    _ = Image.load_with("id.value", context=ctx, store=store)
+    _ = Image.load_with("test_id.evidence", context=ctx, store=store)
 
 
 def test_ignore() -> None:

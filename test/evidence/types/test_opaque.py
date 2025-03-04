@@ -89,5 +89,5 @@ def test_save_load(
     o = Opaque({"foo": "bar"}).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)
 
-    loaded = Opaque.load_with("id.value", context=ctx, store=store)
+    loaded = Opaque.load_with("test_id.evidence", context=ctx, store=store)
     assert loaded == o
