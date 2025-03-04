@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional
 
-from mlte._private.meta import get_full_path
+import mlte._private.meta as meta
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
@@ -52,12 +52,13 @@ class ExternalMeasurement(Measurement):
         metadata = super().generate_metadata()
 
         # Override default class with external-measurement specific one.
-        metadata.output_class = self.output_evidence_type
+        metadata.output_class = meta.get_full_path(self.output_evidence_type)
 
         # Add specific function being used.
-        metadata.additional_data[self.EXTERNAL_FUNCTION_KEY] = get_full_path(
-            self.function
-        ) if self.function is not None else None
+        if self.function is not None:
+            metadata.additional_data[self.EXTERNAL_FUNCTION_KEY] = (
+                meta.get_full_path(self.function)
+            )
         return metadata
 
     def __call__(self, *args, **kwargs) -> Evidence:
