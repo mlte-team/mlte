@@ -10,7 +10,7 @@ import re
 from types import ModuleType
 from typing import Any, Generator, Type
 
-import astunparse
+import astunparse  # type: ignore
 
 
 def load_class(class_path: str) -> Type[Any]:
