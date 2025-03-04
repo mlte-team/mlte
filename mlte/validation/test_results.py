@@ -11,6 +11,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.spec.model import TestSuiteModel
+from mlte.spec.test_case import TestCase
 from mlte.spec.test_suite import TestSuite
 from mlte.validation.model import TestResultsModel
 from mlte.validation.result import Result
@@ -97,7 +98,15 @@ class TestResults(Artifact):
         # Build the TestSuite and TestResults
         return TestResults(
             identifier=model.header.identifier,
-            test_suite=TestSuite(),
+            test_suite=TestSuite(
+                identifier=body.test_suite_id,
+                test_cases={
+                    test_case_model.identifier: TestCase.from_model(
+                        test_case_model
+                    )
+                    for test_case_model in body.test_suite.test_cases
+                },
+            ),
             results={
                 test_case_id: Result.from_model(test_result_model)
                 for test_case_id, test_result_model in body.results.items()
