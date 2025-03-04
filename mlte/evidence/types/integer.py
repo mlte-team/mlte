@@ -46,7 +46,9 @@ class Integer(Evidence):
         :param model: The model representation
         :return: The integer value
         """
-        model = typing.cast(ArtifactModel, model)
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         assert (
             model.header.type == ArtifactType.EVIDENCE
         ), "Broken Precondition."

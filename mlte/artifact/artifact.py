@@ -108,12 +108,15 @@ class Artifact(Serializable):
         """
         self.pre_save_hook(context, store)
 
-        artifact_model = typing.cast(ArtifactModel, self.to_model())
+        model = self.to_model()
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         with ManagedArtifactSession(store.session()) as handle:
             handle.write_artifact_with_header(
                 context.model,
                 context.version,
-                artifact_model,
+                model,
                 force=force,
                 parents=parents,
             )

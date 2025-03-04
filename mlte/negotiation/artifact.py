@@ -67,7 +67,12 @@ class NegotiationCard(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
-        model = typing.cast(ArtifactModel, model)
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
+        assert (
+            model.header.type == ArtifactType.NEGOTIATION_CARD
+        ), "Type should be NegotiationCard."
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,

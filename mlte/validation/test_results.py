@@ -70,7 +70,7 @@ class TestResults(Artifact):
             body=TestResultsModel(
                 test_suite_id=self.test_suite.identifier,
                 test_suite=typing.cast(
-                    TestSuiteModel, self.test_suite.to_model()
+                    TestSuiteModel, self.test_suite.to_model().body
                 ),
                 results={
                     test_case_id: result.to_model()
@@ -86,16 +86,18 @@ class TestResults(Artifact):
         :param model: The model
         :return: The deserialized specification
         """
-        model = typing.cast(ArtifactModel, model)
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         assert (
             model.header.type == ArtifactType.TEST_RESULTS
-        ), "Broken precondition."
+        ), "Type should be TestResults."
         body = typing.cast(TestResultsModel, model.body)
 
         # Build the TestSuite and TestResults
         return TestResults(
             identifier=model.header.identifier,
-            test_suite=TestSuite.from_model(body.test_suite),
+            test_suite=TestSuite(),
             results={
                 test_case_id: Result.from_model(test_result_model)
                 for test_case_id, test_result_model in body.results.items()

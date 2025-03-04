@@ -18,8 +18,8 @@ from mlte.context.context import Context
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
-from test.store.artifact.fixture import store_with_context  # noqa
 from test.evidence.types.helper import get_sample_evidence_metadata
+from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
 

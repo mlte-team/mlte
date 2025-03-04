@@ -12,8 +12,8 @@ from typing import Tuple
 from mlte.context.context import Context
 from mlte.evidence.types.image import Image
 from mlte.store.artifact.store import ArtifactStore
-from test.store.artifact.fixture import store_with_context  # noqa
 from test.evidence.types.helper import get_sample_evidence_metadata
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def get_sample_image_path() -> Path:

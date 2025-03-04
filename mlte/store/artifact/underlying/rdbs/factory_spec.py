@@ -152,8 +152,6 @@ def create_test_results_model_from_db(
         ),
         test_suite=(
             create_test_suite_model_from_db(test_results_obj.test_suite)
-            if test_results_obj.test_suite is not None
-            else None
         ),
     )
     return body

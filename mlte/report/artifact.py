@@ -127,8 +127,12 @@ class Report(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> Report:
         """Convert a report model to its corresponding artifact."""
-        model = typing.cast(ArtifactModel, model)
-        assert model.header.type == ArtifactType.REPORT, "Broken precondition."
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
+        assert (
+            model.header.type == ArtifactType.REPORT
+        ), "Type should be Report."
         body = typing.cast(ReportModel, model.body)
         return Report(
             identifier=model.header.identifier,

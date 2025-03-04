@@ -14,8 +14,8 @@ from mlte.context.context import Context
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
-from test.store.artifact.fixture import store_with_context  # noqa
 from test.evidence.types.helper import get_sample_evidence_metadata
+from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class DummyMeasurementInteger(Measurement):

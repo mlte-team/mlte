@@ -69,10 +69,13 @@ class TestSuite(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> TestSuite:
         """Convert a TestSuite model to its corresponding artifact."""
+        assert (
+            model is ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         model = typing.cast(ArtifactModel, model)
         assert (
             model.header.type == ArtifactType.TEST_SUITE
-        ), "Broken precondition."
+        ), "Type should be TestSuite."
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(
             identifier=model.header.identifier,

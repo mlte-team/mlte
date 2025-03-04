@@ -12,7 +12,6 @@ the link between the statically-typed MLTE evidence system and dynamic extension
 
 from __future__ import annotations
 
-import typing
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -67,7 +66,9 @@ class ExternalEvidence(Evidence, ABC):
         :param model: The artifact model
         :return: The deserialized artifact
         """
-        model = typing.cast(ArtifactModel, model)
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         assert (
             model.body.artifact_type == ArtifactType.EVIDENCE
         ), "Broken precondition."
