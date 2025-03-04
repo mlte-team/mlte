@@ -87,8 +87,8 @@ class Evidence(Artifact, ABC):
         """
         raise NotImplementedError("Evidence.to_model()")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_model(cls, _: BaseModel) -> Evidence:
         """
         Convert a evidence model to its corresponding artifact.
