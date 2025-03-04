@@ -86,7 +86,9 @@ def test_save_load(
 
     cm.save_with(ctx, store)
 
-    loaded = ConfusionMatrix.load_with("test_id.evidence", context=ctx, store=store)
+    loaded = ConfusionMatrix.load_with(
+        "test_id.evidence", context=ctx, store=store
+    )
     assert loaded == cm
 
 
