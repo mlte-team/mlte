@@ -21,6 +21,8 @@ class ConfusionMatrix(ExternalEvidence):
     """A sample extension value type."""
 
     def __init__(self, matrix: list[list[int]]):
+        super().__init__()
+
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
 
@@ -38,9 +40,11 @@ class ConfusionMatrix(ExternalEvidence):
 
 
 class BadInteger(ExternalEvidence):
-    """An extension value that does not implement the interface."""
+    """An extension evidence that does not implement the interface."""
 
     def __init__(self, integer: int):
+        super().__init__()
+
         self.integer = integer
 
 

@@ -20,6 +20,8 @@ class MultipleRanksums(ExternalEvidence):
         array: np.ndarray,
         num_pops: int = 1,
     ):
+        super().__init__()
+
         self.array = array
         """The array to store data in."""
 

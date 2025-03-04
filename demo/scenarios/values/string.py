@@ -15,6 +15,8 @@ class String(ExternalEvidence):
     """An string value."""
 
     def __init__(self, value: str):
+        super().__init__()
+
         self.value = value
         """The attribute to store the string in."""
 

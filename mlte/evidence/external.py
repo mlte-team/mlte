@@ -26,6 +26,10 @@ from mlte.model.base_model import BaseModel
 class ExternalEvidence(Evidence, ABC):
     """The base class for MLTE evidence extensions."""
 
+    def __init__(self):
+        """Initialize an instance"""
+        super().__init__()
+
     @classmethod
     def __subclasshook__(cls, subclass):
         """Define the interface for all Evidence subclasses."""
