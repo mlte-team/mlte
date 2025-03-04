@@ -56,7 +56,9 @@ def test_serde() -> None:
 
     serialized = cm.serialize()
 
-    deserialized = ConfusionMatrix.deserialize(serialized)
+    deserialized = ConfusionMatrix.deserialize(serialized).with_metadata(
+        get_sample_evidence_metadata()
+    )
     assert deserialized == cm
 
 
@@ -84,7 +86,7 @@ def test_save_load(
 
     cm.save_with(ctx, store)
 
-    loaded = ConfusionMatrix.load_with("id.value", context=ctx, store=store)
+    loaded = ConfusionMatrix.load_with("test_id.evidence", context=ctx, store=store)
     assert loaded == cm
 
 
