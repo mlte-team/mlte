@@ -110,7 +110,7 @@ def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
     if type == ArtifactType.TEST_SUITE:
         return _make_spec(complete)
     if type == ArtifactType.TEST_RESULTS:
-        return _make_validated_spec(complete)
+        return _make_test_results(complete)
     if type == ArtifactType.REPORT:
         return _make_report(complete)
 
@@ -153,14 +153,15 @@ def _make_spec(complete: bool) -> TestSuiteModel:
         return make_complete_test_suite_model()
 
 
-def _make_validated_spec(complete: bool) -> TestResultsModel:
+def _make_test_results(complete: bool) -> TestResultsModel:
     """
     Make a minimal validated spec, or a fully featured one, depending on complete.
     :return: The artifact
     """
     # TODO: Make a complete VSpec that is properly connected to Spec and QACategory, which is not trivial.
     # Maybe create in DB here? Find way to make this work for better coverage.
-    return TestResultsModel()
+    test_suite = make_complete_test_suite_model()
+    return TestResultsModel(test_suite=test_suite)
 
 
 def _make_report(complete: bool) -> ReportModel:
