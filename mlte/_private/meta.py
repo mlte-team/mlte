@@ -15,6 +15,10 @@ def has_callables(type, *names: str) -> bool:
     return all(has_callable(type, name) for name in names)
 
 
-def get_full_path(object) -> str:
-    """Returns the full path to this object, including module."""
-    return f"{object.__module__}.{object.__name__}"
+def get_full_path(cls) -> str:
+    """
+    Returns the full path to this class, including module.
+
+    :param cls: It has to be a class type or a function.
+    """
+    return f"{cls.__module__}.{cls.__name__}"

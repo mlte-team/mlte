@@ -78,7 +78,7 @@ class Measurement(ABC):
     def generate_metadata(self) -> MeasurementMetadata:
         """Returns Measurement metadata."""
         return MeasurementMetadata(
-            measurement_class=meta.get_full_path(self),
+            measurement_class=meta.get_full_path(self.__class__),
             output_class=meta.get_full_path(self.output_evidence()),
         )
 
