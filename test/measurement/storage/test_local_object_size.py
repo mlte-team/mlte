@@ -157,12 +157,12 @@ def test_validation_less_than(tmp_path):
     size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
-    v = Integer.less_than(128)(size)
+    v = Integer.less_than(128).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_than(64)(size)
+    v = Integer.less_than(64).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)
 
@@ -175,11 +175,11 @@ def test_validation_less_or_equal_to(tmp_path):
     size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
-    v = Integer.less_or_equal_to(64)(size)
+    v = Integer.less_or_equal_to(64).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_or_equal_to(63)(size)
+    v = Integer.less_or_equal_to(63).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)
