@@ -52,18 +52,23 @@ def _dummy_calculation(x: int, y: int):
     return (x + y) * 2
 
 
-def get_sample_metadata() -> EvidenceMetadata:
+def get_sample_metadata(
+    additional_data: bool = True,
+    output_class: str = "test.measurement.test_external_measurement.BigInteger",
+) -> EvidenceMetadata:
     """Sample for tests."""
-    return EvidenceMetadata(
+    evidence = EvidenceMetadata(
         measurement=MeasurementMetadata(
             measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-            output_class="BigInt",
-            additional_data={
-                ExternalMeasurement.EXTERNAL_FUNCTION_KEY: "test.measurement.test_external_measurement._dummy_calculation"
-            },
+            output_class=output_class,
         ),
         test_case_id="test_id",
     )
+    if additional_data:
+        evidence.measurement.additional_data[
+            ExternalMeasurement.EXTERNAL_FUNCTION_KEY
+        ] = "test.measurement.test_external_measurement._dummy_calculation"
+    return evidence
 
 
 # -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ def test_evaluate_external() -> None:
     y = 2
     expected_value = _dummy_calculation(x, y)
     expected_result = Integer(expected_value).with_metadata(
-        get_sample_metadata()
+        get_sample_metadata(output_class="mlte.evidence.types.integer.Integer")
     )
 
     measurement = ExternalMeasurement("test_id", Integer, _dummy_calculation)
@@ -112,8 +117,6 @@ def test_evaluate_external_base() -> None:
     result = measurement.evaluate(x, y)
 
     assert isinstance(result, BigInteger)
-    print(result.to_model())
-    print(expected_result.to_model())
     assert result == expected_result
 
 
@@ -122,13 +125,18 @@ def test_evaluate_ingest() -> None:
 
     expected_value = 1000
     expected_result = Integer(expected_value).with_metadata(
-        get_sample_metadata()
+        get_sample_metadata(
+            additional_data=False,
+            output_class="mlte.evidence.types.integer.Integer",
+        )
     )
 
     measurement = ExternalMeasurement("test_id", Integer)
     result = measurement.ingest(expected_value)
 
     assert isinstance(result, Integer)
+    print(result.to_model().to_json_string())
+    print(expected_result.to_model().to_json_string())
     assert result == expected_result
 
 
@@ -137,7 +145,7 @@ def test_evaluate_ingest_base() -> None:
 
     expected_value = 1000
     expected_result = BigInteger(expected_value).with_metadata(
-        get_sample_metadata()
+        get_sample_metadata(additional_data=False)
     )
 
     measurement = ExternalMeasurement("test_id", BigInteger)

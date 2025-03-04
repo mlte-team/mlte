@@ -58,6 +58,10 @@ class Evidence(Artifact, ABC):
         """Default evidence id."""
         return DEFAULT_EVIDENCE_ID
 
+    def __str__(self) -> str:
+        """Return a string representation."""
+        return self.to_model().to_json_string()
+
     # -------------------------------------------------------------------------
     # Model handling.
     # -------------------------------------------------------------------------
