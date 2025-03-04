@@ -51,7 +51,7 @@ def create_evidence_model_from_db(evidence_obj: DBEvidence) -> EvidenceModel:
             ),
         ),
         evidence_class=evidence_obj.evidence_class,
-        value=get_model_class(EvidenceType(evidence_obj.value_type)).from_json(
+        value=get_model_class(EvidenceType(evidence_obj.evidence_type)).from_json(
             json.loads(evidence_obj.data_json)
         ),
     )

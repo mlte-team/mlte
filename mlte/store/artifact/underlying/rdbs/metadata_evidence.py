@@ -49,7 +49,7 @@ class DBEvidence(DBBase):
         ForeignKey("artifact_header.id")
     )
     evidence_class: Mapped[str]
-    value_type: Mapped[str]
+    evidence_type: Mapped[str]
     data_json: Mapped[str]
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(

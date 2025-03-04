@@ -35,7 +35,7 @@ class ReportModel(BaseModel):
     nc_data: NegotiationCardDataModel = NegotiationCardDataModel()
     """The specific data from a negotiation card."""
 
-    validated_spec_id: Optional[str] = None
+    test_results_id: Optional[str] = None
     """The findings from MLTE evaluation."""
 
     comments: List[CommentDescriptor] = []

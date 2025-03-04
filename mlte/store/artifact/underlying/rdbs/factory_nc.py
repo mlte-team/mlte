@@ -234,13 +234,13 @@ def create_report_db_from_model(
     report_obj = DBReport(
         artifact_header=artifact_header,
         negotiation_card_data=negotiation_card_data_obj,
-        validated_spec=(
+        test_results=(
             DBReader.get_test_results(
-                report.validated_spec_id,
+                report.test_results_id,
                 artifact_header.version_id,
                 session,
             )
-            if report.validated_spec_id is not None
+            if report.test_results_id is not None
             else None
         ),
         comments=[],
@@ -263,9 +263,9 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
 
     body = ReportModel(
         nc_data=negotiation_card_data,
-        validated_spec_id=(
-            report_obj.validated_spec.artifact_header.identifier
-            if report_obj.validated_spec is not None
+        test_results_id=(
+            report_obj.test_results.artifact_header.identifier
+            if report_obj.test_results is not None
             else None
         ),
         comments=[

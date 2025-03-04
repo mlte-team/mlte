@@ -114,10 +114,10 @@ class DBEvidenceMetadata(DBBase):
     test_case_id: Mapped[str]
     measurement: Mapped[str]
     result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("result.id"))
-    value_id: Mapped[Optional[int]] = mapped_column(ForeignKey("value.id"))
+    evidence_id: Mapped[Optional[int]] = mapped_column(ForeignKey("evidence.id"))
 
     result: Mapped[DBResult] = relationship(back_populates="evidence_metadata")
-    value: Mapped[DBEvidence] = relationship(back_populates="evidence_metadata")
+    evidence: Mapped[DBEvidence] = relationship(back_populates="evidence_metadata")
 
     def __repr__(self) -> str:
         return f"EvidenceMetadata(id={self.id!r}, identifier={self.test_case_id!r}, measurement={self.measurement!r})"

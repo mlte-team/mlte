@@ -16,7 +16,7 @@ from mlte.spec.test_suite import TestSuite
 from mlte.validation.model import TestResultsModel
 from mlte.validation.result import Result
 
-DEFAULT_VALIDATED_SPEC_ID = "default.validated_spec"
+DEFAULT_TEST_RESULTS_ID = "default.test_results"
 
 # -----------------------------------------------------------------------------
 # TestResults
@@ -31,7 +31,7 @@ class TestResults(Artifact):
     def __init__(
         self,
         test_suite: TestSuite,
-        identifier: str = DEFAULT_VALIDATED_SPEC_ID,
+        identifier: str = DEFAULT_TEST_RESULTS_ID,
         results: dict[str, Result] = {},
     ):
         """
@@ -129,7 +129,7 @@ class TestResults(Artifact):
     @staticmethod
     def get_default_id() -> str:
         """Overriden"""
-        return DEFAULT_VALIDATED_SPEC_ID
+        return DEFAULT_TEST_RESULTS_ID
 
     def __eq__(self, other: object) -> bool:
         """Test TestResults instance for equality."""

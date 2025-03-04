@@ -44,7 +44,7 @@ class Report(Artifact):
         model: ModelDescriptor = ModelDescriptor(),
         data: List[DataDescriptor] = [],
         system_requirements: List[QASDescriptor] = [],
-        validated_spec_id: Optional[str] = None,
+        test_results_id: Optional[str] = None,
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
     ) -> None:
@@ -62,7 +62,7 @@ class Report(Artifact):
         self.system_requirements = system_requirements
         """A description of the system requirements."""
 
-        self.validated_spec_id = validated_spec_id
+        self.test_results_id = test_results_id
         """A summary of model performance evaluation."""
 
         self.comments = comments
@@ -82,7 +82,7 @@ class Report(Artifact):
                     model=self.model,
                     system_requirements=self.system_requirements,
                 ),
-                validated_spec_id=self.validated_spec_id,
+                test_results_id=self.test_results_id,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
             ),
@@ -95,7 +95,7 @@ class Report(Artifact):
         :param store: The store in which to save the artifact
         :raises RuntimeError: On broken invariant
         """
-        if self.validated_spec_id is None:
+        if self.test_results_id is None:
             return
 
         with ManagedArtifactSession(store.session()) as handle:
@@ -103,16 +103,16 @@ class Report(Artifact):
                 artifact = handle.read_artifact(
                     context.model,
                     context.version,
-                    self.validated_spec_id,
+                    self.test_results_id,
                 )
             except errors.ErrorNotFound:
                 raise RuntimeError(
-                    f"Validated specification with identifier {self.validated_spec_id} not found."
+                    f"Validated specification with identifier {self.test_results_id} not found."
                 )
 
         if not artifact.header.type == ArtifactType.TEST_RESULTS:
             raise RuntimeError(
-                f"Validated specification with identifier {self.validated_spec_id} not found."
+                f"Validated specification with identifier {self.test_results_id} not found."
             )
 
     def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
@@ -140,7 +140,7 @@ class Report(Artifact):
             data=body.nc_data.data,
             model=body.nc_data.model,
             system_requirements=body.nc_data.system_requirements,
-            validated_spec_id=body.validated_spec_id,
+            test_results_id=body.test_results_id,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
         )
@@ -157,7 +157,7 @@ class Report(Artifact):
             data=deepcopy(artifact.data),
             model=deepcopy(artifact.model),
             system_requirements=deepcopy(artifact.qas),
-            validated_spec_id=self.validated_spec_id,
+            test_results_id=self.test_results_id,
             comments=deepcopy(self.comments),
             quantitative_analysis=deepcopy(self.quantitative_analysis),
         )

@@ -131,10 +131,10 @@ class DBReport(DBBase):
     negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
 
     # Results.
-    validated_spec_id: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("validated_spec.id", ondelete="SET NULL")
+    test_results_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("test_results.id", ondelete="SET NULL")
     )
-    validated_spec: Mapped[DBTestResults] = relationship()
+    test_results: Mapped[DBTestResults] = relationship()
 
     # Comments
     comments: Mapped[List[DBCommentDescriptor]] = relationship(
