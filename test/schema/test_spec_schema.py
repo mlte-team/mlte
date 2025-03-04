@@ -1,19 +1,18 @@
 """
-test/schema/test_spec_schema.py
-
-Unit tests for Spec schema.
+Unit tests for TestSuite schema.
 """
 
-from mlte.evidence.types.integer import Integer
-from mlte.qa_category.costs.storage_cost import StorageCost
-from mlte.spec.spec import Spec
+from mlte.spec.test_case import TestCase
+from mlte.spec.test_suite import TestSuite
 
 from . import util as util
 
 
 def test_instance_with_content():
-    spec = Spec(
-        qa_categories={StorageCost("rationale"): {"test": Integer.less_than(3)}}
+    spec = TestSuite(
+        test_cases={
+            "test": TestCase(identifier="test", goal="test", qas_list=[])
+        }
     )
 
     doc = spec.to_model().to_json()
