@@ -71,6 +71,6 @@ class ExternalMeasurement(Measurement):
         return evidence
 
     @classmethod
-    def output_evidence(self) -> Type[Evidence]:
+    def output_type(cls) -> Type[Evidence]:
         """Returns the class type object for the Evidence produced by the Measurement."""
         return self.output_evidence_type

@@ -160,7 +160,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         ).with_metadata(self.evidence_metadata)
 
     @classmethod
-    def output_evidence(self) -> Type[CPUStatistics]:
+    def output_type(self) -> Type[CPUStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return CPUStatistics
 

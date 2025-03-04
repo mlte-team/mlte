@@ -62,7 +62,7 @@ class Measurement(ABC):
         )
 
     @classmethod
-    def output_evidence(cls) -> Type[Evidence]:
+    def output_type(cls) -> Type[Evidence]:
         """Returns the class type object for the Evidence produced by the Measurement."""
         # Opaque is the default Evidence type.
         return Opaque
@@ -79,7 +79,7 @@ class Measurement(ABC):
         """Returns Measurement metadata."""
         return MeasurementMetadata(
             measurement_class=meta.get_full_path(self.__class__),
-            output_class=meta.get_full_path(self.output_evidence()),
+            output_class=meta.get_full_path(self.output_type()),
         )
 
     @classmethod

@@ -155,7 +155,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         ).with_metadata(self.evidence_metadata)
 
     @classmethod
-    def output_evidence(self) -> Type[MemoryStatistics]:
+    def output_type(self) -> Type[MemoryStatistics]:
         """Returns the class type object for the Value produced by the Measurement."""
         return MemoryStatistics
 

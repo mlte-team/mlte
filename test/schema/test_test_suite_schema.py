@@ -10,9 +10,7 @@ from . import util as util
 
 def test_instance_with_content():
     spec = TestSuite(
-        test_cases={
-            "test": TestCase(identifier="test", goal="test", qas_list=[])
-        }
+        test_cases=[TestCase(identifier="test", goal="test", qas_list=[])]
     )
 
     doc = spec.to_model().to_json()

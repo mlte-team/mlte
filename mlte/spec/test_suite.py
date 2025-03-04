@@ -25,7 +25,7 @@ class TestSuite(Artifact):
     def __init__(
         self,
         identifier: str = DEFAULT_TEST_SUITE_ID,
-        test_cases: dict[str, TestCase] = {},
+        test_cases: list[TestCase] = [],
     ):
         """
         Initialize a TestSuite instance.
@@ -34,7 +34,9 @@ class TestSuite(Artifact):
         """
         super().__init__(identifier, ArtifactType.TEST_SUITE)
 
-        self.test_cases = test_cases
+        self.test_cases = {
+            test_case.identifier: test_case for test_case in test_cases
+        }
         """The collection of TestCases that compose the TestSuite."""
 
     def add_test_case(self, test_case: TestCase):
@@ -79,10 +81,10 @@ class TestSuite(Artifact):
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(
             identifier=model.header.identifier,
-            test_cases={
-                test_case_model.identifier: TestCase.from_model(test_case_model)
+            test_cases=[
+                TestCase.from_model(test_case_model)
                 for test_case_model in body.test_cases
-            },
+            ],
         )
 
     # -------------------------------------------------------------------------

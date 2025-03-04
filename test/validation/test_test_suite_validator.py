@@ -28,10 +28,10 @@ def test_no_requirement():
 
 def test_success():
     test_suite = TestSuite(
-        test_cases={
-            test_case.identifier: TestCase.from_model(test_case)
+        test_cases=[
+            TestCase.from_model(test_case)
             for test_case in make_complete_test_suite_model().test_cases
-        }
+        ]
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 

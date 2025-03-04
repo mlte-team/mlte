@@ -21,6 +21,7 @@ class BigInteger(ExternalEvidence):
     """A sample extension value type."""
 
     def __init__(self, integer: int):
+        super().__init__()
         self.integer = integer
 
     def serialize(self) -> Dict[str, Any]:

@@ -50,6 +50,6 @@ class LocalObjectSize(Measurement):
         return Integer(total_size)
 
     @classmethod
-    def output_evidence(self) -> Type[Integer]:
+    def output_type(self) -> Type[Integer]:
         """Returns the class type object for the Value produced by the Measurement."""
         return Integer

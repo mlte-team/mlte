@@ -100,12 +100,10 @@ class TestResults(Artifact):
             identifier=model.header.identifier,
             test_suite=TestSuite(
                 identifier=body.test_suite_id,
-                test_cases={
-                    test_case_model.identifier: TestCase.from_model(
-                        test_case_model
-                    )
+                test_cases=[
+                    TestCase.from_model(test_case_model)
                     for test_case_model in body.test_suite.test_cases
-                },
+                ],
             ),
             results={
                 test_case_id: Result.from_model(test_result_model)

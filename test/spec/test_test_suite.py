@@ -18,9 +18,9 @@ from test.store.artifact.fixture import store_with_context  # noqa
 def get_sample_test_suite():
     test_suite = TestSuite(
         identifier="test_suite",
-        test_cases={
-            "t1": TestCase(identifier="t1", goal="to test", qas_list=["qa1"])
-        },
+        test_cases=[
+            TestCase(identifier="t1", goal="to test", qas_list=["qa1"])
+        ],
     )
     return test_suite
 
@@ -51,9 +51,7 @@ def test_save_load_default(
     store, ctx = store_with_context
 
     test_suite = TestSuite(
-        test_cases={
-            "t1": TestCase(identifier="t1", goal="to test", qas_list=["qa1"])
-        },
+        test_cases=[TestCase(identifier="t1", goal="to test", qas_list=["qa1"])]
     )
     test_suite.save_with(ctx, store)
 
