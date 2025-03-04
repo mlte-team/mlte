@@ -37,7 +37,6 @@ class CPUStatistics(ExternalEvidence):
         """
         Initialize a CPUStatistics instance.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param avg: The average utilization
         :param min: The minimum utilization
         :param max: The maximum utilization
@@ -66,7 +65,6 @@ class CPUStatistics(ExternalEvidence):
         """
         Deserialize an CPUStatistics from a JSON object.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param data: The JSON object
 
         :return: The deserialized instance

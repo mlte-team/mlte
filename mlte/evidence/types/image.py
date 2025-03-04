@@ -30,7 +30,6 @@ class Image(Evidence):
     ):
         """
         Initialize an Image instance.
-        :param metadata: The generating measurement's metadata
         :param image: The path to the image (str, Path) or raw image data (bytes)
         """
         if isinstance(image, str):

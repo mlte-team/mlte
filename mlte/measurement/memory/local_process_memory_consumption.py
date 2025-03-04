@@ -37,7 +37,6 @@ class MemoryStatistics(ExternalEvidence):
         """
         Initialize a MemoryStatistics instance.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param avg: The average memory consumption, in KB
         :param min: The minimum memory consumption, in KB
         :param max: The maximum memory consumption, in KB
@@ -66,7 +65,6 @@ class MemoryStatistics(ExternalEvidence):
         """
         Deserialize an MemoryStatistics from a JSON object.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param data: The JSON object
 
         :return: The deserialized instance

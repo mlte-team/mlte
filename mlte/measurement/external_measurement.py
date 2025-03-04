@@ -29,7 +29,7 @@ class ExternalMeasurement(Measurement):
         """
         Initialize a new ExternalMeasurement measurement.
 
-        :param identifier: A unique identifier for the instance
+        :param test_case_id: A unique identifier for the instance
         :param output_evidence_type: The type of the Evidence this measurement will return.
         :param function: The function to be used when evaluating.
         """

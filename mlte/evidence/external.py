@@ -45,7 +45,6 @@ class ExternalEvidence(Evidence, ABC):
     def deserialize(cls, data: dict[str, Any]) -> ExternalEvidence:
         """
         Deserialize an Evidence instance from serialized representation.
-        :param metadata: Evidence metadata associated with the evidence
         :param data: The serialized representation
         :return: The deserialized         :param metadata: Evidence metadata associated with the evidence
 
