@@ -133,6 +133,14 @@ class ArtifactStoreSession(StoreSession):
     # Interface: Artifact
     # -------------------------------------------------------------------------
 
+    def _add_header_data(
+        self, artifact: ArtifactModel, user: Optional[str]
+    ) -> ArtifactModel:
+        """Adds time and creator data to model."""
+        artifact.header.timestamp = int(time.time())
+        artifact.header.creator = user
+        return artifact
+
     def write_artifact_with_header(
         self,
         model_id: str,
@@ -152,8 +160,7 @@ class ArtifactStoreSession(StoreSession):
         :param parents: Indicates whether organizational elements
         for artifact should be implictly created (default: False)
         """
-        artifact.header.timestamp = int(time.time())
-        artifact.header.creator = user
+        artifact = self._add_header_data(artifact, user)
         return self.write_artifact(
             model_id,
             version_id,
