@@ -71,10 +71,9 @@ class TestSuite(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> TestSuite:
         """Convert a TestSuite model to its corresponding artifact."""
-        assert (
-            model is ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        model = typing.cast(ArtifactModel, model)
+        assert isinstance(
+            model, ArtifactModel
+        ), f"Can't create object from non-ArtifactModel model: type{type(model)}."
         assert (
             model.header.type == ArtifactType.TEST_SUITE
         ), "Type should be TestSuite."
