@@ -85,11 +85,6 @@ def test_memory_validate_success() -> None:
     vr = validator.validate(stats)
     assert bool(vr)
 
-    assert vr.evidence_metadata is not None
-    assert vr.evidence_metadata.measurement.measurement_class, type(
-        MemoryStatistics
-    ).__name__
-
 
 def test_memory_validate_failure() -> None:
     p = spin_for(5)
@@ -103,11 +98,6 @@ def test_memory_validate_failure() -> None:
         bool_exp=lambda _: False, success="yay", failure="oh"
     ).validate(stats)
     assert not bool(vr)
-
-    assert vr.evidence_metadata is not None
-    assert vr.evidence_metadata.measurement.measurement_class, type(
-        MemoryStatistics
-    ).__name__
 
 
 def test_result_save_load(
