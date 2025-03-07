@@ -53,14 +53,16 @@ class TestCase(Serializable):
 
         return self.measurement.evaluate(*args, **kwargs)
 
-    def validate(self, value: Evidence) -> Result:
-        """Executes the configured validator with the given Value."""
+    def validate(self, evidence: Evidence) -> Result:
+        """Executes the configured validator with the given Evidence."""
         if self.validator is None:
             raise RuntimeError(
                 "Can't validate, no validator has been configured."
             )
 
-        return self.validator.validate(value)
+        return self.validator.validate(evidence)._with_evidence_metadata(
+            evidence.metadata
+        )
 
     # -------------------------------------------------------------------------
     # Model conversion.

@@ -50,8 +50,7 @@ class Result(ABC):
         the Result so that we can use the metadata
         information later when it is used to generate a report.
 
-        :param measurement_id: The evidence id
-        Value from which was this instance was generated.
+        :param evidence_metadata: The evidence metadata to be added.
         :return: The Result instance (`self`)
         """
         self.evidence_metadata = evidence_metadata

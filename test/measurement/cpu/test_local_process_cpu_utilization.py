@@ -93,12 +93,6 @@ def test_cpu_nix_validate_success() -> None:
     vr = Validator(bool_exp=lambda _: True, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert bool(vr)
 
-    # Data is accessible from validation result
-    assert vr.evidence_metadata is not None
-    assert vr.evidence_metadata.measurement.measurement_class, type(
-        CPUStatistics
-    ).__name__
-
 
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
@@ -111,12 +105,6 @@ def test_cpu_nix_validate_failure() -> None:
 
     vr = Validator(bool_exp=lambda _: False, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert not bool(vr)
-
-    # Data is accessible from validation result
-    assert vr.evidence_metadata is not None
-    assert vr.evidence_metadata.measurement.measurement_class, type(
-        CPUStatistics
-    ).__name__
 
 
 @pytest.mark.skipif(
