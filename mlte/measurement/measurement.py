@@ -5,7 +5,6 @@ Superclass for all measurements.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Type
 
 import mlte._private.meta as meta
 from mlte._private.reflection import load_class
@@ -62,7 +61,7 @@ class Measurement(ABC):
         )
 
     @classmethod
-    def output_type(cls) -> Type[Evidence]:
+    def output_type(cls) -> type[Evidence]:
         """Returns the class type object for the Evidence produced by the Measurement."""
         # Opaque is the default Evidence type.
         return Opaque
@@ -93,10 +92,16 @@ class Measurement(ABC):
         :param test_case_id: The id of the associated test case.
         :return: The Measurement.
         """
-        measurement_class: Type[Measurement] = load_class(
+        measurement_class: type[Measurement] = load_class(
             model.measurement_class
         )
-        measurement: Measurement = measurement_class(test_case_id=test_case_id)
+        measurement: Measurement
+        if measurement_class == Measurement:
+            measurement = measurement_class(test_case_id=test_case_id)
+        else:
+            measurement = measurement_class.from_metadata(
+                model=model, test_case_id=test_case_id
+            )
         return measurement
 
     # -------------------------------------------------------------------------

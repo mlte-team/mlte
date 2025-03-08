@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Any, Callable, Optional
 
 import mlte._private.meta as meta
+from mlte._private.reflection import load_class
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
@@ -60,6 +61,27 @@ class ExternalMeasurement(Measurement):
                 meta.get_full_path(self.function)
             )
         return metadata
+
+    # Overriden.
+    @classmethod
+    def from_metadata(
+        cls, model: MeasurementMetadata, test_case_id: str
+    ) -> Measurement:
+        """
+        Create a Measurement from a model.
+
+        :param model: The model.
+        :param test_case_id: The id of the associated test case.
+        :return: The Measurement.
+        """
+        measurement_class: type[ExternalMeasurement] = load_class(
+            model.measurement_class
+        )
+        measurement: ExternalMeasurement = measurement_class(
+            test_case_id=test_case_id,
+            output_evidence_type=load_class(model.output_class),
+        )
+        return measurement
 
     def __call__(self, *args, **kwargs) -> Evidence:
         """Evaluate a measurement and return values without semantics."""
