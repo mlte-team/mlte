@@ -1,7 +1,7 @@
 """
 mlte/validation/model.py
 
-Model implementation for the ValidatedSpec artifact.
+Model implementation for the TestResults artifact.
 """
 
 from typing import Literal, Optional

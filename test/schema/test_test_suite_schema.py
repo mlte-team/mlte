@@ -9,9 +9,9 @@ from . import util as util
 
 
 def test_instance_with_content():
-    spec = TestSuite(
+    test_suite = TestSuite(
         test_cases=[TestCase(identifier="test", goal="test", qas_list=[])]
     )
 
-    doc = spec.to_model().to_json()
-    util.validate_spec_schema(doc["body"])
+    doc = test_suite.to_model().to_json()
+    util.validate_test_suite_schema(doc["body"])

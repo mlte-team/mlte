@@ -69,10 +69,10 @@ def create_db_artifact(
 
     if artifact.header.type == ArtifactType.TEST_SUITE:
         # Create a DBTestSuite and its internal TestResult list.
-        spec = typing.cast(TestSuiteModel, artifact.body)
-        return create_spec_db_from_model(spec, artifact_header)
+        test_suite = typing.cast(TestSuiteModel, artifact.body)
+        return create_spec_db_from_model(test_suite, artifact_header)
     elif artifact.header.type == ArtifactType.TEST_RESULTS:
-        # Create a DBValidatedSpec db object.
+        # Create a DBTestResults db object.
         test_results = typing.cast(TestResultsModel, artifact.body)
         return create_test_results_db_from_model(
             test_results, artifact_header, session
@@ -127,9 +127,11 @@ def create_artifact_from_db(
         EvidenceModel,
     ]
     if artifact_header.type == ArtifactType.TEST_SUITE:
-        # Creating a Spec from DB data.
-        spec_obj = typing.cast(DBTestSuite, artifact_header_obj.body_test_suite)
-        body = create_test_suite_model_from_db(spec_obj)
+        # Creating a TestSuit from DB data.
+        test_suite_obj = typing.cast(
+            DBTestSuite, artifact_header_obj.body_test_suite
+        )
+        body = create_test_suite_model_from_db(test_suite_obj)
     elif artifact_header.type == ArtifactType.TEST_RESULTS:
         # Creating a TestResults from DB data.
         test_results_obj = typing.cast(

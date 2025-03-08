@@ -32,8 +32,8 @@ if TYPE_CHECKING:
     )
 else:
     DBNegotiationCard = "DBNegotiationCard"
-    DBTestSuite = "DBSpec"
-    DBTestResults = "DBValidatedSpec"
+    DBTestSuite = "DBTestSuite"
+    DBTestResults = "DBTestResults"
     DBReport = "DBReport"
     DBEvidence = "DBValue"
 

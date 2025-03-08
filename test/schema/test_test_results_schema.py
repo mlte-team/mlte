@@ -24,4 +24,4 @@ def test_schema():
     test_results = test_suite_validator.validate()
 
     doc = test_results.to_model().to_json()
-    util.validate_validatedspec_schema(doc["body"])
+    util.validate_test_results_schema(doc["body"])

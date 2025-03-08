@@ -9,7 +9,7 @@ from test.fixture.artifact import make_complete_test_results_model
 
 
 def test_test_results_body() -> None:
-    """A spec model can be serialized and deserialized."""
+    """A TestSuite model can be serialized and deserialized."""
     objects = [
         make_complete_test_results_model(),
     ]

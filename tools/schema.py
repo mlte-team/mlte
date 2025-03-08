@@ -83,12 +83,12 @@ CONFIGS = [
     ),
     Config(
         model=ModelImport(path="mlte.tests.model", model="TestSuiteModel"),
-        output_path="spec/v0.0.1",
+        output_path="tests/v0.0.1",
         sub_path="artifact",
     ),
     Config(
         model=ModelImport(path="mlte.results.model", model="TestResultsModel"),
-        output_path="validated/v0.0.1",
+        output_path="results/v0.0.1",
         sub_path="artifact",
     ),
     Config(

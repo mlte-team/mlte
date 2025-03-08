@@ -227,7 +227,7 @@ class DBReader:
     def get_test_suite(
         test_suite_identifier: str, version_id: int, session: Session
     ) -> DBTestSuite:
-        """Gets the Spec with the given identifier."""
+        """Gets the TestSuit with the given identifier."""
         property_obj = session.scalar(
             select(DBTestSuite)
             .where(DBTestSuite.artifact_header_id == DBArtifactHeader.id)
@@ -236,7 +236,7 @@ class DBReader:
         )
         if property_obj is None:
             raise errors.ErrorNotFound(
-                f"Spec with identifier {test_suite_identifier} was not found in the artifact store."
+                f"TestSuite with identifier {test_suite_identifier} was not found in the artifact store."
             )
         else:
             return property_obj
@@ -245,7 +245,7 @@ class DBReader:
     def get_test_results(
         test_results_identifier: str, version_id: int, session: Session
     ) -> DBTestResults:
-        """Gets the Spec with the given identifier."""
+        """Gets the TestSuite with the given identifier."""
         property_obj = session.scalar(
             select(DBTestResults)
             .where(DBTestResults.artifact_header_id == DBArtifactHeader.id)
@@ -254,7 +254,7 @@ class DBReader:
         )
         if property_obj is None:
             raise errors.ErrorNotFound(
-                f"ValidatedSpec with identifier {test_results_identifier} was not found in the artifact store."
+                f"TestResults with identifier {test_results_identifier} was not found in the artifact store."
             )
         else:
             return property_obj

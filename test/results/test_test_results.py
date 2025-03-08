@@ -1,7 +1,5 @@
 """
-test/validation/test_validatedspec.py
-
-Unit tests for ValidatedSpec functionality.
+Unit tests for TestResults functionality.
 """
 
 from __future__ import annotations
@@ -37,11 +35,11 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     )
     test_suite_validator.add_evidence(i)
 
-    validatedSpec = test_suite_validator.validate()
-    validatedSpec.save_with(ctx, store)
+    test_results = test_suite_validator.validate()
+    test_results.save_with(ctx, store)
 
     r = TestResults.load_with(context=ctx, store=store)
-    assert r == validatedSpec
+    assert r == test_results
 
 
 def test_no_result():

@@ -90,7 +90,7 @@ class Report(Artifact):
 
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
-        Override Artifact.pre_save_hook(). Loads the associated ValidatedSpec details.
+        Override Artifact.pre_save_hook(). Loads the associated TestResults details.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
         :raises RuntimeError: On broken invariant
@@ -107,12 +107,12 @@ class Report(Artifact):
                 )
             except errors.ErrorNotFound:
                 raise RuntimeError(
-                    f"Validated specification with identifier {self.test_results_id} not found."
+                    f"Test Results with identifier {self.test_results_id} not found."
                 )
 
         if not artifact.header.type == ArtifactType.TEST_RESULTS:
             raise RuntimeError(
-                f"Validated specification with identifier {self.test_results_id} not found."
+                f"Test Results with identifier {self.test_results_id} not found."
             )
 
     def post_load_hook(self, context: Context, store: ArtifactStore) -> None:

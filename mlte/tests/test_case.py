@@ -1,5 +1,5 @@
 """
-TestCase defines structure for all tests to be defined for a TestSpec.
+TestCase defines structure for all tests to be defined for a TestSuite.
 """
 
 from __future__ import annotations
