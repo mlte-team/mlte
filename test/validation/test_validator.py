@@ -16,7 +16,7 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
 from mlte.model.serialization_error import SerializationError
-from mlte.validation.model_validator import ValidatorModel
+from mlte.validation.model import ValidatorModel
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------

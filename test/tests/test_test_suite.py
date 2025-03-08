@@ -9,9 +9,9 @@ from typing import Tuple
 import pytest
 
 from mlte.context.context import Context
-from mlte.spec.test_case import TestCase
-from mlte.spec.test_suite import TestSuite
 from mlte.store.artifact.store import ArtifactStore
+from mlte.tests.test_case import TestCase
+from mlte.tests.test_suite import TestSuite
 from test.store.artifact.fixture import store_with_context  # noqa
 
 

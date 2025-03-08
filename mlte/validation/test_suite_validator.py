@@ -5,9 +5,9 @@ Class in charge of validating a TestSuite.
 from __future__ import annotations
 
 from mlte.evidence.artifact import Evidence
-from mlte.spec.test_suite import TestSuite
-from mlte.validation.result import Result
-from mlte.validation.test_results import TestResults
+from mlte.results.result import Result
+from mlte.results.test_results import TestResults
+from mlte.tests.test_suite import TestSuite
 
 # -----------------------------------------------------------------------------
 # TestSuiteValidator

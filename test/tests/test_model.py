@@ -6,7 +6,7 @@ Unit tests for specification model.
 
 from __future__ import annotations
 
-from mlte.spec.model import TestSuiteModel
+from mlte.tests.model import TestSuiteModel
 from test.fixture.artifact import make_complete_test_suite_model
 
 # -----------------------------------------------------------------------------

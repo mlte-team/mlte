@@ -8,7 +8,7 @@ import pytest
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.types.integer import Integer
-from mlte.spec.test_suite import TestSuite
+from mlte.tests.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactFactory

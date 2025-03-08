@@ -2,8 +2,8 @@
 Unit tests for TestSuite schema.
 """
 
-from mlte.spec.test_case import TestCase
-from mlte.spec.test_suite import TestSuite
+from mlte.tests.test_case import TestCase
+from mlte.tests.test_suite import TestSuite
 
 from . import util as util
 

@@ -11,8 +11,8 @@ from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
-from mlte.spec.model import TestCaseModel
-from mlte.validation.result import Result
+from mlte.results.result import Result
+from mlte.tests.model import TestCaseModel
 from mlte.validation.validator import Validator
 
 

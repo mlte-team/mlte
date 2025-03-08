@@ -12,7 +12,7 @@ from typing import Optional
 
 import mlte._private.meta as meta
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.validation.model import ResultModel
+from mlte.results.model import ResultModel
 
 # -----------------------------------------------------------------------------
 # Validation Results

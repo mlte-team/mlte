@@ -13,7 +13,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.evidence.model import EvidenceModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import TestSuiteModel
+from mlte.results.model import TestResultsModel
 from mlte.store.artifact.underlying.rdbs.factory_nc import (
     create_negotiation_db_from_model,
     create_negotiation_model_from_db,
@@ -43,7 +43,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBTestResults,
     DBTestSuite,
 )
-from mlte.validation.model import TestResultsModel
+from mlte.tests.model import TestSuiteModel
 
 # -------------------------------------------------------------------------
 # DB artifact factory.

@@ -10,8 +10,8 @@ from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
-from mlte.spec.model import TestSuiteModel
-from mlte.spec.test_case import TestCase
+from mlte.tests.model import TestSuiteModel
+from mlte.tests.test_case import TestCase
 
 DEFAULT_TEST_SUITE_ID = "default.test_suite"
 

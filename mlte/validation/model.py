@@ -1,47 +1,35 @@
 """
-mlte/validation/model.py
-
-Model implementation for the ValidatedSpec artifact.
+Model implementation for the Validator.
 """
 
-from typing import Literal, Optional
+from typing import Any, Optional
 
-from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.model import BaseModel
-from mlte.spec.model import TestSuiteModel
+from mlte.model.base_model import BaseModel
 
 
-class ResultModel(BaseModel):
-    """A description of a Result."""
+class ValidatorModel(BaseModel):
+    """A description of a validator for a test."""
 
-    type: str
-    """The type of result."""
+    bool_exp: Optional[str]
+    """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
-    message: str
-    """The message indicating the reason for status."""
+    bool_exp_str: Optional[str]
+    """A string representation of the code for the bool expression to check for."""
 
-    evidence_metadata: Optional[EvidenceMetadata]
-    """Metadata about the evidence this came from."""
+    success: Optional[str]
+    """A string to be used when recording that the validation was succesful."""
 
+    failure: Optional[str]
+    """A string to be used when recording that the validation was not succesful."""
 
-class TestResultsModel(BaseModel):
-    """The model implementation for the TestResults artifact."""
+    info: Optional[str]
+    """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
-    artifact_type: Literal[ArtifactType.TEST_RESULTS] = (
-        ArtifactType.TEST_RESULTS
-    )
+    creator_class: Optional[str] = None
+    """The name of the class used to create this validator, if any."""
 
-    """Union discriminator."""
+    creator_function: Optional[str] = None
+    """The name of the function used to create this validator, if any."""
 
-    test_suite_id: str = ""
-    """The identifier of the TestSuite this TestResults came from."""
-
-    test_suite: TestSuiteModel
-    """A link to the actual TestSuite details."""
-
-    results: dict[str, ResultModel] = {}
-    """A list of validation results, for each test case."""
-
-
-TestResultsModel.model_rebuild()
+    creator_args: list[Any] = []
+    """The arguments of the function used to create this validator, if any."""

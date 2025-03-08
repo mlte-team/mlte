@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.model import MeasurementMetadata
-from mlte.spec.model import TestCaseModel, TestSuiteModel
+from mlte.results.model import ResultModel, TestResultsModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBEvidenceMetadata,
@@ -19,8 +19,8 @@ from mlte.store.artifact.underlying.rdbs.metadata_spec import (
     DBTestSuite,
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
-from mlte.validation.model import ResultModel, TestResultsModel
-from mlte.validation.model_validator import ValidatorModel
+from mlte.tests.model import TestCaseModel, TestSuiteModel
+from mlte.validation.model import ValidatorModel
 
 # -------------------------------------------------------------------------
 # TestSuite Factory Methods

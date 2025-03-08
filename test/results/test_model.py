@@ -4,11 +4,11 @@ Unit tests for TestResults model.
 
 from __future__ import annotations
 
-import mlte.validation.model as model
+import mlte.results.model as model
 from test.fixture.artifact import make_complete_test_results_model
 
 
-def test_validated_spec_body() -> None:
+def test_test_results_body() -> None:
     """A spec model can be serialized and deserialized."""
     objects = [
         make_complete_test_results_model(),

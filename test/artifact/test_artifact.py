@@ -15,11 +15,11 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
+from mlte.results.test_results import TestResults
 from mlte.session.session import set_context, set_store
-from mlte.spec.test_suite import TestSuite
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
-from mlte.validation.test_results import TestResults
+from mlte.tests.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
 from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID

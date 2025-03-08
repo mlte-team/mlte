@@ -7,7 +7,7 @@ from typing import Literal, Optional
 from mlte.artifact.type import ArtifactType
 from mlte.measurement.model import MeasurementMetadata
 from mlte.model import BaseModel
-from mlte.validation.model_validator import ValidatorModel
+from mlte.validation.model import ValidatorModel
 
 
 class TestCaseModel(BaseModel):

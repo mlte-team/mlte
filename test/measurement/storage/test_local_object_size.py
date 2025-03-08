@@ -12,7 +12,7 @@ from typing import Any, Dict
 
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.storage import LocalObjectSize
-from mlte.validation.result import Result
+from mlte.results.result import Result
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction

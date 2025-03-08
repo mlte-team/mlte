@@ -13,9 +13,9 @@ from mlte.evidence.model import EvidenceModel
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import TestSuiteModel
+from mlte.results.model import TestResultsModel
 from mlte.store.query import Filterable
-from mlte.validation.model import TestResultsModel
+from mlte.tests.model import TestSuiteModel
 
 
 class ArtifactHeaderModel(BaseModel):
