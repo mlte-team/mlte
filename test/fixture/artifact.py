@@ -288,11 +288,11 @@ def make_complete_test_suite_model() -> TestSuiteModel:
                 identifier="Test1",
                 goal="QACategory for useful things.",
                 validator=Validator(
-                    bool_exp=lambda x: x < 3, success="Yay", failure="oh"
+                    bool_exp=lambda x: x.value < 3, success="Yay", failure="oh"
                 ).to_model(),
                 measurement=MeasurementMetadata(
                     measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-                    output_class="mlte.evidence.type.Real",
+                    output_class="mlte.evidence.types.real.Real",
                 ),
             )
         ],
