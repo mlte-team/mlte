@@ -27,7 +27,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     test_suite = TestSuite.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_SUITE)
+        ArtifactFactory.make(ArtifactType.TEST_SUITE, complete=True)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 
@@ -47,7 +47,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 def test_no_result():
     # TestSuite does not have Result for evidence.
     test_suite = TestSuite.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_SUITE)
+        ArtifactFactory.make(ArtifactType.TEST_SUITE, complete=True)
     )
 
     results: Dict[str, Result] = {}
