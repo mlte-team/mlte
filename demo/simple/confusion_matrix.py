@@ -1,45 +1,33 @@
 """
-demo/confusion_matrix.py
-
 Implementation of ConfusionMatrix value.
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import pandas as pd
 
 from mlte.evidence.external import ExternalEvidence
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation.validator import Validator
 
 
 class ConfusionMatrix(ExternalEvidence):
     """A sample extension value type."""
 
-    def __init__(self, metadata: EvidenceMetadata, matrix: np.ndarray):
-        super().__init__(metadata)
+    def __init__(self, matrix: np.ndarray):
+        super().__init__()
 
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         return {"matrix": pd.DataFrame(self.matrix).to_json()}
 
     @staticmethod
-    def deserialize(
-        metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> ConfusionMatrix:
-        return ConfusionMatrix(
-            metadata, pd.read_json(data["matrix"]).to_numpy()
-        )
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, ConfusionMatrix):
-            return False
-        return self._equal(other)
+    def deserialize(data: dict[str, Any]) -> ConfusionMatrix:
+        return ConfusionMatrix(pd.read_json(data["matrix"]).to_numpy())
 
     def __str__(self) -> str:
         return f"{self.matrix}".replace("\n", ", ")
