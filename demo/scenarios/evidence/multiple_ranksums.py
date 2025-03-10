@@ -4,7 +4,7 @@ Implementation of MultipleRaknsums value.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 
@@ -41,8 +41,11 @@ class MultipleRanksums(ExternalEvidence):
     @classmethod
     def all_p_values_greater_or_equal_than(cls, threshold: float) -> Validator:
         """Checks if the p-value for multiple ranksums is below given threshold."""
+        bool_exp: Callable[[MultipleRanksums], bool] = (
+            lambda value: len(value.get_low_p_values(threshold)) == 0
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda value: len(value.get_low_p_values(threshold)) == 0,
+            bool_exp=bool_exp,
             success=f"All p-values are equal to or over threshold {threshold}",
             failure=f"One or more p-values are below threshold {threshold}",
         )
