@@ -7,7 +7,6 @@ from __future__ import annotations
 from typing import Any
 
 from mlte.evidence.external import ExternalEvidence
-from mlte.evidence.metadata import EvidenceMetadata
 from mlte.validation.validator import Validator
 
 
