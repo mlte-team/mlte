@@ -54,7 +54,7 @@ class Array(Evidence):
         body = typing.cast(EvidenceModel, model.body)
 
         assert (
-            body.value.value_type == EvidenceType.ARRAY
+            body.value.evidence_type == EvidenceType.ARRAY
         ), "Broken Precondition."
         return Array(array=body.value.data).with_metadata(body.metadata)
 

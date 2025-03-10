@@ -55,7 +55,7 @@ class Integer(Evidence):
         body = typing.cast(EvidenceModel, model.body)
 
         assert (
-            body.value.value_type == EvidenceType.INTEGER
+            body.value.evidence_type == EvidenceType.INTEGER
         ), "Broken Precondition."
         return Integer(value=body.value.integer).with_metadata(body.metadata)
 

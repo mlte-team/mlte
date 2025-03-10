@@ -32,6 +32,9 @@ class EvidenceType(StrEnum):
     ARRAY = "array"
     """An array of values."""
 
+    STRING = "string"
+    """A string media type."""
+
 
 class EvidenceModel(BaseModel):
     """The model implementation for MLTE evidence."""
@@ -51,15 +54,16 @@ class EvidenceModel(BaseModel):
         "OpaqueValueModel",
         "ImageValueModel",
         "ArrayValueModel",
-    ] = Field(..., discriminator="value_type")
-    """The body of the value."""
+        "StringValueModel",
+    ] = Field(..., discriminator="evidence_type")
+    """The body of the evidence."""
 
 
 class IntegerValueModel(BaseModel):
     """The model implementation for MLTE integer values."""
 
-    value_type: Literal[EvidenceType.INTEGER] = EvidenceType.INTEGER
-    """An identitifier for the value type."""
+    evidence_type: Literal[EvidenceType.INTEGER] = EvidenceType.INTEGER
+    """An identitifier for the evidence type."""
 
     integer: int
     """The encapsulated value."""
@@ -68,8 +72,8 @@ class IntegerValueModel(BaseModel):
 class RealValueModel(BaseModel):
     """The model implementation for MLTE real values."""
 
-    value_type: Literal[EvidenceType.REAL] = EvidenceType.REAL
-    """An identitifier for the value type."""
+    evidence_type: Literal[EvidenceType.REAL] = EvidenceType.REAL
+    """An identitifier for the evidence type."""
 
     real: float
     """The encapsulated value."""
@@ -78,8 +82,8 @@ class RealValueModel(BaseModel):
 class OpaqueValueModel(BaseModel):
     """The model implementation for MLTE opaque values."""
 
-    value_type: Literal[EvidenceType.OPAQUE] = EvidenceType.OPAQUE
-    """An identitifier for the value type."""
+    evidence_type: Literal[EvidenceType.OPAQUE] = EvidenceType.OPAQUE
+    """An identitifier for the evidence type."""
 
     data: Dict[str, Any]
     """Encapsulated, opaque data."""
@@ -88,8 +92,8 @@ class OpaqueValueModel(BaseModel):
 class ImageValueModel(BaseModel):
     """The model implementation for MLTE image values."""
 
-    value_type: Literal[EvidenceType.IMAGE] = EvidenceType.IMAGE
-    """An identitifier for the value type."""
+    evidence_type: Literal[EvidenceType.IMAGE] = EvidenceType.IMAGE
+    """An identitifier for the evidence type."""
 
     data: str
     """The image data as base64-encoded string."""
@@ -98,14 +102,21 @@ class ImageValueModel(BaseModel):
 class ArrayValueModel(BaseModel):
     """The model implementation for MLTE array values."""
 
-    value_type: Literal[EvidenceType.ARRAY] = EvidenceType.ARRAY
-    """An identitifier for the value type."""
+    evidence_type: Literal[EvidenceType.ARRAY] = EvidenceType.ARRAY
+    """An identitifier for the evidence type."""
 
     data: List[Any]
     """The array to capture."""
 
 
-EvidenceModel.model_rebuild()
+class StringValueModel(BaseModel):
+    """The model implementation for MLTE string values."""
+
+    evidence_type: Literal[EvidenceType.STRING] = EvidenceType.STRING
+    """An identitifier for the evidence type."""
+
+    string: str
+    """The encapsulated string."""
 
 
 # Value type mapping to models.

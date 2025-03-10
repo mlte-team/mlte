@@ -27,18 +27,18 @@ else:
 
 
 # -------------------------------------------------------------------------
-# Evidence/Value Elements
+# Evidence Elements
 # -------------------------------------------------------------------------
 
 
-class DBValueType(DBBase):
-    __tablename__ = "value_type"
+class DBEvidenceType(DBBase):
+    __tablename__ = "evidence_type"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
     def __repr__(self) -> str:
-        return f"ValueType(id={self.id!r}, name={self.name!r})"
+        return f"EvidenceType(id={self.id!r}, name={self.name!r})"
 
 
 class DBEvidence(DBBase):
@@ -68,11 +68,11 @@ class DBEvidence(DBBase):
 # -------------------------------------------------------------------------
 
 
-def init_value_types(session: Session):
-    """Initializes the table with the configured value types."""
-    if session.scalars(select(DBValueType)).first() is None:
+def init_evidence_types(session: Session):
+    """Initializes the table with the configured evidence types."""
+    if session.scalars(select(DBEvidenceType)).first() is None:
         types = [e.value for e in EvidenceType]
         for type in types:
-            type_obj = DBValueType(name=type)
+            type_obj = DBEvidenceType(name=type)
             session.add(type_obj)
         session.commit()

@@ -16,7 +16,7 @@ from mlte.validation.validator import Validator
 
 class Real(Evidence):
     """
-    Real implements the Value interface for a single real value.
+    Real implements the Evidence interface for a single real value.
     """
 
     def __init__(self, value: float):
@@ -56,7 +56,7 @@ class Real(Evidence):
         body = typing.cast(EvidenceModel, model.body)
 
         assert (
-            body.value.value_type == EvidenceType.REAL
+            body.value.evidence_type == EvidenceType.REAL
         ), "Broken Precondition."
         return Real(value=body.value.real).with_metadata(body.metadata)
 

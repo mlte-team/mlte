@@ -32,7 +32,7 @@ def create_evidence_db_from_model(
             measurement=json.dumps(evidence.metadata.measurement.to_json()),
         ),
         evidence_class=evidence.evidence_class,
-        evidence_type=evidence.value.value_type.value,
+        evidence_type=evidence.value.evidence_type.value,
         data_json=json.dumps(evidence.value.to_json()),
     )
     return value_obj

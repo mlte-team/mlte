@@ -3,10 +3,10 @@
     "ArrayValueModel": {
       "description": "The model implementation for MLTE array values.",
       "properties": {
-        "value_type": {
+        "evidence_type": {
           "const": "array",
           "default": "array",
-          "title": "Value Type",
+          "title": "Evidence Type",
           "type": "string"
         },
         "data": {
@@ -42,10 +42,10 @@
     "ImageValueModel": {
       "description": "The model implementation for MLTE image values.",
       "properties": {
-        "value_type": {
+        "evidence_type": {
           "const": "image",
           "default": "image",
-          "title": "Value Type",
+          "title": "Evidence Type",
           "type": "string"
         },
         "data": {
@@ -62,10 +62,10 @@
     "IntegerValueModel": {
       "description": "The model implementation for MLTE integer values.",
       "properties": {
-        "value_type": {
+        "evidence_type": {
           "const": "integer",
           "default": "integer",
-          "title": "Value Type",
+          "title": "Evidence Type",
           "type": "string"
         },
         "integer": {
@@ -109,10 +109,10 @@
     "OpaqueValueModel": {
       "description": "The model implementation for MLTE opaque values.",
       "properties": {
-        "value_type": {
+        "evidence_type": {
           "const": "opaque",
           "default": "opaque",
-          "title": "Value Type",
+          "title": "Evidence Type",
           "type": "string"
         },
         "data": {
@@ -129,10 +129,10 @@
     "RealValueModel": {
       "description": "The model implementation for MLTE real values.",
       "properties": {
-        "value_type": {
+        "evidence_type": {
           "const": "real",
           "default": "real",
-          "title": "Value Type",
+          "title": "Evidence Type",
           "type": "string"
         },
         "real": {
@@ -144,6 +144,26 @@
         "real"
       ],
       "title": "RealValueModel",
+      "type": "object"
+    },
+    "StringValueModel": {
+      "description": "The model implementation for MLTE string values.",
+      "properties": {
+        "evidence_type": {
+          "const": "string",
+          "default": "string",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "string": {
+          "title": "String",
+          "type": "string"
+        }
+      },
+      "required": [
+        "string"
+      ],
+      "title": "StringValueModel",
       "type": "object"
     }
   },
@@ -169,9 +189,10 @@
           "image": "#/$defs/ImageValueModel",
           "integer": "#/$defs/IntegerValueModel",
           "opaque": "#/$defs/OpaqueValueModel",
-          "real": "#/$defs/RealValueModel"
+          "real": "#/$defs/RealValueModel",
+          "string": "#/$defs/StringValueModel"
         },
-        "propertyName": "value_type"
+        "propertyName": "evidence_type"
       },
       "oneOf": [
         {
@@ -188,6 +209,9 @@
         },
         {
           "$ref": "#/$defs/ArrayValueModel"
+        },
+        {
+          "$ref": "#/$defs/StringValueModel"
         }
       ],
       "title": "Value"

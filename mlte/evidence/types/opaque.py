@@ -54,7 +54,7 @@ class Opaque(Evidence):
         body = typing.cast(EvidenceModel, model.body)
 
         assert (
-            body.value.value_type == EvidenceType.OPAQUE
+            body.value.evidence_type == EvidenceType.OPAQUE
         ), "Broken Precondition."
         return Opaque(data=body.value.data).with_metadata(body.metadata)
 

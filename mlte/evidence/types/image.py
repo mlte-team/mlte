@@ -73,7 +73,7 @@ class Image(Evidence):
         body = typing.cast(EvidenceModel, model.body)
 
         assert (
-            body.value.value_type == EvidenceType.IMAGE
+            body.value.evidence_type == EvidenceType.IMAGE
         ), "Broken Precondition."
         return Image(
             image=base64.decodebytes(body.value.data.encode("utf-8"))

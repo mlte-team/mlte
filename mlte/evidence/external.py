@@ -77,7 +77,7 @@ class ExternalEvidence(Evidence, ABC):
             model.body.artifact_type == ArtifactType.EVIDENCE
         ), "Broken precondition."
         assert (
-            model.body.value.value_type == EvidenceType.OPAQUE
+            model.body.value.evidence_type == EvidenceType.OPAQUE
         ), "Broken precondition."
         return cls.deserialize(model.body.value.data).with_metadata(
             model.body.metadata
