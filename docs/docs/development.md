@@ -1,6 +1,6 @@
 # Development
 
-This document describes some of the development practices used within `MLTE`.
+This document describes some of the development practices used in `MLTE`.
 
 ## Setup
 
@@ -8,7 +8,7 @@ This document describes some of the development practices used within `MLTE`.
 
 Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both included.
 
-If you don't have one of those versions installed, or you want to target a specific one that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
+If you do not have one of these versions installed, or you want to target a specific version that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
 - Install `pyenv` as described in this link: https://github.com/pyenv/pyenv
 - Install the desired Python version (in this example, 3.9):
@@ -27,7 +27,7 @@ $ pyenv local 3.9
 
 ### Requirements
 
- - MLTE uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - `MLTE` uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
  - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
 
 ```bash
@@ -54,9 +54,9 @@ $ poetry install --with demo
 
 ## Project Development Commands
 
-You can run most project commands (e.g., format sources, lint), in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
+You can run most project commands (e.g., format sources, lint) in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment with, you can run all the commands below without the `poetry run` prefix. 
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `poetry run` prefix. 
 
 To manually activate your environment, run:
 
@@ -126,7 +126,7 @@ $ make docs
 
 ### Unit Tests
 
-We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test-runner for Python. You can run unit tests locally with:
+We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0.x/contents.html" target="_blank">`pytest`</a> package, a test runner for Python. You can run unit tests locally with:
 
 ```bash
 $ make test
@@ -228,7 +228,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the MLTE repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
+We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
 We maintain a group of requirements for building the documentation under the `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
 

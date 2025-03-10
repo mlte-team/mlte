@@ -4,7 +4,7 @@
 
 ## Installation
 
-If you already have Python installed you can install *`MLTE`* with
+If you already have Python installed you can install `MLTE` with
 
 ```bash
 $ pip install mlte-python
@@ -16,7 +16,7 @@ $ conda install mlte-python
 ```
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
-## Using MLTE as a library
+## Using `MLTE` as a library
 
 ### Importing
 
@@ -39,9 +39,9 @@ from mlte.spec ... #importing from spec subpackage
 from mlte.report ... #importing from report subpackage
 ```
 
-### Setting up a MLTE session
+### Setting up a `MLTE` session
 
-Before most operations can be done on MLTE, a context and artifact store need to be set. When using MLTE as a library, there are two commands that can be executed once in a script to set this global state. They can be imported using
+Before most operations can be done on `MLTE`, a context and artifact store need to be set. When using `MLTE` as a library, there are two commands that can be executed once in a script to set this global state. They can be imported using
 
 ```python
 from mlte.session import set_context, set_store
@@ -86,7 +86,7 @@ Some common flags used with the backend include the following:
 
  - **Token key**: The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing instead of the default one. This can be done by either passing it as a command line argument with the `--jwt-secret` flag, or creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`
 
- - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend needs to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When run through the mlte package, the frontend will be hosted at `http://localhost:8080`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
+ - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend needs to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When run through the `MLTE` package, the frontend will be hosted at `http://localhost:8080`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
 
  A sample artifact store is included in this repo, currently containing only a sample negotiation card artifact. To start the backend with this store, run it in this way from the root of this repo:
 
@@ -121,29 +121,29 @@ The following are the types of store URIs used by the system.
 
 - **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): a store in a relational database (DB) engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html" target="_blank">page</a> for details on supported drivers, and see section below on [Using a Relational DB](#using-a-relational-db-engine-backend) for more details on the other parameters on this URI.
 
-- **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote MLTE backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the MLTE frontend. The ``<host>`` and ``<port>`` point to the server where the MLTE backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the MLTE backend and frontend.
+- **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote `MLTE` backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the `MLTE` frontend. The ``<host>`` and ``<port>`` point to the server where the `MLTE` backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the `MLTE` backend and frontend.
 
 ## Using a Relational DB Engine Backend
 
-To use a relational DB engine as a store, you first need to set up your DB engine separately. MLTE comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
+To use a relational DB engine as a store, you first need to set up your DB engine separately. `MLTE` comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
 To install your DB engine, you need to follow the specific instructions depending on the engine type. Usually the steps will include:
 
 1. Download the DB engine installer (e.g., for PostgreSQL, get it from their <a href="https://www.postgresql.org/download/" target="_blank">downloads page</a>), and execute the installation as required for the DB engine.
    - Alternatively, you can download a docker container image with the proper database engine set up.
 1. Ensure the DB engine is running (starting a container if applicable).
-1. Use the DB's tools to create a user with DB creation permissions to be used by MLTE; or create a regular user for MLTE, and create the DB for MLTE manually using an existing user that can do that.
+1. Use the DB's tools to create a user with DB creation permissions to be used by `MLTE`; or create a regular user for `MLTE`, and create the DB for `MLTE` manually using an existing user that can do that.
    - If using a container, this may just require you to specify environment variables for the container, which will create and set up the user automatically.
 
-Then, you can just pass the URI for the DB store when running the MLTE backend, or when using `set_store` and using MLTE as a library.
+Then, you can just pass the URI for the DB store when running the `MLTE` backend, or when using `set_store` and using `MLTE` as a library.
 
-Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte` (which can exist previously or will be created by MLTE if possible):
+Example of running the backend with PostgreSQL, a user called `mlte_user` with password `mlte_pass`, and database called `mlte` (which can exist previously or will be created by `MLTE` if possible):
 
 ```bash
 $ mlte backend --store-uri postgresql://mlte_user:mlte_pass@localhost/mlte
 ```
 
-Example for setting the store inside code when you are using MLTE as a library:
+Example for setting the store inside code when you are using `MLTE` as a library:
 
 ```python
 set_store("postgresql://mlte_user:mlte_pass@localhost/mlte")

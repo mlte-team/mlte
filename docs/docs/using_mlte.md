@@ -2,11 +2,11 @@
 
 After [setting up `MLTE`](setting_up_mlte.md), the process begins at the inception of a project with requirements definition. 
 
-If your team has an existing project and you would like to test it using  `MLTE`, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`. However, if stakeholders have not been activley involved in the process, it is recommended to start with the Negotiation Card to make sure that both system and model requirements have been elicited and defined.
+If your team has an existing project and you would like to test it using  `MLTE`, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`. However, if stakeholders have not been actively involved in the process, it is recommended to start with the Negotiation Card to make sure that both system and model requirements have been elicited and defined.
 
 ## Negotiate Model Quality Requirements
 
-To begin the `MLTE` process, teams hold a negotiation a discussion about requirements with stakeholders that should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
+To begin the `MLTE` process, teams hold a negotiation discussion about requirements with stakeholders that should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
 
 - The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` user interface. To set up `MLTE`, see the [Setting Up `MLTE`](setting_up_mlte.md) page, and to view the content in the Negotiation Card, see this [page](negotiation_card.md).
 - The negotiation is a collaborative discussion where all involved parties aim to agree on project requirements and discuss technical details.
@@ -47,9 +47,11 @@ from demo.scenarios.values.multiple_accuracy import MultipleAccuracy
 spec = Spec(
     properties={
         Fairness(
-            "Important check if model performs well accross different populations"
+            "Important check if model performs well accross different
+            populations"
         ): {
-            "accuracy across gardens": MultipleAccuracy.all_accuracies_more_or_equal_than(
+            "accuracy across gardens": 
+            MultipleAccuracy.all_accuracies_more_or_equal_than(
                 0.9
             )
         },
@@ -71,7 +73,8 @@ from mlte.measurement.external_measurement import ExternalMeasurement
 
 # Evaluate accuracy, identifier has to be the same one defined in the Spec.
 accuracy_measurement = ExternalMeasurement(
-    "accuracy across gardens", MultipleAccuracy, calculate_model_performance_acc
+    "accuracy across gardens", MultipleAccuracy, 
+    calculate_model_performance_acc
 )
 accuracy = accuracy_measurement.evaluate(split_data[0], split_data[1])
 
@@ -104,7 +107,8 @@ spec_validator.add_values(Value.load_all())
 validated_spec = spec_validator.validate()
 validated_spec.save(force=True)
 
-# We want to see the validation results in the Notebook, regardless of them being saved.
+# We want to see the validation results in the Notebook, 
+# regardless of them being saved.
 validated_spec.print_results()
 ```
 
@@ -129,8 +133,10 @@ def build_report() -> Report:
 
     report.model_specification.domain = "Classification"
     report.model_specification.data = [
-        Dataset("Dataset0", "https://github.com/mlte-team", "This is one training dataset."),
-        Dataset("Dataset1", "https://github.com/mlte-team", "This is the other one we used."),
+        Dataset("Dataset0", "https://github.com/mlte-team", 
+        "This is one training dataset."),
+        Dataset("Dataset1", "https://github.com/mlte-team", 
+        "This is the other one we used."),
     ]
 
     report.considerations.users = [
@@ -216,13 +222,16 @@ from demo.scenarios.properties.accuracy import Accuracy
 from demo.scenarios.values.string import String
 
 
-# The full spec. Note that the Robustness Property contains conditions for both Robustness scenarios.
+# The full spec. Note that the Robustness Property contains conditions for 
+# both Robustness scenarios.
 spec = Spec(
     properties={
         Fairness(
-            "Important check if model performs well accross different populations"
+            "Important check if model performs well accross 
+            different populations"
         ): {
-            "accuracy across gardens": MultipleAccuracy.all_accuracies_more_or_equal_than(
+            "accuracy across gardens": 
+            MultipleAccuracy.all_accuracies_more_or_equal_than(
                 0.9
             )
         },
@@ -233,7 +242,8 @@ spec = Spec(
             "multiple ranksums for clade2": MultipleRanksums.all_p_values_greater_or_equal_than(
                 0.05
             ),
-            "multiple ranksums between clade2 and 3": MultipleRanksums.all_p_values_greater_or_equal_than(
+            "multiple ranksums between clade2 and 3": 
+            MultipleRanksums.all_p_values_greater_or_equal_than(
                 0.05
             ),
         },
@@ -243,7 +253,8 @@ spec = Spec(
         PredictingMemoryCost(
             "Useful to evaluate resources needed when predicting"
         ): {
-            "predicting memory": LocalProcessMemoryConsumption.value().average_consumption_less_than(
+            "predicting memory": 
+            LocalProcessMemoryConsumption.value().average_consumption_less_than(
                 512000.0
             )
         }
