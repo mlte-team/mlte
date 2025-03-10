@@ -202,7 +202,7 @@
           ],
           "title": "Info"
         },
-        "creator_class": {
+        "creator_entity": {
           "anyOf": [
             {
               "type": "string"
@@ -212,7 +212,7 @@
             }
           ],
           "default": null,
-          "title": "Creator Class"
+          "title": "Creator Entity"
         },
         "creator_function": {
           "anyOf": [

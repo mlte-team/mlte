@@ -106,7 +106,7 @@ def test_validator_model() -> None:
             success="Test was succesful!",
             failure="Test failed :(",
             info="Only data was attached",
-            creator_class="TestClass",
+            creator_entity="TestClass",
             creator_function="test_validator_model",
             creator_args=[2.3],
         ),

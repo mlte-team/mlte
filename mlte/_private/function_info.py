@@ -67,9 +67,10 @@ class FunctionInfo:
             if arg_key != "cls" and arg_key != "self":
                 filtered_args.append(arg_values[arg_key])
 
-        # Build the class info as a string.
+        # Build the class info as a string, or module if there is no class.
         if "cls" not in arg_keys:
-            cls_str = ""
+            module = inspect.getmodule(caller_function)
+            cls_str = f"{module.__name__ if module else ""}"
         else:
             cls: Type[object] = arg_values["cls"]
             cls_str = f"{get_full_path(cls)}"

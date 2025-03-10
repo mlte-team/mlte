@@ -25,8 +25,8 @@ class ValidatorModel(BaseModel):
     info: Optional[str]
     """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
-    creator_class: Optional[str] = None
-    """The name of the class used to create this validator, if any."""
+    creator_entity: Optional[str] = None
+    """The full name of the class or module used to create this validator, if any."""
 
     creator_function: Optional[str] = None
     """The name of the function used to create this validator, if any."""

@@ -181,7 +181,7 @@ class Validator(Serializable):
             failure=self.failure,
             info=self.info,
             bool_exp_str=self.bool_exp_str,
-            creator_class=(
+            creator_entity=(
                 self.creator.function_class
                 if self.creator is not None
                 else None
@@ -220,10 +220,10 @@ class Validator(Serializable):
                 FunctionInfo(
                     model.creator_function,
                     model.creator_args,
-                    model.creator_class,
+                    model.creator_entity,
                 )
                 if model.creator_function is not None
-                and model.creator_class is not None
+                and model.creator_entity is not None
                 else None
             ),
         )
