@@ -34,13 +34,22 @@ class TestSuite(Artifact):
         """
         super().__init__(identifier, ArtifactType.TEST_SUITE)
 
+        # Check that no tests cases have the same id.
+        found_ids = []
+        for test_case in test_cases:
+            if test_case.identifier in found_ids:
+                raise RuntimeError(
+                    f"Found repeated test case id: <{test_case.identifier}>, all tests cases must have unique ids."
+                )
+            found_ids.append(test_case.identifier)
+
         self.test_cases = {
             test_case.identifier: test_case for test_case in test_cases
         }
         """The collection of TestCases that compose the TestSuite."""
 
     def add_test_case(self, test_case: TestCase):
-        """Adds a test case to its list."""
+        """Adds a test case to its list. Will overwrite if another one with same id had been stored before."""
         self.test_cases[test_case.identifier] = test_case
 
     # -------------------------------------------------------------------------

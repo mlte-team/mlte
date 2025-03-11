@@ -65,3 +65,14 @@ def test_load_failure(
     store, ctx = store_with_context
     with pytest.raises(RuntimeError):
         _ = TestSuite.load_with("test_suite", context=ctx, store=store)
+
+
+def test_repeated_ids():
+    """Check that received test cases have unique ids."""
+    with pytest.raises(RuntimeError):
+        _ = TestSuite(
+            test_cases=[
+                TestCase(identifier="t1", goal="to test", qas_list=["qa1"]),
+                TestCase(identifier="t1", goal="to test", qas_list=["qa1"]),
+            ]
+        )
