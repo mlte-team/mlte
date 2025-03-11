@@ -202,6 +202,14 @@
           ],
           "title": "Info"
         },
+        "input_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Types",
+          "type": "array"
+        },
         "creator_entity": {
           "anyOf": [
             {

@@ -10,9 +10,10 @@ import inspect
 import typing
 from typing import Any, Callable, Optional
 
-from mlte._private import reflection, serializing
+from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
+from mlte.evidence.artifact import Evidence
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -31,6 +32,7 @@ class Validator(Serializable):
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
+        input_types: list[str] = [],
         creator: Optional[FunctionInfo] = None,
     ):
         """
@@ -40,6 +42,7 @@ class Validator(Serializable):
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
+        :param input_types: A list of strings indicating the type of input the validator will expect.
         :param creator: Information about the class and method that created this validator, if any.
         """
         if success is not None and failure is None:
@@ -59,6 +62,7 @@ class Validator(Serializable):
         self.success = success
         self.failure = failure
         self.info = info
+        self.input_types = input_types
         self.creator = creator
 
         self.bool_exp_str = (
@@ -74,6 +78,7 @@ class Validator(Serializable):
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
+        input_types: list[type] = [Evidence],
     ) -> Validator:
         """
         Creates a Validator using the provided test, extracting context info from the function that called us.
@@ -82,7 +87,7 @@ class Validator(Serializable):
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-
+        :param input_types: A list of types indicating the type of input the validator will expect.
         :returns: A Validator, potentially with caller creator information.
         """
         # Get function info, passing our caller as argument.
@@ -96,6 +101,10 @@ class Validator(Serializable):
             success=success,
             failure=failure,
             info=info,
+            input_types=[
+                meta.get_qualified_name(input_type)
+                for input_type in input_types
+            ],
             creator=function_info,
         )
         return validator
@@ -181,6 +190,7 @@ class Validator(Serializable):
             failure=self.failure,
             info=self.info,
             bool_exp_str=self.bool_exp_str,
+            input_types=self.input_types,
             creator_entity=(
                 self.creator.function_parent
                 if self.creator is not None
@@ -216,6 +226,7 @@ class Validator(Serializable):
             success=model.success,
             failure=model.failure,
             info=model.info,
+            input_types=model.input_types,
             creator=(
                 FunctionInfo(
                     model.creator_function,

@@ -25,6 +25,9 @@ class ValidatorModel(BaseModel):
     info: Optional[str]
     """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
+    input_types: list[str] = []
+    """A list of strings representing the types of inputs to be received when validating."""
+
     creator_entity: Optional[str] = None
     """The full name of the class or module used to create this validator, if any."""
 
