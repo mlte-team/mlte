@@ -1,6 +1,4 @@
 """
-mlte/private/meta.py
-
 Metaclasses helpers.
 """
 
@@ -17,10 +15,10 @@ def has_callables(type: type, *names: str) -> bool:
     return all(has_callable(type, name) for name in names)
 
 
-def get_qualified_name(cls: type | Callable[[], Any]) -> str:
+def get_qualified_name(entity: type | Callable[[], Any]) -> str:
     """
     Returns the full path to the given class or function, including module.
 
     :param cls: It has to be a class type or a function.
     """
-    return f"{cls.__qualname__}"
+    return f"{entity.__module__}.{entity.__qualname__}"
