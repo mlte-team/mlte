@@ -147,7 +147,7 @@ def test_build_validator():
     assert validator.failure == "Aww"
     assert validator.info is None
     assert validator.creator is not None
-    assert validator.creator.function_parent == ""
+    assert validator.creator.function_parent == "test.validation.test_validator"
     assert validator.creator.function_name == "test_build_validator"
     assert validator.creator.arguments == []
 
