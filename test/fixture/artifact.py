@@ -10,7 +10,7 @@ import random
 import string
 from typing import List, Optional, Union
 
-from mlte._private.meta import get_full_path
+from mlte._private import meta
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
@@ -137,7 +137,7 @@ def _make_value(id: str, complete: bool) -> EvidenceModel:
 
     return EvidenceModel(
         metadata=m,
-        evidence_class=get_full_path(Integer),
+        evidence_class=meta.get_qualified_name(Integer),
         value=IntegerValueModel(integer=1),
     )
 

@@ -8,7 +8,7 @@ import typing
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from mlte._private.meta import get_full_path
+from mlte._private import meta
 from mlte._private.reflection import load_class
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -41,7 +41,7 @@ class Evidence(Artifact, ABC):
         """We use the default id for now, it will be updated later with the metadata."""
         super().__init__(self.get_default_id(), ArtifactType.EVIDENCE)
 
-        self.typename: str = get_full_path(self.__class__)
+        self.typename: str = meta.get_qualified_name(self.__class__)
         """The class type of the evidence itself."""
 
     def with_metadata(self: T, evidence_metadata: EvidenceMetadata) -> T:
@@ -75,7 +75,7 @@ class Evidence(Artifact, ABC):
             header=self.build_artifact_header(),
             body=EvidenceModel(
                 metadata=self.metadata,
-                evidence_class=get_full_path(self.__class__),
+                evidence_class=meta.get_qualified_name(self.__class__),
                 value=value_model,  # type: ignore
             ),
         )

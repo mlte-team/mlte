@@ -182,7 +182,7 @@ class Validator(Serializable):
             info=self.info,
             bool_exp_str=self.bool_exp_str,
             creator_entity=(
-                self.creator.function_class
+                self.creator.function_parent
                 if self.creator is not None
                 else None
             ),

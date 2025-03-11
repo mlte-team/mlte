@@ -53,12 +53,14 @@ class ExternalMeasurement(Measurement):
         metadata = super().generate_metadata()
 
         # Override default class with external-measurement specific one.
-        metadata.output_class = meta.get_full_path(self.output_evidence_type)
+        metadata.output_class = meta.get_qualified_name(
+            self.output_evidence_type
+        )
 
         # Add specific function being used.
         if self.function is not None:
             metadata.additional_data[self.EXTERNAL_FUNCTION_KEY] = (
-                meta.get_full_path(self.function)
+                meta.get_qualified_name(self.function)
             )
         return metadata
 
