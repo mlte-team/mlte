@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Any, Dict, Type
+from typing import Any, Callable, Dict, Type
 
 import psutil
 
@@ -92,8 +92,11 @@ class MemoryStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
+        bool_exp: Callable[[MemoryStatistics], bool] = (
+            lambda stats: stats.max < threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda stats: stats.max < threshold,
+            bool_exp=bool_exp,
             success=f"Maximum consumption below threshold {threshold}",
             failure=f"Maximum consumption exceeds threshold {threshold}",
         )
@@ -108,8 +111,11 @@ class MemoryStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
+        bool_exp: Callable[[MemoryStatistics], bool] = (
+            lambda stats: stats.avg < threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda stats: stats.avg < threshold,
+            bool_exp=bool_exp,
             success=f"Average consumption below threshold {threshold}",
             failure=f"Average consumption exceeds threshold {threshold}",
         )

@@ -5,6 +5,7 @@ An Evidence instance for a scalar, integral value.
 from __future__ import annotations
 
 import typing
+from typing import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -75,10 +76,13 @@ class Integer(Evidence):
         Determine if integer is strictly less than `value`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Integer], bool] = (
+            lambda integer: integer.value < threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda integer: integer.value < threshold,
+            bool_exp=bool_exp,
             success=f"Integer magnitude is less than threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
         )
@@ -90,10 +94,13 @@ class Integer(Evidence):
         Determine if integer is less than or equal to `value`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Integer], bool] = (
+            lambda integer: integer.value <= threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda integer: integer.value <= threshold,
+            bool_exp=bool_exp,
             success=f"Integer magnitude is less than or equal to threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
         )

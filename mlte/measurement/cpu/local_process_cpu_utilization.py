@@ -9,7 +9,7 @@ from __future__ import annotations
 import subprocess
 import time
 from subprocess import SubprocessError
-from typing import Any, Dict, Type
+from typing import Any, Callable, Dict, Type
 
 from mlte._private.platform import is_windows
 from mlte.evidence.external import ExternalEvidence
@@ -92,8 +92,11 @@ class CPUStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
+        bool_exp: Callable[[CPUStatistics], bool] = (
+            lambda stats: stats.max < threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda stats: stats.max < threshold,
+            bool_exp=bool_exp,
             success=f"Maximum utilization below threshold {threshold:.2f}",
             failure=f"Maximum utilization exceeds threshold {threshold:.2f}",
         )
@@ -108,8 +111,11 @@ class CPUStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
+        bool_exp: Callable[[CPUStatistics], bool] = (
+            lambda stats: stats.avg < threshold
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda stats: stats.avg < threshold,
+            bool_exp=bool_exp,
             success=f"Average utilization below threshold {threshold:.2f}",
             failure=f"Average utilization exceeds threshold {threshold:.2f}",
         )

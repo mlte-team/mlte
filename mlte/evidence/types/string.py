@@ -5,6 +5,7 @@ An Evidence instance for a string value.
 from __future__ import annotations
 
 import typing
+from typing import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -63,8 +64,11 @@ class String(Evidence):
     @classmethod
     def contains(cls, substring: str) -> Validator:
         """Checks if the given string is in this one."""
+        bool_exp: Callable[[String], bool] = (
+            lambda value: substring in value.value
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda value: substring in value.value,
+            bool_exp=bool_exp,
             success=f"Substring '{substring}' is contained in the string value.",
             failure=f"Substring '{substring}' is not contained in the string value.",
         )
@@ -73,8 +77,11 @@ class String(Evidence):
     @classmethod
     def equal_to(cls, other_string: str) -> Validator:
         """Checks if the given string is the same as this one in value."""
+        bool_exp: Callable[[String], bool] = (
+            lambda value: other_string == value.value
+        )
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda value: other_string == value.value,
+            bool_exp=bool_exp,
             success=f"String '{other_string}' is equal to the internal string value.",
             failure=f"String '{other_string}' is not equal to the internal string value.",
         )

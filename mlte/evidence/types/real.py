@@ -5,6 +5,7 @@ An Evidence instance for a scalar, real value.
 from __future__ import annotations
 
 import typing
+from typing import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -76,10 +77,11 @@ class Real(Evidence):
         Determine if real is strictly less than `threshold`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Real], bool] = lambda real: real.value < threshold
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real.value < threshold,
+            bool_exp=bool_exp,
             success=f"Real magnitude is less than threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
         )
@@ -91,10 +93,11 @@ class Real(Evidence):
         Determine if real is less than or equal to `threshold`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Real], bool] = lambda real: real.value <= threshold
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real.value <= threshold,
+            bool_exp=bool_exp,
             success=f"Real magnitude is less than or equal to threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
         )
@@ -106,10 +109,11 @@ class Real(Evidence):
         Determine if real is strictly greater than `threshold`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Real], bool] = lambda real: real.value > threshold
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real.value > threshold,
+            bool_exp=bool_exp,
             success=f"Real magnitude is greater than threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
         )
@@ -121,10 +125,11 @@ class Real(Evidence):
         Determine if real is greater than or equal to `threshold`.
 
         :param threshold: The threshold value
-        :return: The Validator that can be used to validate a Value.
+        :return: The Validator that can be used to validate Evidence.
         """
+        bool_exp: Callable[[Real], bool] = lambda real: real.value >= threshold
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real.value >= threshold,
+            bool_exp=bool_exp,
             success=f"Real magnitude is greater than or equal to threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
         )
