@@ -84,6 +84,7 @@ class Real(Evidence):
             bool_exp=bool_exp,
             success=f"Real magnitude is less than threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
+            input_types=[Real],
         )
         return validator
 
@@ -100,6 +101,7 @@ class Real(Evidence):
             bool_exp=bool_exp,
             success=f"Real magnitude is less than or equal to threshold {threshold}",
             failure=f"Real magnitude exceeds threshold {threshold}",
+            input_types=[Real],
         )
         return validator
 
@@ -116,6 +118,7 @@ class Real(Evidence):
             bool_exp=bool_exp,
             success=f"Real magnitude is greater than threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
+            input_types=[Real],
         )
         return validator
 
@@ -132,5 +135,6 @@ class Real(Evidence):
             bool_exp=bool_exp,
             success=f"Real magnitude is greater than or equal to threshold {threshold}",
             failure=f"Real magnitude is below threshold {threshold}",
+            input_types=[Real],
         )
         return validator

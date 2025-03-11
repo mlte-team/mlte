@@ -17,6 +17,7 @@ def all_accuracies_more_or_equal_than(threshold: float) -> Validator:
         bool_exp=bool_exp,
         success=f"All accuracies are equal to or over threshold {threshold}",
         failure=f"One or more accuracies are below threshold {threshold}",
+        input_types=[Array],
     )
     return validator
 
@@ -30,5 +31,6 @@ def p_value_greater_or_equal_to(threshold: float) -> Validator:
         bool_exp=bool_exp,
         success=f"P-Value is greater or equal to {threshold}",
         failure=f"P-Value is less than threshold {threshold}",
+        input_types=[Array],
     )
     return validator

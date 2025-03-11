@@ -71,6 +71,7 @@ class String(Evidence):
             bool_exp=bool_exp,
             success=f"Substring '{substring}' is contained in the string value.",
             failure=f"Substring '{substring}' is not contained in the string value.",
+            input_types=[String],
         )
         return validator
 
@@ -84,6 +85,7 @@ class String(Evidence):
             bool_exp=bool_exp,
             success=f"String '{other_string}' is equal to the internal string value.",
             failure=f"String '{other_string}' is not equal to the internal string value.",
+            input_types=[String],
         )
         return validator
 

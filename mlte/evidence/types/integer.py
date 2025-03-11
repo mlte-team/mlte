@@ -85,6 +85,7 @@ class Integer(Evidence):
             bool_exp=bool_exp,
             success=f"Integer magnitude is less than threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
+            input_types=[Integer],
         )
         return validator
 
@@ -103,5 +104,6 @@ class Integer(Evidence):
             bool_exp=bool_exp,
             success=f"Integer magnitude is less than or equal to threshold {threshold}",
             failure=f"Integer magnitude exceeds threshold {threshold}",
+            input_types=[Integer],
         )
         return validator

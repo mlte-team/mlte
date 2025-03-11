@@ -52,5 +52,6 @@ class ConfusionMatrix(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"Misclass count is less than threshold {threshold}",
             failure=f"Misclassification count exceeds threshold {threshold}",
+            input_types=[ConfusionMatrix],
         )
         return validator

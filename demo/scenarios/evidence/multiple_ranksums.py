@@ -48,6 +48,7 @@ class MultipleRanksums(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"All p-values are equal to or over threshold {threshold}",
             failure=f"One or more p-values are below threshold {threshold}",
+            input_types=[MultipleRanksums],
         )
         return validator
 

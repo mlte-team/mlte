@@ -99,6 +99,7 @@ class MemoryStatistics(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"Maximum consumption below threshold {threshold}",
             failure=f"Maximum consumption exceeds threshold {threshold}",
+            input_types=[MemoryStatistics],
         )
         return validator
 
@@ -118,6 +119,7 @@ class MemoryStatistics(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"Average consumption below threshold {threshold}",
             failure=f"Average consumption exceeds threshold {threshold}",
+            input_types=[MemoryStatistics],
         )
         return validator
 

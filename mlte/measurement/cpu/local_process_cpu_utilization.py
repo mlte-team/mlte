@@ -99,6 +99,7 @@ class CPUStatistics(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"Maximum utilization below threshold {threshold:.2f}",
             failure=f"Maximum utilization exceeds threshold {threshold:.2f}",
+            input_types=[CPUStatistics],
         )
         return validator
 
@@ -118,6 +119,7 @@ class CPUStatistics(ExternalEvidence):
             bool_exp=bool_exp,
             success=f"Average utilization below threshold {threshold:.2f}",
             failure=f"Average utilization exceeds threshold {threshold:.2f}",
+            input_types=[CPUStatistics],
         )
         return validator
 

@@ -86,7 +86,9 @@ class Image(Evidence):
         :param info: The information to record.
         :return: The Validator that can be used.
         """
-        validator: Validator = Validator.build_validator(info=info)
+        validator: Validator = Validator.build_validator(
+            info=info, input_types=[]
+        )
         return validator
 
     def __str__(self) -> str:
