@@ -54,6 +54,10 @@ class ExternalEvidence(Evidence, ABC):
         """
         raise NotImplementedError("ExternalEvidence.deserialize()")
 
+    def __str__(self) -> str:
+        """Return a string representation of this Evidence."""
+        return f"{self.serialize()}"
+
     def to_model(self) -> ArtifactModel:
         """
         Serialize an Evidence to its corresponding model.

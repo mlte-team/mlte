@@ -88,3 +88,7 @@ class Image(Evidence):
         """
         validator: Validator = Validator.build_validator(info=info)
         return validator
+
+    def __str__(self) -> str:
+        """Return a string representation of this Evidence."""
+        return f"Image size: {len(self.image)}"

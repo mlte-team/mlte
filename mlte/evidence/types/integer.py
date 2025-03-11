@@ -67,7 +67,7 @@ class Integer(Evidence):
         return self._equal(other)
 
     def __str__(self) -> str:
-        """Return a string representation of the Integer."""
+        """Return a string representation of this Evidence."""
         return f"{self.value}"
 
     @classmethod

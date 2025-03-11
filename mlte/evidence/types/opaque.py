@@ -78,3 +78,7 @@ class Opaque(Evidence):
         if not isinstance(other, Opaque):
             return False
         return self._equal(other)
+
+    def __str__(self) -> str:
+        """Return a string representation of this Evidence."""
+        return f"{self.data}"
