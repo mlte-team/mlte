@@ -2,7 +2,7 @@
 Unit tests for Metaclasses helpers.
 """
 
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 import pytest
 
@@ -73,7 +73,9 @@ def test_has_callables(test_object: type, callables: list[str], expected: bool):
         ),
     ],
 )
-def test_qualified_name(test_object: type | Callable[[], Any], expected: str):
+def test_qualified_name(
+    test_object: Union[type, Callable[[], Any]], expected: str
+):
     """Check if qulified name is properly obtained for a function."""
 
     qual_name = meta.get_qualified_name(test_object)

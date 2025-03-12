@@ -39,7 +39,7 @@ class Result(ABC):
         """
 
     def _with_evidence_metadata(
-        self, evidence_metadata: EvidenceMetadata | None
+        self, evidence_metadata: Optional[EvidenceMetadata]
     ) -> Result:
         """
         Set the `metadata` field of the Result

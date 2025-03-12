@@ -2,7 +2,7 @@
 Metaclasses helpers.
 """
 
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 
 def has_callable(type: type, name: str) -> bool:
@@ -15,7 +15,7 @@ def has_callables(type: type, *names: str) -> bool:
     return all(has_callable(type, name) for name in names)
 
 
-def get_qualified_name(entity: type | Callable[[], Any]) -> str:
+def get_qualified_name(entity: Union[type, Callable[[], Any]]) -> str:
     """
     Returns the full path to the given class or function, including module.
 
