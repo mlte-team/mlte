@@ -19,26 +19,26 @@ export function cancelFormSubmission(redirect: string) {
   }
 }
 
-// Load findings from a validated specication.
+// Load findings from a test results.
 export function loadFindings(proxyObject: object) {
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
-  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.spec.qa_categories.forEach((qa_category) => {
-    // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(
-      Object.entries(validatedSpec.body.results[qa_category.name]),
-    );
-    results.forEach((value) => {
-      const finding = {
-        status: value.type,
-        qa_category: qa_category.name,
-        measurement: value.metadata.measurement_type,
-        evidence_id: value.metadata.identifier.name,
-        message: value.message,
-      };
-      findings.push(finding);
-    });
-  });
+  const test_results = JSON.parse(JSON.stringify(proxyObject));
+  const results = test_results.body.results;
+  console.log(results);
+  for (let key in results) {
+    console.log(key);
+    const result = results[key];
+    console.log(result);
+    const finding = {
+      status: result.type,
+      measurement: result.evidence_metadata.measurement.measurement_class,
+      test_case_id: result.evidence_metadata.test_case_id.name,
+      message: result.message,
+    };
+    findings.push(finding);
+  }
+  console.log("termine")
+  console.log(findings)
   return findings;
 }

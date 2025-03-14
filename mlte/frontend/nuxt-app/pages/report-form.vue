@@ -26,7 +26,7 @@
           <th data-sortable scope="col" role="columnheader">Status</th>
           <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
-          <th data-sortable scope="col" role="columnheader">Evidence ID</th>
+          <th data-sortable scope="col" role="columnheader">Test Case ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>
         </tr>
       </thead>
@@ -51,7 +51,7 @@
             {{ finding.status }}
           </td>
           <td v-else>{{ finding.status }}</td>
-          <td>{{ finding.qa_category }}</td>
+          <td></td>
           <td>{{ finding.measurement }}</td>
           <td>{{ finding.evidence_id }}</td>
           <td>{{ finding.message }}</td>
@@ -191,7 +191,7 @@ const form = ref({
       },
     ],
   },
-  validated_spec_id: "",
+  test_results_id: "",
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -250,16 +250,16 @@ if (useRoute().query.artifactId !== undefined) {
               }
             });
 
-            if (response._data.body.validated_spec_id) {
-              form.value.validated_spec_id =
-                response._data.body.validated_spec_id;
-              const validatedSpec = await fetchArtifact(
+            if (response._data.body.test_results_id) {
+              form.value.test_results_id =
+                response._data.body.test_results_id;
+              const testResults = await fetchArtifact(
                 token.value,
                 model,
                 version,
-                form.value.validated_spec_id,
+                form.value.test_results_id,
               );
-              findings.value = loadFindings(validatedSpec);
+              findings.value = loadFindings(testResults);
             }
           }
         }
