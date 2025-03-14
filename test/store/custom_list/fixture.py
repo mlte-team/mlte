@@ -27,7 +27,7 @@ CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 """Base URI for custom lists."""
 
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
-DEFAULT_ENTRY_NAME = "test entry"
+DEFAULT_ENTRY_NAME = "test_entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
 DEFAULT_PARENT = "test parent"
 
@@ -90,25 +90,21 @@ def get_test_entry(
         name=name, description=description, parent=parent
     )
 
-def get_entry_uri(
+def get_custom_list_uri(
     custom_list_id: Optional[str] = None,
     entry_id: Optional[str] = None,
-    only_base: bool = False,
     no_entry: bool = False
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""
     url = f"{CATALOG_BASE_URI}"
-    if only_base:
+    if custom_list_id is None:
         return f"{url}s"
 
-    if custom_list_id is None:
-        url = f"{url}s/entry"
+    if no_entry:
+        return f"{url}/{custom_list_id}"
     else:
-        if no_entry:
-            return f"{url}/{custom_list_id}"
-        else:
-            url = f"{url}/{custom_list_id}/entry"
+        url = f"{url}/{custom_list_id}/entry"
 
-        if entry_id is not None:
-            url = f"{url}/{entry_id}"
+    if entry_id is not None:
+        url = f"{url}/{entry_id}"
     return url
