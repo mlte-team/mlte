@@ -173,7 +173,7 @@ class Validator(Serializable):
         Stringify arguments so that result's message can include generic information about arguments used when validating.
         """
         # First ensure args are turned to string separately, to allow them to use their own str()
-        MAX_STRING_LENGTH = 300
+        MAX_STRING_LENGTH = 1000
         str_args = [
             (
                 str(arg)

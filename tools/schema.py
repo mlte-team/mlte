@@ -78,7 +78,7 @@ CONFIGS = [
     ),
     Config(
         model=ModelImport(path="mlte.evidence.model", model="EvidenceModel"),
-        output_path="value/v0.0.1",
+        output_path="evidence/v0.0.1",
         sub_path="artifact",
     ),
     Config(
