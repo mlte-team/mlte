@@ -121,6 +121,9 @@ class Validator(Serializable):
                 "Can't validate, Validator has no bool expression and is also missing informational message that is used in those cases."
             )
 
+        # Check we got proper arguments.
+        self._check_arguments(*args, **kwargs)
+
         # First execute bool expression (if any), and get its boolean result.
         executed_bool_exp_value: Optional[bool] = None
         if self.bool_exp is not None:
@@ -142,6 +145,28 @@ class Validator(Serializable):
             )
         )
         return result
+
+    def _check_arguments(self, *args, **kwargs):
+        """Checks that the received arguments are of the expected types."""
+        # Since input types is an ordered list, we assume we get them ordered as well, or we have no way to check.
+        all_arguments = [arg for arg in args]
+        all_arguments.extend([value for _, value in kwargs.items()])
+
+        if len(self.input_types) == 0:
+            # Input types are optional, ignore check if they were not configured or there aren't any.
+            return
+
+        if len(all_arguments) != len(self.input_types):
+            raise RuntimeError(
+                f"Invalid amoung of arguments: validator expected {len(self.input_types)}, but got {len(all_arguments)}"
+            )
+
+        for input_type in self.input_types:
+            for arg in all_arguments:
+                if input_type != meta.get_qualified_name(type(arg)):
+                    raise RuntimeError(
+                        f"Invalid argument type received: expected {input_type}, received {meta.get_qualified_name(type(arg))}"
+                    )
 
     def _args_to_string(self, *args, **kwargs) -> str:
         """

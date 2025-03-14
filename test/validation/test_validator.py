@@ -31,6 +31,7 @@ def get_sample_validator(add_creator: bool = False) -> Validator:
         success="Test was succesful!",
         failure="Test failed :(",
         info="Only data was attached",
+        input_types=["builtins.int", "builtins.int"],
     )
 
     if add_creator:
@@ -265,6 +266,25 @@ def test_validate_success_with_evidence() -> None:
         validator.success is not None
         and result.message == validator.success + ' - values: ["1"]'
     )
+
+
+def test_invalid_input_types() -> None:
+    """Tests that validate is checking input types."""
+
+    validator = get_sample_validator()
+    x = 1
+
+    with pytest.raises(RuntimeError):
+        _ = validator.validate(x)
+
+    with pytest.raises(RuntimeError):
+        _ = validator.validate(x, x, x)
+
+    with pytest.raises(RuntimeError):
+        _ = validator.validate(x, "a")
+
+    with pytest.raises(RuntimeError):
+        _ = validator.validate(x, Integer(1))
 
 
 def test_non_serializable_argument():
