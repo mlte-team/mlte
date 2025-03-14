@@ -24,9 +24,10 @@ CUSTOM_LIST_URI = f"{settings.API_PREFIX}{CUSTOM_LIST_ENDPOINT}"
 # Helpers
 # -----------------------------------------------------------------------------
 
-def get_entry_using_admin(entry_id: str, api: TestAPI) -> dict[str, Any]:
-    """Gets a custom list entry using admin."""
-    return api.admin_read_entity(entry_id, CUSTOM_LIST_URI)
+def create_entry_using_admin(custom_list_id: CustomListName, entry: CustomListEntryModel, api: TestAPI):
+    """Create test entry using admin."""
+    url = get_custom_list_uri(custom_list_id=custom_list_id)
+    api.admin_create_entity(entry, url)
 
 # -----------------------------------------------------------------------------
 # Tests
@@ -42,7 +43,7 @@ def test_list_lists(
     """Test that lists can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
-    url = get_entry_uri(only_base=True)
+    url = get_custom_list_uri()
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
 
@@ -59,10 +60,13 @@ def test_list_single_list(
     """Test that a list can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
-    entry = get_test_entry()
+    url = get_custom_list_uri(custom_list_id=CustomListName.QA_CATEGORIES, no_entry=True)    
+    original_entries = test_client.get(f"{url}")
+    entry = get_test_entry(parent="")
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
-    url = get_entry_uri(custom_list_id=CustomListName.QA_CATEGORIES, no_entry=True)    
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
+    assert len(res.json()) == len(original_entries.json()) + 1
 
     _ = CustomListEntryModel(**get_entry_using_admin(entry.name, test_api))
