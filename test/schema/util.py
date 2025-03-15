@@ -10,8 +10,8 @@ import jsonschema
 
 from mlte._private.fixed_json import json
 
-# The identifier for the latest schema for Value
-VALUE_LATEST_SCHEMA_VERSION = "0.0.1"
+# The identifier for the latest schema for Evidence
+EVIDENCE_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for TestSuite
 TEST_SUITE_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for TestResults
@@ -19,8 +19,8 @@ TEST_RESULTS_LATEST_SCHEMA_VERSION = "0.0.1"
 # The identifier for the latest schema for Report
 REPORT_LATEST_SCHEMA_VERSION = "0.0.1"
 
-# Version identifiers for Value schemas
-_VALUE_SCHEMA_VERSIONS = frozenset(("0.0.1",))
+# Version identifiers for Evidence schemas
+_EVIDENCE_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 # Version identifiers for TestSuite schemas
 _TEST_SUITE_SCHEMA_VERSIONS = frozenset(("0.0.1",))
 # Version identifiers for TestResults schemas
@@ -36,20 +36,24 @@ _SCHEMA_FILE_NAME = "schema.json"
 # -----------------------------------------------------------------------------
 
 
-def validate_value_schema(
+def validate_evidence_schema(
     document: Dict[str, Any], version: Optional[str] = None
 ):
     """
-    Validate the schema of a Value document.
+    Validate the schema of a Evidence document.
     :param document: The document instance
     :param version: The identifier for the schema version
     :raises ValueError: If an invalid schema is specified
     :raises ValidationError: If the instance fails validation
     """
     version = (
-        version or document.get("schema_version") or VALUE_LATEST_SCHEMA_VERSION
+        version
+        or document.get("schema_version")
+        or EVIDENCE_LATEST_SCHEMA_VERSION
     )
-    jsonschema.validate(instance=document, schema=_find_value_schema(version))
+    jsonschema.validate(
+        instance=document, schema=_find_evidence_schema(version)
+    )
 
 
 def validate_test_suite_schema(
@@ -141,9 +145,9 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
     return json.loads(data)  # type: ignore
 
 
-def _find_value_schema(version: Optional[str] = None) -> Dict[str, Any]:
+def _find_evidence_schema(version: Optional[str] = None) -> Dict[str, Any]:
     """
-    Find, load, and return the JSON schema for Value output.
+    Find, load, and return the JSON schema for Evidence output.
 
     :param version: The version identifier for the schema
     :type version: Optional[str]
@@ -154,10 +158,12 @@ def _find_value_schema(version: Optional[str] = None) -> Dict[str, Any]:
     :raises ValueError: If an invalid schema is specified
     """
     if version is None:
-        version = VALUE_LATEST_SCHEMA_VERSION
-    if version not in _VALUE_SCHEMA_VERSIONS:
-        raise ValueError(f"Invalid value schema version {version} specified.")
-    return _find_schema(version, "value")
+        version = EVIDENCE_LATEST_SCHEMA_VERSION
+    if version not in _EVIDENCE_SCHEMA_VERSIONS:
+        raise ValueError(
+            f"Invalid evidence schema version {version} specified."
+        )
+    return _find_schema(version, "evidence")
 
 
 def _find_test_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:

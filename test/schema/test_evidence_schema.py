@@ -17,7 +17,7 @@ def test_real():
     r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
-    util.validate_value_schema(doc["body"])
+    util.validate_evidence_schema(doc["body"])
 
 
 def test_integer():
@@ -25,7 +25,7 @@ def test_integer():
     r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
-    util.validate_value_schema(doc["body"])
+    util.validate_evidence_schema(doc["body"])
 
 
 def test_opaque():
@@ -35,4 +35,4 @@ def test_opaque():
     r.with_metadata(get_sample_evidence_metadata())
 
     doc = r.to_model().to_json()
-    util.validate_value_schema(doc["body"])
+    util.validate_evidence_schema(doc["body"])
