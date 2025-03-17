@@ -38,11 +38,15 @@ class TestCase(Serializable):
         self.qas_list = qas_list.copy()
         """Quality Attribute Scenario ids that are associated to this test case."""
 
+        self.validator = validator
+        """Used to validate this test case."""
+
         self.measurement = measurement
         """Used to measure and get a value for this test case."""
 
-        self.validator = validator
-        """Used to validate this test case."""
+        if self.measurement:
+            # If we got a Measurement, ensure its test case id matches ours.
+            self.measurement.set_test_case_id(self.identifier)
 
     def measure(self, *args, **kwargs) -> Evidence:
         """Executes the configured measurement with the given params."""
