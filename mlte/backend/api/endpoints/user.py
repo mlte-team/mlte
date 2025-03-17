@@ -12,6 +12,7 @@ from typing import List, Union
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
+from mlte.custom_list.custom_list_names import CustomListName
 import mlte.store.error as errors
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
