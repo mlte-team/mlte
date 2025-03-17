@@ -79,7 +79,7 @@ def test_load_all_models(
     store, ctx = store_with_context
     fill_test_store(ctx, store)
 
-    models = Artifact.load_all_models_with(artifact_type, ctx, store)
+    models = Artifact.load_models(artifact_type, ctx, store)
 
     assert len(models) == 2
     assert models[0].header.type == artifact_type

@@ -169,16 +169,18 @@ class Artifact(Serializable):
         return artifact
 
     @staticmethod
-    def load_all_models(artifact_type: ArtifactType) -> list[ArtifactModel]:
+    def load_models_for_session(
+        artifact_type: ArtifactType,
+    ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type from the session."""
-        return Artifact.load_all_models_with(
+        return Artifact.load_models(
             artifact_type,
             context=session().context,
             store=session().artifact_store,
         )
 
     @staticmethod
-    def load_all_models_with(
+    def load_models(
         artifact_type: ArtifactType, context: Context, store: ArtifactStore
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""

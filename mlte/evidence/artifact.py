@@ -108,14 +108,16 @@ class Evidence(Artifact, ABC):
 
     @staticmethod
     def load_all() -> list[Evidence]:
-        """Loads all artifact models of the given type for the current session."""
-        evidence_models = Evidence.load_all_models(ArtifactType.EVIDENCE)
+        """Loads all Evidences stored for the current session's context and store."""
+        evidence_models = Evidence.load_models_for_session(
+            ArtifactType.EVIDENCE
+        )
         return Evidence._load_from_models(evidence_models)
 
     @staticmethod
     def load_all_with(context: Context, store: ArtifactStore) -> list[Evidence]:
-        """Loads all artifact models of the given type for the given context and store."""
-        evidence_models = Evidence.load_all_models_with(
+        """Loads all Evidences stored for the given context and store."""
+        evidence_models = Evidence.load_models(
             ArtifactType.EVIDENCE, context, store
         )
         return Evidence._load_from_models(evidence_models)
