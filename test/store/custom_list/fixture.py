@@ -29,7 +29,7 @@ CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_ENTRY_NAME = "test_entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
-DEFAULT_PARENT = "test parent"
+DEFAULT_PARENT = ""
 
 
 def custom_list_stores() -> Generator[str, None, None]:

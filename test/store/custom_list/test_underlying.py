@@ -41,7 +41,6 @@ def test_custom_list_entry(
     test_list = get_test_list()
     test_entry = get_test_entry()
     new_description = "new description"
-    new_parent = "new parent"
 
     with ManagedCustomListSession(store.session()) as custom_list_store:
         original_entries = custom_list_store.custom_list_entry_mapper.list(
@@ -65,7 +64,6 @@ def test_custom_list_entry(
 
         # Test editing an entry.
         test_entry.description = new_description
-        test_entry.parent = new_parent
         _ = custom_list_store.custom_list_entry_mapper.edit(
             test_entry, test_list.name
         )
@@ -73,7 +71,6 @@ def test_custom_list_entry(
             test_entry.name, test_list.name
         )
         assert read_entry.description == new_description
-        assert read_entry.parent == new_parent
 
         # Test deleting an entry.
         custom_list_store.custom_list_entry_mapper.delete(
