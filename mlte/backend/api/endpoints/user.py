@@ -21,6 +21,7 @@ from mlte.backend.core import state_stores
 from mlte.store.user.policy import Policy
 from mlte.user.model import (
     BasicUser,
+    Group,
     MethodType,
     Permission,
     ResourceType,
@@ -71,6 +72,7 @@ def list_user_models_me(
 
 def check_group(user: BasicUser, new_group: Group):
     """Not final location for this method. TODO"""
+    # Check first if the group was not manually added in the received user data.
     has_group = False
     for group in user.groups:
         if group.name == new_group.name:
@@ -109,11 +111,18 @@ def create_user(
             )
             model_create_policy.assign_to_user(user)
 
+            # Give every new user permissions to modify all custom lists
+            custom_list_policy = Policy(
+                ResourceType.CUSTOM_LIST, resource_id=None
+            )
+            custom_list_policy.assign_to_user(user)
+
             # Give user permissions to modify its data.
             own_user_policy = Policy(
                 ResourceType.USER, resource_id=user.username
             )
             own_user_policy.save_to_store(user_store)
+
             own_user_policy.assign_to_user(user)
 
             # Store the user.

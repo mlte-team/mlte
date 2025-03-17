@@ -176,6 +176,8 @@ class TestAPI:
     def admin_read_entity(self, entity_id: str, uri: str) -> dict[str, Any]:
         """Get the given entity using an admin."""
         admin_client = self.get_test_client_for_admin()
+        print('in test api')
+        print(f"{uri}/{entity_id}")
         res = admin_client.get(f"{uri}/{entity_id}")
         assert res.status_code == codes.OK
         return typing.cast(Dict[str, Any], res.json())

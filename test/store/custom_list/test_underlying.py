@@ -7,6 +7,7 @@ Unit tests for the underlying custom list store implementations.
 import pytest
 
 import mlte.store.error as errors
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
 from test.store.custom_list.fixture import (  # noqa
@@ -34,7 +35,7 @@ def test_init_store(store_fixture_name: str, create_test_store) -> None:  # noqa
 def test_custom_list_entry(
     store_fixture_name: str, create_test_store  # noqa
 ) -> None:
-    """An custom list store supports custom list entry operations."""
+    """A custom list store supports custom list entry operations."""
     store: CustomListStore = create_test_store(store_fixture_name)
 
     test_list = get_test_list()
@@ -82,3 +83,21 @@ def test_custom_list_entry(
             custom_list_store.custom_list_entry_mapper.read(
                 test_entry.name, test_list.name
             )
+
+@pytest.mark.parametrize("store_fixture_name", custom_list_stores())
+def test_custom_list_parent_mappings(
+    store_fixture_name: str, create_test_store  # noqa
+) -> None:
+    """A custom list store properly handles parent relations."""
+    store: CustomListStore = create_test_store(store_fixture_name)
+
+    parent_list = CustomListName.QA_CATEGORIES
+    child_list = CustomListName.QUALITY_ATTRIBUTES
+
+    parent_name = "Test parent"
+    parent = get_test_entry(name=parent_name, )
+    child = get_test_entry(name="child", parent=parent_name)
+
+    with ManagedCustomListSession(store.session()) as custom_list_store:
+        custom_list_store.custom_list_entry_mapper.create(parent, parent_list)
+        custom_list_store.custom_list_entry_mapper.create(child, child_list)
