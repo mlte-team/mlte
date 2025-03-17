@@ -4,6 +4,7 @@ Implementation of ConfusionMatrix value.
 
 from __future__ import annotations
 
+from io import StringIO
 from typing import Any, Callable
 
 import numpy as np
@@ -27,7 +28,9 @@ class ConfusionMatrix(ExternalEvidence):
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> ConfusionMatrix:
-        return ConfusionMatrix(pd.read_json(data["matrix"]).to_numpy())
+        return ConfusionMatrix(
+            pd.read_json(StringIO(data["matrix"])).to_numpy()
+        )
 
     def __str__(self) -> str:
         return f"{self.matrix}".replace("\n", ", ")
