@@ -179,7 +179,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
                 CustomListParentMappings.parent_mappings[list_name]
             ):
                 raise errors.ErrorNotFound(
-                    f"Parent {parent} does not exist in list {list_name}"
+                    f"Parent {parent} does not exist in list {CustomListParentMappings.parent_mappings[list_name]}"
                 )
         elif parent != "":
             raise errors.InternalError(
