@@ -81,9 +81,6 @@ class ExternalMeasurement(Measurement):
             evidence = self.output_evidence_type(self.function(*args, **kwargs))
         return evidence
 
-    @classmethod
-    def get_output_type(cls) -> type[Evidence]:
-        """This method does not apply to ExternalEvidence, as it has different output types depending on its config."""
-        raise RuntimeError(
-            "Method get_output_type does not apply to ExternalMeasurement, as it does not have a class-wide output type."
-        )
+    def get_output_type(self) -> type[Evidence]:  # type: ignore
+        """Object method with proper results, similar to the class level get_output_type method, which will always return Opaque for this class."""
+        return self.output_evidence_type
