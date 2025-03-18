@@ -9,6 +9,7 @@ import typing
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.evidence.artifact import Evidence
 from mlte.model.base_model import BaseModel
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
@@ -51,6 +52,20 @@ class TestSuite(Artifact):
     def add_test_case(self, test_case: TestCase):
         """Adds a test case to its list. Will overwrite if another one with same id had been stored before."""
         self.test_cases[test_case.identifier] = test_case
+
+    def run_measurements(
+        self, input: dict[str, list[typing.Any]]
+    ) -> list[Evidence]:
+        """Tries to execute all configured measurements with the provided arguments."""
+        evidences: list[Evidence] = []
+        for case_id, args in input.items():
+            if case_id not in self.test_cases:
+                raise RuntimeError(
+                    f"Test Case id {case_id} received in args does not exist in this suite."
+                )
+            evidence = self.test_cases[case_id].measure(*args)
+            evidences.append(evidence)
+        return evidences
 
     # -------------------------------------------------------------------------
     # Artifact overrides.
