@@ -49,5 +49,6 @@ class LocalObjectSize(Measurement):
         return Integer(total_size)
 
     # Overriden.
-    def get_output_type(self) -> type[Integer]:
+    @classmethod
+    def get_output_type(cls) -> type[Integer]:
         return Integer

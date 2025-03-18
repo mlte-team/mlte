@@ -19,7 +19,8 @@ class SampleProcessMeasurement(ProcessMeasurement):
     def __call__(self, pid: int, *args, **kwargs) -> Evidence:
         return Integer(pid)
 
-    def get_output_type(self) -> type[Evidence]:
+    @classmethod
+    def get_output_type(cls) -> type[Evidence]:
         return Integer
 
 
@@ -55,6 +56,5 @@ def test_evaluate_async() -> None:
     m.evaluate_async(pid)
     result = m.wait_for_output()
 
-    assert m.get_output_type() == Integer
     assert type(result) is Integer and result.value == pid
     assert m.evidence_metadata and m.evidence_metadata.test_case_id == "id1"

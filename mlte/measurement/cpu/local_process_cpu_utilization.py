@@ -169,7 +169,8 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         )
 
     # Overriden.
-    def get_output_type(self) -> type[CPUStatistics]:
+    @classmethod
+    def get_output_type(cls) -> type[CPUStatistics]:
         return CPUStatistics
 
 
