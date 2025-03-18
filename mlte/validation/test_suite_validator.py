@@ -61,6 +61,9 @@ class TestSuiteValidator:
 
         :param evidence: The evidence to add to the internal list.
         """
+        if not evidence.metadata:
+            raise RuntimeError("Provided evidence has no metadata.")
+
         if evidence.metadata.test_case_id in self.evidence:
             raise RuntimeError(
                 f"Can't have two values with the same id: {evidence.metadata.test_case_id}"

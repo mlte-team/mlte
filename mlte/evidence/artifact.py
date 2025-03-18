@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 from mlte._private import meta
 from mlte._private.reflection import load_class
@@ -44,6 +44,9 @@ class Evidence(Artifact, ABC):
         self.typename: str = meta.get_qualified_name(self.__class__)
         """The class type of the evidence itself."""
 
+        self.metadata: Optional[EvidenceMetadata] = None
+        """Metadata has not been initialized yet."""
+
     def with_metadata(self: T, evidence_metadata: EvidenceMetadata) -> T:
         """Sets the evidence metadata, returns updated object."""
         self.metadata = evidence_metadata
@@ -71,6 +74,11 @@ class Evidence(Artifact, ABC):
         Convert a evidence artifact to its corresponding artifact model.
         :param value_model: The specific evidence/value model data.
         """
+        if not self.metadata:
+            raise RuntimeError(
+                "Can't convert Evidence to model, it is missing its metadata."
+            )
+
         model = ArtifactModel(
             header=self.build_artifact_header(),
             body=EvidenceModel(
