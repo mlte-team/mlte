@@ -9,7 +9,7 @@ from __future__ import annotations
 import subprocess
 import time
 from subprocess import SubprocessError
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from mlte._private.platform import is_windows
 from mlte.evidence.external import ExternalEvidence
@@ -132,7 +132,7 @@ class CPUStatistics(ExternalEvidence):
 class LocalProcessCPUUtilization(ProcessMeasurement):
     """Measures CPU utilization for a local process."""
 
-    def __init__(self, identifier: str):
+    def __init__(self, identifier: Optional[str] = None):
         """
         Initialize a new LocalProcessCPUUtilization measurement.
 
@@ -141,7 +141,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
         super().__init__(identifier)
         if is_windows():
             raise RuntimeError(
-                f"Measurement for {self.evidence_metadata.test_case_id} is not supported on Windows."
+                f"Measurement for {self.evidence_metadata.test_case_id if self.evidence_metadata else 'this'} is not supported on Windows."
             )
 
     # Overriden.

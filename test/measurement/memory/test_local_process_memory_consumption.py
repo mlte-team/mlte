@@ -41,7 +41,8 @@ def test_constructor_type():
     m = LocalProcessMemoryConsumption("id")
 
     assert (
-        m.evidence_metadata.measurement.measurement_class
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.memory.local_process_memory_consumption.LocalProcessMemoryConsumption"
     )
 

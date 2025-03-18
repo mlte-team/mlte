@@ -24,7 +24,7 @@ class ExternalMeasurement(Measurement):
 
     def __init__(
         self,
-        test_case_id: str,
+        test_case_id: Optional[str] = None,
         output_evidence_type: type[Evidence] = Opaque,
         function: Optional[Callable[..., Any]] = None,
     ):

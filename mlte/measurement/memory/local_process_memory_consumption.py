@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 import psutil
 
@@ -132,7 +132,7 @@ class MemoryStatistics(ExternalEvidence):
 class LocalProcessMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a local training process."""
 
-    def __init__(self, identifier: str):
+    def __init__(self, identifier: Optional[str] = None):
         """
         Initialize a LocalProcessMemoryConsumption instance.
 

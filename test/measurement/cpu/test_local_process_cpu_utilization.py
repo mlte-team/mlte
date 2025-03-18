@@ -41,7 +41,8 @@ def test_constructor_type():
     m = LocalProcessCPUUtilization("id")
 
     assert (
-        m.evidence_metadata.measurement.measurement_class
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
     )
 

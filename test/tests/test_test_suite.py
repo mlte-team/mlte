@@ -108,7 +108,7 @@ def test_run_measurements():
                 validator=LocalObjectSize.get_output_type().less_than(
                     150000000
                 ),
-                measurement=LocalObjectSize("model size"),
+                measurement=LocalObjectSize(),
             ),
             TestCase(
                 identifier="overall accuracy",
@@ -116,7 +116,7 @@ def test_run_measurements():
                 qas_list=["qas8"],
                 validator=Real.greater_than(0.9),
                 measurement=ExternalMeasurement(
-                    "overall accuracy", Real, internal_cal_function
+                    output_evidence_type=Real, function=internal_cal_function
                 ),
             ),
             TestCase(
@@ -124,7 +124,7 @@ def test_run_measurements():
                 goal="Check what the model is doing",
                 qas_list=["qas7"],
                 validator=Image.register_info("Inspect the image."),
-                measurement=ExternalMeasurement("image attributions", Image),
+                measurement=ExternalMeasurement(output_evidence_type=Image),
             ),
             TestCase(
                 identifier="no measurement",

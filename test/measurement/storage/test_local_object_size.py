@@ -122,7 +122,8 @@ def test_constructor_type():
     m = LocalObjectSize("id")
 
     assert (
-        m.evidence_metadata.measurement.measurement_class
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.storage.local_object_size.LocalObjectSize"
     )
 

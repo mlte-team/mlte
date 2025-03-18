@@ -5,6 +5,7 @@ Storage capacity measurement for locally-stored objects.
 """
 
 import os
+from typing import Optional
 
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
@@ -13,7 +14,7 @@ from mlte.measurement.measurement import Measurement
 class LocalObjectSize(Measurement):
     """Measure the size of a locally-stored object."""
 
-    def __init__(self, identifier: str):
+    def __init__(self, identifier: Optional[str] = None):
         """
         Initialize a new LocalObjectSize measurement.
 
