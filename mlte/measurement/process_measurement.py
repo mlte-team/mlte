@@ -51,9 +51,15 @@ class ProcessMeasurement(Measurement):
         :param identifier: A unique identifier for the measurement
         """
         super().__init__(identifier)
+
         self.thread: Optional[threading.Thread] = None
+        """Thread that will be used to run the measurement process."""
+
         self.stored_value: Optional[Evidence] = None
+        """The result of the measurement."""
+
         self.error: str = ""
+        """Any error messages from running measurement."""
 
     def evaluate_async(self, pid: int, *args, **kwargs):
         """
@@ -76,7 +82,9 @@ class ProcessMeasurement(Measurement):
         Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
         """
         try:
-            self.stored_value = self.__call__(pid, *args, **kwargs)
+            self.stored_value = self.__call__(
+                pid, *args, **kwargs
+            ).with_metadata(self.evidence_metadata)
         except Exception as e:
             self.error = f"Could not evaluate process: {e}"
 
