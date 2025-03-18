@@ -80,3 +80,7 @@ class ExternalMeasurement(Measurement):
         else:
             evidence = self.output_evidence_type(self.function(*args, **kwargs))
         return evidence
+
+    # Overriden.
+    def get_output_type(self) -> type[Evidence]:
+        return self.output_evidence_type
