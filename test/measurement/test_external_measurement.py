@@ -85,6 +85,7 @@ def test_constructor_type():
         m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.external_measurement.ExternalMeasurement"
     )
+    assert m.get_output_type() == Integer
 
 
 def test_load_from_metadata():

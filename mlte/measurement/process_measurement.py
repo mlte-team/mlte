@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import threading
 import time
+from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from mlte._private import job
@@ -19,7 +20,7 @@ from mlte.measurement.measurement import Measurement
 # -----------------------------------------------------------------------------
 
 
-class ProcessMeasurement(Measurement):
+class ProcessMeasurement(Measurement, ABC):
     """Base class to be extended to measure external processes."""
 
     @staticmethod
@@ -61,6 +62,14 @@ class ProcessMeasurement(Measurement):
         self.error: str = ""
         """Any error messages from running measurement."""
 
+    # Overriden.
+    @abstractmethod
+    def __call__(self, pid: int, *args, **kwargs) -> Evidence:
+        """Calls for process based measurement will always have pid as the first argument.."""
+        raise NotImplementedError(
+            "Cannot evaluate abstract process measurement."
+        )
+
     def evaluate_async(self, pid: int, *args, **kwargs):
         """
         Monitor an external process at `pid` in a separate thread until it stops.
@@ -73,18 +82,16 @@ class ProcessMeasurement(Measurement):
         self.error = ""
         self.stored_value = None
         self.thread = threading.Thread(
-            target=lambda: self._run_call(pid, *args, **kwargs)
+            target=lambda: self._evaluate_thread(pid, *args, **kwargs)
         )
         self.thread.start()
 
-    def _run_call(self, pid, *args, **kwargs):
+    def _evaluate_thread(self, pid, *args, **kwargs):
         """
-        Runs the internall __call__ method that should implement the measurement, and stores its results when it finishes.
+        Runs the evaluate method that should implement the measurement, and stores its results when it finishes.
         """
         try:
-            self.stored_value = self.__call__(
-                pid, *args, **kwargs
-            ).with_metadata(self.evidence_metadata)
+            self.stored_value = self.evaluate(pid, *args, **kwargs)
         except Exception as e:
             self.error = f"Could not evaluate process: {e}"
 
