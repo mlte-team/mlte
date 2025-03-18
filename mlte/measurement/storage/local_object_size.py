@@ -5,7 +5,6 @@ Storage capacity measurement for locally-stored objects.
 """
 
 import os
-from typing import Type
 
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
@@ -49,7 +48,6 @@ class LocalObjectSize(Measurement):
 
         return Integer(total_size)
 
-    @classmethod
-    def output_type(self) -> Type[Integer]:
-        """Returns the class type object for the Value produced by the Measurement."""
+    # Overriden.
+    def get_output_type(self) -> type[Integer]:
         return Integer

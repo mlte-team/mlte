@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Any, Callable, Dict, Type
+from typing import Any, Callable
 
 import psutil
 
@@ -52,7 +52,7 @@ class MemoryStatistics(ExternalEvidence):
         self.max = max
         """The maximum memory consumption (KB)."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an MemoryStatistics to a JSON object.
 
@@ -61,7 +61,7 @@ class MemoryStatistics(ExternalEvidence):
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
-    def deserialize(data: Dict[str, Any]) -> MemoryStatistics:
+    def deserialize(data: dict[str, Any]) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
@@ -140,6 +140,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         """
         super().__init__(identifier)
 
+    # Overriden.
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
@@ -162,9 +163,8 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             max=max(stats),
         )
 
-    @classmethod
-    def output_type(self) -> Type[MemoryStatistics]:
-        """Returns the class type object for the Value produced by the Measurement."""
+    # Overriden.
+    def get_output_type(self) -> type[MemoryStatistics]:
         return MemoryStatistics
 
 

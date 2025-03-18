@@ -9,7 +9,7 @@ from __future__ import annotations
 import subprocess
 import time
 from subprocess import SubprocessError
-from typing import Any, Callable, Dict, Type
+from typing import Any, Callable
 
 from mlte._private.platform import is_windows
 from mlte.evidence.external import ExternalEvidence
@@ -52,7 +52,7 @@ class CPUStatistics(ExternalEvidence):
         self.max = max
         """The maximum CPU utilization, as a proportion."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an CPUStatistics to a JSON object.
 
@@ -61,7 +61,7 @@ class CPUStatistics(ExternalEvidence):
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
-    def deserialize(data: Dict[str, Any]) -> CPUStatistics:
+    def deserialize(data: dict[str, Any]) -> CPUStatistics:
         """
         Deserialize an CPUStatistics from a JSON object.
 
@@ -144,6 +144,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
                 f"Measurement for {self.evidence_metadata.test_case_id} is not supported on Windows."
             )
 
+    # Overriden.
     def __call__(self, pid: int, poll_interval: int = 1) -> CPUStatistics:
         """
         Monitor the CPU utilization of process at `pid` until exit.
@@ -167,9 +168,8 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             max=max(stats),
         )
 
-    @classmethod
-    def output_type(self) -> Type[CPUStatistics]:
-        """Returns the class type object for the Value produced by the Measurement."""
+    # Overriden.
+    def get_output_type(self) -> type[CPUStatistics]:
         return CPUStatistics
 
 

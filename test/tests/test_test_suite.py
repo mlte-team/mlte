@@ -28,7 +28,7 @@ def get_sample_test_suite():
                 identifier="model size",
                 goal="Check storage consumption",
                 qas_list=["qas3"],
-                validator=LocalObjectSize.output_type().less_than(150000000),
+                validator=LocalObjectSize.get_output_type().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
         ],
@@ -103,7 +103,7 @@ def test_run_measurements():
                 identifier="model size",
                 goal="Check storage consumption",
                 qas_list=["qas3"],
-                validator=LocalObjectSize.output_type().less_than(150000000),
+                validator=LocalObjectSize.get_output_type().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
             TestCase(
@@ -155,7 +155,7 @@ def test_run_measurements_invalid_id():
                 identifier="model size",
                 goal="Check storage consumption",
                 qas_list=["qas3"],
-                validator=LocalObjectSize.output_type().less_than(150000000),
+                validator=LocalObjectSize.get_output_type().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
         ]
