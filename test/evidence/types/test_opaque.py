@@ -23,7 +23,7 @@ class DummyMeasurementOpaque(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Opaque:
-        return Opaque({"value": 1}).with_metadata(self.evidence_metadata)
+        return Opaque({"value": 1})
 
 
 def test_measurement():

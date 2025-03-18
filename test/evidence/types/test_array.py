@@ -21,7 +21,7 @@ class DummyMeasurementArray(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Array:
-        return Array([1, 2, 3]).with_metadata(self.evidence_metadata)
+        return Array([1, 2, 3])
 
 
 def test_measurement():

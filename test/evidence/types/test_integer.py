@@ -23,7 +23,7 @@ class DummyMeasurementInteger(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Integer:
-        return Integer(1).with_metadata(self.evidence_metadata)
+        return Integer(1)
 
 
 def test_success():

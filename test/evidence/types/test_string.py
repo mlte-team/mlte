@@ -21,7 +21,7 @@ class DummyMeasurementString(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> String:
-        return String("test").with_metadata(self.evidence_metadata)
+        return String("test")
 
 
 def test_success():

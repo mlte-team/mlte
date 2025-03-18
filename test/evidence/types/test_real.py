@@ -23,7 +23,7 @@ class DummyMeasurementReal(Measurement):
         super().__init__(identifier)
 
     def __call__(self) -> Real:
-        return Real(3.14).with_metadata(self.evidence_metadata)
+        return Real(3.14)
 
 
 def test_success():
