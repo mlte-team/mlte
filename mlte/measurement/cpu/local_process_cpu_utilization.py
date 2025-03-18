@@ -165,7 +165,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
             avg=sum(stats) / len(stats),
             min=min(stats),
             max=max(stats),
-        ).with_metadata(self.evidence_metadata)
+        )
 
     @classmethod
     def output_type(self) -> Type[CPUStatistics]:
