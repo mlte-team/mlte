@@ -75,12 +75,8 @@ class Measurement(ABC):
         # Opaque is the default Evidence type.
         return Opaque
 
-    def __str__(self) -> str:
-        """Return a string representation of a Measurement."""
-        return str(self.generate_metadata())
-
     # -------------------------------------------------------------------------
-    # Model handling.
+    # MeasurementMetadata model handling.
     # -------------------------------------------------------------------------
 
     def generate_metadata(self) -> MeasurementMetadata:
@@ -97,25 +93,26 @@ class Measurement(ABC):
         """
         Create a Measurement from a model.
 
-        :param model: The model.
+        :param model: The MeasurementMetadata model.
         :param test_case_id: The id of the associated test case.
         :return: The Measurement.
         """
-        measurement_class: type[Measurement] = load_class(
-            model.measurement_class
-        )
-        measurement: Measurement
-        if measurement_class == Measurement:
-            measurement = measurement_class(test_case_id=test_case_id)
-        else:
-            measurement = measurement_class.from_metadata(
-                model=model, test_case_id=test_case_id
-            )
+        meas_class: type[Measurement] = load_class(model.measurement_class)
+        measurement = meas_class(test_case_id)
+        measurement.additional_setup(model)
         return measurement
+
+    def additional_setup(self, model: MeasurementMetadata):
+        """Optional method to be overriden by subclasses needing additional setup from metadata."""
+        return
 
     # -------------------------------------------------------------------------
     # Helpers
     # -------------------------------------------------------------------------
+
+    def __str__(self) -> str:
+        """Return a string representation of a Measurement."""
+        return str(self.generate_metadata())
 
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""

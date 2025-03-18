@@ -24,7 +24,13 @@ def get_sample_test_suite():
     test_suite = TestSuite(
         identifier="test_suite",
         test_cases=[
-            TestCase(identifier="t1", goal="to test", qas_list=["qa1"])
+            TestCase(
+                identifier="model size",
+                goal="Check storage consumption",
+                qas_list=["qas3"],
+                validator=LocalObjectSize.output_type().less_than(150000000),
+                measurement=LocalObjectSize("model size"),
+            ),
         ],
     )
     return test_suite
@@ -133,6 +139,7 @@ def test_run_measurements():
 
     evidence = test_suite.run_measurements(input=inputs)
 
+    assert len(evidence) == 3
     assert type(evidence[0]) is Integer and evidence[0].value > 0
     assert type(evidence[1]) is Real and evidence[1].value == 4.0
     assert type(evidence[2]) is Image and "Image" in str(evidence[2])

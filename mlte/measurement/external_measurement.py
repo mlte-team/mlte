@@ -11,6 +11,7 @@ from typing import Any, Callable, Optional
 import mlte._private.meta as meta
 from mlte._private.reflection import load_class
 from mlte.evidence.artifact import Evidence
+from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
 
@@ -24,7 +25,7 @@ class ExternalMeasurement(Measurement):
     def __init__(
         self,
         test_case_id: str,
-        output_evidence_type: type,
+        output_evidence_type: type[Evidence] = Opaque,
         function: Optional[Callable[..., Any]] = None,
     ):
         """
@@ -48,6 +49,11 @@ class ExternalMeasurement(Measurement):
         super().__init__(test_case_id=test_case_id)
 
     # Overriden.
+    def additional_setup(self, model: MeasurementMetadata):
+        """Optional method to be overriden by subclasses needing additional setup from metadata."""
+        self.output_evidence_type = load_class(model.output_class)
+
+    # Overriden.
     def generate_metadata(self) -> MeasurementMetadata:
         """Returns Measurement metadata with additional info."""
         metadata = super().generate_metadata()
@@ -65,26 +71,6 @@ class ExternalMeasurement(Measurement):
         return metadata
 
     # Overriden.
-    @classmethod
-    def from_metadata(
-        cls, model: MeasurementMetadata, test_case_id: str
-    ) -> Measurement:
-        """
-        Create a Measurement from a model.
-
-        :param model: The model.
-        :param test_case_id: The id of the associated test case.
-        :return: The Measurement.
-        """
-        measurement_class: type[ExternalMeasurement] = load_class(
-            model.measurement_class
-        )
-        measurement: ExternalMeasurement = measurement_class(
-            test_case_id=test_case_id,
-            output_evidence_type=load_class(model.output_class),
-        )
-        return measurement
-
     def __call__(self, *args, **kwargs) -> Evidence:
         """Evaluate a measurement and return values without semantics."""
         evidence: Evidence

@@ -14,6 +14,7 @@ from mlte.evidence.external import ExternalEvidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.external_measurement import ExternalMeasurement
+from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
 
 
@@ -84,6 +85,16 @@ def test_constructor_type():
         m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.external_measurement.ExternalMeasurement"
     )
+
+
+def test_load_from_metadata():
+    """ "Checks that we can generate and load measurement metadata."""
+    m = ExternalMeasurement("test_id", Integer, test_constructor_type)
+    metadata = m.generate_metadata()
+
+    m2 = Measurement.from_metadata(metadata, test_case_id="test_id")
+
+    assert m == m2
 
 
 def test_evaluate_external() -> None:
@@ -157,7 +168,7 @@ def test_invalid_result_type() -> None:
     """An external measurement cannot be instantiated with a bad result type."""
 
     with pytest.raises(Exception):
-        _ = ExternalMeasurement("dummy", int)
+        _ = ExternalMeasurement("dummy", int)  # type: ignore
 
 
 def test_invalid_function() -> None:

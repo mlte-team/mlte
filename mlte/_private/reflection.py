@@ -26,7 +26,7 @@ def load_class(class_path: str) -> Type[Any]:
     try:
         loaded_module = importlib.import_module(module_name)
     except Exception as e:
-        raise RuntimeError(f"Module {module_name} not found: {e}")
+        raise RuntimeError(f"Module {module_name} could not be loaded: {e}")
 
     try:
         class_type: Type[Any] = getattr(loaded_module, class_name)
