@@ -87,16 +87,10 @@ class ExternalMeasurement(Measurement):
 
     def __call__(self, *args, **kwargs) -> Evidence:
         """Evaluate a measurement and return values without semantics."""
+        evidence: Evidence
         if self.function is None:
-            raise Exception("Can't evaluate, no function was set.")
-
-        evidence: Evidence = self.output_evidence_type(
-            self.function(*args, **kwargs)
-        )
-        return evidence
-
-    def ingest(self, *args, **kwargs) -> Evidence:
-        """Ingest data without evaluating a function, to wrap it as the configured Evidence type. Currently works the same as evaluate()."""
-        evidence: Evidence = self.output_evidence_type(*args, **kwargs)
-        evidence = evidence.with_metadata(self.evidence_metadata)
+            # If no function is configured, we just want to wrap the results in the Evidence type.
+            evidence = self.output_evidence_type(*args, **kwargs)
+        else:
+            evidence = self.output_evidence_type(self.function(*args, **kwargs))
         return evidence

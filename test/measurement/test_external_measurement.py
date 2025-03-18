@@ -132,11 +132,9 @@ def test_evaluate_ingest() -> None:
     )
 
     measurement = ExternalMeasurement("test_id", Integer)
-    result = measurement.ingest(expected_value)
+    result = measurement.evaluate(expected_value)
 
     assert isinstance(result, Integer)
-    print(result.to_model().to_json_string())
-    print(expected_result.to_model().to_json_string())
     assert result == expected_result
 
 
@@ -149,7 +147,7 @@ def test_evaluate_ingest_base() -> None:
     )
 
     measurement = ExternalMeasurement("test_id", BigInteger)
-    result = measurement.ingest(expected_value)
+    result = measurement.evaluate(expected_value)
 
     assert isinstance(result, BigInteger)
     assert result == expected_result
