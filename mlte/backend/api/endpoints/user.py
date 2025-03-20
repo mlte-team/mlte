@@ -86,37 +86,27 @@ def create_user(
             detail="'me' is reserved and can't be used as a username.",
         )
 
-    new_user: BasicUser
     with state_stores.user_store_session() as user_store:
         try:
-            # Give every new user permissions to create models.
-            # Check first if the group was not manually added in the received user data.
-            create_model_group = Policy.build_groups(
+            # Give every new user permissions to create (only) new models.
+            model_create_policy = Policy(
                 ResourceType.MODEL,
                 resource_id=None,
-                build_edit_group=False,
-                build_read_group=False,
-            )[0]
-            user_has_create_group = False
-            for group in user.groups:
-                if create_model_group.name == group.name:
-                    user_has_create_group = True
-                    break
+                create_group=True,
+                edit_group=False,
+                read_group=False,
+            )
+            model_create_policy.assign_to_user(user)
 
-            if not user_has_create_group:
-                user.groups.append(create_model_group)
+            # Give user permissions to modify its data.
+            own_user_policy = Policy(
+                ResourceType.USER, resource_id=user.username
+            )
+            own_user_policy.save_to_store(user_store)
+            own_user_policy.assign_to_user(user)
 
             # Store the user.
-            new_user = user_store.user_mapper.create(user)
-
-            # Now create permissions and groups associated to it.
-            Policy.create(
-                ResourceType.USER,
-                new_user.username,
-                user_store,
-                BasicUser(**new_user.to_json()),
-            )
-
+            new_user: BasicUser = user_store.user_mapper.create(user)
             stored_user = user_store.user_mapper.read(new_user.username)
             return stored_user
         except errors.ErrorAlreadyExists as e:
@@ -239,7 +229,8 @@ def delete_user(
             deleted_user = user_store.user_mapper.delete(username)
 
             # Now delete related permissions and groups.
-            Policy.remove(ResourceType.USER, username, user_store)
+            policy = Policy(ResourceType.USER, resource_id=username)
+            policy.remove_from_store(user_store)
 
             return deleted_user
         except errors.ErrorNotFound as e:
