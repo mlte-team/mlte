@@ -1,6 +1,6 @@
 # Setting Up `MLTE`
 
-`MLTE` is a process and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the `MLTE` [process](mlte_framework.md).
+`MLTE` is a process and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the `MLTE` [process](index.md).
 
 ## Installation
 
@@ -151,4 +151,4 @@ set_store("postgresql://mlte_user:mlte_pass@localhost/mlte")
 
 ## Next Steps
 
-Once you're set up, we recommend referencing the [`MLTE` Process](mlte_process.md) and our how-to guide on [using `MLTE`](using_mlte.md). You can also check out our [development](development.md) guide if you're interested in contributing.
+Once you're set up, we recommend referencing the [`MLTE` Process](index.md) and our how-to guide on [using `MLTE`](using_mlte.md). You can also check out our [development](development.md) guide if you're interested in contributing.
