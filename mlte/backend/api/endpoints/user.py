@@ -69,6 +69,17 @@ def list_user_models_me(
 # -----------------------------------------------------------------------------
 
 
+def check_group(user: BasicUser, new_group: Group):
+    """Not final location for this method. TODO"""
+    has_group = False
+    for group in user.groups:
+        if group.name == new_group.name:
+            has_group = True
+            break
+
+    if not has_group:
+        user.groups.append(new_group)
+
 @router.post("")
 def create_user(
     *,
