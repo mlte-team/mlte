@@ -50,7 +50,7 @@ If stakeholders do not consider the results to be satisfactory, more negotiation
 - [Using `MLTE`](using_mlte.md)
 - [Development Environment](development.md)
 - [`MLTE` Negotiation Card](negotiation_card.md)
-- MLTE <a href="https://arxiv.org/abs/2303.01998" target="_blank">Paper</a> (ICSE 2023 - 45th International Conference on Software Engineering)
+- <a href="https://arxiv.org/abs/2303.01998" target="_blank">`MLTE` Paper</a> (ICSE 2023 - 45th International Conference on Software Engineering)
 - <a href="https://doi.org/10.48550/arXiv.2406.08575" target="_blank">Using Quality Attribute Scenarios for ML Model Test Case Generation</a> (SAML 2024 - 3rd International Workshop on Software Architecture and Machine Learning)
 
 # MLTE Metadata

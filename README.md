@@ -12,7 +12,7 @@
 
 ## Getting Started
 
-The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte-python/" target="_blank">PyPI</a>. The `MLTE` framework can be found in the documentation[LINK]. Install the latest version of the package with pip or conda:
+The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte-python/" target="_blank">PyPI</a>. The `MLTE` framework is described in our <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">documentation</a>. Install the latest version of the package with pip or conda:
 
 ```bash
 $ pip install mlte-python
@@ -56,7 +56,7 @@ from mlte.session import set_context, set_store
 
 ## Next Steps
 
-The `MLTE` Python package is best used in conjunction with the framework[LINK]. For more details on using the package, see LINK in our documentation.
+The `MLTE` Python package is best used in conjunction with the <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">framework</a>. For more details on using the package, see our documentation page on <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a>.
 
 ### Citing This Work
 
