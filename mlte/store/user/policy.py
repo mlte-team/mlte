@@ -4,7 +4,9 @@ mlte/store/user/policy.py
 Class to define group and permission policies.
 """
 
-from typing import Any, List, Optional
+from __future__ import annotations
+
+from typing import Any, Optional, Union
 
 import mlte.store.error as errors
 from mlte.store.artifact.store import ArtifactStoreSession
@@ -16,6 +18,7 @@ from mlte.user.model import (
     Permission,
     ResourceType,
     RoleType,
+    UserWithPassword,
 )
 
 
@@ -28,8 +31,9 @@ def create_model_policies_if_needed(
     """
     models = artifact_store.list_models()
     for model_id in models:
-        if not Policy.is_stored(ResourceType.MODEL, model_id, user_store):
-            Policy.create(ResourceType.MODEL, model_id, user_store)
+        policy = Policy(ResourceType.MODEL, model_id)
+        if not policy.is_stored(user_store):
+            policy.save_to_store(user_store)
 
 
 class Policy:
@@ -55,27 +59,46 @@ class Policy:
     # Policy handling.
     # -----------------------------------------------------------------------------
 
-    @staticmethod
-    def build_groups(
+    def __init__(
+        self,
         resource_type: ResourceType,
-        resource_id: Any = None,
-        build_read_group: bool = True,
-        build_edit_group: bool = True,
-        build_create_group: bool = True,
-    ) -> List[Group]:
+        resource_id: Optional[str] = None,
+        read_group: bool = True,
+        edit_group: bool = True,
+        create_group: bool = True,
+    ):
+        """Initializes a policy from a list of groups."""
+
+        self.resource_type = resource_type
+        """The resource type for this policy."""
+
+        self.resource_id = resource_id
+        """The id of the specific resource this policy is for, if any."""
+
+        self.read_group = read_group
+        self.edit_group = edit_group
+        self.create_group = create_group
+        """Define which types of groups are enabled."""
+
+        self.groups = self._build_groups()
+        """A list of groups and their permissions, defining a policy."""
+
+    def _build_groups(self) -> list[Group]:
         """Generates in memory representations of read and write groups for the given resource."""
-        groups: List[Group] = []
+        groups: list[Group] = []
 
         # Group with read permissions.
-        if build_read_group:
+        if self.read_group:
             read_group = Group(
                 name=Policy._build_group_name(
-                    Policy.READ_GROUP_PREFIX, resource_type, resource_id
+                    Policy.READ_GROUP_PREFIX,
+                    self.resource_type,
+                    self.resource_id,
                 ),
                 permissions=[
                     Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
+                        resource_type=self.resource_type,
+                        resource_id=self.resource_id,
                         method=MethodType.GET,
                     )
                 ],
@@ -83,17 +106,17 @@ class Policy:
             groups.append(read_group)
 
         # Group with create permissions.
-        if build_create_group:
+        if self.create_group:
             # Create group is only created for non-resource-id related groups, create is always general, never associated to an id.
-            if resource_id is None:
+            if self.resource_id is None:
                 create_group = Group(
                     name=Policy._build_group_name(
-                        Policy.CREATE_GROUP_PREFIX, resource_type, None
+                        Policy.CREATE_GROUP_PREFIX, self.resource_type, None
                     ),
                     permissions=[
                         Permission(
-                            resource_type=resource_type,
-                            resource_id=resource_id,
+                            resource_type=self.resource_type,
+                            resource_id=self.resource_id,
                             method=MethodType.POST,
                         ),
                     ],
@@ -101,31 +124,33 @@ class Policy:
                 groups.append(create_group)
 
         # Group with edit/delete permissions.
-        if build_edit_group:
+        if self.edit_group:
             write_group = Group(
                 name=Policy._build_group_name(
-                    Policy.EDIT_GROUP_PREFIX, resource_type, resource_id
+                    Policy.EDIT_GROUP_PREFIX,
+                    self.resource_type,
+                    self.resource_id,
                 ),
                 permissions=[
                     Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
+                        resource_type=self.resource_type,
+                        resource_id=self.resource_id,
                         method=MethodType.PUT,
                     ),
                     Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
+                        resource_type=self.resource_type,
+                        resource_id=self.resource_id,
                         method=MethodType.DELETE,
                     ),
                 ],
             )
 
             # Creating/editing items inside the major resources will happen with a POST and an id of the major resource.
-            if resource_id is not None:
+            if self.resource_id is not None:
                 write_group.permissions.append(
                     Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
+                        resource_type=self.resource_type,
+                        resource_id=self.resource_id,
                         method=MethodType.POST,
                     ),
                 )
@@ -134,27 +159,18 @@ class Policy:
 
         return groups
 
-    @staticmethod
     def is_stored(
-        resource_type: ResourceType,
-        resource_id: Any,
+        self,
         user_store: UserStoreSession,
     ) -> bool:
-        """Checks if the given resource type and id has a policy stored in the DB for them."""
+        """Checks if this policy is stored in the given store for them."""
         try:
-            # Try to read all permissions.
-            for method in MethodType:
-                _ = user_store.permission_mapper.read(
-                    Permission(
-                        resource_type=resource_type,
-                        resource_id=resource_id,
-                        method=method,
-                    ).to_str()
-                )
+            # Try to read all groups and permissions.
+            for group in self.groups:
+                _ = user_store.group_mapper.read(group.name)
 
-                # Try to read all groups.
-                for group in Policy.build_groups(resource_type, resource_id):
-                    _ = user_store.group_mapper.read(group.name)
+                for permission in group.permissions:
+                    _ = user_store.permission_mapper.read(permission.to_str())
         except errors.ErrorNotFound:
             # At least one permission or group is missing.
             return False
@@ -162,53 +178,44 @@ class Policy:
         # If we found everything, policy is complete.
         return True
 
-    @staticmethod
-    def create(
-        resource_type: ResourceType,
-        resource_id: Any,
-        user_store: UserStoreSession,
-        user: Optional[BasicUser] = None,
-    ):
-        """Sets up groups and permissions for a given resource type and id."""
+    def save_to_store(self, user_store: UserStoreSession) -> None:
+        """
+        Store this policy's groups and permissions in the given store.
 
-        # Create a permission for each method type and this resource.
-        for method in MethodType:
-            user_store.permission_mapper.create(
-                Permission(
-                    resource_type=resource_type,
-                    resource_id=resource_id,
-                    method=method,
-                )
-            )
+        :param user_store: The store to use to save this policy's groups and permissions to.
+        """
 
-        # Create a group with read permissions.
-        policy_groups = Policy.build_groups(resource_type, resource_id)
-        for group in policy_groups:
+        # Create groups and permissions in store.
+        for group in self.groups:
+            for permission in group.permissions:
+                user_store.permission_mapper.create(permission)
+
             user_store.group_mapper.create(group)
 
-        # Add current user, if any, to all groups.
-        if user and not user.role == RoleType.ADMIN:
-            for group in policy_groups:
-                user.groups.append(group)
-            user_store.user_mapper.edit(user)
-
-    @staticmethod
-    def remove(
-        resource_type: ResourceType,
-        resource_id: Any,
-        user_store: UserStoreSession,
-    ):
+    def remove_from_store(self, user_store: UserStoreSession) -> None:
         """Delete groups and permissions for a resource."""
-
         # TODO: This is not atomic. Error deleting one part may leave the rest dangling.
-        for group in Policy.build_groups(resource_type, resource_id):
+        for group in self.groups:
+            for permission in group.permissions:
+                user_store.permission_mapper.delete(permission.to_str())
+
             user_store.group_mapper.delete(group.name)
 
-        for method in MethodType:
-            user_store.permission_mapper.delete(
-                Permission(
-                    resource_type=resource_type,
-                    resource_id=resource_id,
-                    method=method,
-                ).to_str()
-            )
+    def assign_to_user(self, user: Union[UserWithPassword, BasicUser]):
+        """
+        Add to this user object the groups from this policy he is not a member of.
+        """
+        # Groups are not assigned to admin role, which has access to everything.
+        if user.role == RoleType.ADMIN:
+            return
+
+        # Only add groups the user does not already belong to.
+        for group in self.groups:
+            user_already_in_group = False
+            for existing_group in user.groups:
+                if existing_group.name == group.name:
+                    user_already_in_group = True
+                    break
+
+            if not user_already_in_group:
+                user.groups.append(group)
