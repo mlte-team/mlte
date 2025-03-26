@@ -62,9 +62,9 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     parent_url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
     parent_entry = get_test_entry(parent="")
 
-    parent_res = test_client.post(parent_url, json=parent_entry.to_json())
-    assert parent_res.status_code == codes.OK
-    _ = CustomListEntryModel(**parent_res.json())
+    res = test_client.post(parent_url, json=parent_entry.to_json())
+    assert res.status_code == codes.OK
+    _ = CustomListEntryModel(**res.json())
 
     # Test creating an entry in list with parent entries
     child_url = get_custom_list_uri(CustomListName.QUALITY_ATTRIBUTES)
@@ -72,9 +72,9 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
         name="child", description="child desc", parent=parent_entry.name
     )
 
-    child_res = test_client.post(child_url, json=child_entry.to_json())
-    assert child_res.status_code == codes.OK
-    _ = CustomListEntryModel(**child_res.json())
+    res = test_client.post(child_url, json=child_entry.to_json())
+    assert res.status_code == codes.OK
+    _ = CustomListEntryModel(**res.json())
 
 
 @pytest.mark.parametrize(
@@ -319,6 +319,34 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
 
     admin_client = test_api.get_test_client_for_admin()
+    res = admin_client.get(f"{url}")
+    assert res.status_code == codes.NOT_FOUND
+
+    # Make child and parent entries
+    parent_entry = get_test_entry(parent="")
+    create_entry_using_admin(
+        CustomListName.QA_CATEGORIES, parent_entry, test_api
+    )
+    child_entry = get_test_entry(
+        name="child", description="child desc", parent=parent_entry.name
+    )
+    create_entry_using_admin(
+        CustomListName.QUALITY_ATTRIBUTES, child_entry, test_api
+    )
+
+    # Test parent is deleted
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES, parent_entry.name)
+    res = test_client.delete(f"{url}")
+    assert res.status_code == codes.OK
+
+    admin_client = test_api.get_test_client_for_admin()
+    res = admin_client.get(f"{url}")
+    assert res.status_code == codes.NOT_FOUND
+
+    # Test deletion cascades to children
+    url = get_custom_list_uri(
+        CustomListName.QUALITY_ATTRIBUTES, child_entry.name
+    )
     res = admin_client.get(f"{url}")
     assert res.status_code == codes.NOT_FOUND
 
