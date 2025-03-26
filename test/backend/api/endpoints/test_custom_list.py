@@ -61,7 +61,52 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     print()
     assert res.status_code == codes.OK
     _ = CustomListEntryModel(**res.json())
-    _ = CustomListEntryModel(**get_entry_using_admin(CustomListName.QA_CATEGORIES, entry.name, test_api))
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_no_write_permissions(ResourceType.CUSTOM_LIST),
+)
+def test_create_no_permissions(
+    test_api_fixture, api_user: UserWithPassword
+) -> None: # noqa
+    """No permissions to create"""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+    entry = get_test_entry(parent="")
+
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
+    res = test_client.post(f"{url}", json=entry.to_json())
+    assert res.status_code == codes.FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_write_permissions(ResourceType.CUSTOM_LIST),
+)
+def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+    """Entries can be edited."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+    entry = get_test_entry(parent="")
+    desc2 = "new description"
+
+    # Create test entry.
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
+
+    # Edit entry.
+    entry.description = desc2
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
+    res = test_client.put(f"{url}", json=entry.to_json())
+    assert res.status_code == codes.OK
+
+    # Read it back.
+    edited_entry = CustomListEntryModel(
+        **get_entry_using_admin(
+            CustomListName.QA_CATEGORIES, entry.name, test_api
+        )
+    )
+    assert edited_entry.description == entry.description
+
 
 @pytest.mark.parametrize(
     "api_user",
