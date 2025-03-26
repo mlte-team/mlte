@@ -23,7 +23,6 @@ plugins:
       nav_file: SUMMARY.md
 nav:
   - Home: 'index.md'
-  - 'Setting Up MLTE': 'setting_up_mlte.md'
   - 'Using MLTE': 'using_mlte.md'
   - 'Development': 'development.md'
   - 'References':

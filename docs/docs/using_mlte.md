@@ -1,8 +1,6 @@
 # Using `MLTE`
 
-`MLTE` is a process and an infrastructure (a Python package) for machine learning model and system evaluation. This section focuses on setting up the infrastructure, which is an integral part of following the `MLTE` [process](index.md).
-
-If your team has an existing project and you would like to test it using  `MLTE`, navigate to the [Internal Model Testing](#internal-model-testing-imt) section for a description of testing a model with `MLTE`. However, if stakeholders have not been actively involved in the process, it is recommended to start with the Negotiation Card to make sure that both system and model requirements have been elicited and defined.
+`MLTE` is a process and an infrastructure (a Python package) for machine learning model and system evaluation.
 
 ## Installation
 
