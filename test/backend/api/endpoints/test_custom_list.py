@@ -60,7 +60,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Test creating an entry in list without parent entries
     parent_url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
-    parent_entry = get_test_entry(parent="")
+    parent_entry = get_test_entry()
 
     res = test_client.post(parent_url, json=parent_entry.to_json())
     assert res.status_code == codes.OK
@@ -90,7 +90,7 @@ def test_create_no_permissions(
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
     res = test_client.post(f"{url}", json=entry.to_json())
     assert res.status_code == codes.FORBIDDEN
@@ -113,7 +113,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     test_client = test_api.get_test_client()
 
     # Create entry to read
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     # Read entry
@@ -137,7 +137,7 @@ def test_read_no_permission(
     test_client = test_api.get_test_client()
 
     # Create entry to read
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     # Read entry
@@ -163,7 +163,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:
     test_client = test_api.get_test_client()
 
     # Create test entry.
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     desc2 = "new description"
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
@@ -196,7 +196,7 @@ def test_edit_no_permission(
     test_client = test_api.get_test_client()
 
     # Create test entry.
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     desc2 = "new description"
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
@@ -264,7 +264,7 @@ def test_list_single_list(test_api_fixture, api_user: UserWithPassword) -> None:
         custom_list_id=CustomListName.QA_CATEGORIES, no_entry=True
     )
     original_entries = test_client.get(f"{url}")
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     res = test_client.get(f"{url}")
@@ -288,7 +288,7 @@ def test_list_single_list_no_permission(
     url = get_custom_list_uri(
         custom_list_id=CustomListName.QA_CATEGORIES, no_entry=True
     )
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     res = test_client.get(f"{url}")
@@ -311,7 +311,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     url = get_custom_list_uri(CustomListName.QA_CATEGORIES, entry.name)
@@ -323,7 +323,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.NOT_FOUND
 
     # Make child and parent entries
-    parent_entry = get_test_entry(parent="")
+    parent_entry = get_test_entry()
     create_entry_using_admin(
         CustomListName.QA_CATEGORIES, parent_entry, test_api
     )
@@ -364,7 +364,7 @@ def test_delete_no_permission(
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    entry = get_test_entry(parent="")
+    entry = get_test_entry()
     create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
 
     url = get_custom_list_uri(CustomListName.QA_CATEGORIES, entry.name)
