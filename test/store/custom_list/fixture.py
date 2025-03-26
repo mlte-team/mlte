@@ -11,17 +11,16 @@ from typing import Generator, List, Optional
 
 import pytest
 
+from mlte.backend.core.config import settings
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel, CustomListModel
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
+from mlte.user.model import ResourceType
 from test.store.custom_list.custom_list_store_creators import (
     create_fs_store,
     create_memory_store,
 )
-from mlte.backend.core.config import settings
-from mlte.user.model import ResourceType
-
 
 CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 """Base URI for custom lists."""
@@ -90,10 +89,11 @@ def get_test_entry(
         name=name, description=description, parent=parent
     )
 
+
 def get_custom_list_uri(
     custom_list_id: Optional[str] = None,
     entry_id: Optional[str] = None,
-    no_entry: bool = False
+    no_entry: bool = False,
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""
     url = f"{CATALOG_BASE_URI}"

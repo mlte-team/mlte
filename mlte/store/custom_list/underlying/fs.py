@@ -100,7 +100,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         self._set_base_path(list_name)
         return self.storage.list_resources()
-    
+
     def edit(
         self,
         entry: CustomListEntryModel,

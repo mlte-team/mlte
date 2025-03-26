@@ -81,6 +81,7 @@ def test_custom_list_entry(
                 test_entry.name, test_list.name
             )
 
+
 @pytest.mark.parametrize("store_fixture_name", custom_list_stores())
 def test_custom_list_parent_mappings(
     store_fixture_name: str, create_test_store  # noqa
@@ -92,7 +93,9 @@ def test_custom_list_parent_mappings(
     child_list = CustomListName.QUALITY_ATTRIBUTES
 
     parent_name = "Test parent"
-    parent = get_test_entry(name=parent_name, )
+    parent = get_test_entry(
+        name=parent_name,
+    )
     child = get_test_entry(name="child", parent=parent_name)
 
     with ManagedCustomListSession(store.session()) as custom_list_store:

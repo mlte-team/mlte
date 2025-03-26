@@ -4,9 +4,9 @@ mlte/backend/api/endpoints/custom_list.py
 Custom list Entry CRUD endpoints.
 """
 
-from fastapi import APIRouter, HTTPException
-
 from typing import List
+
+from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
@@ -50,18 +50,19 @@ def create_custom_list_entry(
 def read_custom_list_entry(
     *,
     custom_list_id: CustomListName,
-    entry_id: str,
+    custom_list_entry_id: str,
     current_user: AuthorizedUser,
 ) -> CustomListEntryModel:
     """
     Read a custom list Entry.
-    :param entry_id: The entry id to read
+    :param custom_list_entry_id: The entry id to read
     :return: The read entry
     """
     with state_stores.custom_list_stores_session() as custom_list_store:
+        print("in")
         try:
             return custom_list_store.custom_list_entry_mapper.read(
-                entry_id, custom_list_id
+                custom_list_entry_id, custom_list_id
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
@@ -71,6 +72,7 @@ def read_custom_list_entry(
             )
         except Exception as e:
             raise_http_internal_error(e)
+
 
 @router.get("s")
 def list_custom_lists(
@@ -82,6 +84,7 @@ def list_custom_lists(
     :return: A collection of list names
     """
     return [list_name.value for list_name in CustomListName]
+
 
 @router.get("/{custom_list_id}")
 def list_custom_list_details(
@@ -95,9 +98,12 @@ def list_custom_list_details(
     """
     with state_stores.custom_list_stores_session() as custom_list_store:
         try:
-            return custom_list_store.custom_list_entry_mapper.list_details(custom_list_id)
+            return custom_list_store.custom_list_entry_mapper.list_details(
+                custom_list_id
+            )
         except Exception as e:
             raise_http_internal_error(e)
+
 
 @router.put("/{custom_list_id}/entry")
 def edit_custom_list_entry(
@@ -126,18 +132,18 @@ def edit_custom_list_entry(
 def delete_custom_list_entry(
     *,
     custom_list_id: CustomListName,
-    entry_id: str,
+    custom_list_entry_id: str,
     current_user: AuthorizedUser,
 ) -> CustomListEntryModel:
     """
     Delete a custom list Entry.
-    :param entry_id: The entry id to delete
+    :param custom_list_entry_id: The entry id to delete
     :return: The deleted entry
     """
     with state_stores.custom_list_stores_session() as custom_list_store:
         try:
             return custom_list_store.custom_list_entry_mapper.delete(
-                entry_id, custom_list_id
+                custom_list_entry_id, custom_list_id
             )
         except errors.ErrorNotFound as e:
             raise HTTPException(

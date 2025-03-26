@@ -12,7 +12,6 @@ from typing import List, Union
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
-from mlte.custom_list.custom_list_names import CustomListName
 import mlte.store.error as errors
 from mlte.backend.api.auth import authorization
 from mlte.backend.api.auth.authorization import AuthorizedUser
@@ -82,6 +81,7 @@ def check_group(user: BasicUser, new_group: Group):
 
     if not has_group:
         user.groups.append(new_group)
+
 
 @router.post("")
 def create_user(

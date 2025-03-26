@@ -68,6 +68,4 @@ class InitialCustomLists:
                 f"Loaded {num_attributes} Quality Attributes for initial list"
             )
 
-        
-
         return custom_list_store

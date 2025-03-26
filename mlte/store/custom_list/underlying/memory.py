@@ -9,7 +9,10 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 import mlte.store.error as errors
-from mlte.custom_list.custom_list_names import CustomListName, CustomListParentMappings
+from mlte.custom_list.custom_list_names import (
+    CustomListName,
+    CustomListParentMappings,
+)
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
 from mlte.store.custom_list.store import CustomListStore
@@ -106,7 +109,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
 
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
-    
+
     def read(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
@@ -114,7 +117,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         self._check_entry_in_list(entry_name, list_name)
         entry = self.storage.custom_lists[list_name][entry_name]
         return entry
-    
+
     def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         list_name = self._check_valid_custom_list(list_name)
         return [

@@ -99,7 +99,9 @@ class TestAPI:
             state.add_catalog_store(
                 catalog_store_creators.create_memory_store(), default_catalog_id
             )
-        state.set_custom_list_store(custom_list_store_creators.create_memory_store())
+        state.set_custom_list_store(
+            custom_list_store_creators.create_memory_store()
+        )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 
         # Set user to interact with API, and admin user.
@@ -176,8 +178,6 @@ class TestAPI:
     def admin_read_entity(self, entity_id: str, uri: str) -> dict[str, Any]:
         """Get the given entity using an admin."""
         admin_client = self.get_test_client_for_admin()
-        print('in test api')
-        print(f"{uri}/{entity_id}")
         res = admin_client.get(f"{uri}/{entity_id}")
         assert res.status_code == codes.OK
         return typing.cast(Dict[str, Any], res.json())
