@@ -59,7 +59,6 @@ def read_custom_list_entry(
     :return: The read entry
     """
     with state_stores.custom_list_stores_session() as custom_list_store:
-        print("in")
         try:
             return custom_list_store.custom_list_entry_mapper.read(
                 custom_list_entry_id, custom_list_id
