@@ -43,7 +43,7 @@ def get_entry_using_admin(
 
 
 # -----------------------------------------------------------------------------
-# Tests
+# Tests - Create
 # -----------------------------------------------------------------------------
 
 
@@ -86,7 +86,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 def test_create_no_permissions(
     test_api_fixture, api_user: UserWithPassword
 ) -> None:
-    """No permissions to create"""
+    """No permissions to create."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
@@ -94,6 +94,11 @@ def test_create_no_permissions(
     url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
     res = test_client.post(f"{url}", json=entry.to_json())
     assert res.status_code == codes.FORBIDDEN
+
+
+# -----------------------------------------------------------------------------
+# Tests - Read
+# -----------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
@@ -116,6 +121,34 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
     _ = CustomListEntryModel(**res.json())
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_no_read_permissions(
+        ResourceType.CUSTOM_LIST
+    ),
+)
+def test_read_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:
+    """No permission to read entry."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    # Create entry to read
+    entry = get_test_entry(parent="")
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
+
+    # Read entry
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES, entry.name)
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.FORBIDDEN
+
+
+# -----------------------------------------------------------------------------
+# Tests - Edit
+# -----------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
@@ -151,6 +184,36 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
+    user_generator.get_test_users_with_no_write_permissions(
+        ResourceType.CUSTOM_LIST
+    ),
+)
+def test_edit_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:
+    """No permission to edit."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    # Create test entry.
+    entry = get_test_entry(parent="")
+    desc2 = "new description"
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
+
+    # Edit entry.
+    entry.description = desc2
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES)
+    res = test_client.put(f"{url}", json=entry.to_json())
+    assert res.status_code == codes.FORBIDDEN
+
+
+# -----------------------------------------------------------------------------
+# Tests - List
+# -----------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "api_user",
     user_generator.get_test_users_with_read_permissions(
         ResourceType.CUSTOM_LIST
     ),
@@ -166,6 +229,24 @@ def test_list_lists(test_api_fixture, api_user: UserWithPassword) -> None:
 
     collection = res.json()
     assert len(collection) == 2
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_no_read_permissions(
+        ResourceType.CUSTOM_LIST
+    ),
+)
+def test_list_lists_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:
+    """No permission to list lists."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    url = get_custom_list_uri()
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.FORBIDDEN
 
 
 @pytest.mark.parametrize(
@@ -193,6 +274,34 @@ def test_list_single_list(test_api_fixture, api_user: UserWithPassword) -> None:
 
 @pytest.mark.parametrize(
     "api_user",
+    user_generator.get_test_users_with_no_read_permissions(
+        ResourceType.CUSTOM_LIST
+    ),
+)
+def test_list_single_list_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:
+    """No permission to list single list."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    url = get_custom_list_uri(
+        custom_list_id=CustomListName.QA_CATEGORIES, no_entry=True
+    )
+    entry = get_test_entry(parent="")
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
+
+    res = test_client.get(f"{url}")
+    assert res.status_code == codes.FORBIDDEN
+
+
+# -----------------------------------------------------------------------------
+# Tests - Delete
+# -----------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "api_user",
     user_generator.get_test_users_with_write_permissions(
         ResourceType.CUSTOM_LIST
     ),
@@ -212,3 +321,24 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     admin_client = test_api.get_test_client_for_admin()
     res = admin_client.get(f"{url}")
     assert res.status_code == codes.NOT_FOUND
+
+
+@pytest.mark.parametrize(
+    "api_user",
+    user_generator.get_test_users_with_no_write_permissions(
+        ResourceType.CUSTOM_LIST
+    ),
+)
+def test_delete_no_permission(
+    test_api_fixture, api_user: UserWithPassword
+) -> None:
+    """No permission to delete."""
+    test_api: TestAPI = test_api_fixture(api_user)
+    test_client = test_api.get_test_client()
+
+    entry = get_test_entry(parent="")
+    create_entry_using_admin(CustomListName.QA_CATEGORIES, entry, test_api)
+
+    url = get_custom_list_uri(CustomListName.QA_CATEGORIES, entry.name)
+    res = test_client.delete(f"{url}")
+    assert res.status_code == codes.FORBIDDEN
