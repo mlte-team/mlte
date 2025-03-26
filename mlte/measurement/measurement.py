@@ -65,7 +65,6 @@ class Measurement(ABC):
         Evaluate a measurement and return a value with semantics.
 
         :return: The resulting value of measurement execution, with semantics
-        :rtype: Evidence
         """
         if self.evidence_metadata is None:
             raise RuntimeError(

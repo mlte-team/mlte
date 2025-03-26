@@ -70,6 +70,18 @@ class ProcessMeasurement(Measurement, ABC):
             "Cannot evaluate abstract process measurement."
         )
 
+    def evaluate(self, command: list[str], *args, **kwargs) -> Evidence:
+        """Evaluate by starting the given process and waiting for it to complete."""
+        if len(command) < 1:
+            raise RuntimeError(
+                f"Command list must as least have one item: {command}"
+            )
+
+        pid = ProcessMeasurement.start_process(command[0], command[1:])
+        self.evaluate_async(pid, *args, **kwargs)
+        evidence = self.wait_for_output()
+        return evidence
+
     def evaluate_async(self, pid: int, *args, **kwargs):
         """
         Monitor an external process at `pid` in a separate thread until it stops.
@@ -91,7 +103,7 @@ class ProcessMeasurement(Measurement, ABC):
         Runs the evaluate method that should implement the measurement, and stores its results when it finishes.
         """
         try:
-            self.stored_value = self.evaluate(pid, *args, **kwargs)
+            self.stored_value = super().evaluate(pid, *args, **kwargs)
         except Exception as e:
             self.error = f"Could not evaluate process: {e}"
 
