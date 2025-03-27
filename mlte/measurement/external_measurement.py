@@ -84,3 +84,14 @@ class ExternalMeasurement(Measurement):
     def get_output_type(self) -> type[Evidence]:  # type: ignore
         """Object method with proper results, similar to the class level get_output_type method, which will always return Opaque for this class."""
         return self.output_evidence_type
+
+    def __eq__(self, other: object) -> bool:
+        """Test instance for equality."""
+        if not isinstance(other, ExternalMeasurement):
+            return False
+        return (
+            self.test_case_id == other.test_case_id
+            and self.evidence_metadata == other.evidence_metadata
+            and self.output_evidence_type == other.output_evidence_type
+            and self.function == other.function
+        )
