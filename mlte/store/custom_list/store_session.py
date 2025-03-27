@@ -68,7 +68,7 @@ class CustomListEntryMapper(ResourceMapper):
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def ensure_parent_exists(
+    def _ensure_parent_exists(
         self, parent: str, list_name: Optional[CustomListName]
     ) -> None:
         if list_name in CustomListParentMappings.parent_mappings.keys():
@@ -83,7 +83,7 @@ class CustomListEntryMapper(ResourceMapper):
                 "Parent specified for item in list with no parent list."
             )
 
-    def delete_children(
+    def _delete_children(
         self, list_name: Optional[CustomListName], entry_name: str
     ) -> None:
         """Cascades delete to children of a parent."""

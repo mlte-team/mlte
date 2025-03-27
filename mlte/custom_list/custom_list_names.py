@@ -42,7 +42,7 @@ class CustomListParentMappings:
     )
 
     @staticmethod
-    def get_child_list_name(list_name: Optional[CustomListName]):
+    def get_child_list_name(list_name: Optional[CustomListName]) -> Optional[CustomListName]:
         """Gets the name of the child list of list_name."""
         if (
             list_name
