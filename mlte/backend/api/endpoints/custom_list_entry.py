@@ -64,8 +64,6 @@ def read_custom_list_entry(
                 custom_list_entry_id, custom_list_id
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
-        except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
             )
