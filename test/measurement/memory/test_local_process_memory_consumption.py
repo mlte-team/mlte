@@ -5,8 +5,6 @@ Unit test for LocalProcessMemoryConsumption measurement.
 """
 
 import os
-import subprocess
-import threading
 import time
 import typing
 from typing import Tuple
@@ -16,24 +14,20 @@ from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
     MemoryStatistics,
 )
+from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
-
-from ...support.meta import path_to_support
+from test.support.meta import path_to_support
 
 # The spin duration, in seconds
-SPIN_DURATION = 5
-
-
-def spin_for(seconds: int):
-    """Run the spin.py program for `seconds`."""
-    path = os.path.join(path_to_support(), "spin.py")
-    prog = subprocess.Popen(["python", path, f"{seconds}"])
-    thread = threading.Thread(target=lambda: prog.wait())
-    thread.start()
-    return prog
+SPIN_DURATION = 3
+SPIN_COMMAND = [
+    "python3",
+    os.path.join(path_to_support(), "spin.py"),
+    str(SPIN_DURATION),
+]
 
 
 def test_constructor_type():
@@ -50,11 +44,10 @@ def test_constructor_type():
 def test_memory_evaluate() -> None:
     start = time.time()
 
-    p = spin_for(5)
     m = LocalProcessMemoryConsumption("identifier")
 
     # Capture memory consumption; blocks until process exit
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stats)) > 0
     assert int(time.time() - start) >= SPIN_DURATION
@@ -63,11 +56,11 @@ def test_memory_evaluate() -> None:
 def test_memory_evaluate_async() -> None:
     start = time.time()
 
-    p = spin_for(5)
+    pid = ProcessMeasurement.start_process(SPIN_COMMAND[0], SPIN_COMMAND[1:])
     m = LocalProcessMemoryConsumption("identifier")
 
     # Capture memory consumption; blocks until process exit
-    m.evaluate_async(p.pid)
+    m.evaluate_async(pid)
     stats = m.wait_for_output()
 
     assert len(str(stats)) > 0
@@ -75,12 +68,10 @@ def test_memory_evaluate_async() -> None:
 
 
 def test_memory_validate_success() -> None:
-    p = spin_for(5)
-
     m = LocalProcessMemoryConsumption("identifier")
 
     # Blocks until process exit
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
     validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
     vr = validator.validate(stats)
@@ -88,12 +79,11 @@ def test_memory_validate_success() -> None:
 
 
 def test_memory_validate_failure() -> None:
-    p = spin_for(5)
 
     m = LocalProcessMemoryConsumption("identifier")
 
     # Blocks until process exit
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
     vr = Validator(
         bool_exp=lambda _: False, success="yay", failure="oh"

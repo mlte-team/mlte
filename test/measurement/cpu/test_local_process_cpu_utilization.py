@@ -5,8 +5,6 @@ Unit test for LocalProcessCPUUtilization measurement.
 """
 
 import os
-import subprocess
-import threading
 import time
 import typing
 from typing import Tuple
@@ -25,15 +23,11 @@ from ...support.meta import path_to_support
 
 # The spin duration, in seconds
 SPIN_DURATION = 3
-
-
-def spin_for(seconds: int):
-    """Run the spin.py program for `seconds`."""
-    path = os.path.join(path_to_support(), "spin.py")
-    prog = subprocess.Popen(["python", path, f"{seconds}"])
-    thread = threading.Thread(target=lambda: prog.wait())
-    thread.start()
-    return prog
+SPIN_COMMAND = [
+    "python3",
+    os.path.join(path_to_support(), "spin.py"),
+    str(SPIN_DURATION),
+]
 
 
 def test_constructor_type():
@@ -53,11 +47,10 @@ def test_constructor_type():
 def test_cpu_nix_evaluate() -> None:
     start = time.time()
 
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
-    stat = m.evaluate(p.pid)
+    stat = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -70,12 +63,10 @@ def test_cpu_nix_evaluate() -> None:
 def test_cpu_nix_evaluate_async() -> None:
     start = time.time()
 
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
-    m.evaluate_async(p.pid)
-    stat = m.wait_for_output()
+    stat = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -86,10 +77,9 @@ def test_cpu_nix_evaluate_async() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_success() -> None:
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
     vr = Validator(bool_exp=lambda _: True, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert bool(vr)
@@ -99,10 +89,9 @@ def test_cpu_nix_validate_success() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_failure() -> None:
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
     vr = Validator(bool_exp=lambda _: False, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert not bool(vr)

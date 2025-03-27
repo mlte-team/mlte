@@ -7,21 +7,27 @@ import sys
 from pathlib import Path
 
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.types.integer import Integer
+from mlte.evidence.types.string import String
 from mlte.measurement.process_measurement import ProcessMeasurement
 from test.support.meta import path_to_support
 
 # The spin duration, in seconds
 SPIN_DURATION = 1
+SPIN_COMMAND = [
+    "python3",
+    os.path.join(path_to_support(), "spin.py"),
+    str(SPIN_DURATION),
+]
 
 
 class SampleProcessMeasurement(ProcessMeasurement):
-    def __call__(self, pid: int, *args, **kwargs) -> Evidence:
-        return Integer(pid)
+    def __call__(self, pid: int, first_arg: str, *args, **kwargs) -> Evidence:
+        print(first_arg)
+        return String(first_arg)
 
     @classmethod
     def get_output_type(cls) -> type[Evidence]:
-        return Integer
+        return String
 
 
 def test_start_script_job():
@@ -44,6 +50,19 @@ def test_start_general_job():
     assert pid > 0
 
 
+def test_evaluate_sync() -> None:
+    """Test that we can properly evaluate synchronously."""
+    m = SampleProcessMeasurement("id1")
+
+    # Dummy process for testing purposes.
+    args = ["python3", "spin.py", f"{SPIN_DURATION}"]
+
+    result = m.evaluate(args, "test")
+
+    assert type(result) is String and result.value == "test"
+    assert m.evidence_metadata and m.evidence_metadata.test_case_id == "id1"
+
+
 def test_evaluate_async() -> None:
     """Test that we can properly evaluate asynchronously."""
     m = SampleProcessMeasurement("id1")
@@ -53,8 +72,8 @@ def test_evaluate_async() -> None:
     args = ["spin.py", f"{SPIN_DURATION}"]
     pid = ProcessMeasurement.start_process(spin, args)
 
-    m.evaluate_async(pid)
+    m.evaluate_async(pid, "test")
     result = m.wait_for_output()
 
-    assert type(result) is Integer and result.value == pid
+    assert type(result) is String and result.value == "test"
     assert m.evidence_metadata and m.evidence_metadata.test_case_id == "id1"
