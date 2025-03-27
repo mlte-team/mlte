@@ -10,10 +10,7 @@ from pathlib import Path
 from typing import List, Optional
 
 import mlte.store.error as errors
-from mlte.custom_list.custom_list_names import (
-    CustomListName,
-    CustomListParentMappings,
-)
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
@@ -86,7 +83,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
-        self._ensure_parent_exists(entry.parent, list_name)
+        self.ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_does_not_exist(entry.name)
         return self._write_entry(entry)
@@ -106,7 +103,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
-        self._ensure_parent_exists(entry.parent, list_name)
+        self.ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry.name)
         return self._write_entry(entry)
@@ -150,19 +147,4 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         else:
             self.storage.set_base_path(
                 Path(self.storage.sub_folder, str(list_name))
-            )
-
-    def _ensure_parent_exists(
-        self, parent: str, list_name: Optional[CustomListName]
-    ) -> None:
-        if list_name in CustomListParentMappings.parent_mappings.keys():
-            if parent not in self.list(
-                CustomListParentMappings.parent_mappings[list_name]
-            ):
-                raise errors.ErrorNotFound(
-                    f"Parent {parent} does not exist in list {list_name}"
-                )
-        elif parent != "":
-            raise errors.InternalError(
-                "Parent specified for item in list with no parent list."
             )

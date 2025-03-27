@@ -6,7 +6,7 @@ Enum of the predefined custom list names.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from strenum import StrEnum
 
@@ -44,3 +44,21 @@ class CustomListParentMappings:
     parent_mappings[CustomListName.QUALITY_ATTRIBUTES] = (
         CustomListName.QA_CATEGORIES
     )
+
+    @staticmethod
+    def get_child_list_name(list_name: Optional[CustomListName]):
+        """Gets the name of the child list of list_name."""
+        if (
+            list_name
+            and list_name in CustomListParentMappings.parent_mappings.values()
+        ):
+            child_list_name = list(
+                CustomListParentMappings.parent_mappings.keys()
+            )[
+                list(CustomListParentMappings.parent_mappings.values()).index(
+                    list_name
+                )
+            ]
+            return child_list_name
+        else:
+            return None

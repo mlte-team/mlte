@@ -9,10 +9,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 import mlte.store.error as errors
-from mlte.custom_list.custom_list_names import (
-    CustomListName,
-    CustomListParentMappings,
-)
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
 from mlte.store.custom_list.store import CustomListStore
@@ -103,7 +100,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self._ensure_parent_exists(entry.parent, list_name)
+        self.ensure_parent_exists(entry.parent, list_name)
         if entry.name in self.storage.custom_lists[list_name]:
             raise errors.ErrorAlreadyExists(f"Custom list Entry {entry.name}")
 
@@ -131,7 +128,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self._ensure_parent_exists(entry.parent, list_name)
+        self.ensure_parent_exists(entry.parent, list_name)
         self._check_entry_in_list(entry.name, list_name)
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
@@ -160,18 +157,3 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     def _check_entry_in_list(self, entry_name: str, list_name: CustomListName):
         if entry_name not in self.storage.custom_lists[list_name]:
             raise errors.ErrorNotFound(f"Custom list Entry {entry_name}")
-
-    def _ensure_parent_exists(
-        self, parent: str, list_name: Optional[CustomListName]
-    ) -> None:
-        if list_name in CustomListParentMappings.parent_mappings.keys():
-            if parent not in self.list(
-                CustomListParentMappings.parent_mappings[list_name]
-            ):
-                raise errors.ErrorNotFound(
-                    f"Parent {parent} does not exist in list {CustomListParentMappings.parent_mappings[list_name]}"
-                )
-        elif parent != "":
-            raise errors.InternalError(
-                "Parent specified for item in list with no parent list."
-            )
