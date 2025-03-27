@@ -8,7 +8,10 @@ from __future__ import annotations
 
 from typing import List, Optional, cast
 
-from mlte.custom_list.custom_list_names import CustomListName
+from mlte.custom_list.custom_list_names import (
+    CustomListName,
+    CustomListParentMappings,
+)
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
 
@@ -67,3 +70,20 @@ class CustomListEntryMapper(ResourceMapper):
         custom_list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def delete_children(
+        self, list_name: Optional[CustomListName], entry_name: str
+    ) -> None:
+        """Cascades delete to children of a parent."""
+        if list_name in CustomListParentMappings.parent_mappings.values():
+            child_list_name = list(
+                CustomListParentMappings.parent_mappings.keys()
+            )[
+                list(CustomListParentMappings.parent_mappings.values()).index(
+                    list_name
+                )
+            ]
+            for child_entry_name in self.list(child_list_name):
+                child_entry = self.read(child_entry_name, child_list_name)
+                if child_entry.parent == entry_name:
+                    self.delete(child_entry_name, child_list_name)

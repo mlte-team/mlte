@@ -22,7 +22,7 @@ from test.store.custom_list.custom_list_store_creators import (
     create_memory_store,
 )
 
-CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
+CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 """Base URI for custom lists."""
 
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
@@ -96,7 +96,7 @@ def get_custom_list_uri(
     no_entry: bool = False,
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""
-    url = f"{CATALOG_BASE_URI}"
+    url = f"{CUSTOM_LIST_BASE_URI}"
     if custom_list_id is None:
         return f"{url}s"
 

@@ -99,8 +99,12 @@ def test_custom_list_parent_mappings(
     child_entry = get_test_entry(name="child", parent=parent_name)
 
     with ManagedCustomListSession(store.session()) as custom_list_store:
-        custom_list_store.custom_list_entry_mapper.create(parent_entry, parent_list_name)
-        custom_list_store.custom_list_entry_mapper.create(child_entry, child_list_name)
+        custom_list_store.custom_list_entry_mapper.create(
+            parent_entry, parent_list_name
+        )
+        custom_list_store.custom_list_entry_mapper.create(
+            child_entry, child_list_name
+        )
 
         read_child_entry = custom_list_store.custom_list_entry_mapper.read(
             child_entry.name, child_list_name

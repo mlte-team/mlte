@@ -141,20 +141,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)
-
-        if list_name in CustomListParentMappings.parent_mappings.values():
-            child_list_name = list(
-                CustomListParentMappings.parent_mappings.keys()
-            )[
-                list(CustomListParentMappings.parent_mappings.values()).index(
-                    list_name
-                )
-            ]
-            for child_entry_name in self.list(child_list_name):
-                child_entry = self.read(child_entry_name, child_list_name)
-                if child_entry.parent == entry_name:
-                    self.delete(child_entry_name, child_list_name)
-
+        self.delete_children(list_name, entry_name)
         popped = self.storage.custom_lists[list_name][entry_name]
         del self.storage.custom_lists[list_name][entry_name]
         return popped

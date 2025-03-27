@@ -117,19 +117,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
-
-        if list_name in CustomListParentMappings.parent_mappings.values():
-            child_list_name = list(
-                CustomListParentMappings.parent_mappings.keys()
-            )[
-                list(CustomListParentMappings.parent_mappings.values()).index(
-                    list_name
-                )
-            ]
-            for child_entry_name in self.list(child_list_name):
-                child_entry = self.read(child_entry_name, child_list_name)
-                if child_entry.parent == entry_name:
-                    self.delete(child_entry_name, child_list_name)
+        self.delete_children(list_name, entry_name)
 
         self._set_base_path(list_name)
         self.storage.delete_resource(entry_name)
