@@ -1,8 +1,4 @@
-"""
-test/store/custom_list/fixture.py
-
-Fixtures for MLTE custom list store unit tests.
-"""
+"""Fixtures for MLTE custom list store unit tests."""
 
 from __future__ import annotations
 

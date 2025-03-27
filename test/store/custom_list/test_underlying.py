@@ -1,8 +1,4 @@
-"""
-test/store/custom_list/test_underlying.py
-
-Unit tests for the underlying custom list store implementations.
-"""
+"""Unit tests for the underlying custom list store implementations."""
 
 import pytest
 

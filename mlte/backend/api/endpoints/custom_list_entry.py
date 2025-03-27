@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/custom_list.py
-
-Custom list Entry CRUD endpoints.
-"""
+"""Custom list Entry CRUD endpoints."""
 
 from typing import List
 

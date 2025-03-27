@@ -1,8 +1,4 @@
-"""
-mlte/store/custom_list/underyling/memory.py
-
-Implementation of in-memory custom list store.
-"""
+"""Implementation of in-memory custom list store."""
 
 from __future__ import annotations
 

@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/catalog.py
-
-Test Catalog Entry CRUD endpoints.
-"""
+"""Test Catalog Entry CRUD endpoints."""
 
 from __future__ import annotations
 
