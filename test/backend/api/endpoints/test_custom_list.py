@@ -36,8 +36,6 @@ def get_entry_using_admin(
     if custom_list_id is None:
         raise Exception("Error running test, custom list id can't be null")
 
-    # this isnt fixed yet
-    # url = get_entry_uri(custom_list_id=custom_list_id, entry_id=entry_id)
     url = get_custom_list_uri(custom_list_id=custom_list_id)
     return api.admin_read_entity(entry_id, url)
 
