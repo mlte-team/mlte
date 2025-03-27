@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Optional
 
 from strenum import StrEnum
 
@@ -14,7 +14,7 @@ class CustomListName(StrEnum):
     QUALITY_ATTRIBUTES = "quality_attributes"
 
 
-class CustomListNameDict(dict[Any, Any]):
+class CustomListNameDict(dict[CustomListName, CustomListName]):
     def __setitem__(
         self: "CustomListNameDict",
         key: CustomListName,
@@ -42,7 +42,9 @@ class CustomListParentMappings:
     )
 
     @staticmethod
-    def get_child_list_name(list_name: Optional[CustomListName]) -> Optional[CustomListName]:
+    def get_child_list_name(
+        list_name: Optional[CustomListName],
+    ) -> Optional[CustomListName]:
         """Gets the name of the child list of list_name."""
         if (
             list_name

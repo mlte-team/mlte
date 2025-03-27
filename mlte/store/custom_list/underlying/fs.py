@@ -79,7 +79,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
-        self.ensure_parent_exists(entry.parent, list_name)
+        self._ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_does_not_exist(entry.name)
         return self._write_entry(entry)
@@ -99,7 +99,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
-        self.ensure_parent_exists(entry.parent, list_name)
+        self._ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry.name)
         return self._write_entry(entry)
@@ -110,7 +110,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
-        self.delete_children(list_name, entry_name)
+        self._delete_children(list_name, entry_name)
 
         self._set_base_path(list_name)
         self.storage.delete_resource(entry_name)

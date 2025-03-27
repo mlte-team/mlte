@@ -96,7 +96,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self.ensure_parent_exists(entry.parent, list_name)
+        self._ensure_parent_exists(entry.parent, list_name)
         if entry.name in self.storage.custom_lists[list_name]:
             raise errors.ErrorAlreadyExists(f"Custom list Entry {entry.name}")
 
@@ -124,7 +124,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self.ensure_parent_exists(entry.parent, list_name)
+        self._ensure_parent_exists(entry.parent, list_name)
         self._check_entry_in_list(entry.name, list_name)
         self.storage.custom_lists[list_name][entry.name] = entry
         return entry
@@ -134,7 +134,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)
-        self.delete_children(list_name, entry_name)
+        self._delete_children(list_name, entry_name)
         popped = self.storage.custom_lists[list_name][entry_name]
         del self.storage.custom_lists[list_name][entry_name]
         return popped
