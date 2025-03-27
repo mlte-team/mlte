@@ -79,24 +79,23 @@ def get_sample_metadata(
 
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = ExternalMeasurement("test_id", Integer, function=test_constructor_type)
+    m = ExternalMeasurement("test_id", Integer, function=get_sample_metadata)
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.external_measurement.ExternalMeasurement"
-        and m.function == test_constructor_type
+        and m.function == get_sample_metadata
     )
     assert m.output_evidence_type == Integer
 
 
 def test_load_from_metadata():
     """ "Checks that we can generate and load measurement metadata."""
-    m = ExternalMeasurement("test_id", Integer, test_constructor_type)
+    m = ExternalMeasurement("test_id", Integer, get_sample_metadata)
     metadata = m.generate_metadata()
 
     m2 = Measurement.from_metadata(metadata, test_case_id="test_id")
-
     assert m == m2
 
 

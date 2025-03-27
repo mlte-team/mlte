@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, TypeVar
 
 from mlte._private import meta
-from mlte._private.reflection import load_class
+from mlte._private.reflection import load_class_or_function
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -141,7 +141,7 @@ class Evidence(Artifact, ABC):
                 EvidenceModel, artifact_model.body
             )
             evidence_class: Evidence = typing.cast(
-                Evidence, load_class(model.evidence_class)
+                Evidence, load_class_or_function(model.evidence_class)
             )
             evidence = evidence_class.from_model(artifact_model)
             evidences.append(evidence)

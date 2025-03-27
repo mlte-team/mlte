@@ -8,18 +8,20 @@ import json
 import os
 import re
 from types import ModuleType
-from typing import Any, Generator, Type
+from typing import Any, Callable, Generator, Union
 
 import astunparse  # type: ignore
 
 
-def load_class(class_path: str) -> Type[Any]:
+def load_class_or_function(
+    type_path: str,
+) -> Union[type[Any], Callable[[], Any]]:
     """
-    Returns a class type of the given class name/path.
-    :param class_path: A path to a class to use, including absolute package/module path and class name.
+    Returns a class or function of the given class name/path.
+    :param type_path: A path to a class or function, including absolute package/module path and class/function name.
     """
     # Split into package/module and class name.
-    parts = class_path.rsplit(".", 1)
+    parts = type_path.rsplit(".", 1)
     module_name = parts[0]
     class_name = parts[1]
 
@@ -29,13 +31,13 @@ def load_class(class_path: str) -> Type[Any]:
         raise RuntimeError(f"Module {module_name} could not be loaded: {e}")
 
     try:
-        class_type: Type[Any] = getattr(loaded_module, class_name)
+        loaded_type: type[Any] = getattr(loaded_module, class_name)
     except Exception as e:
         raise RuntimeError(
-            f"Class {class_name} in module {module_name} not found: {e}"
+            f"Class or function {class_name} in module {module_name} not found: {e}"
         )
 
-    return class_type
+    return loaded_type
 
 
 def get_json_resources(package: ModuleType) -> Generator[Any, None, None]:

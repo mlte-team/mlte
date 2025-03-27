@@ -6,10 +6,11 @@ Base class for measurements calculated by external functions.
 
 from __future__ import annotations
 
+import typing
 from typing import Any, Callable, Optional
 
 import mlte._private.meta as meta
-from mlte._private.reflection import load_class
+from mlte._private.reflection import load_class_or_function
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.measurement import Measurement
@@ -51,7 +52,20 @@ class ExternalMeasurement(Measurement):
     # Overriden.
     def additional_setup(self, model: MeasurementMetadata):
         """Optional method to be overriden by subclasses needing additional setup from metadata."""
-        self.output_evidence_type = load_class(model.output_class)
+
+        # Set up the output type class.
+        self.output_evidence_type = typing.cast(
+            type[Evidence], load_class_or_function(model.output_class)
+        )
+
+        # Set up the function.
+        if self.EXTERNAL_FUNCTION_KEY in model.additional_data:
+            self.function = load_class_or_function(
+                model.additional_data[self.EXTERNAL_FUNCTION_KEY]
+            )
+
+        # Set the metadata.
+        self.set_metadata()
 
     # Overriden.
     def generate_metadata(self) -> MeasurementMetadata:
