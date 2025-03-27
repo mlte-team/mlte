@@ -89,15 +89,20 @@ def test_custom_list_parent_mappings(
     """A custom list store properly handles parent relations."""
     store: CustomListStore = create_test_store(store_fixture_name)
 
-    parent_list = CustomListName.QA_CATEGORIES
-    child_list = CustomListName.QUALITY_ATTRIBUTES
+    parent_list_name = CustomListName.QA_CATEGORIES
+    child_list_name = CustomListName.QUALITY_ATTRIBUTES
 
     parent_name = "Test parent"
-    parent = get_test_entry(
+    parent_entry = get_test_entry(
         name=parent_name,
     )
-    child = get_test_entry(name="child", parent=parent_name)
+    child_entry = get_test_entry(name="child", parent=parent_name)
 
     with ManagedCustomListSession(store.session()) as custom_list_store:
-        custom_list_store.custom_list_entry_mapper.create(parent, parent_list)
-        custom_list_store.custom_list_entry_mapper.create(child, child_list)
+        custom_list_store.custom_list_entry_mapper.create(parent_entry, parent_list_name)
+        custom_list_store.custom_list_entry_mapper.create(child_entry, child_list_name)
+
+        read_child_entry = custom_list_store.custom_list_entry_mapper.read(
+            child_entry.name, child_list_name
+        )
+        assert read_child_entry.parent == parent_entry.name
