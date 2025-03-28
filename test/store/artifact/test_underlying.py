@@ -364,3 +364,24 @@ def test_artifact_overwrite(
 
         # Attempt to write with `force` succeeds
         _ = handle.write_artifact(model_id, version_id, artifact, force=True)
+
+
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+def test_invalid_chars(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """Test creation with chars that may be invalid in some storage types."""
+    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+
+    model_id = "model/test"
+    version_id = "version/test"
+    artifact_id = "myid/test"
+    user = TEST_API_USERNAME
+
+    with ManagedArtifactSession(store.session()) as handle:
+        handle.create_model(Model(identifier=model_id))
+        handle.create_version(model_id, Version(identifier=version_id))
+        artifact = ArtifactFactory.make(ArtifactType.REPORT, artifact_id)
+        handle.write_artifact_with_header(
+            model_id, version_id, artifact, user=user
+        )
