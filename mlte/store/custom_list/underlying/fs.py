@@ -141,6 +141,6 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
                 f"CustomListName, {list_name}, does not exist or is None."
             )
         else:
-            self.storage.set_base_path(
+            self.storage.setup_base_path(
                 Path(self.storage.sub_folder, str(list_name))
             )
