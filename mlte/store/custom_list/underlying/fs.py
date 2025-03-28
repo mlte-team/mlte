@@ -72,6 +72,14 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
+        # Create folders for existing CustomLists.
+        for custom_list_type in CustomListName:
+            try:
+                self.storage.create_resource_group(custom_list_type.value)
+            except FileExistsError:
+                # If it already existed, we just ignore warning.
+                pass
+
     def create(
         self,
         entry: CustomListEntryModel,
