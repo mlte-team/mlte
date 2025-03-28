@@ -6,8 +6,6 @@ Implementation of local file system artifact store.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
@@ -94,8 +92,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self._ensure_model_exists(model_id)
 
         try:
-            model_path = self._model_path(model_id)
-            self.storage.create_resource_group(version.identifier, model_path)
+            self.storage.create_resource_group(version.identifier, [model_id])
         except FileExistsError:
             raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
         return Version(identifier=version.identifier)
@@ -108,16 +105,14 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def list_versions(self, model_id: str) -> list[str]:
         self._ensure_model_exists(model_id)
-        model_path = self._model_path(model_id)
-        return self.storage.list_resource_groups(model_path)
+        return self.storage.list_resource_groups([model_id])
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
         self._ensure_model_exists(model_id)
         self._ensure_version_exists(model_id, version_id)
 
         version = self._read_version(model_id, version_id)
-        model_path = self._model_path(model_id)
-        self.storage.delete_resource_group(version_id, model_path)
+        self.storage.delete_resource_group(version_id, [model_id])
         return version
 
     # -------------------------------------------------------------------------
@@ -131,10 +126,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def _ensure_version_exists(self, model_id: str, version_id: str) -> None:
         """Throws an ErrorNotFound if the given version of the given model does not exist."""
-        model_path = self._model_path(model_id)
-        if not self.storage.exists_resource_group(
-            version_id, base_path=model_path
-        ):
+        if not self.storage.exists_resource_group(version_id, [model_id]):
             raise errors.ErrorNotFound(
                 f"Version {version_id} in model {model_id}"
             )
@@ -190,7 +182,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self.storage.write_resource(
             artifact.header.identifier,
             artifact.to_json(),
-            base_path=self._model_version_path(model_id, version_id),
+            group_ids=[model_id, version_id],
         )
         return artifact
 
@@ -206,7 +198,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         return ArtifactModel(
             **self.storage.read_resource(
                 artifact_id,
-                base_path=self._model_version_path(model_id, version_id),
+                group_ids=[model_id, version_id],
             )
         )
 
@@ -222,7 +214,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
             ArtifactModel(
                 **self.storage.read_resource(
                     artifact_id,
-                    base_path=self._model_version_path(model_id, version_id),
+                    group_ids=[model_id, version_id],
                 )
             )
             for artifact_id in artifacts
@@ -248,7 +240,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         artifact = self.read_artifact(model_id, version_id, artifact_id)
         self.storage.delete_resource(
             artifact.header.identifier,
-            base_path=self._model_version_path(model_id, version_id),
+            group_ids=[model_id, version_id],
         )
         return artifact
 
@@ -276,25 +268,4 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self._ensure_model_exists(model_id)
         self._ensure_version_exists(model_id, version_id)
 
-        artifacts_path = self._model_version_path(model_id, version_id)
-        return self.storage.list_resources(artifacts_path)
-
-    def _model_path(self, model_id: str) -> Path:
-        """
-        Returns the FS path to a model.
-        :param model_id: The model identifier
-        :return: The formatted path
-        """
-        return self.storage._resource_group_path(model_id)
-
-    def _model_version_path(self, model_id: str, version_id: str) -> Path:
-        """
-        Format a local FS path to a version of a model.
-        :param model_id: The model identifier
-        :param version_id: The version identifier
-        :return: The formatted path
-        """
-        model_path = self._model_path(model_id)
-        return self.storage._resource_group_path(
-            version_id, base_path=model_path
-        )
+        return self.storage.list_resources(group_ids=[model_id, version_id])

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import shutil
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import mlte.store.error as errors
 from mlte._private import file
@@ -121,53 +121,53 @@ class FileSystemStorage(Storage):
     # Resource methods.
     # -------------------------------------------------------------------------
 
-    def list_resources(self, base_path: Optional[Path] = None) -> list[str]:
+    def list_resources(self, group_ids: list[str] = []) -> list[str]:
         """Returns a list of resource ids in this storage."""
-        base_path = self.base_path if not base_path else base_path
+        base_path = self._resource_group_path(group_ids)
         return [
             self._resource_id(resource_path)
             for resource_path in JsonFileFS.list_json_files(base_path)
         ]
 
     def read_resource(
-        self, resource_id: str, base_path: Optional[Path] = None
+        self, resource_id: str, group_ids: list[str] = []
     ) -> dict[str, Any]:
         """Reads the given resource as a dict."""
         return JsonFileFS.read_json_file(
-            self._resource_path(resource_id, base_path)
+            self._resource_path(resource_id, group_ids)
         )
 
     def write_resource(
         self,
         resource_id: str,
         resource_data: dict[str, Any],
-        base_path: Optional[Path] = None,
+        group_ids: list[str] = [],
     ) -> None:
         """Writes the given resource to storage."""
         JsonFileFS.write_json_to_file(
-            self._resource_path(resource_id, base_path), resource_data
+            self._resource_path(resource_id, group_ids), resource_data
         )
 
     def delete_resource(
-        self, resource_id: str, base_path: Optional[Path] = None
+        self, resource_id: str, group_ids: list[str] = []
     ) -> None:
         """Deletes the file for the associated resource id."""
-        JsonFileFS.delete_file(self._resource_path(resource_id, base_path))
+        JsonFileFS.delete_file(self._resource_path(resource_id, group_ids))
 
     def ensure_resource_does_not_exist(
-        self, resource_id: str, base_path: Optional[Path] = None
+        self, resource_id: str, group_ids: list[str] = []
     ) -> None:
         """Throws an ErrorAlreadyExists if the given resource does exist."""
-        if self._resource_path(resource_id, base_path).exists():
+        if self._resource_path(resource_id, group_ids).exists():
             raise errors.ErrorAlreadyExists(
                 f"Resource already exists: {resource_id}"
             )
 
     def ensure_resource_exists(
-        self, resource_id: str, base_path: Optional[Path] = None
+        self, resource_id: str, group_ids: list[str] = []
     ) -> None:
         """Throws an ErrorNotFound if the given resource does not exist."""
-        if not self._resource_path(resource_id, base_path).exists():
+        if not self._resource_path(resource_id, group_ids).exists():
             raise errors.ErrorNotFound(f"Resource not found: {resource_id}")
 
     # -------------------------------------------------------------------------
@@ -175,48 +175,53 @@ class FileSystemStorage(Storage):
     # -------------------------------------------------------------------------
 
     def create_resource_group(
-        self, group_id: str, base_path: Optional[Path] = None
+        self, group_id: str, parent_ids: list[str] = []
     ) -> None:
         """Creates a resource group (folder)"""
-        path = self._resource_group_path(group_id, base_path)
+        group_ids = parent_ids.copy()
+        group_ids.append(group_id)
+        path = self._resource_group_path(group_ids)
         JsonFileFS.create_folder(path)
 
-    def list_resource_groups(
-        self, base_path: Optional[Path] = None
-    ) -> list[str]:
-        """List the resource groups in a given path, or on the default one."""
-        base_path = self.base_path if not base_path else base_path
+    def list_resource_groups(self, parent_ids: list[str] = []) -> list[str]:
+        """List the resource groups, inside the given ordered parent groups."""
+        base_path = self._resource_group_path(parent_ids)
         return [
             self._resource_group_id(model_path.relative_to(base_path))
             for model_path in JsonFileFS.list_folders(base_path)
         ]
 
     def exists_resource_group(
-        self, group_id: str, base_path: Optional[Path] = None
+        self, group_id: str, parent_ids: list[str] = []
     ) -> bool:
         """Checks if the given resource group exists."""
-        return self._resource_group_path(group_id, base_path).exists()
+        group_ids = parent_ids.copy()
+        group_ids.append(group_id)
+        return self._resource_group_path(group_ids).exists()
 
     def delete_resource_group(
-        self, group_id: str, base_path: Optional[Path] = None
+        self, group_id: str, parent_ids: list[str] = []
     ) -> None:
         """Removes the given resource group."""
-        JsonFileFS.delete_folder(self._resource_group_path(group_id, base_path))
+        group_ids = parent_ids.copy()
+        group_ids.append(group_id)
+        JsonFileFS.delete_folder(self._resource_group_path(group_ids))
 
     # -------------------------------------------------------------------------
-    # Internal helpers.
+    # Converters from id to path and back.
     # -------------------------------------------------------------------------
 
     def _resource_path(
-        self, resource_id: str, base_path: Optional[Path] = None
+        self, resource_id: str, group_ids: list[str] = []
     ) -> Path:
         """
         Gets the full filepath for a stored resource.
         :param resource_id: The resource identifier
+        :param group_ids: An order list of nested resource groups this resource belongs to.
         :return: The formatted path
         """
+        base_path = self._resource_group_path(group_ids)
         filename = file.make_valid_filename(resource_id)
-        base_path = base_path if base_path else self.base_path
         return Path(base_path, JsonFileFS.add_extension(filename))
 
     def _resource_id(self, resource_path: Path) -> str:
@@ -230,17 +235,17 @@ class FileSystemStorage(Storage):
         )
         return resource_id
 
-    def _resource_group_path(
-        self, group_id: str, base_path: Optional[Path] = None
-    ) -> Path:
+    def _resource_group_path(self, group_ids: list[str]) -> Path:
         """
-        Gets the full path for a stored resource group (which will be translated into a folder).
-        :param group_id: The identifier of the resource group.
-        :return: The formatted path
+        Gets the full path for a list of resource groups, to the last group in the list.
+        :param group_ids: An ordered list of nested resource groups.
+        :return: The formatted, cleaned, full path to the last group in the list.
         """
-        folder_name = file.make_valid_filename(group_id)
-        base_path = base_path if base_path else self.base_path
-        return Path(base_path, folder_name)
+        full_path = self.base_path
+        for group_id in group_ids:
+            folder_name = file.make_valid_filename(group_id)
+            full_path = Path(full_path, folder_name)
+        return full_path
 
     def _resource_group_id(self, group_path: Path) -> str:
         """
