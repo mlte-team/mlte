@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "ArrayValueModel": {
+      "description": "The model implementation for MLTE array values.",
+      "properties": {
+        "evidence_type": {
+          "const": "array",
+          "default": "array",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {},
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "ArrayValueModel",
+      "type": "object"
+    },
+    "EvidenceMetadata": {
+      "description": "A simple wrapper model for evidence metadata.",
+      "properties": {
+        "test_case_id": {
+          "title": "Test Case Id",
+          "type": "string"
+        },
+        "measurement": {
+          "$ref": "#/$defs/MeasurementMetadata"
+        }
+      },
+      "required": [
+        "test_case_id",
+        "measurement"
+      ],
+      "title": "EvidenceMetadata",
+      "type": "object"
+    },
+    "ImageValueModel": {
+      "description": "The model implementation for MLTE image values.",
+      "properties": {
+        "evidence_type": {
+          "const": "image",
+          "default": "image",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "data": {
+          "title": "Data",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "ImageValueModel",
+      "type": "object"
+    },
+    "IntegerValueModel": {
+      "description": "The model implementation for MLTE integer values.",
+      "properties": {
+        "evidence_type": {
+          "const": "integer",
+          "default": "integer",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "integer": {
+          "title": "Integer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "integer"
+      ],
+      "title": "IntegerValueModel",
+      "type": "object"
+    },
+    "MeasurementMetadata": {
+      "description": "Info about a Measurement.",
+      "properties": {
+        "measurement_class": {
+          "title": "Measurement Class",
+          "type": "string"
+        },
+        "output_class": {
+          "title": "Output Class",
+          "type": "string"
+        },
+        "additional_data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "title": "Additional Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "measurement_class",
+        "output_class"
+      ],
+      "title": "MeasurementMetadata",
+      "type": "object"
+    },
+    "OpaqueValueModel": {
+      "description": "The model implementation for MLTE opaque values.",
+      "properties": {
+        "evidence_type": {
+          "const": "opaque",
+          "default": "opaque",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "data": {
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "OpaqueValueModel",
+      "type": "object"
+    },
+    "RealValueModel": {
+      "description": "The model implementation for MLTE real values.",
+      "properties": {
+        "evidence_type": {
+          "const": "real",
+          "default": "real",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "real": {
+          "title": "Real",
+          "type": "number"
+        }
+      },
+      "required": [
+        "real"
+      ],
+      "title": "RealValueModel",
+      "type": "object"
+    },
+    "StringValueModel": {
+      "description": "The model implementation for MLTE string values.",
+      "properties": {
+        "evidence_type": {
+          "const": "string",
+          "default": "string",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "string": {
+          "title": "String",
+          "type": "string"
+        }
+      },
+      "required": [
+        "string"
+      ],
+      "title": "StringValueModel",
+      "type": "object"
+    }
+  },
+  "description": "The model implementation for MLTE evidence.",
+  "properties": {
+    "artifact_type": {
+      "const": "evidence",
+      "default": "evidence",
+      "title": "Artifact Type",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/EvidenceMetadata"
+    },
+    "evidence_class": {
+      "title": "Evidence Class",
+      "type": "string"
+    },
+    "value": {
+      "discriminator": {
+        "mapping": {
+          "array": "#/$defs/ArrayValueModel",
+          "image": "#/$defs/ImageValueModel",
+          "integer": "#/$defs/IntegerValueModel",
+          "opaque": "#/$defs/OpaqueValueModel",
+          "real": "#/$defs/RealValueModel",
+          "string": "#/$defs/StringValueModel"
+        },
+        "propertyName": "evidence_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IntegerValueModel"
+        },
+        {
+          "$ref": "#/$defs/RealValueModel"
+        },
+        {
+          "$ref": "#/$defs/OpaqueValueModel"
+        },
+        {
+          "$ref": "#/$defs/ImageValueModel"
+        },
+        {
+          "$ref": "#/$defs/ArrayValueModel"
+        },
+        {
+          "$ref": "#/$defs/StringValueModel"
+        }
+      ],
+      "title": "Value"
+    }
+  },
+  "required": [
+    "metadata",
+    "evidence_class",
+    "value"
+  ],
+  "title": "EvidenceModel",
+  "type": "object"
+}

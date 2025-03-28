@@ -48,29 +48,27 @@ def get_test_users_with_read_permissions(
     """Get a list of users that have permissions to read from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
-        build_test_user(groups=Policy.build_groups(resource_type)),
+        build_test_user(groups=Policy(resource_type).groups),
         build_test_user(
-            groups=Policy.build_groups(
-                resource_type, build_edit_group=False, build_create_group=False
-            )
+            groups=Policy(
+                resource_type, edit_group=False, create_group=False
+            ).groups
         ),
     ]
 
     # Add user with all permissions for this type/id, and one with only read permissions.
     if resource_id is not None:
         users.append(
-            build_test_user(
-                groups=Policy.build_groups(resource_type, resource_id)
-            )
+            build_test_user(groups=Policy(resource_type, resource_id).groups)
         )
         users.append(
             build_test_user(
-                groups=Policy.build_groups(
+                groups=Policy(
                     resource_type,
                     resource_id,
-                    build_edit_group=False,
-                    build_create_group=False,
-                )
+                    edit_group=False,
+                    create_group=False,
+                ).groups
             )
         )
 
@@ -83,23 +81,19 @@ def get_test_users_with_write_permissions(
     """Get a list of users that have permissions to write from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
-        build_test_user(groups=Policy.build_groups(resource_type)),
-        build_test_user(
-            groups=Policy.build_groups(resource_type, build_read_group=False)
-        ),
+        build_test_user(groups=Policy(resource_type).groups),
+        build_test_user(groups=Policy(resource_type, read_group=False).groups),
     ]
 
     if resource_id is not None:
         users.append(
-            build_test_user(
-                groups=Policy.build_groups(resource_type, resource_id)
-            )
+            build_test_user(groups=Policy(resource_type, resource_id).groups)
         )
         users.append(
             build_test_user(
-                groups=Policy.build_groups(
-                    resource_type, resource_id, build_read_group=False
-                )
+                groups=Policy(
+                    resource_type, resource_id, read_group=False
+                ).groups
             )
         )
 
@@ -112,9 +106,7 @@ def get_test_users_with_no_read_permissions(
     """Get a list of users that do not have permissions to read from different sources."""
     users = [
         build_test_user(),
-        build_test_user(
-            groups=Policy.build_groups(resource_type, build_read_group=False)
-        ),
+        build_test_user(groups=Policy(resource_type, read_group=False).groups),
     ]
 
     # Add user with the opposite permission, and with appropriate ones but for wrong id.
@@ -122,14 +114,14 @@ def get_test_users_with_no_read_permissions(
     if resource_id is not None:
         users.append(
             build_test_user(
-                groups=Policy.build_groups(
-                    resource_type, resource_id, build_read_group=False
-                )
+                groups=Policy(
+                    resource_type, resource_id, read_group=False
+                ).groups
             )
         )
         users.append(
             build_test_user(
-                groups=Policy.build_groups(resource_type, resource_id=fake_id)
+                groups=Policy(resource_type, resource_id=fake_id).groups
             )
         )
 
@@ -143,9 +135,9 @@ def get_test_users_with_no_write_permissions(
     users = [
         build_test_user(),
         build_test_user(
-            groups=Policy.build_groups(
-                resource_type, build_edit_group=False, build_create_group=False
-            )
+            groups=Policy(
+                resource_type, edit_group=False, create_group=False
+            ).groups
         ),
     ]
 
@@ -153,17 +145,17 @@ def get_test_users_with_no_write_permissions(
     if resource_id is not None:
         users.append(
             build_test_user(
-                groups=Policy.build_groups(
+                groups=Policy(
                     resource_type,
                     resource_id,
-                    build_edit_group=False,
-                    build_create_group=False,
-                )
+                    edit_group=False,
+                    create_group=False,
+                ).groups
             )
         )
         users.append(
             build_test_user(
-                groups=Policy.build_groups(resource_type, resource_id=fake_id)
+                groups=Policy(resource_type, resource_id=fake_id).groups
             )
         )
 

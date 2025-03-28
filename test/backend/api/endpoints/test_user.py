@@ -67,7 +67,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     _ = BasicUser(**res.json())
 
     # Update user with the groups that are automatically created.
-    user.groups = Policy.build_groups(ResourceType.USER, user.username)
+    user.groups = Policy(ResourceType.USER, user.username).groups
 
     # Read it back.
     assert user.is_equal_to(
@@ -176,7 +176,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     read = BasicUser(**res.json())
 
     # Update user with the groups that are automatically created.
-    user.groups = Policy.build_groups(ResourceType.USER, user.username)
+    user.groups = Policy(ResourceType.USER, user.username).groups
 
     assert read.is_equal_to(user, ignore_groups=True)
 
@@ -304,8 +304,8 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     res = admin_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.NOT_FOUND
 
-    assert not Policy.is_stored(
-        ResourceType.USER, user.username, state.user_store.session()
+    assert not Policy(ResourceType.USER, user.username).is_stored(
+        state.user_store.session()
     )
 
 
@@ -348,12 +348,8 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
     test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
-    user.groups.extend(
-        Policy.build_groups(ResourceType.MODEL, resource_id=m1_id)
-    )
-    user.groups.extend(
-        Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
-    )
+    user.groups.extend(Policy(ResourceType.MODEL, resource_id=m1_id).groups)
+    user.groups.extend(Policy(ResourceType.MODEL, resource_id=m2_id).groups)
     user_store = state.user_store.session()
     user_store.user_mapper.edit(user)
 
@@ -386,12 +382,8 @@ def test_list_user_groups_me(
     test_api.admin_create_entity(Model(identifier=m3_id), MODEL_URI)
 
     # Give user permissions to some models.
-    api_user.groups.extend(
-        Policy.build_groups(ResourceType.MODEL, resource_id=m1_id)
-    )
-    api_user.groups.extend(
-        Policy.build_groups(ResourceType.MODEL, resource_id=m2_id)
-    )
+    api_user.groups.extend(Policy(ResourceType.MODEL, resource_id=m1_id).groups)
+    api_user.groups.extend(Policy(ResourceType.MODEL, resource_id=m2_id).groups)
     user_store = state.user_store.session()
     user_store.user_mapper.edit(BasicUser(**api_user.to_json()))
 

@@ -76,8 +76,8 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Also test that permissions and groups were created.
     with ManagedUserSession(state.user_store.session()) as user_store:
-        assert Policy.is_stored(
-            ResourceType.MODEL, model.identifier, user_store
+        assert Policy(ResourceType.MODEL, model.identifier).is_stored(
+            user_store
         )
 
 
@@ -194,8 +194,8 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Also test that permissions and groups were deleted
     with ManagedUserSession(state.user_store.session()) as user_store:
-        assert not Policy.is_stored(
-            ResourceType.MODEL, model.identifier, user_store
+        assert not Policy(ResourceType.MODEL, model.identifier).is_stored(
+            user_store
         )
 
 

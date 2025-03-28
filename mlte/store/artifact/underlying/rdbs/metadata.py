@@ -21,21 +21,21 @@ from mlte.artifact.type import ArtifactType
 
 # Needed to avoid circular import issues from relationships between tables classes.
 if TYPE_CHECKING:
+    from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
     from mlte.store.artifact.underlying.rdbs.metadata_nc import (
         DBNegotiationCard,
         DBReport,
     )
     from mlte.store.artifact.underlying.rdbs.metadata_spec import (
-        DBSpec,
-        DBValidatedSpec,
+        DBTestResults,
+        DBTestSuite,
     )
-    from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
 else:
     DBNegotiationCard = "DBNegotiationCard"
-    DBSpec = "DBSpec"
-    DBValidatedSpec = "DBValidatedSpec"
+    DBTestSuite = "DBTestSuite"
+    DBTestResults = "DBTestResults"
     DBReport = "DBReport"
-    DBValue = "DBValue"
+    DBEvidence = "DBValue"
 
 
 class DBBase(DeclarativeBase):
@@ -110,10 +110,10 @@ class DBArtifactHeader(DBBase):
 
     type: Mapped[DBArtifactType] = relationship()
     version: Mapped[DBVersion] = relationship()
-    body_spec: Mapped[Optional[DBSpec]] = relationship(
+    body_test_suite: Mapped[Optional[DBTestSuite]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
-    body_validated_spec: Mapped[Optional[DBValidatedSpec]] = relationship(
+    body_test_results: Mapped[Optional[DBTestResults]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
     body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
@@ -122,7 +122,7 @@ class DBArtifactHeader(DBBase):
     body_report: Mapped[Optional[DBReport]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
-    body_value: Mapped[Optional[DBValue]] = relationship(
+    body_evidence: Mapped[Optional[DBEvidence]] = relationship(
         back_populates="artifact_header", cascade="all, delete-orphan"
     )
 

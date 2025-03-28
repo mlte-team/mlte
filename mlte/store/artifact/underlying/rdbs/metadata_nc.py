@@ -11,12 +11,12 @@ from typing import List, Optional
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
-from mlte.model.shared import DataClassification, ProblemType
+from mlte.negotiation.model import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBValidatedSpec
+from mlte.store.artifact.underlying.rdbs.metadata_spec import DBTestResults
 
 # -------------------------------------------------------------------------
 # Negotiation Card
@@ -131,10 +131,10 @@ class DBReport(DBBase):
     negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
 
     # Results.
-    validated_spec_id: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("validated_spec.id", ondelete="SET NULL")
+    test_results_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("test_results.id", ondelete="SET NULL")
     )
-    validated_spec: Mapped[DBValidatedSpec] = relationship()
+    test_results: Mapped[DBTestResults] = relationship()
 
     # Comments
     comments: Mapped[List[DBCommentDescriptor]] = relationship(

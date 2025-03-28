@@ -1,8 +1,4 @@
-"""
-mlte/store/custom_list/initial_custom_lists.py
-
-MLTE initial custom lists to come with installation.
-"""
+"""MLTE initial custom lists to come with installation."""
 
 from __future__ import annotations
 

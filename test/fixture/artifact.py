@@ -10,10 +10,14 @@ import random
 import string
 from typing import List, Optional, Union
 
+from mlte._private import meta
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.model.shared import (
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.model import EvidenceModel, IntegerValueModel
+from mlte.evidence.types.integer import Integer
+from mlte.measurement.model import MeasurementMetadata
+from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
     FieldDescriptor,
@@ -24,23 +28,21 @@ from mlte.model.shared import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardDataModel,
+    NegotiationCardModel,
     ProblemType,
     QASDescriptor,
     RiskDescriptor,
     SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.spec.model import QACategoryModel, SpecModel
-from mlte.validation.model import ResultModel, ValidatedSpecModel
-from mlte.validation.model_condition import ConditionModel
+from mlte.results.model import ResultModel, TestResultsModel
+from mlte.tests.model import TestCaseModel, TestSuiteModel
 from mlte.validation.validator import Validator
-from mlte.value.model import IntegerValueModel, ValueModel
-from mlte.value.types.integer import Integer
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def _random_id(length: int = 5) -> str:
@@ -88,10 +90,12 @@ class TypeUtil:
         return [t for t in ArtifactType if t != type]
 
 
-def _make_body(
-    type: ArtifactType, id: str, complete: bool
-) -> Union[
-    NegotiationCardModel, ValueModel, SpecModel, ValidatedSpecModel, ReportModel
+def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
+    NegotiationCardModel,
+    EvidenceModel,
+    TestSuiteModel,
+    TestResultsModel,
+    ReportModel,
 ]:
     """
     Make the body of the artifact for a given type.
@@ -101,12 +105,12 @@ def _make_body(
     """
     if type == ArtifactType.NEGOTIATION_CARD:
         return _make_negotiation_card(complete)
-    if type == ArtifactType.VALUE:
+    if type == ArtifactType.EVIDENCE:
         return _make_value(id, complete)
-    if type == ArtifactType.SPEC:
-        return _make_spec(complete)
-    if type == ArtifactType.VALIDATED_SPEC:
-        return _make_validated_spec(complete)
+    if type == ArtifactType.TEST_SUITE:
+        return _make_test_suite(complete)
+    if type == ArtifactType.TEST_RESULTS:
+        return _make_test_results(complete)
     if type == ArtifactType.REPORT:
         return _make_report(complete)
 
@@ -124,43 +128,40 @@ def _make_negotiation_card(complete: bool) -> NegotiationCardModel:
         return make_complete_negotiation_card()
 
 
-def _make_value(id: str, complete: bool) -> ValueModel:
+def _make_value(id: str, complete: bool) -> EvidenceModel:
     """
     Make a minimal value, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name=id)
-    )
+    m = get_sample_evidence_metadata(test_case_id=id)
 
-    return ValueModel(
+    return EvidenceModel(
         metadata=m,
-        value_class=Integer.get_class_path(),
-        value=IntegerValueModel(
-            integer=1,
-        ),
+        evidence_class=meta.get_qualified_name(Integer),
+        value=IntegerValueModel(integer=1),
     )
 
 
-def _make_spec(complete: bool) -> SpecModel:
+def _make_test_suite(complete: bool) -> TestSuiteModel:
     """
-    Make a minimal spec, or a fully featured one, depending on complete.
+    Make a minimal test suite, or a fully featured one, depending on complete.
     :return: The artifact
     """
     if not complete:
-        return SpecModel()
+        return TestSuiteModel()
     else:
-        return make_complete_spec_model()
+        return make_complete_test_suite_model()
 
 
-def _make_validated_spec(complete: bool) -> ValidatedSpecModel:
+def _make_test_results(complete: bool) -> TestResultsModel:
     """
-    Make a minimal validated spec, or a fully featured one, depending on complete.
+    Make a minimal test results, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    # TODO: Make a complete VSpec that is properly connected to Spec and QACategory, which is not trivial.
+    # TODO: Make a complete TestResults that is properly connected to TestSuite, which is not trivial.
     # Maybe create in DB here? Find way to make this work for better coverage.
-    return ValidatedSpecModel()
+    test_suite = make_complete_test_suite_model()
+    return TestResultsModel(test_suite=test_suite)
 
 
 def _make_report(complete: bool) -> ReportModel:
@@ -276,53 +277,49 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
     )
 
 
-def make_complete_spec_model() -> SpecModel:
+def make_complete_test_suite_model() -> TestSuiteModel:
     """
-    Make a filled in Spec model.
+    Make a filled in TestSuite model.
     :return: The artifact model
     """
-    return SpecModel(
-        qa_categories=[
-            QACategoryModel(
-                name="TaskEfficacy",
-                description="QACategory for useful things.",
-                rationale="Because I say so",
-                module="mlte.qa_category.functionality.task_efficacy",
-                conditions={
-                    "accuracy": ConditionModel(
-                        name="less_than",
-                        arguments=[3.0],
-                        validator=Validator(
-                            success="Yay", failure="oh"
-                        ).to_model(),
-                        value_class="mlte.value.types.real.Real",
-                    )
-                },
+    return TestSuiteModel(
+        test_cases=[
+            TestCaseModel(
+                identifier="Test1",
+                goal="QACategory for useful things.",
+                validator=Validator(
+                    bool_exp=lambda x: x.value < 3, success="Yay", failure="oh"
+                ).to_model(),
+                measurement=MeasurementMetadata(
+                    measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                    output_class="mlte.evidence.types.real.Real",
+                ),
             )
         ],
     )
 
 
-def make_complete_validated_spec_model() -> ValidatedSpecModel:
+def make_complete_test_results_model() -> TestResultsModel:
     """
-    Make a filled in ValidatedSpec model.
+    Make a filled in TestResults model.
     :return: The artifact model
     """
-    return ValidatedSpecModel(
-        spec_identifier="",
-        spec=make_complete_spec_model(),
+    return TestResultsModel(
+        test_suite_id="",
+        test_suite=make_complete_test_suite_model(),
         results={
-            "TaskEfficacy": {
-                "accuracy": ResultModel(
-                    type="Success",
-                    message="The RF accuracy is greater than 3",
-                    metadata=EvidenceMetadata(
-                        measurement_type="ExternalMeasurement",
-                        identifier=Identifier(name="accuracy"),
-                        info="function: skleran.accu()",
+            "accuracy": ResultModel(
+                type="Success",
+                message="The RF accuracy is greater than 3",
+                evidence_metadata=EvidenceMetadata(
+                    test_case_id="accuracy",
+                    measurement=MeasurementMetadata(
+                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                        output_class="mlte.evidence.types.real.Real",
+                        additional_data={"function": "skleran.accu()"},
                     ),
-                )
-            },
+                ),
+            )
         },
     )
 

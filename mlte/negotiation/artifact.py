@@ -12,14 +12,15 @@ from typing import List
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.model.shared import (
+from mlte.model.base_model import BaseModel
+from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardDataModel,
+    NegotiationCardModel,
     QASDescriptor,
     SystemDescriptor,
 )
-from mlte.negotiation.model import NegotiationCardModel
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
 
@@ -64,8 +65,14 @@ class NegotiationCard(Artifact):
         )
 
     @classmethod
-    def from_model(cls, model: ArtifactModel) -> NegotiationCard:
+    def from_model(cls, model: BaseModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
+        assert (
+            model.header.type == ArtifactType.NEGOTIATION_CARD
+        ), "Type should be NegotiationCard."
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,

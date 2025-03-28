@@ -17,14 +17,14 @@ class ArtifactType(StrEnum):
     NEGOTIATION_CARD = "negotiation_card"
     """The negotiation card artifact type."""
 
-    VALUE = "value"
-    """The value card artifact type."""
+    EVIDENCE = "evidence"
+    """The evidence card artifact type."""
 
-    SPEC = "spec"
+    TEST_SUITE = "test_suite"
     """The specification artifact type."""
 
-    VALIDATED_SPEC = "validated_spec"
-    """The validated specification artifact type."""
+    TEST_RESULTS = "test_results"
+    """The results for a test suite artifact type."""
 
     REPORT = "report"
     """The report artifact type."""

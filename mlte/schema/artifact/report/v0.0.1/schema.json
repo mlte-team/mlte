@@ -807,7 +807,7 @@
         "system_requirements": []
       }
     },
-    "validated_spec_id": {
+    "test_results_id": {
       "anyOf": [
         {
           "type": "string"
@@ -817,7 +817,7 @@
         }
       ],
       "default": null,
-      "title": "Validated Spec Id"
+      "title": "Test Results Id"
     },
     "comments": {
       "default": [],

@@ -1,8 +1,4 @@
-"""
-mlte/store/custom_list/factory.py
-
-Top-level functions for custom list store creation.
-"""
+"""Top-level functions for custom list store creation."""
 
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.custom_list.store import CustomListStore

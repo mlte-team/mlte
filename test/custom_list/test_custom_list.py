@@ -1,8 +1,4 @@
-"""
-test/custom_list/test_model.py
-
-Unit tests for custom_list and custom_list_entry model.
-"""
+"""Unit tests for custom_list and custom_list_entry model."""
 
 from __future__ import annotations
 

@@ -6,6 +6,7 @@ Handling of JWT tokens.
 
 from __future__ import annotations
 
+import typing
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
 
@@ -70,10 +71,10 @@ def decode_user_token(encoded_token: str, key: str) -> DecodedToken:
     try:
         payload = jwt.decode(encoded_token, key, algorithms=[ALGORITHM])
 
-        username: str = payload.get(SUBJECT_CLAIM_KEY)
+        username: str = typing.cast(str, payload.get(SUBJECT_CLAIM_KEY))
         if username is None:
             raise Exception("No valid user in token")
-        exp_timestamp: int = payload.get(EXPIRATION_CLAIM_KEY)
+        exp_timestamp: int = typing.cast(int, payload.get(EXPIRATION_CLAIM_KEY))
         if exp_timestamp is None:
             raise Exception("No valid expiration time in token")
         expiration_time: datetime = datetime.fromtimestamp(

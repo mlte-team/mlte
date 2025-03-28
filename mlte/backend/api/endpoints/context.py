@@ -51,14 +51,14 @@ def create_model(
             raise_http_internal_error(ex)
 
     with state_stores.user_store_session() as handle:
-        # Now create permissions and groups associated to it.
         try:
-            Policy.create(
-                ResourceType.MODEL,
-                created_model.identifier,
-                handle,
-                current_user,
-            )
+            # Create permissions and groups to handle this model.
+            policy = Policy(ResourceType.MODEL, created_model.identifier)
+            policy.save_to_store(handle)
+
+            # Also make user have access to CRUD for this model, since they are its creator.
+            policy.assign_to_user(current_user)
+            handle.user_mapper.edit(current_user)
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -136,7 +136,8 @@ def delete_model(
     with state_stores.user_store_session() as handle:
         # Now delete related permissions and groups.
         try:
-            Policy.remove(ResourceType.MODEL, model_id, handle)
+            policy = Policy(ResourceType.MODEL, resource_id=model_id)
+            policy.remove_from_store(handle)
         except Exception as ex:
             raise_http_internal_error(ex)
 

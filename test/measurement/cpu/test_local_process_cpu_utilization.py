@@ -5,8 +5,6 @@ Unit test for LocalProcessCPUUtilization measurement.
 """
 
 import os
-import subprocess
-import threading
 import time
 import typing
 from typing import Tuple
@@ -15,26 +13,32 @@ import pytest
 
 from mlte._private.platform import is_nix, is_windows
 from mlte.context.context import Context
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
 from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
-from mlte.spec.condition import Condition
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
+from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
 
 # The spin duration, in seconds
 SPIN_DURATION = 3
+SPIN_COMMAND = [
+    "python3",
+    os.path.join(path_to_support(), "spin.py"),
+    str(SPIN_DURATION),
+]
 
 
-def spin_for(seconds: int):
-    """Run the spin.py program for `seconds`."""
-    path = os.path.join(path_to_support(), "spin.py")
-    prog = subprocess.Popen(["python", path, f"{seconds}"])
-    thread = threading.Thread(target=lambda: prog.wait())
-    thread.start()
-    return prog
+def test_constructor_type():
+    """ "Checks that the constructor sets up type properly."""
+    m = LocalProcessCPUUtilization("id")
+
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
+    )
 
 
 @pytest.mark.skipif(
@@ -43,11 +47,10 @@ def spin_for(seconds: int):
 def test_cpu_nix_evaluate() -> None:
     start = time.time()
 
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
-    stat = m.evaluate(p.pid)
+    stat = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -60,12 +63,10 @@ def test_cpu_nix_evaluate() -> None:
 def test_cpu_nix_evaluate_async() -> None:
     start = time.time()
 
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
     # Capture CPU utilization; blocks until process exit
-    m.evaluate_async(p.pid)
-    stat = m.wait_for_output()
+    stat = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stat)) > 0
     # Test for passage of time
@@ -76,34 +77,24 @@ def test_cpu_nix_evaluate_async() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_success() -> None:
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
-    vr = Condition("Succeed", [], Validator(bool_exp=lambda _: True, success="Yay", failure="oh"))(stats)  # type: ignore
+    vr = Validator(bool_exp=lambda _: True, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert bool(vr)
-
-    # Data is accessible from validation result
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_cpu_nix_validate_failure() -> None:
-    p = spin_for(SPIN_DURATION)
     m = LocalProcessCPUUtilization("id")
 
-    stats = m.evaluate(p.pid)
+    stats = m.evaluate(SPIN_COMMAND)
 
-    vr = Condition("Fail", [], Validator(bool_exp=lambda _: False, success="Yay", failure="oh"))(stats)  # type: ignore
+    vr = Validator(bool_exp=lambda _: False, success="Yay", failure="oh").validate(stats)  # type: ignore
     assert not bool(vr)
-
-    # Data is accessible from validation result
-    assert vr.metadata is not None
-    assert vr.metadata.measurement_type, type(CPUStatistics).__name__
 
 
 @pytest.mark.skipif(
@@ -123,15 +114,14 @@ def test_result_save_load(
 ) -> None:
     store, ctx = store_with_context
 
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+    stats = CPUStatistics(0.5, 0.1, 0.8).with_metadata(
+        get_sample_evidence_metadata()
     )
-    stats = CPUStatistics(m, 0.5, 0.1, 0.8)
     stats.save_with(ctx, store)
 
     r: CPUStatistics = typing.cast(
         CPUStatistics,
-        CPUStatistics.load_with("id.value", context=ctx, store=store),
+        CPUStatistics.load_with("test_id.evidence", context=ctx, store=store),
     )
     assert r.avg == stats.avg
     assert r.min == stats.min
@@ -139,34 +129,42 @@ def test_result_save_load(
 
 
 def test_max_utilization_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+    m = get_sample_evidence_metadata()
+
+    validator = CPUStatistics.max_utilization_less_than(3)
+
+    res = validator.validate(
+        CPUStatistics(avg=2, max=2, min=1).with_metadata(m)
     )
-
-    cond = CPUStatistics.max_utilization_less_than(3)
-
-    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
     assert bool(res)
 
-    res = cond(CPUStatistics(m, avg=2, max=4, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=4, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(CPUStatistics(m, avg=2, max=3, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=2, max=3, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
 
 def test_avg_utilization_less_than() -> None:
-    m = EvidenceMetadata(
-        measurement_type="typename", identifier=Identifier(name="id")
+    m = get_sample_evidence_metadata()
+
+    validator = CPUStatistics.average_utilization_less_than(3)
+
+    res = validator.validate(
+        CPUStatistics(avg=2, max=2, min=1).with_metadata(m)
     )
-
-    cond = CPUStatistics.average_utilization_less_than(3)
-
-    res = cond(CPUStatistics(m, avg=2, max=2, min=1))
     assert bool(res)
 
-    res = cond(CPUStatistics(m, avg=3, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=3, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)
 
-    res = cond(CPUStatistics(m, avg=4, max=2, min=1))
+    res = validator.validate(
+        CPUStatistics(avg=4, max=2, min=1).with_metadata(m)
+    )
     assert not bool(res)

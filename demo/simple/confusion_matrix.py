@@ -1,46 +1,36 @@
 """
-demo/confusion_matrix.py
-
 Implementation of ConfusionMatrix value.
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from io import StringIO
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
 
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.spec.condition import Condition
-from mlte.validation.result import Failure, Success
-from mlte.value.base import ValueBase
+from mlte.evidence.external import ExternalEvidence
+from mlte.validation.validator import Validator
 
 
-class ConfusionMatrix(ValueBase):
+class ConfusionMatrix(ExternalEvidence):
     """A sample extension value type."""
 
-    def __init__(self, metadata: EvidenceMetadata, matrix: np.ndarray):
-        super().__init__(self, metadata)
+    def __init__(self, matrix: np.ndarray):
+        super().__init__()
 
         self.matrix = matrix
         """Underlying matrix represented as two-dimensional array."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         return {"matrix": pd.DataFrame(self.matrix).to_json()}
 
     @staticmethod
-    def deserialize(
-        metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> ConfusionMatrix:
+    def deserialize(data: dict[str, Any]) -> ConfusionMatrix:
         return ConfusionMatrix(
-            metadata, pd.read_json(data["matrix"]).to_numpy()
+            pd.read_json(StringIO(data["matrix"])).to_numpy()
         )
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, ConfusionMatrix):
-            return False
-        return self._equal(other)
 
     def __str__(self) -> str:
         return f"{self.matrix}".replace("\n", ", ")
@@ -57,10 +47,14 @@ class ConfusionMatrix(ValueBase):
         return int(count)
 
     @classmethod
-    def misclassification_count_less_than(cls, threshold: int) -> Condition:
-        condition: Condition = Condition.build_condition(
-            bool_exp=lambda cm: cm.misclassifications <= threshold,
+    def misclassification_count_less_than(cls, threshold: int) -> Validator:
+        bool_exp: Callable[[ConfusionMatrix], bool] = (
+            lambda cm: cm.misclassifications <= threshold
+        )
+        validator: Validator = Validator.build_validator(
+            bool_exp=bool_exp,
             success=f"Misclass count is less than threshold {threshold}",
             failure=f"Misclassification count exceeds threshold {threshold}",
+            input_types=[ConfusionMatrix],
         )
-        return condition
+        return validator

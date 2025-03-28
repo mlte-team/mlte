@@ -10,7 +10,7 @@ from typing import Callable, Optional
 
 import sqlalchemy
 import sqlalchemy.orm
-import sqlalchemy_utils
+import sqlalchemy_utils  # type: ignore
 from sqlalchemy.orm import DeclarativeBase
 
 from mlte.store.base import StoreURI

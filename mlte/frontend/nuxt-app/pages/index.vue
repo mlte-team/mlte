@@ -213,7 +213,7 @@
           </p>
           <UsaTable
             :headers="cardSpecReportHeaders"
-            :rows="specifications"
+            :rows="testSuites"
             borderless
             class="table"
           />
@@ -229,7 +229,7 @@
           </p>
           <UsaTable
             :headers="validatedSpecHeaders"
-            :rows="validatedSpecs"
+            :rows="testResults"
             borderless
             class="table"
           />
@@ -245,7 +245,7 @@
           </p>
           <UsaTable
             :headers="valuesHeaders"
-            :rows="values"
+            :rows="evidences"
             borderless
             class="table"
           />
@@ -296,13 +296,13 @@ const valuesHeaders = ref([
 const negotiationCards = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
-const specifications = ref<
+const testSuites = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
 const reports = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
-const validatedSpecs = ref<
+const testResults = ref<
   {
     id: string;
     specid: string;
@@ -311,7 +311,7 @@ const validatedSpecs = ref<
     version: string;
   }[]
 >([]);
-const values = ref<
+const evidences = ref<
   {
     id: string;
     measurement: string;
@@ -503,9 +503,9 @@ function populateArtifacts(
       }
     }
     // Spec
-    else if (artifact.header.type === "spec") {
-      if (isValidSpec(artifact)) {
-        specifications.value.push({
+    else if (artifact.header.type === "test_suite") {
+      if (isValidTestSuite(artifact)) {
+        testSuites.value.push({
           id: artifact.header.identifier,
           timestamp: artifact.header.timestamp,
           model,
@@ -513,10 +513,10 @@ function populateArtifacts(
         });
       }
     }
-    // Validated spec
-    else if (artifact.header.type === "validated_spec") {
-      if (isValidValidatedSpec(artifact)) {
-        validatedSpecs.value.push({
+    // Test Results
+    else if (artifact.header.type === "test_results") {
+      if (isValidTestResults(artifact)) {
+        testResults.value.push({
           id: artifact.header.identifier,
           specid: artifact.body.spec_identifier,
           timestamp: artifact.header.timestamp,
@@ -527,8 +527,8 @@ function populateArtifacts(
     }
     // Value
     if (artifact.header.type === "value") {
-      if (isValidValue(artifact)) {
-        values.value.push({
+      if (isValidEvidence(artifact)) {
+        evidences.value.push({
           id: artifact.header.identifier.slice(0, -6),
           measurement: artifact.body.metadata.measurement_type,
           type: artifact.body.value.value_type,
@@ -545,9 +545,9 @@ function populateArtifacts(
 function clearArtifacts() {
   negotiationCards.value = [];
   reports.value = [];
-  specifications.value = [];
-  validatedSpecs.value = [];
-  values.value = [];
+  testSuites.value = [];
+  testResults.value = [];
+  evidences.value = [];
 }
 
 async function submitNewModel(modelName: string) {

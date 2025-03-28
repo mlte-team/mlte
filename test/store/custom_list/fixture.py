@@ -1,29 +1,30 @@
-"""
-test/store/custom_list/fixture.py
-
-Fixtures for MLTE custom list store unit tests.
-"""
+"""Fixtures for MLTE custom list store unit tests."""
 
 from __future__ import annotations
 
 import typing
-from typing import Generator, List
+from typing import Generator, List, Optional
 
 import pytest
 
+from mlte.backend.core.config import settings
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel, CustomListModel
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
+from mlte.user.model import ResourceType
 from test.store.custom_list.custom_list_store_creators import (
     create_fs_store,
     create_memory_store,
 )
 
+CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
+"""Base URI for custom lists."""
+
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
-DEFAULT_ENTRY_NAME = "test entry"
+DEFAULT_ENTRY_NAME = "test_entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
-DEFAULT_PARENT = "test parent"
+DEFAULT_PARENT = ""
 
 
 def custom_list_stores() -> Generator[str, None, None]:
@@ -83,3 +84,23 @@ def get_test_entry(
     return CustomListEntryModel(
         name=name, description=description, parent=parent
     )
+
+
+def get_custom_list_uri(
+    custom_list_id: Optional[str] = None,
+    entry_id: Optional[str] = None,
+    no_entry: bool = False,
+):
+    """Returns a proper URI for the endpoint based on the presence of the ids."""
+    url = f"{CUSTOM_LIST_BASE_URI}"
+    if custom_list_id is None:
+        return f"{url}s"
+
+    if no_entry:
+        return f"{url}/{custom_list_id}"
+    else:
+        url = f"{url}/{custom_list_id}/entry"
+
+    if entry_id is not None:
+        url = f"{url}/{entry_id}"
+    return url

@@ -39,8 +39,9 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 MODEL_FILE_PATH = MODELS_DIR / "oxford_flower_model.keras"
 
 # This is the external script that will load and run the model for inference/prediction.
-MODEL_SCRIPT = Path.cwd() / "model_predict.py"
-MODEL_ARGS = [
+MODEL_COMMAND = [
+    "python3",
+    Path.cwd() / "model_predict.py",
     "--images",
     SAMPLE_DATASET_DIR,
     "--model",

@@ -1,0 +1,285 @@
+{
+  "$defs": {
+    "EvidenceMetadata": {
+      "description": "A simple wrapper model for evidence metadata.",
+      "properties": {
+        "test_case_id": {
+          "title": "Test Case Id",
+          "type": "string"
+        },
+        "measurement": {
+          "$ref": "#/$defs/MeasurementMetadata"
+        }
+      },
+      "required": [
+        "test_case_id",
+        "measurement"
+      ],
+      "title": "EvidenceMetadata",
+      "type": "object"
+    },
+    "MeasurementMetadata": {
+      "description": "Info about a Measurement.",
+      "properties": {
+        "measurement_class": {
+          "title": "Measurement Class",
+          "type": "string"
+        },
+        "output_class": {
+          "title": "Output Class",
+          "type": "string"
+        },
+        "additional_data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "title": "Additional Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "measurement_class",
+        "output_class"
+      ],
+      "title": "MeasurementMetadata",
+      "type": "object"
+    },
+    "ResultModel": {
+      "description": "A description of a Result.",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "evidence_metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "message",
+        "evidence_metadata"
+      ],
+      "title": "ResultModel",
+      "type": "object"
+    },
+    "TestCaseModel": {
+      "properties": {
+        "identifier": {
+          "title": "Identifier",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "qas_list": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Qas List",
+          "type": "array"
+        },
+        "measurement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeasurementMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "validator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValidatorModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "identifier",
+        "goal"
+      ],
+      "title": "TestCaseModel",
+      "type": "object"
+    },
+    "TestSuiteModel": {
+      "description": "The model implementation for the TestSuite artifact.",
+      "properties": {
+        "artifact_type": {
+          "const": "test_suite",
+          "default": "test_suite",
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "test_cases": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TestCaseModel"
+          },
+          "title": "Test Cases",
+          "type": "array"
+        }
+      },
+      "title": "TestSuiteModel",
+      "type": "object"
+    },
+    "ValidatorModel": {
+      "description": "A description of a validator for a test.",
+      "properties": {
+        "bool_exp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp"
+        },
+        "bool_exp_str": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bool Exp Str"
+        },
+        "success": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Success"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Failure"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Info"
+        },
+        "input_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Input Types",
+          "type": "array"
+        },
+        "creator_entity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Entity"
+        },
+        "creator_function": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Function"
+        },
+        "creator_args": {
+          "default": [],
+          "items": {},
+          "title": "Creator Args",
+          "type": "array"
+        }
+      },
+      "required": [
+        "bool_exp",
+        "bool_exp_str",
+        "success",
+        "failure",
+        "info"
+      ],
+      "title": "ValidatorModel",
+      "type": "object"
+    }
+  },
+  "description": "The model implementation for the TestResults artifact.",
+  "properties": {
+    "artifact_type": {
+      "const": "test_results",
+      "default": "test_results",
+      "title": "Artifact Type",
+      "type": "string"
+    },
+    "test_suite_id": {
+      "default": "",
+      "title": "Test Suite Id",
+      "type": "string"
+    },
+    "test_suite": {
+      "$ref": "#/$defs/TestSuiteModel"
+    },
+    "results": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ResultModel"
+      },
+      "default": {},
+      "title": "Results",
+      "type": "object"
+    }
+  },
+  "required": [
+    "test_suite"
+  ],
+  "title": "TestResultsModel",
+  "type": "object"
+}

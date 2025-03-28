@@ -8,21 +8,20 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Any, Dict, Type
+from typing import Any, Callable, Optional
 
 import psutil
 
-from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.spec.condition import Condition
-from mlte.value.base import ValueBase
+from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
 # Memory Statistics
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(ValueBase):
+class MemoryStatistics(ExternalEvidence):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
@@ -31,7 +30,6 @@ class MemoryStatistics(ValueBase):
 
     def __init__(
         self,
-        evidence_metadata: EvidenceMetadata,
         avg: int,
         min: int,
         max: int,
@@ -39,12 +37,11 @@ class MemoryStatistics(ValueBase):
         """
         Initialize a MemoryStatistics instance.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param avg: The average memory consumption, in KB
         :param min: The minimum memory consumption, in KB
         :param max: The maximum memory consumption, in KB
         """
-        super().__init__(self, evidence_metadata)
+        super().__init__()
 
         self.avg = avg
         """The average memory consumption (KB)."""
@@ -55,7 +52,7 @@ class MemoryStatistics(ValueBase):
         self.max = max
         """The maximum memory consumption (KB)."""
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         """
         Serialize an MemoryStatistics to a JSON object.
 
@@ -64,19 +61,15 @@ class MemoryStatistics(ValueBase):
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
     @staticmethod
-    def deserialize(
-        evidence_metadata: EvidenceMetadata, data: Dict[str, Any]
-    ) -> MemoryStatistics:
+    def deserialize(data: dict[str, Any]) -> MemoryStatistics:
         """
         Deserialize an MemoryStatistics from a JSON object.
 
-        :param evidence_metadata: The generating measurement's metadata
         :param data: The JSON object
 
         :return: The deserialized instance
         """
         return MemoryStatistics(
-            evidence_metadata,
             avg=data["avg"],
             min=data["min"],
             max=data["max"],
@@ -91,36 +84,44 @@ class MemoryStatistics(ValueBase):
         return s
 
     @classmethod
-    def max_consumption_less_than(cls, threshold: int) -> Condition:
+    def max_consumption_less_than(cls, threshold: int) -> Validator:
         """
-        Construct and invoke a condition for maximum memory consumption.
+        Construct and invoke a validator for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption, in KB
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
-            bool_exp=lambda stats: stats.max < threshold,
+        bool_exp: Callable[[MemoryStatistics], bool] = (
+            lambda stats: stats.max < threshold
+        )
+        validator: Validator = Validator.build_validator(
+            bool_exp=bool_exp,
             success=f"Maximum consumption below threshold {threshold}",
             failure=f"Maximum consumption exceeds threshold {threshold}",
+            input_types=[MemoryStatistics],
         )
-        return condition
+        return validator
 
     @classmethod
-    def average_consumption_less_than(cls, threshold: float) -> Condition:
+    def average_consumption_less_than(cls, threshold: float) -> Validator:
         """
-        Construct and invoke a condition for average memory consumption.
+        Construct and invoke a validator for average memory consumption.
 
         :param threshold: The threshold value for average consumption, in KB
 
-        :return: The Condition that can be used to validate a Value.
+        :return: The Validator that can be used to validate a Value.
         """
-        condition: Condition = Condition.build_condition(
-            bool_exp=lambda stats: stats.avg < threshold,
+        bool_exp: Callable[[MemoryStatistics], bool] = (
+            lambda stats: stats.avg < threshold
+        )
+        validator: Validator = Validator.build_validator(
+            bool_exp=bool_exp,
             success=f"Average consumption below threshold {threshold}",
             failure=f"Average consumption exceeds threshold {threshold}",
+            input_types=[MemoryStatistics],
         )
-        return condition
+        return validator
 
 
 # -----------------------------------------------------------------------------
@@ -131,14 +132,15 @@ class MemoryStatistics(ValueBase):
 class LocalProcessMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a local training process."""
 
-    def __init__(self, identifier: str):
+    def __init__(self, identifier: Optional[str] = None):
         """
         Initialize a LocalProcessMemoryConsumption instance.
 
         :param identifier: A unique identifier for the measurement
         """
-        super().__init__(self, identifier)
+        super().__init__(identifier)
 
+    # Overriden.
     def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
@@ -156,15 +158,14 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             time.sleep(poll_interval)
 
         return MemoryStatistics(
-            self.metadata,
             avg=int(sum(stats) / len(stats)),
             min=min(stats),
             max=max(stats),
         )
 
+    # Overriden.
     @classmethod
-    def value(self) -> Type[MemoryStatistics]:
-        """Returns the class type object for the Value produced by the Measurement."""
+    def get_output_type(cls) -> type[MemoryStatistics]:
         return MemoryStatistics
 
 

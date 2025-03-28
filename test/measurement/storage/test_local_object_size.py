@@ -10,9 +10,9 @@ import typing
 from pathlib import Path
 from typing import Any, Dict
 
+from mlte.evidence.types.integer import Integer
 from mlte.measurement.storage import LocalObjectSize
-from mlte.validation.result import Result
-from mlte.value.types.integer import Integer
+from mlte.results.result import Result
 
 # -----------------------------------------------------------------------------
 # Directory Hierarchy Construction
@@ -117,6 +117,17 @@ def expected_hierarchy_size(template: Dict[str, Any]) -> int:
 # -----------------------------------------------------------------------------
 
 
+def test_constructor_type():
+    """ "Checks that the constructor sets up type properly."""
+    m = LocalObjectSize("id")
+
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.storage.local_object_size.LocalObjectSize"
+    )
+
+
 def test_file(tmp_path):
     # Test with a model represented as file
     model = {"model": 32}
@@ -147,12 +158,12 @@ def test_validation_less_than(tmp_path):
     size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
-    v = Integer.less_than(128)(size)
+    v = Integer.less_than(128).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_than(64)(size)
+    v = Integer.less_than(64).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)
 
@@ -165,11 +176,11 @@ def test_validation_less_or_equal_to(tmp_path):
     size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
 
     # Validation success
-    v = Integer.less_or_equal_to(64)(size)
+    v = Integer.less_or_equal_to(64).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_or_equal_to(63)(size)
+    v = Integer.less_or_equal_to(63).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)

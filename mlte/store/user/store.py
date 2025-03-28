@@ -69,9 +69,6 @@ class UserStore(Store):
         """Create all default permissions."""
         user_store = self.session()
         for resource_type in ResourceType:
-            if not Policy.is_stored(
-                resource_type, resource_id=None, user_store=user_store
-            ):
-                Policy.create(
-                    resource_type, resource_id=None, user_store=user_store
-                )
+            policy = Policy(resource_type, resource_id=None)
+            if not policy.is_stored(user_store=user_store):
+                policy.save_to_store(user_store=user_store)

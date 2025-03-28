@@ -201,7 +201,7 @@ version = "24.3.0"
 description = "Classes Without Boilerplate"
 optional = false
 python-versions = ">=3.8"
-groups = ["demo", "test"]
+groups = ["demo", "qa", "test"]
 markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
 files = [
     {file = "attrs-24.3.0-py3-none-any.whl", hash = "sha256:ac96cd038792094f438ad1f6ff80837353805ac950cd2aa0e0625ef19850c308"},
@@ -4574,7 +4574,7 @@ version = "0.35.1"
 description = "JSON Referencing + Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["demo", "test"]
+groups = ["demo", "qa", "test"]
 markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
 files = [
     {file = "referencing-0.35.1-py3-none-any.whl", hash = "sha256:eda6d3234d62814d1c64e305c1331c9a3a6132da475ab6382eaa997b21ee75de"},
@@ -4801,7 +4801,7 @@ version = "0.22.3"
 description = "Python bindings to Rust's persistent data structures (rpds)"
 optional = false
 python-versions = ">=3.9"
-groups = ["demo", "test"]
+groups = ["demo", "qa", "test"]
 markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
 files = [
     {file = "rpds_py-0.22.3-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:6c7b99ca52c2c1752b544e310101b98a659b720b21db00e65edca34483259967"},
@@ -5629,6 +5629,104 @@ urllib3 = ">=1.26.0"
 keyring = ["keyring (>=15.1)"]
 
 [[package]]
+name = "types-colorama"
+version = "0.4.15.20240311"
+description = "Typing stubs for colorama"
+optional = false
+python-versions = ">=3.8"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types-colorama-0.4.15.20240311.tar.gz", hash = "sha256:a28e7f98d17d2b14fb9565d32388e419f4108f557a7d939a66319969b2b99c7a"},
+    {file = "types_colorama-0.4.15.20240311-py3-none-any.whl", hash = "sha256:6391de60ddc0db3f147e31ecb230006a6823e81e380862ffca1e4695c13a0b8e"},
+]
+
+[[package]]
+name = "types-decorator"
+version = "5.2.0.20250224"
+description = "Typing stubs for decorator"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_decorator-5.2.0.20250224-py3-none-any.whl", hash = "sha256:baa205eddcacd380512d10e70f1bdf9b8effde90367bc137bcba5db08ec240d1"},
+    {file = "types_decorator-5.2.0.20250224.tar.gz", hash = "sha256:d68aa2f55cf504510dd7d01b49e68dd32c3a200d0bc0cbb84595dba1a11954ff"},
+]
+
+[[package]]
+name = "types-docutils"
+version = "0.21.0.20241128"
+description = "Typing stubs for docutils"
+optional = false
+python-versions = ">=3.8"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_docutils-0.21.0.20241128-py3-none-any.whl", hash = "sha256:e0409204009639e9b0bf4521eeabe58b5e574ce9c0db08421c2ac26c32be0039"},
+    {file = "types_docutils-0.21.0.20241128.tar.gz", hash = "sha256:4dd059805b83ac6ec5a223699195c4e9eeb0446a4f7f2aeff1759a4a7cc17473"},
+]
+
+[[package]]
+name = "types-jsonschema"
+version = "4.23.0.20241208"
+description = "Typing stubs for jsonschema"
+optional = false
+python-versions = ">=3.8"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_jsonschema-4.23.0.20241208-py3-none-any.whl", hash = "sha256:87934bd9231c99d8eff94cacfc06ba668f7973577a9bd9e1f9de957c5737313e"},
+    {file = "types_jsonschema-4.23.0.20241208.tar.gz", hash = "sha256:e8b15ad01f290ecf6aea53f93fbdf7d4730e4600313e89e8a7f95622f7e87b7c"},
+]
+
+[package.dependencies]
+referencing = "*"
+
+[[package]]
+name = "types-psutil"
+version = "7.0.0.20250218"
+description = "Typing stubs for psutil"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_psutil-7.0.0.20250218-py3-none-any.whl", hash = "sha256:1447a30c282aafefcf8941ece854e1100eee7b0296a9d9be9977292f0269b121"},
+    {file = "types_psutil-7.0.0.20250218.tar.gz", hash = "sha256:1e642cdafe837b240295b23b1cbd4691d80b08a07d29932143cbbae30eb0db9c"},
+]
+
+[[package]]
+name = "types-pyasn1"
+version = "0.6.0.20250208"
+description = "Typing stubs for pyasn1"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_pyasn1-0.6.0.20250208-py3-none-any.whl", hash = "sha256:4a4fef8801efa983a88a1db52f6d7ac70cb1ad48abf25fad59134237603d5334"},
+    {file = "types_pyasn1-0.6.0.20250208.tar.gz", hash = "sha256:14c6a0463555fb74ec81aca67ad2eb6d8409895359238511a3eceda7b5426235"},
+]
+
+[[package]]
+name = "types-pygments"
+version = "2.19.0.20250219"
+description = "Typing stubs for Pygments"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_Pygments-2.19.0.20250219-py3-none-any.whl", hash = "sha256:5e3e1f660665b3a2ea946dda794b8d5b05772d789181704b523d646e8a7f4382"},
+    {file = "types_pygments-2.19.0.20250219.tar.gz", hash = "sha256:a4a279338c96f3d4f2eb2c4d7c6c5593c88108b185bb5c664f943f781170cd14"},
+]
+
+[package.dependencies]
+types-docutils = "*"
+types-setuptools = "*"
+
+[[package]]
 name = "types-python-dateutil"
 version = "2.9.0.20241206"
 description = "Typing stubs for python-dateutil"
@@ -5642,6 +5740,22 @@ files = [
 ]
 
 [[package]]
+name = "types-python-jose"
+version = "3.4.0.20250224"
+description = "Typing stubs for python-jose"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_python_jose-3.4.0.20250224-py3-none-any.whl", hash = "sha256:fb0c4134882b700a871f854c4a1bc865ad048ee472cd8d4f4625d1a7b842b264"},
+    {file = "types_python_jose-3.4.0.20250224.tar.gz", hash = "sha256:70d70880d55416e89ed659f0b735af5437dd49ba6c86a116f5af4448aef6a5c8"},
+]
+
+[package.dependencies]
+types-pyasn1 = "*"
+
+[[package]]
 name = "types-pytz"
 version = "2024.2.0.20241221"
 description = "Typing stubs for pytz"
@@ -5652,6 +5766,19 @@ markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
 files = [
     {file = "types_pytz-2024.2.0.20241221-py3-none-any.whl", hash = "sha256:8fc03195329c43637ed4f593663df721fef919b60a969066e22606edf0b53ad5"},
     {file = "types_pytz-2024.2.0.20241221.tar.gz", hash = "sha256:06d7cde9613e9f7504766a0554a270c369434b50e00975b3a4a0f6eed0f2c1a9"},
+]
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.12.20241230"
+description = "Typing stubs for PyYAML"
+optional = false
+python-versions = ">=3.8"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_PyYAML-6.0.12.20241230-py3-none-any.whl", hash = "sha256:fa4d32565219b68e6dee5f67534c722e53c00d1cfc09c435ef04d7353e1e96e6"},
+    {file = "types_pyyaml-6.0.12.20241230.tar.gz", hash = "sha256:7f07622dbd34bb9c8b264fe860a17e0efcad00d50b5f27e93984909d9363498c"},
 ]
 
 [[package]]
@@ -5669,6 +5796,32 @@ files = [
 
 [package.dependencies]
 urllib3 = ">=2"
+
+[[package]]
+name = "types-setuptools"
+version = "75.8.2.20250301"
+description = "Typing stubs for setuptools"
+optional = false
+python-versions = ">=3.9"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types_setuptools-75.8.2.20250301-py3-none-any.whl", hash = "sha256:3cc3e751db9e84eddf1e6d4f8c46bef2c77e6c25b0cd096f729ffa57d3d6a83a"},
+    {file = "types_setuptools-75.8.2.20250301.tar.gz", hash = "sha256:c900bceebfffc92a4abc3cfd4b3c39ead1a2298a73dae37e6bc09da7baf797a0"},
+]
+
+[[package]]
+name = "types-ujson"
+version = "5.10.0.20240515"
+description = "Typing stubs for ujson"
+optional = false
+python-versions = ">=3.8"
+groups = ["qa"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "types-ujson-5.10.0.20240515.tar.gz", hash = "sha256:ceae7127f0dafe4af5dd0ecf98ee13e9d75951ef963b5c5a9b7ea92e0d71f0d7"},
+    {file = "types_ujson-5.10.0.20240515-py3-none-any.whl", hash = "sha256:02bafc36b3a93d2511757a64ff88bd505e0a57fba08183a9150fbcfcb2015310"},
+]
 
 [[package]]
 name = "typing-extensions"
@@ -6002,4 +6155,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "daaffceff2a52dc24d1dc7bb8ce817fa9842b84eaff870fc5f75b23956c88067"
+content-hash = "2adc01662a9034bea19ce4ea58a064e7c522fa77768bf3d23a8e2c9f0a990ed7"

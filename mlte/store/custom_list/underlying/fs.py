@@ -1,14 +1,11 @@
-"""
-mlte/store/custom_list/underlying/fs.py
-
-Implementation of local file system custom list store.
-"""
+"""Implementation of local file system custom list store."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import List, Optional
 
+import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
@@ -82,17 +79,9 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        self._ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_does_not_exist(entry.name)
-        return self._write_entry(entry)
-
-    def edit(
-        self,
-        entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
-    ) -> CustomListEntryModel:
-        self._set_base_path(list_name)
-        self.storage.ensure_resource_exists(entry.name)
         return self._write_entry(entry)
 
     def read(
@@ -105,12 +94,25 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self._set_base_path(list_name)
         return self.storage.list_resources()
 
+    def edit(
+        self,
+        entry: CustomListEntryModel,
+        list_name: Optional[CustomListName] = None,
+    ) -> CustomListEntryModel:
+        self._ensure_parent_exists(entry.parent, list_name)
+        self._set_base_path(list_name)
+        self.storage.ensure_resource_exists(entry.name)
+        return self._write_entry(entry)
+
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
+        self._delete_children(list_name, entry_name)
+
+        self._set_base_path(list_name)
         self.storage.delete_resource(entry_name)
         return entry
 
@@ -126,14 +128,19 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def _set_base_path(self, list_name: Optional[CustomListName]) -> None:
         """
-        Sets the path to the list specified in the param.
+        Sets the path to the list specified in the param and checks list exists.
 
         This method sets the base path of the mapper to the path of the list given as a param.
         This has to happen before each request to ensure that the operation happens on the correct list.
         """
-        if CustomListName is not None:
+        if (
+            list_name is None
+            or list_name not in CustomListName._value2member_map_
+        ):
+            raise errors.ErrorNotFound(
+                f"CustomListName, {list_name}, does not exist or is None."
+            )
+        else:
             self.storage.set_base_path(
                 Path(self.storage.sub_folder, str(list_name))
             )
-        else:
-            raise ValueError("CustomListName cannot be None")

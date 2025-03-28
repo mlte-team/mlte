@@ -1,8 +1,4 @@
-"""
-mlte/custom_list/model.py
-
-Model implementation for a custom list.
-"""
+"""Model implementation for a custom list."""
 
 from __future__ import annotations
 
