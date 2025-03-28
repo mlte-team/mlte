@@ -98,6 +98,12 @@ def create_user(
             )
             model_create_policy.assign_to_user(user)
 
+            # Give every new user permissions to modify all custom lists
+            custom_list_policy = Policy(
+                ResourceType.CUSTOM_LIST, resource_id=None
+            )
+            custom_list_policy.assign_to_user(user)
+
             # Give user permissions to modify its data.
             own_user_policy = Policy(
                 ResourceType.USER, resource_id=user.username
