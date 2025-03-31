@@ -12,7 +12,7 @@
 
 ## Getting Started
 
-The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte-python/" target="_blank">PyPI</a>. The `MLTE` framework is described in our <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">documentation</a>. Install the latest version of the package with pip or conda:
+The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte-python/" target="_blank">PyPI</a>, and the `MLTE` framework is described in our <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">documentation</a>. Install the latest version of the package with pip or conda:
 
 ```bash
 $ pip install mlte-python
@@ -20,13 +20,13 @@ $ pip install mlte-python
 
 ### Running `MLTE`
 
-The `MLTE` web-based user interface (UI or frontend) allows you to create and edit system artifacts, such as the Negotiation Card, and review existing models and test catalogs. It requires authentication for access and allows admins to manage users. To access the UI, first you need to start the backend server. This can be done with the following command:
+The `MLTE` web-based user interface (UI) allows you to create/edit system artifacts and review existing models and test catalogs. To access the UI, first start the backend server with the following command:
 
 ```bash
 $ mlte backend
 ```
 
-There are a number of flags that can be used with the backend to specify parameters; see SECTION for details on those. The default artifact store puts artifacts into a non-persistent, in-memory store. For example, running the backend with a store located in a folder called `store` relative to the folder where you are running `MLTE` would use the following command:
+There are a number of flags that can be used to specify parameters; see the backend section of the <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a> page for details. The default artifact store puts artifacts into a non-persistent, in-memory store. For example, running the backend with a store located in a folder called `store` relative to the folder where you are running `MLTE` would use the following command:
 
   ```bash
     $ mlte backend --store-uri fs://store
@@ -52,7 +52,7 @@ Before most operations can be done on `MLTE`, a context and artifact store need 
 ```python
 from mlte.session import set_context, set_store
 ```
-``set_context()`` indicates the model and version being used for the script, and can be any string. ``set_store()`` indicates the location of the artifact store being used, with four store type options described at LINK. The MLTE context and artifact store can alternatively be set by environment variables before starting the script (``MLTE_CONTEXT_MODEL``, ``MLTE_CONTEXT_VERSION``, and ``MLTE_ARTIFACT_STORE_URI``), and can later be overridden using the set methods above.
+``set_context()`` indicates the model and version being used for the script, and can be any string. ``set_store()`` indicates the location of the artifact store being used, with four store type options described in the <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">documentation</a>. The MLTE context and artifact store can alternatively be set by environment variables before starting the script (``MLTE_CONTEXT_MODEL``, ``MLTE_CONTEXT_VERSION``, and ``MLTE_ARTIFACT_STORE_URI``), and can later be overridden using the set methods above.
 
 ## Next Steps
 
