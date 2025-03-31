@@ -53,7 +53,7 @@
           <td v-else>{{ finding.status }}</td>
           <td></td>
           <td>{{ finding.measurement }}</td>
-          <td>{{ finding.evidence_id }}</td>
+          <td>{{ finding.test_case_id }}</td>
           <td>{{ finding.message }}</td>
         </tr>
       </tbody>
