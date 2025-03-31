@@ -205,14 +205,14 @@
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Specifications">
+      <UsaAccordionItem label="Test Suites">
         <div class="scrollable-table-div">
           <p>
-            A specification (spec) defines the model requirements that must be
+            A test suite defines the model requirements that must be
             satisfied to ensure successful integration with the target system.
           </p>
           <UsaTable
-            :headers="cardSpecReportHeaders"
+            :headers="testSuiteHeaders"
             :rows="testSuites"
             borderless
             class="table"
@@ -220,15 +220,15 @@
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Validated Specification">
+      <UsaAccordionItem label="Test Results">
         <div class="scrollable-table-div">
           <p>
-            Validated Specification are produced by combining a specification
+            Test Results are produced by combining a specification
             with its corresponding results; this artifact communicates how well
             a model performed against all of its requirements.
           </p>
           <UsaTable
-            :headers="validatedSpecHeaders"
+            :headers="testResultHeaders"
             :rows="testResults"
             borderless
             class="table"
@@ -236,15 +236,15 @@
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Values">
+      <UsaAccordionItem label="Evidences">
         <div class="scrollable-table-div">
           <p>
-            Values are the atomic unit of model evaluation in MLTE. A value is
+            Evidences are the atomic unit of model evaluation in MLTE. A value is
             any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
           <UsaTable
-            :headers="valuesHeaders"
+            :headers="evidencesHeaders"
             :rows="evidences"
             borderless
             class="table"
@@ -275,18 +275,18 @@ const selectedVersion = useCookie("selectedVersion", {
 });
 selectedVersion.value = selectedVersion.value || "";
 
-const cardSpecReportHeaders = ref([
+const testSuiteHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const validatedSpecHeaders = ref([
+const testResultHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "specid", label: "SpecID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const valuesHeaders = ref([
+const evidencesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "measurement", label: "Measurement", sortable: true },
   { id: "type", label: "Type", sortable: true },
