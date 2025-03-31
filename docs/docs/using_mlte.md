@@ -16,48 +16,6 @@ $ conda install mlte-python
 ```
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
-## Using `MLTE` as a library
-
-### Importing
-
-`MLTE` contains the following subpackages:
-
-- **Properties**: Properties are any attribute of the trained model, the procedure used to train it (including training data), or its ability to perform inference. A property is ‘abstract’ in the sense that there may be many ways in which it might be assessed. Developers will consider priorities, tradeoffs, and weaknesses of their model in the context of the system and prioritize properties for testing.  
-
-- **Measurement**: Measurements are functions that assess phenomena related to the property of interest. For example, the total local process memory consumption is a *measurement* that measures the *property* of Training Memory Cost. 
-
-- **Spec**: Specifications (Specs) are collections of properties and their associated measurements. Specs help organize the *`MLTE`* properties so that models can be easily re-evaluted. They are created by selecting the characteristics the model must exhibit to be considered acceptable. 
-
-- **Report**: A *`MLTE`* report encapsulates all of the knowledge gained about the model and the system as a consequence of the evaluation process. The report renders as a web page and is opened automatically in an available window of the default browser. 
-
-*`MLTE`* can be imported like any Python pacakge using the standard conventions.
-
-```python
-from mlte.property ... #importing from properties subpackage
-from mlte.measurement ... #importing from measurement subpackage
-from mlte.spec ... #importing from spec subpackage
-from mlte.report ... #importing from report subpackage
-```
-
-### Setting up a `MLTE` session
-
-Before most operations can be done on `MLTE`, a context and artifact store need to be set. When using `MLTE` as a library, there are two commands that can be executed once in a script to set this global state. They can be imported using
-
-```python
-from mlte.session import set_context, set_store
-```
-
-They are described and used in the following way:
-
-- ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
-
-- ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the structure described in the section [Store URIs](#store-uris) below.
-
-Alternatively, these two things can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
-
-- ``MLTE_CONTEXT_MODEL`` and ``MLTE_CONTEXT_VERSION`` to set the model and version.
-- ``MLTE_ARTIFACT_STORE_URI`` to set the artifact store URI.
-
 ## Running the Backend and User Interface
 
 The web-based user interface (UI or frontend) allows you to create and edit system artifacts, such as the Negotiation Card, and review existing models and test catalogs. It requires authentication for access and allows admins to manage users. To access the UI, first you need to start the backend server. See details for running each component.
@@ -123,7 +81,7 @@ The following are the types of store URIs used by the system.
 
 - **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote `MLTE` backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the `MLTE` frontend. The ``<host>`` and ``<port>`` point to the server where the `MLTE` backend is running (defaults to ``localhost`` and ``8080``). See the following section for instructions on setting up the `MLTE` backend and frontend.
 
-## Using a Relational DB Engine Backend
+### Using a Relational DB Engine Backend
 
 To use a relational DB engine as a store, you first need to set up your DB engine separately. `MLTE` comes with DBAPI drivers installed for PostgreSQL; for other DB engines, you need to install the corresponding Python package drivers first.
 
@@ -149,14 +107,32 @@ Example for setting the store inside code when you are using `MLTE` as a library
 set_store("postgresql://mlte_user:mlte_pass@localhost/mlte")
 ```
 
+## Setting up a `MLTE` session
+
+Before most operations can be done using `MLTE`, a context and artifact store need to be set. When using `MLTE` as a library, there are two commands that can be executed once in a script to set this global state. They can be imported using
+
+```python
+from mlte.session import set_context, set_store
+```
+
+They are described and used in the following way:
+
+- ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
+
+- ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the structure described in the [Store URIs](#store-uris) section.
+
+Alternatively, these two things can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
+
+- ``MLTE_CONTEXT_MODEL`` and ``MLTE_CONTEXT_VERSION`` to set the model and version.
+- ``MLTE_ARTIFACT_STORE_URI`` to set the artifact store URI.
+
 ## Negotiate Model Quality Requirements
 
-To begin the `MLTE` process, teams hold a negotiation discussion about requirements with stakeholders that should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
+Now that you have the `MLTE` infrastructure set up, your team can hold a negotiation to discuss requirements with stakeholders. This should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
 
-- The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` user interface. To view the content in the Negotiation Card, you can run the frontend as described above or see this [page](negotiation_card.md).
+- The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` user interface as described above. You can also refer to its [contents](negotiation_card.md).
 - The negotiation is a collaborative discussion where all involved parties aim to agree on project requirements and discuss technical details.
 - Once the negotiation is complete and the Negotiation Card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The Negotiation Card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
-
 
 ## Internal Model Testing (IMT)
 
