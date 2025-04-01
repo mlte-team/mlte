@@ -68,7 +68,6 @@ class FunctionInfo:
         arg_keys, _, _, arg_values = inspect.getargvalues(caller_function)
         filtered_args = []
         for arg_key in arg_keys:
-            # print(f"{arg_key}={arg_values[arg_key]}")
             if arg_key != "cls" and arg_key != "self":
                 filtered_args.append(arg_values[arg_key])
 
@@ -107,7 +106,10 @@ def get_class_from_func(func: Optional[FunctionType]) -> Optional[type]:
         return None
 
     cls_qual_name, func_name = func.__qualname__.rsplit(".", 1)
-    assert func_name == func.__name__
+    if func_name != func.__name__:
+        raise RuntimeError(
+            f"Error parsing function name, expected name and frame do not match: {func_name}, {func.__name__}"
+        )
 
     # Recursively check GC references
     visited_ids = set()

@@ -18,7 +18,7 @@ class TestCaseModel(BaseModel):
     """A description of the goal of this test case."""
 
     qas_list: list[str] = []
-    """A list of ids of Qualit Attribute Scenarios that this case is addressing."""
+    """A list of ids of Quality Attribute Scenarios that this case is addressing."""
 
     measurement: Optional[MeasurementMetadata] = None
     """Measurement to be used with this test case."""

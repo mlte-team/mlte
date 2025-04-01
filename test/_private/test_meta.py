@@ -44,6 +44,7 @@ def function_for_testing(b):
         (ClassForTesting, ["method_for_test"], True),
         (ClassForTesting, ["not_method_for_test"], False),
         (ClassForTesting, ["method_for_test", "a_class_method"], True),
+        (ClassForTesting, ["a_static_method"], True),
     ],
 )
 def test_has_callables(test_object: type, callables: list[str], expected: bool):
