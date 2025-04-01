@@ -26,11 +26,23 @@ As part of the negotiation, teams fill out a `MLTE` [Negotiation Card](negotiati
 ## 4. Initial Model Testing (IMT)
 IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform preliminary testing to determine when the model exceeds baselines. Once model performance exceeds baselines, or if additional testing is needed to validate assumptions, the process moves to SDMT.
 
+IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform preliminary testing through IMT to determine when the model exceeds their specified thresholds.
+
+1. TRAINED MODEL: Performing IMT assumes that teams have a trained model. 
+
+2. TEST MODEL USING `TESTSUITE`: Test the trained model against `TestCase`s selected during the negotiation with stakeholders during `MLTE` step ➀. 
+
+3. DOES PERFORMANCE EXCEED BASELINE? 
+
+    - YES: If performance exceeds the baseline, go to the next item in the `MLTE` workflow.
+    
+    - NO: If performance does not exceed the baseline, revisit the `MLTE` Negotiation Card to see if any of the items defined there need to change. After verifying model qualities via the Negotiation Card, retrain the model and then repeat IMT.
+
 ## 5. System Dependent Model Testing (SDMT)
-In SDMT, teams focus on ensuring that the model fulfills the larger set of system and model requirements. To do so, teams use system-derived requirements and quality attribute information from the [Negotiation Card](negotiation_card.md) to develop a test specification, which contains code that will evaluate each model or system-derived requirement.
+In SDMT, teams focus on ensuring that the model fulfills the larger set of system and model requirements. To do so, teams conduct another negotiation or refer to the most recent touchpoint in their continuous negotiation to update the [Negotiation Card](negotiation_card.md). This prepares them to use system-derived requirements and quality attribute information to develop a `TestSuite`, which contains code that will evaluate each model or system-derived requirement.
 
 ## 6. Test Cases
-Test cases are artifacts that define metrics, measurement methods, and passing conditions. This allows teams to encode their requirements to be captured throughout the model development process.
+`TestCase`s are artifacts that define metrics, measurement methods, and passing conditions. This allows teams to encode their requirements to be captured throughout the model development process.
 
 ## 7. Test Catalog
 The `MLTE` Test Catalog contains reusable — local or organizational — examples of test cases sorted by quality attribute. Model developers can use the catalog to find examples of tests, similar to looking for code examples on StackOverflow. Model developers can also contribute test code back to the Test Catalog so that it can be used by others.
