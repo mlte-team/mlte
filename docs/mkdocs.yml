@@ -26,7 +26,6 @@ nav:
   - 'Using MLTE': 'using_mlte.md'
   - 'Development': 'development.md'
   - 'References':
-    - 'MLTE Properties': 'properties.md'
     - 'MLTE Measurements': 'mlte_measurements.md'
     - 'MLTE Negotiation Card': 'negotiation_card.md'
     - 'Resources': 'resources.md'
