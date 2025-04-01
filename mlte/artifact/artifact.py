@@ -6,19 +6,19 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
-import abc
+import typing
 from typing import Optional
 
-import mlte._private.meta as meta
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
+from mlte.model.serializable import Serializable
 from mlte.session.session import session
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 
 
-class Artifact(metaclass=abc.ABCMeta):
+class Artifact(Serializable):
     """
     The MLTE artifact protocol implementation.
 
@@ -28,10 +28,6 @@ class Artifact(metaclass=abc.ABCMeta):
     by a common protocol that allows us to perform common
     operations with them, namely persistence.
     """
-
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        return meta.has_callables(subclass, "to_model", "from_model")
 
     def __init__(self, identifier: str, type: ArtifactType) -> None:
         self.identifier = identifier
@@ -49,35 +45,6 @@ class Artifact(metaclass=abc.ABCMeta):
 
         self.creator = None
         """The user that created this artifact."""
-
-    @abc.abstractmethod
-    def to_model(self) -> ArtifactModel:
-        """Serialize an artifact to its corresponding model."""
-        raise NotImplementedError(
-            "Artifact.to_model() not implemented for abstract Artifact."
-        )
-
-    @classmethod
-    @abc.abstractmethod
-    def from_model(cls, _: ArtifactModel) -> Artifact:
-        """Deserialize an artifact from its corresponding model."""
-        raise NotImplementedError(
-            "Artifact.from_model() not implemented for abstract Artifact."
-        )
-
-    def __json__(self):
-        """Hack method to make Artifacts serializable to JSON if importing json-fix before json.dumps."""
-        return self.to_model().to_json()
-
-    def _equal(a: Artifact, b: Artifact) -> bool:
-        """
-        Compare Artifact instances for equality.
-
-        :param a: Input instance
-        :param b: Input instance
-        :return: `True` if `a` and `b` are equal, `False` otherwise
-        """
-        return a.to_model() == b.to_model()
 
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""
@@ -141,12 +108,15 @@ class Artifact(metaclass=abc.ABCMeta):
         """
         self.pre_save_hook(context, store)
 
-        artifact_model = self.to_model()
+        model = self.to_model()
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
         with ManagedArtifactSession(store.session()) as handle:
             handle.write_artifact_with_header(
                 context.model,
                 context.version,
-                artifact_model,
+                model,
                 force=force,
                 parents=parents,
             )
@@ -184,28 +154,33 @@ class Artifact(metaclass=abc.ABCMeta):
             identifier = cls.get_default_id()
 
         with ManagedArtifactSession(store.session()) as handle:
-            artifact = cls.from_model(
-                handle.read_artifact(
-                    context.model,
-                    context.version,
-                    identifier,
-                )
+            artifact = typing.cast(
+                Artifact,
+                cls.from_model(
+                    handle.read_artifact(
+                        context.model,
+                        context.version,
+                        identifier,
+                    )
+                ),
             )
 
         artifact.post_load_hook(context, store)
         return artifact
 
     @staticmethod
-    def load_all_models(artifact_type: ArtifactType) -> list[ArtifactModel]:
+    def load_models_for_session(
+        artifact_type: ArtifactType,
+    ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type from the session."""
-        return Artifact.load_all_models_with(
+        return Artifact.load_models(
             artifact_type,
             context=session().context,
             store=session().artifact_store,
         )
 
     @staticmethod
-    def load_all_models_with(
+    def load_models(
         artifact_type: ArtifactType, context: Context, store: ArtifactStore
     ) -> list[ArtifactModel]:
         """Loads all artifact models of the given type for the given context and store."""

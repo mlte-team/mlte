@@ -205,47 +205,47 @@
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Specifications">
+      <UsaAccordionItem label="Test Suites">
         <div class="scrollable-table-div">
           <p>
-            A specification (spec) defines the model requirements that must be
+            A test suite defines the model requirements that must be
             satisfied to ensure successful integration with the target system.
           </p>
           <UsaTable
-            :headers="cardSpecReportHeaders"
-            :rows="specifications"
+            :headers="testSuiteHeaders"
+            :rows="testSuites"
             borderless
             class="table"
           />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Validated Specification">
+      <UsaAccordionItem label="Test Results">
         <div class="scrollable-table-div">
           <p>
-            Validated Specification are produced by combining a specification
+            Test Results are produced by combining a specification
             with its corresponding results; this artifact communicates how well
             a model performed against all of its requirements.
           </p>
           <UsaTable
-            :headers="validatedSpecHeaders"
-            :rows="validatedSpecs"
+            :headers="testResultHeaders"
+            :rows="testResults"
             borderless
             class="table"
           />
         </div>
       </UsaAccordionItem>
 
-      <UsaAccordionItem label="Values">
+      <UsaAccordionItem label="Evidences">
         <div class="scrollable-table-div">
           <p>
-            Values are the atomic unit of model evaluation in MLTE. A value is
+            Evidences are the atomic unit of model evaluation in MLTE. A value is
             any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
           <UsaTable
-            :headers="valuesHeaders"
-            :rows="values"
+            :headers="evidencesHeaders"
+            :rows="evidences"
             borderless
             class="table"
           />
@@ -275,18 +275,18 @@ const selectedVersion = useCookie("selectedVersion", {
 });
 selectedVersion.value = selectedVersion.value || "";
 
-const cardSpecReportHeaders = ref([
+const testSuiteHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const validatedSpecHeaders = ref([
+const testResultHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "specid", label: "SpecID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const valuesHeaders = ref([
+const evidencesHeaders = ref([
   { id: "id", label: "ID", sortable: true },
   { id: "measurement", label: "Measurement", sortable: true },
   { id: "type", label: "Type", sortable: true },
@@ -296,13 +296,13 @@ const valuesHeaders = ref([
 const negotiationCards = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
-const specifications = ref<
+const testSuites = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
 const reports = ref<
   { id: string; timestamp: string; model: string; version: string }[]
 >([]);
-const validatedSpecs = ref<
+const testResults = ref<
   {
     id: string;
     specid: string;
@@ -311,7 +311,7 @@ const validatedSpecs = ref<
     version: string;
   }[]
 >([]);
-const values = ref<
+const evidences = ref<
   {
     id: string;
     measurement: string;
@@ -503,9 +503,9 @@ function populateArtifacts(
       }
     }
     // Spec
-    else if (artifact.header.type === "spec") {
-      if (isValidSpec(artifact)) {
-        specifications.value.push({
+    else if (artifact.header.type === "test_suite") {
+      if (isValidTestSuite(artifact)) {
+        testSuites.value.push({
           id: artifact.header.identifier,
           timestamp: artifact.header.timestamp,
           model,
@@ -513,10 +513,10 @@ function populateArtifacts(
         });
       }
     }
-    // Validated spec
-    else if (artifact.header.type === "validated_spec") {
-      if (isValidValidatedSpec(artifact)) {
-        validatedSpecs.value.push({
+    // Test Results
+    else if (artifact.header.type === "test_results") {
+      if (isValidTestResults(artifact)) {
+        testResults.value.push({
           id: artifact.header.identifier,
           specid: artifact.body.spec_identifier,
           timestamp: artifact.header.timestamp,
@@ -527,8 +527,8 @@ function populateArtifacts(
     }
     // Value
     if (artifact.header.type === "value") {
-      if (isValidValue(artifact)) {
-        values.value.push({
+      if (isValidEvidence(artifact)) {
+        evidences.value.push({
           id: artifact.header.identifier.slice(0, -6),
           measurement: artifact.body.metadata.measurement_type,
           type: artifact.body.value.value_type,
@@ -545,9 +545,9 @@ function populateArtifacts(
 function clearArtifacts() {
   negotiationCards.value = [];
   reports.value = [];
-  specifications.value = [];
-  validatedSpecs.value = [];
-  values.value = [];
+  testSuites.value = [];
+  testResults.value = [];
+  evidences.value = [];
 }
 
 async function submitNewModel(modelName: string) {

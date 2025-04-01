@@ -7,8 +7,8 @@ Unit tests for report artifact type.
 from typing import Tuple
 
 from mlte.context.context import Context
-from mlte.model.shared import ProblemType, SystemDescriptor
 from mlte.negotiation.artifact import NegotiationCard
+from mlte.negotiation.model import ProblemType, SystemDescriptor
 from mlte.report.artifact import Report
 from mlte.store.artifact.store import ArtifactStore
 from test.store.artifact.fixture import store_with_context  # noqa

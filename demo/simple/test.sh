@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-CURR_FOLDER="./demo/simple"
+DEMO_FOLDER="${1:-.}"
 
 # Remove everything from temp stores to avoid outdated data.
-rm -r ${CURR_FOLDER}/store/models
-mkdir -p ${CURR_FOLDER}/store/models
+rm -r ${DEMO_FOLDER}/store/models
+mkdir -p ${DEMO_FOLDER}/store/models
 
-poetry run pytest --nbmake ${CURR_FOLDER}/1_negotiation.ipynb
-poetry run pytest --nbmake ${CURR_FOLDER}/2_requirements.ipynb
-poetry run pytest --nbmake ${CURR_FOLDER}/3_evidence.ipynb
-poetry run pytest --nbmake ${CURR_FOLDER}/4_report.ipynb
+# Run all notebooks.
+for file in ${DEMO_FOLDER}/*.ipynb
+do
+  poetry run pytest --nbmake "$file"
+done

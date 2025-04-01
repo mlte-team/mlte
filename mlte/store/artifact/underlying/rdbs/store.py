@@ -24,11 +24,13 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBVersion,
     init_artifact_types,
 )
+from mlte.store.artifact.underlying.rdbs.metadata_evidence import (
+    init_evidence_types,
+)
 from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     init_classification_types,
     init_problem_types,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_value import init_value_types
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
 from mlte.store.query import Query
@@ -66,7 +68,7 @@ def init_artifact_store_tables(engine: Engine):
         init_artifact_types(session)
         init_problem_types(session)
         init_classification_types(session)
-        init_value_types(session)
+        init_evidence_types(session)
 
 
 # -----------------------------------------------------------------------------

@@ -8,7 +8,7 @@ import base64
 import typing
 from typing import Any, Callable
 
-import dill
+import dill  # type: ignore
 
 
 def encode_callable(callable: Callable[[Any], Any]) -> str:
