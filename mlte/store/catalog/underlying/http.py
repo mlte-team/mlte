@@ -4,7 +4,7 @@ Implementation of HTTP catalog store group.
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, OrderedDict, Tuple
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -16,6 +16,8 @@ from mlte.store.catalog.store import (
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
 from mlte.user.model import ResourceType
+
+ENTRY_URL_KEY = "entry"
 
 
 # -----------------------------------------------------------------------------
@@ -96,8 +98,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         new_entry = self._convert_to_local(entry)
 
-        url = f"/{local_catalog_id}/entry"
-        response = self.storage.post(url, json=new_entry.to_json())
+        response = self.storage.post(
+            json=new_entry.to_json(), groups=_entry_group(local_catalog_id)
+        )
 
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
@@ -107,8 +110,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         edited_entry = self._convert_to_local(entry)
 
-        url = f"/{local_catalog_id}/entry"
-        response = self.storage.put(url, json=edited_entry.to_json())
+        response = self.storage.put(
+            json=edited_entry.to_json(), groups=_entry_group(local_catalog_id)
+        )
 
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
@@ -117,8 +121,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
         catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
-        url = f"/{catalog_id}/entry/{entry_id}"
-        response = self.storage.get(url)
+        response = self.storage.get(
+            id=entry_id, groups=_entry_group(catalog_id)
+        )
 
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
@@ -132,8 +137,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     ) -> CatalogEntry:
         local_catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
 
-        url = f"/{local_catalog_id}/entry/{entry_id}"
-        response = self.storage.delete(url)
+        response = self.storage.delete(
+            id=entry_id, groups=_entry_group(local_catalog_id)
+        )
 
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
@@ -144,8 +150,10 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[CatalogEntry]:
-        url = "s/entry"
-        response = self.storage.get(url)
+        # Note: this is hacky, due to the hacky url being used to get details: catalogs/entry
+        self.storage.base_url += "s"
+        response = self.storage.get(id="entry")
+        self.storage.base_url = self.storage.base_url[:-1]
 
         return [
             self._convert_to_remote(CatalogEntry(**entry)) for entry in response
@@ -200,3 +208,8 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         new_entry.header.catalog_id = http_catalog_id
 
         return new_entry
+
+
+def _entry_group(catalog_id: str) -> OrderedDict[str, str]:
+    """Returns the resource group info for entries inside a catalog."""
+    return OrderedDict([(catalog_id, ENTRY_URL_KEY)])

@@ -4,7 +4,7 @@ Base class for HTTP based stores.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, OrderedDict
 
 from mlte.backend.core.config import settings
 from mlte.store.base import StoreURI
@@ -44,26 +44,59 @@ class HttpStorage(Storage):
         """Perform authentication."""
         self.client.authenticate(f"{self.clean_url}{API_PREFIX}")
 
-    def post(self, resource_url: str, json: Any) -> Any:
+    def post(
+        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+    ) -> Any:
         """Post method, to create resource."""
-        return self.send_command(resource_url, MethodType.POST, json)
+        return self.send_command(MethodType.POST, json=json, groups=groups)
 
-    def put(self, resource_url: str, json: Any) -> Any:
+    def put(
+        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+    ) -> Any:
         """Put method, to update resource."""
-        return self.send_command(resource_url, MethodType.PUT, json)
+        return self.send_command(MethodType.PUT, json=json, groups=groups)
 
-    def get(self, resource_url: str) -> Any:
+    def get(
+        self,
+        id: Optional[str] = None,
+        groups: OrderedDict[str, str] = OrderedDict(),
+        query_args: dict[str, str] = {},
+    ) -> Any:
         """Get method, to read resource."""
-        return self.send_command(resource_url, MethodType.GET)
+        return self.send_command(
+            MethodType.GET, id=id, groups=groups, query_args=query_args
+        )
 
-    def delete(self, resource_url: str) -> Any:
+    def delete(
+        self, id: str, groups: OrderedDict[str, str] = OrderedDict()
+    ) -> Any:
         """Delete method, to remove resource."""
-        return self.send_command(resource_url, MethodType.DELETE)
+        return self.send_command(MethodType.DELETE, id=id, groups=groups)
 
     def send_command(
-        self, resource_url: str, method: MethodType, json: Optional[Any] = None
+        self,
+        method: MethodType,
+        groups: OrderedDict[str, str] = OrderedDict(),
+        id: Optional[str] = None,
+        query_args: dict[str, str] = {},
+        json: Optional[Any] = None,
     ):
-        url = f"{self.base_url}{resource_url}"
+        url = f"{self.base_url}"
+
+        # Add groups to path.
+        for group_id, subgroup_name in groups.items():
+            url += f"/{group_id}/{subgroup_name}"
+
+        # Add id to path, if any.
+        if id:
+            url += f"/{id}"
+
+        # Add query args.
+        link_char = "?"
+        for arg_name, arg_value in query_args.items():
+            url += f"{link_char}{arg_name}={arg_value}"
+            link_char = "&"
+
         if method == MethodType.POST:
             res = self.client.post(url, json=json)
         elif method == MethodType.PUT:
@@ -74,5 +107,6 @@ class HttpStorage(Storage):
             res = self.client.delete(url)
         else:
             raise RuntimeError(f"Invalid method type: {method}")
+
         self.client.raise_for_response(res)
         return res.json()
