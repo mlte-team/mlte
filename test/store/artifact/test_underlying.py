@@ -321,6 +321,7 @@ def test_artifact_parents(
         # The artifact is present
         read = handle.read_artifacts(model_id, version_id)
         assert len(read) == 1
+        handle.read_artifact(model_id, version_id, artifact_id)
 
 
 @pytest.mark.parametrize(
@@ -372,10 +373,6 @@ def test_invalid_chars(
 ) -> None:
     """Test creation with chars that may be invalid in some storage types."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
-
-    # TODO: Ignore this case for now, URL's are not well encoded.
-    if store_fixture_name == "http_store":
-        return
 
     model_id = "model/test"
     version_id = "version/test"

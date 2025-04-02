@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
+from mlte._private import url as url_utils
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
@@ -40,6 +41,8 @@ def write_artifact(
     :param request: The artifact write request
     :return: The created artifact
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as artifact_store:
         try:
             artifact = artifact_store.write_artifact_with_header(
@@ -77,6 +80,9 @@ def read_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The read artifact
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
+    artifact_id = url_utils.revert_valid_url_part(artifact_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifact(model_id, version_id, artifact_id)
@@ -104,6 +110,8 @@ def read_artifacts(
     :param offset: The offset on returned artifacts
     :return: The read artifacts
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_artifacts(model_id, version_id, limit, offset)
@@ -128,6 +136,8 @@ def search_artifacts(
     :param query: The artifact query
     :return: The read artifacts
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.search_artifacts(model_id, version_id, query)
@@ -149,6 +159,9 @@ def delete_artifact(
     :param artifact_id: The identifier for the artifact
     :return: The deleted artifact
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
+    artifact_id = url_utils.revert_valid_url_part(artifact_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.delete_artifact(model_id, version_id, artifact_id)

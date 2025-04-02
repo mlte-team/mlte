@@ -5,7 +5,9 @@ Base class for HTTP based stores.
 from __future__ import annotations
 
 from typing import Any, Optional, OrderedDict
+from urllib import parse as url_parse
 
+from mlte._private import url as url_utils
 from mlte.backend.core.config import settings
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
@@ -81,22 +83,24 @@ class HttpStorage(Storage):
         query_args: dict[str, str] = {},
         json: Optional[Any] = None,
     ):
-        url = f"{self.base_url}"
+        path_url = ""
 
         # Add groups to path.
         for group_id, subgroup_name in groups.items():
-            url += f"/{group_id}/{subgroup_name}"
+            path_url += f"/{url_utils.make_valid_url_part(group_id)}/{url_utils.make_valid_url_part(subgroup_name)}"
 
         # Add id to path, if any.
         if id:
-            url += f"/{id}"
+            path_url += f"/{url_utils.make_valid_url_part(id)}"
 
         # Add query args.
+        query = ""
         link_char = "?"
         for arg_name, arg_value in query_args.items():
-            url += f"{link_char}{arg_name}={arg_value}"
+            query += f"{link_char}{url_utils.make_valid_url_part(arg_name)}={url_utils.make_valid_url_part(arg_value)}"
             link_char = "&"
 
+        url = f"{self.base_url}{url_parse.quote(path_url)}{query}"
         if method == MethodType.POST:
             res = self.client.post(url, json=json)
         elif method == MethodType.PUT:
