@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import List, Optional
 
-import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
@@ -74,73 +72,76 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
+        # Create folders for existing CustomLists.
+        for custom_list_type in CustomListName:
+            try:
+                self.storage.create_resource_group(custom_list_type.value)
+            except FileExistsError:
+                # If it already existed, we just ignore warning.
+                pass
+
     def create(
         self,
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        if list_name is None:
+            raise RuntimeError("Custom list name can't be None")
         self._ensure_parent_exists(entry.parent, list_name)
-        self._set_base_path(list_name)
-        self.storage.ensure_resource_does_not_exist(entry.name)
-        return self._write_entry(entry)
+        self.storage.ensure_resource_does_not_exist(
+            entry.name, [list_name.value]
+        )
+        return self._write_entry(entry, list_name)
 
     def read(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
-        self._set_base_path(list_name)
-        return self._read_entry(entry_name)
+        if list_name is None:
+            raise RuntimeError("Custom list name can't be None")
+        return self._read_entry(entry_name, list_name)
 
     def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
-        self._set_base_path(list_name)
-        return self.storage.list_resources()
+        if list_name is None:
+            raise RuntimeError("Custom list name can't be None")
+        return self.storage.list_resources([list_name.value])
 
     def edit(
         self,
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        if list_name is None:
+            raise RuntimeError("Custom list name can't be None")
         self._ensure_parent_exists(entry.parent, list_name)
-        self._set_base_path(list_name)
-        self.storage.ensure_resource_exists(entry.name)
-        return self._write_entry(entry)
+        self.storage.ensure_resource_exists(entry.name, [list_name.value])
+        return self._write_entry(entry, list_name)
 
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
-        self._set_base_path(list_name)
-        self.storage.ensure_resource_exists(entry_name)
-        entry = self._read_entry(entry_name)
+        if list_name is None:
+            raise RuntimeError("Custom list name can't be None")
+        self.storage.ensure_resource_exists(entry_name, [list_name.value])
+        entry = self._read_entry(entry_name, list_name)
         self._delete_children(list_name, entry_name)
 
-        self._set_base_path(list_name)
-        self.storage.delete_resource(entry_name)
+        self.storage.delete_resource(entry_name, [list_name.value])
         return entry
 
-    def _read_entry(self, entry_name: str) -> CustomListEntryModel:
+    def _read_entry(
+        self, entry_name: str, list_name: CustomListName
+    ) -> CustomListEntryModel:
         """Reads a custom list entry."""
-        self.storage.ensure_resource_exists(entry_name)
-        return CustomListEntryModel(**self.storage.read_resource(entry_name))
+        self.storage.ensure_resource_exists(entry_name, [list_name.value])
+        return CustomListEntryModel(
+            **self.storage.read_resource(entry_name, [list_name.value])
+        )
 
-    def _write_entry(self, entry: CustomListEntryModel) -> CustomListEntryModel:
+    def _write_entry(
+        self, entry: CustomListEntryModel, list_name: CustomListName
+    ) -> CustomListEntryModel:
         """Writes a custom list entry to storage."""
-        self.storage.write_resource(entry.name, entry.to_json())
-        return self._read_entry(entry.name)
-
-    def _set_base_path(self, list_name: Optional[CustomListName]) -> None:
-        """
-        Sets the path to the list specified in the param and checks list exists.
-
-        This method sets the base path of the mapper to the path of the list given as a param.
-        This has to happen before each request to ensure that the operation happens on the correct list.
-        """
-        if (
-            list_name is None
-            or list_name not in CustomListName._value2member_map_
-        ):
-            raise errors.ErrorNotFound(
-                f"CustomListName, {list_name}, does not exist or is None."
-            )
-        else:
-            self.storage.set_base_path(
-                Path(self.storage.sub_folder, str(list_name))
-            )
+        self.storage.write_resource(
+            entry.name, entry.to_json(), [list_name.value]
+        )
+        return self._read_entry(entry.name, list_name)
