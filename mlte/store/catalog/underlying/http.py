@@ -15,7 +15,7 @@ from mlte.store.catalog.store import (
 )
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
-from mlte.user.model import ResourceType
+from mlte.user.model import MethodType, ResourceType
 
 ENTRY_URL_KEY = "entry"
 
@@ -150,11 +150,13 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[CatalogEntry]:
-        # Note: this is hacky, due to the hacky url being used to get details: catalogs/entry
-        self.storage.base_url += "s"
-        response = self.storage.get(id="entry")
-        self.storage.base_url = self.storage.base_url[:-1]
-
+        # This is a bit hacky, in that we have a pseudo resource type "catalogs",
+        # and a pseudo resource id "entry" to get all details of all entries.
+        response = self.storage.send_command(
+            MethodType.GET,
+            id="entry",
+            resource_type=f"{ResourceType.CATALOG.value}s",
+        )
         return [
             self._convert_to_remote(CatalogEntry(**entry)) for entry in response
         ][offset : offset + limit]

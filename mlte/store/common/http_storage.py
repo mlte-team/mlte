@@ -39,8 +39,11 @@ class HttpStorage(Storage):
         self.clean_url = uri.uri
         """Store the clean URL without credentials."""
 
-        self.base_url = f"{self.clean_url}{API_PREFIX}/{resource_type.value}"
-        """Base resource URL."""
+        self.resource_url = self.build_resource_url(resource_type.value)
+        """Set the base URL for all calls to this resource."""
+
+    def build_resource_url(self, resource: str) -> str:
+        return f"{self.clean_url}{API_PREFIX}/{resource}"
 
     def start_session(self):
         """Perform authentication."""
@@ -82,7 +85,22 @@ class HttpStorage(Storage):
         id: Optional[str] = None,
         query_args: dict[str, str] = {},
         json: Optional[Any] = None,
-    ):
+        resource_type: Optional[str] = None,
+    ) -> Any:
+        """
+        Sends an HTTP command request to the backend API, and returns a JSON response from it. Commonly not used direclty, as it is expected
+        for callers to use the post(), put(), read() and delete() method, but can be used when a non-standard command, which does not properly
+        match the arguments of the previous 4 methods, needs to be sent.
+
+        :param method: what HTTP method to use, from MethodType
+        :param groups: a dict of groups to prepend to the request path, where the key is the id of the given group, and the value is the string used to denote
+        the beginning of the next nested level (e.g., {"model1": "version"}, with model1 being a model id, and "version" being the keyword for the next level).
+        :param id: the id of a given resource.
+        :param query_args: dictionary of query args to append.
+        :param json: json payload to send, only for POST and PUT commands.
+        :param resource_type: optional param to overwride the default resource type set up when creating this storage;
+        string to be used as the first item in the URL's path.
+        """
         path_url = ""
 
         # Add groups to path.
@@ -100,7 +118,12 @@ class HttpStorage(Storage):
             query += f"{link_char}{url_utils.make_valid_url_part(arg_name)}={url_utils.make_valid_url_part(arg_value)}"
             link_char = "&"
 
-        url = f"{self.base_url}{url_parse.quote(path_url)}{query}"
+        # Allow changing the resource part of the base resource URL, if needed.
+        base_url = self.resource_url
+        if resource_type:
+            base_url = self.build_resource_url(resource_type)
+
+        url = f"{base_url}{url_parse.quote(path_url)}{query}"
         if method == MethodType.POST:
             res = self.client.post(url, json=json)
         elif method == MethodType.PUT:
