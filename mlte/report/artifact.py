@@ -156,7 +156,7 @@ class Report(Artifact):
             system=deepcopy(artifact.system),
             data=deepcopy(artifact.data),
             model=deepcopy(artifact.model),
-            system_requirements=deepcopy(artifact.qas),
+            system_requirements=deepcopy(artifact.quality_scenarios),
             test_results_id=self.test_results_id,
             comments=deepcopy(self.comments),
             quantitative_analysis=deepcopy(self.quantitative_analysis),

@@ -34,7 +34,7 @@ class NegotiationCard(Artifact):
         system: SystemDescriptor = SystemDescriptor(),
         data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
-        qas: List[QASDescriptor] = [],
+        quality_scenarios: List[QASDescriptor] = [],
     ) -> None:
         super().__init__(identifier, ArtifactType.NEGOTIATION_CARD)
 
@@ -47,7 +47,7 @@ class NegotiationCard(Artifact):
         self.model = model
         """A descriptor for the model."""
 
-        self.qas = qas
+        self.quality_scenarios = quality_scenarios
         """A list of quality attribute scenarios."""
 
     def to_model(self) -> ArtifactModel:
@@ -59,7 +59,7 @@ class NegotiationCard(Artifact):
                     system=self.system,
                     data=self.data,
                     model=self.model,
-                    system_requirements=self.qas,
+                    system_requirements=self.quality_scenarios,
                 ),
             ),
         )
@@ -79,7 +79,7 @@ class NegotiationCard(Artifact):
             system=body.nc_data.system,
             data=body.nc_data.data,
             model=body.nc_data.model,
-            qas=body.nc_data.system_requirements,
+            quality_scenarios=body.nc_data.system_requirements,
         )
 
     @staticmethod
