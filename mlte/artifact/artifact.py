@@ -206,3 +206,7 @@ class Artifact(Serializable):
             timestamp=self.timestamp,
             creator=self.creator,
         )
+
+    def __str__(self) -> str:
+        """Return a string representation."""
+        return self.to_model().to_json_string()

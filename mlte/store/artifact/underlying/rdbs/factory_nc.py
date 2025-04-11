@@ -126,6 +126,7 @@ def create_negotiation_data_db_from_model(
     # Create list of QAS objects.
     for qas in negotiation_card_data.system_requirements:
         qas_obj = DBQAS(
+            identifier=qas.identifier,
             quality=qas.quality,
             stimulus=qas.stimulus,
             source=qas.source,
@@ -191,6 +192,7 @@ def create_negotiation_data_model_from_db(
         ),
         system_requirements=[
             QASDescriptor(
+                identifier=qas.identifier,
                 quality=qas.quality,
                 stimulus=qas.stimulus,
                 source=qas.source,
