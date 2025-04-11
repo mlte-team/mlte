@@ -552,6 +552,18 @@
     "QASDescriptor": {
       "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
       "properties": {
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
         "quality": {
           "anyOf": [
             {

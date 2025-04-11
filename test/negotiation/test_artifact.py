@@ -11,9 +11,12 @@ from typing import Tuple
 import pytest
 
 import mlte.store.error as errors
+from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.negotiation.artifact import NegotiationCard
+from mlte.negotiation.model import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
+from test.fixture.artifact import ArtifactFactory
 from test.store.artifact.fixture import (  # noqa
     FX_MODEL_ID,
     FX_VERSION_ID,
@@ -77,3 +80,76 @@ def test_save_overwrite(
 
     # Force write succeeds
     card.save_with(ctx, store, force=True)
+
+
+def test_qas_id_generation():
+    # Generate a sample negotiation card, with QAS without ids.
+    card_model = ArtifactFactory.make(
+        ArtifactType.NEGOTIATION_CARD, complete=True
+    )
+    card = NegotiationCard.from_model(card_model)
+    card.quality_scenarios.append(
+        QASDescriptor(quality="security", stimulus="test")
+    )
+    card.quality_scenarios.append(
+        QASDescriptor(quality="performance", stimulus="test")
+    )
+
+    # Sort out ids.
+    card.add_qas_ids()
+
+    for qas in card.quality_scenarios:
+        assert qas.identifier is not None
+
+
+def test_qas_id_increase():
+    # Generate a sample negotiation card, with some QAS with id, and three others without.
+    card_model = ArtifactFactory.make(
+        ArtifactType.NEGOTIATION_CARD, complete=True
+    )
+    card = NegotiationCard.from_model(card_model)
+    card.quality_scenarios = []
+    card.quality_scenarios.append(
+        QASDescriptor(quality="resilience", stimulus="test")
+    )
+    card.quality_scenarios.append(
+        QASDescriptor(
+            identifier=NegotiationCard.build_qas_id(1),
+            quality="security",
+            stimulus="test",
+        )
+    )
+    card.quality_scenarios.append(
+        QASDescriptor(quality="robustness", stimulus="test")
+    )
+    card.quality_scenarios.append(
+        QASDescriptor(
+            identifier=NegotiationCard.build_qas_id(2),
+            quality="maintainability",
+            stimulus="test",
+        )
+    )
+    card.quality_scenarios.append(
+        QASDescriptor(quality="perforemance", stimulus="test")
+    )
+
+    # Sort out ids.
+    card.add_qas_ids()
+
+    print(card.quality_scenarios)
+    assert len(card.quality_scenarios) == 5
+    assert card.quality_scenarios[0].identifier == NegotiationCard.build_qas_id(
+        3
+    )
+    assert card.quality_scenarios[1].identifier == NegotiationCard.build_qas_id(
+        1
+    )
+    assert card.quality_scenarios[2].identifier == NegotiationCard.build_qas_id(
+        4
+    )
+    assert card.quality_scenarios[3].identifier == NegotiationCard.build_qas_id(
+        2
+    )
+    assert card.quality_scenarios[4].identifier == NegotiationCard.build_qas_id(
+        5
+    )
