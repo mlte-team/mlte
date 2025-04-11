@@ -25,10 +25,17 @@ from test.store.artifact.fixture import (  # noqa
 )
 
 
+def get_sample_negotiation_card(id: str="my-card"):
+    card_model = ArtifactFactory.make(
+        ArtifactType.NEGOTIATION_CARD, id, complete=True
+    )
+    return NegotiationCard.from_model(card_model)
+
+
 def test_round_trip() -> None:
     """Negotiation card can be converted to model and back."""
 
-    card = NegotiationCard("my-card")
+    card = get_sample_negotiation_card()
 
     model = card.to_model()
     _ = NegotiationCard.from_model(model)
@@ -40,7 +47,7 @@ def test_save_load(
     """Negotiation card can be saved to and loaded from artifact store."""
     store, ctx = store_with_context  # noqa
 
-    card = NegotiationCard("my-card")
+    card = get_sample_negotiation_card()
     card.save_with(ctx, store)
 
     loaded = NegotiationCard.load_with("my-card", context=ctx, store=store)
@@ -51,7 +58,7 @@ def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
     """Save fails when no parents are present."""
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
-    card = NegotiationCard("my-card")
+    card = get_sample_negotiation_card()
     with pytest.raises(errors.ErrorNotFound):
         card.save_with(ctx, memory_store)
 
@@ -60,7 +67,7 @@ def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
     """Save succeeds when parents are present."""
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
-    card = NegotiationCard("my-card")
+    card = get_sample_negotiation_card()
     card.save_with(ctx, memory_store, parents=True)
 
 
@@ -71,7 +78,7 @@ def test_save_overwrite(
     store, ctx = store_with_context  # noqa
 
     # Initial write succeeds
-    card = NegotiationCard("my-card")
+    card = get_sample_negotiation_card()
     card.save_with(ctx, store)
 
     # Write without `force` fails
@@ -84,10 +91,7 @@ def test_save_overwrite(
 
 def test_qas_id_generation():
     # Generate a sample negotiation card, with QAS without ids.
-    card_model = ArtifactFactory.make(
-        ArtifactType.NEGOTIATION_CARD, complete=True
-    )
-    card = NegotiationCard.from_model(card_model)
+    card = get_sample_negotiation_card()
     card.quality_scenarios.append(
         QASDescriptor(quality="security", stimulus="test")
     )
@@ -104,10 +108,7 @@ def test_qas_id_generation():
 
 def test_qas_id_increase():
     # Generate a sample negotiation card, with some QAS with id, and three others without.
-    card_model = ArtifactFactory.make(
-        ArtifactType.NEGOTIATION_CARD, complete=True
-    )
-    card = NegotiationCard.from_model(card_model)
+    card = get_sample_negotiation_card()
     card.quality_scenarios = []
     card.quality_scenarios.append(
         QASDescriptor(quality="resilience", stimulus="test")
