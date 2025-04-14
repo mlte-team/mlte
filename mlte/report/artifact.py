@@ -145,6 +145,17 @@ class Report(Artifact):
             quantitative_analysis=body.quantitative_analysis,
         )
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Report:
+        """
+        Load a Report from the configured global session.
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
+        """
+        report = super().load(identifier)
+        return typing.cast(Report, report)
+
     def populate_from(self, artifact: NegotiationCard) -> Report:
         """
         Populate the contents of a report from a negotiation card.

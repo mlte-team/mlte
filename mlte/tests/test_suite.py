@@ -118,8 +118,8 @@ class TestSuite(Artifact):
         :param identifier: The identifier for the artifact. If None,
         the default id is used.
         """
-        card = super().load(identifier)
-        return typing.cast(TestSuite, card)
+        suite = super().load(identifier)
+        return typing.cast(TestSuite, suite)
 
     # -------------------------------------------------------------------------
     # Builtin overloads.
