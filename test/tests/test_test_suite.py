@@ -27,7 +27,7 @@ def get_sample_test_suite():
             TestCase(
                 identifier="model size",
                 goal="Check storage consumption",
-                qas_list=["qas3"],
+                quality_scenarios=["qas3"],
                 validator=LocalObjectSize.get_output_type().less_than(
                     150000000
                 ),
@@ -64,7 +64,9 @@ def test_save_load_default(
     store, ctx = store_with_context
 
     test_suite = TestSuite(
-        test_cases=[TestCase(identifier="t1", goal="to test", qas_list=["qa1"])]
+        test_cases=[
+            TestCase(identifier="t1", goal="to test", quality_scenarios=["qa1"])
+        ]
     )
     test_suite.save_with(ctx, store)
 
@@ -85,8 +87,12 @@ def test_repeated_ids():
     with pytest.raises(RuntimeError):
         _ = TestSuite(
             test_cases=[
-                TestCase(identifier="t1", goal="to test", qas_list=["qa1"]),
-                TestCase(identifier="t1", goal="to test", qas_list=["qa1"]),
+                TestCase(
+                    identifier="t1", goal="to test", quality_scenarios=["qa1"]
+                ),
+                TestCase(
+                    identifier="t1", goal="to test", quality_scenarios=["qa1"]
+                ),
             ]
         )
 
@@ -104,7 +110,7 @@ def test_run_measurements():
             TestCase(
                 identifier="model size",
                 goal="Check storage consumption",
-                qas_list=["qas3"],
+                quality_scenarios=["qas3"],
                 validator=LocalObjectSize.get_output_type().less_than(
                     150000000
                 ),
@@ -113,7 +119,7 @@ def test_run_measurements():
             TestCase(
                 identifier="overall accuracy",
                 goal="Measure the overall accuracy of your end to end pipeline",
-                qas_list=["qas8"],
+                quality_scenarios=["qas8"],
                 validator=Real.greater_than(0.9),
                 measurement=ExternalMeasurement(
                     output_evidence_type=Real, function=internal_cal_function
@@ -122,14 +128,14 @@ def test_run_measurements():
             TestCase(
                 identifier="image attributions",
                 goal="Check what the model is doing",
-                qas_list=["qas7"],
+                quality_scenarios=["qas7"],
                 validator=Image.register_info("Inspect the image."),
                 measurement=ExternalMeasurement(output_evidence_type=Image),
             ),
             TestCase(
                 identifier="no measurement",
                 goal="This test has no initial measurement",
-                qas_list=["qas8"],
+                quality_scenarios=["qas8"],
                 validator=Real.greater_than(0.9),
             ),
         ]
@@ -158,7 +164,7 @@ def test_run_measurements_invalid_id():
             TestCase(
                 identifier="model size",
                 goal="Check storage consumption",
-                qas_list=["qas3"],
+                quality_scenarios=["qas3"],
                 validator=LocalObjectSize.get_output_type().less_than(
                     150000000
                 ),

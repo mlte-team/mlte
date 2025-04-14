@@ -146,3 +146,14 @@ class Evidence(Artifact, ABC):
             evidence = evidence_class.from_model(artifact_model)
             evidences.append(evidence)
         return evidences
+
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Evidence:
+        """
+        Load a Evidence from the configured global session.
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
+        """
+        evidence = super().load(identifier)
+        return typing.cast(Evidence, evidence)

@@ -272,7 +272,16 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
                 environment="normal time",
                 response="results are fair",
                 measure="less than 1 percent difference",
-            )
+            ),
+            QASDescriptor(
+                identifier="qas_id_1",
+                quality="fairness",
+                stimulus="new data arrives",
+                source="from new area",
+                environment="normal time",
+                response="results are fair",
+                measure="less than 1 percent difference",
+            ),
         ],
     )
 

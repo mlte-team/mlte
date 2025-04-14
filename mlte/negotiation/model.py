@@ -224,6 +224,9 @@ class DataDescriptor(BaseModel):
 class QASDescriptor(BaseModel):
     """Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario."""
 
+    identifier: Optional[str] = None
+    """The unique identifier for the QAS."""
+
     quality: Optional[str] = None
     """System property that is being evaluated."""
 

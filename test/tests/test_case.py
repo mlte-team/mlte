@@ -12,7 +12,9 @@ from test.evidence.types.helper import get_sample_evidence_metadata
 
 
 def get_sample_test_case():
-    test_case = TestCase(identifier="t1", goal="to test", qas_list=["qa1"])
+    test_case = TestCase(
+        identifier="t1", goal="to test", quality_scenarios=["qa1"]
+    )
     return test_case
 
 

@@ -334,6 +334,7 @@ class DBQAS(DBBase):
     __tablename__ = "nc_qas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    identifier: Mapped[Optional[str]]
     quality: Mapped[Optional[str]]
     stimulus: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
