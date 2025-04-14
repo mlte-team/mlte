@@ -164,3 +164,10 @@ class NegotiationCard(Artifact):
         if not isinstance(other, NegotiationCard):
             return False
         return self._equal(other)
+
+    def print_quality_scenarios(self):
+        """Prints the scenarios in a user-friednly way."""
+        for qas in self.quality_scenarios:
+            prefix = f"{qas.identifier} ({qas.quality}): "
+            scenario = f"{qas.stimulus} from {qas.source} while in {qas.environment}, {qas.response}, {qas.measure}"
+            print(f"{prefix}{scenario.lower().capitalize()}")
