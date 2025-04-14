@@ -110,6 +110,17 @@ class TestSuite(Artifact):
             ],
         )
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> TestSuite:
+        """
+        Load a TestSuite from the configured global session.
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
+        """
+        card = super().load(identifier)
+        return typing.cast(TestSuite, card)
+
     # -------------------------------------------------------------------------
     # Builtin overloads.
     # -------------------------------------------------------------------------

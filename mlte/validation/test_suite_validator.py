@@ -4,7 +4,6 @@ Class in charge of validating a TestSuite.
 
 from __future__ import annotations
 
-import typing
 from typing import Optional
 
 from mlte.evidence.artifact import Evidence
@@ -34,11 +33,9 @@ class TestSuiteValidator:
         # If no test suite is provided, load it from its id or its default one.
         if test_suite is None:
             if test_suite_id != "":
-                test_suite = typing.cast(
-                    TestSuite, TestSuite.load(test_suite_id)
-                )
+                test_suite = TestSuite.load(test_suite_id)
             else:
-                test_suite = typing.cast(TestSuite, TestSuite.load())
+                test_suite = TestSuite.load()
 
         self.test_suite = test_suite
         """The test suite to be validated."""
