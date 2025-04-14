@@ -7,7 +7,7 @@ Artifact implementation for negotiation card.
 from __future__ import annotations
 
 import typing
-from typing import List
+from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -57,7 +57,7 @@ class NegotiationCard(Artifact):
     # ----------------------------------------------------------------------------------
     # Serialization methods.
     # ----------------------------------------------------------------------------------
-
+    # Overriden.
     def to_model(self) -> ArtifactModel:
         """Convert a negotation card artifact to its corresponding model."""
         return ArtifactModel(
@@ -72,6 +72,7 @@ class NegotiationCard(Artifact):
             ),
         )
 
+    # Overriden.
     @classmethod
     def from_model(cls, model: BaseModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
@@ -89,6 +90,17 @@ class NegotiationCard(Artifact):
             model=body.nc_data.model,
             quality_scenarios=body.nc_data.system_requirements,
         )
+
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: Optional[str] = None) -> NegotiationCard:
+        """
+        Load a NegotiationCard from the configured global session.
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
+        """
+        card = super().load(identifier)
+        return typing.cast(NegotiationCard, card)
 
     # ----------------------------------------------------------------------------------
     # QAS methods.

@@ -125,7 +125,8 @@ class Artifact(Serializable):
     def load(cls, identifier: Optional[str] = None) -> Artifact:
         """
         Load an artifact from the configured global session.
-        :param identifier: The identifier for the artifact
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
 
         This is equivalent to calling:
             Artifact.load_with(session().context, session().store)
@@ -146,7 +147,8 @@ class Artifact(Serializable):
     ) -> Artifact:
         """
         Load an artifact with the given context and store configuration.
-        :param identifier: The identifier for the artifact
+        :param identifier: The identifier for the artifact If None,
+        the default id is used.
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """

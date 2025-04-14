@@ -99,7 +99,7 @@ def test_qas_id_generation():
         QASDescriptor(quality="performance", stimulus="test")
     )
 
-    # Sort out ids.
+    # Add new ids as needed.
     card.add_qas_ids()
 
     for qas in card.quality_scenarios:
@@ -134,10 +134,9 @@ def test_qas_id_increase():
         QASDescriptor(quality="perforemance", stimulus="test")
     )
 
-    # Sort out ids.
+    # Add ids as needed.
     card.add_qas_ids()
 
-    print(card.quality_scenarios)
     assert len(card.quality_scenarios) == 5
     assert card.quality_scenarios[0].identifier == NegotiationCard.build_qas_id(
         3
