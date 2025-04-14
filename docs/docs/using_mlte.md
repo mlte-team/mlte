@@ -156,7 +156,7 @@ When teams have a model that is ready for testing at either the IMT or SDMT stag
 
 ### 1. Define a `TestSuite`
 
-A `TestSuite` is an artifact made up of a collection (or suite) of tests that the completed model must pass in order to be acceptable for use in the system into which it will be integrated. The `MLTE` `TestSuite` is  made up of smaller units, which we call a `TestCase`. Each `TestCase` includes a name or title, a goal, a link to a corresponding quality attribute in the Negotiation Card, a threshold, and finally a measurement. Here is an example of a `TestCase`:
+A `TestSuite` is an artifact made up of a collection (or suite) of tests that the completed model must pass in order to be acceptable for use in the system into which it will be integrated. The `MLTE` `TestSuite` is  made up of smaller units, which we call a `TestCase`. Each `TestCase` includes a name or title, a goal, a link to a corresponding quality attribute in the Negotiation Card, a threshold, and finally a measurement. Measurements are optional and can be ignored, allowing teams to create and execute them later on in the development or evaluation process. Here is an example of a `TestCase`:
 
 ```python
 TestCase(
@@ -170,7 +170,7 @@ TestCase(
 )
 ```
 
-To see a simple example of a `TestSuite`, refer to the `2_test_suite.ipynb` notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">simple demo folder</a>. To see an example of a more extensive `TestSuite` including quality attribute scenarios, see the requirements notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">scenario demo folder</a>. All demos and corresponding instructions can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo folder</a>.
+To see a simple example of a `TestSuite`, refer to the `2_test_suite.ipynb` notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">simple demo folder</a>. To see an example of a more extensive `TestSuite` including quality attribute scenarios, see the requirements notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">scenario demo folder</a>. All demos and corresponding instructions can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo folder</a>.
 
 ### 2. Collect `Evidence`
 
