@@ -39,7 +39,7 @@ $ python -m venv .venv
 Once poetry and the virtual env are setup, you can set up dev dependencies like this, from the root of the repository:
 
 ```bash
-$ poetry install --with qa,test,build,docs
+$ poetry install --with dev
 ```
 
 Now you are ready to start working on `MLTE`!
@@ -51,6 +51,8 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 ```bash
 $ poetry install --with demo
 ```
+
+NOTE: The demo will only work on its entirety with python versions up to 3.12, since requires tensorflow, which is not currently supported in newer python versions.
 
 ## Project Development Commands
 
@@ -130,12 +132,6 @@ We unit test the `MLTE` library with the <a href="https://docs.pytest.org/en/7.0
 
 ```bash
 $ make test
-```
-
-Alternatively, you can run the tests manually from the project root:
-
-```bash
-$ poetry run pytest test
 ```
 
 Unit test failures result in build failures in CI.
@@ -230,13 +226,7 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-We maintain a group of requirements for building the documentation under the `docs` optional group. They are installed if you follow the general instructions to set up the environment. But if you only want to build the documentation locally, install the requirements from this group, either in the same dev environment or a separate one:
-
-```bash
-$ poetry install --with docs
-```
-
-Now you can build and serve the documentation with the following command, when run from inside the `docs/` folder:
+You can build and serve the documentation with the following command, when run from inside the `docs/` folder:
 
 ```bash
 $ mkdocs serve
@@ -266,19 +256,6 @@ To build the frontend and then the whole package, it is enough to execute the fo
 ```bash
 $ bash build.sh
 ```
-
-You can also do this manually:
-1. Build the static distribution for the front end; the command below assumes that you have the dependencies for frontend builds installed:
-
-    ```bash
-    $ cd mlte/frontend/nuxt-app && npm run build
-    ```
-
-2. Create the source distribution and wheel from the main repo folder:
-
-    ```bash
-    $ poetry build
-    ```
 
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
