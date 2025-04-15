@@ -39,7 +39,7 @@ $ python -m venv .venv
 Once poetry and the virtual env are setup, you can set up dev dependencies like this, from the root of the repository:
 
 ```bash
-$ poetry install --with dev
+$ poetry install --with dev --all-extras
 ```
 
 Now you are ready to start working on `MLTE`!

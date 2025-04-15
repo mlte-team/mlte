@@ -19,16 +19,22 @@ dependencies = [
   "astunparse >=1.6.3",
   "requests >=2.32.3",
   "httpx >=0.28.1",
-  "pip-system-certs >=4.0.0",
-  "uvicorn >=0.34.0",
-  "fastapi >=0.115.6",
-  "python-multipart >=0.0.20",
-  "cryptography >=43.0.3",
-  "python-jose >=3.3.0",
   "bcrypt >=4.2.1",
+  "cryptography >=43.0.3",
+  "pip-system-certs >=4.0.0",
+]
+
+[project.optional-dependencies]
+rdbs = [
   "SQLAlchemy >=2.0.37",
   "SQLAlchemy-Utils >=0.41.2",
   "psycopg2-binary >=2.9.10",
+]
+frontend = [
+  "uvicorn >=0.34.0",
+  "fastapi >=0.115.6",
+  "python-multipart >=0.0.20",
+  "python-jose >=3.3.0",
 ]
 
 [project.urls]
