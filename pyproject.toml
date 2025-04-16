@@ -60,43 +60,43 @@ exclude = [
 optional = true
 
 [tool.poetry.group.demo.dependencies]
-numpy = ">=2.0.2"
-pandas = ">=2.2.2"
-pandas-stubs = ">=2.2.1.240316"
-scikit-learn = ">=1.6.1"
-matplotlib = ">=3.9.4"
-ipykernel = ">=6.29.5"
-notebook = ">=7.3.2"
-tensorflow = ">=2.18.0"
+numpy = "^2.0.2"
+pandas = "^2.2.2"
+pandas-stubs = "^2.2.1.240316"
+scikit-learn = "^1.6.1"
+matplotlib = "^3.9.4"
+ipykernel = "^6.29.5"
+notebook = "^7.3.2"
+tensorflow = "^2.18.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
 # Docs
-mkdocs = "*"
-mkdocstrings-python = "*"
-mkdocs-material = "*"
-mkdocs-gen-files = "*"
-mkdocs-literate-nav = "*"
+mkdocs = "1.6.1"
+mkdocstrings-python = "1.16.10"
+mkdocs-material = "9.6.11"
+mkdocs-gen-files = "0.5.0"
+mkdocs-literate-nav = "0.6.2"
 
 # QA
-isort = ">=5.13.2"
-black = {extras = ["jupyter"], version = ">=24.10.0"}
-flake8 = ">=7.1.1"
-mypy = ">=1.14.1"
-types-requests = ">=2.32.0.20241016"
+isort = "5.13.2"
+black = {extras = ["jupyter"], version = "24.10.0"}
+flake8 = "7.1.1"
+mypy = "1.14.1"
+types-requests = "2.32.0.20241016"
 
 # Testing
-pytest = ">=8.3.4"
-deepdiff = ">=8.1.1"
-pytest-cov = ">=6.0.0"
-jsonschema = ">=4.23.0"
-nbmake = ">=1.5.5"
+pytest = "8.3.4"
+deepdiff = "8.1.1"
+pytest-cov = "6.0.0"
+jsonschema = "4.23.0"
+nbmake = "1.5.5"
 
 # Building
-bump2version = ">=1.0.1"
-twine = ">=6.0.1"
+bump2version = "1.0.1"
+twine = "6.0.1"
 
 [tool.isort]
 profile="black"
