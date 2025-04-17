@@ -2,7 +2,7 @@
 #
 # Image definition for base Python image with proxy support.
 
-FROM python:3.10.14-slim-bookworm
+FROM python:3.12.10-slim-bookworm
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format

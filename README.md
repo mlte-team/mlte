@@ -18,6 +18,12 @@
 $ pip install mlte-python
 ```
 
+If you also want to install the dependencies to have support for a relational DB store, and for the frontend, install MLTE with its corresponding extras:
+
+```bash
+$ pip install mlte-python[rdbs,frontend]
+```
+
 You can go to our <a href="https://mlte.readthedocs.io/en/latest/setting_up_mlte/" target="_blank">setting up MLTE</a> page to see details on setting up and running MLTE. After that, you can head to our guide on <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using MLTE</a> for next steps. If you're interested in reading about the project more generally, see our <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">documentation</a>.
 
 ### Citing This Work

@@ -20,7 +20,7 @@ jobs:
       - name: Install poetry
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
-        run: poetry install --with qa,test,build,docs
+        run: poetry install --with dev --all-extras
       - name: Sort imports with isort
         run: make check-isort
       - name: Format with black
