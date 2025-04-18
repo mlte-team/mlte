@@ -1,6 +1,8 @@
 from typing import Optional, Tuple
 from urllib.parse import ParseResult, quote, urlparse
 
+from mlte._private import text
+
 
 def set_url_username_password(url: str, username: str, password: str) -> str:
     """Adds the given username and password to an URL."""
@@ -27,3 +29,20 @@ def remove_url_username_password(
         url = clear_uri.geturl()
 
     return url, parsed_uri.username, parsed_uri.password
+
+
+# --------------------------------------------------------------------------------------------------------------
+# URL parsing.
+# --------------------------------------------------------------------------------------------------------------
+
+VALID_URL_PATH_CHARS = {"/": "---"}
+
+
+def make_valid_url_part(path_part: str) -> str:
+    """Makes a part of a URL path valid."""
+    return text.replace_all(path_part, VALID_URL_PATH_CHARS)
+
+
+def revert_valid_url_part(path_part: str) -> str:
+    """Makes a part of a URL path valid."""
+    return text.replace_all(path_part, VALID_URL_PATH_CHARS, revert=True)

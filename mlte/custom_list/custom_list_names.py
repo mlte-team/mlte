@@ -27,7 +27,7 @@ class CustomListNameDict(dict[CustomListName, CustomListName]):
         else:
             raise KeyError(f"CustomListName {key} or {value} is not valid.")
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> CustomListName:
         if key in CustomListName._value2member_map_:
             return super().__getitem__(key)
         else:

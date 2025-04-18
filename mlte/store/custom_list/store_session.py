@@ -73,7 +73,9 @@ class CustomListEntryMapper(ResourceMapper):
     ) -> None:
         if list_name in CustomListParentMappings.parent_mappings.keys():
             if parent not in self.list(
-                CustomListParentMappings.parent_mappings[list_name]
+                CustomListName(
+                    CustomListParentMappings.parent_mappings[list_name]
+                )
             ):
                 raise errors.ErrorNotFound(
                     f"Parent {parent} does not exist in list {CustomListParentMappings.parent_mappings[list_name]}"
@@ -91,7 +93,7 @@ class CustomListEntryMapper(ResourceMapper):
             list_name
         )
         if child_list_name:
-            for child_entry_name in self.list(child_list_name):
+            for child_entry_name in self.list(CustomListName(child_list_name)):
                 child_entry = self.read(child_entry_name, child_list_name)
                 if child_entry.parent == entry_name:
                     self.delete(child_entry_name, child_list_name)

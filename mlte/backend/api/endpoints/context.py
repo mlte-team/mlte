@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
+from mlte._private import url as url_utils
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
@@ -76,6 +77,7 @@ def read_model(
     :param model_id: The model identifier
     :return: The read model
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
     try:
         with state_stores.artifact_store_session() as handle:
             model = handle.read_model(model_id)
@@ -119,6 +121,7 @@ def delete_model(
     :param model_id: The model identifier
     :return: The deleted model
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
     deleted_model: Model
     with state_stores.artifact_store_session() as handle:
         try:
@@ -157,6 +160,7 @@ def create_version(
     :param version: The version create model
     :return: The created version
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.create_version(model_id, version)
@@ -185,6 +189,8 @@ def read_version(
     :param version_id: The version identifier
     :return: The read version
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.read_version(model_id, version_id)
@@ -206,6 +212,7 @@ def list_versions(
     :param model_id: The model identifier
     :return: A collection of version identifiers
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.list_versions(model_id)
@@ -230,6 +237,8 @@ def delete_version(
     :param version_id: The version identifier
     :return: The deleted version
     """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
             return handle.delete_version(model_id, version_id)

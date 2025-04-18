@@ -99,7 +99,7 @@ class FileSystemUserMappper(UserMapper):
         self.group_mapper = group_mapper
         """Reference to group mapper, to get updated groups when needed."""
 
-        self.storage.set_base_path(
+        self.storage.setup_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.USERS_FOLDER)
         )
         """Set the subfolder for this resource."""
@@ -178,7 +178,7 @@ class FileSystemGroupMappper(GroupMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
-        self.storage.set_base_path(
+        self.storage.setup_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.GROUPS_FOLDER)
         )
         """Set the subfolder for this resource."""
@@ -233,7 +233,7 @@ class FileSystemPermissionMappper(PermissionMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
-        self.storage.set_base_path(
+        self.storage.setup_base_path(
             Path(FileSystemUserStore.BASE_USERS_FOLDER, self.PERMISSIONS_FOLDER)
         )
         """Set the subfolder for this resource."""

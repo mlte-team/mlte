@@ -74,9 +74,11 @@ def create_api_and_http_store(
 
 
 @pytest.fixture(scope="function")
-def create_test_store(tmpdir_factory) -> typing.Callable[[str], CatalogStore]:
+def create_test_store(
+    tmpdir_factory, test_catalog_id: str = TEST_CATALOG_ID
+) -> typing.Callable[[str], CatalogStore]:
     def _make(
-        store_fixture_name, catalog_id: str = TEST_CATALOG_ID
+        store_fixture_name, catalog_id: str = test_catalog_id
     ) -> CatalogStore:
         if store_fixture_name == StoreType.LOCAL_MEMORY.value:
             return create_memory_store()

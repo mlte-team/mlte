@@ -97,7 +97,7 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
-        self.storage.set_base_path(
+        self.storage.setup_base_path(
             Path(self.storage.sub_folder, self.ENTRIES_FOLDER)
         )
         """Set the subfolder for this resource."""
