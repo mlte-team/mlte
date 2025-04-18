@@ -237,9 +237,9 @@ class FileSystemStorage(Storage):
 
     def _resource_group_path(self, group_ids: list[str]) -> Path:
         """
-        Gets the full path for a list of resource groups, to the last group in the list.
+        Gets the full path for a list of nested resource groups, including all groups list, in order.
         :param group_ids: An ordered list of nested resource groups.
-        :return: The formatted, cleaned, full path to the last group in the list.
+        :return: The formatted, cleaned, full path, up to the last group in the list.
         """
         full_path = self.base_path
         for group_id in group_ids:

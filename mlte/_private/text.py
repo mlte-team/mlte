@@ -1,6 +1,4 @@
-"""
-Internal utilities for handling text.
-"""
+"""Internal utilities for handling text."""
 
 import textwrap
 
@@ -26,7 +24,7 @@ def replace_all(
 
     :param main_string: the string to do the replacements on.
     :param replacement: a dict of substrings and their replacements.
-    :param rever: if true, revert how the replacements dict is used: the replacements will be found and replaced with the substrings.
+    :param revert: if true, revert how the replacements dict is used: the replacements will be found and replaced with the substrings.
     """
     for substring, replacement in replacements.items():
         if not revert:

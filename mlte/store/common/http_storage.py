@@ -88,7 +88,7 @@ class HttpStorage(Storage):
         resource_type: Optional[str] = None,
     ) -> Any:
         """
-        Sends an HTTP command request to the backend API, and returns a JSON response from it. Commonly not used direclty, as it is expected
+        Sends an HTTP command request to the backend API, and returns a JSON response from it. Commonly not used directly, as it is expected
         for callers to use the post(), put(), read() and delete() method, but can be used when a non-standard command, which does not properly
         match the arguments of the previous 4 methods, needs to be sent.
 
