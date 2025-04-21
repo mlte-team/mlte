@@ -252,7 +252,7 @@ if (QACategoryAPIData.value) {
 
 function addRequirement() {
   props.modelValue.push({
-    quality: "<System Quality>",
+    quality: "",
     stimulus: "<Stimulus>",
     source: "<Source>",
     environment: "<Environment>",

@@ -57,6 +57,7 @@
     <UsaSelect
       v-model="modelValue.qa_category"
       :options="QACategoryOptions"
+      @change="categoryChange(modelValue.qa_category)"
     >
       <template #label>
         Quality Attribute Category
@@ -68,7 +69,10 @@
       <template #error-message>Not defined</template>
     </UsaSelect>
 
-    <UsaTextInput v-model="modelValue.quality_attribute">
+    <UsaSelect
+      v-model="modelValue.quality_attribute"
+      :options="selectedQAOptions"
+    >
       <template #label>
         Quality Attribute
         <InfoIcon>
@@ -77,7 +81,7 @@
         </InfoIcon>
       </template>
       <template #error-message>Not defined</template>
-    </UsaTextInput>
+    </UsaSelect>
 
     <UsaSelect
       v-model="modelValue.code_type"
@@ -229,24 +233,64 @@ const tagOptions = ref([
   { name: "Tabular", selected: false },
   { name: "Time Series", selected: false },
 ]);
-const QACategoryOptions = ref([
-  { value: "Explainability", text: "Explainability" },
-  { value: "Fairness", text: "Fairness" },
-  { value: "Functional Correctness", text: "Functional Correctness" },
-  { value: "Interoperability", text: "Interoperability" },
-  { value: "Interpretability", text: "Interpretability" },
-  { value: "Maintainability", text: "Maintainability" },
-  { value: "Monitorability", text: "Monitorability" },
-  { value: "Privacy", text: "Privacy" },
-  { value: "Resilience", text: "Resilience" },
-  { value: "Resource Consumption", text: "Resource Consumption" },
-  { value: "Robustness", text: "Robustness" },
-  { value: "Safety", text: "Safety" },
-  { value: "Scalability", text: "Scalability" },
-  { value: "Security", text: "Security" },
-  { value: "Testability", text: "Testability" },
-  { value: "Trust", text: "Trust" },
-]);
+
+const QACategoryOptions = ref<
+  {
+    value: string;
+    text: string;
+    description: string;
+    parent: string;
+  }[]
+>([]);
+const { data: QACategoryAPIData } = await useFetch<string[]>(
+  config.public.apiPath + "/custom_list/qa_categories/",
+  {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+  },
+)
+if (QACategoryAPIData.value) {
+  QACategoryAPIData.value.forEach((category: object) => {
+    QACategoryOptions.value.push({
+      value: category.name,
+      text: category.name,
+      description: category.description,
+      parent: category.parent,
+    })
+  })
+}
+
+const selectedQAOptions = ref([]);
+const AllQAOptions = ref<
+  {
+    value: string;
+    text: string;
+    description: string;
+    parent: string;
+  }[]
+>([]);
+const { data: QAapiOptions } = await useFetch<string[]>(
+  config.public.apiPath + "/custom_list/quality_attributes/",
+  {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+  },
+)
+if (QAapiOptions.value) {
+  QAapiOptions.value.forEach((attribute: object) => {
+    AllQAOptions.value.push({
+      value: attribute.name,
+      text: attribute.name,
+      description: attribute.description,
+      parent: attribute.parent,
+    })
+  })
+}
+
 const codeTypeOptions = ref([
   { value: "measurement", text: "Measurement" },
   { value: "validation", text: "Validation " },
@@ -257,6 +301,9 @@ tagOptions.value.forEach((tagOption: object) => {
     tagOption.selected = true;
   }
 });
+
+// On page load, populate Quality Attribute field if one is selected
+categoryChange(props.modelValue.qa_category, props.modelValue.quality_attribute)
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
@@ -295,6 +342,22 @@ function tagChange(selected: boolean, tagOption: object) {
     );
     const index = props.modelValue.tags.indexOf(objForRemoval);
     props.modelValue.tags.splice(index, 1);
+  }
+}
+
+function categoryChange(newCategory: string, quality_attribute?: string){
+  selectedQAOptions.value = []
+  AllQAOptions.value.forEach((attribute: object) => {
+    if (attribute.parent == newCategory){
+      selectedQAOptions.value.push(attribute)
+    }
+  })
+
+  if (typeof quality_attribute == 'undefined'){
+    props.modelValue.quality_attribute = ""
+  }
+  else{
+    props.modelValue.quality_attribute = quality_attribute
   }
 }
 
