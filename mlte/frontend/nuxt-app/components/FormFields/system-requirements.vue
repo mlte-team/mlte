@@ -34,7 +34,11 @@
         {{ requirement.environment }}. {{ requirement.response }}
         {{ requirement.measure }}.
       </p>
-      <UsaTextInput v-model="requirement.quality">
+
+      <UsaSelect
+        v-model="requirement.quality"
+        :options="QACategoryOptions"
+      >
         <template #label>
           <b>System Quality:</b> What is the model quality attribute category to be tested, such
           as accuracy, performance, robustness, fairness, or resource
@@ -49,7 +53,7 @@
             <i>Example: Response time.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaSelect>
 
       <UsaTextInput v-model="requirement.stimulus">
         <template #label>
@@ -149,6 +153,9 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig();
+const token = useCookie("token");
+
 const props = defineProps({
   modelValue: {
     type: Array,
@@ -214,6 +221,34 @@ const systemModalRows = ref([
     measure: "No errors due to unavailable resources",
   },
 ]);
+
+const QACategoryOptions = ref<
+  {
+    value: string;
+    text: string;
+    description: string;
+    parent: string;
+  }[]
+>([]);
+const { data: QACategoryAPIData } = await useFetch<string[]>(
+  config.public.apiPath + "/custom_list/qa_categories/",
+  {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
+  },
+)
+if (QACategoryAPIData.value) {
+  QACategoryAPIData.value.forEach((category: object) => {
+    QACategoryOptions.value.push({
+      value: category.name,
+      text: category.name,
+      description: category.description,
+      parent: category.parent,
+    })
+  })
+}
 
 function addRequirement() {
   props.modelValue.push({
