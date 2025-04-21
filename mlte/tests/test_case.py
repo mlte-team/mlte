@@ -25,7 +25,7 @@ class TestCase(Serializable):
         self,
         identifier: str,
         goal: str,
-        qas_list: list[str],
+        quality_scenarios: list[str],
         measurement: Optional[Measurement] = None,
         validator: Optional[Validator] = None,
     ):
@@ -35,7 +35,7 @@ class TestCase(Serializable):
         self.goal = goal
         """Goal for the TestCase, reason for it."""
 
-        self.qas_list = qas_list.copy()
+        self.quality_scenarios = quality_scenarios.copy()
         """Quality Attribute Scenario ids that are associated to this test case."""
 
         self.validator = validator
@@ -81,7 +81,7 @@ class TestCase(Serializable):
         return TestCaseModel(
             identifier=self.identifier,
             goal=self.goal,
-            qas_list=self.qas_list,
+            qas_list=self.quality_scenarios,
             measurement=(
                 self.measurement.generate_metadata()
                 if self.measurement
@@ -103,7 +103,7 @@ class TestCase(Serializable):
         test_case: TestCase = TestCase(
             identifier=model.identifier,
             goal=model.goal,
-            qas_list=model.qas_list,
+            quality_scenarios=model.qas_list,
             measurement=(
                 Measurement.from_metadata(
                     model=model.measurement, test_case_id=model.identifier
@@ -125,7 +125,7 @@ class TestCase(Serializable):
 
     def __str__(self) -> str:
         """Return a string representation of TestCase."""
-        return f"{self.identifier}: {self.goal} ({self.qas_list})"
+        return f"{self.identifier}: {self.goal} ({self.quality_scenarios})"
 
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""
