@@ -59,7 +59,9 @@
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
+          <th data-sortable scope="col" role="columnheader">
+            Quality Attribute Category
+          </th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
           <th data-sortable scope="col" role="columnheader">Test Case ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>

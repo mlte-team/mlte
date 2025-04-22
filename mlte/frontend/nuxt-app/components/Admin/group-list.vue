@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["addGroup", "editGroup", "deleteGroup"]);
+const emits = defineEmits(["addGroup", "editGroup", "deleteGroup"]);
 const props = defineProps({
   modelValue: {
     type: Array,

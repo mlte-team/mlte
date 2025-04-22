@@ -36,14 +36,15 @@
       </p>
 
       <FormFieldsQualityAttributes
+        :initial-quality-attribute="requirement.quality"
         @update-attribute="requirement.quality = $event"
       >
-        <b>System Quality:</b> What is the model quality attribute category to be tested, such
-        as accuracy, performance, robustness, fairness, or resource
-        consumption?
+        <b>System Quality:</b> What is the model quality attribute category to
+        be tested, such as accuracy, performance, robustness, fairness, or
+        resource consumption?
         <InfoIcon>
-          Quality attribute category by which the model will be evaluated in the context of the
-          system <br />
+          Quality attribute category by which the model will be evaluated in the
+          context of the system <br />
           (e.g., Accuracy, Performance, Robustness, Fairness, Resource
           Consumption).
           <br />
@@ -55,8 +56,8 @@
       <UsaTextInput v-model="requirement.stimulus">
         <template #label>
           <b>Stimulus:</b> What is the input to the model, the action, or the
-          event that will enable testing of the quality attribute category, such as input data,
-          system event, or user operation?
+          event that will enable testing of the quality attribute category, such
+          as input data, system event, or user operation?
           <InfoIcon>
             A condition arriving at the system/model (e.g., data,
             <br />
@@ -235,7 +236,7 @@ const { data: QACategoryAPIData } = await useFetch<string[]>(
       Authorization: "Bearer " + token.value,
     },
   },
-)
+);
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: object) => {
     QACategoryOptions.value.push({
@@ -243,8 +244,8 @@ if (QACategoryAPIData.value) {
       text: category.name,
       description: category.description,
       parent: category.parent,
-    })
-  })
+    });
+  });
 }
 
 function addRequirement() {

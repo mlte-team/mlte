@@ -60,7 +60,7 @@
     >
       Quality Attribute Category
       <InfoIcon>
-        High-level quality attribute category that the test example is 
+        High-level quality attribute category that the test example is
         validating, e.g., functional correctness, performance, robustness.
       </InfoIcon>
     </FormFieldsQualityAttributes>

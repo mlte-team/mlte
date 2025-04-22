@@ -5,7 +5,9 @@
         <th data-sortable scope="col" role="columnheader">Identifier</th>
         <th data-sortable scope="col" role="columnheader">Catalog</th>
         <th data-sortable scope="col" role="columnheader">Tags</th>
-        <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
+        <th data-sortable scope="col" role="columnheader">
+          Quality Attribute Category
+        </th>
         <th data-sortable scope="col" role="columnheader">Code Type</th>
         <th data-sortable scope="col" role="columnheader">Actions</th>
       </tr>
@@ -51,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
+const emits = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
 const props = defineProps({
   modelValue: {
     type: Array,

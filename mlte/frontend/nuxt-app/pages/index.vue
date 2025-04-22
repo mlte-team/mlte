@@ -208,8 +208,8 @@
       <UsaAccordionItem label="Test Suites">
         <div class="scrollable-table-div">
           <p>
-            A test suite defines the model requirements that must be
-            satisfied to ensure successful integration with the target system.
+            A test suite defines the model requirements that must be satisfied
+            to ensure successful integration with the target system.
           </p>
           <UsaTable
             :headers="testSuiteHeaders"
@@ -223,9 +223,9 @@
       <UsaAccordionItem label="Test Results">
         <div class="scrollable-table-div">
           <p>
-            Test Results are produced by combining a specification
-            with its corresponding results; this artifact communicates how well
-            a model performed against all of its requirements.
+            Test Results are produced by combining a specification with its
+            corresponding results; this artifact communicates how well a model
+            performed against all of its requirements.
           </p>
           <UsaTable
             :headers="testResultHeaders"
@@ -239,8 +239,8 @@
       <UsaAccordionItem label="Evidences">
         <div class="scrollable-table-div">
           <p>
-            Evidences are the atomic unit of model evaluation in MLTE. A value is
-            any artifact produced by a MLTE measurement for the purposes of
+            Evidences are the atomic unit of model evaluation in MLTE. A value
+            is any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
           <UsaTable

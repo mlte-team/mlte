@@ -119,11 +119,9 @@ async function submit() {
       },
       onResponse({ response }) {
         if (response.ok) {
-          const userRole = useCookie("userRole",
-            {
-              maxAge: expiresInTemp,
-            }
-          );
+          const userRole = useCookie("userRole", {
+            maxAge: expiresInTemp,
+          });
           userRole.value = response._data.role;
         }
       },
@@ -134,8 +132,8 @@ async function submit() {
 
     navigateTo("/");
   } catch (exception) {
-    console.log("Error in login: ")
-    console.log(exception)
+    console.log("Error in login: ");
+    console.log(exception);
   }
 }
 </script>
