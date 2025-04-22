@@ -35,25 +35,22 @@
         {{ requirement.measure }}.
       </p>
 
-      <UsaSelect
-        v-model="requirement.quality"
-        :options="QACategoryOptions"
+      <FormFieldsQualityAttributes
+        @update-attribute="requirement.quality = $event"
       >
-        <template #label>
-          <b>System Quality:</b> What is the model quality attribute category to be tested, such
-          as accuracy, performance, robustness, fairness, or resource
-          consumption?
-          <InfoIcon>
-            Quality attribute category by which the model will be evaluated in the context of the
-            system <br />
-            (e.g., Accuracy, Performance, Robustness, Fairness, Resource
-            Consumption).
-            <br />
-            <br />
-            <i>Example: Response time.</i>
-          </InfoIcon>
-        </template>
-      </UsaSelect>
+        <b>System Quality:</b> What is the model quality attribute category to be tested, such
+        as accuracy, performance, robustness, fairness, or resource
+        consumption?
+        <InfoIcon>
+          Quality attribute category by which the model will be evaluated in the context of the
+          system <br />
+          (e.g., Accuracy, Performance, Robustness, Fairness, Resource
+          Consumption).
+          <br />
+          <br />
+          <i>Example: Response time.</i>
+        </InfoIcon>
+      </FormFieldsQualityAttributes>
 
       <UsaTextInput v-model="requirement.stimulus">
         <template #label>

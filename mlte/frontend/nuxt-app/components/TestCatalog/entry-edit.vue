@@ -54,34 +54,16 @@
       </span>
     </div>
 
-    <UsaSelect
-      v-model="modelValue.qa_category"
-      :options="QACategoryOptions"
-      @change="categoryChange(modelValue.qa_category)"
+    <FormFieldsQualityAttributes
+      @update-category="props.modelValue.qa_category = $event"
+      @update-attribute="props.modelValue.quality_attribute = $event"
     >
-      <template #label>
-        Quality Attribute Category
-        <InfoIcon>
-          High-level quality attribute category that the test example is 
-          validating, e.g., functional correctness, performance, robustness.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-
-    <UsaSelect
-      v-model="modelValue.quality_attribute"
-      :options="selectedQAOptions"
-    >
-      <template #label>
-        Quality Attribute
-        <InfoIcon>
-          More specific quality attribute that the test example is validating, e.g.,
-          accuracy, inference time, robustness to image blur.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
+      Quality Attribute Category
+      <InfoIcon>
+        High-level quality attribute category that the test example is 
+        validating, e.g., functional correctness, performance, robustness.
+      </InfoIcon>
+    </FormFieldsQualityAttributes>
 
     <UsaSelect
       v-model="modelValue.code_type"
@@ -151,7 +133,7 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emit = defineEmits(["cancel", "submit", "updateEntry"]);
+const emits = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -234,63 +216,6 @@ const tagOptions = ref([
   { name: "Time Series", selected: false },
 ]);
 
-const QACategoryOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QACategoryAPIData } = await useFetch<string[]>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-)
-if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: object) => {
-    QACategoryOptions.value.push({
-      value: category.name,
-      text: category.name,
-      description: category.description,
-      parent: category.parent,
-    })
-  })
-}
-
-const selectedQAOptions = ref([]);
-const AllQAOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QAapiOptions } = await useFetch<string[]>(
-  config.public.apiPath + "/custom_list/quality_attributes/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-)
-if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: object) => {
-    AllQAOptions.value.push({
-      value: attribute.name,
-      text: attribute.name,
-      description: attribute.description,
-      parent: attribute.parent,
-    })
-  })
-}
-
 const codeTypeOptions = ref([
   { value: "measurement", text: "Measurement" },
   { value: "validation", text: "Validation " },
@@ -301,9 +226,6 @@ tagOptions.value.forEach((tagOption: object) => {
     tagOption.selected = true;
   }
 });
-
-// On page load, populate Quality Attribute field if one is selected
-categoryChange(props.modelValue.qa_category, props.modelValue.quality_attribute)
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
@@ -342,22 +264,6 @@ function tagChange(selected: boolean, tagOption: object) {
     );
     const index = props.modelValue.tags.indexOf(objForRemoval);
     props.modelValue.tags.splice(index, 1);
-  }
-}
-
-function categoryChange(newCategory: string, quality_attribute?: string){
-  selectedQAOptions.value = []
-  AllQAOptions.value.forEach((attribute: object) => {
-    if (attribute.parent == newCategory){
-      selectedQAOptions.value.push(attribute)
-    }
-  })
-
-  if (typeof quality_attribute == 'undefined'){
-    props.modelValue.quality_attribute = ""
-  }
-  else{
-    props.modelValue.quality_attribute = quality_attribute
   }
 }
 
