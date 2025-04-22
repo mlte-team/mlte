@@ -54,6 +54,7 @@
       </span>
     </div>
 
+    <!-- Delete when test catalog no longer saves qa category -->
     <UsaSelect
       v-model="modelValue.qa_category"
       :options="QACategoryOptions"
@@ -82,6 +83,19 @@
       </template>
       <template #error-message>Not defined</template>
     </UsaSelect>
+    <!-- End of delete section -->
+
+    <!-- Add back when test catalog no longer saves qa category -->
+    <!-- <FormFieldsQualityAttributes
+       @update-category="props.modelValue.qa_category = $event"
+       @update-attribute="props.modelValue.quality_attribute = $event"
+     >
+      Quality Attribute Category
+      <InfoIcon>
+        High-level quality attribute category that the test example is 
+        validating, e.g., functional correctness, performance, robustness.
+      </InfoIcon>
+     </FormFieldsQualityAttributes> -->
 
     <UsaSelect
       v-model="modelValue.code_type"
@@ -216,6 +230,7 @@ if (catalogList.value) {
   });
 }
 
+// Delete when test catalog no longer saves qa category
 const QACategoryOptions = ref<
   {
     value: string;
@@ -272,6 +287,7 @@ if (QAapiOptions.value) {
     });
   });
 }
+// End of delete section
 
 const tagOptions = ref([
   { name: "Audio Analysis", selected: false },
@@ -302,11 +318,13 @@ tagOptions.value.forEach((tagOption: object) => {
   }
 });
 
+// Delete when test catalog no longer saves qa category
 // On page load, populate Quality Attribute field if one is selected
 categoryChange(
   props.modelValue.qa_category,
   props.modelValue.quality_attribute,
 );
+// End of delete section
 
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
@@ -347,7 +365,7 @@ function tagChange(selected: boolean, tagOption: object) {
     props.modelValue.tags.splice(index, 1);
   }
 }
-
+// Delete when test catalog no longer saves qa category
 function categoryChange(newCategory: string, quality_attribute?: string) {
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: object) => {
@@ -362,6 +380,7 @@ function categoryChange(newCategory: string, quality_attribute?: string) {
     props.modelValue.quality_attribute = quality_attribute;
   }
 }
+// End of delete section
 
 function copyCode() {
   navigator.clipboard.writeText(props.modelValue.code);
