@@ -151,9 +151,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const props = defineProps({
   modelValue: {
     type: Array,
@@ -219,34 +216,6 @@ const systemModalRows = ref([
     measure: "No errors due to unavailable resources",
   },
 ]);
-
-const QACategoryOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QACategoryAPIData } = await useFetch<string[]>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
-if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: object) => {
-    QACategoryOptions.value.push({
-      value: category.name,
-      text: category.name,
-      description: category.description,
-      parent: category.parent,
-    });
-  });
-}
 
 function addRequirement() {
   props.modelValue.push({
