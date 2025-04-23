@@ -1,14 +1,11 @@
 """
-mlte/store/catalog/underlying/http.py
-
 Implementation of HTTP catalog store group.
 """
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, OrderedDict, Tuple
 
-from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
 from mlte.store.catalog.store import (
@@ -18,10 +15,9 @@ from mlte.store.catalog.store import (
 )
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
-from mlte.user.model import ResourceType
+from mlte.user.model import MethodType, ResourceType
 
-API_PREFIX = settings.API_PREFIX
-"""API URL prefix."""
+ENTRY_URL_KEY = "entry"
 
 
 # -----------------------------------------------------------------------------
@@ -41,7 +37,9 @@ class HttpCatalogGroupStore(CatalogStore):
     ) -> None:
         super().__init__(uri=uri)
 
-        self.storage = HttpStorage(uri=uri, client=client)
+        self.storage = HttpStorage(
+            uri=uri, resource_type=ResourceType.CATALOG, client=client
+        )
         """HTTP storage."""
 
     def session(self) -> CatalogStoreSession:
@@ -71,9 +69,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
         self.read_only = read_only
         """Whether this is read only or not."""
 
-        self.entry_mapper = HTTPCatalogGroupEntryMapper(
-            url=self.storage.clean_url, client=self.storage.client
-        )
+        self.entry_mapper = HTTPCatalogGroupEntryMapper(storage=self.storage)
         """The mapper to entries CRUD."""
 
         storage.start_session()
@@ -93,26 +89,20 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
 
     COMPOSITE_ID_SEPARATOR = "--"
 
-    def __init__(self, url: str, client: OAuthHttpClient) -> None:
-        self.url = url
-        """The remote catalog store URL."""
-
-        self.client = client
-        """A reference to underlying HTTP client."""
-
-        self.base_url = f"{self.url}{API_PREFIX}/{ResourceType.CATALOG.value}"
-        """Base URL used in mapper."""
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
 
     def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         new_entry = self._convert_to_local(entry)
 
-        url = f"{self.base_url}/{local_catalog_id}/entry"
-        res = self.client.post(url, json=new_entry.to_json())
-        self.client.raise_for_response(res)
+        response = self.storage.post(
+            json=new_entry.to_json(), groups=_entry_group(local_catalog_id)
+        )
 
-        local_entry = CatalogEntry(**(res.json()))
+        local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
     def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
@@ -120,22 +110,22 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_catalog_id, _ = self.split_ids(entry.header.identifier)
         edited_entry = self._convert_to_local(entry)
 
-        url = f"{self.base_url}/{local_catalog_id}/entry"
-        res = self.client.put(url, json=edited_entry.to_json())
-        self.client.raise_for_response(res)
+        response = self.storage.put(
+            json=edited_entry.to_json(), groups=_entry_group(local_catalog_id)
+        )
 
-        local_entry = CatalogEntry(**(res.json()))
+        local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
     def read(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
         catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
-        url = f"{self.base_url}/{catalog_id}/entry/{entry_id}"
-        res = self.client.get(url)
-        self.client.raise_for_response(res)
+        response = self.storage.get(
+            id=entry_id, groups=_entry_group(catalog_id)
+        )
 
-        local_entry = CatalogEntry(**(res.json()))
+        local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
     def list(self, context: Any = None) -> List[str]:
@@ -147,11 +137,11 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     ) -> CatalogEntry:
         local_catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
 
-        url = f"{self.base_url}/{local_catalog_id}/entry/{entry_id}"
-        res = self.client.delete(url)
-        self.client.raise_for_response(res)
+        response = self.storage.delete(
+            id=entry_id, groups=_entry_group(local_catalog_id)
+        )
 
-        local_entry = CatalogEntry(**(res.json()))
+        local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
     def list_details(
@@ -160,13 +150,15 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
     ) -> List[CatalogEntry]:
-        url = f"{self.base_url}s/entry"
-        res = self.client.get(url)
-        self.client.raise_for_response(res)
-
+        # This is a bit hacky, in that we have a pseudo resource type "catalogs",
+        # and a pseudo resource id "entry" to get all details of all entries.
+        response = self.storage.send_command(
+            MethodType.GET,
+            id="entry",
+            resource_type=f"{ResourceType.CATALOG.value}s",
+        )
         return [
-            self._convert_to_remote(CatalogEntry(**entry))
-            for entry in res.json()
+            self._convert_to_remote(CatalogEntry(**entry)) for entry in response
         ][offset : offset + limit]
 
     @staticmethod
@@ -218,3 +210,8 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         new_entry.header.catalog_id = http_catalog_id
 
         return new_entry
+
+
+def _entry_group(catalog_id: str) -> OrderedDict[str, str]:
+    """Returns the resource group info for entries inside a catalog."""
+    return OrderedDict([(catalog_id, ENTRY_URL_KEY)])
