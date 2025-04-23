@@ -195,11 +195,19 @@ class Policy:
     def remove_from_store(self, user_store: UserStoreSession) -> None:
         """Delete groups and permissions for a resource."""
         # TODO: This is not atomic. Error deleting one part may leave the rest dangling.
+        permissions: dict[str, bool] = {}
         for group in self.groups:
             for permission in group.permissions:
-                user_store.permission_mapper.delete(permission.to_str())
+                # Store permissions in dict for later removal, to avoid trying to re-remove already deleted ones.
+                permissions[permission.to_str()] = True
 
             user_store.group_mapper.delete(group.name)
+
+        # Now remove all permissions.
+        # TODO: note that this main leave other groups using these permissions dangling. Not trivial to check if
+        # a permission is no longer used. Even worse, we may want to leave some of them, even with no groups.
+        for permission_str in permissions:
+            user_store.permission_mapper.delete(permission_str)
 
     def assign_to_user(self, user: Union[UserWithPassword, BasicUser]):
         """
@@ -219,3 +227,6 @@ class Policy:
 
             if not user_already_in_group:
                 user.groups.append(group)
+
+    def __str__(self) -> str:
+        return f"Resource {self.resource_type}, Id: {self.resource_id}, Read: {self.read_group}, Edit: {self.edit_group}, Create: {self.create_group}, Groups: {self.groups}"
