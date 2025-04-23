@@ -105,14 +105,15 @@ if (QAapiOptions.value) {
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
   QAapiOptions.value?.forEach((attribute: object) => {
-    if (attribute.value === props.initialQualityAttribute) {
+    if (attribute.name === props.initialQualityAttribute) {
       qaCategory.value = attribute.parent;
+      categoryChange(qaCategory.value, props.initialQualityAttribute);
     }
   });
 }
 
-// newAttribute is used on startup to set the value of category and parent
-function categoryChange(newCategory: string) {
+// initialAttribute is used on startup to set the value of category and parent
+function categoryChange(newCategory: string, initialAttrbute?: string) {
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: object) => {
     if (attribute.parent === newCategory) {
@@ -120,6 +121,11 @@ function categoryChange(newCategory: string) {
     }
   });
 
-  emit("updateAttribute", "");
+  if(initialAttrbute === undefined){
+    emit("updateAttribute", "");
+  }
+  else{
+    emit("updateAttribute", initialAttrbute)
+  }
 }
 </script>
