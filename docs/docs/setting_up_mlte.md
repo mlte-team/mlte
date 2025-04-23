@@ -16,6 +16,12 @@ $ conda install mlte-python
 ```
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
+If you also want to install the dependencies to have support for a relational DB store, and for the frontend, install MLTE with its corresponding extras:
+
+```bash
+$ pip install mlte-python[rdbs,frontend]
+```
+
 ## Using `MLTE` as a library
 
 ### Importing
