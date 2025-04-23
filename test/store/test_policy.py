@@ -143,7 +143,7 @@ def test_create_policy_if_needed(
             )
 
             # Check policies now exist.
-            policy.is_stored(user_store_session)
+            assert policy.is_stored(user_store_session)
 
             # Check we can call create_model_policies again with no issues.
             create_model_policies_if_needed(
