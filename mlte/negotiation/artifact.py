@@ -166,7 +166,7 @@ class NegotiationCard(Artifact):
         return self._equal(other)
 
     def print_quality_scenarios(self):
-        """Prints the scenarios in a user-friednly way."""
+        """Prints the scenarios in a user-friendly way."""
         for qas in self.quality_scenarios:
             prefix = f"{qas.identifier} ({qas.quality}): "
             scenario = f"{qas.stimulus} from {qas.source} while in {qas.environment}, {qas.response}, {qas.measure}"

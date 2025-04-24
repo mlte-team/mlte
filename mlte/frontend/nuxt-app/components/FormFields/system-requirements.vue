@@ -28,6 +28,12 @@
       <h3 class="no-margin-sub-header">
         Requirement {{ requirementIndex + 1 }}
       </h3>
+      <p v-if="requirement.identifer">
+        <b>ID: </b> {{ requirement.identifer }}
+      </p>
+      <p v-else>
+        <b>ID: </b> Defined after save
+      </p>
       <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
         <b>Scenario for {{ requirement.quality }}: </b>
         {{ requirement.stimulus }} from {{ requirement.source }} during
@@ -155,7 +161,7 @@ const props = defineProps({
     required: true,
     default: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",
