@@ -6,7 +6,7 @@ Class to define group and permission policies.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import mlte.store.error as errors
 from mlte.store.artifact.store import ArtifactStoreSession
@@ -45,14 +45,18 @@ class Policy:
     EDIT_GROUP_PREFIX = "edit"
     READ_GROUP_PREFIX = "read"
 
+    SEPARATOR = "-"
+    SEPARATOR_REPLACEMENT = "___"
+    """Used when building group name."""
+
     @staticmethod
     def _build_group_name(
-        prefix: str, resource_type: ResourceType, resource_id: Any
+        prefix: str, resource_type: ResourceType, resource_id: Optional[str]
     ):
         """Builds group ids for the given prefix and resource id."""
-        name = f"{prefix}-{resource_type}"
+        name = f"{prefix}{Policy.SEPARATOR}{resource_type}"
         if resource_id is not None:
-            name = f"{name}-{resource_id}"
+            name = f"{name}{Policy.SEPARATOR}{resource_id.replace(Policy.SEPARATOR, Policy.SEPARATOR_REPLACEMENT)}"
         return name
 
     # -----------------------------------------------------------------------------

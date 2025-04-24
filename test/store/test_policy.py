@@ -28,7 +28,7 @@ from test.store.user.fixture import user_stores
 @pytest.mark.parametrize(
     "resource_type", [resource_type for resource_type in ResourceType]
 )
-@pytest.mark.parametrize("id", [None, "test_id"])
+@pytest.mark.parametrize("id", [None, "test-1"])
 @pytest.mark.parametrize("read", [True, False])
 @pytest.mark.parametrize("edit", [True, False])
 @pytest.mark.parametrize("create", [True, False])
