@@ -82,9 +82,19 @@
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
         Cancel
       </UsaButton>
-      <UsaButton class="primary-button" disabled @click="exportReport()">
-        Export
-      </UsaButton>
+      <NuxtLink
+        target="_blank"
+        :to="{
+          path: '/report-export',
+          query: {
+            model: useRoute().query.model,
+            version: useRoute().query.version,
+            artifactId: useRoute().query.artifactId,
+          },
+        }"
+      >
+        <UsaButton class="primary-button"> Export </UsaButton>
+      </NuxtLink>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
   </NuxtLayout>
@@ -184,7 +194,7 @@ const form = ref({
     },
     system_requirements: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",
@@ -315,28 +325,30 @@ async function submit() {
           onRequestError() {
             requestErrorAlert();
           },
-          onResponseError({ response }) {
-            if (response.status === 409) {
-              conflictErrorAlert();
-            } else {
-              handleHttpError(
-                response.status,
-                response._data.error_description,
-              );
+          onResponse({ response }) {
+            if (response.ok) {
+              successfulArtifactSubmission("report", identifier);
+              forceSaveParam.value = true;
+              if (useRoute().query.artifactId === undefined) {
+                window.location =
+                  "/report-form?" +
+                  "model=" +
+                  useRoute().query.model +
+                  "&version=" +
+                  useRoute().query.version +
+                  "&artifactId=" +
+                  identifier;
+              }
             }
+          },
+          onResponseError({ response }) {
+            handleHttpError(response.status, response._data.error_description);
           },
         },
       );
-      successfulArtifactSubmission("report", identifier);
-      forceSaveParam.value = true;
     } catch {}
   } else {
     console.log("Invalid report.");
   }
-}
-
-// Export the current report.
-function exportReport() {
-  alert("Report export is not currently implemented.");
 }
 </script>
