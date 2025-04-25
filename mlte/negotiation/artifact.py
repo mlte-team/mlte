@@ -14,19 +14,18 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
+from mlte.negotiation import qas
 from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardDataModel,
     NegotiationCardModel,
-    QASDescriptor,
     SystemDescriptor,
 )
+from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 
 DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
-
-QAS_ID_PREFIX = "qas_id_"
 
 
 class NegotiationCard(Artifact):
@@ -102,43 +101,6 @@ class NegotiationCard(Artifact):
         card = super().load(identifier)
         return typing.cast(NegotiationCard, card)
 
-    # ----------------------------------------------------------------------------------
-    # QAS methods.
-    # ----------------------------------------------------------------------------------
-
-    @staticmethod
-    def build_qas_id(id_pos: int) -> str:
-        """Returns a well formed id for a QAS, based on the prefix and position."""
-        # Note we pad the number with up to 2 zeroes.
-        return f"{QAS_ID_PREFIX}{id_pos:03d}"
-
-    @staticmethod
-    def get_pos_from_qas_id(qas_id: str) -> int:
-        """Returns the position of the QAS id from its name."""
-        return int(qas_id.replace(QAS_ID_PREFIX, ""))
-
-    def add_qas_ids(self):
-        """Ensures that all QAS in the NegotiationCard have an id, and assigns one to those who don't have it."""
-        # Find the highest position that has been assigned a QAS id.
-        highest_id_pos = 0
-        sorted_qas: list[QASDescriptor] = sorted(
-            [
-                qas
-                for qas in self.quality_scenarios
-                if qas.identifier is not None
-            ],
-            key=lambda x: x.identifier,  # type: ignore
-            reverse=True,
-        )
-        if len(sorted_qas) > 0:
-            highest_id_pos = self.get_pos_from_qas_id(sorted_qas[0].identifier)  # type: ignore[arg-type]
-
-        # Go over all QAS and assign ids to those that don't have them, based on the highest position found.
-        for qas in self.quality_scenarios:
-            if qas.identifier is None:
-                highest_id_pos += 1
-                qas.identifier = self.build_qas_id(highest_id_pos)
-
     # Overriden.
     def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
         """
@@ -148,7 +110,7 @@ class NegotiationCard(Artifact):
         :raises RuntimeError: On broken invariant
         """
         # Add ids to QAS as needed.
-        self.add_qas_ids()
+        qas.add_qas_ids(self.quality_scenarios)
 
     # ----------------------------------------------------------------------------------
     # Helper methods.
@@ -167,7 +129,7 @@ class NegotiationCard(Artifact):
 
     def print_quality_scenarios(self):
         """Prints the scenarios in a user-friendly way."""
-        for qas in self.quality_scenarios:
-            prefix = f"{qas.identifier} ({qas.quality}): "
-            scenario = f"{qas.stimulus} from {qas.source} while in {qas.environment}, {qas.response}, {qas.measure}"
-            print(f"{prefix}{scenario.lower().capitalize()}")
+        for scenario in self.quality_scenarios:
+            prefix = f"{scenario.identifier} ({scenario.quality}): "
+            description = f"{scenario.stimulus} from {scenario.source} while in {scenario.environment}, {scenario.response}, {scenario.measure}"
+            print(f"{prefix}{description.lower().capitalize()}")

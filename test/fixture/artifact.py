@@ -30,10 +30,10 @@ from mlte.negotiation.model import (
     NegotiationCardDataModel,
     NegotiationCardModel,
     ProblemType,
-    QASDescriptor,
     RiskDescriptor,
     SystemDescriptor,
 )
+from mlte.negotiation.qas import QASDescriptor
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,

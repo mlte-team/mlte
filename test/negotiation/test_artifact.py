@@ -13,8 +13,9 @@ import pytest
 import mlte.store.error as errors
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
+from mlte.negotiation import qas
 from mlte.negotiation.artifact import NegotiationCard
-from mlte.negotiation.model import QASDescriptor
+from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 from test.fixture.artifact import ArtifactFactory
 from test.store.artifact.fixture import (  # noqa
@@ -100,10 +101,10 @@ def test_qas_id_generation():
     )
 
     # Add new ids as needed.
-    card.add_qas_ids()
+    qas.add_qas_ids(card.quality_scenarios)
 
-    for qas in card.quality_scenarios:
-        assert qas.identifier is not None
+    for scenario in card.quality_scenarios:
+        assert scenario.identifier is not None
 
 
 def test_qas_id_increase():
@@ -115,7 +116,7 @@ def test_qas_id_increase():
     )
     card.quality_scenarios.append(
         QASDescriptor(
-            identifier=NegotiationCard.build_qas_id(1),
+            identifier=qas._build_qas_id(1),
             quality="security",
             stimulus="test",
         )
@@ -125,7 +126,7 @@ def test_qas_id_increase():
     )
     card.quality_scenarios.append(
         QASDescriptor(
-            identifier=NegotiationCard.build_qas_id(2),
+            identifier=qas._build_qas_id(2),
             quality="maintainability",
             stimulus="test",
         )
@@ -135,21 +136,11 @@ def test_qas_id_increase():
     )
 
     # Add ids as needed.
-    card.add_qas_ids()
+    qas.add_qas_ids(card.quality_scenarios)
 
     assert len(card.quality_scenarios) == 5
-    assert card.quality_scenarios[0].identifier == NegotiationCard.build_qas_id(
-        3
-    )
-    assert card.quality_scenarios[1].identifier == NegotiationCard.build_qas_id(
-        1
-    )
-    assert card.quality_scenarios[2].identifier == NegotiationCard.build_qas_id(
-        4
-    )
-    assert card.quality_scenarios[3].identifier == NegotiationCard.build_qas_id(
-        2
-    )
-    assert card.quality_scenarios[4].identifier == NegotiationCard.build_qas_id(
-        5
-    )
+    assert card.quality_scenarios[0].identifier == qas._build_qas_id(3)
+    assert card.quality_scenarios[1].identifier == qas._build_qas_id(1)
+    assert card.quality_scenarios[2].identifier == qas._build_qas_id(4)
+    assert card.quality_scenarios[3].identifier == qas._build_qas_id(2)
+    assert card.quality_scenarios[4].identifier == qas._build_qas_id(5)
