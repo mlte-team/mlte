@@ -6,7 +6,7 @@ Class to define group and permission policies.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import mlte.store.error as errors
 from mlte.store.artifact.store import ArtifactStoreSession
@@ -45,14 +45,18 @@ class Policy:
     EDIT_GROUP_PREFIX = "edit"
     READ_GROUP_PREFIX = "read"
 
+    SEPARATOR = "-"
+    SEPARATOR_REPLACEMENT = "___"
+    """Used when building group name."""
+
     @staticmethod
     def _build_group_name(
-        prefix: str, resource_type: ResourceType, resource_id: Any
+        prefix: str, resource_type: ResourceType, resource_id: Optional[str]
     ):
         """Builds group ids for the given prefix and resource id."""
-        name = f"{prefix}-{resource_type}"
+        name = f"{prefix}{Policy.SEPARATOR}{resource_type}"
         if resource_id is not None:
-            name = f"{name}-{resource_id}"
+            name = f"{name}{Policy.SEPARATOR}{resource_id.replace(Policy.SEPARATOR, Policy.SEPARATOR_REPLACEMENT)}"
         return name
 
     # -----------------------------------------------------------------------------
@@ -195,11 +199,19 @@ class Policy:
     def remove_from_store(self, user_store: UserStoreSession) -> None:
         """Delete groups and permissions for a resource."""
         # TODO: This is not atomic. Error deleting one part may leave the rest dangling.
+        permissions: dict[str, bool] = {}
         for group in self.groups:
             for permission in group.permissions:
-                user_store.permission_mapper.delete(permission.to_str())
+                # Store permissions in dict for later removal, to avoid trying to re-remove already deleted ones.
+                permissions[permission.to_str()] = True
 
             user_store.group_mapper.delete(group.name)
+
+        # Now remove all permissions.
+        # TODO: note that this main leave other groups using these permissions dangling. Not trivial to check if
+        # a permission is no longer used. Even worse, we may want to leave some of them, even with no groups.
+        for permission_str in permissions:
+            user_store.permission_mapper.delete(permission_str)
 
     def assign_to_user(self, user: Union[UserWithPassword, BasicUser]):
         """
@@ -219,3 +231,6 @@ class Policy:
 
             if not user_already_in_group:
                 user.groups.append(group)
+
+    def __str__(self) -> str:
+        return f"Resource {self.resource_type}, Id: {self.resource_id}, Read: {self.read_group}, Edit: {self.edit_group}, Create: {self.create_group}, Groups: {self.groups}"
