@@ -247,29 +247,6 @@ if (useRoute().query.artifactId !== undefined) {
             response._data.header.timestamp * 1000,
           ).toLocaleString("en-US");
           form.value = response._data.body;
-
-          const problemType = response._data.body.nc_data.system.problem_type;
-          if (
-            problemTypeOptions.value.find((x) => x.value === problemType)
-              ?.value !== undefined
-          ) {
-            form.value.nc_data.system.problem_type =
-              problemTypeOptions.value.find((x) => x.value === problemType)
-                ?.value;
-          }
-
-          response._data.body.nc_data.data.forEach((item) => {
-            const classification = item.classification;
-            if (
-              classificationOptions.value.find(
-                (x) => x.value === classification,
-              )?.value !== undefined
-            ) {
-              item.classification = classificationOptions.value.find(
-                (x) => x.value === classification,
-              )?.value;
-            }
-          });
         }
       },
       onResponseError({ response }) {
