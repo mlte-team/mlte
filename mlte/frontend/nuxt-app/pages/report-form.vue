@@ -24,7 +24,9 @@
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
+          <th data-sortable scope="col" role="columnheader">
+            Quality Attribute Category
+          </th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
           <th data-sortable scope="col" role="columnheader">Test Case ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>
@@ -231,9 +233,8 @@ if (useRoute().query.artifactId !== undefined) {
                 ?.value !== undefined
             ) {
               form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find(
-                  (x) => x.value === problemType,
-                )?.value;
+                problemTypeOptions.value.find((x) => x.value === problemType)
+                  ?.value;
             }
 
             // Setting .value for each classification item to work in the select
@@ -251,8 +252,7 @@ if (useRoute().query.artifactId !== undefined) {
             });
 
             if (response._data.body.test_results_id) {
-              form.value.test_results_id =
-                response._data.body.test_results_id;
+              form.value.test_results_id = response._data.body.test_results_id;
               const testResults = await fetchArtifact(
                 token.value,
                 model,

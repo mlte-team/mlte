@@ -114,7 +114,7 @@
         <slot name="default" />
         <footer>
           <p class="footer-text-left">
-            <b>MLTE - {{currentDate.getFullYear()}}</b>
+            <b>MLTE - {{ currentDate.getFullYear() }}</b>
           </p>
           <div class="footer-text-right">
             <a

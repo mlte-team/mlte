@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["addUser", "editUser", "deleteUser"]);
+const emits = defineEmits(["addUser", "editUser", "deleteUser"]);
 const props = defineProps({
   modelValue: {
     type: Array,

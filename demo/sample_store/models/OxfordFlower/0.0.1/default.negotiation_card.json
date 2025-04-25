@@ -201,7 +201,7 @@
             "system_requirements": [
                 {
                     "identifier": "qas_id_001",
-                    "quality": "Fairness: Model Impartial to Photo Location",
+                    "quality": "Model Impartial to Photo Location",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -210,7 +210,7 @@
                 },
                 {
                     "identifier": "qas_id_002",
-                    "quality": "Robustness: Model Robust to Noise (Image Blur)",
+                    "quality": "Model Robust to Noise (Image Blur)",
                     "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry,",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -219,7 +219,7 @@
                 },
                 {
                     "identifier": "qas_id_003",
-                    "quality": "Robustness: Model Robust to Noise (Channel Loss)",
+                    "quality": "Model Robust to Noise (Channel Loss)",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application running on a loaned device ",
                     "environment": "normal operations. These devices are known to sometimes lose a channel (i.e., RGB channel)",
@@ -228,7 +228,7 @@
                 },
                 {
                     "identifier": "qas_id_004",
-                    "quality": "Performance: Resource Consumption on Operational Platform",
+                    "quality": "Resource Consumption on Operational Platform",
                     "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively)",
@@ -237,7 +237,7 @@
                 },
                 {
                     "identifier": "qas_id_005",
-                    "quality": "Interpretability: Understanding Model Results",
+                    "quality": "Understanding Model Results",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -246,7 +246,7 @@
                 },
                 {
                     "identifier": "qas_id_006",
-                    "quality": "Functional Correctness: Accuracy",
+                    "quality": "Accuracy",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "flower identification application",
                     "environment": "normal operations",
@@ -255,7 +255,7 @@
                 },
                 {
                     "identifier": "qas_id_007",
-                    "quality": "Functional Correctness: Input and Output Specification",
+                    "quality": "Input and Output Specification",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "flower identification application",
                     "environment": "normal operations",
@@ -264,7 +264,7 @@
                 },
                 {
                     "identifier": "qas_id_008",
-                    "quality": "Resilience: Input Validation",
+                    "quality": "Input Validation",
                     "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -273,7 +273,7 @@
                 },
                 {
                     "identifier": "qas_id_009",
-                    "quality": "Monitorability: Detect Out-of-Distribution (OOD) Inputs",
+                    "quality": "Detect Out-of-Distribution (OOD) Inputs",
                     "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -282,7 +282,7 @@
                 },
                 {
                     "identifier": "qas_id_010",
-                    "quality": "Monitorability: Detect Shifts in Output (Confidence) Distribution",
+                    "quality": "Detect Shifts in Output (Confidence) Distribution",
                     "stimulus": "The ML pipeline detects an output distribution change",
                     "source": "the output produced by the model",
                     "environment": "normal operations",
@@ -291,7 +291,7 @@
                 },
                 {
                     "identifier": "qas_id_011",
-                    "quality": "Performance: Inference Time on Operational Platform",
+                    "quality": "Inference Time on Operational Platform",
                     "stimulus": "Model running on the loaned device receives a picture",
                     "source": "the flower identification application",
                     "environment": "normal operations",

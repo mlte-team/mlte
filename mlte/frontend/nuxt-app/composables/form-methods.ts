@@ -25,7 +25,7 @@ export function loadFindings(proxyObject: object) {
   // TODO(Kyle): Standardize conversion of proxy objects.
   const test_results = JSON.parse(JSON.stringify(proxyObject));
   const results = test_results.body.results;
-  for (let key in results) {
+  for (const key in results) {
     const result = results[key];
     const finding = {
       status: result.type,
@@ -35,6 +35,6 @@ export function loadFindings(proxyObject: object) {
     };
     findings.push(finding);
   }
-  console.log(findings)
+  console.log(findings);
   return findings;
 }
