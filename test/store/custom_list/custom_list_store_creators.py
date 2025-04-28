@@ -16,7 +16,7 @@ def create_memory_store() -> InMemoryCustomListStore:
     return typing.cast(
         InMemoryCustomListStore,
         create_custom_list_store(
-            f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
         ),
     )
 
@@ -25,6 +25,6 @@ def create_fs_store(path: Path) -> FileSystemCustomListStore:
     return typing.cast(
         FileSystemCustomListStore,
         create_custom_list_store(
-            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{path}"
+            StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, str(path))
         ),
     )

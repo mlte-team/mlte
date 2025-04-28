@@ -23,9 +23,6 @@ from mlte.store.custom_list.store_session import (
 class InitialCustomLists:
     """Initial lists populated with pre-defined quality attributes and QA categories."""
 
-    DEFAULT_STORES_FOLDER = "stores"
-    """Default root folder for all built-in stores."""
-
     @staticmethod
     def setup_custom_list_store(
         stores_uri: StoreURI,
@@ -43,15 +40,8 @@ class InitialCustomLists:
             or stores_uri.type == StoreType.REMOTE_HTTP
         ):
             # Creates a  file system URI using the default stores folder.
-            os.makedirs(
-                f"./{InitialCustomLists.DEFAULT_STORES_FOLDER}", exist_ok=True
-            )
-            stores_uri = StoreURI.from_string(
-                StoreURI.create_uri_string(
-                    StoreURI.PREFIXES[StoreType.LOCAL_FILESYSTEM][0],
-                    InitialCustomLists.DEFAULT_STORES_FOLDER,
-                )
-            )
+            stores_uri = StoreURI.create_default_fs_uri()
+            os.makedirs(f"{stores_uri.path}", exist_ok=True)
 
         # Create the initial custom lists.
         print(f"Creating initial custom lists at URI: {stores_uri}")

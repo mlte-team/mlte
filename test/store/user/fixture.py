@@ -32,7 +32,7 @@ def create_memory_store() -> InMemoryUserStore:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
             InMemoryUserStore,
             create_user_store(
-                f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+                StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
             ),
         )
 
@@ -63,7 +63,7 @@ def create_fs_store(path: Path) -> FileSystemUserStore:
     return typing.cast(
         FileSystemUserStore,
         create_user_store(
-            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{path}"
+            StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, str(path))
         ),
     )
 

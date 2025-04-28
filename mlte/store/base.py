@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, List, Protocol
+from typing import Any, List, Optional, Protocol
 
 from mlte.store.query import Query
 
@@ -58,6 +58,9 @@ class StoreURI:
     DELIMITER = "://"
     """Delimiter used to separate prefixes from rest of the path."""
 
+    DEFAULT_STORES_FOLDER = "default_store"
+    """Default root folder for all built-in file-based stores."""
+
     def __init__(self, uri: str, type: StoreType, path: str, prefix: str):
         """
         Initialize a StoreURI instance.
@@ -104,18 +107,6 @@ class StoreURI:
         )
 
     @staticmethod
-    def create_uri_string(prefix: str, path: str) -> str:
-        """Creates a properly structured URI string from the provided parts."""
-        try:
-            _ = StoreURI.get_type(prefix)
-        except Exception as e:
-            raise RuntimeError(
-                f"Can't create URI string, prefix {prefix} is not supported."
-            ) from e
-
-        return f"{prefix}{StoreURI.DELIMITER}{path}"
-
-    @staticmethod
     def _parse_uri(uri: str) -> tuple[str, str]:
         """Split an URI into its prefix and the rest of the path."""
         parts = uri.split(StoreURI.DELIMITER)
@@ -127,9 +118,19 @@ class StoreURI:
             return prefix, path
 
     @staticmethod
-    def get_default_prefix(type: StoreType) -> str:
-        """Returns the default prefix for the given type, which will be the first one."""
-        return f"{StoreURI.PREFIXES[type][0]}{StoreURI.DELIMITER}"
+    def create_uri_string(type: StoreType, path: Optional[str] = None) -> str:
+        """Creates a URI using the default (first) prefix for the given type."""
+        prefix = StoreURI.PREFIXES[type][0]
+        return f"{prefix}{StoreURI.DELIMITER}{path}"
+
+    @staticmethod
+    def create_default_fs_uri() -> StoreURI:
+        """Creates the default StoreURI for file system stores."""
+        uri_string = StoreURI.create_uri_string(
+            type=StoreType.LOCAL_FILESYSTEM,
+            path=StoreURI.DEFAULT_STORES_FOLDER,
+        )
+        return StoreURI.from_string(uri_string)
 
     def __str__(self) -> str:
         return f"{self.type}:{self.uri}"
