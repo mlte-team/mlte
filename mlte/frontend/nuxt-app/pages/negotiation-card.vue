@@ -211,9 +211,6 @@ const formErrors = ref({
   identifier: false,
 });
 
-const classificationOptions = useClassificationOptions();
-const problemTypeOptions = useProblemTypeOptions();
-
 const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
