@@ -60,7 +60,7 @@
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
           <th data-sortable scope="col" role="columnheader">
-            Quality Attribute Category
+            Quality Attribute Scenario
           </th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
           <th data-sortable scope="col" role="columnheader">Test Case ID</th>
@@ -88,7 +88,11 @@
             {{ finding.status }}
           </td>
           <td v-else>{{ finding.status }}</td>
-          <td></td>
+          <td>
+            <div v-for="(item, index) in finding.qas_list">
+              {{ item.id }} - {{ item.qa }}
+            </div>
+          </td>
           <td>{{ finding.measurement }}</td>
           <td>{{ finding.test_case_id }}</td>
           <td>{{ finding.message }}</td>
@@ -174,7 +178,10 @@ await useFetch(
               version,
               pageData.value.test_results_id,
             );
-            findings.value = loadFindings(testResults);
+            findings.value = loadFindings(
+              testResults,
+              pageData.value.nc_data.system_requirements,
+            );
           }
         }
       }
