@@ -31,9 +31,7 @@
       <p v-if="requirement.identifier">
         <b>ID: </b> {{ requirement.identifier }}
       </p>
-      <p v-else>
-        <b>ID: </b> Defined after save
-      </p>
+      <p v-else><b>ID: </b> Defined after save</p>
       <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
         <b>Scenario for {{ requirement.quality }}: </b>
         {{ requirement.stimulus }} from {{ requirement.source }} during
