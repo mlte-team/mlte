@@ -58,7 +58,7 @@ class StoreURI:
     DELIMITER = "://"
     """Delimiter used to separate prefixes from rest of the path."""
 
-    def __init__(self, uri: str, type: StoreType, path: str):
+    def __init__(self, uri: str, type: StoreType, path: str, prefix: str):
         """
         Initialize a StoreURI instance.
         :param uri: The URI
@@ -74,6 +74,9 @@ class StoreURI:
         self.path = path
         """The rest of the path, with the prefix removed."""
 
+        self.prefix = prefix
+        """The actual prefix used in the type."""
+
     @staticmethod
     def from_string(uri: str) -> StoreURI:
         """
@@ -82,12 +85,35 @@ class StoreURI:
         :return: The parsed StoreURI
         """
         prefix, path = StoreURI._parse_uri(uri)
+
+        try:
+            type = StoreURI.get_type(prefix)
+            return StoreURI(uri, type, path, prefix)
+        except Exception as e:
+            # If we got here, the stucture of the URI is fine, but the prefix is unknown.
+            raise RuntimeError(f"Unsupported store URI: {uri}") from e
+
+    @staticmethod
+    def get_type(prefix: str) -> StoreType:
+        """Returns the type given a prefix."""
         for type in StoreType:
             if prefix.startswith(tuple(StoreURI.PREFIXES[type])):
-                return StoreURI(uri, type, path)
+                return type
+        raise RuntimeError(
+            f"Prefix {prefix} is not associated to any known type."
+        )
 
-        # If we got here, the stucture of the URI is fine, but the prefix is unknown.
-        raise RuntimeError(f"Unsupported store URI: {uri}")
+    @staticmethod
+    def create_uri_string(prefix: str, path: str) -> str:
+        """Creates a properly structured URI string from the provided parts."""
+        try:
+            _ = StoreURI.get_type(prefix)
+        except Exception as e:
+            raise RuntimeError(
+                f"Can't create URI string, prefix {prefix} is not supported."
+            ) from e
+
+        return f"{prefix}{StoreURI.DELIMITER}{path}"
 
     @staticmethod
     def _parse_uri(uri: str) -> tuple[str, str]:
