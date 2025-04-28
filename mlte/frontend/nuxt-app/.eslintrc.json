@@ -14,6 +14,7 @@
     "useCookie": true,
     "navigateTo": true,
     "useRuntimeConfig": true,
+
     "isValidNegotiation": true,
     "isValidTestSuite": true,
     "isValidTestResults": true,
@@ -24,7 +25,12 @@
     "cancelFormSubmission": true,
     "requestErrorAlert": true,
     "handleHttpError": true,
-    "fetchArtifact": true
+    "fetchArtifact": true,
+    "useClassificationOptions": true,
+    "useProblemTypeOptions": true,
+    "loadFindings": true,
+    "inputErrorAlert": true,
+    "resetFormErrors": true
   },
   "extends": [
     "standard",
