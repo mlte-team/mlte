@@ -21,9 +21,9 @@ from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
     NegotiationCardDataModel,
-    QASDescriptor,
     SystemDescriptor,
 )
+from mlte.negotiation.qas import QASDescriptor
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,

@@ -196,7 +196,7 @@ const form = ref({
     },
     system_requirements: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",

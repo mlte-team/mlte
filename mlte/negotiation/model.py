@@ -8,10 +8,12 @@ from __future__ import annotations
 
 from typing import List, Literal, Optional
 
+from pydantic import model_validator
 from strenum import StrEnum
 
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
+from mlte.negotiation import qas
 
 # -----------------------------------------------------------------------------
 # ProblemType
@@ -221,31 +223,6 @@ class DataDescriptor(BaseModel):
     """A description of the policies that govern use of this data."""
 
 
-class QASDescriptor(BaseModel):
-    """Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario."""
-
-    identifier: Optional[str] = None
-    """The unique identifier for the QAS."""
-
-    quality: Optional[str] = None
-    """System property that is being evaluated."""
-
-    stimulus: Optional[str] = None
-    """The condition that triggers this scenario."""
-
-    source: Optional[str] = None
-    """Where the stimulus comes from."""
-
-    environment: Optional[str] = None
-    """Set of circumnstances in which the scenario takes place."""
-
-    response: Optional[str] = None
-    """Activity that ocurrs as the result of the stimulus."""
-
-    measure: Optional[str] = None
-    """Used to determine if the goals of the responses of the scenario have been achieved."""
-
-
 # -----------------------------------------------------------------------------
 # System Subcomponents
 # -----------------------------------------------------------------------------
@@ -287,8 +264,13 @@ class NegotiationCardDataModel(BaseModel):
     model: ModelDescriptor = ModelDescriptor()
     """The descriptor for the model."""
 
-    system_requirements: List[QASDescriptor] = []
+    system_requirements: List[qas.QASDescriptor] = []
     """The descriptor of the system-level quality requirements."""
+
+    @model_validator(mode="after")
+    def update_qas_ids(self) -> NegotiationCardDataModel:
+        qas.add_qas_ids(self.system_requirements)
+        return self
 
 
 # -----------------------------------------------------------------------------
