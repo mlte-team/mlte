@@ -9,8 +9,12 @@ import typing
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
 from mlte.evidence.artifact import Evidence
 from mlte.model.base_model import BaseModel
+from mlte.negotiation.model import NegotiationCardModel
+from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.query import Query, TypeFilter
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 
@@ -120,6 +124,51 @@ class TestSuite(Artifact):
         """
         suite = super().load(identifier)
         return typing.cast(TestSuite, suite)
+
+    # -------------------------------------------------------------------------
+    # Hooks.
+    # -------------------------------------------------------------------------
+
+    def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
+        """
+        A method that artifact subclasses can override to enforce pre-save invariants.
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        # Check that the QAS ids in the test cases are all valid QAS ids.
+        with ManagedArtifactSession(store.session()) as store_session:
+            # Load all negotiation card, to find the ids of the QAS there.
+            negotiation_cards = store_session.search_artifacts(
+                context.model,
+                context.version,
+                Query(
+                    filter=TypeFilter(item_type=ArtifactType.NEGOTIATION_CARD)
+                ),
+            )
+            for _, case in self.test_cases.items():
+                # Check each QAS id, in each test case.
+                found = False
+                for qas_id in case.quality_scenarios:
+                    # Check for all negotiation cards, in case there is more than one.
+                    for artifact in negotiation_cards:
+                        card = typing.cast(NegotiationCardModel, artifact.body)
+                        scenarios = card.nc_data.system_requirements
+
+                        # Look in each scenario for the negotiation card, to find the QAS id.
+                        for scenario in scenarios:
+                            if qas_id == scenario.identifier:
+                                found = True
+                                break
+
+                        # Stop looking into other cards if we found the id.
+                        if found:
+                            break
+
+                if not found and case.quality_scenarios:
+                    raise RuntimeError(
+                        f"Quality Attribute Scenario with id {qas_id} was not found on any NegotiationCard"
+                    )
 
     # -------------------------------------------------------------------------
     # Builtin overloads.
