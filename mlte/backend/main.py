@@ -6,7 +6,7 @@ Entry point for MLTE artifact store server.
 
 import logging
 import sys
-from typing import Any, Dict, List
+from typing import Any
 
 import uvicorn
 from pydantic.networks import HttpUrl
@@ -29,7 +29,7 @@ EXIT_FAILURE = 1
 ANY_URL = "*"
 
 
-def _validate_origins(allowed_origins: List[str]) -> List[Any]:
+def _validate_origins(allowed_origins: list[str]) -> list[Any]:
     """
     Validate allowed origins.
     :param allowed_origins: The collection of allowed origins, as strings
@@ -43,8 +43,8 @@ def run(
     host: str,
     port: int,
     store_uri: str,
-    catalog_uris: Dict[str, str],
-    allowed_origins: List[str],
+    catalog_uris: dict[str, str],
+    allowed_origins: list[str],
     jwt_secret: str,
 ) -> int:
     """
@@ -68,48 +68,8 @@ def run(
     # The global FastAPI application
     app = app_factory.create(allowed_origins)
 
-    logging.info(
-        f"Backend using artifact and user store URI of type: {StoreURI.from_string(store_uri).type}"
-    )
-
-    # Initialize the backing artifact store instance
-    artifact_store = artifact_store_factory.create_artifact_store(store_uri)
-    if artifact_store.uri.type == StoreType.REMOTE_HTTP:
-        raise RuntimeError("Cannot run backend with remote HTTP store.")
-    state.set_artifact_store(artifact_store)
-
-    # Initialize the backing user store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here
-    user_store = user_store_factory.create_user_store(store_uri)
-    state.set_user_store(user_store)
-
-    # First add the sample catalog store.
-    sample_catalog = SampleCatalog.setup_sample_catalog(
-        stores_uri=artifact_store.uri
-    )
-    state.add_catalog_store(
-        store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
-    )
-
-    # Add all configured catalog stores.
-    for id, uri in catalog_uris.items():
-        logging.info(
-            f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
-        )
-        state.add_catalog_store_from_uri(uri, id)
-
-    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here
-    # TODO: Remove this check once RDBS and HTTP are implemented
-    parsed_uri = StoreURI.from_string(artifact_store.uri.uri)
-    if (
-        parsed_uri.type == StoreType.LOCAL_MEMORY
-        or parsed_uri.type == StoreType.LOCAL_FILESYSTEM
-    ):
-        custom_list_store = InitialCustomLists.setup_custom_list_store(
-            stores_uri=artifact_store.uri
-        )
-        state.set_custom_list_store(custom_list_store)
+    # Setup all stores.
+    _setup_stores(store_uri, catalog_uris)
 
     # Set the token signing key.
     state.set_token_key(jwt_secret)
@@ -117,6 +77,50 @@ def run(
     # Run the server
     uvicorn.run(app, host=host, port=port)
     return EXIT_SUCCESS
+
+
+def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
+    """
+    Sets up all stores required by MLTE, from the provided URIs.
+
+    :param stores_uri: The store URI string, used as the common type and root location for all non-catalog stores.
+    :param catalog_uris: A dict of URIs for catalog stores.
+    """
+    parsed_uri = StoreURI.from_string(stores_uri)
+    logging.info(f"Backend using stores URI of type: {parsed_uri.type}")
+
+    # Initialize the backing artifact store instance.
+    artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
+    if artifact_store.uri.type == StoreType.REMOTE_HTTP:
+        raise RuntimeError("Cannot run backend with HTTP artifact store.")
+    state.set_artifact_store(artifact_store)
+
+    # Initialize the backing user store instance. Assume same store as artifact one for now.
+    # TODO: allow for separate config of uri here?
+    user_store = user_store_factory.create_user_store(stores_uri)
+    state.set_user_store(user_store)
+
+    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
+    # TODO: allow for separate config of uri here?
+    custom_list_store = InitialCustomLists.setup_custom_list_store(
+        stores_uri=artifact_store.uri
+    )
+    state.set_custom_list_store(custom_list_store)
+
+    # Catalogs: first add the sample catalog store.
+    sample_catalog = SampleCatalog.setup_sample_catalog(
+        stores_uri=artifact_store.uri
+    )
+    state.add_catalog_store(
+        store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
+    )
+
+    # Catalogs: Add all configured catalog stores.
+    for id, uri in catalog_uris.items():
+        logging.info(
+            f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
+        )
+        state.add_catalog_store_from_uri(uri, id)
 
 
 def main() -> int:

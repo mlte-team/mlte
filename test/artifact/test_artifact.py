@@ -33,7 +33,7 @@ def test_save_load_session() -> None:
     """
 
     set_context(FX_MODEL_ID, FX_VERSION_ID)
-    set_store(f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}")
+    set_store(f"{StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)}")
 
     a = NegotiationCard("my-card")
 
