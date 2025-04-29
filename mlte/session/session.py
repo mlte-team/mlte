@@ -10,9 +10,12 @@ from typing import Optional
 
 import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
+from mlte.store.custom_list.factory import create_custom_list_store
+from mlte.store.custom_list.store import CustomListStore
 
 
 class Session:
@@ -30,6 +33,9 @@ class Session:
     MLTE_ARTIFACT_STORE_URI_VAR = "MLTE_ARTIFACT_STORE_URI"
     """Environment variable to get the artifact store URI from, if needed."""
 
+    MLTE_CUSTOM_LIST_STORE_URI_VAR = "MLTE_CUSTOM_LIST_STORE_URI"
+    """Environment variable to get the custom list store URI from, if needed."""
+
     _instance = None
 
     def __new__(self):
@@ -42,7 +48,10 @@ class Session:
         """The MLTE context for the session."""
 
         self._artifact_store: Optional[ArtifactStore] = None
-        """The MLTE store instance for the session."""
+        """The MLTE artifct store instance for the session."""
+
+        self._custom_list_store: Optional[CustomListStore] = None
+        """The MLTE custom list store instance for the session."""
 
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
         """The list of catalog store instances maintained by the session object."""
@@ -84,8 +93,24 @@ class Session:
                 raise RuntimeError(
                     "Must initialize MLTE artifact store for session, either manually or through environment variables."
                 )
-
         return self._artifact_store
+
+    @property
+    def custom_list_store(self) -> CustomListStore:
+        if self._custom_list_store is None:
+            # If the custom list store URI has not been manually set, get it from environment.
+            if self.MLTE_CUSTOM_LIST_STORE_URI_VAR in os.environ:
+                self._custom_list_store = create_custom_list_store(
+                    typing.cast(
+                        str, os.getenv(self.MLTE_CUSTOM_LIST_STORE_URI_VAR)
+                    )
+                )
+            else:
+                raise RuntimeError(
+                    "Must initialize MLTE custom list store for session, either manually or through environment variables."
+                )
+
+        return self._custom_list_store
 
     @property
     def catalog_stores(self) -> CatalogStoreGroup:
@@ -98,6 +123,12 @@ class Session:
     def _set_artifact_store(self, artifact_store: ArtifactStore) -> None:
         """Set the session artifact store."""
         self._artifact_store = artifact_store
+
+    def _set_custom_list_store(
+        self, custom_list_store: CustomListStore
+    ) -> None:
+        """Set the session custom list store."""
+        self._custom_list_store = custom_list_store
 
     def _add_catalog_store(self, store_uri: str, id: str):
         """Adds a catalog store."""
@@ -140,13 +171,14 @@ def set_context(model_id: str, version_id: str, lazy: bool = True):
         g_session.create_context()
 
 
-def set_store(artifact_store_uri: str):
+def set_store(store_uri: str):
     """
-    Set the global MLTE context artifact store URI.
-    :param artifact_store_uri: The artifact store URI string
+    Set the global MLTE context store URI.
+    :param store_uri: The store URI string
     """
     global g_session
-    g_session._set_artifact_store(create_artifact_store(artifact_store_uri))
+    g_session._set_artifact_store(create_artifact_store(store_uri))
+    g_session._set_custom_list_store(create_custom_list_store(store_uri))
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
@@ -156,3 +188,16 @@ def add_catalog_store(catalog_store_uri: str, id: str):
     """
     global g_session
     g_session._add_catalog_store(catalog_store_uri, id)
+
+
+def print_custom_list_entries(list_name: CustomListName) -> None:
+    """Prints custom list entries in a user-friendly way."""
+    global g_session
+    entry_list = g_session.custom_list_store.session().custom_list_entry_mapper.list_details(
+        list_name
+    )
+    for entry in entry_list:
+        if entry.parent:
+            print(f"{entry.name} (Parent: {entry.parent}): {entry.description}")
+        else:
+            print(f"{entry.name} (Parent: None): {entry.description}")

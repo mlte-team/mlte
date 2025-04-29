@@ -77,20 +77,24 @@ def test_environment_vars():
     model = "model"
     version = "v0.0.1"
     artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    custom_list_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     os.environ[Session.MLTE_CONTEXT_MODEL_VAR] = model
     os.environ[Session.MLTE_CONTEXT_VERSION_VAR] = version
     os.environ[Session.MLTE_ARTIFACT_STORE_URI_VAR] = artifact_store_uri
+    os.environ[Session.MLTE_CUSTOM_LIST_STORE_URI_VAR] = custom_list_store_uri
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
     assert s.artifact_store.uri.uri == artifact_store_uri
+    assert s.custom_list_store.uri.uri == custom_list_store_uri
 
     del os.environ[Session.MLTE_CONTEXT_MODEL_VAR]
     del os.environ[Session.MLTE_CONTEXT_VERSION_VAR]
     del os.environ[Session.MLTE_ARTIFACT_STORE_URI_VAR]
+    del os.environ[Session.MLTE_CUSTOM_LIST_STORE_URI_VAR]
 
 
 def test_no_context_setup():
