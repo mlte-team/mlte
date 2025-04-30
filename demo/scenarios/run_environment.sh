@@ -3,6 +3,18 @@
 MODEL="OxfordFlower"
 VERSION="0.0.1"
 
+# Function to stop env.
+function cleanup() {
+    echo "Cleaning up..."
+    source stop.sh
+    cd ../../demo/scenarios
+    exit 130
+}
+
+# Set up cleanup function to be called if Ctrl+C is used.
+trap cleanup SIGINT
+
+# Needed to copy sample card.
 source copy_nc.sh
 
 # Set env vars to not use a relational DB, but a file store, and point to the one here.
@@ -13,5 +25,5 @@ export HOST_FS_STORE="../../demo/scenarios/store"
 cd ../../docker/deployment
 source rebuild_and_restart.sh
 
-source stop.sh
-cd ../../demo/scenarios
+# Unlikely we'll get there, but explicitly call cleanup if the running server scripts stopped for another reason.
+cleanup
