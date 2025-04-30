@@ -6,9 +6,8 @@ Model implementation for negotiation card artifact.
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional
 
-from pydantic import model_validator
 from strenum import StrEnum
 
 from mlte.artifact.type import ArtifactType
@@ -267,11 +266,6 @@ class NegotiationCardDataModel(BaseModel):
     system_requirements: List[qas.QASDescriptor] = []
     """The descriptor of the system-level quality requirements."""
 
-    @model_validator(mode="after")
-    def update_qas_ids(self) -> NegotiationCardDataModel:
-        qas.add_qas_ids(self.system_requirements)
-        return self
-
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
@@ -284,8 +278,18 @@ class NegotiationCardModel(BaseModel):
     artifact_type: Literal[ArtifactType.NEGOTIATION_CARD] = (
         ArtifactType.NEGOTIATION_CARD
     )
-
     """Union discriminator."""
 
     nc_data: NegotiationCardDataModel = NegotiationCardDataModel()
     """The specific data for this negotiation card."""
+
+    # Overriden.
+    def post_validation_hook(self, data: Optional[Any] = None) -> Any:
+        """Called after validation, allows us to generate ids for QASs."""
+        if not data or not isinstance(data, str):
+            raise RuntimeError(
+                f"Invalid data id received in Negotiation Card model: {data}"
+            )
+        identifier = str(data)
+        qas.add_qas_ids(identifier, self.nc_data.system_requirements)
+        return self

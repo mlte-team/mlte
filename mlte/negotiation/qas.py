@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-QAS_ID_PREFIX = "qas_id_"
+QAS_ID_PREFIX = "qas_"
 
 
 # -----------------------------------------------------------------------------
@@ -42,18 +42,26 @@ class QASDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-def _build_qas_id(id_pos: int) -> str:
-    """Returns a well formed id for a QAS, based on the prefix and position."""
+def _build_qas_id(base_id: str, id_pos: int) -> str:
+    """
+    Returns a well formed id for a QAS, based on the card id, prefix and position.
+
+    :param base_id: base to use for ids, to differentiate QAS in different contexts.
+    :param id_pos: int to indicate the numeric part of the QAS id.
+    :return: a string with the QAS id.
+    """
     # Note we pad the number with up to 2 zeroes.
-    return f"{QAS_ID_PREFIX}{id_pos:03d}"
+    return f"{base_id}-{QAS_ID_PREFIX}{id_pos:03d}"
 
 
 def _get_pos_from_qas_id(qas_id: str) -> int:
     """Returns the position of the QAS id from its name."""
-    return int(qas_id.replace(QAS_ID_PREFIX, ""))
+    return int(qas_id[qas_id.find(QAS_ID_PREFIX) + len(QAS_ID_PREFIX) :])
 
 
-def add_qas_ids(quality_scenarios: list[QASDescriptor]) -> list[QASDescriptor]:
+def add_qas_ids(
+    base_id: str, quality_scenarios: list[QASDescriptor]
+) -> list[QASDescriptor]:
     """Ensures that all QAS in the NegotiationCard have an id, and assigns one to those who don't have it."""
     # Find the highest position that has been assigned a QAS id.
     highest_id_pos = 0
@@ -69,6 +77,6 @@ def add_qas_ids(quality_scenarios: list[QASDescriptor]) -> list[QASDescriptor]:
     for qas in quality_scenarios:
         if qas.identifier is None:
             highest_id_pos += 1
-            qas.identifier = _build_qas_id(highest_id_pos)
+            qas.identifier = _build_qas_id(base_id, highest_id_pos)
 
     return quality_scenarios

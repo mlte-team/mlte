@@ -4,9 +4,11 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
+from __future__ import annotations
+
 from typing import Any, Optional, Union
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, model_validator
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.model import EvidenceModel
@@ -57,3 +59,9 @@ class ArtifactModel(Filterable):
 
     def get_type(self) -> Any:
         return self.header.type
+
+    @model_validator(mode="after")
+    def post_validation_caller(self) -> ArtifactModel:
+        """Called after validation, lets submodel do any needed post-processing."""
+        self.body.post_validation_hook(self.header.identifier)
+        return self

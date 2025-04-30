@@ -4,7 +4,8 @@ Unit tests for TestSuite functionality.
 
 from __future__ import annotations
 
-from typing import Any, Tuple
+import typing
+from typing import Any, Optional
 
 import pytest
 
@@ -14,20 +15,24 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.storage import LocalObjectSize
+from mlte.negotiation.artifact import NegotiationCard
 from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
+from test.negotiation.test_artifact import get_sample_negotiation_card
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
-def get_sample_test_suite():
+def get_sample_test_suite(
+    identifier: Optional[str] = None, qas_ids: list[str] = []
+):
     test_suite = TestSuite(
-        identifier="test_suite",
+        identifier=identifier if identifier else "test_suite",
         test_cases=[
             TestCase(
                 identifier="model size",
                 goal="Check storage consumption",
-                quality_scenarios=["qas3"],
+                quality_scenarios=qas_ids,
                 validator=LocalObjectSize.get_output_type().less_than(
                     150000000
                 ),
@@ -48,34 +53,49 @@ def test_round_trip() -> None:
     assert test_suite == loaded
 
 
-def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
+def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
-    test_suite = get_sample_test_suite()
+
+    # Setup dependent card with QAS ids.
+    card = get_sample_negotiation_card()
+    card.save_with(ctx, store)
+    card = typing.cast(
+        NegotiationCard,
+        NegotiationCard.load_with(card.identifier, context=ctx, store=store),
+    )
+    qas_ids = [scenario.identifier for scenario in card.quality_scenarios]
+
+    id = "test_suite"
+    test_suite = get_sample_test_suite(identifier=id, qas_ids=qas_ids)
 
     test_suite.save_with(ctx, store)
-    loaded = TestSuite.load_with("test_suite", context=ctx, store=store)
+    loaded = TestSuite.load_with(id, context=ctx, store=store)
 
     assert test_suite == loaded
 
 
 def test_save_load_default(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: tuple[ArtifactStore, Context]  # noqa
 ):
     store, ctx = store_with_context
+    test_suite = get_sample_test_suite(identifier=TestSuite.get_default_id())
 
-    test_suite = TestSuite(
-        test_cases=[
-            TestCase(identifier="t1", goal="to test", quality_scenarios=["qa1"])
-        ]
-    )
     test_suite.save_with(ctx, store)
 
     loaded = TestSuite.load_with(context=ctx, store=store)
     assert test_suite == loaded
 
 
+def test_save_invalid_qasids():
+    """Tests if a TestSuite is given a qas id for a scenario that is in no existing NegotiationCard, save will fail."""
+    test_suite = get_sample_test_suite(qas_ids=["qas1"])
+
+    with pytest.raises(RuntimeError):
+        test_suite.save()
+
+
 def test_load_failure(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: tuple[ArtifactStore, Context]  # noqa
 ):
     store, ctx = store_with_context
     with pytest.raises(RuntimeError):

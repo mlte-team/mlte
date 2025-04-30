@@ -6,7 +6,7 @@ Base model implementation for all MLTE models.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 import pydantic
 
@@ -49,6 +49,10 @@ class BaseModel(pydantic.BaseModel):
     def from_json_string(cls, json_str: str) -> Any:
         """Deserialize from a json string."""
         return cls.from_json(json.loads(json_str))
+
+    def post_validation_hook(self, data: Optional[Any] = None) -> Any:
+        """Called after validation, lets submodels do any needed post-processing."""
+        pass
 
     def _equal(a: BaseModel, b: BaseModel) -> bool:
         """
