@@ -73,8 +73,6 @@ def test_eager_context_creation(
         == version
     )
 
-    # How to add my test here?
-
 
 def test_environment_vars():
     model = "model"
