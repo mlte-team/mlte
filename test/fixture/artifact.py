@@ -272,7 +272,7 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier="qas_id_1",
+                identifier="default.negotiation_card-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
