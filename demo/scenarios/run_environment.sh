@@ -3,11 +3,12 @@
 MODEL="OxfordFlower"
 VERSION="0.0.1"
 
+DOCKER_FOLDER=../../docker/deployment
+
 # Function to stop env.
 function cleanup() {
     echo "Cleaning up..."
-    source stop.sh
-    cd ../../demo/scenarios
+    (cd $DOCKER_FOLDER && source stop.sh)
     exit 130
 }
 
@@ -22,8 +23,7 @@ export STORE_TYPE=fs
 export HOST_FS_STORE="../../demo/scenarios/store"
 
 # We will use dockerized versions of frontend and backend. This will also build them if needed.
-cd ../../docker/deployment
-source rebuild_and_restart.sh
+(cd $DOCKER_FOLDER && source rebuild_and_restart.sh)
 
 # Unlikely we'll get there, but explicitly call cleanup if the running server scripts stopped for another reason.
 cleanup
