@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Ensure everything stops if there is a failure in one of the commands.
+set -e
+
 MODEL="OxfordFlower"
 VERSION="0.0.1"
 
