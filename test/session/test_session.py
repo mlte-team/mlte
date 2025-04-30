@@ -39,7 +39,7 @@ def test_session() -> None:
     set_context(model, version)
     set_store(store_uri)
     add_catalog_store(catalog_store_uri, cat_id)
-    
+
     s = session()
 
     assert s.context.model == model
