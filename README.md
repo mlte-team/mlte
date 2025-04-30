@@ -4,7 +4,7 @@
 
 `mlte` (pronounced "melt") is a framework and infrastructure for machine learning evaluation.
 
-![Version Badge](https://img.shields.io/badge/release-v1.0.2-e19b38)
+![Version Badge](https://img.shields.io/badge/release-v2.0.0-e19b38)
 [![Python](https://img.shields.io/pypi/pyversions/mlte-python.svg)](https://badge.fury.io/py/mlte-python)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Tests](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml)
