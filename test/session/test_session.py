@@ -45,8 +45,8 @@ def test_session() -> None:
     assert s.context.model == model
     assert s.context.version == version
     assert s.artifact_store.uri.uri == store_uri
-    assert s.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
     assert s.custom_list_store.uri.uri == store_uri
+    assert s.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -119,3 +119,4 @@ def test_no_store_setup():
 
     with pytest.raises(RuntimeError):
         _ = s.artifact_store
+        _ = s.custom_list_store
