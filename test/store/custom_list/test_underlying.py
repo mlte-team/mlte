@@ -1,12 +1,9 @@
-"""
-test/store/custom_list/test_underlying.py
-
-Unit tests for the underlying custom list store implementations.
-"""
+"""Unit tests for the underlying custom list store implementations."""
 
 import pytest
 
 import mlte.store.error as errors
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
 from test.store.custom_list.fixture import (  # noqa
@@ -34,13 +31,12 @@ def test_init_store(store_fixture_name: str, create_test_store) -> None:  # noqa
 def test_custom_list_entry(
     store_fixture_name: str, create_test_store  # noqa
 ) -> None:
-    """An custom list store supports custom list entry operations."""
+    """A custom list store supports custom list entry operations."""
     store: CustomListStore = create_test_store(store_fixture_name)
 
     test_list = get_test_list()
     test_entry = get_test_entry()
     new_description = "new description"
-    new_parent = "new parent"
 
     with ManagedCustomListSession(store.session()) as custom_list_store:
         original_entries = custom_list_store.custom_list_entry_mapper.list(
@@ -64,7 +60,6 @@ def test_custom_list_entry(
 
         # Test editing an entry.
         test_entry.description = new_description
-        test_entry.parent = new_parent
         _ = custom_list_store.custom_list_entry_mapper.edit(
             test_entry, test_list.name
         )
@@ -72,7 +67,6 @@ def test_custom_list_entry(
             test_entry.name, test_list.name
         )
         assert read_entry.description == new_description
-        assert read_entry.parent == new_parent
 
         # Test deleting an entry.
         custom_list_store.custom_list_entry_mapper.delete(
@@ -82,3 +76,33 @@ def test_custom_list_entry(
             custom_list_store.custom_list_entry_mapper.read(
                 test_entry.name, test_list.name
             )
+
+
+@pytest.mark.parametrize("store_fixture_name", custom_list_stores())
+def test_custom_list_parent_mappings(
+    store_fixture_name: str, create_test_store  # noqa
+) -> None:
+    """A custom list store properly handles parent relations."""
+    store: CustomListStore = create_test_store(store_fixture_name)
+
+    parent_list_name = CustomListName.QA_CATEGORIES
+    child_list_name = CustomListName.QUALITY_ATTRIBUTES
+
+    parent_name = "Test parent"
+    parent_entry = get_test_entry(
+        name=parent_name,
+    )
+    child_entry = get_test_entry(name="child", parent=parent_name)
+
+    with ManagedCustomListSession(store.session()) as custom_list_store:
+        custom_list_store.custom_list_entry_mapper.create(
+            parent_entry, parent_list_name
+        )
+        custom_list_store.custom_list_entry_mapper.create(
+            child_entry, child_list_name
+        )
+
+        read_child_entry = custom_list_store.custom_list_entry_mapper.read(
+            child_entry.name, child_list_name
+        )
+        assert read_child_entry.parent == parent_entry.name

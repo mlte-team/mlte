@@ -6,7 +6,7 @@ Model implementation for a User.
 
 from __future__ import annotations
 
-from typing import List, Optional, Union
+from typing import ClassVar, List, Optional, Union
 
 from strenum import StrEnum
 
@@ -154,6 +154,9 @@ class ResourceType(StrEnum):
     CATALOG = "catalog"
     """Test catalogs."""
 
+    CUSTOM_LIST = "custom_list"
+    """Custom lists."""
+
     @staticmethod
     def get_type_from_url(url: str) -> Optional[ResourceType]:
         """Returns the resource type for the given URL."""
@@ -186,6 +189,10 @@ class Group(BaseModel):
 class Permission(BaseModel):
     """Permissions for manipulating resources."""
 
+    SEPARATOR: ClassVar[str] = "-"
+    SEPARATOR_REPLACEMENT: ClassVar[str] = "___"
+    """Used when serializing to string."""
+
     resource_type: ResourceType
     """The type of resource resource."""
 
@@ -197,20 +204,22 @@ class Permission(BaseModel):
 
     def to_str(self) -> str:
         """Serialize the permission to a string"""
-        serialized = f"{self.resource_type}-{self.method}"
+        serialized = f"{self.resource_type}{Permission.SEPARATOR}{self.method}"
         if self.resource_id is not None:
-            serialized = f"{serialized}-{self.resource_id}"
+            serialized = f"{serialized}{Permission.SEPARATOR}{self.resource_id.replace(Permission.SEPARATOR, Permission.SEPARATOR_REPLACEMENT)}"
         return serialized
 
     @staticmethod
     def from_str(permission_str: str) -> Permission:
         """Creates a permission from its string serialization."""
         # Source str can have 2 or 3 parts, depending if resource id was None.
-        parts = permission_str.split("-")
+        parts = permission_str.split(Permission.SEPARATOR)
         type = parts[0]
         method = parts[1]
         if len(parts) > 2:
-            resource_id = parts[2]
+            resource_id = parts[2].replace(
+                Permission.SEPARATOR_REPLACEMENT, Permission.SEPARATOR
+            )
         else:
             resource_id = None
 

@@ -196,7 +196,7 @@ const form = ref({
     },
     system_requirements: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",
@@ -254,9 +254,8 @@ if (useRoute().query.artifactId !== undefined) {
               ?.value !== undefined
           ) {
             form.value.nc_data.system.problem_type =
-              problemTypeOptions.value.find(
-                (x) => x.value === problemType,
-              )?.value;
+              problemTypeOptions.value.find((x) => x.value === problemType)
+                ?.value;
           }
 
           response._data.body.nc_data.data.forEach((item) => {

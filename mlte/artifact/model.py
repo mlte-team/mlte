@@ -4,18 +4,20 @@ mlte/artifact/model.py
 Model implementation for MLTE artifacts.
 """
 
+from __future__ import annotations
+
 from typing import Any, Optional, Union
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, model_validator
 
 from mlte.artifact.type import ArtifactType
+from mlte.evidence.model import EvidenceModel
 from mlte.model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
-from mlte.spec.model import SpecModel
+from mlte.results.model import TestResultsModel
 from mlte.store.query import Filterable
-from mlte.validation.model import ValidatedSpecModel
-from mlte.value.model import ValueModel
+from mlte.tests.model import TestSuiteModel
 
 
 class ArtifactHeaderModel(BaseModel):
@@ -44,10 +46,11 @@ class ArtifactModel(Filterable):
 
     body: Union[
         NegotiationCardModel,
-        ValueModel,
-        SpecModel,
-        ValidatedSpecModel,
+        EvidenceModel,
+        TestSuiteModel,
+        TestResultsModel,
         ReportModel,
+        TestSuiteModel,
     ] = Field(..., discriminator="artifact_type")
     """The artifact body."""
 
@@ -56,3 +59,9 @@ class ArtifactModel(Filterable):
 
     def get_type(self) -> Any:
         return self.header.type
+
+    @model_validator(mode="after")
+    def post_validation_caller(self) -> ArtifactModel:
+        """Called after validation, lets submodel do any needed post-processing."""
+        self.body.post_validation_hook(self.header.identifier)
+        return self

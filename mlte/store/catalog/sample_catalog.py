@@ -28,9 +28,6 @@ class SampleCatalog:
     SAMPLE_CATALOG_ID = "sample"
     """Id for sample catalog."""
 
-    DEFAULT_STORES_FOLDER = "stores"
-    """Default root folder for all built-in stores."""
-
     @staticmethod
     def setup_sample_catalog(
         stores_uri: Optional[StoreURI] = None,
@@ -48,12 +45,10 @@ class SampleCatalog:
         ):
             # We will always create the sample catalog store as a file system store, regardless of where the other
             # stores of the system are.
-            stores_uri = StoreURI.from_string(
-                f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{SampleCatalog.DEFAULT_STORES_FOLDER}"
-            )
+            stores_uri = StoreURI.create_default_fs_uri()
 
         # The base stores folder has to exist, so create it if it doesn't.
-        os.makedirs(f"./{stores_uri.path}", exist_ok=True)
+        os.makedirs(f"{stores_uri.path}", exist_ok=True)
 
         # Create the actual sample catalog.
         print(f"Creating sample catalog at URI: {stores_uri}")

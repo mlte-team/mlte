@@ -4,13 +4,38 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "mlte"
-version = "1.0.2"
+version = "2.0.0"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
-dynamic = ["dependencies"]
-obsoletes-dist = "mlte-python"
+dependencies = [
+  "pydantic >= 2.10.5",
+  "pydantic-settings >=2.7.1",
+  "dill >=0.3.9",
+  "psutil >=6.1.1",
+  "StrEnum >=0.4.15",
+  "json-fix >=1.0.0",
+  "astunparse >=1.6.3",
+  "requests >=2.32.3",
+  "httpx >=0.28.1",
+  "bcrypt >=4.2.1",
+  "cryptography >=43.0.3",
+  "pip-system-certs >=4.0.0",
+]
+
+[project.optional-dependencies]
+rdbs = [
+  "SQLAlchemy >=2.0.37",
+  "SQLAlchemy-Utils >=0.41.2",
+  "psycopg2-binary >=2.9.10",
+]
+frontend = [
+  "uvicorn >=0.34.0",
+  "fastapi >=0.115.6",
+  "python-multipart >=0.0.20",
+  "python-jose >=3.3.0",
+]
 
 [project.urls]
 repository = "https://github.com/mlte-team/mlte"
@@ -31,40 +56,7 @@ exclude = [
   "mlte/frontend/nuxt-app/**/**/*"
 ]
 
-[tool.poetry.dependencies]
-fastapi = "^0.115.6"
-pydantic-settings = "^2.7.1"
-pydantic = "^2.10.5"
-requests = "^2.32.3"
-uvicorn = "^0.34.0"
-httpx = "^0.28.1"
-dill = "^0.3.9"
-psutil = "^6.1.1"
-SQLAlchemy = "^2.0.37"
-SQLAlchemy-Utils = "^0.41.2"
-psycopg2-binary = "^2.9.10"
-python-multipart = "^0.0.20"
-cryptography = "^43.0.3"
-python-jose = "^3.3.0"
-bcrypt = "^4.2.1"
-StrEnum = "^0.4.15"
-json-fix = "^1.0.0"
-astunparse = "^1.6.3"
-pip-system-certs = "^4.0.0"
-
 [tool.poetry.group.demo]
-optional = true
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.qa]
-optional = true
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.build]
 optional = true
 
 [tool.poetry.group.demo.dependencies]
@@ -75,30 +67,42 @@ scikit-learn = "^1.6.1"
 matplotlib = "^3.9.4"
 ipykernel = "^6.29.5"
 notebook = "^7.3.2"
-tensorflow = "~2.18.0"
+tensorflow = "^2.18.0"
 
-[tool.poetry.group.docs.dependencies]
-mkdocs = "*"
-mkdocstrings-python = "*"
-mkdocs-material = "*"
-mkdocs-gen-files = "*"
-mkdocs-literate-nav = "*"
+[tool.poetry.group.dev]
+optional = true
 
-[tool.poetry.group.qa.dependencies]
+[tool.poetry.group.dev.dependencies]
+# Docs
+mkdocs = "1.6.1"
+mkdocstrings-python = "1.16.10"
+mkdocs-material = "9.6.11"
+mkdocs-gen-files = "0.5.0"
+mkdocs-literate-nav = "0.6.2"
+
+# QA
 isort = "5.13.2"
 black = {extras = ["jupyter"], version = "24.10.0"}
 flake8 = "7.1.1"
 mypy = "1.14.1"
 types-requests = "2.32.0.20241016"
+types-PyYAML = "6.0.12.20241230"
+types-Pygments = "2.19.0.20250219"
+types-colorama = "0.4.15.20240311"
+types-decorator = "5.2.0.20250224"
+types-jsonschema = "4.23.0.20241208"
+types-psutil = "7.0.0.20250218"
+types-python-jose = "3.4.0.20250224"
+types-ujson = "5.10.0.20240515"
 
-[tool.poetry.group.test.dependencies]
+# Testing
 pytest = "8.3.4"
 deepdiff = "8.1.1"
 pytest-cov = "6.0.0"
 jsonschema = "4.23.0"
 nbmake = "1.5.5"
 
-[tool.poetry.group.build.dependencies]
+# Building
 bump2version = "1.0.1"
 twine = "6.0.1"
 
@@ -115,7 +119,6 @@ target-version = ['py38']
 mypy_path = "src"
 check_untyped_defs = true
 disallow_any_generics = true
-ignore_missing_imports = true
 no_implicit_optional = true
 show_error_codes = true
 strict_equality = true

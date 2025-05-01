@@ -33,10 +33,8 @@ def test_session() -> None:
     model = "model"
     version = "v0.0.1"
     cat_id = "test_cat"
-    artifact_store_uri = (
-        f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
-    )
-    catalog_store_uri = f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    catalog_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     set_context(model, version)
     set_store(artifact_store_uri)
@@ -78,9 +76,7 @@ def test_eager_context_creation(
 def test_environment_vars():
     model = "model"
     version = "v0.0.1"
-    artifact_store_uri = (
-        f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
-    )
+    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     os.environ[Session.MLTE_CONTEXT_MODEL_VAR] = model
     os.environ[Session.MLTE_CONTEXT_VERSION_VAR] = version
@@ -98,9 +94,7 @@ def test_environment_vars():
 
 
 def test_no_context_setup():
-    artifact_store_uri = (
-        f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
-    )
+    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     set_store(artifact_store_uri)
 

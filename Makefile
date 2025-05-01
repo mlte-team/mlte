@@ -29,7 +29,6 @@ docs:
 isort:	
 	poetry run isort mlte/
 	poetry run isort test/
-	poetry run isort testbed/
 	poetry run isort demo/
 	poetry run isort tools/
 
@@ -37,7 +36,6 @@ isort:
 check-isort:
 	poetry run isort --check mlte/
 	poetry run isort --check test/
-	poetry run isort --check testbed/
 	poetry run isort --check demo/
 	poetry run isort --check tools/
 
@@ -46,7 +44,6 @@ check-isort:
 format:
 	poetry run black mlte/
 	poetry run black test/
-	poetry run black testbed/
 	poetry run black demo/
 	poetry run black demo/simple/*.ipynb
 	poetry run black demo/scenarios/*.ipynb
@@ -56,7 +53,6 @@ format:
 check-format:
 	poetry run black --check mlte/
 	poetry run black --check test/
-	poetry run black --check testbed/
 	poetry run black --check demo/
 	poetry run black --check demo/simple/*.ipynb
 	poetry run black --check demo/scenarios/*.ipynb
@@ -97,13 +93,13 @@ typecheck-frontend:
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest --cov=mlte test 
+	poetry run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
 
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	bash demo/simple/test.sh
-	bash demo/scenarios/test.sh
+	bash demo/simple/test.sh demo/simple
+	bash demo/scenarios/test.sh demo/scenarios
 
 # -----------------------------------------------------------------------------
 # Shorthand actions and checks needed to update and review for pushing.
