@@ -49,3 +49,6 @@ docs/site
 /store*/
 pgdata/
 *.whl
+
+# TODO: Remove this check once RDBS and HTTP are implemented.
+default_store/

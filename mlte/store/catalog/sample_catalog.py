@@ -30,7 +30,7 @@ class SampleCatalog:
 
     @staticmethod
     def setup_sample_catalog(
-        stores_uri: Optional[StoreURI] = None,
+        stores_uri: Optional[str] = None,
     ) -> CatalogStore:
         """
         Sets up the sample catalog.
@@ -41,19 +41,22 @@ class SampleCatalog:
         # Set file system URI if we didn't get one, or if we got a non-file system one.
         if stores_uri is None or (
             stores_uri is not None
-            and stores_uri.type != StoreType.LOCAL_FILESYSTEM
+            and StoreURI.from_string(stores_uri).type
+            != StoreType.LOCAL_FILESYSTEM
         ):
             # We will always create the sample catalog store as a file system store, regardless of where the other
             # stores of the system are.
-            stores_uri = StoreURI.create_default_fs_uri()
+            parsed_uri = StoreURI.create_default_fs_uri()
+        else:
+            parsed_uri = StoreURI.from_string(stores_uri)
 
         # The base stores folder has to exist, so create it if it doesn't.
-        os.makedirs(f"{stores_uri.path}", exist_ok=True)
+        os.makedirs(f"{parsed_uri.path}", exist_ok=True)
 
         # Create the actual sample catalog.
-        print(f"Creating sample catalog at URI: {stores_uri}")
+        print(f"Creating sample catalog at URI: {parsed_uri}")
         catalog = create_catalog_store(
-            stores_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
+            parsed_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
         )
 
         # Ensure the catalog is always reset to its initial state, and mark it as read only.
