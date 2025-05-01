@@ -14,7 +14,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
-from mlte.store.custom_list.factory import create_custom_list_store
+from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 
 
@@ -60,17 +60,11 @@ class Session:
     def context(self) -> Context:
         if self._context is None:
             # If the context has not been manually set, get it from environment.
-            if (
-                self.MLTE_CONTEXT_MODEL_VAR in os.environ
-                and self.MLTE_CONTEXT_VERSION_VAR in os.environ
-            ):
+            model_context = self._get_env_var(self.MLTE_CONTEXT_MODEL_VAR)
+            version_context = self._get_env_var(self.MLTE_CONTEXT_VERSION_VAR)
+            if model_context and version_context:
                 self._context = Context(
-                    model=typing.cast(
-                        str, os.getenv(self.MLTE_CONTEXT_MODEL_VAR)
-                    ),
-                    version=typing.cast(
-                        str, os.getenv(self.MLTE_CONTEXT_VERSION_VAR)
-                    ),
+                    model=model_context, version=version_context
                 )
             else:
                 raise RuntimeError(
@@ -83,12 +77,9 @@ class Session:
     def artifact_store(self) -> ArtifactStore:
         if self._artifact_store is None:
             # If the artifact store URI has not been manually set, get it from environment.
-            if self.MLTE_ARTIFACT_STORE_URI_VAR in os.environ:
-                self._artifact_store = create_artifact_store(
-                    typing.cast(
-                        str, os.getenv(self.MLTE_ARTIFACT_STORE_URI_VAR)
-                    )
-                )
+            store_uri = self._get_env_var(self.MLTE_ARTIFACT_STORE_URI_VAR)
+            if store_uri:
+                self._artifact_store = create_artifact_store(store_uri)
             else:
                 raise RuntimeError(
                     "Must initialize MLTE artifact store for session, either manually or through environment variables."
@@ -99,11 +90,10 @@ class Session:
     def custom_list_store(self) -> CustomListStore:
         if self._custom_list_store is None:
             # If the custom list store URI has not been manually set, get it from environment.
-            if self.MLTE_CUSTOM_LIST_STORE_URI_VAR in os.environ:
-                self._custom_list_store = create_custom_list_store(
-                    typing.cast(
-                        str, os.getenv(self.MLTE_CUSTOM_LIST_STORE_URI_VAR)
-                    )
+            store_uri = self._get_env_var(self.MLTE_CUSTOM_LIST_STORE_URI_VAR)
+            if store_uri:
+                self._custom_list_store = (
+                    InitialCustomLists.setup_custom_list_store(store_uri)
                 )
             else:
                 raise RuntimeError(
@@ -119,6 +109,13 @@ class Session:
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
+
+    def _get_env_var(self, env_var: str) -> Optional[str]:
+        """Get env var or return none if does not exist."""
+        if env_var in os.environ:
+            return typing.cast(str, os.getenv(env_var))
+        else:
+            return None
 
     def _set_artifact_store(self, artifact_store: ArtifactStore) -> None:
         """Set the session artifact store."""
@@ -178,7 +175,9 @@ def set_store(store_uri: str):
     """
     global g_session
     g_session._set_artifact_store(create_artifact_store(store_uri))
-    g_session._set_custom_list_store(create_custom_list_store(store_uri))
+    g_session._set_custom_list_store(
+        InitialCustomLists.setup_custom_list_store(store_uri)
+    )
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
