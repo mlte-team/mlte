@@ -110,7 +110,7 @@ class NegotiationCard(Artifact):
         :raises RuntimeError: On broken invariant
         """
         # Add ids to QAS as needed.
-        qas.add_qas_ids(self.quality_scenarios)
+        qas.add_qas_ids(self.identifier, self.quality_scenarios)
 
     # ----------------------------------------------------------------------------------
     # Helper methods.

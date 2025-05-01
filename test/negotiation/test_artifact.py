@@ -101,7 +101,7 @@ def test_qas_id_generation():
     )
 
     # Add new ids as needed.
-    qas.add_qas_ids(card.quality_scenarios)
+    qas.add_qas_ids(card.identifier, card.quality_scenarios)
 
     for scenario in card.quality_scenarios:
         assert scenario.identifier is not None
@@ -116,7 +116,7 @@ def test_qas_id_increase():
     )
     card.quality_scenarios.append(
         QASDescriptor(
-            identifier=qas._build_qas_id(1),
+            identifier=qas._build_qas_id(card.identifier, 1),
             quality="security",
             stimulus="test",
         )
@@ -126,7 +126,7 @@ def test_qas_id_increase():
     )
     card.quality_scenarios.append(
         QASDescriptor(
-            identifier=qas._build_qas_id(2),
+            identifier=qas._build_qas_id(card.identifier, 2),
             quality="maintainability",
             stimulus="test",
         )
@@ -136,11 +136,21 @@ def test_qas_id_increase():
     )
 
     # Add ids as needed.
-    qas.add_qas_ids(card.quality_scenarios)
+    qas.add_qas_ids(card.identifier, card.quality_scenarios)
 
     assert len(card.quality_scenarios) == 5
-    assert card.quality_scenarios[0].identifier == qas._build_qas_id(3)
-    assert card.quality_scenarios[1].identifier == qas._build_qas_id(1)
-    assert card.quality_scenarios[2].identifier == qas._build_qas_id(4)
-    assert card.quality_scenarios[3].identifier == qas._build_qas_id(2)
-    assert card.quality_scenarios[4].identifier == qas._build_qas_id(5)
+    assert card.quality_scenarios[0].identifier == qas._build_qas_id(
+        card.identifier, 3
+    )
+    assert card.quality_scenarios[1].identifier == qas._build_qas_id(
+        card.identifier, 1
+    )
+    assert card.quality_scenarios[2].identifier == qas._build_qas_id(
+        card.identifier, 4
+    )
+    assert card.quality_scenarios[3].identifier == qas._build_qas_id(
+        card.identifier, 2
+    )
+    assert card.quality_scenarios[4].identifier == qas._build_qas_id(
+        card.identifier, 5
+    )

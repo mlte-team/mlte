@@ -158,8 +158,6 @@ def _make_test_results(complete: bool) -> TestResultsModel:
     Make a minimal test results, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    # TODO: Make a complete TestResults that is properly connected to TestSuite, which is not trivial.
-    # Maybe create in DB here? Find way to make this work for better coverage.
     test_suite = make_complete_test_suite_model()
     return TestResultsModel(test_suite=test_suite)
 
@@ -274,7 +272,7 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier="qas_id_1",
+                identifier="default.negotiation_card-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
