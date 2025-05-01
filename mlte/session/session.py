@@ -196,7 +196,4 @@ def print_custom_list_entries(list_name: CustomListName) -> None:
         list_name
     )
     for entry in entry_list:
-        if entry.parent:
-            print(f"{entry.name} (Parent: {entry.parent}): {entry.description}")
-        else:
-            print(f"{entry.name} (Parent: None): {entry.description}")
+        print(str(entry))
