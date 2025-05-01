@@ -33,18 +33,19 @@ def test_session() -> None:
     model = "model"
     version = "v0.0.1"
     cat_id = "test_cat"
-    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
     catalog_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     set_context(model, version)
-    set_store(artifact_store_uri)
+    set_store(store_uri)
     add_catalog_store(catalog_store_uri, cat_id)
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
-    assert s.artifact_store.uri.uri == artifact_store_uri
+    assert s.artifact_store.uri.uri == store_uri
+    assert s.custom_list_store.uri.uri == store_uri
     assert s.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
 
 
@@ -77,31 +78,36 @@ def test_environment_vars():
     model = "model"
     version = "v0.0.1"
     artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    custom_list_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
     os.environ[Session.MLTE_CONTEXT_MODEL_VAR] = model
     os.environ[Session.MLTE_CONTEXT_VERSION_VAR] = version
     os.environ[Session.MLTE_ARTIFACT_STORE_URI_VAR] = artifact_store_uri
+    os.environ[Session.MLTE_CUSTOM_LIST_STORE_URI_VAR] = custom_list_store_uri
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
     assert s.artifact_store.uri.uri == artifact_store_uri
+    assert s.custom_list_store.uri.uri == custom_list_store_uri
 
     del os.environ[Session.MLTE_CONTEXT_MODEL_VAR]
     del os.environ[Session.MLTE_CONTEXT_VERSION_VAR]
     del os.environ[Session.MLTE_ARTIFACT_STORE_URI_VAR]
+    del os.environ[Session.MLTE_CUSTOM_LIST_STORE_URI_VAR]
 
 
 def test_no_context_setup():
-    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
-    set_store(artifact_store_uri)
+    set_store(store_uri)
 
     s = session()
 
     with pytest.raises(RuntimeError):
         _ = s.context
+        _ = s.custom_list_store
 
 
 def test_no_store_setup():
@@ -114,3 +120,4 @@ def test_no_store_setup():
 
     with pytest.raises(RuntimeError):
         _ = s.artifact_store
+        _ = s.custom_list_store
