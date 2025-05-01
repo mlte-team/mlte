@@ -24,9 +24,11 @@
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
+          <th data-sortable scope="col" role="columnheader">
+            Quality Attribute Scenario
+          </th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
-          <th data-sortable scope="col" role="columnheader">Evidence ID</th>
+          <th data-sortable scope="col" role="columnheader">Test Case ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>
         </tr>
       </thead>
@@ -51,9 +53,13 @@
             {{ finding.status }}
           </td>
           <td v-else>{{ finding.status }}</td>
-          <td>{{ finding.qa_category }}</td>
+          <td>
+            <div v-for="(item, index) in finding.qas_list" :key="index">
+              {{ item.id }} - {{ item.qa }}
+            </div>
+          </td>
           <td>{{ finding.measurement }}</td>
-          <td>{{ finding.evidence_id }}</td>
+          <td>{{ finding.test_case_id }}</td>
           <td>{{ finding.message }}</td>
         </tr>
       </tbody>
@@ -80,9 +86,19 @@
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
         Cancel
       </UsaButton>
-      <UsaButton class="primary-button" disabled @click="exportReport()">
-        Export
-      </UsaButton>
+      <NuxtLink
+        target="_blank"
+        :to="{
+          path: '/report-export',
+          query: {
+            model: useRoute().query.model,
+            version: useRoute().query.version,
+            artifactId: useRoute().query.artifactId,
+          },
+        }"
+      >
+        <UsaButton class="primary-button"> Export </UsaButton>
+      </NuxtLink>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
     </div>
   </NuxtLayout>
@@ -182,7 +198,7 @@ const form = ref({
     },
     system_requirements: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",
@@ -191,7 +207,7 @@ const form = ref({
       },
     ],
   },
-  validated_spec_id: "",
+  test_results_id: "",
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -231,9 +247,8 @@ if (useRoute().query.artifactId !== undefined) {
                 ?.value !== undefined
             ) {
               form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find(
-                  (x) => x.value === problemType,
-                )?.value;
+                problemTypeOptions.value.find((x) => x.value === problemType)
+                  ?.value;
             }
 
             // Setting .value for each classification item to work in the select
@@ -250,16 +265,18 @@ if (useRoute().query.artifactId !== undefined) {
               }
             });
 
-            if (response._data.body.validated_spec_id) {
-              form.value.validated_spec_id =
-                response._data.body.validated_spec_id;
-              const validatedSpec = await fetchArtifact(
+            if (response._data.body.test_results_id) {
+              form.value.test_results_id = response._data.body.test_results_id;
+              const testResults = await fetchArtifact(
                 token.value,
                 model,
                 version,
-                form.value.validated_spec_id,
+                form.value.test_results_id,
               );
-              findings.value = loadFindings(validatedSpec);
+              findings.value = loadFindings(
+                testResults,
+                form.value.nc_data.system_requirements,
+              );
             }
           }
         }
@@ -315,28 +332,30 @@ async function submit() {
           onRequestError() {
             requestErrorAlert();
           },
-          onResponseError({ response }) {
-            if (response.status === 409) {
-              conflictErrorAlert();
-            } else {
-              handleHttpError(
-                response.status,
-                response._data.error_description,
-              );
+          onResponse({ response }) {
+            if (response.ok) {
+              successfulArtifactSubmission("report", identifier);
+              forceSaveParam.value = true;
+              if (useRoute().query.artifactId === undefined) {
+                window.location =
+                  "/report-form?" +
+                  "model=" +
+                  useRoute().query.model +
+                  "&version=" +
+                  useRoute().query.version +
+                  "&artifactId=" +
+                  identifier;
+              }
             }
+          },
+          onResponseError({ response }) {
+            handleHttpError(response.status, response._data.error_description);
           },
         },
       );
-      successfulArtifactSubmission("report", identifier);
-      forceSaveParam.value = true;
     } catch {}
   } else {
     console.log("Invalid report.");
   }
-}
-
-// Export the current report.
-function exportReport() {
-  alert("Report export is not currently implemented.");
 }
 </script>

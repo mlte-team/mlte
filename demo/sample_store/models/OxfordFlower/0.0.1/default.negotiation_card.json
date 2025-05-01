@@ -2,7 +2,7 @@
     "header": {
         "identifier": "default.negotiation_card",
         "type": "negotiation_card",
-        "timestamp": 1727711963,
+        "timestamp": 1745958596,
         "creator": "admin"
     },
     "body": {
@@ -200,7 +200,8 @@
             },
             "system_requirements": [
                 {
-                    "quality": "Fairness: Model Impartial to Photo Location",
+                    "identifier": "default.negotiation_card-qas_001",
+                    "quality": "Model Impartial to Photo Location",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -208,7 +209,8 @@
                     "measure": "at least 90% of the time"
                 },
                 {
-                    "quality": "Robustness: Model Robust to Noise (Image Blur)",
+                    "identifier": "default.negotiation_card-qas_002",
+                    "quality": "Model Robust to Noise (Image Blur)",
                     "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry,",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -216,7 +218,8 @@
                     "measure": "at the same rate as non-blurry images"
                 },
                 {
-                    "quality": "Robustness: Model Robust to Noise (Channel Loss)",
+                    "identifier": "default.negotiation_card-qas_003",
+                    "quality": "Model Robust to Noise (Channel Loss)",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application running on a loaned device ",
                     "environment": "normal operations. These devices are known to sometimes lose a channel (i.e., RGB channel)",
@@ -224,7 +227,8 @@
                     "measure": "at the same rate as full images"
                 },
                 {
-                    "quality": "Performance: Resource Consumption on Operational Platform",
+                    "identifier": "default.negotiation_card-qas_004",
+                    "quality": "Resource Consumption on Operational Platform",
                     "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively)",
@@ -232,7 +236,8 @@
                     "measure": "without any errors due to unavailable resources"
                 },
                 {
-                    "quality": "Interpretability: Understanding Model Results",
+                    "identifier": "default.negotiation_card-qas_005",
+                    "quality": "Understanding Model Results",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -240,7 +245,8 @@
                     "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
                 },
                 {
-                    "quality": "Functional Correctness: Accuracy",
+                    "identifier": "default.negotiation_card-qas_006",
+                    "quality": "Accuracy",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "flower identification application",
                     "environment": "normal operations",
@@ -248,7 +254,8 @@
                     "measure": "at least 90% of the time"
                 },
                 {
-                    "quality": "Functional Correctness: Input and Output Specification",
+                    "identifier": "default.negotiation_card-qas_007",
+                    "quality": "Input and Output Specification",
                     "stimulus": "The model receives a picture taken at the garden",
                     "source": "flower identification application",
                     "environment": "normal operations",
@@ -256,7 +263,8 @@
                     "measure": "according to established input and output specifications without exceptions"
                 },
                 {
-                    "quality": "Resilience: Input Validation",
+                    "identifier": "default.negotiation_card-qas_008",
+                    "quality": "Input Validation",
                     "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -264,7 +272,8 @@
                     "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input."
                 },
                 {
-                    "quality": "Monitorability: Detect Out-of-Distribution (OOD) Inputs",
+                    "identifier": "default.negotiation_card-qas_009",
+                    "quality": "Detect Out-of-Distribution (OOD) Inputs",
                     "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
                     "source": "the flower identification application",
                     "environment": "normal operations",
@@ -272,7 +281,8 @@
                     "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
                 },
                 {
-                    "quality": "Monitorability: Detect Shifts in Output (Confidence) Distribution",
+                    "identifier": "default.negotiation_card-qas_010",
+                    "quality": "Detect Shifts in Output (Confidence) Distribution",
                     "stimulus": "The ML pipeline detects an output distribution change",
                     "source": "the output produced by the model",
                     "environment": "normal operations",
@@ -280,7 +290,8 @@
                     "measure": "with the tag \"Model - Output Confidence Error - <Output>, where <Output> is the output produced by the model that triggered the condition"
                 },
                 {
-                    "quality": "Performance: Inference Time on Operational Platform",
+                    "identifier": "default.negotiation_card-qas_011",
+                    "quality": "Inference Time on Operational Platform",
                     "stimulus": "Model running on the loaned device receives a picture",
                     "source": "the flower identification application",
                     "environment": "normal operations",

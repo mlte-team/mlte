@@ -2,13 +2,13 @@
 #
 # Image definition for MLTE container, built from a PyPi package.
 
-FROM python:3.10.14-slim-bookworm
+FROM python:3.12.10-slim-bookworm
 
 # Base deps for compiling wheels.
 RUN apt-get update && apt-get install -y build-essential
 
 # Setup MLTE and dependencies.
-RUN pip install mlte-python
+RUN pip install mlte[rdbs,frontend]
 
 # Get the command from an arg.
 ARG MLTE_COMMAND

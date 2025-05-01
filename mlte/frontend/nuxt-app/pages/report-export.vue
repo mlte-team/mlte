@@ -59,14 +59,16 @@
       <thead>
         <tr>
           <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">Quality Attribute Category</th>
+          <th data-sortable scope="col" role="columnheader">
+            Quality Attribute Scenario
+          </th>
           <th data-sortable scope="col" role="columnheader">Measurement</th>
-          <th data-sortable scope="col" role="columnheader">Evidence ID</th>
+          <th data-sortable scope="col" role="columnheader">Test Case ID</th>
           <th data-sortable scope="col" role="columnheader">Message</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="finding in findings" :key="finding.evidence_id">
+        <tr v-for="finding in findings" :key="finding.test_case_id">
           <td
             v-if="finding.status == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
@@ -86,9 +88,13 @@
             {{ finding.status }}
           </td>
           <td v-else>{{ finding.status }}</td>
-          <td>{{ finding.qa_category }}</td>
+          <td>
+            <div v-for="(item, index) in finding.qas_list" :key="index">
+              {{ item.id }} - {{ item.qa }}
+            </div>
+          </td>
           <td>{{ finding.measurement }}</td>
-          <td>{{ finding.evidence_id }}</td>
+          <td>{{ finding.test_case_id }}</td>
           <td>{{ finding.message }}</td>
         </tr>
       </tbody>
@@ -163,16 +169,19 @@ await useFetch(
         if (isValidReport(response._data)) {
           pageData.value = response._data.body;
 
-          if (response._data.body.validated_spec_id) {
-            pageData.value.validated_spec_id =
-              response._data.body.validated_spec_id;
-            const validatedSpec = await fetchArtifact(
+          if (response._data.body.test_results_id) {
+            pageData.value.test_results_id =
+              response._data.body.test_results_id;
+            const testResults = await fetchArtifact(
               token.value,
               model,
               version,
-              pageData.value.validated_spec_id,
+              pageData.value.test_results_id,
             );
-            findings.value = loadFindings(validatedSpec);
+            findings.value = loadFindings(
+              testResults,
+              pageData.value.nc_data.system_requirements,
+            );
           }
         }
       }

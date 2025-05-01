@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/catalog.py
-
-Test Catalog Entry CRUD endpoint.
-"""
+"""Test Catalog Entry CRUD endpoints."""
 
 from __future__ import annotations
 
@@ -12,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
+from mlte._private import url as url_utils
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.models.catalog import CatalogReply
@@ -35,6 +32,7 @@ def create_catalog_entry(
     :param entry: The catalog entry to create
     :return: The created catalog entry
     """
+    catalog_id = url_utils.revert_valid_url_part(catalog_id)
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             if not entry.header.catalog_id:
@@ -77,6 +75,7 @@ def edit_catalog_entry(
     :param entry: The entry to edit
     :return: The edited entry
     """
+    catalog_id = url_utils.revert_valid_url_part(catalog_id)
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             if not entry.header.catalog_id:
@@ -115,6 +114,8 @@ def read_catalog_entry(
     :param catalog_entry_id: The entry name
     :return: The read entry
     """
+    catalog_id = url_utils.revert_valid_url_part(catalog_id)
+    catalog_entry_id = url_utils.revert_valid_url_part(catalog_entry_id)
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(catalog_id).entry_mapper.read(
@@ -140,6 +141,8 @@ def delete_catalog_entry(
     :param catalog_entry_id: The entry id
     :return: The deleted entry
     """
+    catalog_id = url_utils.revert_valid_url_part(catalog_id)
+    catalog_entry_id = url_utils.revert_valid_url_part(catalog_entry_id)
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             catalog_session = catalog_stores.get_session(catalog_id)
@@ -171,6 +174,7 @@ def list_catalog_entries(
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
     """
+    catalog_id = url_utils.revert_valid_url_part(catalog_id)
     with state_stores.catalog_stores_session() as catalog_stores:
         try:
             return catalog_stores.get_session(

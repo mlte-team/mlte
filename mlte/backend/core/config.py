@@ -51,11 +51,11 @@ class Settings(BaseSettings):
             ) from None
         return v
 
-    STORE_URI: str = StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)
+    STORE_URI: str = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
     """The store URI string; defaults to in-memory store."""
 
     CATALOG_URIS: Dict[str, str] = {
-        "local": StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)
+        "local": StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
     }
     """The dict of catalog URI strings; defaults to one in-memory store."""
 

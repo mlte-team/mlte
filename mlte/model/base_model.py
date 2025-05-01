@@ -6,7 +6,7 @@ Base model implementation for all MLTE models.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Optional
 
 import pydantic
 
@@ -17,7 +17,7 @@ from mlte.model.serialization_error import SerializationError
 class BaseModel(pydantic.BaseModel):
     """The base model for all MLTE models."""
 
-    def to_json(self) -> Dict[str, Any]:
+    def to_json(self) -> dict[str, Any]:
         """
         Serialize the model. Also check if the result is serializable.
         :return: The JSON representation of the model
@@ -33,13 +33,26 @@ class BaseModel(pydantic.BaseModel):
         return json_object
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> BaseModel:
+    def from_json(cls, data: dict[str, Any]) -> BaseModel:
         """
         Deserialize a model from data.
         :param data: The raw input data
         :return: A deserialized model instance
         """
         return cls(**data)
+
+    def to_json_string(self) -> str:
+        """Serialize to a json string."""
+        return json.dumps(self.to_json())
+
+    @classmethod
+    def from_json_string(cls, json_str: str) -> Any:
+        """Deserialize from a json string."""
+        return cls.from_json(json.loads(json_str))
+
+    def post_validation_hook(self, data: Optional[Any] = None) -> Any:
+        """Called after validation, lets submodels do any needed post-processing."""
+        pass
 
     def _equal(a: BaseModel, b: BaseModel) -> bool:
         """

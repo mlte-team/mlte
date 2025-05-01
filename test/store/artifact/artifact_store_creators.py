@@ -43,7 +43,7 @@ def create_memory_store() -> InMemoryStore:
     return typing.cast(
         InMemoryStore,
         create_artifact_store(
-            f"{StoreURI.get_default_prefix(StoreType.LOCAL_MEMORY)}"
+            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
         ),
     )
 
@@ -52,7 +52,9 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
         create_artifact_store(
-            f"{StoreURI.get_default_prefix(StoreType.LOCAL_FILESYSTEM)}{tmp_path}"
+            StoreURI.create_uri_string(
+                StoreType.LOCAL_FILESYSTEM, str(tmp_path)
+            )
         ),
     )
 

@@ -28,34 +28,40 @@
       <h3 class="no-margin-sub-header">
         Requirement {{ requirementIndex + 1 }}
       </h3>
+      <p v-if="requirement.identifier">
+        <b>ID: </b> {{ requirement.identifier }}
+      </p>
+      <p v-else><b>ID: </b> Defined after save</p>
       <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
         <b>Scenario for {{ requirement.quality }}: </b>
         {{ requirement.stimulus }} from {{ requirement.source }} during
         {{ requirement.environment }}. {{ requirement.response }}
         {{ requirement.measure }}.
       </p>
-      <UsaTextInput v-model="requirement.quality">
-        <template #label>
-          <b>System Quality:</b> What is the model quality attribute category to be tested, such
-          as accuracy, performance, robustness, fairness, or resource
-          consumption?
-          <InfoIcon>
-            Quality attribute category by which the model will be evaluated in the context of the
-            system <br />
-            (e.g., Accuracy, Performance, Robustness, Fairness, Resource
-            Consumption).
-            <br />
-            <br />
-            <i>Example: Response time.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
+
+      <FormFieldsQualityAttributes
+        :initial-quality-attribute="requirement.quality"
+        @update-attribute="requirement.quality = $event"
+      >
+        <b>System Quality:</b> What is the model quality attribute category to
+        be tested, such as accuracy, performance, robustness, fairness, or
+        resource consumption?
+        <InfoIcon>
+          Quality attribute category by which the model will be evaluated in the
+          context of the system <br />
+          (e.g., Accuracy, Performance, Robustness, Fairness, Resource
+          Consumption).
+          <br />
+          <br />
+          <i>Example: Response time.</i>
+        </InfoIcon>
+      </FormFieldsQualityAttributes>
 
       <UsaTextInput v-model="requirement.stimulus">
         <template #label>
           <b>Stimulus:</b> What is the input to the model, the action, or the
-          event that will enable testing of the quality attribute category, such as input data,
-          system event, or user operation?
+          event that will enable testing of the quality attribute category, such
+          as input data, system event, or user operation?
           <InfoIcon>
             A condition arriving at the system/model (e.g., data,
             <br />
@@ -155,7 +161,7 @@ const props = defineProps({
     required: true,
     default: [
       {
-        quality: "<System Quality>",
+        quality: "",
         stimulus: "<Stimulus>",
         source: "<Source>",
         environment: "<Environment>",
@@ -217,7 +223,7 @@ const systemModalRows = ref([
 
 function addRequirement() {
   props.modelValue.push({
-    quality: "<System Quality>",
+    quality: "",
     stimulus: "<Stimulus>",
     source: "<Source>",
     environment: "<Environment>",

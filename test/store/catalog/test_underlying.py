@@ -170,3 +170,27 @@ def test_search(store_fixture_name: str, create_test_store) -> None:  # noqa
         query = Query()
         entries = session.entry_mapper.search(query)
         assert len(entries) == 2
+
+
+@pytest.mark.parametrize("store_fixture_name", catalog_stores())
+def test_invalid_chars(
+    store_fixture_name: str, create_test_store  # noqa
+) -> None:
+    """A catalog store store supports invalid storage chars."""
+    catalog_id = "weird/catalog_id"
+    store: CatalogStore = create_test_store(store_fixture_name, catalog_id)
+
+    entry_id = "weird/name"
+    test_entry = get_test_entry_for_store(
+        store_name=store_fixture_name, id=entry_id, catalog_id=catalog_id
+    )
+
+    with ManagedCatalogSession(store.session()) as catalog_store:
+        # Test creating an entry.
+        catalog_store.entry_mapper.create(test_entry)
+        read_entry = catalog_store.entry_mapper.read(
+            test_entry.header.identifier
+        )
+        read_entry.header.creator = None  # To avoid issue with creator.
+        read_entry.header.created = -1  # To avoid issue with creation time.
+        assert test_entry == read_entry

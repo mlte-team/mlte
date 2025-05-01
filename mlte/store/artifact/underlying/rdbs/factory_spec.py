@@ -1,6 +1,4 @@
 """
-mlte/store/artifact/underlying/rdbs/factory_spec.py
-
 Conversions between schema and internal models.
 """
 
@@ -9,170 +7,151 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from mlte._private.fixed_json import json
-from mlte.evidence.metadata import EvidenceMetadata, Identifier
-from mlte.spec.model import QACategoryModel, SpecModel
+from mlte.evidence.metadata import EvidenceMetadata
+from mlte.measurement.model import MeasurementMetadata
+from mlte.results.model import ResultModel, TestResultsModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_spec import (
-    DBCondition,
     DBEvidenceMetadata,
-    DBQACategory,
     DBResult,
-    DBSpec,
-    DBValidatedSpec,
+    DBTestCase,
+    DBTestResults,
+    DBTestSuite,
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
-from mlte.validation.model import ResultModel, ValidatedSpecModel
-from mlte.validation.model_condition import ConditionModel
+from mlte.tests.model import TestCaseModel, TestSuiteModel
+from mlte.validation.model import ValidatorModel
 
 # -------------------------------------------------------------------------
-# Spec Factory Methods
+# TestSuite Factory Methods
 # -------------------------------------------------------------------------
 
 
 def create_spec_db_from_model(
-    spec: SpecModel, artifact_header: DBArtifactHeader
-) -> DBSpec:
+    test_suite: TestSuiteModel, artifact_header: DBArtifactHeader
+) -> DBTestSuite:
     """Creates the DB object from the corresponding internal model."""
-    spec_obj = DBSpec(artifact_header=artifact_header, qa_categories=[])
-    for qa_category in spec.qa_categories:
-        qa_category_obj = DBQACategory(
-            name=qa_category.name,
-            description=qa_category.description,
-            rationale=qa_category.rationale,
-            module=qa_category.module,
-            spec=spec_obj,
+    test_suite_obj = DBTestSuite(artifact_header=artifact_header, test_cases=[])
+    for test_case in test_suite.test_cases:
+        test_case_obj = DBTestCase(
+            identifier=test_case.identifier,
+            goal=test_case.goal,
+            measurement_metadata=(
+                test_case.measurement.to_json_string()
+                if test_case.measurement
+                else None
+            ),
+            validator=(
+                test_case.validator.to_json_string()
+                if test_case.validator
+                else None
+            ),
+            qas_list=json.dumps(test_case.qas_list),
         )
-        spec_obj.qa_categories.append(qa_category_obj)
+        test_suite_obj.test_cases.append(test_case_obj)
 
-        for (
-            measurement_id,
-            condition,
-        ) in qa_category.conditions.items():
-            condition_obj = DBCondition(
-                name=condition.name,
-                measurement_id=measurement_id,
-                arguments=condition.args_to_json_str(),
-                validator=json.dumps(condition.validator.to_json()),
-                value_class=condition.value_class,
-                qa_category=qa_category_obj,
-            )
-            qa_category_obj.conditions.append(condition_obj)
-
-    return spec_obj
+    return test_suite_obj
 
 
-def create_spec_model_from_db(spec_obj: DBSpec) -> SpecModel:
+def create_test_suite_model_from_db(
+    test_suite_obj: DBTestSuite,
+) -> TestSuiteModel:
     """Creates the internal model object from the corresponding DB object."""
-    # Creating a Spec from DB data.
-    body = SpecModel(
-        qa_categories=[
-            QACategoryModel(
-                name=category.name,
-                description=category.description,
-                rationale=category.rationale,
-                module=category.module,
-                conditions={
-                    condition.measurement_id: ConditionModel(
-                        name=condition.name,
-                        validator=json.loads(condition.validator),
-                        value_class=condition.value_class,
-                        arguments=json.loads(condition.arguments),
+    # Creating a TestSuite from DB data.
+    body = TestSuiteModel(
+        test_cases=[
+            TestCaseModel(
+                identifier=test_case_obj.identifier,
+                goal=test_case_obj.goal,
+                measurement=(
+                    MeasurementMetadata.from_json_string(
+                        test_case_obj.measurement_metadata
                     )
-                    for condition in category.conditions
-                },
+                    if test_case_obj.measurement_metadata
+                    else None
+                ),
+                validator=(
+                    ValidatorModel.from_json_string(test_case_obj.validator)
+                    if test_case_obj.validator
+                    else None
+                ),
+                qas_list=json.loads(test_case_obj.qas_list),
             )
-            for category in spec_obj.qa_categories
+            for test_case_obj in test_suite_obj.test_cases
         ],
     )
     return body
 
 
 # -------------------------------------------------------------------------
-# ValidatedSpec Factory Methods
+# TestResults Factory Methods
 # -------------------------------------------------------------------------
 
 
-def create_v_spec_db_from_model(
-    validated_spec: ValidatedSpecModel,
+def create_test_results_db_from_model(
+    test_results: TestResultsModel,
     artifact_header: DBArtifactHeader,
     session: Session,
-) -> DBValidatedSpec:
+) -> DBTestResults:
     """Creates the DB object from the corresponding internal model."""
-    validated_spec_obj = DBValidatedSpec(
+    test_results_obj = DBTestResults(
         artifact_header=artifact_header,
         results=[],
-        spec=(
-            DBReader.get_spec(
-                validated_spec.spec_identifier,
+        test_suite=(
+            DBReader.get_test_suite(
+                test_results.test_suite_id,
                 artifact_header.version_id,
                 session,
             )
-            if validated_spec.spec_identifier != ""
+            if test_results.test_suite_id != ""
             else None
         ),
     )
-    for qa_category_name, results in validated_spec.results.items():
-        for measurement_id, result in results.items():
-            result_obj = DBResult(
-                measurement_id=measurement_id,
-                type=result.type,
-                message=result.message,
-                qa_category_id=DBReader.get_qa_category_id(
-                    qa_category_name,
-                    validated_spec.spec_identifier,
-                    artifact_header.version_id,
-                    session,
-                ),
-                validated_spec=validated_spec_obj,
-                evidence_metadata=(
-                    DBEvidenceMetadata(
-                        identifier=measurement_id,
-                        measurement_type=result.metadata.measurement_type,
-                        info=result.metadata.info,
-                    )
-                    if result.metadata is not None
-                    else None
-                ),
-            )
-            validated_spec_obj.results.append(result_obj)
-    return validated_spec_obj
+    for test_case_id, result in test_results.results.items():
+        result_obj = DBResult(
+            type=result.type,
+            message=result.message,
+            test_results=test_results_obj,
+            evidence_metadata=(
+                DBEvidenceMetadata(
+                    test_case_id=test_case_id,
+                    measurement=result.evidence_metadata.measurement.to_json_string(),
+                )
+                if result.evidence_metadata is not None
+                else None
+            ),
+        )
+        test_results_obj.results.append(result_obj)
+    return test_results_obj
 
 
-def create_v_spec_model_from_db(
-    validated_obj: DBValidatedSpec,
-) -> ValidatedSpecModel:
+def create_test_results_model_from_db(
+    test_results_obj: DBTestResults,
+) -> TestResultsModel:
     """Creates the internal model object from the corresponding DB object."""
-    body = ValidatedSpecModel(
+    body = TestResultsModel(
         results=(
             {
-                qa_category.name: {
-                    result.measurement_id: ResultModel(
-                        type=result.type,
-                        message=result.message,
-                        metadata=EvidenceMetadata(
-                            measurement_type=result.evidence_metadata.measurement_type,
-                            identifier=Identifier(
-                                name=result.evidence_metadata.identifier
-                            ),
+                result.evidence_metadata.test_case_id: ResultModel(
+                    type=result.type,
+                    message=result.message,
+                    evidence_metadata=EvidenceMetadata(
+                        test_case_id=result.evidence_metadata.test_case_id,
+                        measurement=MeasurementMetadata.from_json_string(
+                            result.evidence_metadata.measurement
                         ),
-                    )
-                    for result in validated_obj.results
-                    if result.qa_category.name == qa_category.name
-                }
-                for qa_category in validated_obj.spec.qa_categories
+                    ),
+                )
+                for result in test_results_obj.results
             }
-            if validated_obj.spec is not None
-            else {}
         ),
-        spec_identifier=(
-            validated_obj.spec.artifact_header.identifier
-            if validated_obj.spec is not None
+        test_suite_id=(
+            test_results_obj.test_suite.artifact_header.identifier
+            if test_results_obj.test_suite is not None
             else ""
         ),
-        spec=(
-            create_spec_model_from_db(validated_obj.spec)
-            if validated_obj.spec is not None
-            else None
+        test_suite=(
+            create_test_suite_model_from_db(test_results_obj.test_suite)
         ),
     )
     return body
