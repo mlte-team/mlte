@@ -102,15 +102,11 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
 
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here?
-    custom_list_store = InitialCustomLists.setup_custom_list_store(
-        stores_uri=artifact_store.uri
-    )
+    custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
     state.set_custom_list_store(custom_list_store)
 
     # Catalogs: first add the sample catalog store.
-    sample_catalog = SampleCatalog.setup_sample_catalog(
-        stores_uri=artifact_store.uri
-    )
+    sample_catalog = SampleCatalog.setup_sample_catalog(stores_uri)
     state.add_catalog_store(
         store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
     )

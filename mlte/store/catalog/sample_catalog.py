@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import importlib.resources
 import os
-from typing import Optional
 
 import mlte.store.catalog.sample as sample_entries
 from mlte._private.fixed_json import json
@@ -30,7 +29,7 @@ class SampleCatalog:
 
     @staticmethod
     def setup_sample_catalog(
-        stores_uri: Optional[StoreURI] = None,
+        stores_uri: str,
     ) -> CatalogStore:
         """
         Sets up the sample catalog.
@@ -38,22 +37,21 @@ class SampleCatalog:
         :param stores_uri: The URI of the stores being used (i.e., base folder, base DB, etc).
         :return: The sample catalog store.
         """
+        parsed_uri = StoreURI.from_string(stores_uri)
+
         # Set file system URI if we didn't get one, or if we got a non-file system one.
-        if stores_uri is None or (
-            stores_uri is not None
-            and stores_uri.type != StoreType.LOCAL_FILESYSTEM
-        ):
+        if parsed_uri.type != StoreType.LOCAL_FILESYSTEM:
             # We will always create the sample catalog store as a file system store, regardless of where the other
             # stores of the system are.
-            stores_uri = StoreURI.create_default_fs_uri()
+            parsed_uri = StoreURI.create_default_fs_uri()
 
         # The base stores folder has to exist, so create it if it doesn't.
-        os.makedirs(f"{stores_uri.path}", exist_ok=True)
+        os.makedirs(f"{parsed_uri.path}", exist_ok=True)
 
         # Create the actual sample catalog.
-        print(f"Creating sample catalog at URI: {stores_uri}")
+        print(f"Creating sample catalog at URI: {parsed_uri}")
         catalog = create_catalog_store(
-            stores_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
+            parsed_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
         )
 
         # Ensure the catalog is always reset to its initial state, and mark it as read only.

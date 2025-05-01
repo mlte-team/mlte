@@ -25,7 +25,7 @@ class InitialCustomLists:
 
     @staticmethod
     def setup_custom_list_store(
-        stores_uri: StoreURI,
+        stores_uri: str,
     ) -> CustomListStore:
         """
         Sets up a custom list store with the initial custom lists.
@@ -35,17 +35,19 @@ class InitialCustomLists:
         """
         # Workaround to force FS if DB or HTTP is requested, as they are not supported yet.
         # TODO: Remove this check once RDBS and HTTP are implemented.
+        parsed_uri = StoreURI.from_string(stores_uri)
         if (
-            stores_uri.type == StoreType.RELATIONAL_DB
-            or stores_uri.type == StoreType.REMOTE_HTTP
+            parsed_uri.type == StoreType.RELATIONAL_DB
+            or parsed_uri.type == StoreType.REMOTE_HTTP
         ):
             # Creates a  file system URI using the default stores folder.
-            stores_uri = StoreURI.create_default_fs_uri()
-            os.makedirs(f"{stores_uri.path}", exist_ok=True)
+            parsed_uri = StoreURI.create_default_fs_uri()
+            os.makedirs(f"{parsed_uri.path}", exist_ok=True)
 
         # Create the initial custom lists.
         print(f"Creating initial custom lists at URI: {stores_uri}")
-        custom_list_store = create_custom_list_store(stores_uri.uri)
+        # TODO : After section above is removed with implementation of RDBS and HTTP, make this var stores_uri
+        custom_list_store = create_custom_list_store(parsed_uri.uri)
 
         with ManagedCustomListSession(custom_list_store.session()) as session:
             # Load both QA categoties and QA as default lists.
