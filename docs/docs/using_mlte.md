@@ -7,12 +7,12 @@ This section walks users through how to set up and run the `MLTE` Python package
 If you already have Python installed you can install `MLTE` with
 
 ```bash
-$ pip install mlte-python
+$ pip install mlte
 ```
 or
 
 ```bash
-$ conda install mlte-python
+$ conda install mlte
 ```
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
