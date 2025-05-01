@@ -3,13 +3,14 @@ requires = ["poetry-core>=1.0.1"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-name = "mlte-python"
+name = "mlte"
 version = "1.0.2"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 dynamic = ["dependencies"]
+obsoletes-dist = "mlte-python"
 
 [project.urls]
 repository = "https://github.com/mlte-team/mlte"
