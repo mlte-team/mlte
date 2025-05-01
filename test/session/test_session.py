@@ -107,6 +107,7 @@ def test_no_context_setup():
 
     with pytest.raises(RuntimeError):
         _ = s.context
+        _ = s.custom_list_store
 
 
 def test_no_store_setup():
