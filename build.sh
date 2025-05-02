@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-rm dist/mlte_python-*.whl
-rm dist/mlte_python-*.gz
+rm -r dist
+mkdir dist
 
 cd mlte/frontend/nuxt-app && npm run build
 cd ../../../
