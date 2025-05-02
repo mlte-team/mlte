@@ -44,7 +44,7 @@ If results are not satisfactory, more negotiation is required to determine if re
 
 ## MLTE Metadata
 
-- Version: 1.0.2
+- Version: 1.0.3
 - Contact Email: mlte dot team dot info at gmail dot com
 - Citations: While not required, it is highly encouraged and greatly appreciated if you cite our paper when you use `MLTE` for academic research.
 
