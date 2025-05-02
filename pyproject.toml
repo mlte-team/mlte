@@ -2,18 +2,21 @@
 requires = ["poetry-core>=1.0.1"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "mlte-python"
 version = "1.0.3"
 description = "An infrastructure for machine learning test and evaluation."
-authors = ["MLTE Engineers"]
+authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
+requires-python = ">=3.9.1,<3.12"
+dependencies = [
+  "mlte >= 2.0.0",
+]
+dynamic = ["classifiers"]
+
+[tool.poetry]
 classifiers = ["Development Status :: 7 - Inactive"]
 
 packages = [
   { include = "mlte", format = ["sdist", "wheel"] }
 ]
-
-[tool.poetry.dependencies]
-python = ">=3.9.1,<3.12"
-mlte = ">=2.0.0"
