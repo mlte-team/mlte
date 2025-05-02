@@ -1,13 +1,11 @@
 """
-mlte/store/artifact/underlying/rdbs/metadata_spec.py
-
-Definition of the metadata (DB schema) for spec and validated spec in the artifact store,
+Definition of the metadata (DB schema) for TestSuite and TestResults in the artifact store,
 as well as converstions between schema and internal models.
 """
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -16,15 +14,15 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_value import DBValue
+from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
 
 # -------------------------------------------------------------------------
-# Spec Elements
+# TestSuite Elements
 # -------------------------------------------------------------------------
 
 
-class DBSpec(DBBase):
-    __tablename__ = "spec"
+class DBTestSuite(DBBase):
+    __tablename__ = "test_suite"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
@@ -32,117 +30,98 @@ class DBSpec(DBBase):
     )
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_spec", cascade="all"
+        back_populates="body_test_suite", cascade="all"
     )
-    qa_categories: Mapped[List[DBQACategory]] = relationship(
-        back_populates="spec", cascade="all, delete-orphan"
+    test_cases: Mapped[list[DBTestCase]] = relationship(
+        back_populates="test_suite", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"Spec(id={self.id!r}, artifact_header={self.artifact_header!r}, qa_categories={self.qa_categories!r})"
+        return f"TestSuite(id={self.id!r}, artifact_header={self.artifact_header!r}, test_cases={self.test_cases!r})"
 
 
-class DBQACategory(DBBase):
-    __tablename__ = "qa_category"
+class DBTestCase(DBBase):
+    __tablename__ = "test_case"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    description: Mapped[str]
-    rationale: Mapped[str]
-    module: Mapped[str]
-    spec_id: Mapped[int] = mapped_column(ForeignKey("spec.id"))
+    identifier: Mapped[str]
+    goal: Mapped[str]
+    qas_list: Mapped[str]
+    measurement_metadata: Mapped[Optional[str]]
+    validator: Mapped[Optional[str]]
+    test_suite_id: Mapped[int] = mapped_column(ForeignKey("test_suite.id"))
 
-    spec: Mapped[DBSpec] = relationship(back_populates="qa_categories")
-    conditions: Mapped[List[DBCondition]] = relationship(
-        cascade="all, delete-orphan", back_populates="qa_category"
-    )
-    results: Mapped[List[DBResult]] = relationship(back_populates="qa_category")
+    test_suite: Mapped[DBTestSuite] = relationship(back_populates="test_cases")
 
     def __repr__(self) -> str:
-        return f"QACategory(id={self.id!r}, name={self.name!r}, description={self.description!r}, rationale={self.rationale!r}, module={self.module!r})"
-
-
-class DBCondition(DBBase):
-    __tablename__ = "condition"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    measurement_id: Mapped[str]
-    name: Mapped[str]
-    arguments: Mapped[str]  # Json string of the aray of arguments.
-    validator: Mapped[str]
-    value_class: Mapped[str]
-    qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
-
-    qa_category: Mapped[DBQACategory] = relationship(
-        back_populates="conditions"
-    )
-
-    def __repr__(self) -> str:
-        return f"Condition(id={self.id!r}, name={self.name!r}, arguments={self.arguments!r}, value_class={self.value_class!r}, qa_category={self.qa_category!r})"
+        return f"TestCase(id={self.id!r}, name={self.identifier!r}, goal={self.goal!r})"
 
 
 # -------------------------------------------------------------------------
-# ValidatedSpec Elements
+# TestResults Elements
 # -------------------------------------------------------------------------
 
 
-class DBValidatedSpec(DBBase):
-    __tablename__ = "validated_spec"
+class DBTestResults(DBBase):
+    __tablename__ = "test_results"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
         ForeignKey("artifact_header.id")
     )
-    spec_id: Mapped[Optional[int]] = mapped_column(ForeignKey("spec.id"))
+    test_suite_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("test_suite.id")
+    )
 
     artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_validated_spec", cascade="all"
+        back_populates="body_test_results", cascade="all"
     )
-    spec: Mapped[DBSpec] = relationship()
-    results: Mapped[List[DBResult]] = relationship(
-        back_populates="validated_spec", cascade="all"
+    test_suite: Mapped[DBTestSuite] = relationship()
+    results: Mapped[list[DBResult]] = relationship(
+        back_populates="test_results", cascade="all"
     )
 
     def __repr__(self) -> str:
-        return f"ValidatedSpec(id={self.id!r}, artifact_header={self.artifact_header!r}, spec={self.spec!r})"
+        return f"TestResults(id={self.id!r}, artifact_header={self.artifact_header!r}, test_suite={self.test_suite!r})"
 
 
 class DBResult(DBBase):
     __tablename__ = "result"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    measurement_id: Mapped[str]
     type: Mapped[str]
     message: Mapped[str]
-    qa_category_id: Mapped[int] = mapped_column(ForeignKey("qa_category.id"))
-    validated_spec_id: Mapped[int] = mapped_column(
-        ForeignKey("validated_spec.id")
-    )
+    test_results_id: Mapped[int] = mapped_column(ForeignKey("test_results.id"))
 
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
         cascade="all, delete-orphan", back_populates="result"
     )
-    validated_spec: Mapped[DBValidatedSpec] = relationship(
-        back_populates="results"
-    )
-    qa_category: Mapped[DBQACategory] = relationship(back_populates="results")
+    test_results: Mapped[DBTestResults] = relationship(back_populates="results")
 
     def __repr__(self) -> str:
         return f"Result(id={self.id!r}, type={self.type!r}, message={self.message!r}, evidence_metadata={self.evidence_metadata!r})"
+
+
+# -------------------------------------------------------------------------
+# Common metadata.
+# -------------------------------------------------------------------------
 
 
 class DBEvidenceMetadata(DBBase):
     __tablename__ = "evidence_metadata"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    identifier: Mapped[str]
-    measurement_type: Mapped[str]
-    info: Mapped[Optional[str]]
+    test_case_id: Mapped[str]
+    measurement: Mapped[str]
     result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("result.id"))
-    value_id: Mapped[Optional[int]] = mapped_column(ForeignKey("value.id"))
+    evidence_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("evidence.id")
+    )
 
     result: Mapped[DBResult] = relationship(back_populates="evidence_metadata")
-    value: Mapped[DBValue] = relationship(back_populates="evidence_metadata")
+    evidence: Mapped[DBEvidence] = relationship(
+        back_populates="evidence_metadata"
+    )
 
     def __repr__(self) -> str:
-        return f"EvidenceMetadata(id={self.id!r}, identifier={self.identifier!r}, measurement_type={self.measurement_type!r}, info={self.info!r})"
+        return f"EvidenceMetadata(id={self.id!r}, identifier={self.test_case_id!r}, measurement={self.measurement!r})"

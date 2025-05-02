@@ -23,13 +23,9 @@ plugins:
       nav_file: SUMMARY.md
 nav:
   - Home: 'index.md'
-  - 'MLTE Process': mlte_process.md
-  - 'Setting Up MLTE': 'setting_up_mlte.md'
   - 'Using MLTE': 'using_mlte.md'
   - 'Development': 'development.md'
   - 'References':
-    - 'MLTE Framework': 'mlte_framework.md'
-    - 'MLTE Properties': 'properties.md'
     - 'MLTE Measurements': 'mlte_measurements.md'
     - 'MLTE Negotiation Card': 'negotiation_card.md'
     - 'Resources': 'resources.md'

@@ -566,6 +566,18 @@
     "QASDescriptor": {
       "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
       "properties": {
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
         "quality": {
           "anyOf": [
             {
@@ -807,7 +819,7 @@
         "system_requirements": []
       }
     },
-    "validated_spec_id": {
+    "test_results_id": {
       "anyOf": [
         {
           "type": "string"
@@ -817,7 +829,7 @@
         }
       ],
       "default": null,
-      "title": "Validated Spec Id"
+      "title": "Test Results Id"
     },
     "comments": {
       "default": [],

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, List, Protocol
+from typing import Any, List, Optional, Protocol
 
 from mlte.store.query import Query
 
@@ -58,7 +58,10 @@ class StoreURI:
     DELIMITER = "://"
     """Delimiter used to separate prefixes from rest of the path."""
 
-    def __init__(self, uri: str, type: StoreType, path: str):
+    DEFAULT_STORES_FOLDER = "default_store"
+    """Default root folder for all built-in file-based stores."""
+
+    def __init__(self, uri: str, type: StoreType, path: str, prefix: str):
         """
         Initialize a StoreURI instance.
         :param uri: The URI
@@ -74,6 +77,9 @@ class StoreURI:
         self.path = path
         """The rest of the path, with the prefix removed."""
 
+        self.prefix = prefix
+        """The actual prefix used in the type."""
+
     @staticmethod
     def from_string(uri: str) -> StoreURI:
         """
@@ -82,12 +88,23 @@ class StoreURI:
         :return: The parsed StoreURI
         """
         prefix, path = StoreURI._parse_uri(uri)
+
+        try:
+            type = StoreURI.get_type(prefix)
+            return StoreURI(uri, type, path, prefix)
+        except Exception as e:
+            # If we got here, the stucture of the URI is fine, but the prefix is unknown.
+            raise RuntimeError(f"Unsupported store URI: {uri}") from e
+
+    @staticmethod
+    def get_type(prefix: str) -> StoreType:
+        """Returns the type given a prefix."""
         for type in StoreType:
             if prefix.startswith(tuple(StoreURI.PREFIXES[type])):
-                return StoreURI(uri, type, path)
-
-        # If we got here, the stucture of the URI is fine, but the prefix is unknown.
-        raise RuntimeError(f"Unsupported store URI: {uri}")
+                return type
+        raise RuntimeError(
+            f"Prefix {prefix} is not associated to any known type."
+        )
 
     @staticmethod
     def _parse_uri(uri: str) -> tuple[str, str]:
@@ -101,9 +118,19 @@ class StoreURI:
             return prefix, path
 
     @staticmethod
-    def get_default_prefix(type: StoreType) -> str:
-        """Returns the default prefix for the given type, which will be the first one."""
-        return f"{StoreURI.PREFIXES[type][0]}{StoreURI.DELIMITER}"
+    def create_uri_string(type: StoreType, path: Optional[str] = None) -> str:
+        """Creates a URI using the default (first) prefix for the given type."""
+        prefix = StoreURI.PREFIXES[type][0]
+        return f"{prefix}{StoreURI.DELIMITER}{path}"
+
+    @staticmethod
+    def create_default_fs_uri() -> StoreURI:
+        """Creates the default StoreURI for file system stores."""
+        uri_string = StoreURI.create_uri_string(
+            type=StoreType.LOCAL_FILESYSTEM,
+            path=StoreURI.DEFAULT_STORES_FOLDER,
+        )
+        return StoreURI.from_string(uri_string)
 
     def __str__(self) -> str:
         return f"{self.type}:{self.uri}"

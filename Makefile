@@ -93,13 +93,13 @@ typecheck-frontend:
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest --cov=mlte test 
+	poetry run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
 
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	bash demo/simple/test.sh
-	bash demo/scenarios/test.sh
+	bash demo/simple/test.sh demo/simple
+	bash demo/scenarios/test.sh demo/scenarios
 
 # -----------------------------------------------------------------------------
 # Shorthand actions and checks needed to update and review for pushing.

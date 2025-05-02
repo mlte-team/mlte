@@ -49,3 +49,4 @@ docs/site
 /store*/
 pgdata/
 *.whl
+default_store/

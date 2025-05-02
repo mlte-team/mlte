@@ -29,3 +29,9 @@ class CustomListEntryModel(BaseModel):
 
     parent: str
     """ID of parent."""
+
+    def __str__(self) -> str:
+        if self.parent:
+            return f"{self.name} (Parent: {self.parent}): {self.description}"
+        else:
+            return f"{self.name} (Parent: None): {self.description}"

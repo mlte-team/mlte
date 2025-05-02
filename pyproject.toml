@@ -3,12 +3,13 @@ requires = ["poetry-core>=1.0.1"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-name = "mlte-python"
-version = "1.0.2"
+name = "mlte"
+version = "2.0.0"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
+obsoletes-dist = "mlte-python"
 dependencies = [
   "pydantic >= 2.10.5",
   "pydantic-settings >=2.7.1",
@@ -86,6 +87,14 @@ black = {extras = ["jupyter"], version = "24.10.0"}
 flake8 = "7.1.1"
 mypy = "1.14.1"
 types-requests = "2.32.0.20241016"
+types-PyYAML = "6.0.12.20241230"
+types-Pygments = "2.19.0.20250219"
+types-colorama = "0.4.15.20240311"
+types-decorator = "5.2.0.20250224"
+types-jsonschema = "4.23.0.20241208"
+types-psutil = "7.0.0.20250218"
+types-python-jose = "3.4.0.20250224"
+types-ujson = "5.10.0.20240515"
 
 # Testing
 pytest = "8.3.4"
@@ -111,7 +120,6 @@ target-version = ['py38']
 mypy_path = "src"
 check_untyped_defs = true
 disallow_any_generics = true
-ignore_missing_imports = true
 no_implicit_optional = true
 show_error_codes = true
 strict_equality = true

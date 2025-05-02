@@ -19,26 +19,45 @@ export function cancelFormSubmission(redirect: string) {
   }
 }
 
-// Load findings from a validated specication.
-export function loadFindings(proxyObject: object) {
+// Load findings from a test results.
+export function loadFindings(
+  proxyObject: object,
+  system_requirements: Array<object>,
+) {
   const findings = [];
   // TODO(Kyle): Standardize conversion of proxy objects.
-  const validatedSpec = JSON.parse(JSON.stringify(proxyObject));
-  validatedSpec.body.spec.qa_categories.forEach((qa_category) => {
-    // TODO(Kyle): This is not portable to some browsers.
-    const results = new Map(
-      Object.entries(validatedSpec.body.results[qa_category.name]),
+  const test_results = JSON.parse(JSON.stringify(proxyObject));
+  const results = test_results.body.results;
+  const test_cases = test_results.body.test_suite.test_cases;
+  for (const key in results) {
+    const result = results[key];
+    const matched_case = test_cases.find(
+      (x) => x.identifier === result.evidence_metadata.test_case_id,
     );
-    results.forEach((value) => {
-      const finding = {
-        status: value.type,
-        qa_category: qa_category.name,
-        measurement: value.metadata.measurement_type,
-        evidence_id: value.metadata.identifier.name,
-        message: value.message,
-      };
-      findings.push(finding);
+    const finding = {
+      status: result.type,
+      measurement: result.evidence_metadata.measurement.measurement_class,
+      test_case_id: result.evidence_metadata.test_case_id,
+      message: result.message,
+      qas_list: matched_case.qas_list,
+    };
+
+    findings.push(finding);
+  }
+  findings.forEach((finding) => {
+    const new_qas_list = [];
+    finding.qas_list.forEach((qas_id) => {
+      const matched_req = system_requirements.find(
+        (x) => x.identifier === qas_id,
+      );
+      new_qas_list.push({
+        id: qas_id,
+        qa: matched_req.quality,
+      });
     });
+    finding.qas_list = new_qas_list;
   });
+  console.log(findings);
+
   return findings;
 }

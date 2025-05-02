@@ -25,7 +25,7 @@ EXIT_FAILURE = 1
 _PROGRAM_NAME = "mlte"
 
 # The name of the package.
-_PACKAGE_NAME = "mlte-python"
+_PACKAGE_NAME = "mlte"
 
 # -----------------------------------------------------------------------------
 # Parsing Setup

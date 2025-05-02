@@ -1,47 +1,38 @@
 """
-mlte/validation/model.py
-
-Model implementation for the ValidatedSpec artifact.
+Model implementation for the Validator.
 """
 
-from typing import Dict, Literal, Optional
+from typing import Any, Optional
 
-from mlte.artifact.type import ArtifactType
-from mlte.evidence.metadata import EvidenceMetadata
-from mlte.model import BaseModel
-from mlte.spec.model import SpecModel
+from mlte.model.base_model import BaseModel
 
 
-class ResultModel(BaseModel):
-    """A description of a Result."""
+class ValidatorModel(BaseModel):
+    """A description of a validator for a test."""
 
-    type: str
-    """The type of result."""
+    bool_exp: Optional[str]
+    """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
-    message: str
-    """The message indicating the reason for status."""
+    bool_exp_str: Optional[str]
+    """A string representation of the code for the bool expression to check for."""
 
-    metadata: Optional[EvidenceMetadata]
-    """Evidence metadata associated with the value."""
+    success: Optional[str]
+    """A string to be used when recording that the validation was succesful."""
 
+    failure: Optional[str]
+    """A string to be used when recording that the validation was not succesful."""
 
-class ValidatedSpecModel(BaseModel):
-    """The model implementation for the ValidatedSpec artifact."""
+    info: Optional[str]
+    """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
-    artifact_type: Literal[ArtifactType.VALIDATED_SPEC] = (
-        ArtifactType.VALIDATED_SPEC
-    )
+    input_types: list[str] = []
+    """A list of strings representing the types of inputs to be received when validating."""
 
-    """Union discriminator."""
+    creator_entity: Optional[str] = None
+    """The full name of the class or module used to create this validator, if any."""
 
-    spec_identifier: str = ""
-    """The identifier of the Spec this ValidatedSpec came from."""
+    creator_function: Optional[str] = None
+    """The name of the function used to create this validator, if any."""
 
-    spec: Optional[SpecModel] = None
-    """A link to the actual Spec details."""
-
-    results: Dict[str, Dict[str, ResultModel]] = {}
-    """A list of validation results, for each measurement id, grouped by QACategory."""
-
-
-ValidatedSpecModel.model_rebuild()
+    creator_args: list[Any] = []
+    """The arguments of the function used to create this validator, if any."""

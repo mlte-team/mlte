@@ -8,17 +8,19 @@ from __future__ import annotations
 
 import inspect
 import typing
-from types import FrameType
 from typing import Any, Callable, Optional
 
-from mlte._private import reflection, serializing
+from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
-from mlte.validation.model_condition import ValidatorModel
-from mlte.validation.result import Failure, Info, Result, Success
+from mlte.evidence.artifact import Evidence
+from mlte.model.base_model import BaseModel
+from mlte.model.serializable import Serializable
+from mlte.results.result import Failure, Info, Result, Success
+from mlte.validation.model import ValidatorModel
 
 
-class Validator:
+class Validator(Serializable):
     """
     Class that represents a validation, including condition, and results for success or failure.
     """
@@ -30,6 +32,7 @@ class Validator:
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
+        input_types: list[str] = [],
         creator: Optional[FunctionInfo] = None,
     ):
         """
@@ -39,6 +42,7 @@ class Validator:
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
+        :param input_types: A list of strings indicating the type of input the validator will expect.
         :param creator: Information about the class and method that created this validator, if any.
         """
         if success is not None and failure is None:
@@ -58,6 +62,7 @@ class Validator:
         self.success = success
         self.failure = failure
         self.info = info
+        self.input_types = input_types
         self.creator = creator
 
         self.bool_exp_str = (
@@ -73,7 +78,7 @@ class Validator:
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
-        caller_function: Optional[FrameType] = None,
+        input_types: list[type] = [Evidence],
     ) -> Validator:
         """
         Creates a Validator using the provided test, extracting context info from the function that called us.
@@ -82,16 +87,12 @@ class Validator:
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
-        :param caller_function: A FrameType with data about function that originally called this function. SHOULD BE REMOVED WHEN CONDITIONS ARE.
-
+        :param input_types: A list of types indicating the type of input the validator will expect.
         :returns: A Validator, potentially with caller creator information.
         """
         # Get function info, passing our caller as argument.
-        if caller_function is None:
-            curr_frame = inspect.currentframe()
-            caller_function = (
-                curr_frame.f_back if curr_frame is not None else None
-            )
+        curr_frame = inspect.currentframe()
+        caller_function = curr_frame.f_back if curr_frame is not None else None
         function_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
@@ -100,6 +101,10 @@ class Validator:
             success=success,
             failure=failure,
             info=info,
+            input_types=[
+                meta.get_qualified_name(input_type)
+                for input_type in input_types
+            ],
             creator=function_info,
         )
         return validator
@@ -115,6 +120,9 @@ class Validator:
             raise RuntimeError(
                 "Can't validate, Validator has no bool expression and is also missing informational message that is used in those cases."
             )
+
+        # Check we got proper arguments.
+        self._check_arguments(*args, **kwargs)
 
         # First execute bool expression (if any), and get its boolean result.
         executed_bool_exp_value: Optional[bool] = None
@@ -137,6 +145,28 @@ class Validator:
             )
         )
         return result
+
+    def _check_arguments(self, *args, **kwargs):
+        """Checks that the received arguments are of the expected types."""
+        # Since input types is an ordered list, we assume we get them ordered as well, or we have no way to check.
+        all_arguments = [arg for arg in args]
+        all_arguments.extend([value for _, value in kwargs.items()])
+
+        if len(self.input_types) == 0:
+            # Input types are optional, ignore check if they were not configured or there aren't any.
+            return
+
+        if len(all_arguments) != len(self.input_types):
+            raise RuntimeError(
+                f"Invalid amoung of arguments: validator expected {len(self.input_types)}, but got {len(all_arguments)}"
+            )
+
+        for input_type in self.input_types:
+            for arg in all_arguments:
+                if input_type != meta.get_qualified_name(type(arg)):
+                    raise RuntimeError(
+                        f"Invalid argument type received: expected {input_type}, received {meta.get_qualified_name(type(arg))}"
+                    )
 
     def _args_to_string(self, *args, **kwargs) -> str:
         """
@@ -185,8 +215,9 @@ class Validator:
             failure=self.failure,
             info=self.info,
             bool_exp_str=self.bool_exp_str,
-            creator_class=(
-                self.creator.function_class
+            input_types=self.input_types,
+            creator_entity=(
+                self.creator.function_parent
                 if self.creator is not None
                 else None
             ),
@@ -199,7 +230,7 @@ class Validator:
         )
 
     @classmethod
-    def from_model(cls, model: ValidatorModel) -> Validator:
+    def from_model(cls, model: BaseModel) -> Validator:
         """
         Deserialize a Validator from a model.
 
@@ -207,6 +238,7 @@ class Validator:
 
         :return: The deserialized Validator
         """
+        model = typing.cast(ValidatorModel, model)
         validator: Validator = Validator(
             bool_exp=(
                 typing.cast(
@@ -219,14 +251,15 @@ class Validator:
             success=model.success,
             failure=model.failure,
             info=model.info,
+            input_types=model.input_types,
             creator=(
                 FunctionInfo(
                     model.creator_function,
                     model.creator_args,
-                    model.creator_class,
+                    model.creator_entity,
                 )
                 if model.creator_function is not None
-                and model.creator_class is not None
+                and model.creator_entity is not None
                 else None
             ),
         )
@@ -237,8 +270,7 @@ class Validator:
     # -------------------------------------------------------------------------
 
     def __eq__(self, other: object) -> bool:
-        """Compare Validator instances for equality."""
+        """Test instance for equality."""
         if not isinstance(other, Validator):
             return False
-        reference: Validator = other
-        return self.to_model() == reference.to_model()
+        return self._equal(other)
