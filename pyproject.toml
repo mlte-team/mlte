@@ -44,6 +44,7 @@ python-jose = "^3.3.0"
 bcrypt = "^4.1.2"
 StrEnum = "^0.4.15"
 pip-system-certs = "^4.0.0"
+mlte = "^2.0.0"
 
 [tool.poetry.group.demo]
 optional = true
