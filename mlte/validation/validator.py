@@ -29,6 +29,7 @@ class Validator(Serializable):
         self,
         *,
         bool_exp: Optional[Callable[[Any], bool]] = None,
+        thresholds: list[str] = [],
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
@@ -59,6 +60,7 @@ class Validator(Serializable):
             )
 
         self.bool_exp = bool_exp
+        self.thresholds = thresholds.copy()
         self.success = success
         self.failure = failure
         self.info = info
@@ -75,6 +77,7 @@ class Validator(Serializable):
     @staticmethod
     def build_validator(
         bool_exp: Optional[Callable[[Any], bool]] = None,
+        thresholds: list[str] = [],
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
@@ -84,6 +87,7 @@ class Validator(Serializable):
         Creates a Validator using the provided test, extracting context info from the function that called us.
 
         :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
+        :param thresholds: A list of serialized thresholds used in the bool exp, for auditing purposes.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
@@ -98,6 +102,7 @@ class Validator(Serializable):
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
             bool_exp=bool_exp,
+            thresholds=thresholds,
             success=success,
             failure=failure,
             info=info,
@@ -211,6 +216,7 @@ class Validator(Serializable):
                 if self.bool_exp
                 else None
             ),
+            thresholds=self.thresholds,
             success=self.success,
             failure=self.failure,
             info=self.info,
@@ -248,6 +254,7 @@ class Validator(Serializable):
                 if model.bool_exp
                 else None
             ),
+            thresholds=model.thresholds,
             success=model.success,
             failure=model.failure,
             info=model.info,

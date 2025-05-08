@@ -100,6 +100,13 @@
           ],
           "title": "Bool Exp Str"
         },
+        "thresholds": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Thresholds",
+          "type": "array"
+        },
         "success": {
           "anyOf": [
             {
@@ -175,6 +182,7 @@
       "required": [
         "bool_exp",
         "bool_exp_str",
+        "thresholds",
         "success",
         "failure",
         "info"

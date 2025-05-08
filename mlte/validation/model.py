@@ -16,6 +16,9 @@ class ValidatorModel(BaseModel):
     bool_exp_str: Optional[str]
     """A string representation of the code for the bool expression to check for."""
 
+    thresholds: list[str]
+    """A list of thresholds used in the bool expression, serialized to string, for auditing purposes."""
+
     success: Optional[str]
     """A string to be used when recording that the validation was succesful."""
 
