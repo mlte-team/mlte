@@ -9,6 +9,9 @@ import time
 import typing
 from typing import Tuple
 
+import pint
+import pytest
+
 from mlte.context.context import Context
 from mlte.measurement.memory import (
     LocalProcessMemoryConsumption,
@@ -22,7 +25,7 @@ from test.store.artifact.fixture import store_with_context  # noqa
 from test.support.meta import path_to_support
 
 # The spin duration, in seconds
-SPIN_DURATION = 3
+SPIN_DURATION = 2
 SPIN_COMMAND = [
     "python3",
     os.path.join(path_to_support(), "spin.py"),
@@ -133,6 +136,32 @@ def test_max_consumption_less_than() -> None:
     assert not bool(res)
 
 
+def test_max_consumption_less_than_in_bytes() -> None:
+    m = get_sample_evidence_metadata()
+
+    validator = MemoryStatistics.max_consumption_less_than(3000, "bytes")
+
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
+    assert bool(res)
+
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=4, min=1).with_metadata(m)
+    )
+    assert not bool(res)
+
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=3, min=1).with_metadata(m)
+    )
+    assert not bool(res)
+
+
+def test_max_consumption_less_than_invalid_unit() -> None:
+    with pytest.raises(pint.UndefinedUnitError):
+        _ = MemoryStatistics.max_consumption_less_than(3000, "fakeunit")
+
+
 def test_avg_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
@@ -152,3 +181,29 @@ def test_avg_consumption_less_than() -> None:
         MemoryStatistics(avg=3, max=2, min=1).with_metadata(m)
     )
     assert not bool(res)
+
+
+def test_avg_consumption_less_than_in_bytes() -> None:
+    m = get_sample_evidence_metadata()
+
+    validator = MemoryStatistics.average_consumption_less_than(3000, "bytes")
+
+    res = validator.validate(
+        MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
+    )
+    assert bool(res)
+
+    res = validator.validate(
+        MemoryStatistics(avg=4, max=2, min=1).with_metadata(m)
+    )
+    assert not bool(res)
+
+    res = validator.validate(
+        MemoryStatistics(avg=3, max=2, min=1).with_metadata(m)
+    )
+    assert not bool(res)
+
+
+def test_average_consumption_less_than_invalid_unit() -> None:
+    with pytest.raises(pint.UndefinedUnitError):
+        _ = MemoryStatistics.average_consumption_less_than(3000, "fakeunit")
