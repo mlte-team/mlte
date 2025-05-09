@@ -14,6 +14,7 @@ from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
 from mlte.evidence.artifact import Evidence
+from mlte.measurement.units import QuantityType
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -40,6 +41,7 @@ class Validator(Serializable):
         Constructor.
 
         :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
+        :param thresholds: A list of serialized thesholds used in the bool exp, for auditing purposes.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
@@ -77,7 +79,7 @@ class Validator(Serializable):
     @staticmethod
     def build_validator(
         bool_exp: Optional[Callable[[Any], bool]] = None,
-        thresholds: list[str] = [],
+        thresholds: list[QuantityType] = [],
         success: Optional[str] = None,
         failure: Optional[str] = None,
         info: Optional[str] = None,
@@ -87,7 +89,7 @@ class Validator(Serializable):
         Creates a Validator using the provided test, extracting context info from the function that called us.
 
         :param bool_exp: A boolean expression that can be used to test the actual condition we want to validate.
-        :param thresholds: A list of serialized thresholds used in the bool exp, for auditing purposes.
+        :param thresholds: A list of thesholds, stored as unit-aware Quantities, used in the bool exp, for auditing purposes.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
@@ -102,7 +104,7 @@ class Validator(Serializable):
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
         validator = Validator(
             bool_exp=bool_exp,
-            thresholds=thresholds,
+            thresholds=[str(threshold) for threshold in thresholds],
             success=success,
             failure=failure,
             info=info,

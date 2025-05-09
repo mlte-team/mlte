@@ -15,6 +15,7 @@ from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
+from mlte.measurement.units import Units
 from mlte.model.serialization_error import SerializationError
 from mlte.validation.model import ValidatorModel
 from mlte.validation.validator import Validator
@@ -96,6 +97,7 @@ def test_validator_model() -> None:
     validators = [
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
+            thresholds=[3 * Units.meter],
             bool_exp_str="test()",
             success="Test was succesful!",
             failure="Test failed :(",
@@ -104,6 +106,7 @@ def test_validator_model() -> None:
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
             bool_exp_str="test()",
+            thresholds=[4 * Units.meter],
             success="Test was succesful!",
             failure="Test failed :(",
             info="Only data was attached",

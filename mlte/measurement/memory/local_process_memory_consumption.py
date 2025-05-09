@@ -12,9 +12,9 @@ from typing import Any, Callable, Optional
 
 import psutil
 
-from mlte._private.units import Quantity
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
+from mlte.measurement.units import Quantity
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ class MemoryStatistics(ExternalEvidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            thresholds=[str(threshold_w_unit)],
+            thresholds=[threshold_w_unit],
             success=f"Maximum consumption below threshold {threshold}",
             failure=f"Maximum consumption exceeds threshold {threshold}",
             input_types=[MemoryStatistics],
@@ -127,7 +127,7 @@ class MemoryStatistics(ExternalEvidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            thresholds=[str(threshold_w_unit)],
+            thresholds=[threshold_w_unit],
             success=f"Average consumption below threshold {threshold}",
             failure=f"Average consumption exceeds threshold {threshold}",
             input_types=[MemoryStatistics],
