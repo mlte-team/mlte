@@ -113,8 +113,8 @@ class CPUStatistics(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Maximum utilization below threshold {threshold:.2f}",
-            failure=f"Maximum utilization exceeds threshold {threshold:.2f}",
+            success=f"Maximum utilization below threshold {threshold_w_unit:.2f}",
+            failure=f"Maximum utilization exceeds threshold {threshold_w_unit:.2f}",
             input_types=[CPUStatistics],
         )
         return validator

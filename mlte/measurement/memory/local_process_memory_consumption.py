@@ -107,8 +107,8 @@ class MemoryStatistics(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Maximum consumption below threshold {threshold}",
-            failure=f"Maximum consumption exceeds threshold {threshold}",
+            success=f"Maximum consumption below threshold {threshold_w_unit}",
+            failure=f"Maximum consumption exceeds threshold {threshold_w_unit}",
             input_types=[MemoryStatistics],
         )
         return validator
@@ -132,8 +132,8 @@ class MemoryStatistics(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Average consumption below threshold {threshold}",
-            failure=f"Average consumption exceeds threshold {threshold}",
+            success=f"Average consumption below threshold {threshold_w_unit}",
+            failure=f"Average consumption exceeds threshold {threshold_w_unit}",
             input_types=[MemoryStatistics],
         )
         return validator
