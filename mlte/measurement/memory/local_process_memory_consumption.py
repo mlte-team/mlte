@@ -29,14 +29,16 @@ class MemoryStatistics(ExternalEvidence):
     consumption statistics for a running process.
     """
 
-    def __init__(self, avg: int, min: int, max: int, unit: str = "kilobyte"):
+    def __init__(
+        self, avg: int, min: int, max: int, unit: UnitType = Units.kilobyte
+    ):
         """
         Initialize a MemoryStatistics instance.
 
         :param avg: The average memory consumption
         :param min: The minimum memory consumption
         :param max: The maximum memory consumption
-        :param unit: a string from the list of valid pint default units, indicating the unit; defaults to "kilobyte"
+        :param unit: the unit the values comes in, as a value from Units; defaults to Units.kilobyte
         """
         super().__init__()
 
@@ -49,6 +51,9 @@ class MemoryStatistics(ExternalEvidence):
         self.max = Quantity(max, unit)
         """The maximum memory consumption."""
 
+        self.unit = unit
+        """The unit being used for all values."""
+
     def serialize(self) -> dict[str, Any]:
         """
         Serialize an MemoryStatistics to a JSON object.
@@ -59,6 +64,7 @@ class MemoryStatistics(ExternalEvidence):
             "avg": self.avg.magnitude,
             "min": self.min.magnitude,
             "max": self.max.magnitude,
+            "unit": self.unit,
         }
 
     @staticmethod
@@ -71,9 +77,7 @@ class MemoryStatistics(ExternalEvidence):
         :return: The deserialized instance
         """
         return MemoryStatistics(
-            avg=data["avg"],
-            min=data["min"],
-            max=data["max"],
+            avg=data["avg"], min=data["min"], max=data["max"], unit=data["unit"]
         )
 
     def __str__(self) -> str:
@@ -92,7 +96,7 @@ class MemoryStatistics(ExternalEvidence):
         Construct and invoke a validator for maximum memory consumption.
 
         :param threshold: The threshold value for maximum consumption
-        :param unit: a string from the list of valid pint default units, indicating the unit; defaults to "kilobyte"
+        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
 
         :return: The Validator that can be used to validate a Value.
         """
@@ -117,7 +121,7 @@ class MemoryStatistics(ExternalEvidence):
         Construct and invoke a validator for average memory consumption.
 
         :param threshold: The threshold value for average consumption, in KB
-        :param unit: a string from the list of valid pint default units, indicating the unit; defaults to "kilobyte"
+        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
 
         :return: The Validator that can be used to validate a Value.
         """
@@ -172,7 +176,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             avg=int(sum(stats) / len(stats)),
             min=min(stats),
             max=max(stats),
-            unit="kilobyte",
+            unit=Units.kilobyte,
         )
 
     # Overriden.
