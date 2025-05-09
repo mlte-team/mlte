@@ -18,6 +18,7 @@ from mlte.measurement.memory import (
     MemoryStatistics,
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
+from mlte.measurement.units import Units
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
@@ -139,7 +140,7 @@ def test_max_consumption_less_than() -> None:
 def test_max_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.max_consumption_less_than(3000, "bytes")
+    validator = MemoryStatistics.max_consumption_less_than(3000, Units.bytes)
 
     res = validator.validate(
         MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
@@ -159,7 +160,7 @@ def test_max_consumption_less_than_in_bytes() -> None:
 
 def test_max_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = MemoryStatistics.max_consumption_less_than(3000, "fakeunit")
+        _ = MemoryStatistics.max_consumption_less_than(3000, Units.fakeunit)
 
 
 def test_avg_consumption_less_than() -> None:
@@ -186,7 +187,9 @@ def test_avg_consumption_less_than() -> None:
 def test_avg_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.average_consumption_less_than(3000, "bytes")
+    validator = MemoryStatistics.average_consumption_less_than(
+        3000, Units.bytes
+    )
 
     res = validator.validate(
         MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
@@ -206,4 +209,4 @@ def test_avg_consumption_less_than_in_bytes() -> None:
 
 def test_average_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = MemoryStatistics.average_consumption_less_than(3000, "fakeunit")
+        _ = MemoryStatistics.average_consumption_less_than(3000, Units.fakeunit)
