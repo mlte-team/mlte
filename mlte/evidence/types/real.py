@@ -21,10 +21,11 @@ class Real(Evidence):
     Real implements the Evidence interface for a single real value.
     """
 
-    def __init__(self, value: float):
+    def __init__(self, value: float, unit: Optional[Unit] = None):
         """
         Initialize a Real instance.
         :param value: The real value
+        :param unit: The unit the values comes in, as a value from Units, defaults to None.
         """
         assert isinstance(value, float), "Argument must be `float`."
 
@@ -32,6 +33,15 @@ class Real(Evidence):
 
         self.value = value
         """The wrapped real value."""
+
+        self.unit = unit
+        """The unit, if any."""
+
+    def get_value_w_units(self) -> Quantity:
+        """
+        Returns the float value as a Quantity, potentially with units.
+        """
+        return Quantity(self.value, self.unit)
 
     def to_model(self) -> ArtifactModel:
         """
@@ -64,7 +74,7 @@ class Real(Evidence):
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""
-        return f"{self.value}"
+        return f"{self.get_value_w_units()}"
 
     def __eq__(self, other: object) -> bool:
         """Comparison between Real values."""
@@ -85,7 +95,7 @@ class Real(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Real], bool] = (
-            lambda real: real.value < threshold_w_unit.magnitude
+            lambda real: real.get_value_w_units() < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -108,7 +118,7 @@ class Real(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Real], bool] = (
-            lambda real: real.value <= threshold_w_unit.magnitude
+            lambda real: real.get_value_w_units() <= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -131,7 +141,7 @@ class Real(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Real], bool] = (
-            lambda real: real.value > threshold_w_unit.magnitude
+            lambda real: real.get_value_w_units() > threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -154,7 +164,7 @@ class Real(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Real], bool] = (
-            lambda real: real.value >= threshold_w_unit.magnitude
+            lambda real: real.get_value_w_units() >= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,

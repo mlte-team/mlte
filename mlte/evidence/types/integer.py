@@ -21,16 +21,26 @@ class Integer(Evidence):
     Integer implements the Value interface for a single integer value.
     """
 
-    def __init__(self, value: int):
+    def __init__(self, value: int, unit: Optional[Unit] = None):
         """
         Initialize an Integer instance.
         :param value: The integer value
+        :param unit: The unit the values comes in, as a value from Units, defaults to None.
         """
         assert isinstance(value, int), "Argument must be `int`."
         super().__init__()
 
         self.value = value
         """The wrapped integer value."""
+
+        self.unit = unit
+        """The unit, if any."""
+
+    def get_value_w_units(self) -> Quantity:
+        """
+        Returns the int value as a Quantity, potentially with units.
+        """
+        return Quantity(self.value, self.unit)
 
     def to_model(self) -> ArtifactModel:
         """
@@ -69,7 +79,7 @@ class Integer(Evidence):
 
     def __str__(self) -> str:
         """Return a string representation of this Evidence."""
-        return f"{self.value}"
+        return f"{self.get_value_w_units()}"
 
     @classmethod
     def less_than(
@@ -84,7 +94,7 @@ class Integer(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.value < threshold_w_unit.magnitude
+            lambda integer: integer.get_value_w_units() < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -108,7 +118,7 @@ class Integer(Evidence):
         """
         threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.value <= threshold_w_unit.magnitude
+            lambda integer: integer.get_value_w_units() <= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
