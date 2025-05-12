@@ -14,7 +14,7 @@ import psutil
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import Quantity, Units, UnitType
+from mlte.measurement.units import Quantity, Unit, Units
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
@@ -30,7 +30,7 @@ class MemoryStatistics(ExternalEvidence):
     """
 
     def __init__(
-        self, avg: int, min: int, max: int, unit: UnitType = Units.kilobyte
+        self, avg: int, min: int, max: int, unit: Unit = Units.kilobyte
     ):
         """
         Initialize a MemoryStatistics instance.
@@ -90,7 +90,7 @@ class MemoryStatistics(ExternalEvidence):
 
     @classmethod
     def max_consumption_less_than(
-        cls, threshold: int, unit: UnitType = Units.kilobyte
+        cls, threshold: int, unit: Unit = Units.kilobyte
     ) -> Validator:
         """
         Construct and invoke a validator for maximum memory consumption.
@@ -115,7 +115,7 @@ class MemoryStatistics(ExternalEvidence):
 
     @classmethod
     def average_consumption_less_than(
-        cls, threshold: float, unit: UnitType = Units.kilobyte
+        cls, threshold: float, unit: Unit = Units.kilobyte
     ) -> Validator:
         """
         Construct and invoke a validator for average memory consumption.

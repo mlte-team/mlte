@@ -16,7 +16,7 @@ from pint import Quantity
 from mlte._private.platform import is_windows
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import Units, UnitType
+from mlte.measurement.units import Unit, Units
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class CPUStatistics(ExternalEvidence):
         avg: float,
         min: float,
         max: float,
-        unit: UnitType = Units.percent,
+        unit: Unit = Units.percent,
     ):
         """
         Initialize a CPUStatistics instance.
@@ -96,7 +96,7 @@ class CPUStatistics(ExternalEvidence):
 
     @classmethod
     def max_utilization_less_than(
-        cls, threshold: float, unit: UnitType = Units.percent
+        cls, threshold: float, unit: Unit = Units.percent
     ) -> Validator:
         """
         Construct and invoke a validator for maximum CPU utilization.
@@ -121,7 +121,7 @@ class CPUStatistics(ExternalEvidence):
 
     @classmethod
     def average_utilization_less_than(
-        cls, threshold: float, unit: UnitType = Units.percent
+        cls, threshold: float, unit: Unit = Units.percent
     ) -> Validator:
         """
         Construct and invoke a validator for average CPU utilization.
