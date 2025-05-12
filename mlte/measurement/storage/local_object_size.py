@@ -9,10 +9,11 @@ from typing import Optional
 
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
+from mlte.measurement.units import Unit, Units
 
 
 class LocalObjectSize(Measurement):
-    """Measure the size of a locally-stored object."""
+    """Measure the size of a locally-stored object. Calculates the results by default in bytes."""
 
     def __init__(self, identifier: Optional[str] = None):
         """
@@ -22,11 +23,12 @@ class LocalObjectSize(Measurement):
         """
         super().__init__(identifier)
 
-    def __call__(self, path: str) -> Integer:
+    def __call__(self, path: str, unit: Unit = Units.byte) -> Integer:
         """
         Compute the size of the object at `path`.
 
         :param path: The path to the object
+        :param unit: The unit to return the size in, defaults to byte (Units.byte).
 
         :return: The size of the object, in bytes
         """
@@ -47,7 +49,10 @@ class LocalObjectSize(Measurement):
                 if not os.path.islink(path):
                     total_size += os.path.getsize(path)
 
-        return Integer(total_size)
+        # Convert to requested unit, if any.
+        size_w_unit = total_size * unit
+
+        return Integer(size_w_unit.magnitude, unit)
 
     # Overriden.
     @classmethod
