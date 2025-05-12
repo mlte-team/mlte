@@ -11,12 +11,10 @@ import time
 from subprocess import SubprocessError
 from typing import Any, Callable, Optional
 
-from pint import Quantity
-
 from mlte._private.platform import is_windows
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import Unit, Units
+from mlte.measurement.units import Quantity, Unit, Units
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------

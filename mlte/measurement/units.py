@@ -1,12 +1,10 @@
 """Loads and defines shared Units and Quantiies to be used."""
 
-from typing import TypeAlias
-
 import pint
 
-# Init shared registry and main Quantity construct.
+# Init shared registry.
 Units = pint.UnitRegistry()
-Quantity = Units.Quantity
 
-# Init types for typehints.
-Unit: TypeAlias = pint.Unit
+# Export types from here, to abstract out the use of pint.
+Unit = pint.Unit
+Quantity = pint.Quantity

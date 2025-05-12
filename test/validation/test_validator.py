@@ -61,6 +61,7 @@ class TestValue:
         """Checks if the value is in between the arguments."""
         validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value > arg1 and real.value < arg2,
+            thresholds=[arg1 * Units.meter, arg2],
             success=f"Real magnitude is between {arg1} and {arg2}",
             failure=f"Real magnitude is not between {arg1} and {arg2}",
         )
@@ -70,7 +71,8 @@ class TestValue:
     def in_between_complex(cls, arg1: float, arg2: TestValue) -> Validator:
         """Checks if the value is in between the arguments."""
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real.value > arg1 and real.value < arg2,
+            bool_exp=lambda real: real.value > arg1 and arg2.data == str(real),
+            thresholds=[arg1 * Units.meter, arg2],
             success=f"Real magnitude is between {arg1} and {arg2}",
             failure=f"Real magnitude is not between {arg1} and {arg2}",
         )
@@ -80,7 +82,8 @@ class TestValue:
     def json_method(cls, arg1: JsonValue) -> Validator:
         """Checks if the value is in between the arguments."""
         validator: Validator = Validator.build_validator(
-            bool_exp=lambda real: real == 1,
+            bool_exp=lambda real: real == arg1,
+            thresholds=[arg1],
             success=f"Success: {arg1}",
             failure=f"Failure: {arg1}",
         )
@@ -97,7 +100,7 @@ def test_validator_model() -> None:
     validators = [
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
-            thresholds=[3 * Units.meter],
+            thresholds=[str(3 * Units.meter)],
             bool_exp_str="test()",
             success="Test was succesful!",
             failure="Test failed :(",
@@ -106,7 +109,7 @@ def test_validator_model() -> None:
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
             bool_exp_str="test()",
-            thresholds=[4 * Units.meter],
+            thresholds=[str(4 * Units.meter)],
             success="Test was succesful!",
             failure="Test failed :(",
             info="Only data was attached",
@@ -141,6 +144,7 @@ def test_build_validator():
     # fmt: off
     validator = Validator.build_validator(
         bool_exp=lambda x: x == 1,
+        thresholds=[1 * Units.meter],
         success="Yay!",
         failure="Aww"
     )
@@ -161,6 +165,7 @@ def test_serialize_from_build():
     # fmt: off
     validator = Validator.build_validator(
         bool_exp=lambda x: x == 1,
+        thresholds=[1 * Units.meter],
         success="Yay!",
         failure="Aww"
     )
