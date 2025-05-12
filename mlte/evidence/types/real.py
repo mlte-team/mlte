@@ -5,12 +5,13 @@ An Evidence instance for a scalar, real value.
 from __future__ import annotations
 
 import typing
-from typing import Callable
+from typing import Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
+from mlte.measurement.units import Quantity, Unit
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -72,69 +73,93 @@ class Real(Evidence):
         return self._equal(other)
 
     @classmethod
-    def less_than(cls, threshold: float) -> Validator:
+    def less_than(
+        cls, threshold: float, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if real is strictly less than `threshold`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
-        bool_exp: Callable[[Real], bool] = lambda real: real.value < threshold
+        threshold_w_unit = Quantity(threshold, unit)
+        bool_exp: Callable[[Real], bool] = (
+            lambda real: real.value < threshold_w_unit.magnitude
+        )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than threshold {threshold}",
-            failure=f"Real magnitude exceeds threshold {threshold}",
+            success=f"Real magnitude is less than threshold {threshold_w_unit}",
+            failure=f"Real magnitude exceeds threshold {threshold_w_unit}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
-    def less_or_equal_to(cls, threshold: float) -> Validator:
+    def less_or_equal_to(
+        cls, threshold: float, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if real is less than or equal to `threshold`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
-        bool_exp: Callable[[Real], bool] = lambda real: real.value <= threshold
+        threshold_w_unit = Quantity(threshold, unit)
+        bool_exp: Callable[[Real], bool] = (
+            lambda real: real.value <= threshold_w_unit.magnitude
+        )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than or equal to threshold {threshold}",
-            failure=f"Real magnitude exceeds threshold {threshold}",
+            success=f"Real magnitude is less than or equal to threshold {threshold_w_unit}",
+            failure=f"Real magnitude exceeds threshold {threshold_w_unit}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
-    def greater_than(cls, threshold: float) -> Validator:
+    def greater_than(
+        cls, threshold: float, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if real is strictly greater than `threshold`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
-        bool_exp: Callable[[Real], bool] = lambda real: real.value > threshold
+        threshold_w_unit = Quantity(threshold, unit)
+        bool_exp: Callable[[Real], bool] = (
+            lambda real: real.value > threshold_w_unit.magnitude
+        )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than threshold {threshold}",
-            failure=f"Real magnitude is below threshold {threshold}",
+            success=f"Real magnitude is greater than threshold {threshold_w_unit}",
+            failure=f"Real magnitude is below threshold {threshold_w_unit}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
-    def greater_or_equal_to(cls, threshold: float) -> Validator:
+    def greater_or_equal_to(
+        cls, threshold: float, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if real is greater than or equal to `threshold`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
-        bool_exp: Callable[[Real], bool] = lambda real: real.value >= threshold
+        threshold_w_unit = Quantity(threshold, unit)
+        bool_exp: Callable[[Real], bool] = (
+            lambda real: real.value >= threshold_w_unit.magnitude
+        )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than or equal to threshold {threshold}",
-            failure=f"Real magnitude is below threshold {threshold}",
+            success=f"Real magnitude is greater than or equal to threshold {threshold_w_unit}",
+            failure=f"Real magnitude is below threshold {threshold_w_unit}",
             input_types=[Real],
         )
         return validator

@@ -5,12 +5,13 @@ An Evidence instance for a scalar, integral value.
 from __future__ import annotations
 
 import typing
-from typing import Callable
+from typing import Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, IntegerValueModel
+from mlte.measurement.units import Quantity, Unit
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -71,39 +72,49 @@ class Integer(Evidence):
         return f"{self.value}"
 
     @classmethod
-    def less_than(cls, threshold: int) -> Validator:
+    def less_than(
+        cls, threshold: int, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if integer is strictly less than `value`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
+        threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.value < threshold
+            lambda integer: integer.value < threshold_w_unit.magnitude
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Integer magnitude is less than threshold {threshold}",
-            failure=f"Integer magnitude exceeds threshold {threshold}",
+            thresholds=[threshold_w_unit],
+            success=f"Integer magnitude is less than threshold {threshold_w_unit}",
+            failure=f"Integer magnitude exceeds threshold {threshold_w_unit}",
             input_types=[Integer],
         )
         return validator
 
     @classmethod
-    def less_or_equal_to(cls, threshold: int) -> Validator:
+    def less_or_equal_to(
+        cls, threshold: int, unit: Optional[Unit] = None
+    ) -> Validator:
         """
         Determine if integer is less than or equal to `value`.
 
         :param threshold: The threshold value
+        :param unit: the unit the values comes in, as a value from Units
         :return: The Validator that can be used to validate Evidence.
         """
+        threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.value <= threshold
+            lambda integer: integer.value <= threshold_w_unit.magnitude
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Integer magnitude is less than or equal to threshold {threshold}",
-            failure=f"Integer magnitude exceeds threshold {threshold}",
+            thresholds=[threshold_w_unit],
+            success=f"Integer magnitude is less than or equal to threshold {threshold_w_unit}",
+            failure=f"Integer magnitude exceeds threshold {threshold_w_unit}",
             input_types=[Integer],
         )
         return validator
