@@ -10,8 +10,9 @@ import typing
 from pathlib import Path
 from typing import Any, Dict
 
-from mlte.evidence.types.integer import Integer
+from mlte.evidence.types.real import Real
 from mlte.measurement.storage import LocalObjectSize
+from mlte.measurement.units import Units
 from mlte.results.result import Result
 
 # -----------------------------------------------------------------------------
@@ -128,59 +129,63 @@ def test_constructor_type():
     )
 
 
-def test_file(tmp_path):
+def test_file(tmp_path: Path):
     # Test with a model represented as file
     model = {"model": 32}
     create_fs_hierarchy(tmp_path, model)
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
+    size: Real = typing.cast(Real, m.evaluate(str(tmp_path / "model")))
     assert size.value == expected_hierarchy_size(model)
 
 
-def test_directory(tmp_path):
+def test_directory(tmp_path: Path):
     # Test with a model represented as directory
     model = {"model": {"params": 1024, "hyperparams": 32}}
     create_fs_hierarchy(tmp_path, model)
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
+    size: Real = typing.cast(Real, m.evaluate(str(tmp_path / "model")))
     assert size.value == expected_hierarchy_size(model)
 
 
-def test_validation_less_than(tmp_path):
+def test_validation_less_than(tmp_path: Path):
     create_fs_hierarchy(tmp_path, {"model": 64})
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
+    size: Real = typing.cast(
+        Real, m.evaluate(str(tmp_path / "model"), unit=Units.megabyte)
+    )
 
     # Validation success
-    v = Integer.less_than(128).validate(size)
+    v = Real.less_than(128, unit=Units.byte).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_than(64).validate(size)
+    v = Real.less_than(64, unit=Units.byte).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)
 
 
-def test_validation_less_or_equal_to(tmp_path):
+def test_validation_less_or_equal_to(tmp_path: Path):
     create_fs_hierarchy(tmp_path, {"model": 64})
 
     m = LocalObjectSize("identifier")
 
-    size: Integer = typing.cast(Integer, m.evaluate(str(tmp_path / "model")))
+    size: Real = typing.cast(
+        Real, m.evaluate(str(tmp_path / "model"), unit=Units.kilobyte)
+    )
 
     # Validation success
-    v = Integer.less_or_equal_to(64).validate(size)
+    v = Real.less_or_equal_to(64, unit=Units.byte).validate(size)
     assert isinstance(v, Result)
     assert bool(v)
 
     # Validation failure
-    v = Integer.less_or_equal_to(63).validate(size)
+    v = Real.less_or_equal_to(63, unit=Units.byte).validate(size)
     assert isinstance(v, Result)
     assert not bool(v)

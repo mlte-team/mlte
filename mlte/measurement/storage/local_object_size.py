@@ -7,7 +7,7 @@ Storage capacity measurement for locally-stored objects.
 import os
 from typing import Optional
 
-from mlte.evidence.types.integer import Integer
+from mlte.evidence.types.real import Real
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.units import Unit, Units
 
@@ -23,7 +23,7 @@ class LocalObjectSize(Measurement):
         """
         super().__init__(identifier)
 
-    def __call__(self, path: str, unit: Unit = Units.byte) -> Integer:
+    def __call__(self, path: str, unit: Unit = Units.byte) -> Real:
         """
         Compute the size of the object at `path`.
 
@@ -50,11 +50,14 @@ class LocalObjectSize(Measurement):
                     if not os.path.islink(path):
                         total_size += os.path.getsize(path)
 
-        # Convert to requested unit, if any.
-        size_w_unit = total_size * unit
-        return Integer(size_w_unit.magnitude, unit=unit)
+        # Since getsize measures in bytes, first set up quantity in that unit.
+        size_w_unit = total_size * Units.byte
+
+        # Convert to requested unit.
+        converted_size = size_w_unit.to(unit)
+        return Real(float(converted_size.magnitude), unit=unit)
 
     # Overriden.
     @classmethod
-    def get_output_type(cls) -> type[Integer]:
-        return Integer
+    def get_output_type(cls) -> type[Real]:
+        return Real
