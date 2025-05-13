@@ -92,7 +92,12 @@ class ExternalMeasurement(Measurement):
             # If no function is configured, we just want to wrap the results in the Evidence type.
             evidence = self.output_evidence_type(*args, **kwargs)
         else:
-            evidence = self.output_evidence_type(self.function(*args, **kwargs))
+            result = self.function(*args, **kwargs)
+            if isinstance(result, tuple):
+                # If we get more than one value from the function, unpack them.
+                evidence = self.output_evidence_type(*result)
+            else:
+                evidence = self.output_evidence_type(result)
         return evidence
 
     def get_output_type(self) -> type[Evidence]:  # type: ignore

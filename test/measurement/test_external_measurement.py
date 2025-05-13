@@ -16,6 +16,7 @@ from mlte.evidence.types.integer import Integer
 from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.measurement import Measurement
 from mlte.measurement.model import MeasurementMetadata
+from mlte.measurement.units import Unit, Units
 
 
 class BigInteger(ExternalEvidence):
@@ -38,24 +39,24 @@ class BigInteger(ExternalEvidence):
         return self._equal(other)
 
 
-def _dummy_calculation(x: int, y: int):
+def _dummy_calculation(x: int, y: int) -> int:
     """
     Dummy calculation function that adds two ints and multiplies the result by two.
-
-    :param x: The first number
-    :type x: int
-    :param y: The second number
-    :type y: int
-
-    :return: the result of the calculation
-    :rtype: int
     """
     return (x + y) * 2
+
+
+def _tuple_calculation(x: int, y: int) -> tuple[int, Unit]:
+    """
+    Dummy calculation function that just returns the numbers multiplied by each other, and a unit.
+    """
+    return x * y, Units.kilogram
 
 
 def get_sample_metadata(
     additional_data: bool = True,
     output_class: str = "test.measurement.test_external_measurement.BigInteger",
+    function: str = "test.measurement.test_external_measurement._dummy_calculation",
 ) -> EvidenceMetadata:
     """Sample for tests."""
     evidence = EvidenceMetadata(
@@ -68,7 +69,7 @@ def get_sample_metadata(
     if additional_data:
         evidence.measurement.additional_data[
             ExternalMeasurement.EXTERNAL_FUNCTION_KEY
-        ] = "test.measurement.test_external_measurement._dummy_calculation"
+        ] = function
     return evidence
 
 
@@ -163,6 +164,26 @@ def test_evaluate_ingest_base() -> None:
     result = measurement.evaluate(expected_value)
 
     assert isinstance(result, BigInteger)
+    assert result == expected_result
+
+
+def test_evaluate_tuple() -> None:
+    """An external measurement can be evaluated when the function returns a tuple."""
+
+    x = 1
+    y = 2
+    expected_value, expected_unit = _tuple_calculation(x, y)
+    expected_result = Integer(expected_value, expected_unit).with_metadata(
+        get_sample_metadata(
+            output_class="mlte.evidence.types.integer.Integer",
+            function="test.measurement.test_external_measurement._tuple_calculation",
+        )
+    )
+
+    measurement = ExternalMeasurement("test_id", Integer, _tuple_calculation)
+    result = measurement.evaluate(x, y)
+
+    assert isinstance(result, Integer)
     assert result == expected_result
 
 
