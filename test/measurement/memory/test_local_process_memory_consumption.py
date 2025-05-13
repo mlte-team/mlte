@@ -75,7 +75,7 @@ def test_memory_validate_success() -> None:
     m = LocalProcessMemoryConsumption("identifier")
 
     # Blocks until process exit
-    stats = m.evaluate(SPIN_COMMAND)
+    stats = m.evaluate(SPIN_COMMAND, unit=Units.megabyte)
 
     validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
     vr = validator.validate(stats)

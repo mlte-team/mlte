@@ -166,28 +166,36 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         super().__init__(identifier)
 
     # Overriden.
-    def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
+    def __call__(
+        self, pid: int, unit: Unit = Units.kilobyte, poll_interval: int = 1
+    ) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
 
         :param pid: The process identifier
         :param poll_interval: The poll interval, in seconds
+        :param unit: The unit to return the memory size in, defaults to kilobyte (Units.kilobyte).
         :return: The captured statistics
         """
-        stats = []
+        captures = []
         while True:
-            kb = _get_memory_usage_psutil(pid)
-            if kb == 0:
+            size_in_kb = _get_memory_usage_psutil(pid)
+            if size_in_kb == 0:
                 break
-            stats.append(kb)
+            captures.append(size_in_kb)
             time.sleep(poll_interval)
 
-        return MemoryStatistics(
-            avg=int(sum(stats) / len(stats)),
-            min=min(stats),
-            max=max(stats),
-            unit=Units.kilobyte,
-        )
+        # Calculate stats, use kilobytes as the psutil function returns values in that unit.
+        avg = int(sum(captures) / len(captures)) * Units.kilobyte
+        minimum = min(captures) * Units.kilobyte
+        maximum = max(captures) * Units.kilobyte
+
+        # Convert to provided unit if needed.
+        avg = avg.to(unit)
+        minimum = minimum.to(unit)
+        maximum = maximum.to(unit)
+
+        return MemoryStatistics(avg, minimum, maximum, unit=unit)
 
     # Overriden.
     @classmethod
