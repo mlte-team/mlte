@@ -232,7 +232,7 @@ class Validator(Serializable):
                 self.creator.function_name if self.creator is not None else None
             ),
             creator_args=(
-                self.creator.arguments if self.creator is not None else []
+                [str(arg) for arg in self.creator.arguments] if self.creator is not None else []
             ),
         )
 
