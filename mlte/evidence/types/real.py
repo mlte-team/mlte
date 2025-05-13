@@ -11,7 +11,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
-from mlte.measurement.units import Quantity, Unit
+from mlte.measurement.units import Quantity, Unit, str_to_unit, unit_to_str
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -49,7 +49,9 @@ class Real(Evidence):
         :return: The artifact model
         """
         return self._to_artifact_model(
-            value_model=RealValueModel(real=self.value)
+            value_model=RealValueModel(
+                real=self.value, unit=unit_to_str(self.unit)
+            )
         )
 
     @classmethod
@@ -70,7 +72,10 @@ class Real(Evidence):
         assert (
             body.value.evidence_type == EvidenceType.REAL
         ), "Broken Precondition."
-        return Real(value=body.value.real).with_metadata(body.metadata)
+        return Real(
+            value=body.value.real,
+            unit=str_to_unit(body.value.unit),
+        ).with_metadata(body.metadata)
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""

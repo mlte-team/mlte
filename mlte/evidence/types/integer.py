@@ -11,7 +11,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, IntegerValueModel
-from mlte.measurement.units import Quantity, Unit
+from mlte.measurement.units import Quantity, Unit, str_to_unit, unit_to_str
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -48,7 +48,9 @@ class Integer(Evidence):
         :return: The artifact model
         """
         return self._to_artifact_model(
-            value_model=IntegerValueModel(integer=self.value)
+            value_model=IntegerValueModel(
+                integer=self.value, unit=unit_to_str(self.unit)
+            )
         )
 
     @classmethod
@@ -69,7 +71,10 @@ class Integer(Evidence):
         assert (
             body.value.evidence_type == EvidenceType.INTEGER
         ), "Broken Precondition."
-        return Integer(value=body.value.integer).with_metadata(body.metadata)
+        return Integer(
+            value=body.value.integer,
+            unit=str_to_unit(body.value.unit),
+        ).with_metadata(body.metadata)
 
     def __eq__(self, other: object) -> bool:
         """Comparison between Integer values."""

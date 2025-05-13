@@ -14,7 +14,13 @@ import psutil
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import Quantity, Unit, Units
+from mlte.measurement.units import (
+    Quantity,
+    Unit,
+    Units,
+    str_to_unit,
+    unit_to_str,
+)
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
@@ -64,7 +70,7 @@ class MemoryStatistics(ExternalEvidence):
             "avg": self.avg.magnitude,
             "min": self.min.magnitude,
             "max": self.max.magnitude,
-            "unit": self.unit,
+            "unit": unit_to_str(self.unit),
         }
 
     @staticmethod
@@ -76,8 +82,12 @@ class MemoryStatistics(ExternalEvidence):
 
         :return: The deserialized instance
         """
+        unit = str_to_unit(data["unit"])
         return MemoryStatistics(
-            avg=data["avg"], min=data["min"], max=data["max"], unit=data["unit"]
+            avg=data["avg"],
+            min=data["min"],
+            max=data["max"],
+            unit=unit if unit else Units.kilobyte,
         )
 
     def __str__(self) -> str:

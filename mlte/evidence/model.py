@@ -4,7 +4,7 @@ Model implementation for MLTE evidence.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import Field
 from strenum import StrEnum
@@ -68,6 +68,9 @@ class IntegerValueModel(BaseModel):
     integer: int
     """The encapsulated value."""
 
+    unit: Optional[str] = None
+    """The unit associated with this value, if any."""
+
 
 class RealValueModel(BaseModel):
     """The model implementation for MLTE real values."""
@@ -77,6 +80,9 @@ class RealValueModel(BaseModel):
 
     real: float
     """The encapsulated value."""
+
+    unit: Optional[str] = None
+    """The unit associated with this value, if any."""
 
 
 class OpaqueValueModel(BaseModel):
