@@ -180,12 +180,14 @@ def test_invalid_function() -> None:
         ExternalMeasurement("dummy", Integer, "not_a_function")  # type: ignore
 
 
-def test_evaluate_no_function() -> None:
-    """An external measurement cannot be evaluated with no function."""
-
+def test_evaluate_invalid_args() -> None:
+    """An external measurement with invalid number of args throws an exception."""
     x = 1
-    y = 2
 
-    measurement = ExternalMeasurement("dummy", Integer)
+    measurement = ExternalMeasurement("dummy", Integer, _dummy_calculation)
+
     with pytest.raises(Exception):
-        measurement.evaluate(x, y)
+        _ = measurement.evaluate(x)
+
+    with pytest.raises(Exception):
+        _ = measurement.evaluate(x, x, x)
