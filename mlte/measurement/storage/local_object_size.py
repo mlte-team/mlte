@@ -40,7 +40,9 @@ class LocalObjectSize(Measurement):
             total_size = os.path.getsize(path)
         else:
             # Otherwise, the object must be directory, get accumulated size.
-            assert os.path.isdir(path), f"Path {path} is not a file nor a folder."
+            assert os.path.isdir(
+                path
+            ), f"Path {path} is not a file nor a folder."
             total_size = 0
             for dirpath, _, filenames in os.walk(path):
                 for name in filenames:
