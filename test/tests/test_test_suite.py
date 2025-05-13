@@ -11,7 +11,6 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.types.image import Image
-from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.storage import LocalObjectSize

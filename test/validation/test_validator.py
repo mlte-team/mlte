@@ -16,7 +16,6 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
 from mlte.measurement.units import Units
-from mlte.model.serialization_error import SerializationError
 from mlte.validation.model import ValidatorModel
 from mlte.validation.validator import Validator
 
@@ -293,13 +292,6 @@ def test_invalid_input_types() -> None:
 
     with pytest.raises(RuntimeError):
         _ = validator.validate(x, Integer(1))
-
-
-def test_non_serializable_argument():
-    validator = TestValue.in_between_complex(1.0, TestValue())
-
-    with pytest.raises(SerializationError):
-        _ = validator.to_model().to_json()
 
 
 def test_json_fix_serializable_argument():
