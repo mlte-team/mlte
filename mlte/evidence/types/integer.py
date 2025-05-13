@@ -11,7 +11,13 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, IntegerValueModel
-from mlte.measurement.units import Quantity, Unit, str_to_unit, unit_to_str
+from mlte.measurement.units import (
+    Quantity,
+    Unit,
+    quantity_to_str,
+    str_to_unit,
+    unit_to_str,
+)
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -104,8 +110,8 @@ class Integer(Evidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Integer magnitude is less than threshold {threshold_w_unit}",
-            failure=f"Integer magnitude exceeds threshold {threshold_w_unit}",
+            success=f"Integer magnitude is less than threshold {quantity_to_str(threshold_w_unit)})",
+            failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Integer],
         )
         return validator
@@ -128,8 +134,8 @@ class Integer(Evidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Integer magnitude is less than or equal to threshold {threshold_w_unit}",
-            failure=f"Integer magnitude exceeds threshold {threshold_w_unit}",
+            success=f"Integer magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Integer],
         )
         return validator

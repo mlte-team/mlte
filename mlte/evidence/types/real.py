@@ -11,7 +11,13 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
-from mlte.measurement.units import Quantity, Unit, str_to_unit, unit_to_str
+from mlte.measurement.units import (
+    Quantity,
+    Unit,
+    quantity_to_str,
+    str_to_unit,
+    unit_to_str,
+)
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -104,8 +110,8 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than threshold {threshold_w_unit}",
-            failure=f"Real magnitude exceeds threshold {threshold_w_unit}",
+            success=f"Real magnitude is less than threshold {quantity_to_str(threshold_w_unit)}",
+            failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
@@ -127,8 +133,8 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than or equal to threshold {threshold_w_unit}",
-            failure=f"Real magnitude exceeds threshold {threshold_w_unit}",
+            success=f"Real magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
@@ -150,8 +156,8 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than threshold {threshold_w_unit}",
-            failure=f"Real magnitude is below threshold {threshold_w_unit}",
+            success=f"Real magnitude is greater than threshold {quantity_to_str(threshold_w_unit)}",
+            failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
@@ -173,8 +179,8 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than or equal to threshold {threshold_w_unit}",
-            failure=f"Real magnitude is below threshold {threshold_w_unit}",
+            success=f"Real magnitude is greater than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
