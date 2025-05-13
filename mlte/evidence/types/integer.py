@@ -84,7 +84,7 @@ class Integer(Evidence):
 
     def __str__(self) -> str:
         """Return a string representation of this Evidence."""
-        return f"{self.get_value_w_units()}"
+        return f"{self.get_value_w_units() if self.unit else self.value}"
 
     @classmethod
     def less_than(

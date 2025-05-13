@@ -79,7 +79,7 @@ class Real(Evidence):
 
     def __str__(self) -> str:
         """Return a string representation of the Real."""
-        return f"{self.get_value_w_units()}"
+        return f"{self.get_value_w_units() if self.unit else self.value}"
 
     def __eq__(self, other: object) -> bool:
         """Comparison between Real values."""
