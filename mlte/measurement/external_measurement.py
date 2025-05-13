@@ -93,7 +93,7 @@ class ExternalMeasurement(Measurement):
             evidence = self.output_evidence_type(*args, **kwargs)
         else:
             result = self.function(*args, **kwargs)
-            if isinstance(result, tuple):
+            if type(result) is tuple:
                 # If we get more than one value from the function, unpack them.
                 evidence = self.output_evidence_type(*result)
             else:
