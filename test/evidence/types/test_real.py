@@ -13,6 +13,7 @@ import pytest
 from mlte.context.context import Context
 from mlte.evidence.types.real import Real
 from mlte.measurement.measurement import Measurement
+from mlte.measurement.units import Unit, Units
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -26,10 +27,12 @@ class DummyMeasurementReal(Measurement):
         return Real(3.14)
 
 
-def test_success():
+@pytest.mark.parametrize("number,unit", [(3.14, None), (2.2, Units.meter)])
+def test_success(number: float, unit: Unit):
     """Integer construction works for valid input."""
-    r = Real(3.14).with_metadata(get_sample_evidence_metadata())
-    assert r.value == 3.14
+    r = Real(number, unit).with_metadata(get_sample_evidence_metadata())
+    assert r.value == number
+    assert r.unit == unit
 
 
 def test_fail():
@@ -48,7 +51,9 @@ def test_measurement():
 
 def test_serde() -> None:
     """Real can be converted to model and back."""
-    r = Real(3.14).with_metadata(get_sample_evidence_metadata())
+    r = Real(3.14, unit=Units.mile).with_metadata(
+        get_sample_evidence_metadata()
+    )
 
     model = r.to_model()
     e = Real.from_model(model)
@@ -62,7 +67,9 @@ def test_save_load(
     """Real can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    i = Real(3.14).with_metadata(get_sample_evidence_metadata())
+    i = Real(3.14, unit=Units.celsius).with_metadata(
+        get_sample_evidence_metadata()
+    )
     i.save_with(ctx, store)
 
     loaded = Real.load_with("test_id.evidence", context=ctx, store=store)
