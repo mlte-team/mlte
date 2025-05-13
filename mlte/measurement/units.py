@@ -4,12 +4,14 @@ from typing import Optional
 
 import pint
 
-# Init shared registry.
 Units = pint.UnitRegistry()
+"""Unit registry, contains all common units (use lowercase and singular unit name as attribute)."""
 
-# Export types from here, to abstract out the use of pint.
 Unit = pint.Unit
+"""Type for Units."""
+
 Quantity = pint.Quantity
+"""Quantity type that contains a magnitude and a Unit."""
 
 
 def unit_to_str(unit: Optional[Unit]) -> Optional[str]:
