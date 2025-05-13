@@ -35,24 +35,22 @@ class LocalObjectSize(Measurement):
         if not os.path.isfile(path) and not os.path.isdir(path):
             raise RuntimeError(f"Invalid path: {path}")
 
-        # If the object is just a file, return it immediately
+        # If the object is just a file, just get its size.
         if os.path.isfile(path):
-            return Integer(os.path.getsize(path))
-
-        # Otherwise, the object must be directory
-        assert os.path.isdir(path), "Broken invariant."
-
-        total_size = 0
-        for dirpath, _, filenames in os.walk(path):
-            for name in filenames:
-                path = os.path.join(dirpath, name)
-                if not os.path.islink(path):
-                    total_size += os.path.getsize(path)
+            total_size = os.path.getsize(path)
+        else:
+            # Otherwise, the object must be directory, get accumulated size.
+            assert os.path.isdir(path), f"Path {path} is not a file nor a folder."
+            total_size = 0
+            for dirpath, _, filenames in os.walk(path):
+                for name in filenames:
+                    path = os.path.join(dirpath, name)
+                    if not os.path.islink(path):
+                        total_size += os.path.getsize(path)
 
         # Convert to requested unit, if any.
         size_w_unit = total_size * unit
-
-        return Integer(size_w_unit.magnitude, unit)
+        return Integer(size_w_unit.magnitude, unit=unit)
 
     # Overriden.
     @classmethod
