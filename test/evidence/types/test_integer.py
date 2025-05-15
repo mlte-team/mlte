@@ -6,13 +6,14 @@ Unit tests for Integer.
 
 from __future__ import annotations
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.measurement import Measurement
+from mlte.measurement.units import Unit, Units
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -26,10 +27,12 @@ class DummyMeasurementInteger(Measurement):
         return Integer(1)
 
 
-def test_success():
+@pytest.mark.parametrize("number,unit", [(1, None), (2, Units.meter)])
+def test_success(number: int, unit: Optional[Unit]):
     """Integer construction works for valid input type."""
-    i = Integer(1).with_metadata(get_sample_evidence_metadata())
-    assert i.value == 1
+    i = Integer(number, unit).with_metadata(get_sample_evidence_metadata())
+    assert i.value == number
+    assert i.unit == unit
 
 
 def test_fail():
@@ -50,7 +53,9 @@ def test_measurement():
 
 def test_serde() -> None:
     """Integer can be converted to model and back."""
-    i = Integer(1).with_metadata(get_sample_evidence_metadata())
+    i = Integer(1, unit=Units.meter).with_metadata(
+        get_sample_evidence_metadata()
+    )
 
     model = i.to_model()
     e = Integer.from_model(model)
@@ -64,7 +69,9 @@ def test_save_load(
     """Integer can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
 
-    i = Integer(1).with_metadata(get_sample_evidence_metadata())
+    i = Integer(1, unit=Units.kilobyte).with_metadata(
+        get_sample_evidence_metadata()
+    )
     i.save_with(ctx, store)
 
     loaded = Integer.load_with("test_id.evidence", context=ctx, store=store)

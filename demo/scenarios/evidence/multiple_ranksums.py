@@ -40,12 +40,18 @@ class MultipleRanksums(ExternalEvidence):
 
     @classmethod
     def all_p_values_greater_or_equal_than(cls, threshold: float) -> Validator:
-        """Checks if the p-value for multiple ranksums is below given threshold."""
+        """
+        Checks if the p-value for multiple ranksums is below given threshold.
+
+        :param threshold: The p-value we want to check against.
+        :return: A Validator that checks for this.
+        """
         bool_exp: Callable[[MultipleRanksums], bool] = (
             lambda value: len(value.get_low_p_values(threshold)) == 0
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
+            thresholds=[threshold],
             success=f"All p-values are equal to or over threshold {threshold}",
             failure=f"One or more p-values are below threshold {threshold}",
             input_types=[MultipleRanksums],

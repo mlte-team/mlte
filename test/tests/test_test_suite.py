@@ -11,7 +11,6 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.types.image import Image
-from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.storage import LocalObjectSize
@@ -170,7 +169,7 @@ def test_run_measurements():
     evidence = test_suite.run_measurements(input=inputs)
 
     assert len(evidence) == 3
-    assert type(evidence[0]) is Integer and evidence[0].value > 0
+    assert type(evidence[0]) is Real and evidence[0].value > 0
     assert type(evidence[1]) is Real and evidence[1].value == 4.0
     assert type(evidence[2]) is Image and "Image" in str(evidence[2])
 

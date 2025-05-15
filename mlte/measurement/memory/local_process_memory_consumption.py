@@ -14,6 +14,13 @@ import psutil
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
+from mlte.measurement.units import (
+    Quantity,
+    Unit,
+    Units,
+    str_to_unit,
+    unit_to_str,
+)
 from mlte.validation.validator import Validator
 
 # -----------------------------------------------------------------------------
@@ -29,28 +36,29 @@ class MemoryStatistics(ExternalEvidence):
     """
 
     def __init__(
-        self,
-        avg: int,
-        min: int,
-        max: int,
+        self, avg: int, min: int, max: int, unit: Unit = Units.kilobyte
     ):
         """
         Initialize a MemoryStatistics instance.
 
-        :param avg: The average memory consumption, in KB
-        :param min: The minimum memory consumption, in KB
-        :param max: The maximum memory consumption, in KB
+        :param avg: The average memory consumption
+        :param min: The minimum memory consumption
+        :param max: The maximum memory consumption
+        :param unit: the unit the values comes in, as a value from Units; defaults to Units.kilobyte
         """
         super().__init__()
 
-        self.avg = avg
-        """The average memory consumption (KB)."""
+        self.avg = Quantity(avg, unit)
+        """The average memory consumption."""
 
-        self.min = min
-        """The minimum memory consumption (KB)."""
+        self.min = Quantity(min, unit)
+        """The minimum memory consumption."""
 
-        self.max = max
-        """The maximum memory consumption (KB)."""
+        self.max = Quantity(max, unit)
+        """The maximum memory consumption."""
+
+        self.unit = unit
+        """The unit being used for all values."""
 
     def serialize(self) -> dict[str, Any]:
         """
@@ -58,7 +66,12 @@ class MemoryStatistics(ExternalEvidence):
 
         :return: The JSON object
         """
-        return {"avg": self.avg, "min": self.min, "max": self.max}
+        return {
+            "avg": self.avg.magnitude,
+            "min": self.min.magnitude,
+            "max": self.max.magnitude,
+            "unit": unit_to_str(self.unit),
+        }
 
     @staticmethod
     def deserialize(data: dict[str, Any]) -> MemoryStatistics:
@@ -69,10 +82,12 @@ class MemoryStatistics(ExternalEvidence):
 
         :return: The deserialized instance
         """
+        unit = str_to_unit(data["unit"])
         return MemoryStatistics(
             avg=data["avg"],
             min=data["min"],
             max=data["max"],
+            unit=unit if unit else Units.kilobyte,
         )
 
     def __str__(self) -> str:
@@ -84,41 +99,51 @@ class MemoryStatistics(ExternalEvidence):
         return s
 
     @classmethod
-    def max_consumption_less_than(cls, threshold: int) -> Validator:
+    def max_consumption_less_than(
+        cls, threshold: int, unit: Unit = Units.kilobyte
+    ) -> Validator:
         """
         Construct and invoke a validator for maximum memory consumption.
 
-        :param threshold: The threshold value for maximum consumption, in KB
+        :param threshold: The threshold value for maximum consumption
+        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
 
         :return: The Validator that can be used to validate a Value.
         """
+        threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[MemoryStatistics], bool] = (
-            lambda stats: stats.max < threshold
+            lambda stats: stats.max < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Maximum consumption below threshold {threshold}",
-            failure=f"Maximum consumption exceeds threshold {threshold}",
+            thresholds=[threshold_w_unit],
+            success=f"Maximum consumption below threshold {threshold_w_unit}",
+            failure=f"Maximum consumption exceeds threshold {threshold_w_unit}",
             input_types=[MemoryStatistics],
         )
         return validator
 
     @classmethod
-    def average_consumption_less_than(cls, threshold: float) -> Validator:
+    def average_consumption_less_than(
+        cls, threshold: float, unit: Unit = Units.kilobyte
+    ) -> Validator:
         """
         Construct and invoke a validator for average memory consumption.
 
         :param threshold: The threshold value for average consumption, in KB
+        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
 
         :return: The Validator that can be used to validate a Value.
         """
+        threshold_w_unit = Quantity(threshold, unit)
         bool_exp: Callable[[MemoryStatistics], bool] = (
-            lambda stats: stats.avg < threshold
+            lambda stats: stats.avg < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Average consumption below threshold {threshold}",
-            failure=f"Average consumption exceeds threshold {threshold}",
+            thresholds=[threshold_w_unit],
+            success=f"Average consumption below threshold {threshold_w_unit}",
+            failure=f"Average consumption exceeds threshold {threshold_w_unit}",
             input_types=[MemoryStatistics],
         )
         return validator
@@ -141,27 +166,36 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         super().__init__(identifier)
 
     # Overriden.
-    def __call__(self, pid: int, poll_interval: int = 1) -> MemoryStatistics:
+    def __call__(
+        self, pid: int, unit: Unit = Units.kilobyte, poll_interval: int = 1
+    ) -> MemoryStatistics:
         """
         Monitor memory consumption of process at `pid` until exit.
 
         :param pid: The process identifier
         :param poll_interval: The poll interval, in seconds
+        :param unit: The unit to return the memory size in, defaults to kilobyte (Units.kilobyte).
         :return: The captured statistics
         """
-        stats = []
+        captures = []
         while True:
-            kb = _get_memory_usage_psutil(pid)
-            if kb == 0:
+            size_in_kb = _get_memory_usage_psutil(pid)
+            if size_in_kb == 0:
                 break
-            stats.append(kb)
+            captures.append(size_in_kb)
             time.sleep(poll_interval)
 
-        return MemoryStatistics(
-            avg=int(sum(stats) / len(stats)),
-            min=min(stats),
-            max=max(stats),
-        )
+        # Calculate stats, use kilobytes as the psutil function returns values in that unit.
+        avg = int(sum(captures) / len(captures)) * Units.kilobyte
+        minimum = min(captures) * Units.kilobyte
+        maximum = max(captures) * Units.kilobyte
+
+        # Convert to provided unit if needed.
+        avg = avg.to(unit)
+        minimum = minimum.to(unit)
+        maximum = maximum.to(unit)
+
+        return MemoryStatistics(avg, minimum, maximum, unit=unit)
 
     # Overriden.
     @classmethod
