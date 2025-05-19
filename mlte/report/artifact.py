@@ -7,29 +7,23 @@ Artifact implementation for MLTE report.
 from __future__ import annotations
 
 import typing
-from copy import deepcopy
 from typing import List, Optional
 
-import mlte.store.error as errors
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
-from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.artifact import NegotiationCard
-from mlte.negotiation.model import (
-    DataDescriptor,
-    ModelDescriptor,
-    NegotiationCardDataModel,
-    SystemDescriptor,
-)
-from mlte.negotiation.qas import QASDescriptor
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import (
     CommentDescriptor,
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.results.model import TestResultsModel
+from mlte.results.test_results import TestResults
+from mlte.tests.model import TestSuiteModel
+from mlte.tests.test_suite import TestSuite
 
 DEFAULT_REPORT_ID = "default.report"
 
@@ -40,29 +34,33 @@ class Report(Artifact):
     def __init__(
         self,
         identifier: str = DEFAULT_REPORT_ID,
-        system: SystemDescriptor = SystemDescriptor(),
-        model: ModelDescriptor = ModelDescriptor(),
-        data: List[DataDescriptor] = [],
-        system_requirements: List[QASDescriptor] = [],
-        test_results_id: Optional[str] = None,
+        negotiation_card: Optional[NegotiationCard] = None,
+        test_suite: Optional[TestSuite] = None,
+        test_results: Optional[TestResults] = None,
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
     ) -> None:
+        """
+        Creates a Report.
+
+        :param identifier: The Report id (default value used if not provided).
+        :param negotiation_card: A NegotiationCard object; if None, NegotiationCard with default id will be loaded.
+        :param test_suite: A TestSuite object; if None, TestSuite with default id will be loaded.
+        :param test_results: A TestResults object; if None, TestResults with default id will be loaded.
+        :param comments: Optional comments to add.
+        :quantitative_analysis: Optional additional analysis to add.
+        """
         super().__init__(identifier, ArtifactType.REPORT)
 
-        self.system = system
-        """A system requirements."""
+        self.negotiation_card = (
+            negotiation_card if negotiation_card else NegotiationCard.load()
+        )
+        """The Negotiation Card with the requirements."""
 
-        self.data = data
-        """A description of the data used during model evaluation."""
+        self.test_suite = test_suite if test_suite else TestSuite.load()
+        """The test suite used to generate these results."""
 
-        self.model = model
-        """The intended use of the model under evaluation."""
-
-        self.system_requirements = system_requirements
-        """A description of the system requirements."""
-
-        self.test_results_id = test_results_id
+        self.test_results = test_results if test_results else TestResults.load()
         """A summary of model performance evaluation."""
 
         self.comments = comments
@@ -76,53 +74,22 @@ class Report(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ReportModel(
-                nc_data=NegotiationCardDataModel(
-                    system=self.system,
-                    data=self.data,
-                    model=self.model,
-                    system_requirements=self.system_requirements,
+                negotiation_card_id=self.negotiation_card.identifier,
+                negotiation_card=typing.cast(
+                    NegotiationCardModel, self.negotiation_card.to_model().body
                 ),
-                test_results_id=self.test_results_id,
+                test_suite_id=self.test_suite.identifier,
+                test_suite=typing.cast(
+                    TestSuiteModel, self.test_suite.to_model().body
+                ),
+                test_results_id=self.test_results.identifier,
+                test_results=typing.cast(
+                    TestResultsModel, self.negotiation_card.to_model().body
+                ),
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
             ),
         )
-
-    def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
-        """
-        Override Artifact.pre_save_hook(). Loads the associated TestResults details.
-        :param context: The context in which to save the artifact
-        :param store: The store in which to save the artifact
-        :raises RuntimeError: On broken invariant
-        """
-        if self.test_results_id is None:
-            return
-
-        with ManagedArtifactSession(store.session()) as handle:
-            try:
-                artifact = handle.read_artifact(
-                    context.model,
-                    context.version,
-                    self.test_results_id,
-                )
-            except errors.ErrorNotFound:
-                raise RuntimeError(
-                    f"Test Results with identifier {self.test_results_id} not found."
-                )
-
-        if not artifact.header.type == ArtifactType.TEST_RESULTS:
-            raise RuntimeError(
-                f"Test Results with identifier {self.test_results_id} not found."
-            )
-
-    def post_load_hook(self, context: Context, store: ArtifactStore) -> None:
-        """
-        Override Artifact.post_load_hook().
-        :param context: The context in which to save the artifact
-        :param store: The store in which to save the artifact
-        :raises RuntimeError: On broken invariant
-        """
-        super().post_load_hook(context, store)
 
     @classmethod
     def from_model(cls, model: BaseModel) -> Report:
@@ -136,11 +103,33 @@ class Report(Artifact):
         body = typing.cast(ReportModel, model.body)
         return Report(
             identifier=model.header.identifier,
-            system=body.nc_data.system,
-            data=body.nc_data.data,
-            model=body.nc_data.model,
-            system_requirements=body.nc_data.system_requirements,
-            test_results_id=body.test_results_id,
+            negotiation_card=NegotiationCard.from_model(
+                ArtifactModel(
+                    header=ArtifactHeaderModel(
+                        identifier=body.negotiation_card_id,
+                        type=ArtifactType.NEGOTIATION_CARD,
+                    ),
+                    body=body.negotiation_card,
+                )
+            ),
+            test_suite=TestSuite.from_model(
+                ArtifactModel(
+                    header=ArtifactHeaderModel(
+                        identifier=body.test_suite_id,
+                        type=ArtifactType.TEST_SUITE,
+                    ),
+                    body=body.test_suite,
+                )
+            ),
+            test_results=TestResults.from_model(
+                ArtifactModel(
+                    header=ArtifactHeaderModel(
+                        identifier=body.test_results_id,
+                        type=ArtifactType.TEST_RESULTS,
+                    ),
+                    body=body.test_results,
+                )
+            ),
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
         )
@@ -155,23 +144,6 @@ class Report(Artifact):
         """
         report = super().load(identifier)
         return typing.cast(Report, report)
-
-    def populate_from(self, artifact: NegotiationCard) -> Report:
-        """
-        Populate the contents of a report from a negotiation card.
-        :param artifact: The artifact to populate from
-        :return: The new report artifact with fields populated
-        """
-        return Report(
-            identifier=self.identifier,
-            system=deepcopy(artifact.system),
-            data=deepcopy(artifact.data),
-            model=deepcopy(artifact.model),
-            system_requirements=deepcopy(artifact.quality_scenarios),
-            test_results_id=self.test_results_id,
-            comments=deepcopy(self.comments),
-            quantitative_analysis=deepcopy(self.quantitative_analysis),
-        )
 
     @staticmethod
     def get_default_id() -> str:
