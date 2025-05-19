@@ -32,9 +32,6 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig();
-const token = useCookie("token");
-const user = useCookie("user");
-const userRole = useCookie("userRole");
 
 const username = ref("");
 const password = ref("");

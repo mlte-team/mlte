@@ -8,34 +8,36 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint --fix --ext .vue,.ts ."
+    "lint": "eslint --fix --ext .vue,.ts,.mjs ."
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.27.0",
+    "@nuxt/eslint": "^1.4.1",
     "@types/node": "^18",
     "@uswds/compile": "^1.0.1",
-    "eslint": "^8.45.0",
-    "eslint-config-standard": "^17.1.0",
+    "eslint": "^9.27.0",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-vue": "^9.15.1",
-    "nuxt": "^3.7.4"
+    "globals": "^16.1.0",
+    "nuxt": "^3.7.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.22.9",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
-    "@typescript-eslint/parser": "^6.1.0",
+    "@babel/eslint-parser": "^7.27.1",
+    "@typescript-eslint/eslint-plugin": "8.32.1",
+    "@typescript-eslint/parser": "8.32.1",
     "@uswds/uswds": "^3.4.1",
-    "chokidar": "^3.5.3",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "glob-parent": "^6.0.2",
+    "eslint-plugin-vue": "^10.1.0",
     "jsonschema": "^1.4.1",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6",
     "url": "^0.11.1",
     "vue": "3.3",
-    "vue-tsc": "^1.8.6",
+    "vue-tsc": "2.2.10",
     "vue-uswds": "^1.2.0"
   }
 }

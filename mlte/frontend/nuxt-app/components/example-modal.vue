@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-const emits = defineEmits(["toggleVisible"]);
+const emits = defineEmits(["toggleVisible"]); // eslint-disable @typescript-eslint/no-unused-vars
 const props = defineProps({
   visible: {
     type: Boolean,

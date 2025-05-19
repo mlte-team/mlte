@@ -35,6 +35,10 @@ jobs:
         run: make test
       - name: Vet schemas
         run: make check-schema
+      - name: Install frontend dependencies
+        run: cd mlte/frontend/nuxt-app && npm install
+      - name: Lint frontend
+        run: make lint-frontend
 
   docker:
     runs-on: ubuntu-latest

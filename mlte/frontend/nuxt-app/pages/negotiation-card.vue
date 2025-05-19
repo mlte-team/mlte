@@ -330,7 +330,9 @@ async function submit() {
           },
         },
       );
-    } catch {}
+    } catch (exception) {
+      console.log(exception);
+    }
   } else {
     console.log("Invalid document attempting to be submitted.");
   }
@@ -540,9 +542,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.nc_data.model.production_compute_resources.storage =
             document.computing_resources.storage;
         }
-      } catch (err) {
+      } catch (exception) {
         console.error("Invalid JSON or error in parsing file.");
-        console.log(err);
+        console.log(exception);
       }
     };
     reader.readAsText(file);
