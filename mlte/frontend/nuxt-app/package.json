@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.27.0",
     "@nuxt/eslint": "^1.4.1",
     "@types/node": "^18",
     "@uswds/compile": "^1.0.1",
