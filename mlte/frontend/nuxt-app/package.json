@@ -7,8 +7,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "lint": "eslint --fix --ext .vue,.ts,.mjs ."
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
