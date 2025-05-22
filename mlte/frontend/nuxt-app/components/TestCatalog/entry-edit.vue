@@ -45,7 +45,7 @@
       >
         <UsaCheckbox
           v-model="tag.selected"
-          @update:modelValue="tagChange(tag.selected, tag.name)"
+          @update:model-value="tagChange(tag.selected, tag.name)"
         >
           <template #default>
             {{ tag.name }}
@@ -170,22 +170,24 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
-    default: {
-      header: {
-        identifier: "",
-        creator: "",
-        created: -1,
-        updated: -1,
-        catalog_id: "",
-      },
-      tags: [],
-      qa_category: "",
-      quality_attribute: "",
-      code_type: "",
-      code: "",
-      description: "",
-      inputs: "",
-      output: "",
+    default() {
+      return {
+        header: {
+          identifier: "",
+          creator: "",
+          created: -1,
+          updated: -1,
+          catalog_id: "",
+        },
+        tags: [],
+        qa_category: "",
+        quality_attribute: "",
+        code_type: "",
+        code: "",
+        description: "",
+        inputs: "",
+        output: "",
+      };
     },
   },
   newEntryFlag: {

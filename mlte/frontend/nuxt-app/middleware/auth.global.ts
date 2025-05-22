@@ -1,6 +1,6 @@
-export default defineNuxtRouteMiddleware((from, to) => {
+export default defineNuxtRouteMiddleware((from) => {
   const token = useCookie("token");
-  if (!token.value && from.fullPath !== "/login") {
-    return navigateTo("/login");
+  if (!token.value && from.fullPath !== "/login-page") {
+    return navigateTo("/login-page");
   }
 });

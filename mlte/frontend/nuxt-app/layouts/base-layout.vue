@@ -20,7 +20,7 @@
     <div class="flex-container">
       <div class="sidebar left-sidebar">
         <div style="position: fixed">
-          <div v-if="$route.name != 'login'" class="grid-row grid-gap">
+          <div v-if="$route.name != 'login-page'" class="grid-row grid-gap">
             <div
               class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
             >

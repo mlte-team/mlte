@@ -29,8 +29,8 @@
 
       <TestCatalogEntryList
         v-model="entryList"
-        @editEntry="editEntry"
-        @deleteEntry="deleteEntry"
+        @edit-entry="editEntry"
+        @delete-entry="deleteEntry"
       />
     </div>
     <div v-if="editFlag">
@@ -317,8 +317,9 @@ async function saveEntry(entry: object) {
         },
       );
     }
-  } catch {
+  } catch (exception) {
     console.log("Error in submit.");
+    console.log(exception);
     return;
   }
 

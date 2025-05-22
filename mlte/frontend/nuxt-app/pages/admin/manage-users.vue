@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout" @manageUsers="manageUserClick">
+  <NuxtLayout name="base-layout" @manage-users="manageUserClick">
     <title>Manage Users</title>
     <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
@@ -11,8 +11,8 @@
       </UsaButton>
       <AdminUserList
         v-model="userList"
-        @editUser="editUser"
-        @deleteUser="deleteUser"
+        @edit-user="editUser"
+        @delete-user="deleteUser"
       />
     </div>
     <div v-if="editFlag">
@@ -181,8 +181,9 @@ async function saveUser(user: object) {
         },
       });
     }
-  } catch {
+  } catch (exception) {
     console.log("Error in submit.");
+    console.log(exception);
     return;
   }
   alert("User has been saved successfully.");

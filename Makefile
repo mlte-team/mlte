@@ -79,7 +79,11 @@ typecheck:
 # Lint frontend source code
 .PHONY: lint-frontend
 lint-frontend:
-	cd mlte/frontend/nuxt-app && npm run lint
+	cd mlte/frontend/nuxt-app && npx eslint --fix .
+
+.PHONY: check-lint-frontend
+check-lint-frontend:
+	cd mlte/frontend/nuxt-app && npx eslint .
 
 # Typecheck frontend source code
 .PHONY: typecheck-frontend
@@ -107,11 +111,11 @@ demo-test:
 
 # All quality assurance, as well as schema generation
 .PHONY: qa
-qa: schema isort format lint typecheck docs
+qa: schema isort format lint lint-frontend typecheck docs
 
 # Check all QA tasks
 .PHONY: check-qa
-check-qa: check-schema check-isort check-format lint typecheck docs
+check-qa: check-schema check-isort check-format lint check-lint-frontend typecheck docs
 
 # Clean cache files
 .PHONY: clean

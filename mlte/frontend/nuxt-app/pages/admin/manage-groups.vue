@@ -11,8 +11,8 @@
       </UsaButton>
       <AdminGroupList
         v-model="groupList"
-        @editGroup="editGroup"
-        @deleteGroup="deleteGroup"
+        @edit-group="editGroup"
+        @delete-group="deleteGroup"
       />
     </div>
     <div v-if="editFlag">
@@ -157,8 +157,9 @@ async function saveGroup(group: object) {
         },
       });
     }
-  } catch {
+  } catch (exception) {
     console.log("Error in submit.");
+    console.log(exception);
     return;
   }
   alert("Group has been saved successfully.");

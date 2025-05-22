@@ -41,7 +41,7 @@
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
-          @update:modelValue="selectModel($event, true)"
+          @update:model-value="selectModel($event, true)"
         >
           <template #label>Model</template>
         </UsaSelect>
@@ -52,7 +52,7 @@
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
-          @update:modelValue="selectVersion($event)"
+          @update:model-value="selectVersion($event)"
         >
           <template #label>Version</template>
         </UsaSelect>
@@ -575,7 +575,9 @@ async function submitNewModel(modelName: string) {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  } catch {}
+  } catch (exception) {
+    console.log(exception);
+  }
 }
 
 async function submitNewVersion(modelName: string, versionName: string) {
@@ -605,7 +607,9 @@ async function submitNewVersion(modelName: string, versionName: string) {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  } catch {}
+  } catch (exception) {
+    console.log(exception);
+  }
 }
 </script>
 

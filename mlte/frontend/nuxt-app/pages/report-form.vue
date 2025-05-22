@@ -247,8 +247,9 @@ if (useRoute().query.artifactId !== undefined) {
                 ?.value !== undefined
             ) {
               form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find((x) => x.value === problemType)
-                  ?.value;
+                problemTypeOptions.value.find(
+                  (x) => x.value === problemType,
+                )?.value;
             }
 
             // Setting .value for each classification item to work in the select
@@ -353,7 +354,9 @@ async function submit() {
           },
         },
       );
-    } catch {}
+    } catch (exception) {
+      console.log(exception);
+    }
   } else {
     console.log("Invalid report.");
   }

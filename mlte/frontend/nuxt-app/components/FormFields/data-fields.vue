@@ -304,34 +304,36 @@ const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: [
-      {
-        description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
-          {
-            name: "",
-            description: "",
-            percentage: 0,
-          },
-        ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
-      },
-    ],
+    default() {
+      return [
+        {
+          description: "",
+          source: "",
+          classification: "unclassified",
+          access: "",
+          labeling_method: "",
+          labels: [
+            {
+              name: "",
+              description: "",
+              percentage: 0,
+            },
+          ],
+          fields: [
+            {
+              name: "",
+              description: "",
+              type: "",
+              expected_values: "",
+              missing_values: "",
+              special_values: "",
+            },
+          ],
+          rights: "",
+          policies: "",
+        },
+      ];
+    },
   },
 });
 

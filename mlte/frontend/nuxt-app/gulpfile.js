@@ -4,7 +4,7 @@
  * Import uswds-compile
  */
 
-const uswds = require("@uswds/compile");
+const uswds = require("@uswds/compile"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**
  * USWDS version
