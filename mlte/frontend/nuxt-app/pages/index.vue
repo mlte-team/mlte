@@ -267,13 +267,17 @@ const versionOptions = ref<{ value: string; text: string }[]>([]);
 const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel", {
-  decode: false,
+  decode(value) {
+    return value
+  },
 });
-selectedModel.value = selectedModel.value as string || "";
+selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
-  decode: false,
+  decode(value) {
+    return value
+  },
 });
-selectedVersion.value = selectedVersion.value as string || "";
+selectedVersion.value = selectedVersion.value || "";
 
 const testSuiteHeaders = ref([
   { id: "id", label: "ID", sortable: true },
