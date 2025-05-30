@@ -111,11 +111,11 @@ demo-test:
 
 # All quality assurance, as well as schema generation
 .PHONY: qa
-qa: schema isort format lint lint-frontend typecheck docs
+qa: schema isort format lint lint-frontend typecheck typecheck-frontend docs
 
 # Check all QA tasks
 .PHONY: check-qa
-check-qa: check-schema check-isort check-format lint check-lint-frontend typecheck docs
+check-qa: check-schema check-isort check-format lint check-lint-frontend typecheck typecheck-frontend docs
 
 # Clean cache files
 .PHONY: clean
