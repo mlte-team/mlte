@@ -266,9 +266,13 @@ const modelOptions = ref<{ value: string; text: string }[]>([]);
 const versionOptions = ref<{ value: string; text: string }[]>([]);
 const modelList = ref<string[]>([]);
 
-const selectedModel = useCookie("selectedModel", {});
+const selectedModel = useCookie("selectedModel", {
+  decode: false,
+});
 selectedModel.value = selectedModel.value as string || "";
-const selectedVersion = useCookie("selectedVersion", {});
+const selectedVersion = useCookie("selectedVersion", {
+  decode: false,
+});
 selectedVersion.value = selectedVersion.value as string || "";
 
 const testSuiteHeaders = ref([
@@ -426,7 +430,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
 // Update the selected version for the artifact store.
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
-  if (versionName === "") {
+  if (selectedVersion.value === "") {
     clearArtifacts();
     return;
   }
@@ -436,7 +440,7 @@ async function selectVersion(versionName: string) {
       "/model/" +
       selectedModel.value +
       "/version/" +
-      versionName +
+      selectedVersion.value +
       "/artifact",
     {
       retry: 0,
@@ -449,7 +453,6 @@ async function selectVersion(versionName: string) {
       },
       onResponse({ response }) {
         if (response.ok && response._data) {
-          selectedVersion.value = versionName;
           populateArtifacts(
             selectedModel.value,
             selectedVersion.value,
