@@ -171,23 +171,7 @@ const props = defineProps({
     type: Object,
     required: true,
     default() {
-      return {
-        header: {
-          identifier: "",
-          creator: "",
-          created: -1,
-          updated: -1,
-          catalog_id: "",
-        },
-        tags: [],
-        qa_category: "",
-        quality_attribute: "",
-        code_type: "",
-        code: "",
-        description: "",
-        inputs: "",
-        output: "",
-      };
+      return new testCatalogEntry();
     },
   },
   newEntryFlag: {

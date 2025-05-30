@@ -52,18 +52,8 @@ const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QACategorySearchValue = ref("");
-const entryList = ref<{
-  header: object;
-  tags: Array<string>;
-  qa_category: string;
-  quality_attribute: string;
-  code_type: string;
-  code: string;
-  description: string;
-  inputs: string;
-  output: string;
-}>([]);
-const selectedEntry = ref({});
+const entryList = ref<testCatalogEntry[]>([]);
+const selectedEntry = ref<testCatalogEntry>(new testCatalogEntry());
 
 populateFullEntryList();
 
@@ -213,7 +203,7 @@ function addEntry() {
   newEntryFlag.value = true;
 }
 
-function editEntry(entry: object) {
+function editEntry(entry: testCatalogEntry) {
   selectedEntry.value = entry;
   editFlag.value = true;
   newEntryFlag.value = false;
@@ -262,7 +252,7 @@ function cancelEdit() {
   }
 }
 
-async function saveEntry(entry: object) {
+async function saveEntry(entry: testCatalogEntry) {
   try {
     if (newEntryFlag.value) {
       await $fetch(
