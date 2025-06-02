@@ -11,7 +11,7 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.model import MeasurementMetadata
 from mlte.results.model import ResultModel, TestResultsModel
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
-from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+from mlte.store.artifact.underlying.rdbs.metadata_tests import (
     DBEvidenceMetadata,
     DBResult,
     DBTestCase,

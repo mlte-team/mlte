@@ -19,7 +19,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
 
 # Needed to avoid circular import issues from relationships between tables classes.
 if TYPE_CHECKING:
-    from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+    from mlte.store.artifact.underlying.rdbs.metadata_tests import (
         DBEvidenceMetadata,
     )
 else:

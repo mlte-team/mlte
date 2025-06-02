@@ -28,7 +28,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     DBProblemType,
     DBReport,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+from mlte.store.artifact.underlying.rdbs.metadata_tests import (
     DBTestResults,
     DBTestSuite,
 )

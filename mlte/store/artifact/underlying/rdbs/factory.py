@@ -20,7 +20,7 @@ from mlte.store.artifact.underlying.rdbs.factory_nc import (
     create_report_db_from_model,
     create_report_model_from_db,
 )
-from mlte.store.artifact.underlying.rdbs.factory_spec import (
+from mlte.store.artifact.underlying.rdbs.factory_tests import (
     create_spec_db_from_model,
     create_test_results_db_from_model,
     create_test_results_model_from_db,
@@ -39,7 +39,7 @@ from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     DBNegotiationCard,
     DBReport,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+from mlte.store.artifact.underlying.rdbs.metadata_tests import (
     DBTestResults,
     DBTestSuite,
 )

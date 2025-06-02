@@ -26,7 +26,7 @@ if TYPE_CHECKING:
         DBNegotiationCard,
         DBReport,
     )
-    from mlte.store.artifact.underlying.rdbs.metadata_spec import (
+    from mlte.store.artifact.underlying.rdbs.metadata_tests import (
         DBTestResults,
         DBTestSuite,
     )

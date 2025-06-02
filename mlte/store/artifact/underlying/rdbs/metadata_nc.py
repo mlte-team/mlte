@@ -16,7 +16,7 @@ from mlte.store.artifact.underlying.rdbs.metadata import (
     DBArtifactHeader,
     DBBase,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBTestResults
+from mlte.store.artifact.underlying.rdbs.metadata_tests import DBTestResults
 
 # -------------------------------------------------------------------------
 # Negotiation Card

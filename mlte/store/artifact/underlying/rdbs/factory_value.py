@@ -14,7 +14,7 @@ from mlte.evidence.model import EvidenceModel, EvidenceType, get_model_class
 from mlte.measurement.model import MeasurementMetadata
 from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
 from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBEvidenceMetadata
+from mlte.store.artifact.underlying.rdbs.metadata_tests import DBEvidenceMetadata
 
 # -------------------------------------------------------------------------
 # Evidence Factory Methods
