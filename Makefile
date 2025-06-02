@@ -147,4 +147,4 @@ clean:
 	rm -r -f .mypy_cache .pytest_cache
 
 .PHONY: ci
-ci: clean check-qa test
+ci: clean venv frontend-env check-qa test

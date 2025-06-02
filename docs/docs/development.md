@@ -42,6 +42,12 @@ Once poetry and the virtual env are setup, you can set up dev dependencies like 
 $ poetry install --with dev --all-extras
 ```
 
+You can also run the following make command to install the same dependencies, plus the demo ones (see below):
+
+```bash
+$ make venv
+```
+
 Now you are ready to start working on `MLTE`!
 
 ### Demos
@@ -177,6 +183,12 @@ To initialize the development environment for the front end, navigate to the sub
 $ npm install
 $ npx gulp compile
 $ npx gulp init
+```
+
+You can also run the following make command:
+
+```bash
+$ make frontend-env
 ```
 
 Now the environment is set up and the front end can be run with the following command:
