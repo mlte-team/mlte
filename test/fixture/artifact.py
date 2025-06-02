@@ -157,8 +157,7 @@ def _make_test_results(complete: bool) -> TestResultsModel:
     Make a minimal test results, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    test_suite = make_complete_test_suite_model()
-    return TestResultsModel(test_suite=test_suite)
+    return make_complete_test_results_model()
 
 
 def _make_report(complete: bool) -> ReportModel:
@@ -301,10 +300,10 @@ def make_complete_test_results_model() -> TestResultsModel:
     :return: The artifact model
     """
     return TestResultsModel(
-        test_suite_id="",
+        test_suite_id="default.test_suite",
         test_suite=make_complete_test_suite_model(),
         results={
-            "accuracy": ResultModel(
+            "Test1": ResultModel(
                 type="Success",
                 message="The RF accuracy is greater than 3",
                 evidence_metadata=EvidenceMetadata(

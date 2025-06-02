@@ -84,7 +84,7 @@ class Report(Artifact):
                 ),
                 test_results_id=self.test_results.identifier,
                 test_results=typing.cast(
-                    TestResultsModel, self.negotiation_card.to_model().body
+                    TestResultsModel, self.test_results.to_model().body
                 ),
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
