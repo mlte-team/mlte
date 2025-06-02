@@ -178,23 +178,7 @@ async function search() {
 }
 
 function resetSelectedEntry() {
-  selectedEntry.value = {
-    header: {
-      identifier: "",
-      creator: "",
-      created: -1,
-      updated: -1,
-      catalog_id: "",
-    },
-    tags: [],
-    qa_category: "",
-    quality_attribute: "",
-    code_type: "",
-    code: "",
-    description: "",
-    inputs: "",
-    output: "",
-  };
+  selectedEntry.value = new TestCatalogEntry();
 }
 
 function addEntry() {

@@ -97,6 +97,6 @@ export class TestCatalogEntry {
     public code: string = "",
     public description: string = "",
     public inputs: string = "",
-    public outputs: string = "",
+    public output: string = "",
   ) {}
 }
