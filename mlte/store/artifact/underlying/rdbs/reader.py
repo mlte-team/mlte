@@ -14,24 +14,22 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
 from mlte.negotiation.model import DataClassification, ProblemType
-from mlte.store.artifact.underlying.rdbs import factory
-from mlte.store.artifact.underlying.rdbs.metadata import (
+from mlte.store.artifact.underlying.rdbs import main_factory
+from mlte.store.artifact.underlying.rdbs.card_metadata import (
+    DBDataClassification,
+    DBNegotiationCard,
+    DBProblemType,
+)
+from mlte.store.artifact.underlying.rdbs.evidence_metadata import DBEvidence
+from mlte.store.artifact.underlying.rdbs.main_metadata import (
     DBArtifact,
     DBArtifactType,
     DBModel,
     DBVersion,
 )
-from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
-from mlte.store.artifact.underlying.rdbs.metadata_nc import (
-    DBDataClassification,
-    DBNegotiationCard,
-    DBProblemType,
-    DBReport,
-)
-from mlte.store.artifact.underlying.rdbs.metadata_tests import (
-    DBTestResults,
-    DBTestSuite,
-)
+from mlte.store.artifact.underlying.rdbs.report_metadata import DBReport
+from mlte.store.artifact.underlying.rdbs.result_metadata import DBTestResults
+from mlte.store.artifact.underlying.rdbs.tests_metadata import DBTestSuite
 
 
 class DBReader:
@@ -149,7 +147,7 @@ class DBReader:
             )
         else:
             return (
-                factory.create_artifact_from_db(artifact_header_obj, session),
+                main_factory.create_artifact_from_db(artifact_header_obj),
                 artifact_obj,
             )
 
@@ -182,21 +180,18 @@ class DBReader:
         )
         artifacts = []
         for artifact_obj in artifact_objs:
-            artifact = factory.create_artifact_from_db(
-                artifact_obj.artifact, session
-            )
-            artifacts.append(artifact)
+            if artifact_obj.artifact:
+                artifact = main_factory.create_artifact_from_db(
+                    artifact_obj.artifact
+                )
+                artifacts.append(artifact)
         return artifacts
 
     @staticmethod
-    def get_artifact_header(
-        artifact_id: str, session: Session
-    ) -> DBArtifact:
+    def get_artifact_header(artifact_id: str, session: Session) -> DBArtifact:
         """Gets the artifact header object of the artifact identifier provided."""
         artifact_header_obj = session.scalar(
-            select(DBArtifact).where(
-                DBArtifact.identifier == artifact_id
-            )
+            select(DBArtifact).where(DBArtifact.identifier == artifact_id)
         )
         if artifact_header_obj is None:
             raise errors.ErrorNotFound(

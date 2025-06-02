@@ -17,19 +17,19 @@ import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
-from mlte.store.artifact.underlying.rdbs import factory
-from mlte.store.artifact.underlying.rdbs.metadata import (
+from mlte.store.artifact.underlying.rdbs import main_factory
+from mlte.store.artifact.underlying.rdbs.card_metadata import (
+    init_classification_types,
+    init_problem_types,
+)
+from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
+    init_evidence_types,
+)
+from mlte.store.artifact.underlying.rdbs.main_metadata import (
     DBBase,
     DBModel,
     DBVersion,
     init_artifact_types,
-)
-from mlte.store.artifact.underlying.rdbs.metadata_evidence import (
-    init_evidence_types,
-)
-from mlte.store.artifact.underlying.rdbs.metadata_nc import (
-    init_classification_types,
-    init_problem_types,
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
@@ -224,7 +224,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             _, version_obj = DBReader.get_version(model_id, version_id, session)
 
             # Create the actual object.
-            new_artifact_obj = factory.create_db_artifact(
+            new_artifact_obj = main_factory.create_db_artifact(
                 artifact, artifact_type_obj, version_obj.id, session
             )
 

@@ -153,7 +153,7 @@ class TestSuite(Artifact):
                     # Check for all negotiation cards, in case there is more than one.
                     for artifact in negotiation_cards:
                         card = typing.cast(NegotiationCardModel, artifact.body)
-                        scenarios = card.nc_data.system_requirements
+                        scenarios = card.system_requirements
 
                         # Look in each scenario for the negotiation card, to find the QAS id.
                         for scenario in scenarios:

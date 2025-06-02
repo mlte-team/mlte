@@ -1,8 +1,4 @@
-"""
-mlte/store/artifact/underlying/rdbs/factory_value.py
-
-Conversions between schema and internal models.
-"""
+"""Conversions between schema and internal models."""
 
 from __future__ import annotations
 
@@ -12,9 +8,11 @@ from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, EvidenceType, get_model_class
 from mlte.measurement.model import MeasurementMetadata
-from mlte.store.artifact.underlying.rdbs.metadata import DBArtifact
-from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
-from mlte.store.artifact.underlying.rdbs.metadata_tests import DBEvidenceMetadata
+from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
+    DBEvidence,
+    DBEvidenceMetadata,
+)
+from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 
 # -------------------------------------------------------------------------
 # Evidence Factory Methods

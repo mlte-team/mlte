@@ -1,12 +1,8 @@
-"""
-mlte/store/artifact/underlying/rdbs/metadata.py
-
-Definition of the metadata (DB schema) for the artifact store.
-"""
+"""Definition of the metadata (DB schema) for the artifact store."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import BigInteger, ForeignKey, UniqueConstraint, select
 from sqlalchemy.orm import (
@@ -21,15 +17,15 @@ from mlte.artifact.type import ArtifactType
 
 # Needed to avoid circular import issues from relationships between tables classes.
 if TYPE_CHECKING:
-    from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
-    from mlte.store.artifact.underlying.rdbs.metadata_nc import (
+    from mlte.store.artifact.underlying.rdbs.card_metadata import (
         DBNegotiationCard,
-        DBReport,
     )
-    from mlte.store.artifact.underlying.rdbs.metadata_tests import (
+    from mlte.store.artifact.underlying.rdbs.evidence_metadata import DBEvidence
+    from mlte.store.artifact.underlying.rdbs.report_metadata import DBReport
+    from mlte.store.artifact.underlying.rdbs.result_metadata import (
         DBTestResults,
-        DBTestSuite,
     )
+    from mlte.store.artifact.underlying.rdbs.tests_metadata import DBTestSuite
 else:
     DBNegotiationCard = "DBNegotiationCard"
     DBTestSuite = "DBTestSuite"
@@ -41,7 +37,10 @@ else:
 class DBBase(DeclarativeBase):
     """Base class for DB table classes."""
 
-    pass
+    @classmethod
+    def get_id_column(cls):
+        """Method to simplify access to id column, useful for ForeignKeys."""
+        return cls.__table__.c.id
 
 
 # -------------------------------------------------------------------------
@@ -55,14 +54,14 @@ class DBModel(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    versions: Mapped[List[DBVersion]] = relationship(
+    versions: Mapped[list[DBVersion]] = relationship(
         back_populates="model", cascade="all, delete-orphan"
     )
 
-    __table_args__ = (UniqueConstraint("name", name="_model_identifier"),)
+    __table_args__ = (UniqueConstraint("name", name="_model_identifier_uc"),)
 
     def __repr__(self) -> str:
-        return f"Version(id={self.id!r}, name={self.name!r})"
+        return f"Model(id={self.id!r}, name={self.name!r}, versions={self.versions})"
 
 
 class DBVersion(DBBase):
@@ -105,8 +104,12 @@ class DBArtifact(DBBase):
     timestamp: Mapped[int] = mapped_column(BigInteger)
     username: Mapped[Optional[str]]
 
-    type_id: Mapped[int] = mapped_column(ForeignKey("artifact_type.id"))
-    version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
+    type_id: Mapped[int] = mapped_column(
+        ForeignKey(DBArtifactType.get_id_column())
+    )
+    version_id: Mapped[int] = mapped_column(
+        ForeignKey(DBVersion.get_id_column())
+    )
 
     type: Mapped[DBArtifactType] = relationship()
     version: Mapped[DBVersion] = relationship()

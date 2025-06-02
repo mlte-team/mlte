@@ -27,7 +27,6 @@ from mlte.negotiation.model import (
     ModelDescriptor,
     ModelIODescriptor,
     ModelResourcesDescriptor,
-    NegotiationCardDataModel,
     NegotiationCardModel,
     ProblemType,
     RiskDescriptor,
@@ -168,7 +167,7 @@ def _make_report(complete: bool) -> ReportModel:
     :return: The artifact
     """
     if not complete:
-        return ReportModel()
+        raise RuntimeError("Report needs to have all basic fields filled in.")
     else:
         return make_complete_report()
 
@@ -179,13 +178,6 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
     :return: The artifact model
     """
     return NegotiationCardModel(
-        nc_data=_make_nc_data_model(),
-    )
-
-
-def _make_nc_data_model() -> NegotiationCardDataModel:
-    """Helper function to create sample NC data model with data."""
-    return NegotiationCardDataModel(
         system=SystemDescriptor(
             goals=[
                 GoalDescriptor(
@@ -337,7 +329,12 @@ def make_complete_report() -> ReportModel:
     :return: The artifact model
     """
     return ReportModel(
-        nc_data=_make_nc_data_model(),
+        negotiation_card_id="default",
+        negotiation_card=_make_negotiation_card(complete=True),
+        test_suite_id="default",
+        test_suite=_make_test_suite(complete=True),
+        test_results_id="default",
+        test_results=_make_test_results(complete=True),
         comments=[CommentDescriptor(content="content")],
         quantitative_analysis=QuantitiveAnalysisDescriptor(content="analysis"),
     )
