@@ -23,7 +23,7 @@ export function cancelFormSubmission(redirect: string) {
 export function loadFindings(
   testResults: TestResults,
   system_requirements: Array<QASDescriptor>,
-) {
+): Array<Finding> {
   const findings: Array<Finding> = [];
   const results = testResults.body.results;
   const test_cases = testResults.body.test_suite.test_cases;

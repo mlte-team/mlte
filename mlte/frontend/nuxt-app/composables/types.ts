@@ -6,6 +6,17 @@ interface Dictionary<T> {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
+export interface SelectOption {
+  value: string;
+  text: string;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// General Artifacts
+// --------------------------------------------------------------------------------------------------------------
+
+export type Artifact = TestResults;
+
 export class ArtifactHeader {
   constructor(
     public identifier: string = "",
@@ -20,14 +31,16 @@ export class ArtifactHeader {
 // Negotiation Card
 // --------------------------------------------------------------------------------------------------------------
 
-export interface QASDescriptor {
-  identifier: string;
-  quality: string;
-  stimulus: string;
-  source: string;
-  environment: string;
-  response: string;
-  measure: string;
+export class QASDescriptor {
+  constructor(
+    public identifier: string = "",
+    public quality: string = "",
+    public stimulus: string = "",
+    public source: string = "",
+    public environment: string = "",
+    public response: string = "",
+    public measure: string = "",
+  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ export async function fetchArtifact(
   model: string,
   version: string,
   artifactId: string,
-) {
+): Promise<Artifact> {
   const data = await $fetch(
     config.public.apiPath +
       "/model/" +

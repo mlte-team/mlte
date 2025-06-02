@@ -1,6 +1,6 @@
 // TODO: Pull these from the schema
 export const useClassificationOptions = () =>
-  useState<Array<object>>("classificationOptions", () => [
+  useState<Array<SelectOption>>("classificationOptions", () => [
     { value: "unclassified", text: "Unclassified" },
     {
       value: "cui",
@@ -19,7 +19,7 @@ export const useClassificationOptions = () =>
 
 // TODO: Pull these from the schema
 export const useProblemTypeOptions = () =>
-  useState<Array<object>>("problemTypeOptions", () => [
+  useState<Array<SelectOption>>("problemTypeOptions", () => [
     { value: "classification", text: "Classification" },
     { value: "clustering", text: "Clustering" },
     { value: "detection", text: "Detection" },
