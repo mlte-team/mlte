@@ -35,7 +35,7 @@ else:
     DBTestSuite = "DBTestSuite"
     DBTestResults = "DBTestResults"
     DBReport = "DBReport"
-    DBEvidence = "DBValue"
+    DBEvidence = "DBEvidence"
 
 
 class DBBase(DeclarativeBase):

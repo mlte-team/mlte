@@ -88,7 +88,7 @@ def create_db_artifact(
         report = typing.cast(ReportModel, artifact.body)
         return create_report_db_from_model(report, artifact_header, session)
     elif artifact.header.type == ArtifactType.EVIDENCE:
-        # Create a DBValue object and all its subpieces.
+        # Create a DBEvidence object and all its subpieces.
         value = typing.cast(EvidenceModel, artifact.body)
         return create_evidence_db_from_model(value, artifact_header)
     else:
