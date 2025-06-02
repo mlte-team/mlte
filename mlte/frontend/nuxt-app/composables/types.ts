@@ -31,6 +31,39 @@ export class ArtifactHeader {
 // Negotiation Card
 // --------------------------------------------------------------------------------------------------------------
 
+export class DataDescriptor {
+  constructor(
+    public description: string = "",
+    public source: string = "",
+    public classification: string = "unclassified",
+    public access: string = "",
+    public labeling_method: string = "",
+    public labels: Array<Label> = [new Label()],
+    public fields: Array<Field> = [new Field()],
+    public rights: string = "",
+    public policies: string = "",
+  ) {}
+}
+
+export class Label {
+  constructor(
+    public name: string = "",
+    public description: string = "",
+    public percentage: number = 0,
+  ) {}
+}
+
+export class Field {
+  constructor(
+    public name: string = "",
+    public description: string = "",
+    public type: string = "",
+    public expected_values: string = "",
+    public missing_values: string = "",
+    public special_values: string = "",
+  ) {}
+}
+
 export class QASDescriptor {
   constructor(
     public identifier: string = "",

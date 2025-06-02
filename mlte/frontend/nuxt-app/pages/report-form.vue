@@ -116,7 +116,7 @@ const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
 
-const findings = ref(null);
+const findings = ref<Array<Finding>>([]);
 const form = ref({
   artifact_type: "report",
   nc_data: {
@@ -141,34 +141,7 @@ const form = ref({
         other: "",
       },
     },
-    data: [
-      {
-        description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
-          {
-            name: "",
-            description: "",
-            percentage: 0,
-          },
-        ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
-      },
-    ],
+    data: [new DataDescriptor()],
     model: {
       development_compute_resources: {
         gpu: "0",
@@ -202,14 +175,15 @@ const form = ref({
       },
     },
     system_requirements: [
-      {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
-      },
+      new QASDescriptor(
+        "",
+        "",
+        "<Stimulus>",
+        "<Source>",
+        "<Environment",
+        "<Response",
+        "<Response Measure>",
+      ),
     ],
   },
   test_results_id: "",
@@ -273,7 +247,7 @@ if (useRoute().query.artifactId !== undefined) {
 
             if (response._data.body.test_results_id) {
               form.value.test_results_id = response._data.body.test_results_id;
-              const testResults = await fetchArtifact(
+              const testResults: TestResults = await fetchArtifact(
                 token.value!,
                 model as string,
                 version as string,

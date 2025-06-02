@@ -35,6 +35,7 @@ export default withNuxt(
           useRoute: true,
           useRuntimeConfig: true,
 
+          // Functions
           cancelFormSubmission: true,
           fetchArtifact: true,
           handleHttpError: true,
@@ -51,6 +52,11 @@ export default withNuxt(
           useClassificationOptions: true,
           useProblemTypeOptions: true,
           isValidNegotiation: true,
+
+          // Types
+          DataDescriptor: true,
+          QASDescriptor: true,
+          TestResults: true,
         },
 
         parser: parser,
