@@ -14,7 +14,6 @@ from . import util as util
 def test_valid_instance() -> None:
     """A complete instance validates successfully."""
     artifact_model = ArtifactFactory.make(ArtifactType.REPORT, id="id0")
-    print(artifact_model.body.test_results)
     report = Report.from_model(artifact_model)
     doc = report.to_model().to_json()
     util.validate_report_schema(doc["body"])
