@@ -87,7 +87,7 @@
       >
         <UsaCheckbox
           v-model="groupOption.selected"
-          @update:modelValue="groupChange(groupOption.selected, groupOption)"
+          @update:model-value="groupChange(groupOption.selected, groupOption)"
         >
           {{ groupOption.name }}
         </UsaCheckbox>
@@ -112,14 +112,16 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
-    default: {
-      username: "",
-      password: "",
-      email: "",
-      full_name: "",
-      disabled: false,
-      role: "regular",
-      groups: [],
+    default() {
+      return {
+        username: "",
+        password: "",
+        email: "",
+        full_name: "",
+        disabled: false,
+        role: "regular",
+        groups: [],
+      };
     },
   },
   newUserFlag: {

@@ -121,11 +121,10 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
     }
   });
 
-  if(initialAttrbute === undefined){
+  if (initialAttrbute === undefined) {
     emit("updateAttribute", "");
-  }
-  else{
-    emit("updateAttribute", initialAttrbute)
+  } else {
+    emit("updateAttribute", initialAttrbute);
   }
 }
 </script>

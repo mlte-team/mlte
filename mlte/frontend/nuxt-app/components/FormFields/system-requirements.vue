@@ -159,16 +159,18 @@ const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: [
-      {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
-      },
-    ],
+    default() {
+      return [
+        {
+          quality: "",
+          stimulus: "<Stimulus>",
+          source: "<Source>",
+          environment: "<Environment>",
+          response: "<Response>",
+          measure: "<Response Measure>",
+        },
+      ];
+    },
   },
 });
 

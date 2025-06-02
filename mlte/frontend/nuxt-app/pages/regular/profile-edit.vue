@@ -139,6 +139,8 @@ async function submit() {
         handleHttpError(response.status, response._data.error_description);
       },
     });
-  } catch {}
+  } catch (exception) {
+    console.log(exception);
+  }
 }
 </script>
