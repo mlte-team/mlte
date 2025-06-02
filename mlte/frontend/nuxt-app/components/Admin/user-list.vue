@@ -48,7 +48,9 @@ const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: [],
+    default() {
+      return [];
+    },
   },
 });
 </script>

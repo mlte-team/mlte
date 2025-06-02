@@ -15,4 +15,6 @@ export default defineNuxtConfig({
       version: pkg.version,
     },
   },
+
+  modules: ["@nuxt/eslint"],
 });

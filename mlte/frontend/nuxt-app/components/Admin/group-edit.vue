@@ -19,7 +19,7 @@
       >
         <UsaCheckbox
           v-model="permissionOption.selected"
-          @update:modelValue="
+          @update:model-value="
             permissionChange(permissionOption.selected, permissionOption)
           "
         >
