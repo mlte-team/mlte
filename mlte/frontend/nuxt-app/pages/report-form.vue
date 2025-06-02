@@ -279,6 +279,7 @@ if (useRoute().query.artifactId !== undefined) {
                 version as string,
                 form.value.test_results_id,
               );
+
               findings.value = loadFindings(
                 testResults,
                 form.value.nc_data.system_requirements,

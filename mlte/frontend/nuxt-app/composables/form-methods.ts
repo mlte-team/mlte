@@ -21,43 +21,44 @@ export function cancelFormSubmission(redirect: string) {
 
 // Load findings from a test results.
 export function loadFindings(
-  proxyObject: object,
-  system_requirements: Array<object>,
+  testResults: TestResults,
+  system_requirements: Array<QASDescriptor>,
 ) {
-  const findings = [];
-  // TODO(Kyle): Standardize conversion of proxy objects.
-  const test_results = JSON.parse(JSON.stringify(proxyObject));
-  const results = test_results.body.results;
-  const test_cases = test_results.body.test_suite.test_cases;
+  const findings: Array<Finding> = [];
+  const results = testResults.body.results;
+  const test_cases = testResults.body.test_suite.test_cases;
   for (const key in results) {
     const result = results[key];
-    const matched_case = test_cases.find(
+    const matched_test_case = test_cases.find(
       (x) => x.identifier === result.evidence_metadata.test_case_id,
     );
-    const finding = {
-      status: result.type,
-      measurement: result.evidence_metadata.measurement.measurement_class,
-      test_case_id: result.evidence_metadata.test_case_id,
-      message: result.message,
-      qas_list: matched_case.qas_list,
-    };
 
-    findings.push(finding);
-  }
-  findings.forEach((finding) => {
-    const new_qas_list = [];
-    finding.qas_list.forEach((qas_id) => {
+    if (matched_test_case === undefined) {
+      console.log(
+        "Error: Test case identifier did not match a result test_case_id.",
+      );
+      continue;
+    }
+
+    const new_qas_list: Array<QualityAttributeScenario> = [];
+    matched_test_case.qas_list.forEach((qas_id) => {
       const matched_req = system_requirements.find(
         (x) => x.identifier === qas_id,
       );
       new_qas_list.push({
         id: qas_id,
-        qa: matched_req.quality,
+        qa: matched_req!.quality,
       });
     });
-    finding.qas_list = new_qas_list;
-  });
-  console.log(findings);
 
+    const finding = new Finding(
+      result.type,
+      result.evidence_metadata.measurement.measurement_class,
+      result.evidence_metadata.test_case_id,
+      result.message,
+      new_qas_list,
+    );
+    findings.push(finding);
+  }
   return findings;
 }
