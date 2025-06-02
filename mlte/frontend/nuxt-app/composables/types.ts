@@ -1,37 +1,50 @@
-export interface artifactHeader {
-  identifier: string;
-  creator: string;
-  created: Number;
-  updated: Number;
-  catalog_id: string;
+// --------------------------------------------------------------------------------------------------------------
+// Artifacts
+// --------------------------------------------------------------------------------------------------------------
+
+export interface Artifact {
+  header: ArtifactHeader;
 }
 
-export class testCatalogEntry {
-  header: artifactHeader;
-  tags: Array<string>;
-  qa_category: string;
-  quality_attribute: string;
-  code_type: string;
-  code: string;
-  description: string;
-  inputs: string;
-  output: string;
+export class ArtifactHeader {
+  constructor(
+    public identifier: string = "",
+    public creator: string = "",
+    public created: number = -1,
+    public updated: number = -1,
+    public catalog_id: string = "",
+  ) {}
+}
 
-  constructor(){
-    this.header = {
-      identifier: "",
-      creator: "",
-      created: -1,
-      updated: -1,
-      catalog_id: "",
-    },
-    this.tags = [];
-    this.qa_category = "";
-    this.quality_attribute = "";
-    this.code_type = "";
-    this.code = "";
-    this.description = "";
-    this.inputs = "";
-    this.output = ""
-  }
+export class Finding {
+  constructor(
+    public status: string,
+    public measurement: string,
+    public test_case_id: string,
+    public message: string,
+    public qas_list: Array<QualityAttributeScenario>,
+  ) {}
+}
+
+export interface QualityAttributeScenario {
+  id: string;
+  qa: string;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Test Catalog
+// --------------------------------------------------------------------------------------------------------------
+
+export class TestCatalogEntry {
+  constructor(
+    public header: ArtifactHeader = new ArtifactHeader(),
+    public tags: Array<string> = [],
+    public qa_category: string = "",
+    public quality_attribute: string = "",
+    public code_type: string = "",
+    public code: string = "",
+    public description: string = "",
+    public inputs: string = "",
+    public outputs: string = "",
+  ) {}
 }

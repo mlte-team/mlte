@@ -171,7 +171,7 @@ const props = defineProps({
     type: Object,
     required: true,
     default() {
-      return new testCatalogEntry();
+      return new TestCatalogEntry();
     },
   },
   newEntryFlag: {

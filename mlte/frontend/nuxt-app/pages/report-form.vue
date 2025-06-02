@@ -3,7 +3,7 @@
     <title>Report</title>
     <template #page-title>Report</template>
     <UsaTextInput
-      v-if="useRoute().query.artifactId === undefined"
+      v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
     >
       <template #label>
@@ -91,15 +91,16 @@
         :to="{
           path: '/report-export',
           query: {
-            model: useRoute().query.model,
-            version: useRoute().query.version,
-            artifactId: useRoute().query.artifactId,
+            model: queryModel,
+            version: queryVersion,
+            artifactId: queryArtifactId,
           },
         }"
       >
         <UsaButton class="primary-button"> Export </UsaButton>
       </NuxtLink>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
+      {{ forceSaveParam }}
     </div>
   </NuxtLayout>
 </template>
@@ -108,8 +109,12 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
+const queryModel = useRoute().query.model;
+const queryVersion = useRoute().query.version;
+const queryArtifactId = useRoute().query.artifactId;
+const forceSaveParam = queryArtifactId !== undefined;
+
 const userInputArtifactId = ref("");
-const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
 const findings = ref(null);
 const form = ref({
@@ -269,9 +274,9 @@ if (useRoute().query.artifactId !== undefined) {
             if (response._data.body.test_results_id) {
               form.value.test_results_id = response._data.body.test_results_id;
               const testResults = await fetchArtifact(
-                token.value,
-                model,
-                version,
+                token.value!,
+                model as string,
+                version as string,
                 form.value.test_results_id,
               );
               findings.value = loadFindings(
@@ -292,14 +297,8 @@ if (useRoute().query.artifactId !== undefined) {
 async function submit() {
   const model = useRoute().query.model;
   const version = useRoute().query.version;
-
-  let identifier = "";
-  if (useRoute().query.artifactId === undefined) {
-    identifier = userInputArtifactId.value;
-  } else {
-    identifier = useRoute().query.artifactId?.toString();
-  }
-
+  const identifier =
+    useRoute().query.artifactId?.toString() || userInputArtifactId.value;
   const artifact = {
     header: {
       identifier,
@@ -327,7 +326,7 @@ async function submit() {
           },
           body: {
             artifact,
-            force: forceSaveParam.value,
+            force: forceSaveParam,
             parents: false,
           },
           onRequestError() {
@@ -336,9 +335,8 @@ async function submit() {
           onResponse({ response }) {
             if (response.ok) {
               successfulArtifactSubmission("report", identifier);
-              forceSaveParam.value = true;
               if (useRoute().query.artifactId === undefined) {
-                window.location =
+                window.location.href =
                   "/report-form?" +
                   "model=" +
                   useRoute().query.model +

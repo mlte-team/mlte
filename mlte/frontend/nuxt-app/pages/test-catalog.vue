@@ -52,8 +52,8 @@ const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QACategorySearchValue = ref("");
-const entryList = ref<testCatalogEntry[]>([]);
-const selectedEntry = ref<testCatalogEntry>(new testCatalogEntry());
+const entryList = ref<TestCatalogEntry[]>([]);
+const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 populateFullEntryList();
 
@@ -203,7 +203,7 @@ function addEntry() {
   newEntryFlag.value = true;
 }
 
-function editEntry(entry: testCatalogEntry) {
+function editEntry(entry: TestCatalogEntry) {
   selectedEntry.value = entry;
   editFlag.value = true;
   newEntryFlag.value = false;
@@ -252,7 +252,7 @@ function cancelEdit() {
   }
 }
 
-async function saveEntry(entry: testCatalogEntry) {
+async function saveEntry(entry: TestCatalogEntry) {
   try {
     if (newEntryFlag.value) {
       await $fetch(

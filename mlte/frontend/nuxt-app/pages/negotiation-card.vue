@@ -314,7 +314,7 @@ async function submit() {
               successfulArtifactSubmission("negotiation card", identifier);
               forceSaveParam.value = true;
               if (useRoute().query.artifactId === undefined) {
-                window.location =
+                window.location.href =
                   "/negotiation-card?" +
                   "model=" +
                   useRoute().query.model +

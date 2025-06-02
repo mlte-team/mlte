@@ -268,13 +268,13 @@ const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel", {
   decode(value) {
-    return value
+    return value;
   },
 });
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
   decode(value) {
-    return value
+    return value;
   },
 });
 selectedVersion.value = selectedVersion.value || "";
