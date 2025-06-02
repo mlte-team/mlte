@@ -166,10 +166,7 @@ def _make_report(complete: bool) -> ReportModel:
     Make a minimal report, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    if not complete:
-        raise RuntimeError("Report needs to have all basic fields filled in.")
-    else:
-        return make_complete_report()
+    return make_complete_report()
 
 
 def make_complete_negotiation_card() -> NegotiationCardModel:

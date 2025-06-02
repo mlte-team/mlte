@@ -93,7 +93,7 @@ class DBGoalDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     metrics: Mapped[list[DBMetricDescriptor]] = relationship(
@@ -147,7 +147,7 @@ class DBDataDescriptor(DBBase):
         ForeignKey("nc_data_classification.id")
     )
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     classification: Mapped[DBDataClassification] = relationship()
@@ -223,10 +223,10 @@ class DBModelIODescriptor(DBBase):
     expected_values: Mapped[Optional[str]]
 
     negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
     negotiation_card_output_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
@@ -242,7 +242,7 @@ class DBModelResourcesDescriptor(DBBase):
     memory: Mapped[Optional[str]]
     storage: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
@@ -262,7 +262,7 @@ class DBQAS(DBBase):
     measure: Mapped[Optional[str]]
 
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
