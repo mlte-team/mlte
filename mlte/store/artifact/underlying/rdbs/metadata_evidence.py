@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from mlte.evidence.model import EvidenceType
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
+    DBArtifact,
     DBBase,
 )
 
@@ -45,14 +45,14 @@ class DBEvidence(DBBase):
     __tablename__ = "evidence"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[DBArtifact] = mapped_column(
+        ForeignKey(DBArtifact.__table__.c.id)
     )
     evidence_class: Mapped[str]
     evidence_type: Mapped[str]
     data_json: Mapped[str]
 
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[DBArtifact] = relationship(
         back_populates="body_evidence", cascade="all"
     )
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(
@@ -60,7 +60,7 @@ class DBEvidence(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"Evidence(id={self.id!r}, artifact_header={self.artifact_header!r}, evidence_class={self.evidence_class!r}, data_json={self.data_json!r})"
+        return f"Evidence(id={self.id!r}, artifact={self.artifact!r}, evidence_class={self.evidence_class!r}, data_json={self.data_json!r})"
 
 
 # -------------------------------------------------------------------------

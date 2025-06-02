@@ -16,7 +16,7 @@ from mlte.context.model import Model, Version
 from mlte.negotiation.model import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs import factory
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
+    DBArtifact,
     DBArtifactType,
     DBModel,
     DBVersion,
@@ -138,9 +138,9 @@ class DBReader:
             .where(DBVersion.model_id == DBModel.id)
             .where(DBVersion.name == version_id)
             .where(DBModel.name == model_id)
-            .where(DBArtifactHeader.id == artifact_class.artifact_header_id)
-            .where(DBArtifactHeader.identifier == artifact_id)
-            .where(DBArtifactHeader.version_id == DBVersion.id)
+            .where(DBArtifact.id == artifact_class.artifact_id)
+            .where(DBArtifact.identifier == artifact_id)
+            .where(DBArtifact.version_id == DBVersion.id)
         )
 
         if artifact_obj is None:
@@ -176,14 +176,14 @@ class DBReader:
                 .where(DBVersion.model_id == DBModel.id)
                 .where(DBVersion.name == version_id)
                 .where(DBModel.name == model_id)
-                .where(DBArtifactHeader.id == artifact_class.artifact_header_id)
-                .where(DBArtifactHeader.version_id == DBVersion.id)
+                .where(DBArtifact.id == artifact_class.artifact_id)
+                .where(DBArtifact.version_id == DBVersion.id)
             )
         )
         artifacts = []
         for artifact_obj in artifact_objs:
             artifact = factory.create_artifact_from_db(
-                artifact_obj.artifact_header, session
+                artifact_obj.artifact, session
             )
             artifacts.append(artifact)
         return artifacts
@@ -191,11 +191,11 @@ class DBReader:
     @staticmethod
     def get_artifact_header(
         artifact_id: str, session: Session
-    ) -> DBArtifactHeader:
+    ) -> DBArtifact:
         """Gets the artifact header object of the artifact identifier provided."""
         artifact_header_obj = session.scalar(
-            select(DBArtifactHeader).where(
-                DBArtifactHeader.identifier == artifact_id
+            select(DBArtifact).where(
+                DBArtifact.identifier == artifact_id
             )
         )
         if artifact_header_obj is None:
@@ -230,9 +230,9 @@ class DBReader:
         """Gets the TestSuit with the given identifier."""
         property_obj = session.scalar(
             select(DBTestSuite)
-            .where(DBTestSuite.artifact_header_id == DBArtifactHeader.id)
-            .where(DBArtifactHeader.identifier == test_suite_identifier)
-            .where(DBArtifactHeader.version_id == version_id)
+            .where(DBTestSuite.artifact_id == DBArtifact.id)
+            .where(DBArtifact.identifier == test_suite_identifier)
+            .where(DBArtifact.version_id == version_id)
         )
         if property_obj is None:
             raise errors.ErrorNotFound(
@@ -248,9 +248,9 @@ class DBReader:
         """Gets the TestSuite with the given identifier."""
         property_obj = session.scalar(
             select(DBTestResults)
-            .where(DBTestResults.artifact_header_id == DBArtifactHeader.id)
-            .where(DBArtifactHeader.identifier == test_results_identifier)
-            .where(DBArtifactHeader.version_id == version_id)
+            .where(DBTestResults.artifact_id == DBArtifact.id)
+            .where(DBArtifact.identifier == test_results_identifier)
+            .where(DBArtifact.version_id == version_id)
         )
         if property_obj is None:
             raise errors.ErrorNotFound(

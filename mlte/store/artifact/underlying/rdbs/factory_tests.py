@@ -10,7 +10,7 @@ from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.model import MeasurementMetadata
 from mlte.results.model import ResultModel, TestResultsModel
-from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
+from mlte.store.artifact.underlying.rdbs.metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.metadata_tests import (
     DBEvidenceMetadata,
     DBResult,
@@ -28,10 +28,10 @@ from mlte.validation.model import ValidatorModel
 
 
 def create_spec_db_from_model(
-    test_suite: TestSuiteModel, artifact_header: DBArtifactHeader
+    test_suite: TestSuiteModel, artifact: DBArtifact
 ) -> DBTestSuite:
     """Creates the DB object from the corresponding internal model."""
-    test_suite_obj = DBTestSuite(artifact_header=artifact_header, test_cases=[])
+    test_suite_obj = DBTestSuite(artifact=artifact, test_cases=[])
     for test_case in test_suite.test_cases:
         test_case_obj = DBTestCase(
             identifier=test_case.identifier,
@@ -90,17 +90,17 @@ def create_test_suite_model_from_db(
 
 def create_test_results_db_from_model(
     test_results: TestResultsModel,
-    artifact_header: DBArtifactHeader,
+    artifact: DBArtifact,
     session: Session,
 ) -> DBTestResults:
     """Creates the DB object from the corresponding internal model."""
     test_results_obj = DBTestResults(
-        artifact_header=artifact_header,
+        artifact=artifact,
         results=[],
         test_suite=(
             DBReader.get_test_suite(
                 test_results.test_suite_id,
-                artifact_header.version_id,
+                artifact.version_id,
                 session,
             )
             if test_results.test_suite_id != ""
@@ -146,7 +146,7 @@ def create_test_results_model_from_db(
             }
         ),
         test_suite_id=(
-            test_results_obj.test_suite.artifact_header.identifier
+            test_results_obj.test_suite.artifact.identifier
             if test_results_obj.test_suite is not None
             else ""
         ),

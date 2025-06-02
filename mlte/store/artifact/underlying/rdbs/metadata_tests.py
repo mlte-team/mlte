@@ -11,7 +11,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
+    DBArtifact,
     DBBase,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
@@ -25,11 +25,11 @@ class DBTestSuite(DBBase):
     __tablename__ = "test_suite"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[DBArtifact] = mapped_column(
+        ForeignKey(DBArtifact.__table__.c.id)
     )
 
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[DBArtifact] = relationship(
         back_populates="body_test_suite", cascade="all"
     )
     test_cases: Mapped[list[DBTestCase]] = relationship(
@@ -37,7 +37,7 @@ class DBTestSuite(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"TestSuite(id={self.id!r}, artifact_header={self.artifact_header!r}, test_cases={self.test_cases!r})"
+        return f"TestSuite(id={self.id!r}, artifact={self.artifact!r}, test_cases={self.test_cases!r})"
 
 
 class DBTestCase(DBBase):
@@ -66,14 +66,14 @@ class DBTestResults(DBBase):
     __tablename__ = "test_results"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[DBArtifact] = mapped_column(
+        ForeignKey(DBArtifact.__table__.c.id)
     )
     test_suite_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("test_suite.id")
     )
 
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[DBArtifact] = relationship(
         back_populates="body_test_results", cascade="all"
     )
     test_suite: Mapped[DBTestSuite] = relationship()
@@ -82,7 +82,7 @@ class DBTestResults(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"TestResults(id={self.id!r}, artifact_header={self.artifact_header!r}, test_suite={self.test_suite!r})"
+        return f"TestResults(id={self.id!r}, artifact={self.artifact!r}, test_suite={self.test_suite!r})"
 
 
 class DBResult(DBBase):

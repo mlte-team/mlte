@@ -31,7 +31,7 @@ from mlte.store.artifact.underlying.rdbs.factory_value import (
     create_evidence_model_from_db,
 )
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
+    DBArtifact,
     DBArtifactType,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
@@ -59,7 +59,7 @@ def create_db_artifact(
     DBTestSuite, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
 ]:
     """Converts an internal model to its corresponding DB object for artifacts."""
-    artifact_header = DBArtifactHeader(
+    artifact = DBArtifact(
         identifier=artifact.header.identifier,
         type=artifact_type_obj,
         timestamp=artifact.header.timestamp,
@@ -70,27 +70,27 @@ def create_db_artifact(
     if artifact.header.type == ArtifactType.TEST_SUITE:
         # Create a DBTestSuite and its internal TestResult list.
         test_suite = typing.cast(TestSuiteModel, artifact.body)
-        return create_spec_db_from_model(test_suite, artifact_header)
+        return create_spec_db_from_model(test_suite, artifact)
     elif artifact.header.type == ArtifactType.TEST_RESULTS:
         # Create a DBTestResults db object.
         test_results = typing.cast(TestResultsModel, artifact.body)
         return create_test_results_db_from_model(
-            test_results, artifact_header, session
+            test_results, artifact, session
         )
     elif artifact.header.type == ArtifactType.NEGOTIATION_CARD:
         # Create a DBNegotiationCard object and all its subpieces.
         negotiation_card = typing.cast(NegotiationCardModel, artifact.body)
         return create_negotiation_db_from_model(
-            negotiation_card, artifact_header, session
+            negotiation_card, artifact, session
         )
     elif artifact.header.type == ArtifactType.REPORT:
         # Create a DBReport object and all its subpieces.
         report = typing.cast(ReportModel, artifact.body)
-        return create_report_db_from_model(report, artifact_header, session)
+        return create_report_db_from_model(report, artifact, session)
     elif artifact.header.type == ArtifactType.EVIDENCE:
         # Create a DBEvidence object and all its subpieces.
         value = typing.cast(EvidenceModel, artifact.body)
-        return create_evidence_db_from_model(value, artifact_header)
+        return create_evidence_db_from_model(value, artifact)
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact.header.type}"
@@ -103,7 +103,7 @@ def create_db_artifact(
 
 
 def create_artifact_from_db(
-    artifact_header_obj: DBArtifactHeader, session: Session
+    artifact_header_obj: DBArtifact, session: Session
 ) -> ArtifactModel:
     """
     Creates an Artifact model from the corresponding DB object and DB header.

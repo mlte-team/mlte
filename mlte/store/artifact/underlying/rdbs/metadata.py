@@ -97,8 +97,8 @@ class DBArtifactType(DBBase):
         return f"ArtifactType(id={self.id!r}, name={self.name!r})"
 
 
-class DBArtifactHeader(DBBase):
-    __tablename__ = "artifact_header"
+class DBArtifact(DBBase):
+    __tablename__ = "artifact"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
@@ -110,24 +110,25 @@ class DBArtifactHeader(DBBase):
 
     type: Mapped[DBArtifactType] = relationship()
     version: Mapped[DBVersion] = relationship()
-    body_test_suite: Mapped[Optional[DBTestSuite]] = relationship(
-        back_populates="artifact_header", cascade="all, delete-orphan"
-    )
-    body_test_results: Mapped[Optional[DBTestResults]] = relationship(
-        back_populates="artifact_header", cascade="all, delete-orphan"
-    )
+
     body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
-        back_populates="artifact_header", cascade="all, delete-orphan"
+        back_populates="artifact", cascade="all, delete-orphan"
     )
-    body_report: Mapped[Optional[DBReport]] = relationship(
-        back_populates="artifact_header", cascade="all, delete-orphan"
+    body_test_suite: Mapped[Optional[DBTestSuite]] = relationship(
+        back_populates="artifact", cascade="all, delete-orphan"
     )
     body_evidence: Mapped[Optional[DBEvidence]] = relationship(
-        back_populates="artifact_header", cascade="all, delete-orphan"
+        back_populates="artifact", cascade="all, delete-orphan"
+    )
+    body_test_results: Mapped[Optional[DBTestResults]] = relationship(
+        back_populates="artifact", cascade="all, delete-orphan"
+    )
+    body_report: Mapped[Optional[DBReport]] = relationship(
+        back_populates="artifact", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"ArtifactHeader(id={self.id!r}, identifier={self.identifier!r}, timestamp={self.timestamp!r}, type={self.type!r})"
+        return f"Artifact(id={self.id!r}, identifier={self.identifier!r}, timestamp={self.timestamp!r}, type={self.type!r})"
 
 
 # -------------------------------------------------------------------------

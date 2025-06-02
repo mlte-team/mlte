@@ -32,7 +32,7 @@ from mlte.report.model import (
     QuantitiveAnalysisDescriptor,
     ReportModel,
 )
-from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
+from mlte.store.artifact.underlying.rdbs.metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.metadata_nc import (
     DBQAS,
     DBCommentDescriptor,
@@ -141,7 +141,7 @@ def create_negotiation_data_db_from_model(
 
 def create_negotiation_db_from_model(
     negotiation_card: NegotiationCardModel,
-    artifact_header: DBArtifactHeader,
+    artifact: DBArtifact,
     session: Session,
 ) -> DBNegotiationCard:
     """Creates the DB object from the corresponding internal model."""
@@ -152,7 +152,7 @@ def create_negotiation_db_from_model(
 
     # Create the actual object.
     negotiation_card_obj = DBNegotiationCard(
-        artifact_header=artifact_header,
+        artifact=artifact,
         negotiation_card_data=negotiation_card_data_obj,
     )
 
@@ -224,7 +224,7 @@ def create_negotiation_model_from_db(
 
 def create_report_db_from_model(
     report: ReportModel,
-    artifact_header: DBArtifactHeader,
+    artifact: DBArtifact,
     session: Session,
 ) -> DBReport:
     """Creates the DB object from the corresponding internal model."""
@@ -234,12 +234,12 @@ def create_report_db_from_model(
 
     # Create the actual object.
     report_obj = DBReport(
-        artifact_header=artifact_header,
+        artifact=artifact,
         negotiation_card_data=negotiation_card_data_obj,
         test_results=(
             DBReader.get_test_results(
                 report.test_results_id,
-                artifact_header.version_id,
+                artifact.version_id,
                 session,
             )
             if report.test_results_id is not None
@@ -266,7 +266,7 @@ def create_report_model_from_db(report_obj: DBReport) -> ReportModel:
     body = ReportModel(
         nc_data=negotiation_card_data,
         test_results_id=(
-            report_obj.test_results.artifact_header.identifier
+            report_obj.test_results.artifact.identifier
             if report_obj.test_results is not None
             else None
         ),

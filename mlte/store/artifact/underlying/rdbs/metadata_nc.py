@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from mlte.negotiation.model import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
+    DBArtifact,
     DBBase,
 )
 from mlte.store.artifact.underlying.rdbs.metadata_tests import DBTestResults
@@ -28,10 +28,10 @@ class DBNegotiationCard(DBBase):
 
     # General
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[DBArtifact] = mapped_column(
+        ForeignKey(DBArtifact.__table__.c.id)
     )
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[DBArtifact] = relationship(
         back_populates="body_negotiation_card",
         cascade="all",
     )
@@ -43,7 +43,7 @@ class DBNegotiationCard(DBBase):
     negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
 
     def __repr__(self) -> str:
-        return f"NegotiationCard(id={self.id!r}, artifact_header={self.artifact_header!r})"
+        return f"NegotiationCard(id={self.id!r}, artifact={self.artifact!r})"
 
 
 class DBNegotiationCardData(DBBase):
@@ -116,10 +116,10 @@ class DBReport(DBBase):
 
     # General
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[DBArtifact] = mapped_column(
+        ForeignKey(DBArtifact.__table__.c.id)
     )
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[DBArtifact] = relationship(
         back_populates="body_report",
         cascade="all",
     )
@@ -146,7 +146,7 @@ class DBReport(DBBase):
 
     def __repr__(self) -> str:
         return (
-            f"Report(id={self.id!r}, artifact_header={self.artifact_header!r})"
+            f"Report(id={self.id!r}, artifact={self.artifact!r})"
         )
 
 

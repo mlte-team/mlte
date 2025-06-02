@@ -12,7 +12,7 @@ from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, EvidenceType, get_model_class
 from mlte.measurement.model import MeasurementMetadata
-from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
+from mlte.store.artifact.underlying.rdbs.metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
 from mlte.store.artifact.underlying.rdbs.metadata_tests import DBEvidenceMetadata
 
@@ -22,11 +22,11 @@ from mlte.store.artifact.underlying.rdbs.metadata_tests import DBEvidenceMetadat
 
 
 def create_evidence_db_from_model(
-    evidence: EvidenceModel, artifact_header: DBArtifactHeader
+    evidence: EvidenceModel, artifact: DBArtifact
 ) -> DBEvidence:
     """Creates the DB object from the corresponding internal model."""
     value_obj = DBEvidence(
-        artifact_header=artifact_header,
+        artifact=artifact,
         evidence_metadata=DBEvidenceMetadata(
             test_case_id=evidence.metadata.test_case_id,
             measurement=json.dumps(evidence.metadata.measurement.to_json()),
