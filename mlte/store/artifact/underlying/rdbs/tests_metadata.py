@@ -21,11 +21,11 @@ class DBTestSuite(DBBase):
     __tablename__ = "test_suite"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_id: Mapped[DBArtifact] = mapped_column(
+    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
         ForeignKey(DBArtifact.get_id_column())
     )
 
-    artifact: Mapped[DBArtifact] = relationship(
+    artifact: Mapped[Optional[DBArtifact]] = relationship(
         back_populates="body_test_suite", cascade="all"
     )
     test_cases: Mapped[list[DBTestCase]] = relationship(

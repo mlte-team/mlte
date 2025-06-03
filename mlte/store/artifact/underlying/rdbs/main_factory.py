@@ -70,9 +70,7 @@ def create_db_artifact(
     elif artifact.header.type == ArtifactType.TEST_RESULTS:
         # Create a DBTestResults db object.
         test_results = typing.cast(TestResultsModel, artifact.body)
-        return create_test_results_db_from_model(
-            test_results, artifact_obj, session
-        )
+        return create_test_results_db_from_model(test_results, artifact_obj)
     elif artifact.header.type == ArtifactType.NEGOTIATION_CARD:
         # Create a DBNegotiationCard object and all its subpieces.
         negotiation_card = typing.cast(NegotiationCardModel, artifact.body)

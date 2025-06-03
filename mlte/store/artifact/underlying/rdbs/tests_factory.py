@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from mlte._private.fixed_json import json
 from mlte.measurement.model import MeasurementMetadata
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
@@ -18,7 +20,7 @@ from mlte.validation.model import ValidatorModel
 
 
 def create_test_suite_db_from_model(
-    test_suite: TestSuiteModel, artifact: DBArtifact
+    test_suite: TestSuiteModel, artifact: Optional[DBArtifact]
 ) -> DBTestSuite:
     """Creates the DB object from the corresponding internal model."""
     test_suite_obj = DBTestSuite(artifact=artifact, test_cases=[])

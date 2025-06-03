@@ -43,7 +43,7 @@ from mlte.store.artifact.underlying.rdbs.reader import DBReader
 
 def create_negotiation_db_from_model(
     negotiation_card: NegotiationCardModel,
-    db_artifact: DBArtifact,
+    db_artifact: Optional[DBArtifact],
     session: Session,
 ) -> DBNegotiationCard:
     """Creates the DB object from the corresponding internal model."""

@@ -40,8 +40,8 @@ from mlte.report.model import (
     ReportModel,
 )
 from mlte.results.model import ResultModel, TestResultsModel
-from mlte.results.test_results import TestResults
 from mlte.tests.model import TestCaseModel, TestSuiteModel
+from mlte.tests.test_suite import TestSuite
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 
@@ -302,7 +302,7 @@ def make_complete_test_results_model() -> TestResultsModel:
     :return: The artifact model
     """
     return TestResultsModel(
-        test_suite_id=f"{TestResults.get_default_id()}",
+        test_suite_id=f"{TestSuite.get_default_id()}",
         test_suite=make_complete_test_suite_model(),
         results={
             "Test1": ResultModel(

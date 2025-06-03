@@ -31,14 +31,15 @@ class DBTestResults(DBBase):
     __tablename__ = "test_results"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_id: Mapped[DBArtifact] = mapped_column(
+    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
         ForeignKey(DBArtifact.get_id_column())
     )
+    test_suite_identifier: Mapped[str] = mapped_column()
     test_suite_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("test_suite.id")
+        ForeignKey(DBTestSuite.get_id_column())
     )
 
-    artifact: Mapped[DBArtifact] = relationship(
+    artifact: Mapped[Optional[DBArtifact]] = relationship(
         back_populates="body_test_results", cascade="all"
     )
     test_suite: Mapped[DBTestSuite] = relationship()

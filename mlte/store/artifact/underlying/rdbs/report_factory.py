@@ -36,21 +36,22 @@ def create_report_db_from_model(
     session: Session,
 ) -> DBReport:
     """Creates the DB object from the corresponding internal model."""
-    negotiation_card_data_obj = create_negotiation_db_from_model(
-        report.negotiation_card, artifact, session
+    negotiation_card_obj = create_negotiation_db_from_model(
+        report.negotiation_card, None, session
     )
-    test_suite_obj = create_test_suite_db_from_model(
-        report.test_suite, artifact
-    )
+    test_suite_obj = create_test_suite_db_from_model(report.test_suite, None)
     test_results_obj = create_test_results_db_from_model(
-        report.test_results, artifact, session
+        report.test_results, None
     )
 
     # Create the actual object.
     report_obj = DBReport(
         artifact=artifact,
-        negotiation_card=negotiation_card_data_obj,
+        negotiation_card_identifier=negotiation_card_obj.id,
+        negotiation_card=negotiation_card_obj,
+        test_suite_identifier=test_suite_obj.id,
         test_suite=test_suite_obj,
+        test_results_identifier=test_results_obj.id,
         test_results=test_results_obj,
         comments=[],
         quantitative_analysis_content=report.quantitative_analysis.content,
