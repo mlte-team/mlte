@@ -17,6 +17,7 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
+from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -39,6 +40,7 @@ from mlte.report.model import (
     ReportModel,
 )
 from mlte.results.model import ResultModel, TestResultsModel
+from mlte.results.test_results import TestResults
 from mlte.tests.model import TestCaseModel, TestSuiteModel
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
@@ -260,7 +262,7 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier="default.negotiation_card-qas_1",
+                identifier=f"{NegotiationCard.get_default_id()}-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
@@ -300,7 +302,7 @@ def make_complete_test_results_model() -> TestResultsModel:
     :return: The artifact model
     """
     return TestResultsModel(
-        test_suite_id="default.test_suite",
+        test_suite_id=f"{TestResults.get_default_id()}",
         test_suite=make_complete_test_suite_model(),
         results={
             "Test1": ResultModel(

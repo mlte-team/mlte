@@ -24,7 +24,7 @@ from mlte.negotiation.model import (
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 
-DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
+DEFAULT_NEGOTIATION_CARD_ID = "default.card"
 
 
 class NegotiationCard(Artifact):

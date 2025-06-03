@@ -18,7 +18,7 @@ from mlte.store.query import Query, TypeFilter
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 
-DEFAULT_TEST_SUITE_ID = "default.test_suite"
+DEFAULT_TEST_SUITE_ID = "default.suite"
 
 
 class TestSuite(Artifact):

@@ -16,7 +16,7 @@ from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
 
-DEFAULT_TEST_RESULTS_ID = "default.test_results"
+DEFAULT_TEST_RESULTS_ID = "default.results"
 
 # -----------------------------------------------------------------------------
 # TestResults
