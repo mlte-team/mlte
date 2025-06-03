@@ -6,12 +6,14 @@ Artifact implementation for MLTE report.
 
 from __future__ import annotations
 
+import datetime
 import typing
 from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import NegotiationCardModel
@@ -22,6 +24,7 @@ from mlte.report.model import (
 )
 from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
+from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_suite import TestSuite
 
@@ -144,6 +147,20 @@ class Report(Artifact):
         """
         report = super().load(identifier)
         return typing.cast(Report, report)
+
+    # Overriden.
+    def pre_save_hook(self, context: Context, store: ArtifactStore) -> None:
+        """
+        Override Artifact.pre_save_hook(). Assigns time-stamped id to report, to ensure all have different ids.
+        :param context: The context in which to save the artifact
+        :param store: The store in which to save the artifact
+        :raises RuntimeError: On broken invariant
+        """
+        self.identifier = f"{self.identifier}-{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}"
+
+    # ----------------------------------------------------------------------------------
+    # Helper methods.
+    # ----------------------------------------------------------------------------------
 
     @staticmethod
     def get_default_id() -> str:
