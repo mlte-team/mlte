@@ -11,7 +11,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact, DBBase
-from mlte.store.artifact.underlying.rdbs.tests_metadata import DBTestSuite
+from mlte.store.artifact.underlying.rdbs.suite_metadata import DBTestSuite
 
 # Needed to avoid circular import issues from relationships between tables classes.
 if TYPE_CHECKING:

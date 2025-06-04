@@ -309,7 +309,7 @@ def make_complete_test_results_model() -> TestResultsModel:
                 type="Success",
                 message="The RF accuracy is greater than 3",
                 evidence_metadata=EvidenceMetadata(
-                    test_case_id="accuracy",
+                    test_case_id="Test1",
                     measurement=MeasurementMetadata(
                         measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
                         output_class="mlte.evidence.types.real.Real",

@@ -7,7 +7,7 @@ from typing import Optional
 from mlte._private.fixed_json import json
 from mlte.measurement.model import MeasurementMetadata
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
-from mlte.store.artifact.underlying.rdbs.tests_metadata import (
+from mlte.store.artifact.underlying.rdbs.suite_metadata import (
     DBTestCase,
     DBTestSuite,
 )
@@ -19,13 +19,13 @@ from mlte.validation.model import ValidatorModel
 # -------------------------------------------------------------------------
 
 
-def create_test_suite_db_from_model(
-    test_suite: TestSuiteModel, artifact: Optional[DBArtifact]
+def create_suite_orm(
+    test_suite: TestSuiteModel, artifact_orm: Optional[DBArtifact]
 ) -> DBTestSuite:
     """Creates the DB object from the corresponding internal model."""
-    test_suite_obj = DBTestSuite(artifact=artifact, test_cases=[])
+    test_suite_orm = DBTestSuite(artifact=artifact_orm, test_cases=[])
     for test_case in test_suite.test_cases:
-        test_case_obj = DBTestCase(
+        test_case_orm = DBTestCase(
             identifier=test_case.identifier,
             goal=test_case.goal,
             measurement_metadata=(
@@ -40,36 +40,36 @@ def create_test_suite_db_from_model(
             ),
             qas_list=json.dumps(test_case.qas_list),
         )
-        test_suite_obj.test_cases.append(test_case_obj)
+        test_suite_orm.test_cases.append(test_case_orm)
 
-    return test_suite_obj
+    return test_suite_orm
 
 
-def create_test_suite_model_from_db(
-    test_suite_obj: DBTestSuite,
+def create_suite_model(
+    test_suite_orm: DBTestSuite,
 ) -> TestSuiteModel:
     """Creates the internal model object from the corresponding DB object."""
     # Creating a TestSuite from DB data.
     body = TestSuiteModel(
         test_cases=[
             TestCaseModel(
-                identifier=test_case_obj.identifier,
-                goal=test_case_obj.goal,
+                identifier=test_case_orm.identifier,
+                goal=test_case_orm.goal,
                 measurement=(
                     MeasurementMetadata.from_json_string(
-                        test_case_obj.measurement_metadata
+                        test_case_orm.measurement_metadata
                     )
-                    if test_case_obj.measurement_metadata
+                    if test_case_orm.measurement_metadata
                     else None
                 ),
                 validator=(
-                    ValidatorModel.from_json_string(test_case_obj.validator)
-                    if test_case_obj.validator
+                    ValidatorModel.from_json_string(test_case_orm.validator)
+                    if test_case_orm.validator
                     else None
                 ),
-                qas_list=json.loads(test_case_obj.qas_list),
+                qas_list=json.loads(test_case_orm.qas_list),
             )
-            for test_case_obj in test_suite_obj.test_cases
+            for test_case_orm in test_suite_orm.test_cases
         ],
     )
     return body

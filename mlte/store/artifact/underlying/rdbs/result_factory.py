@@ -7,6 +7,7 @@ from typing import Optional
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.model import MeasurementMetadata
 from mlte.results.model import ResultModel, TestResultsModel
+from mlte.store.artifact.underlying.rdbs import suite_factory
 from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
     DBEvidenceMetadata,
 )
@@ -15,34 +16,30 @@ from mlte.store.artifact.underlying.rdbs.result_metadata import (
     DBResult,
     DBTestResults,
 )
-from mlte.store.artifact.underlying.rdbs.tests_factory import (
-    create_test_suite_db_from_model,
-    create_test_suite_model_from_db,
-)
 
 # -------------------------------------------------------------------------
 # TestResults Factory Methods
 # -------------------------------------------------------------------------
 
 
-def create_test_results_db_from_model(
+def create_results_orm(
     test_results: TestResultsModel,
-    artifact: Optional[DBArtifact],
+    artifact_orm: Optional[DBArtifact],
 ) -> DBTestResults:
     """Creates the DB object from the corresponding internal model."""
-    test_results_obj = DBTestResults(
-        artifact=artifact,
+    test_results_orm = DBTestResults(
+        artifact=artifact_orm,
         results=[],
         test_suite_identifier=test_results.test_suite_id,
-        test_suite=create_test_suite_db_from_model(
-            test_results.test_suite, None
+        test_suite=suite_factory.create_suite_orm(
+            test_results.test_suite, artifact_orm=None
         ),
     )
     for test_case_id, result in test_results.results.items():
-        result_obj = DBResult(
+        result_orm = DBResult(
             type=result.type,
             message=result.message,
-            test_results=test_results_obj,
+            test_results=test_results_orm,
             evidence_metadata=(
                 DBEvidenceMetadata(
                     test_case_id=test_case_id,
@@ -52,12 +49,12 @@ def create_test_results_db_from_model(
                 else None
             ),
         )
-        test_results_obj.results.append(result_obj)
-    return test_results_obj
+        test_results_orm.results.append(result_orm)
+    return test_results_orm
 
 
-def create_test_results_model_from_db(
-    test_results_obj: DBTestResults,
+def create_results_model(
+    test_results_orm: DBTestResults,
 ) -> TestResultsModel:
     """Creates the internal model object from the corresponding DB object."""
     body = TestResultsModel(
@@ -73,12 +70,12 @@ def create_test_results_model_from_db(
                         ),
                     ),
                 )
-                for result in test_results_obj.results
+                for result in test_results_orm.results
             }
         ),
-        test_suite_id=test_results_obj.test_suite_identifier,
+        test_suite_id=test_results_orm.test_suite_identifier,
         test_suite=(
-            create_test_suite_model_from_db(test_results_obj.test_suite)
+            suite_factory.create_suite_model(test_results_orm.test_suite)
         ),
     )
     return body

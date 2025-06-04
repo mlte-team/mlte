@@ -100,11 +100,11 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                model_obj = DBModel(
+                model_orm = DBModel(
                     name=model.identifier,
                     versions=[],
                 )
-                session.add(model_obj)
+                session.add(model_orm)
                 session.commit()
                 return Model(identifier=model.identifier, versions=[])
 
@@ -116,15 +116,15 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def list_models(self) -> List[str]:
         models: List[str] = []
         with Session(self.storage.engine) as session:
-            model_objs = session.scalars(select(DBModel))
-            for model_obj in model_objs:
-                models.append(model_obj.name)
+            model_orms = session.scalars(select(DBModel))
+            for model_orm in model_orms:
+                models.append(model_orm.name)
         return models
 
     def delete_model(self, model_id: str) -> Model:
         with Session(self.storage.engine) as session:
-            model, model_obj = DBReader.get_model(model_id, session)
-            session.delete(model_obj)
+            model, model_orm = DBReader.get_model(model_id, session)
+            session.delete(model_orm)
             session.commit()
             return model
 
@@ -139,13 +139,13 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 )
             except errors.ErrorNotFound:
                 # Check if model exists.
-                _, model_obj = DBReader.get_model(model_id, session)
+                _, model_orm = DBReader.get_model(model_id, session)
 
                 # Now create version.
-                version_obj = DBVersion(
-                    name=version.identifier, model_id=model_obj.id
+                version_orm = DBVersion(
+                    name=version.identifier, model_id=model_orm.id
                 )
-                session.add(version_obj)
+                session.add(version_orm)
                 session.commit()
                 return Version(identifier=version.identifier)
 
@@ -157,23 +157,23 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def list_versions(self, model_id: str) -> List[str]:
         versions: List[str] = []
         with Session(self.storage.engine) as session:
-            version_objs = session.scalars(
+            version_orms = session.scalars(
                 (
                     select(DBVersion)
                     .where(DBVersion.model_id == DBModel.id)
                     .where(DBModel.name == model_id)
                 )
             )
-            for version_obj in version_objs:
-                versions.append(version_obj.name)
+            for version_orm in version_orms:
+                versions.append(version_orm.name)
         return versions
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
         with Session(self.storage.engine) as session:
-            version, version_obj = DBReader.get_version(
+            version, version_orm = DBReader.get_version(
                 model_id, version_id, session
             )
-            session.delete(version_obj)
+            session.delete(version_orm)
             session.commit()
             return version
 
@@ -199,7 +199,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
 
             # Check if artifact already exists.
             try:
-                _, artifact_obj = DBReader.get_artifact(
+                _, artifact_orm = DBReader.get_artifact(
                     model_id,
                     version_id,
                     artifact.header.identifier,
@@ -212,24 +212,18 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 else:
                     # We have no edit functionality, nor any versioning system, so delete the previous version.
                     # TODO: versioning? Keep previous versions?
-                    session.delete(artifact_obj)
+                    session.delete(artifact_orm)
             except errors.ErrorNotFound:
                 # If artifact was not found, it is ok, force it or not we will create it.
                 pass
 
-            # Get type and parent version info.
-            artifact_type_obj = DBReader.get_artifact_type(
-                artifact.header.type, session
-            )
-            _, version_obj = DBReader.get_version(model_id, version_id, session)
-
             # Create the actual object.
-            new_artifact_obj = main_factory.create_db_artifact(
-                artifact, artifact_type_obj, version_obj.id, session
+            new_artifact_orm = main_factory.create_artifact_orm(
+                artifact, model_id, version_id, session
             )
 
             # Use session to add object.
-            session.add(new_artifact_obj)
+            session.add(new_artifact_orm)
             session.commit()
             return artifact
 
@@ -254,13 +248,8 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     ) -> List[ArtifactModel]:
         # TODO: not the best support of offset and limit, still loading everything from DB.
         with Session(self.storage.engine) as session:
-            all_artifacts = []
-            for artifact_type in DBReader.SUPPORTED_ARTIFACT_DB_CLASSES.keys():
-                artifacts = DBReader.get_artifacts_for_type(
-                    model_id, version_id, artifact_type, session
-                )
-                all_artifacts.extend(artifacts)
-            return all_artifacts[offset : offset + limit]
+            artifacts = DBReader.get_artifacts(model_id, version_id, session)
+            return artifacts[offset : offset + limit]
 
     def search_artifacts(
         self,
@@ -281,9 +270,9 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         artifact_id: str,
     ) -> ArtifactModel:
         with Session(self.storage.engine) as session:
-            artifact, artifact_obj = DBReader.get_artifact(
+            artifact, artifact_orm = DBReader.get_artifact(
                 model_id, version_id, artifact_id, session
             )
-            session.delete(artifact_obj)
+            session.delete(artifact_orm)
             session.commit()
             return artifact

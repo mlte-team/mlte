@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from mlte.store.artifact.underlying.rdbs.result_metadata import (
         DBTestResults,
     )
-    from mlte.store.artifact.underlying.rdbs.tests_metadata import DBTestSuite
+    from mlte.store.artifact.underlying.rdbs.suite_metadata import DBTestSuite
 else:
     DBNegotiationCard = "DBNegotiationCard"
     DBTestSuite = "DBTestSuite"
