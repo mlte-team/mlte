@@ -156,7 +156,7 @@ class Report(Artifact):
         :param store: The store in which to save the artifact
         :raises RuntimeError: On broken invariant
         """
-        self.identifier = f"{self.identifier}-{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}"
+        self.identifier = f"{self.identifier}-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
     # ----------------------------------------------------------------------------------
     # Helper methods.
