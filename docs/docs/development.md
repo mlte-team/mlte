@@ -181,7 +181,6 @@ To initialize the development environment for the front end, navigate to the sub
 
 ```bash
 $ npm install
-$ npx gulp compile
 $ npx gulp init
 ```
 

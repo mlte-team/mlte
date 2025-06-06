@@ -97,7 +97,6 @@ typecheck:
 frontend-env:
 	cd mlte/frontend/nuxt-app && \
 	npm install && \
-	npx gulp compile && \
 	npx gulp init
 
 # Lint frontend source code
