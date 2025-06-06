@@ -161,14 +161,15 @@ const props = defineProps({
     required: true,
     default() {
       return [
-        {
-          quality: "",
-          stimulus: "<Stimulus>",
-          source: "<Source>",
-          environment: "<Environment>",
-          response: "<Response>",
-          measure: "<Response Measure>",
-        },
+        new QASDescriptor(
+          "",
+          "",
+          "<Stimulus>",
+          "<Source>",
+          "<Environment",
+          "<Response",
+          "<Response Measure>",
+        ),
       ];
     },
   },

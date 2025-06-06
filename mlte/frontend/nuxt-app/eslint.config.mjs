@@ -58,6 +58,7 @@ export default withNuxt(
           MetricDescriptor: true,
           GoalDescriptor: true,
           ModelIODescriptor: true,
+          ModelDescriptor: true,
           LabelDescriptor: true,
           FieldDescriptor: true,
           DataDescriptor: true,

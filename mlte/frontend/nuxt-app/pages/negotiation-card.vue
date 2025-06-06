@@ -116,96 +116,19 @@ const timestamp = ref("");
 const form = ref({
   artifact_type: "negotiation_card",
   nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
-    data: [
-      {
-        description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
-          {
-            name: "",
-            description: "",
-            percentage: 0,
-          },
-        ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
-      },
-    ],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-    },
+    system: new SystemDescriptor(),
+    data: [new DataDescriptor()],
+    model: new ModelDescriptor(),
     system_requirements: [
-      {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
-      },
+      new QASDescriptor(
+        "",
+        "",
+        "<Stimulus>",
+        "<Source>",
+        "<Environment",
+        "<Response",
+        "<Response Measure>",
+      ),
     ],
   },
 });

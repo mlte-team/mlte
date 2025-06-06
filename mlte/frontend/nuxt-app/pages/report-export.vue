@@ -144,60 +144,9 @@ const findings = ref<Array<Finding>>([]);
 const pageData = ref({
   artifact_type: "report",
   nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
+    system: new SystemDescriptor(),
     data: [new DataDescriptor()],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-    },
+    model: new ModelDescriptor(),
     system_requirements: [
       new QASDescriptor(
         "",

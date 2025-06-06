@@ -73,7 +73,7 @@ export class ModelIODescriptor {
 
 export class ModelDescriptor {
   constructor(
-    public development_comput_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
+    public development_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
     public deployment_platform: string = "",
     public capability_deployment_mecahnism: string = "",
     public input_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line

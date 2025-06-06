@@ -109,72 +109,19 @@ import { cancelFormSubmission } from "~/composables/form-methods";
 
 const config = useRuntimeConfig();
 const token = useCookie("token");
-
 const queryModel = useRoute().query.model;
 const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
-
 const findings = ref<Array<Finding>>([]);
 const form = ref({
   artifact_type: "report",
   nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
+    system: new SystemDescriptor(),
     data: [new DataDescriptor()],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-    },
+    model: new ModelDescriptor(),
     system_requirements: [
       new QASDescriptor(
         "",
