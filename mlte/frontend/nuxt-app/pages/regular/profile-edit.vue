@@ -38,11 +38,11 @@
       </UsaTextInput>
     </div>
 
-    <UsaTextInput v-model="user.email">
+    <UsaTextInput v-model="user!.email">
       <template #label> Email </template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="user.full_name">
+    <UsaTextInput v-model="user!.full_name">
       <template #label> Full Name </template>
     </UsaTextInput>
 
@@ -56,21 +56,26 @@
 </template>
 
 <script setup lang="ts">
+import { cancelFormSubmission } from "~/composables/form-methods";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 const userCookie = useCookie("user");
 
-const { data: user } = await useFetch(config.public.apiPath + "/user/me", {
-  retry: 0,
-  method: "GET",
-  headers: {
-    Authorization: "Bearer " + token.value,
+const { data: user } = await useFetch<User>(
+  config.public.apiPath + "/user/me",
+  {
+    retry: 0,
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token.value,
+    },
   },
-});
+);
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
 const confirmPassword = ref("");
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   password: false,
   confirmPassword: false,
 });
@@ -108,12 +113,12 @@ async function submit() {
   }
 
   try {
-    const requestBody = {
-      username: user.value.username,
-      email: user.value.email,
-      full_name: user.value.full_name,
+    const requestBody: UserUpdateBody = {
+      username: user.value!.username,
+      email: user.value!.email,
+      full_name: user.value!.full_name,
       disabled: false,
-      role: user.value.role,
+      role: user.value!.role,
     };
 
     if (resetPasswordFlag.value) {

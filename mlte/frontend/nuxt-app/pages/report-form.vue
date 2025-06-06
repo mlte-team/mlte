@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { cancelFormSubmission } from "../composables/form-methods";
+import { cancelFormSubmission } from "~/composables/form-methods";
 
 const config = useRuntimeConfig();
 const token = useCookie("token");

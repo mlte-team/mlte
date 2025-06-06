@@ -1,9 +1,9 @@
-interface Dictionary<T> {
+export interface Dictionary<T> {
   [key: string]: T;
 }
 
 // --------------------------------------------------------------------------------------------------------------
-// General Artifacts
+// General Page Items
 // --------------------------------------------------------------------------------------------------------------
 
 export interface SelectOption {
@@ -222,4 +222,26 @@ export class TestCatalogEntry {
     public inputs: string = "",
     public output: string = "",
   ) {}
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Profile Edit
+// --------------------------------------------------------------------------------------------------------------
+
+export interface User {
+  username: string;
+  email: string;
+  full_name: string;
+  disabled: boolean;
+  role: string;
+  groups: Array<object>;
+}
+
+export interface UserUpdateBody {
+  username: string;
+  password?: string;
+  email: string;
+  full_name: string;
+  disabled: boolean;
+  role: string;
 }

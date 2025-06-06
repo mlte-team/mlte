@@ -1,6 +1,10 @@
+import type { Dictionary } from "../composables/types";
+
 const config = useRuntimeConfig();
 
-export function resetFormErrors(formErrors: object) {
+export function resetFormErrors(
+  formErrors: Dictionary<boolean>,
+): Dictionary<boolean> {
   for (const key in formErrors) {
     formErrors[key] = false;
   }

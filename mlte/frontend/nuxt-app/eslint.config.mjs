@@ -54,9 +54,12 @@ export default withNuxt(
           isValidNegotiation: true,
 
           // Types
+          Dictionary: true,
           DataDescriptor: true,
           QASDescriptor: true,
           TestResults: true,
+          User: true,
+          UserUpdateBody: true,
         },
 
         parser: parser,
