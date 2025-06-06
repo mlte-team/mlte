@@ -63,7 +63,7 @@
     </p>
 
     <UsaTextInput
-      v-if="useRoute().query.artifactId === undefined"
+      v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
       :error="formErrors.identifier"
     >
@@ -102,8 +102,11 @@
 </template>
 
 <script setup lang="ts">
+import { cancelFormSubmission } from "~/composables/form-methods";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const queryArtifactId = useRoute().query.artifactId;
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
@@ -211,6 +214,7 @@ const formErrors = ref({
   identifier: false,
 });
 
+// References to child components used to call their methods when importing descriptors
 const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
@@ -262,7 +266,7 @@ async function submit() {
   if (useRoute().query.artifactId === undefined) {
     identifier = userInputArtifactId.value;
   } else {
-    identifier = useRoute().query.artifactId?.toString();
+    identifier = useRoute().query.artifactId!.toString();
   }
 
   if (identifier === "") {
@@ -339,6 +343,8 @@ async function submit() {
 }
 
 function descriptorUpload(event: Event, descriptorName: string) {
+  console.log(dataRef.value);
+
   const target = event.target as HTMLInputElement;
   const file = target.files![0];
   if (file !== null) {
@@ -356,6 +362,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               let lastGoalIndex = form.value.nc_data.system.goals.length - 1;
               if (!goalEmpty(form.value.nc_data.system.goals[lastGoalIndex])) {
+                // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                 systemInformationRef.value.parentAddGoal();
                 lastGoalIndex += 1;
               }
@@ -383,6 +390,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
         } else if (descriptorName === "Raw Data") {
           let lastDataIndex = form.value.nc_data.data.length - 1;
           if (!dataItemEmpty(form.value.nc_data.data[lastDataIndex])) {
+            // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
             dataRef.value.parentAddDataItem();
             lastDataIndex += 1;
           }
@@ -409,8 +417,8 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.nc_data.data[lastDataIndex].labels.splice(0, 1);
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
+              // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
               dataRef.value.parentAddLabel(lastDataIndex);
-              form.value.nc_data.data[lastDataIndex].labels[i].name =
                 label.label;
               form.value.nc_data.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
@@ -436,6 +444,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
               },
               i: number,
             ) => {
+              // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
               dataRef.value.parentAddField(lastDataIndex);
               form.value.nc_data.data[lastDataIndex].fields[i].name =
                 fields.field_name;
@@ -482,6 +491,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                     form.value.nc_data.model.input_specification[lastSpecIndex],
                   )
                 ) {
+                  // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                   modelRef.value.parentAddInputSpec();
                   lastSpecIndex += 1;
                 }
@@ -519,6 +529,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                     ],
                   )
                 ) {
+                  // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                   modelRef.value.parentAddOutputSpec();
                   lastSpecIndex += 1;
                 }
@@ -551,14 +562,14 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
-function goalEmpty(goal) {
+function goalEmpty(goal: GoalDescriptor) {
   let isEmpty = true;
 
   if (goal.description !== "") {
     isEmpty = false;
   }
 
-  goal.metrics.forEach((metric) => {
+  goal.metrics.forEach((metric: MetricDescriptor) => {
     if (metric.description !== "" || metric.baseline !== "") {
       isEmpty = false;
     }
@@ -567,7 +578,7 @@ function goalEmpty(goal) {
   return isEmpty;
 }
 
-function dataItemEmpty(dataItem) {
+function dataItemEmpty(dataItem: DataDescriptor) {
   let isEmpty = true;
 
   if (
@@ -580,7 +591,7 @@ function dataItemEmpty(dataItem) {
     isEmpty = false;
   }
 
-  dataItem.labels.forEach((label) => {
+  dataItem.labels.forEach((label: LabelDescriptor) => {
     if (
       label.name !== "" ||
       label.description !== "" ||
@@ -590,7 +601,7 @@ function dataItemEmpty(dataItem) {
     }
   });
 
-  dataItem.fields.forEach((field) => {
+  dataItem.fields.forEach((field: FieldDescriptor) => {
     if (
       field.name !== "" ||
       field.description !== "" ||
@@ -606,7 +617,7 @@ function dataItemEmpty(dataItem) {
   return isEmpty;
 }
 
-function specEmpty(spec) {
+function specEmpty(spec: ModelIODescriptor) {
   let isEmpty = true;
 
   if (
