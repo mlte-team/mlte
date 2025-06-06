@@ -31,21 +31,58 @@ export class ArtifactHeader {
 // Negotiation Card
 // --------------------------------------------------------------------------------------------------------------
 
-export class DataDescriptor {
+export class MetricDescriptor {
   constructor(
     public description: string = "",
-    public source: string = "",
-    public classification: string = "unclassified",
-    public access: string = "",
-    public labeling_method: string = "",
-    public labels: Array<Label> = [new Label()],
-    public fields: Array<Field> = [new Field()],
-    public rights: string = "",
-    public policies: string = "",
+    public baseline: string = "",
   ) {}
 }
 
-export class Label {
+export class GoalDescriptor {
+  constructor(
+    public description: string = "",
+    public metrics: Array<MetricDescriptor> = [new MetricDescriptor()],
+  ) {}
+}
+
+export class RiskDescriptor {
+  constructor(
+    public fp: string = "",
+    public fn: string = "",
+    public other: string = "",
+  ) {}
+}
+
+export class ModelResourcesDescriptor {
+  constructor(
+    public cpu: string = "0",
+    public gpu: string = "0",
+    public memory: string = "0",
+    public storage: string = "0",
+  ) {}
+}
+
+export class ModelIODescriptor {
+  constructor(
+    public name: string = "",
+    public description: string = "",
+    public type: string = "",
+    public expected_values: string = "",
+  ) {}
+}
+
+export class ModelDescriptor {
+  constructor(
+    public development_comput_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
+    public deployment_platform: string = "",
+    public capability_deployment_mecahnism: string = "",
+    public input_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
+    public output_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
+    public production_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
+  ) {}
+}
+
+export class LabelDescriptor {
   constructor(
     public name: string = "",
     public description: string = "",
@@ -53,7 +90,7 @@ export class Label {
   ) {}
 }
 
-export class Field {
+export class FieldDescriptor {
   constructor(
     public name: string = "",
     public description: string = "",
@@ -61,6 +98,46 @@ export class Field {
     public expected_values: string = "",
     public missing_values: string = "",
     public special_values: string = "",
+  ) {}
+}
+
+export class DataDescriptor {
+  constructor(
+    public description: string = "",
+    public source: string = "",
+    public classification: string = "unclassified",
+    public access: string = "",
+    public labeling_method: string = "",
+    public labels: Array<LabelDescriptor> = [new LabelDescriptor()],
+    public fields: Array<FieldDescriptor> = [new FieldDescriptor()],
+    public rights: string = "",
+    public policies: string = "",
+  ) {}
+}
+
+export class SystemDescriptor {
+  constructor(
+    public goals: Array<GoalDescriptor> = [new GoalDescriptor()],
+    public problem_type: string = "classification",
+    public task: string = "",
+    public usage_context: string = "",
+    public risks: RiskDescriptor = new RiskDescriptor(),
+  ) {}
+}
+
+export class NegotiationCardDataModel {
+  constructor(
+    public system: SystemDescriptor = new SystemDescriptor(),
+    public data: Array<DataDescriptor> = [new DataDescriptor()],
+    public model: ModelDescriptor = new ModelDescriptor(),
+    public system_requirements: Array<QASDescriptor> = [new QASDescriptor()],
+  ) {}
+}
+
+export class NegotiationCardModel {
+  constructor(
+    public artifact_type: string = "negotiation_card",
+    public nc_data: NegotiationCardDataModel = new NegotiationCardDataModel(),
   ) {}
 }
 
