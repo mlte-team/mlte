@@ -26,10 +26,7 @@
     <div class="rounded-border section-margin">
       <h3 class="insection-margin">Overview</h3>
       <hr />
-      <div
-        v-for="(goal, goalIndex) in pageData.nc_data.system.goals"
-        :key="goalIndex"
-      >
+      <div v-for="(goal, goalIndex) in pageData.system.goals" :key="goalIndex">
         <div class="info-box-row insection-margin">
           <div class="info-box-third rounded-border">
             Goal {{ goalIndex + 1 }}:<br />
@@ -106,30 +103,30 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ pageData.nc_data.system.problem_type }}
+          {{ pageData.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ pageData.nc_data.system.task }}
+          {{ pageData.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ pageData.nc_data.system.usage_context }}
+          {{ pageData.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ pageData.nc_data.system.risks.fp }}
+          {{ pageData.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ pageData.nc_data.system.risks.fn }}
+          {{ pageData.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br />
-          {{ pageData.nc_data.system.risks.other }}
+          {{ pageData.system.risks.other }}
         </div>
       </div>
     </div>
@@ -180,7 +177,7 @@ await useFetch(
             );
             findings.value = loadFindings(
               testResults,
-              pageData.value.nc_data.system_requirements,
+              pageData.value.system_requirements,
             );
           }
         }

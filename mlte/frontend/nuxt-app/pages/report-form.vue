@@ -15,9 +15,9 @@
       </template>
     </UsaTextInput>
 
-    <FormFieldsSystemInformation v-model="form.nc_data.system" />
+    <FormFieldsSystemInformation v-model="form.system" />
 
-    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
+    <FormFieldsSystemRequirements v-model="form.system_requirements" />
 
     <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
@@ -78,9 +78,9 @@
     <hr />
     <h1 class="section-header">Additional Context</h1>
 
-    <FormFieldsDataFields v-model="form.nc_data.data" />
+    <FormFieldsDataFields v-model="form.data" />
 
-    <FormFieldsModelFields v-model="form.nc_data.model" />
+    <FormFieldsModelFields v-model="form.model" />
 
     <div style="text-align: right; margin-top: 1em">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
@@ -114,99 +114,97 @@ const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 const findings = ref(null);
 const form = ref({
   artifact_type: "report",
-  nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
-    data: [
+  system: {
+    goals: [
       {
         description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
+        metrics: [
           {
-            name: "",
             description: "",
-            percentage: 0,
+            baseline: "",
           },
         ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
       },
     ],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
+    problem_type: "classification",
+    task: "",
+    usage_context: "",
+    risks: {
+      fp: "",
+      fn: "",
+      other: "",
     },
-    system_requirements: [
+  },
+  data: [
+    {
+      description: "",
+      source: "",
+      classification: "unclassified",
+      access: "",
+      labeling_method: "",
+      labels: [
+        {
+          name: "",
+          description: "",
+          percentage: 0,
+        },
+      ],
+      fields: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+          missing_values: "",
+          special_values: "",
+        },
+      ],
+      rights: "",
+      policies: "",
+    },
+  ],
+  model: {
+    development_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
+    },
+    deployment_platform: "",
+    capability_deployment_mechanism: "",
+    input_specification: [
       {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
       },
     ],
+    output_specification: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
+      },
+    ],
+    production_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
+    },
   },
+  system_requirements: [
+    {
+      quality: "",
+      stimulus: "<Stimulus>",
+      source: "<Source>",
+      environment: "<Environment>",
+      response: "<Response>",
+      measure: "<Response Measure>",
+    },
+  ],
   test_results_id: "",
   comments: [{ content: "" }],
   quantitative_analysis: {},
@@ -241,19 +239,18 @@ if (useRoute().query.artifactId !== undefined) {
         if (response.ok) {
           if (isValidReport(response._data)) {
             form.value = response._data.body;
-            const problemType = response._data.body.nc_data.system.problem_type;
+            const problemType = response._data.body.system.problem_type;
             if (
               problemTypeOptions.value.find((x) => x.value === problemType)
                 ?.value !== undefined
             ) {
-              form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find(
-                  (x) => x.value === problemType,
-                )?.value;
+              form.value.system.problem_type = problemTypeOptions.value.find(
+                (x) => x.value === problemType,
+              )?.value;
             }
 
             // Setting .value for each classification item to work in the select
-            response._data.body.nc_data.data.forEach((item) => {
+            response._data.body.data.forEach((item) => {
               const classification = item.classification;
               if (
                 classificationOptions.value.find(
@@ -276,7 +273,7 @@ if (useRoute().query.artifactId !== undefined) {
               );
               findings.value = loadFindings(
                 testResults,
-                form.value.nc_data.system_requirements,
+                form.value.system_requirements,
               );
             }
           }

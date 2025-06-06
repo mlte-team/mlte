@@ -53,8 +53,9 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     v1 = Integer(10).with_metadata(m1)
     m2 = get_sample_evidence_metadata(test_case_id="id2")
     v2 = Real(3.14).with_metadata(m2)
-    r1 = Report("r1")
-    r2 = Report("r2")
+
+    r1 = Report("r1", negotiation_card=n1, test_suite=s1, test_results=vs1)
+    r2 = Report("r2", negotiation_card=n2, test_suite=s2, test_results=vs2)
 
     n1.save_with(ctx, store, parents=True)
     n2.save_with(ctx, store)

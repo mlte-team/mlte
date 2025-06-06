@@ -1,22 +1,14 @@
-"""
-mlte/store/artifact/underlying/rdbs/metadata_nc.py
-
-Definition of the metadata (DB schema) for negotiation card and report elements in the artifact store.
-"""
+"""Definition of the metadata (DB schema) for negotiation card and report elements in the artifact store."""
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from mlte.negotiation.model import DataClassification, ProblemType
-from mlte.store.artifact.underlying.rdbs.metadata import (
-    DBArtifactHeader,
-    DBBase,
-)
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBTestResults
+from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact, DBBase
 
 # -------------------------------------------------------------------------
 # Negotiation Card
@@ -28,32 +20,16 @@ class DBNegotiationCard(DBBase):
 
     # General
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
+    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
+        ForeignKey(DBArtifact.get_id_column())
     )
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
+    artifact: Mapped[Optional[DBArtifact]] = relationship(
         back_populates="body_negotiation_card",
         cascade="all",
     )
 
-    # Main data.
-    negotiation_card_data_id: Mapped[int] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
-    )
-    negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
-
-    def __repr__(self) -> str:
-        return f"NegotiationCard(id={self.id!r}, artifact_header={self.artifact_header!r})"
-
-
-class DBNegotiationCardData(DBBase):
-    __tablename__ = "negotiation_card_data"
-
-    # General
-    id: Mapped[int] = mapped_column(primary_key=True)
-
     # System
-    sys_goals: Mapped[List[DBGoalDescriptor]] = relationship(
+    sys_goals: Mapped[list[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
     sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
@@ -67,7 +43,7 @@ class DBNegotiationCardData(DBBase):
     sys_risks_other: Mapped[Optional[str]]
 
     # Data
-    data_descriptors: Mapped[List[DBDataDescriptor]] = relationship(
+    data_descriptors: Mapped[list[DBDataDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
 
@@ -82,12 +58,12 @@ class DBNegotiationCardData(DBBase):
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
 
-    model_prod_inputs: Mapped[List[DBModelIODescriptor]] = relationship(
+    model_prod_inputs: Mapped[list[DBModelIODescriptor]] = relationship(
         cascade="all, delete-orphan",
         foreign_keys="DBModelIODescriptor.negotiation_card_input_id",
     )
 
-    model_prod_outputs: Mapped[List[DBModelIODescriptor]] = relationship(
+    model_prod_outputs: Mapped[list[DBModelIODescriptor]] = relationship(
         cascade="all, delete-orphan",
         foreign_keys="DBModelIODescriptor.negotiation_card_output_id",
     )
@@ -101,66 +77,9 @@ class DBNegotiationCardData(DBBase):
     )
 
     # QAS
-    system_requirements: Mapped[List[DBQAS]] = relationship(
+    system_requirements: Mapped[list[DBQAS]] = relationship(
         cascade="all, delete-orphan"
     )
-
-
-# -------------------------------------------------------------------------
-# Report
-# -------------------------------------------------------------------------
-
-
-class DBReport(DBBase):
-    __tablename__ = "report"
-
-    # General
-    id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_header_id: Mapped[DBArtifactHeader] = mapped_column(
-        ForeignKey("artifact_header.id")
-    )
-    artifact_header: Mapped[DBArtifactHeader] = relationship(
-        back_populates="body_report",
-        cascade="all",
-    )
-
-    # Main data.
-    negotiation_card_data_id: Mapped[int] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
-    )
-    negotiation_card_data: Mapped[DBNegotiationCardData] = relationship()
-
-    # Results.
-    test_results_id: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("test_results.id", ondelete="SET NULL")
-    )
-    test_results: Mapped[DBTestResults] = relationship()
-
-    # Comments
-    comments: Mapped[List[DBCommentDescriptor]] = relationship(
-        back_populates="report", cascade="all, delete-orphan"
-    )
-
-    # Analysis.
-    quantitative_analysis_content: Mapped[Optional[str]]
-
-    def __repr__(self) -> str:
-        return (
-            f"Report(id={self.id!r}, artifact_header={self.artifact_header!r})"
-        )
-
-
-class DBCommentDescriptor(DBBase):
-    __tablename__ = "report_comment"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    content: Mapped[Optional[str]]
-    report_id: Mapped[Optional[int]] = mapped_column(ForeignKey("report.id"))
-
-    report: Mapped[DBReport] = relationship(back_populates="comments")
-
-    def __repr__(self) -> str:
-        return f"Comment(id={self.id!r}, content={self.content!r})"
 
 
 # -------------------------------------------------------------------------
@@ -174,10 +93,10 @@ class DBGoalDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
-    metrics: Mapped[List[DBMetricDescriptor]] = relationship(
+    metrics: Mapped[list[DBMetricDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="goal_descriptor"
     )
 
@@ -228,14 +147,14 @@ class DBDataDescriptor(DBBase):
         ForeignKey("nc_data_classification.id")
     )
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     classification: Mapped[DBDataClassification] = relationship()
-    labels: Mapped[List[DBLabelDescriptor]] = relationship(
+    labels: Mapped[list[DBLabelDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )
-    fields: Mapped[List[DBFieldDescriptor]] = relationship(
+    fields: Mapped[list[DBFieldDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )
 
@@ -304,10 +223,10 @@ class DBModelIODescriptor(DBBase):
     expected_values: Mapped[Optional[str]]
 
     negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
     negotiation_card_output_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
@@ -323,7 +242,7 @@ class DBModelResourcesDescriptor(DBBase):
     memory: Mapped[Optional[str]]
     storage: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
@@ -343,7 +262,7 @@ class DBQAS(DBBase):
     measure: Mapped[Optional[str]]
 
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("negotiation_card_data.id")
+        ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
