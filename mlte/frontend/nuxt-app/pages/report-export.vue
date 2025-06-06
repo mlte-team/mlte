@@ -140,8 +140,80 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const findings = ref(null);
-const pageData = ref(null);
+const findings = ref<Array<Finding>>([]);
+const pageData = ref({
+  artifact_type: "report",
+  nc_data: {
+    system: {
+      goals: [
+        {
+          description: "",
+          metrics: [
+            {
+              description: "",
+              baseline: "",
+            },
+          ],
+        },
+      ],
+      problem_type: "classification",
+      task: "",
+      usage_context: "",
+      risks: {
+        fp: "",
+        fn: "",
+        other: "",
+      },
+    },
+    data: [new DataDescriptor()],
+    model: {
+      development_compute_resources: {
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
+      },
+      deployment_platform: "",
+      capability_deployment_mechanism: "",
+      input_specification: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+        },
+      ],
+      output_specification: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+        },
+      ],
+      production_compute_resources: {
+        gpu: "0",
+        cpu: "0",
+        memory: "0",
+        storage: "0",
+      },
+    },
+    system_requirements: [
+      new QASDescriptor(
+        "",
+        "",
+        "<Stimulus>",
+        "<Source>",
+        "<Environment",
+        "<Response",
+        "<Response Measure>",
+      ),
+    ],
+  },
+  test_results_id: "",
+  comments: [{ content: "" }],
+  quantitative_analysis: {},
+});
 
 const model = useRoute().query.model;
 const version = useRoute().query.version;
@@ -172,10 +244,10 @@ await useFetch(
           if (response._data.body.test_results_id) {
             pageData.value.test_results_id =
               response._data.body.test_results_id;
-            const testResults = await fetchArtifact(
-              token.value,
-              model,
-              version,
+            const testResults: TestResults = await fetchArtifact(
+              token.value as string,
+              model as string,
+              version as string,
               pageData.value.test_results_id,
             );
             findings.value = loadFindings(

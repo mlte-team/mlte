@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="finding in findings" :key="finding.evidence_id">
+        <tr v-for="(finding, index) in findings" :key="index">
           <td
             v-if="finding.status == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
@@ -100,12 +100,13 @@
         <UsaButton class="primary-button"> Export </UsaButton>
       </NuxtLink>
       <UsaButton class="primary-button" @click="submit()"> Save </UsaButton>
-      {{ forceSaveParam }}
     </div>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
+import { cancelFormSubmission } from "../composables/form-methods";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
@@ -191,9 +192,6 @@ const form = ref({
   quantitative_analysis: {},
 });
 
-const classificationOptions = useClassificationOptions();
-const problemTypeOptions = useProblemTypeOptions();
-
 if (useRoute().query.artifactId !== undefined) {
   const model = useRoute().query.model;
   const version = useRoute().query.version;
@@ -220,30 +218,6 @@ if (useRoute().query.artifactId !== undefined) {
         if (response.ok) {
           if (isValidReport(response._data)) {
             form.value = response._data.body;
-            const problemType = response._data.body.nc_data.system.problem_type;
-            if (
-              problemTypeOptions.value.find((x) => x.value === problemType)
-                ?.value !== undefined
-            ) {
-              form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find(
-                  (x) => x.value === problemType,
-                )?.value;
-            }
-
-            // Setting .value for each classification item to work in the select
-            response._data.body.nc_data.data.forEach((item) => {
-              const classification = item.classification;
-              if (
-                classificationOptions.value.find(
-                  (x) => x.value === classification,
-                )?.value !== undefined
-              ) {
-                item.classification = classificationOptions.value.find(
-                  (x) => x.value === classification,
-                )?.value;
-              }
-            });
 
             if (response._data.body.test_results_id) {
               form.value.test_results_id = response._data.body.test_results_id;
