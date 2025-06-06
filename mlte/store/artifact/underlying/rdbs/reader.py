@@ -25,8 +25,6 @@ from mlte.store.artifact.underlying.rdbs.main_metadata import (
     DBModel,
     DBVersion,
 )
-from mlte.store.artifact.underlying.rdbs.result_metadata import DBTestResults
-from mlte.store.artifact.underlying.rdbs.suite_metadata import DBTestSuite
 
 
 class DBReader:
@@ -137,55 +135,6 @@ class DBReader:
             artifact_model = main_factory.create_artifact_model(artifact_orm)
             artifacts_models.append(artifact_model)
         return artifacts_models
-
-    @staticmethod
-    def get_artifact_header(artifact_id: str, session: Session) -> DBArtifact:
-        """Gets the artifact header object of the artifact identifier provided."""
-        artifact_header_orm = session.scalar(
-            select(DBArtifact).where(DBArtifact.identifier == artifact_id)
-        )
-        if artifact_header_orm is None:
-            raise errors.ErrorNotFound(
-                f"Artifact with identifier {artifact_id} was not found in the artifact store."
-            )
-        else:
-            return artifact_header_orm
-
-    @staticmethod
-    def get_test_suite(
-        test_suite_identifier: str, version_id: int, session: Session
-    ) -> DBTestSuite:
-        """Gets the TestSuit with the given identifier."""
-        property_orm = session.scalar(
-            select(DBTestSuite)
-            .where(DBTestSuite.artifact_id == DBArtifact.id)
-            .where(DBArtifact.identifier == test_suite_identifier)
-            .where(DBArtifact.version_id == version_id)
-        )
-        if property_orm is None:
-            raise errors.ErrorNotFound(
-                f"TestSuite with identifier {test_suite_identifier} was not found in the artifact store."
-            )
-        else:
-            return property_orm
-
-    @staticmethod
-    def get_test_results(
-        test_results_identifier: str, version_id: int, session: Session
-    ) -> DBTestResults:
-        """Gets the TestSuite with the given identifier."""
-        property_orm = session.scalar(
-            select(DBTestResults)
-            .where(DBTestResults.artifact_id == DBArtifact.id)
-            .where(DBArtifact.identifier == test_results_identifier)
-            .where(DBArtifact.version_id == version_id)
-        )
-        if property_orm is None:
-            raise errors.ErrorNotFound(
-                f"TestResults with identifier {test_results_identifier} was not found in the artifact store."
-            )
-        else:
-            return property_orm
 
     @staticmethod
     def get_problem_type(type: ProblemType, session: Session) -> DBProblemType:
