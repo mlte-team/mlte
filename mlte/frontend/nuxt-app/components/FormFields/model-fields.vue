@@ -289,38 +289,7 @@ const props = defineProps({
     type: Object,
     required: true,
     default() {
-      return {
-        development_compute_resources: {
-          gpu: "0",
-          cpu: "0",
-          memory: "0",
-          storage: "0",
-        },
-        deployment_platform: "",
-        capability_deployment_mechanism: "",
-        input_specification: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-          },
-        ],
-        output_specification: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-          },
-        ],
-        production_compute_resources: {
-          gpu: "0",
-          cpu: "0",
-          memory: "0",
-          storage: "0",
-        },
-      };
+      return new ModelDescriptor();
     },
   },
 });

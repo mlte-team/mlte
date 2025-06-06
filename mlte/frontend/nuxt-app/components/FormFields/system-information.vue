@@ -188,27 +188,7 @@ const props = defineProps({
     type: Object,
     required: true,
     default() {
-      return {
-        goals: [
-          {
-            description: "",
-            metrics: [
-              {
-                description: "",
-                baseline: "",
-              },
-            ],
-          },
-        ],
-        problem_type: "classification",
-        task: "",
-        usage_context: "",
-        risks: {
-          fp: "",
-          fn: "",
-          other: "",
-        },
-      };
+      return new SystemDescriptor();
     },
   },
 });
