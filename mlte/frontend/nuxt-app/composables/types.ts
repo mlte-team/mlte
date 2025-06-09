@@ -20,10 +20,9 @@ export type Artifact = TestResults;
 export class ArtifactHeader {
   constructor(
     public identifier: string = "",
+    public type: string = "",
+    public timestamp: number = -1,
     public creator: string = "",
-    public created: number = -1,
-    public updated: number = -1,
-    public catalog_id: string = "",
   ) {}
 }
 
@@ -125,6 +124,7 @@ export class SystemDescriptor {
   ) {}
 }
 
+// Not currently used
 export class NegotiationCardDataModel {
   constructor(
     public system: SystemDescriptor = new SystemDescriptor(),
@@ -134,6 +134,7 @@ export class NegotiationCardDataModel {
   ) {}
 }
 
+// Not currently used
 export class NegotiationCardModel {
   constructor(
     public artifact_type: string = "negotiation_card",
@@ -210,9 +211,20 @@ export interface QualityAttributeScenario {
 // Test Catalog
 // --------------------------------------------------------------------------------------------------------------
 
+export class TestCatalogHeader {
+  constructor(
+    public identifier: string = "",
+    public creator: string = "",
+    public created: number = -1,
+    public updater: string = "",
+    public updated: number = -1,
+    public catalog_id: string = "",
+  ) {}
+}
+
 export class TestCatalogEntry {
   constructor(
-    public header: ArtifactHeader = new ArtifactHeader(),
+    public header: TestCatalogHeader = new TestCatalogHeader(),
     public tags: Array<string> = [],
     public qa_category: string = "",
     public quality_attribute: string = "",

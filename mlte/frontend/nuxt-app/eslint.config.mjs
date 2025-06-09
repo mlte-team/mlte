@@ -55,6 +55,7 @@ export default withNuxt(
 
           // Types
           Dictionary: true,
+          Artifact: true,
           MetricDescriptor: true,
           GoalDescriptor: true,
           ModelIODescriptor: true,

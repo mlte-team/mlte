@@ -479,7 +479,7 @@ function populateArtifacts(
   artifactList: Array<object>,
 ) {
   clearArtifacts();
-  artifactList.forEach((artifact: object) => {
+  artifactList.forEach((artifact: Artifact) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
     ).toLocaleString("en-US");
