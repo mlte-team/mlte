@@ -302,10 +302,10 @@
 <script setup lang="ts">
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<DataDescriptor>,
     required: true,
     default() {
-      return new DataDescriptor();
+      return [new DataDescriptor()];
     },
   },
 });
