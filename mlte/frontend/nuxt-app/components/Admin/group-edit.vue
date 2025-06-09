@@ -49,11 +49,17 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emits = defineEmits(["cancel", "submit"]);
+const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
+    default() {
+      return {
+        name: "",
+        permissions: [],
+      };
+    },
   },
   newGroupFlag: {
     type: Boolean,
@@ -62,18 +68,11 @@ const props = defineProps({
   },
 });
 
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   name: false,
 });
-const permissionOptions = ref<
-  {
-    resource_type: string;
-    resource_id: string;
-    method: string;
-    selected: boolean;
-  }[]
->([]);
-const { data: permissionList } = await useFetch<string[]>(
+const permissionOptions = ref<Array<Permission>>([]);
+const { data: permissionList } = await useFetch<Array<Permission>>(
   config.public.apiPath + "/groups/permissions/details",
   {
     method: "GET",
@@ -83,7 +82,7 @@ const { data: permissionList } = await useFetch<string[]>(
   },
 );
 if (permissionList.value) {
-  permissionList.value.forEach((permission: object) => {
+  permissionList.value.forEach((permission: Permission) => {
     permissionOptions.value.push({
       resource_id: permission.resource_id,
       resource_type: permission.resource_type,
@@ -96,7 +95,7 @@ if (permissionList.value) {
 permissionOptions.value.forEach((permissionOption) => {
   if (
     props.modelValue.permissions.find(
-      (x) =>
+      (x: Permission) =>
         x.resource_id === permissionOption.resource_id &&
         x.resource_type === permissionOption.resource_type &&
         x.method === permissionOption.method,
@@ -106,7 +105,7 @@ permissionOptions.value.forEach((permissionOption) => {
   }
 });
 
-function permissionChange(selected: boolean, permissionOption: object) {
+function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
     props.modelValue.permissions.push({
       resource_id: permissionOption.resource_id,
@@ -115,8 +114,8 @@ function permissionChange(selected: boolean, permissionOption: object) {
     });
   } else {
     const objForRemoval = props.modelValue.permissions.find(
-      (x) =>
-        x.name === permissionOption.name &&
+      (x: Permission) =>
+        x.resource_id === permissionOption.resource_id &&
         x.resource_type === permissionOption.resource_type &&
         x.method === permissionOption.method,
     );

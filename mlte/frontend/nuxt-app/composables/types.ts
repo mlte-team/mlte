@@ -237,7 +237,7 @@ export class TestCatalogEntry {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-// Profile Edit
+// Profile Management
 // --------------------------------------------------------------------------------------------------------------
 
 export interface User {
@@ -256,4 +256,11 @@ export interface UserUpdateBody {
   full_name: string;
   disabled: boolean;
   role: string;
+}
+
+export interface Permission {
+  resource_id: string | undefined;
+  resource_type: string;
+  method: string;
+  selected: boolean;
 }
