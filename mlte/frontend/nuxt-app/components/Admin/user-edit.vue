@@ -137,16 +137,14 @@ const roleOptions = ref([
   { value: "admin", text: "admin" },
   { value: "regular", text: "regular" },
 ]);
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   username: false,
   role: false,
   password: false,
   confirmPassword: false,
 });
-const groupOptions = ref<
-  { name: string; permissions: Array<object>; selected: boolean }[]
->([]);
-const { data: groupList } = await useFetch<string[]>(
+const groupOptions = ref<Array<Group>>([]);
+const { data: groupList } = await useFetch<Array<Group>>(
   config.public.apiPath + "/groups/details",
   {
     retry: 0,
@@ -157,7 +155,7 @@ const { data: groupList } = await useFetch<string[]>(
   },
 );
 if (groupList.value) {
-  groupList.value.forEach((group: object) => {
+  groupList.value.forEach((group: Group) => {
     groupOptions.value.push({
       name: group.name,
       permissions: group.permissions,
@@ -167,7 +165,7 @@ if (groupList.value) {
 }
 
 groupOptions.value.forEach((groupOption) => {
-  if (props.modelValue.groups.find((x) => x.name === groupOption.name)) {
+  if (props.modelValue.groups.find((x: Group) => x.name === groupOption.name)) {
     groupOption.selected = true;
   }
 });
@@ -186,7 +184,7 @@ function disablePasswordReset() {
   delete props.modelValue.password;
 }
 
-function groupChange(selected: boolean, groupOption: object) {
+function groupChange(selected: boolean, groupOption: Group) {
   if (selected) {
     props.modelValue.groups.push({
       name: groupOption.name,
@@ -194,7 +192,7 @@ function groupChange(selected: boolean, groupOption: object) {
     });
   } else {
     const objForRemoval = props.modelValue.groups.find(
-      (x) => x.name === groupOption.name,
+      (x: Group) => x.name === groupOption.name,
     );
     const index = props.modelValue.groups.indexOf(objForRemoval);
     props.modelValue.groups.splice(index, 1);

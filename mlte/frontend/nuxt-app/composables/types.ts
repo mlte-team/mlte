@@ -264,3 +264,9 @@ export interface Permission {
   method: string;
   selected: boolean;
 }
+
+export interface Group {
+  name: string;
+  permissions: Array<Permission>;
+  selected: boolean;
+}
