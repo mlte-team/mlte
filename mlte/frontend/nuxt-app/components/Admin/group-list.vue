@@ -1,4 +1,6 @@
 <template>
+  {{ modelValue[1] }}
+
   <table class="table usa-table usa-table--borderless">
     <thead>
       <tr>
@@ -49,7 +51,7 @@
 const emits = defineEmits(["addGroup", "editGroup", "deleteGroup"]);
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<Group>,
     required: true,
     default() {
       return [];

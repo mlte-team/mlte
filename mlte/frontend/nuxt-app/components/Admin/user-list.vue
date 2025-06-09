@@ -46,11 +46,8 @@
 const emits = defineEmits(["addUser", "editUser", "deleteUser"]);
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<User>,
     required: true,
-    default() {
-      return [];
-    },
   },
 });
 </script>
