@@ -45,15 +45,8 @@ const props = defineProps({
 const qaCategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 
-const QACategoryOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QACategoryAPIData } = await useFetch<string[]>(
+const QACategoryOptions = ref<Array<QAOption>>([]);
+const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
   config.public.apiPath + "/custom_list/qa_categories/",
   {
     method: "GET",
@@ -63,7 +56,7 @@ const { data: QACategoryAPIData } = await useFetch<string[]>(
   },
 );
 if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: object) => {
+  QACategoryAPIData.value.forEach((category: CustomListEntry) => {
     QACategoryOptions.value.push({
       value: category.name,
       text: category.name,
@@ -73,16 +66,9 @@ if (QACategoryAPIData.value) {
   });
 }
 
-const selectedQAOptions = ref([]);
-const AllQAOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QAapiOptions } = await useFetch<string[]>(
+const selectedQAOptions = ref<Array<QAOption>>([]);
+const AllQAOptions = ref<Array<QAOption>>([]);
+const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
   config.public.apiPath + "/custom_list/quality_attributes/",
   {
     method: "GET",
@@ -92,7 +78,7 @@ const { data: QAapiOptions } = await useFetch<string[]>(
   },
 );
 if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: object) => {
+  QAapiOptions.value.forEach((attribute: CustomListEntry) => {
     AllQAOptions.value.push({
       value: attribute.name,
       text: attribute.name,
@@ -104,7 +90,7 @@ if (QAapiOptions.value) {
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
-  QAapiOptions.value?.forEach((attribute: object) => {
+  QAapiOptions.value?.forEach((attribute: CustomListEntry) => {
     if (attribute.name === props.initialQualityAttribute) {
       qaCategory.value = attribute.parent;
       categoryChange(qaCategory.value, props.initialQualityAttribute);
@@ -115,7 +101,7 @@ if (props.initialQualityAttribute) {
 // initialAttribute is used on startup to set the value of category and parent
 function categoryChange(newCategory: string, initialAttrbute?: string) {
   selectedQAOptions.value = [];
-  AllQAOptions.value.forEach((attribute: object) => {
+  AllQAOptions.value.forEach((attribute: QAOption) => {
     if (attribute.parent === newCategory) {
       selectedQAOptions.value.push(attribute);
     }

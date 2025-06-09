@@ -6,6 +6,13 @@ export interface Dictionary<T> {
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
 
+export interface QAOption {
+  value: string;
+  text: string;
+  description: string;
+  parent: string;
+}
+
 export interface SelectOption {
   value: string;
   text: string;
@@ -270,4 +277,14 @@ export interface Group {
   name: string;
   permissions: Array<Permission>;
   selected: boolean;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Backend Internals
+// --------------------------------------------------------------------------------------------------------------
+
+export interface CustomListEntry {
+  name: string;
+  description: string;
+  parent: string;
 }
