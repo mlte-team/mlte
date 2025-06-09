@@ -17,7 +17,9 @@
 
     <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
 
-    <FormFieldsSystemRequirements v-model="form.negotiation_card.system_requirements" />
+    <FormFieldsSystemRequirements
+      v-model="form.negotiation_card.system_requirements"
+    />
 
     <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
@@ -209,7 +211,12 @@ const form = ref({
   },
   negotiation_card_id: "",
   test_results_id: "",
-  test_results: {test_suite_id: "", results: [], artifact_type: "test_results", test_suite: {artifact_type: "test_suite", test_cases: []}},
+  test_results: {
+    test_suite_id: "",
+    results: [],
+    artifact_type: "test_results",
+    test_suite: { artifact_type: "test_suite", test_cases: [] },
+  },
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -243,7 +250,8 @@ if (useRoute().query.artifactId !== undefined) {
         if (response.ok) {
           if (isValidReport(response._data)) {
             form.value = response._data.body;
-            const problemType = response._data.body.negotiation_card.system.problem_type;
+            const problemType =
+              response._data.body.negotiation_card.system.problem_type;
             if (
               problemTypeOptions.value.find((x) => x.value === problemType)
                 ?.value !== undefined
@@ -274,7 +282,8 @@ if (useRoute().query.artifactId !== undefined) {
             if (response._data.body.test_results) {
               findings.value = loadFindings(
                 response._data.body.test_results,
-                form.value.negotiation_card.system_requirements);
+                form.value.negotiation_card.system_requirements,
+              );
             }
           }
         }
