@@ -26,7 +26,10 @@
     <div class="rounded-border section-margin">
       <h3 class="insection-margin">Overview</h3>
       <hr />
-      <div v-for="(goal, goalIndex) in pageData.system.goals" :key="goalIndex">
+      <div
+        v-for="(goal, goalIndex) in pageData.negotiation_card.system.goals"
+        :key="goalIndex"
+      >
         <div class="info-box-row insection-margin">
           <div class="info-box-third rounded-border">
             Goal {{ goalIndex + 1 }}:<br />
@@ -103,30 +106,30 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ pageData.system.problem_type }}
+          {{ pageData.negotiation_card.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ pageData.system.task }}
+          {{ pageData.negotiation_card.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ pageData.system.usage_context }}
+          {{ pageData.negotiation_card.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ pageData.system.risks.fp }}
+          {{ pageData.negotiation_card.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ pageData.system.risks.fn }}
+          {{ pageData.negotiation_card.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br />
-          {{ pageData.system.risks.other }}
+          {{ pageData.negotiation_card.system.risks.other }}
         </div>
       </div>
     </div>
@@ -169,15 +172,12 @@ await useFetch(
           if (response._data.body.test_results_id) {
             pageData.value.test_results_id =
               response._data.body.test_results_id;
-            const testResults = await fetchArtifact(
-              token.value,
-              model,
-              version,
-              pageData.value.test_results_id,
-            );
+          }
+          if (response._data.body.test_results) {
+            console.log(response._data.body.test_results);
             findings.value = loadFindings(
-              testResults,
-              pageData.value.system_requirements,
+              response._data.body.test_results,
+              pageData.value.negotiation_card.system_requirements,
             );
           }
         }
