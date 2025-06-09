@@ -151,7 +151,7 @@ export class NegotiationCardModel {
 
 export class QASDescriptor {
   constructor(
-    public identifier: string = "",
+    public identifier?: string,
     public quality: string = "",
     public stimulus: string = "",
     public source: string = "",
