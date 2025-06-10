@@ -49,16 +49,13 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emit = defineEmits(["cancel", "submit"]);
+const emits = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Group,
     required: true,
     default() {
-      return {
-        name: "",
-        permissions: [],
-      };
+      return new Group();
     },
   },
   newGroupFlag: {
@@ -71,7 +68,7 @@ const props = defineProps({
 const formErrors = ref<Dictionary<boolean>>({
   name: false,
 });
-const permissionOptions = ref<Array<Permission>>([]);
+const permissionOptions = ref<Array<PermissionCheckboxOption>>([]);
 const { data: permissionList } = await useFetch<Array<Permission>>(
   config.public.apiPath + "/groups/permissions/details",
   {
@@ -107,11 +104,13 @@ permissionOptions.value.forEach((permissionOption) => {
 
 function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
-    props.modelValue.permissions.push({
-      resource_id: permissionOption.resource_id,
-      resource_type: permissionOption.resource_type,
-      method: permissionOption.method,
-    });
+    props.modelValue.permissions.push(
+      new Permission(
+        permissionOption.resource_id,
+        permissionOption.resource_type,
+        permissionOption.method,
+      ),
+    );
   } else {
     const objForRemoval = props.modelValue.permissions.find(
       (x: Permission) =>
@@ -119,8 +118,10 @@ function permissionChange(selected: boolean, permissionOption: Permission) {
         x.resource_type === permissionOption.resource_type &&
         x.method === permissionOption.method,
     );
-    const index = props.modelValue.permissions.indexOf(objForRemoval);
-    props.modelValue.permissions.splice(index, 1);
+    if (objForRemoval) {
+      const index = props.modelValue.permissions.indexOf(objForRemoval);
+      props.modelValue.permissions.splice(index, 1);
+    }
   }
 }
 
