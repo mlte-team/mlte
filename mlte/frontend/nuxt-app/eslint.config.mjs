@@ -73,6 +73,7 @@ export default withNuxt(
           QAOption: true,
           SelectOption: true,
           SystemDescriptor: true,
+          TagOption: true,
           TestResults: true,
           User: true,
           UserUpdateBody: true,

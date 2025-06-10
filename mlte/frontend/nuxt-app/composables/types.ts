@@ -20,6 +20,11 @@ export interface SelectOption {
   text: string;
 }
 
+export interface TagOption {
+  name: string;
+  selected: boolean;
+}
+
 // --------------------------------------------------------------------------------------------------------------
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
@@ -83,7 +88,7 @@ export class ModelDescriptor {
   constructor(
     public development_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
     public deployment_platform: string = "",
-    public capability_deployment_mecahnism: string = "",
+    public capability_deployment_mechanism: string = "",
     public input_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public output_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public production_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
@@ -255,14 +260,16 @@ export class TestCatalogEntry {
 // Profile Management
 // --------------------------------------------------------------------------------------------------------------
 
-export interface User {
-  username: string;
-  password?: string;
-  email: string;
-  full_name: string;
-  disabled: boolean;
-  role: string;
-  groups: Array<object>;
+export class User {
+  constructor(
+    public username: string = "",
+    public password?: string,
+    public email: string = "",
+    public full_name: string = "",
+    public disabled: boolean = false,
+    public role: string = "",
+    public groups: Array<Group> = [],
+  ) {}
 }
 
 export interface UserUpdateBody {

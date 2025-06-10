@@ -61,15 +61,7 @@ async function updateUserList() {
 }
 
 function resetSelectedUser() {
-  selectedUser.value = {
-    username: "",
-    password: "",
-    email: "",
-    full_name: "",
-    disabled: false,
-    role: "",
-    groups: [],
-  };
+  selectedUser.value = new User();
 }
 
 function addUser() {

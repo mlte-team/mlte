@@ -153,7 +153,7 @@ if (groupList.value) {
   });
 }
 
-groupOptions.value.forEach((groupOption) => {
+groupOptions.value.forEach((groupOption: GroupCheckboxOption) => {
   if (props.modelValue.groups.find((x: Group) => x.name === groupOption.name)) {
     groupOption.selected = true;
   }
@@ -183,8 +183,11 @@ function groupChange(selected: boolean, groupOption: Group) {
     const objForRemoval = props.modelValue.groups.find(
       (x: Group) => x.name === groupOption.name,
     );
-    const index = props.modelValue.groups.indexOf(objForRemoval);
-    props.modelValue.groups.splice(index, 1);
+    // TODO : Add error handling
+    if (objForRemoval) {
+      const index = props.modelValue.groups.indexOf(objForRemoval);
+      props.modelValue.groups.splice(index, 1);
+    }
   }
 }
 
@@ -198,14 +201,14 @@ async function submit() {
       inputError = true;
     }
 
-    if (props.modelValue.password.trim() === "") {
+    if (props.modelValue.password && props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
-    if (props.modelValue.password.trim() === "") {
+    if (props.modelValue.password && props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       inputError = true;
     }

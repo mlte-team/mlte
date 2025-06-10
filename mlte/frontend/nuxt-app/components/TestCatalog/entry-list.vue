@@ -56,11 +56,8 @@
 const emits = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<TestCatalogEntry>,
     required: true,
-    default() {
-      return [];
-    },
   },
 });
 </script>

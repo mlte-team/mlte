@@ -115,6 +115,7 @@ function permissionChange(selected: boolean, permissionOption: Permission) {
         x.resource_type === permissionOption.resource_type &&
         x.method === permissionOption.method,
     );
+    // TODO: Add error handling
     if (objForRemoval) {
       const index = props.modelValue.permissions.indexOf(objForRemoval);
       props.modelValue.permissions.splice(index, 1);
