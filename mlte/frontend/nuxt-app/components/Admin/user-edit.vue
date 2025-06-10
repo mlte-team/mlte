@@ -143,7 +143,7 @@ const formErrors = ref<Dictionary<boolean>>({
   password: false,
   confirmPassword: false,
 });
-const groupOptions = ref<Array<Group>>([]);
+const groupOptions = ref<Array<GroupCheckboxOption>>([]);
 const { data: groupList } = await useFetch<Array<Group>>(
   config.public.apiPath + "/groups/details",
   {

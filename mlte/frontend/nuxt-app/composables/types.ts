@@ -6,11 +6,13 @@ export interface Dictionary<T> {
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
 
-export interface QAOption {
-  value: string;
-  text: string;
-  description: string;
-  parent: string;
+export class QAOption {
+  constructor(
+    public value: string,
+    public text: string,
+    public description: string,
+    public parent: string,
+  ) {}
 }
 
 export interface SelectOption {
@@ -218,6 +220,12 @@ export interface QualityAttributeScenario {
 // Test Catalog
 // --------------------------------------------------------------------------------------------------------------
 
+export interface CatalogReply {
+  id: string;
+  read_only: boolean;
+  type: string;
+}
+
 export class TestCatalogHeader {
   constructor(
     public identifier: string = "",
@@ -266,17 +274,27 @@ export interface UserUpdateBody {
   role: string;
 }
 
-export interface Permission {
-  resource_id: string | undefined;
-  resource_type: string;
-  method: string;
+export interface PermissionCheckboxOption extends Permission {
   selected: boolean;
 }
 
-export interface Group {
-  name: string;
-  permissions: Array<Permission>;
+export class Permission {
+  constructor(
+    public resource_id: string | undefined = "",
+    public resource_type: string = "",
+    public method: string = "",
+  ) {}
+}
+
+export interface GroupCheckboxOption extends Group {
   selected: boolean;
+}
+
+export class Group {
+  constructor(
+    public name: string = "",
+    public permissions: Array<Permission> = [],
+  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------

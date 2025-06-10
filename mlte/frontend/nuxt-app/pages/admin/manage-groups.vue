@@ -32,11 +32,8 @@ const token = useCookie("token");
 
 const editFlag = ref(false);
 const newGroupFlag = ref(false);
-const groupList = ref<{
-  name: string;
-  permissions: Array<object>;
-}>([]);
-const selectedGroup = ref({});
+const groupList = ref<Array<Group>>([]);
+const selectedGroup = ref<Group>(new Group());
 
 updateGroupList();
 
@@ -52,7 +49,9 @@ async function updateGroupList() {
     },
     onResponse({ response }) {
       if (response.ok) {
-        groupList.value = response._data;
+        response._data.forEach((group: Group) => {
+          groupList.value.push(new Group(group.name, group.permissions));
+        });
       }
     },
     onResponseError({ response }) {
@@ -62,10 +61,7 @@ async function updateGroupList() {
 }
 
 function resetSelectedGroup() {
-  selectedGroup.value = {
-    name: "",
-    permissions: [],
-  };
+  selectedGroup.value = new Group();
 }
 
 function addGroup() {
@@ -74,8 +70,8 @@ function addGroup() {
   newGroupFlag.value = true;
 }
 
-function editGroup(group: object) {
-  selectedGroup.value = group;
+function editGroup(group: Group) {
+  selectedGroup.value = group as Group;
   editFlag.value = true;
   newGroupFlag.value = false;
 }
@@ -114,7 +110,7 @@ function cancelEdit() {
   }
 }
 
-async function saveGroup(group: object) {
+async function saveGroup(group: Group) {
   try {
     if (newGroupFlag.value) {
       await $fetch(config.public.apiPath + "/group", {

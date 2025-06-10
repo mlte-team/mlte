@@ -33,17 +33,7 @@ const userCookie = useCookie("user");
 
 const editFlag = ref(false);
 const newUserFlag = ref(false);
-const userList = ref<
-  {
-    username: string;
-    email: string;
-    full_name: string;
-    disabled: boolean;
-    role: string;
-    groups: Array<object>;
-    password: string;
-  }[]
->([]);
+const userList = ref<Array<User>>([]);
 const selectedUser = ref({});
 
 updateUserList();
@@ -73,12 +63,12 @@ async function updateUserList() {
 function resetSelectedUser() {
   selectedUser.value = {
     username: "",
+    password: "",
     email: "",
     full_name: "",
     disabled: false,
     role: "",
     groups: [],
-    password: "",
   };
 }
 

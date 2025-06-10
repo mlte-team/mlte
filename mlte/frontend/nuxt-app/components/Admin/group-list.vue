@@ -1,6 +1,4 @@
 <template>
-  {{ modelValue[1] }}
-
   <table class="table usa-table usa-table--borderless">
     <thead>
       <tr>
