@@ -286,11 +286,9 @@
 <script setup lang="ts">
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: ModelDescriptor,
     required: true,
-    default() {
-      return new ModelDescriptor();
-    },
+
   },
 });
 

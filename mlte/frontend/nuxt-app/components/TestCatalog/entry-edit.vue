@@ -168,11 +168,8 @@ const token = useCookie("token");
 const emits = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: TestCatalogEntry,
     required: true,
-    default() {
-      return new TestCatalogEntry();
-    },
   },
   newEntryFlag: {
     type: Boolean,

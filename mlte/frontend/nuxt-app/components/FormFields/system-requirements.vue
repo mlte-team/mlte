@@ -159,19 +159,6 @@ const props = defineProps({
   modelValue: {
     type: Array<QASDescriptor>,
     required: true,
-    default() {
-      return [
-        new QASDescriptor(
-          "",
-          "",
-          "<Stimulus>",
-          "<Source>",
-          "<Environment",
-          "<Response",
-          "<Response Measure>",
-        ),
-      ];
-    },
   },
 });
 

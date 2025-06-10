@@ -110,19 +110,8 @@ const token = useCookie("token");
 const emits = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: User,
     required: true,
-    default() {
-      return {
-        username: "",
-        password: "",
-        email: "",
-        full_name: "",
-        disabled: false,
-        role: "regular",
-        groups: [],
-      };
-    },
   },
   newUserFlag: {
     type: Boolean,

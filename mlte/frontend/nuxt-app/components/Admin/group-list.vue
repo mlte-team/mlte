@@ -51,9 +51,6 @@ const props = defineProps({
   modelValue: {
     type: Array<Group>,
     required: true,
-    default() {
-      return [];
-    },
   },
 });
 </script>

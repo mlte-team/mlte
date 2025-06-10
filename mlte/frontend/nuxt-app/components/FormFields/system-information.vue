@@ -185,11 +185,8 @@
 <script setup lang="ts">
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: SystemDescriptor,
     required: true,
-    default() {
-      return new SystemDescriptor();
-    },
   },
 });
 

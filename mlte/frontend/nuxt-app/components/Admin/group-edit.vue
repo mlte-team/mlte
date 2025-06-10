@@ -54,9 +54,6 @@ const props = defineProps({
   modelValue: {
     type: Group,
     required: true,
-    default() {
-      return new Group();
-    },
   },
   newGroupFlag: {
     type: Boolean,

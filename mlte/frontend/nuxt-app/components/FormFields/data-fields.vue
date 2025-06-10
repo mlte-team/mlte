@@ -304,9 +304,6 @@ const props = defineProps({
   modelValue: {
     type: Array<DataDescriptor>,
     required: true,
-    default() {
-      return [new DataDescriptor()];
-    },
   },
 });
 

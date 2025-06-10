@@ -38,7 +38,6 @@ const props = defineProps({
   initialQualityAttribute: {
     type: String,
     required: true,
-    default: "",
   },
 });
 
