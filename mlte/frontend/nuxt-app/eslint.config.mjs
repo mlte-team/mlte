@@ -77,6 +77,7 @@ export default withNuxt(
           ReportModel: true,
           SelectOption: true,
           SystemDescriptor: true,
+          TableItem: true,
           TagOption: true,
           TestResults: true,
           User: true,

@@ -6,6 +6,14 @@ export interface Dictionary<T> {
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
 
+export interface TableItem {
+  id: string;
+  test_suite_id?: string;
+  timestamp: number;
+  model: string;
+  version: string;
+}
+
 export class QAOption {
   constructor(
     public value: string,

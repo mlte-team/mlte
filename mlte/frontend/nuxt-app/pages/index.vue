@@ -297,34 +297,11 @@ const evidencesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const negotiationCards = ref<
-  { id: string; timestamp: number; model: string; version: string }[]
->([]);
-const testSuites = ref<
-  { id: string; timestamp: number; model: string; version: string }[]
->([]);
-const reports = ref<
-  { id: string; timestamp: number; model: string; version: string }[]
->([]);
-const testResults = ref<
-  {
-    id: string;
-    test_suite_id: string;
-    timestamp: number;
-    model: string;
-    version: string;
-  }[]
->([]);
-const evidences = ref<
-  {
-    id: string;
-    measurement: string;
-    type: string;
-    timestamp: number;
-    model: string;
-    version: string;
-  }[]
->([]);
+const negotiationCards = ref<Array<TableItem>>([]);
+const testSuites = ref<Array<TableItem>>([]);
+const reports = ref<Array<TableItem>>([]);
+const testResults = ref<Array<TableItem>>([]);
+const evidences = ref<Array<TableItem>>([]);
 
 await populateModelVersionLists();
 if (modelOptions.value !== null) {
