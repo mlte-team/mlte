@@ -472,17 +472,16 @@ async function selectVersion(versionName: string) {
 }
 
 // Populate artifacts for a given model and version.
-// TODO : Do better typing on the artifactList and artifact
 function populateArtifacts(
   model: string,
   version: string,
-  artifactList: Array<object>,
+  artifactList: Array<Artifact>,
 ) {
   clearArtifacts();
   artifactList.forEach((artifact: Artifact) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
-    ).toLocaleString("en-US");
+    ).toLocaleString("en-US") as unknown as number;
     // Negotiation card
     if (artifact.header.type === "negotiation_card") {
       if (isValidNegotiation(artifact)) {
@@ -517,7 +516,7 @@ function populateArtifacts(
       }
     }
     // Test Results
-    else if (artifact.header.type === "test_results") {
+    else if (artifact.body.artifact_type === "test_results") {
       if (isValidTestResults(artifact)) {
         testResults.value.push({
           id: artifact.header.identifier,
@@ -528,13 +527,13 @@ function populateArtifacts(
         });
       }
     }
-    // Value
-    if (artifact.header.type === "value") {
+    // Evidence
+    if (artifact.body.artifact_type === "evidence") {
       if (isValidEvidence(artifact)) {
         evidences.value.push({
           id: artifact.header.identifier.slice(0, -6),
-          measurement: artifact.body.metadata.measurement_type,
-          type: artifact.body.value.value_type,
+          measurement: artifact.body.metadata.measurement.measurement_class,
+          type: artifact.body.value.evidence_type,
           timestamp: artifact.header.timestamp,
           model,
           version,

@@ -170,17 +170,20 @@ if (useRoute().query.artifactId !== undefined) {
     form.value = reportData.value.body;
     if (reportData.value.body.test_results_id) {
       form.value.test_results_id = reportData.value.body.test_results_id;
-      const testResults: TestResults = await fetchArtifact(
+      const testResults = await fetchArtifact(
         token.value!,
         model as string,
         version as string,
         form.value.test_results_id,
       );
 
-      findings.value = loadFindings(
-        testResults,
-        form.value.nc_data.system_requirements,
-      );
+      // TODO : Consider error handling
+      if (testResults.body.artifact_type === "test_results") {
+        findings.value = loadFindings(
+          testResults as TestResults,
+          form.value.nc_data.system_requirements,
+        );
+      }
     }
   }
 }

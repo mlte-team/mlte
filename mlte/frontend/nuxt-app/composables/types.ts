@@ -29,15 +29,60 @@ export interface TagOption {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export type Artifact = TestResults;
+export interface Artifact {
+  header: ArtifactHeader;
+  body: TestResultsBody | EvidenceBody;
+}
 
 export class ArtifactHeader {
   constructor(
     public identifier: string = "",
     public type: string = "",
     public timestamp: number = -1,
-    public creator: string = "",
+    public creator: string,
   ) {}
+}
+
+export interface TestResultsBody {
+  artifact_type: "test_results";
+  test_suite_id: string;
+  test_suite: {
+    artifact_type: string;
+    test_cases: Array<TestCase>;
+  };
+  results: Dictionary<Result>;
+}
+
+export interface TestResults {
+  header: ArtifactHeader;
+  body: TestResultsBody;
+}
+
+export interface EvidenceBody {
+  artifact_type: "evidence";
+  metadata: {
+    test_case_id: string;
+    measurement: {
+      measurement_class: string;
+      output_class: string;
+      additional_data: object;
+    };
+  };
+  evidence_class: string;
+  value: {
+    evidence_type: string;
+    data: {
+      avg: number;
+      min: number;
+      max: number;
+      unit: string;
+    };
+  };
+}
+
+export interface Evidence {
+  header: ArtifactHeader;
+  body: EvidenceBody;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -138,7 +183,6 @@ export class SystemDescriptor {
   ) {}
 }
 
-// Not currently used
 export class NegotiationCardDataModel {
   constructor(
     public system: SystemDescriptor = new SystemDescriptor(),
