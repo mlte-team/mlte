@@ -350,7 +350,7 @@ async function populateModelVersionLists() {
   modelOptions.value = [];
   if (modelList.value) {
     modelList.value.forEach((modelName: string) => {
-      modelOptions.value.push({ value: modelName, text: modelName });
+      modelOptions.value.push(new SelectOption(modelName, modelName));
     });
   }
 }
@@ -382,10 +382,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
         selectedModel.value = modelName;
         versionOptions.value = [];
         response._data.forEach((version: string) => {
-          versionOptions.value.push({
-            value: version,
-            text: version,
-          });
+          versionOptions.value.push(new SelectOption(version, version));
         });
       }
     },
@@ -462,59 +459,70 @@ function populateArtifacts(
     // Negotiation card
     if (artifact.header.type === "negotiation_card") {
       if (isValidNegotiation(artifact)) {
-        negotiationCards.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        negotiationCards.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
     // Report
     else if (artifact.header.type === "report") {
       if (isValidReport(artifact)) {
-        reports.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        reports.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
     // Test Suite
     else if (artifact.header.type === "test_suite") {
       if (isValidTestSuite(artifact)) {
-        testSuites.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        testSuites.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
     // Test Results
     else if (artifact.body.artifact_type === "test_results") {
       if (isValidTestResults(artifact)) {
-        testResults.value.push({
-          id: artifact.header.identifier,
-          test_suite_id: artifact.body.test_suite_id,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        testResults.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+            artifact.body.test_suite_id,
+          ),
+        );
       }
     }
     // Evidence
     if (artifact.body.artifact_type === "evidence") {
       if (isValidEvidence(artifact)) {
-        evidences.value.push({
-          id: artifact.header.identifier.slice(0, -6),
-          measurement: artifact.body.metadata.measurement.measurement_class,
-          type: artifact.body.value.evidence_type,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        evidences.value.push(
+          new TableItem(
+            artifact.header.identifier.slice(0, -6),
+            artifact.header.timestamp,
+            model,
+            version,
+            undefined,
+            artifact.body.metadata.measurement.measurement_class,
+            artifact.body.value.evidence_type,
+          ),
+        );
       }
     }
   });

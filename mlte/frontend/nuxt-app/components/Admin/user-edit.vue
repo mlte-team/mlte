@@ -147,11 +147,9 @@ const { data: groupList } = await useFetch<Array<Group>>(
 );
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
-    groupOptions.value.push({
-      name: group.name,
-      permissions: group.permissions,
-      selected: false,
-    });
+    groupOptions.value.push(
+      new GroupCheckboxOption(group.name, group.permissions, false),
+    );
   });
 }
 
@@ -177,10 +175,9 @@ function disablePasswordReset() {
 
 function groupChange(selected: boolean, groupOption: Group) {
   if (selected) {
-    props.modelValue.groups.push({
-      name: groupOption.name,
-      permissions: groupOption.permissions,
-    });
+    props.modelValue.groups.push(
+      new Group(groupOption.name, groupOption.permissions),
+    );
   } else {
     const objForRemoval = props.modelValue.groups.find(
       (x: Group) => x.name === groupOption.name,

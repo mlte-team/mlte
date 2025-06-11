@@ -56,12 +56,14 @@ const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
 );
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: CustomListEntry) => {
-    QACategoryOptions.value.push({
-      value: category.name,
-      text: category.name,
-      description: category.description,
-      parent: category.parent,
-    });
+    QACategoryOptions.value.push(
+      new QAOption(
+        category.name,
+        category.name,
+        category.description,
+        category.parent,
+      ),
+    );
   });
 }
 
@@ -78,12 +80,14 @@ const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
 );
 if (QAapiOptions.value) {
   QAapiOptions.value.forEach((attribute: CustomListEntry) => {
-    AllQAOptions.value.push({
-      value: attribute.name,
-      text: attribute.name,
-      description: attribute.description,
-      parent: attribute.parent,
-    });
+    AllQAOptions.value.push(
+      new QAOption(
+        attribute.name,
+        attribute.name,
+        attribute.description,
+        attribute.parent,
+      ),
+    );
   });
 }
 

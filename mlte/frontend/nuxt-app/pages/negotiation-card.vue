@@ -169,7 +169,7 @@ if (useRoute().query.artifactId !== undefined) {
       },
     },
   );
-  if (!error.value && cardData.value && isValidNegotiation(cardData)) {
+  if (!error.value && cardData.value && isValidNegotiation(cardData.value)) {
     form.value = cardData.value.body;
     creator.value = cardData.value.header.creator;
     timestamp.value = new Date(

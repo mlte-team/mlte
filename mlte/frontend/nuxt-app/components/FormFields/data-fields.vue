@@ -418,32 +418,7 @@ const dataModalRows = ref([
 ]);
 
 function addDataItem() {
-  props.modelValue.push({
-    description: "",
-    source: "",
-    classification: "unclassified",
-    access: "",
-    labeling_method: "",
-    labels: [
-      {
-        name: "",
-        description: "",
-        percentage: 0,
-      },
-    ],
-    fields: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-        missing_values: "",
-        special_values: "",
-      },
-    ],
-    rights: "",
-    policies: "",
-  });
+  props.modelValue.push(new DataDescriptor());
 }
 
 function deleteDataItem(dataItemIndex: number) {
@@ -453,11 +428,7 @@ function deleteDataItem(dataItemIndex: number) {
 }
 
 function addLabel(dataItemIndex: number) {
-  props.modelValue[dataItemIndex].labels.push({
-    name: "",
-    description: "",
-    percentage: 0,
-  });
+  props.modelValue[dataItemIndex].labels.push(new LabelDescriptor());
 }
 
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
@@ -467,14 +438,7 @@ function deleteLabel(dataItemIndex: number, labelIndex: number) {
 }
 
 function addField(dataItemIndex: number) {
-  props.modelValue[dataItemIndex].fields.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-    missing_values: "",
-    special_values: "",
-  });
+  props.modelValue[dataItemIndex].fields.push(new FieldDescriptor());
 }
 
 function deleteField(dataItemIndex: number, fieldIndex: number) {

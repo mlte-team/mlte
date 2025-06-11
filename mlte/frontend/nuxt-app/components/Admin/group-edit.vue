@@ -46,13 +46,15 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
-    type: Group,
+    type: Object as PropType<Group>,
     required: true,
   },
   newGroupFlag: {
@@ -77,12 +79,14 @@ const { data: permissionList } = await useFetch<Array<Permission>>(
 );
 if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {
-    permissionOptions.value.push({
-      resource_id: permission.resource_id,
-      resource_type: permission.resource_type,
-      method: permission.method,
-      selected: false,
-    });
+    permissionOptions.value.push(
+      new PermissionCheckboxOption(
+        permission.resource_id,
+        permission.resource_type,
+        permission.method,
+        false,
+      ),
+    );
   });
 }
 
@@ -101,11 +105,13 @@ permissionOptions.value.forEach((permissionOption) => {
 
 function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
-    props.modelValue.permissions.push({
-      resource_id: permissionOption.resource_id,
-      resource_type: permissionOption.resource_type,
-      method: permissionOption.method,
-    });
+    props.modelValue.permissions.push(
+      new Permission(
+        permissionOption.resource_id,
+        permissionOption.resource_type,
+        permissionOption.method,
+      ),
+    );
   } else {
     const objForRemoval = props.modelValue.permissions.find(
       (x: Permission) =>

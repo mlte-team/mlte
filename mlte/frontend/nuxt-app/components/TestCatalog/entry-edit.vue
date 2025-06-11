@@ -201,10 +201,12 @@ const { data: catalogList } = await useFetch<Array<CatalogReply>>(
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
     if (!catalog.read_only) {
-      catalogOptions.value.push({
-        value: catalog.id,
-        text: catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
-      });
+      catalogOptions.value.push(
+        new SelectOption(
+          catalog.id,
+          catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
+        ),
+      );
     }
   });
 }
@@ -323,7 +325,6 @@ async function submit() {
 }
 
 function tagChange(selected: boolean, tagName: string) {
-  console.log(props.modelValue.tags);
   if (selected) {
     props.modelValue.tags.push(tagName);
     props.modelValue.tags.sort();

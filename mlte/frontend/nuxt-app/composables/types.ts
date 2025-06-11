@@ -6,12 +6,16 @@ export interface Dictionary<T> {
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
 
-export interface TableItem {
-  id: string;
-  test_suite_id?: string;
-  timestamp: number;
-  model: string;
-  version: string;
+export class TableItem {
+  constructor(
+    public id: string,
+    public timestamp: number,
+    public model: string,
+    public version: string,
+    public test_suite_id?: string,
+    public measurement?: string,
+    public type?: string,
+  ) {}
 }
 
 export class QAOption {
@@ -23,9 +27,11 @@ export class QAOption {
   ) {}
 }
 
-export interface SelectOption {
-  value: string;
-  text: string;
+export class SelectOption {
+  constructor(
+    public value: string,
+    public text: string,
+  ) {}
 }
 
 export interface TagOption {
@@ -343,10 +349,6 @@ export interface UserUpdateBody {
   role: string;
 }
 
-export interface PermissionCheckboxOption extends Permission {
-  selected: boolean;
-}
-
 export class Permission {
   constructor(
     public resource_id: string | undefined = "",
@@ -355,8 +357,15 @@ export class Permission {
   ) {}
 }
 
-export interface GroupCheckboxOption extends Group {
-  selected: boolean;
+export class PermissionCheckboxOption extends Permission {
+  constructor(
+    resource_id: string | undefined,
+    resource_type: string,
+    method: string,
+    public selected: boolean,
+  ) {
+    super(resource_id, resource_type, method);
+  }
 }
 
 export class Group {
@@ -364,6 +373,16 @@ export class Group {
     public name: string = "",
     public permissions: Array<Permission> = [],
   ) {}
+}
+
+export class GroupCheckboxOption extends Group {
+  constructor(
+    name: string,
+    permissions: Array<Permission>,
+    public selected: boolean,
+  ) {
+    super(name, permissions);
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------

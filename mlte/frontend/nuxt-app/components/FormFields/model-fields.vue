@@ -339,12 +339,7 @@ const outputModalRows = ref([
 ]);
 
 function addInputSpec() {
-  props.modelValue.input_specification.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-  });
+  props.modelValue.input_specification.push(new ModelIODescriptor());
 }
 
 function deleteInputSpec(specIndex: number) {
@@ -354,12 +349,7 @@ function deleteInputSpec(specIndex: number) {
 }
 
 function addOutputSpec() {
-  props.modelValue.output_specification.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-  });
+  props.modelValue.output_specification.push(new ModelIODescriptor());
 }
 
 function deleteOutputSpec(specIndex: number) {

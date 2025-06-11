@@ -203,10 +203,7 @@ defineExpose({
 });
 
 function addGoal() {
-  props.modelValue.goals.push({
-    description: "",
-    metrics: [{ description: "", baseline: "" }],
-  });
+  props.modelValue.goals.push(new GoalDescriptor());
 }
 
 function deleteGoal(goalIndex: number) {
@@ -216,10 +213,7 @@ function deleteGoal(goalIndex: number) {
 }
 
 function addMetric(goalIndex: number) {
-  props.modelValue.goals[goalIndex].metrics.push({
-    description: "",
-    baseline: "",
-  });
+  props.modelValue.goals[goalIndex].metrics.push(new MetricDescriptor());
 }
 
 function deleteMetric(goalIndex: number, metricIndex: number) {
