@@ -81,8 +81,8 @@ if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {
     permissionOptions.value.push(
       new PermissionCheckboxOption(
-        permission.resource_id,
         permission.resource_type,
+        permission.resource_id,
         permission.method,
         false,
       ),
@@ -94,8 +94,8 @@ permissionOptions.value.forEach((permissionOption) => {
   if (
     props.modelValue.permissions.find(
       (x: Permission) =>
-        x.resource_id === permissionOption.resource_id &&
         x.resource_type === permissionOption.resource_type &&
+        x.resource_id === permissionOption.resource_id &&
         x.method === permissionOption.method,
     )
   ) {
@@ -107,16 +107,16 @@ function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
     props.modelValue.permissions.push(
       new Permission(
-        permissionOption.resource_id,
         permissionOption.resource_type,
+        permissionOption.resource_id,
         permissionOption.method,
       ),
     );
   } else {
     const objForRemoval = props.modelValue.permissions.find(
       (x: Permission) =>
-        x.resource_id === permissionOption.resource_id &&
         x.resource_type === permissionOption.resource_type &&
+        x.resource_id === permissionOption.resource_id &&
         x.method === permissionOption.method,
     );
     // TODO: Add error handling

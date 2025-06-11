@@ -351,20 +351,20 @@ export interface UserUpdateBody {
 
 export class Permission {
   constructor(
-    public resource_id: string | undefined = "",
-    public resource_type: string = "",
-    public method: string = "",
+    public resource_type: string,
+    public resource_id: string | undefined,
+    public method: string,
   ) {}
 }
 
 export class PermissionCheckboxOption extends Permission {
   constructor(
-    resource_id: string | undefined,
     resource_type: string,
+    resource_id: string | undefined,
     method: string,
     public selected: boolean,
   ) {
-    super(resource_id, resource_type, method);
+    super(resource_type, resource_id, method);
   }
 }
 
