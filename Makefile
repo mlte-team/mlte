@@ -1,6 +1,22 @@
 # Automation of various common tasks
 
 # -----------------------------------------------------------------------------
+# Python env setup.
+# -----------------------------------------------------------------------------
+
+.PHONY: venv-clean
+venv-clean:
+	rm -rf ./.venv
+
+.PHONY: venv
+venv:
+	python -m venv .venv && \
+	poetry install --with dev,demo --all-extras
+
+.PHONY: venv-redo
+venv-redo: venv-clean venv
+
+# -----------------------------------------------------------------------------
 # Schema Generation / Vetting
 # -----------------------------------------------------------------------------
 
@@ -76,6 +92,13 @@ typecheck:
 # Frontend QA
 # -----------------------------------------------------------------------------
 
+# Setup frontend env.
+.PHONY: frontend-env
+frontend-env:
+	cd mlte/frontend/nuxt-app && \
+	npm install && \
+	npx gulp init
+
 # Lint frontend source code
 .PHONY: lint-frontend
 lint-frontend:
@@ -123,4 +146,4 @@ clean:
 	rm -r -f .mypy_cache .pytest_cache
 
 .PHONY: ci
-ci: clean check-qa test
+ci: clean venv frontend-env check-qa test
