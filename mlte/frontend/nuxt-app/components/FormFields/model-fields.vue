@@ -288,7 +288,6 @@ const props = defineProps({
   modelValue: {
     type: ModelDescriptor,
     required: true,
-
   },
 });
 

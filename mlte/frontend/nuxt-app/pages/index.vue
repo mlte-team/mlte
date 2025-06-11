@@ -286,7 +286,7 @@ const testSuiteHeaders = ref([
 
 const testResultHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "specid", label: "SpecID", sortable: true },
+  { id: "test_suite_id", label: "Test Suite ID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
@@ -298,19 +298,19 @@ const evidencesHeaders = ref([
 ]);
 
 const negotiationCards = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
+  { id: string; timestamp: number; model: string; version: string }[]
 >([]);
 const testSuites = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
+  { id: string; timestamp: number; model: string; version: string }[]
 >([]);
 const reports = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
+  { id: string; timestamp: number; model: string; version: string }[]
 >([]);
 const testResults = ref<
   {
     id: string;
-    specid: string;
-    timestamp: string;
+    test_suite_id: string;
+    timestamp: number;
     model: string;
     version: string;
   }[]
@@ -320,7 +320,7 @@ const evidences = ref<
     id: string;
     measurement: string;
     type: string;
-    timestamp: string;
+    timestamp: number;
     model: string;
     version: string;
   }[]
@@ -505,7 +505,7 @@ function populateArtifacts(
         });
       }
     }
-    // Spec
+    // Test Suite
     else if (artifact.header.type === "test_suite") {
       if (isValidTestSuite(artifact)) {
         testSuites.value.push({
@@ -521,7 +521,7 @@ function populateArtifacts(
       if (isValidTestResults(artifact)) {
         testResults.value.push({
           id: artifact.header.identifier,
-          specid: artifact.body.spec_identifier,
+          test_suite_id: artifact.body.test_suite_id,
           timestamp: artifact.header.timestamp,
           model,
           version,

@@ -34,7 +34,7 @@ const userCookie = useCookie("user");
 const editFlag = ref(false);
 const newUserFlag = ref(false);
 const userList = ref<Array<User>>([]);
-const selectedUser = ref({});
+const selectedUser = ref<User>(new User());
 
 updateUserList();
 resetSelectedUser();
@@ -70,7 +70,7 @@ function addUser() {
   newUserFlag.value = true;
 }
 
-function editUser(user: object) {
+function editUser(user: User) {
   selectedUser.value = user;
   editFlag.value = true;
   newUserFlag.value = false;
