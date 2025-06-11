@@ -120,7 +120,7 @@ function cancelEdit() {
   }
 }
 
-async function saveUser(user: object) {
+async function saveUser(user: User) {
   try {
     if (newUserFlag.value) {
       await $fetch(config.public.apiPath + "/user", {
