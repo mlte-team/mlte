@@ -11,6 +11,7 @@ venv-clean:
 .PHONY: venv
 venv:
 	python -m venv .venv && \
+	poetry lock && \
 	poetry install --with dev,demo --all-extras
 
 .PHONY: venv-redo
