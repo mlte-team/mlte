@@ -54,7 +54,7 @@
           </td>
           <td v-else>{{ finding.status }}</td>
           <td>
-            <div v-for="(item, index) in finding.qas_list" :key="index">
+            <div v-for="(item, qasIndex) in finding.qas_list" :key="qasIndex">
               {{ item.id }} - {{ item.qa }}
             </div>
           </td>
