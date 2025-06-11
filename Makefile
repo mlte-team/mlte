@@ -62,8 +62,6 @@ format:
 	poetry run black mlte/
 	poetry run black test/
 	poetry run black demo/
-	poetry run black demo/simple/*.ipynb
-	poetry run black demo/scenarios/*.ipynb
 	poetry run black tools/
 
 .PHONY: check-format 
@@ -71,8 +69,6 @@ check-format:
 	poetry run black --check mlte/
 	poetry run black --check test/
 	poetry run black --check demo/
-	poetry run black --check demo/simple/*.ipynb
-	poetry run black --check demo/scenarios/*.ipynb
 	poetry run black --check tools/
 
 # Lint all source code
