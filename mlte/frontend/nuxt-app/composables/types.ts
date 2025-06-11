@@ -148,12 +148,14 @@ export class NegotiationCardDataModel {
   ) {}
 }
 
-// Not currently used
-export class NegotiationCardModel {
-  constructor(
-    public artifact_type: string = "negotiation_card",
-    public nc_data: NegotiationCardDataModel = new NegotiationCardDataModel(),
-  ) {}
+export interface NegotiationCardModel {
+  artifact_type: string;
+  nc_data: NegotiationCardDataModel;
+}
+
+export interface NegotiationApiResponse {
+  header: ArtifactHeader;
+  body: NegotiationCardModel;
 }
 
 export class QASDescriptor {
@@ -171,19 +173,6 @@ export class QASDescriptor {
 // --------------------------------------------------------------------------------------------------------------
 // Report
 // --------------------------------------------------------------------------------------------------------------
-
-export interface TestResults {
-  header: ArtifactHeader;
-  body: {
-    artifact_type: string;
-    test_suite_id: string;
-    test_suite: {
-      artifact_type: string;
-      test_cases: Array<TestCase>;
-    };
-    results: Dictionary<Result>;
-  };
-}
 
 export interface TestCase {
   identifier: string;
@@ -219,6 +208,27 @@ export class Finding {
 export interface QualityAttributeScenario {
   id: string;
   qa: string;
+}
+
+export interface CommentDescriptor {
+  content: string;
+}
+
+export interface QuantitativeAnalysisDescriptor {
+  content?: string;
+}
+
+export interface ReportModel {
+  artifact_type: string;
+  nc_data: NegotiationCardDataModel;
+  test_results_id?: string;
+  comments: Array<CommentDescriptor>;
+  quantitative_analysis: QuantitativeAnalysisDescriptor;
+}
+
+export interface ReportApiResponse {
+  header: ArtifactHeader;
+  body: ReportModel;
 }
 
 // --------------------------------------------------------------------------------------------------------------

@@ -183,9 +183,11 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const props = defineProps({
   modelValue: {
-    type: SystemDescriptor,
+    type: Object as PropType<SystemDescriptor>,
     required: true,
   },
 });

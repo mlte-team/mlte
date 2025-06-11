@@ -162,13 +162,15 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
-    type: TestCatalogEntry,
+    type: Object as PropType<TestCatalogEntry>,
     required: true,
   },
   newEntryFlag: {

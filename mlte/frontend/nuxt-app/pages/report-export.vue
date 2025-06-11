@@ -141,7 +141,7 @@ const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const findings = ref<Array<Finding>>([]);
-const pageData = ref({
+const pageData = ref<ReportModel>({
   artifact_type: "report",
   nc_data: {
     system: new SystemDescriptor(),
@@ -168,7 +168,7 @@ const model = useRoute().query.model;
 const version = useRoute().query.version;
 const artifactId = useRoute().query.artifactId;
 
-await useFetch(
+const { data: reportData, error } = await useFetch<ReportApiResponse>(
   config.public.apiPath +
     "/model/" +
     model +
@@ -185,33 +185,28 @@ await useFetch(
     onRequestError() {
       requestErrorAlert();
     },
-    async onResponse({ response }) {
-      if (response.ok) {
-        if (isValidReport(response._data)) {
-          pageData.value = response._data.body;
-
-          if (response._data.body.test_results_id) {
-            pageData.value.test_results_id =
-              response._data.body.test_results_id;
-            const testResults: TestResults = await fetchArtifact(
-              token.value as string,
-              model as string,
-              version as string,
-              pageData.value.test_results_id,
-            );
-            findings.value = loadFindings(
-              testResults,
-              pageData.value.nc_data.system_requirements,
-            );
-          }
-        }
-      }
-    },
     onResponseError({ response }) {
       handleHttpError(response.status, response._data.error_description);
     },
   },
 );
+if (!error.value && reportData.value && isValidReport(reportData.value)) {
+  pageData.value = reportData.value.body;
+
+  if (reportData.value.body.test_results_id) {
+    pageData.value.test_results_id = reportData.value.body.test_results_id;
+    const testResults: TestResults = await fetchArtifact(
+      token.value as string,
+      model as string,
+      version as string,
+      pageData.value.test_results_id,
+    );
+    findings.value = loadFindings(
+      testResults,
+      pageData.value.nc_data.system_requirements,
+    );
+  }
+}
 </script>
 
 <style>

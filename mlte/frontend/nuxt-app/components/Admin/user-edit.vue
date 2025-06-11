@@ -104,13 +104,15 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
-    type: User,
+    type: Object as PropType<User>,
     required: true,
   },
   newUserFlag: {

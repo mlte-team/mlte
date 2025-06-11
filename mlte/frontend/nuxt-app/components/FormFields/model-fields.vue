@@ -284,9 +284,11 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const props = defineProps({
   modelValue: {
-    type: ModelDescriptor,
+    type: Object as PropType<ModelDescriptor>,
     required: true,
   },
 });

@@ -116,7 +116,7 @@ const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
 const findings = ref<Array<Finding>>([]);
-const form = ref({
+const form = ref<ReportModel>({
   artifact_type: "report",
   nc_data: {
     system: new SystemDescriptor(),
@@ -144,7 +144,7 @@ if (useRoute().query.artifactId !== undefined) {
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
-  await useFetch(
+  const { data: reportData, error } = await useFetch<ReportApiResponse>(
     config.public.apiPath +
       "/model/" +
       model +
@@ -161,33 +161,28 @@ if (useRoute().query.artifactId !== undefined) {
       onRequestError() {
         requestErrorAlert();
       },
-      async onResponse({ response }) {
-        if (response.ok) {
-          if (isValidReport(response._data)) {
-            form.value = response._data.body;
-
-            if (response._data.body.test_results_id) {
-              form.value.test_results_id = response._data.body.test_results_id;
-              const testResults: TestResults = await fetchArtifact(
-                token.value!,
-                model as string,
-                version as string,
-                form.value.test_results_id,
-              );
-
-              findings.value = loadFindings(
-                testResults,
-                form.value.nc_data.system_requirements,
-              );
-            }
-          }
-        }
-      },
       onResponseError({ response }) {
         handleHttpError(response.status, response._data.error_description);
       },
     },
   );
+  if (!error.value && reportData.value && isValidReport(reportData.value)) {
+    form.value = reportData.value.body;
+    if (reportData.value.body.test_results_id) {
+      form.value.test_results_id = reportData.value.body.test_results_id;
+      const testResults: TestResults = await fetchArtifact(
+        token.value!,
+        model as string,
+        version as string,
+        form.value.test_results_id,
+      );
+
+      findings.value = loadFindings(
+        testResults,
+        form.value.nc_data.system_requirements,
+      );
+    }
+  }
 }
 
 async function submit() {

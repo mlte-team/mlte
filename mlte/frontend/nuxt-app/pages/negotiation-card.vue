@@ -147,7 +147,7 @@ if (useRoute().query.artifactId !== undefined) {
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
-  await useFetch(
+  const { data: cardData, error } = await useFetch<NegotiationApiResponse>(
     config.public.apiPath +
       "/model/" +
       model +
@@ -164,20 +164,18 @@ if (useRoute().query.artifactId !== undefined) {
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }) {
-        if (isValidNegotiation(response._data)) {
-          creator.value = response._data.header.creator;
-          timestamp.value = new Date(
-            response._data.header.timestamp * 1000,
-          ).toLocaleString("en-US");
-          form.value = response._data.body;
-        }
-      },
       onResponseError({ response }) {
         handleHttpError(response.status, response._data.error_description);
       },
     },
   );
+  if (!error.value && cardData.value && isValidNegotiation(cardData)) {
+    form.value = cardData.value.body;
+    creator.value = cardData.value.header.creator;
+    timestamp.value = new Date(
+      cardData.value.header.timestamp * 1000,
+    ).toLocaleString("en-US");
+  }
 }
 
 async function submit() {
@@ -342,6 +340,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             (label: { label: string; percentage: number }, i: number) => {
               // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
               dataRef.value.parentAddLabel(lastDataIndex);
+              form.value.nc_data.data[lastDataIndex].labels[i].name =
                 label.label;
               form.value.nc_data.data[lastDataIndex].labels[i].percentage =
                 label.percentage;

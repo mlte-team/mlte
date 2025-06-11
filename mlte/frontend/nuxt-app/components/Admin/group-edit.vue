@@ -101,13 +101,11 @@ permissionOptions.value.forEach((permissionOption) => {
 
 function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
-    props.modelValue.permissions.push(
-      new Permission(
-        permissionOption.resource_id,
-        permissionOption.resource_type,
-        permissionOption.method,
-      ),
-    );
+    props.modelValue.permissions.push({
+      resource_id: permissionOption.resource_id,
+      resource_type: permissionOption.resource_type,
+      method: permissionOption.method,
+    });
   } else {
     const objForRemoval = props.modelValue.permissions.find(
       (x: Permission) =>
