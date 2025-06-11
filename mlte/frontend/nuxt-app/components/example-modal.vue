@@ -10,7 +10,7 @@
         type="button"
         class="usa-button usa-modal__close"
         aria-label="Close this window"
-        @click="$emit('toggleVisible', false)"
+        @click="emit('toggleVisible', false)"
       >
         <img
           src="~/assets/uswds/img/usa-icons/close.svg"
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-const emits = defineEmits(["toggleVisible"]);
+const emit = defineEmits(["toggleVisible"]);
 const props = defineProps({
   visible: {
     type: Boolean,

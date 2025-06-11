@@ -14,7 +14,7 @@
     <UsaSelect
       v-model="qualityAttribute"
       :options="selectedQAOptions"
-      @change="$emit('updateAttribute', $event.target.value)"
+      @change="emit('updateAttribute', $event.target.value)"
     >
       <template #label>
         Quality Attribute

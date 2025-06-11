@@ -153,7 +153,7 @@
     </UsaTextInput>
 
     <div class="submit-footer">
-      <UsaButton class="primary-button" @click="$emit('cancel')">
+      <UsaButton class="primary-button" @click="emit('cancel')">
         Cancel
       </UsaButton>
       <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
@@ -165,7 +165,7 @@
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emits = defineEmits(["cancel", "submit", "updateEntry"]);
+const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
     type: TestCatalogEntry,
