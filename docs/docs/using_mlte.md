@@ -14,6 +14,13 @@ or
 ```bash
 $ conda install mlte
 ```
+
+To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; and to use relational database storage, the `rdbs` optional dependencies are needed. To install all optional dependencies:
+
+```bash
+$ pip install mlte[frontend,rdbs]
+```
+
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
 ## Running the Backend and User Interface

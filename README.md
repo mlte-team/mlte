@@ -18,6 +18,12 @@ The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte
 $ pip install mlte
 ```
 
+To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; and to use relational database storage, the `rdbs` optional dependencies are needed. To install all optional dependencies:
+
+```bash
+$ pip install mlte[frontend,rdbs]
+```
+
 ### Running `MLTE`
 
 The `MLTE` web-based user interface (UI) allows you to create/edit system artifacts and review existing models and test catalogs. To access the UI, first start the backend server with the following command:
