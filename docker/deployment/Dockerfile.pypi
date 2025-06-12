@@ -14,4 +14,4 @@ RUN pip install mlte[rdbs,frontend]
 ARG MLTE_COMMAND
 ENV MLTE_COMMAND=${MLTE_COMMAND}
 
-ENTRYPOINT mlte ${MLTE_COMMAND}
+ENTRYPOINT ["mlte", "${MLTE_COMMAND}"]
