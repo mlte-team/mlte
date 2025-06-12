@@ -8,7 +8,6 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.user.store import UserStore
 from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
-from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 
 
 def create_user_store(uri: str) -> UserStore:
@@ -21,6 +20,9 @@ def create_user_store(uri: str) -> UserStore:
     if parsed_uri.type == StoreType.LOCAL_MEMORY:
         return InMemoryUserStore(parsed_uri)
     if parsed_uri.type == StoreType.RELATIONAL_DB:
+        # Import is here to avoid importing SQL libraries if they have not been installed.
+        from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
+
         return RelationalDBUserStore(parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemUserStore(parsed_uri)

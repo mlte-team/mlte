@@ -116,6 +116,7 @@ known_first_party=["mlte", "test"]
 [tool.black]
 line-length = 80
 target-version = ['py38']
+include = '\.pyi?$|\.ipynb$'
 
 [tool.mypy]
 mypy_path = "src"

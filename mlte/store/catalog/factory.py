@@ -11,7 +11,6 @@ from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
-from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 
 
 def create_catalog_store(
@@ -29,6 +28,11 @@ def create_catalog_store(
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemCatalogStore(uri=parsed_uri, catalog_folder=catalog_id)
     if parsed_uri.type == StoreType.RELATIONAL_DB:
+        # Import is here to avoid importing SQL libraries if they have not been installed.
+        from mlte.store.catalog.underlying.rdbs.store import (
+            RelationalDBCatalogStore,
+        )
+
         return RelationalDBCatalogStore(uri=parsed_uri)
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return HttpCatalogGroupStore(uri=parsed_uri)
