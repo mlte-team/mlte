@@ -40,6 +40,16 @@ export interface TagOption {
 }
 
 // --------------------------------------------------------------------------------------------------------------
+// Backend Internals
+// --------------------------------------------------------------------------------------------------------------
+
+export interface CustomListEntry {
+  name: string;
+  description: string;
+  parent: string;
+}
+
+// --------------------------------------------------------------------------------------------------------------
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
@@ -197,6 +207,18 @@ export class SystemDescriptor {
   ) {}
 }
 
+export class QASDescriptor {
+  constructor(
+    public identifier?: string,
+    public quality: string = "",
+    public stimulus: string = "",
+    public source: string = "",
+    public environment: string = "",
+    public response: string = "",
+    public measure: string = "",
+  ) {}
+}
+
 export class NegotiationCardDataModel {
   constructor(
     public system: SystemDescriptor = new SystemDescriptor(),
@@ -214,18 +236,6 @@ export interface NegotiationCardModel {
 export interface NegotiationApiResponse {
   header: ArtifactHeader;
   body: NegotiationCardModel;
-}
-
-export class QASDescriptor {
-  constructor(
-    public identifier?: string,
-    public quality: string = "",
-    public stimulus: string = "",
-    public source: string = "",
-    public environment: string = "",
-    public response: string = "",
-    public measure: string = "",
-  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -253,16 +263,6 @@ export interface Result {
   };
 }
 
-export class Finding {
-  constructor(
-    public status: string,
-    public measurement: string,
-    public test_case_id: string,
-    public message: string,
-    public qas_list: Array<QualityAttributeScenario>,
-  ) {}
-}
-
 export interface QualityAttributeScenario {
   id: string;
   qa: string;
@@ -287,6 +287,16 @@ export interface ReportModel {
 export interface ReportApiResponse {
   header: ArtifactHeader;
   body: ReportModel;
+}
+
+export class Finding {
+  constructor(
+    public status: string,
+    public measurement: string,
+    public test_case_id: string,
+    public message: string,
+    public qas_list: Array<QualityAttributeScenario>,
+  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -331,22 +341,22 @@ export class TestCatalogEntry {
 export class User {
   constructor(
     public username: string = "",
-    public password?: string,
     public email: string = "",
     public full_name: string = "",
     public disabled: boolean = false,
     public role: string = "",
     public groups: Array<Group> = [],
+    public password?: string,
   ) {}
 }
 
 export interface UserUpdateBody {
   username: string;
-  password?: string;
   email: string;
   full_name: string;
   disabled: boolean;
   role: string;
+  password?: string;
 }
 
 export class Permission {
@@ -383,14 +393,4 @@ export class GroupCheckboxOption extends Group {
   ) {
     super(name, permissions);
   }
-}
-
-// --------------------------------------------------------------------------------------------------------------
-// Backend Internals
-// --------------------------------------------------------------------------------------------------------------
-
-export interface CustomListEntry {
-  name: string;
-  description: string;
-  parent: string;
 }
