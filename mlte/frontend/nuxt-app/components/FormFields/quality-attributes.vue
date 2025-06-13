@@ -55,16 +55,7 @@ const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
   },
 );
 if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: CustomListEntry) => {
-    QACategoryOptions.value.push(
-      new QAOption(
-        category.name,
-        category.name,
-        category.description,
-        category.parent,
-      ),
-    );
-  });
+  addOptionsToList(QACategoryOptions.value, QACategoryAPIData.value);
 }
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
@@ -79,16 +70,7 @@ const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
   },
 );
 if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: CustomListEntry) => {
-    AllQAOptions.value.push(
-      new QAOption(
-        attribute.name,
-        attribute.name,
-        attribute.description,
-        attribute.parent,
-      ),
-    );
-  });
+  addOptionsToList(AllQAOptions.value, QAapiOptions.value);
 }
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
@@ -115,5 +97,16 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   } else {
     emit("updateAttribute", initialAttrbute);
   }
+}
+
+function addOptionsToList(
+  initialList: Array<QAOption>,
+  appendList: Array<CustomListEntry>,
+) {
+  appendList.forEach((entry: CustomListEntry) => {
+    initialList.push(
+      new QAOption(entry.name, entry.name, entry.description, entry.parent),
+    );
+  });
 }
 </script>
