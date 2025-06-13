@@ -183,33 +183,12 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as PropType<SystemDescriptor>,
     required: true,
-    default() {
-      return {
-        goals: [
-          {
-            description: "",
-            metrics: [
-              {
-                description: "",
-                baseline: "",
-              },
-            ],
-          },
-        ],
-        problem_type: "classification",
-        task: "",
-        usage_context: "",
-        risks: {
-          fp: "",
-          fn: "",
-          other: "",
-        },
-      };
-    },
   },
 });
 
@@ -224,10 +203,7 @@ defineExpose({
 });
 
 function addGoal() {
-  props.modelValue.goals.push({
-    description: "",
-    metrics: [{ description: "", baseline: "" }],
-  });
+  props.modelValue.goals.push(new GoalDescriptor());
 }
 
 function deleteGoal(goalIndex: number) {
@@ -237,10 +213,7 @@ function deleteGoal(goalIndex: number) {
 }
 
 function addMetric(goalIndex: number) {
-  props.modelValue.goals[goalIndex].metrics.push({
-    description: "",
-    baseline: "",
-  });
+  props.modelValue.goals[goalIndex].metrics.push(new MetricDescriptor());
 }
 
 function deleteMetric(goalIndex: number, metricIndex: number) {

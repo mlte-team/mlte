@@ -95,7 +95,7 @@
     </div>
 
     <div class="submit-footer">
-      <UsaButton class="primary-button" @click="$emit('cancel')">
+      <UsaButton class="primary-button" @click="emit('cancel')">
         Cancel
       </UsaButton>
       <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
@@ -104,25 +104,16 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emits = defineEmits(["cancel", "submit", "updateUserGroups"]);
+const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as PropType<User>,
     required: true,
-    default() {
-      return {
-        username: "",
-        password: "",
-        email: "",
-        full_name: "",
-        disabled: false,
-        role: "regular",
-        groups: [],
-      };
-    },
   },
   newUserFlag: {
     type: Boolean,
@@ -137,16 +128,14 @@ const roleOptions = ref([
   { value: "admin", text: "admin" },
   { value: "regular", text: "regular" },
 ]);
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   username: false,
   role: false,
   password: false,
   confirmPassword: false,
 });
-const groupOptions = ref<
-  { name: string; permissions: Array<object>; selected: boolean }[]
->([]);
-const { data: groupList } = await useFetch<string[]>(
+const groupOptions = ref<Array<GroupCheckboxOption>>([]);
+const { data: groupList } = await useFetch<Array<Group>>(
   config.public.apiPath + "/groups/details",
   {
     retry: 0,
@@ -157,17 +146,15 @@ const { data: groupList } = await useFetch<string[]>(
   },
 );
 if (groupList.value) {
-  groupList.value.forEach((group: object) => {
-    groupOptions.value.push({
-      name: group.name,
-      permissions: group.permissions,
-      selected: false,
-    });
+  groupList.value.forEach((group: Group) => {
+    groupOptions.value.push(
+      new GroupCheckboxOption(group.name, group.permissions, false),
+    );
   });
 }
 
-groupOptions.value.forEach((groupOption) => {
-  if (props.modelValue.groups.find((x) => x.name === groupOption.name)) {
+groupOptions.value.forEach((groupOption: GroupCheckboxOption) => {
+  if (props.modelValue.groups.find((x: Group) => x.name === groupOption.name)) {
     groupOption.selected = true;
   }
 });
@@ -186,18 +173,20 @@ function disablePasswordReset() {
   delete props.modelValue.password;
 }
 
-function groupChange(selected: boolean, groupOption: object) {
+function groupChange(selected: boolean, groupOption: Group) {
   if (selected) {
-    props.modelValue.groups.push({
-      name: groupOption.name,
-      permissions: groupOption.permissions,
-    });
+    props.modelValue.groups.push(
+      new Group(groupOption.name, groupOption.permissions),
+    );
   } else {
     const objForRemoval = props.modelValue.groups.find(
-      (x) => x.name === groupOption.name,
+      (x: Group) => x.name === groupOption.name,
     );
-    const index = props.modelValue.groups.indexOf(objForRemoval);
-    props.modelValue.groups.splice(index, 1);
+    // TODO : Add error handling
+    if (objForRemoval) {
+      const index = props.modelValue.groups.indexOf(objForRemoval);
+      props.modelValue.groups.splice(index, 1);
+    }
   }
 }
 
@@ -211,14 +200,14 @@ async function submit() {
       inputError = true;
     }
 
-    if (props.modelValue.password.trim() === "") {
+    if (props.modelValue.password && props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
-    if (props.modelValue.password.trim() === "") {
+    if (props.modelValue.password && props.modelValue.password.trim() === "") {
       formErrors.value.password = true;
       inputError = true;
     }

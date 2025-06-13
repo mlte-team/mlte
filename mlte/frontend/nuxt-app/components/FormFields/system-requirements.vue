@@ -157,20 +157,8 @@
 <script setup lang="ts">
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<QASDescriptor>,
     required: true,
-    default() {
-      return [
-        {
-          quality: "",
-          stimulus: "<Stimulus>",
-          source: "<Source>",
-          environment: "<Environment>",
-          response: "<Response>",
-          measure: "<Response Measure>",
-        },
-      ];
-    },
   },
 });
 
@@ -224,14 +212,7 @@ const systemModalRows = ref([
 ]);
 
 function addRequirement() {
-  props.modelValue.push({
-    quality: "",
-    stimulus: "<Stimulus>",
-    source: "<Source>",
-    environment: "<Environment>",
-    response: "<Response>",
-    measure: "<Response Measure>",
-  });
+  props.modelValue.push(new QASDescriptor());
 }
 
 function deleteRequirement(requirementIndex: number) {

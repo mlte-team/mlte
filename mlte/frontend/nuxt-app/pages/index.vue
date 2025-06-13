@@ -267,11 +267,15 @@ const versionOptions = ref<{ value: string; text: string }[]>([]);
 const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel", {
-  decode: false,
+  decode(value) {
+    return value;
+  },
 });
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
-  decode: false,
+  decode(value) {
+    return value;
+  },
 });
 selectedVersion.value = selectedVersion.value || "";
 
@@ -282,7 +286,7 @@ const testSuiteHeaders = ref([
 
 const testResultHeaders = ref([
   { id: "id", label: "ID", sortable: true },
-  { id: "specid", label: "SpecID", sortable: true },
+  { id: "test_suite_id", label: "Test Suite ID", sortable: true },
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
@@ -293,34 +297,11 @@ const evidencesHeaders = ref([
   { id: "timestamp", label: "Timestamp", sortable: true },
 ]);
 
-const negotiationCards = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
->([]);
-const testSuites = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
->([]);
-const reports = ref<
-  { id: string; timestamp: string; model: string; version: string }[]
->([]);
-const testResults = ref<
-  {
-    id: string;
-    specid: string;
-    timestamp: string;
-    model: string;
-    version: string;
-  }[]
->([]);
-const evidences = ref<
-  {
-    id: string;
-    measurement: string;
-    type: string;
-    timestamp: string;
-    model: string;
-    version: string;
-  }[]
->([]);
+const negotiationCards = ref<Array<TableItem>>([]);
+const testSuites = ref<Array<TableItem>>([]);
+const reports = ref<Array<TableItem>>([]);
+const testResults = ref<Array<TableItem>>([]);
+const evidences = ref<Array<TableItem>>([]);
 
 await populateModelVersionLists();
 if (modelOptions.value !== null) {
@@ -369,7 +350,7 @@ async function populateModelVersionLists() {
   modelOptions.value = [];
   if (modelList.value) {
     modelList.value.forEach((modelName: string) => {
-      modelOptions.value.push({ value: modelName, text: modelName });
+      modelOptions.value.push(new SelectOption(modelName, modelName));
     });
   }
 }
@@ -401,10 +382,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
         selectedModel.value = modelName;
         versionOptions.value = [];
         response._data.forEach((version: string) => {
-          versionOptions.value.push({
-            value: version,
-            text: version,
-          });
+          versionOptions.value.push(new SelectOption(version, version));
         });
       }
     },
@@ -430,7 +408,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
 // Update the selected version for the artifact store.
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
-  if (versionName === "") {
+  if (selectedVersion.value === "") {
     clearArtifacts();
     return;
   }
@@ -440,7 +418,7 @@ async function selectVersion(versionName: string) {
       "/model/" +
       selectedModel.value +
       "/version/" +
-      versionName +
+      selectedVersion.value +
       "/artifact",
     {
       retry: 0,
@@ -453,7 +431,6 @@ async function selectVersion(versionName: string) {
       },
       onResponse({ response }) {
         if (response.ok && response._data) {
-          selectedVersion.value = versionName;
           populateArtifacts(
             selectedModel.value,
             selectedVersion.value,
@@ -469,73 +446,83 @@ async function selectVersion(versionName: string) {
 }
 
 // Populate artifacts for a given model and version.
-// TODO : Do better typing on the artifactList and artifact
 function populateArtifacts(
   model: string,
   version: string,
-  artifactList: Array<object>,
+  artifactList: Array<Artifact>,
 ) {
   clearArtifacts();
-  artifactList.forEach((artifact: object) => {
+  artifactList.forEach((artifact: Artifact) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
-    ).toLocaleString("en-US");
+    ).toLocaleString("en-US") as unknown as number;
     // Negotiation card
     if (artifact.header.type === "negotiation_card") {
       if (isValidNegotiation(artifact)) {
-        negotiationCards.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        negotiationCards.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
     // Report
     else if (artifact.header.type === "report") {
       if (isValidReport(artifact)) {
-        reports.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        reports.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
-    // Spec
+    // Test Suite
     else if (artifact.header.type === "test_suite") {
       if (isValidTestSuite(artifact)) {
-        testSuites.value.push({
-          id: artifact.header.identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        testSuites.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+          ),
+        );
       }
     }
     // Test Results
-    else if (artifact.header.type === "test_results") {
+    else if (artifact.body.artifact_type === "test_results") {
       if (isValidTestResults(artifact)) {
-        testResults.value.push({
-          id: artifact.header.identifier,
-          specid: artifact.body.spec_identifier,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        testResults.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+            artifact.body.test_suite_id,
+          ),
+        );
       }
     }
-    // Value
-    if (artifact.header.type === "value") {
+    // Evidence
+    if (artifact.body.artifact_type === "evidence") {
       if (isValidEvidence(artifact)) {
-        evidences.value.push({
-          id: artifact.header.identifier.slice(0, -6),
-          measurement: artifact.body.metadata.measurement_type,
-          type: artifact.body.value.value_type,
-          timestamp: artifact.header.timestamp,
-          model,
-          version,
-        });
+        evidences.value.push(
+          new TableItem(
+            artifact.header.identifier,
+            artifact.header.timestamp,
+            model,
+            version,
+            undefined,
+            artifact.body.metadata.measurement.measurement_class,
+            artifact.body.value.evidence_type,
+          ),
+        );
       }
     }
   });

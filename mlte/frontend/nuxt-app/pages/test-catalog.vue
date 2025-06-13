@@ -52,18 +52,8 @@ const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QACategorySearchValue = ref("");
-const entryList = ref<{
-  header: object;
-  tags: Array<string>;
-  qa_category: string;
-  quality_attribute: string;
-  code_type: string;
-  code: string;
-  description: string;
-  inputs: string;
-  output: string;
-}>([]);
-const selectedEntry = ref({});
+const entryList = ref<TestCatalogEntry[]>([]);
+const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 populateFullEntryList();
 
@@ -188,23 +178,7 @@ async function search() {
 }
 
 function resetSelectedEntry() {
-  selectedEntry.value = {
-    header: {
-      identifier: "",
-      creator: "",
-      created: -1,
-      updated: -1,
-      catalog_id: "",
-    },
-    tags: [],
-    qa_category: "",
-    quality_attribute: "",
-    code_type: "",
-    code: "",
-    description: "",
-    inputs: "",
-    output: "",
-  };
+  selectedEntry.value = new TestCatalogEntry();
 }
 
 function addEntry() {
@@ -213,7 +187,7 @@ function addEntry() {
   newEntryFlag.value = true;
 }
 
-function editEntry(entry: object) {
+function editEntry(entry: TestCatalogEntry) {
   selectedEntry.value = entry;
   editFlag.value = true;
   newEntryFlag.value = false;
@@ -262,7 +236,7 @@ function cancelEdit() {
   }
 }
 
-async function saveEntry(entry: object) {
+async function saveEntry(entry: TestCatalogEntry) {
   try {
     if (newEntryFlag.value) {
       await $fetch(
@@ -273,10 +247,10 @@ async function saveEntry(entry: object) {
         {
           retry: 0,
           method: "POST",
+          body: JSON.stringify(entry),
           headers: {
             Authorization: "Bearer " + token.value,
           },
-          body: entry,
           onRequestError() {
             requestErrorAlert();
           },
@@ -299,10 +273,10 @@ async function saveEntry(entry: object) {
         {
           retry: 0,
           method: "PUT",
+          body: JSON.stringify(entry),
           headers: {
             Authorization: "Bearer " + token.value,
           },
-          body: entry,
           onRequestError() {
             requestErrorAlert();
           },

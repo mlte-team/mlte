@@ -3,7 +3,7 @@
     <title>Report</title>
     <template #page-title>Report</template>
     <UsaTextInput
-      v-if="useRoute().query.artifactId === undefined"
+      v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
     >
       <template #label>
@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="finding in findings" :key="finding.evidence_id">
+        <tr v-for="(finding, index) in findings" :key="index">
           <td
             v-if="finding.status == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
@@ -54,7 +54,7 @@
           </td>
           <td v-else>{{ finding.status }}</td>
           <td>
-            <div v-for="(item, index) in finding.qas_list" :key="index">
+            <div v-for="(item, qasIndex) in finding.qas_list" :key="qasIndex">
               {{ item.id }} - {{ item.qa }}
             </div>
           </td>
@@ -91,9 +91,9 @@
         :to="{
           path: '/report-export',
           query: {
-            model: useRoute().query.model,
-            version: useRoute().query.version,
-            artifactId: useRoute().query.artifactId,
+            model: queryModel,
+            version: queryVersion,
+            artifactId: queryArtifactId,
           },
         }"
       >
@@ -105,201 +105,51 @@
 </template>
 
 <script setup lang="ts">
+import { cancelFormSubmission } from "~/composables/form-methods";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const queryModel = useRoute().query.model;
+const queryVersion = useRoute().query.version;
+const queryArtifactId = useRoute().query.artifactId;
+const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
-const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
-
-const findings = ref(null);
-const form = ref({
+const findings = ref<Array<Finding>>([]);
+const form = ref<ReportModel>({
   artifact_type: "report",
   nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
-    data: [
-      {
-        description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
-          {
-            name: "",
-            description: "",
-            percentage: 0,
-          },
-        ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
-      },
-    ],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-    },
-    system_requirements: [
-      {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
-      },
-    ],
+    system: new SystemDescriptor(),
+    data: [new DataDescriptor()],
+    model: new ModelDescriptor(),
+    system_requirements: [new QASDescriptor()],
   },
   test_results_id: "",
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
 
-const classificationOptions = useClassificationOptions();
-const problemTypeOptions = useProblemTypeOptions();
-
-if (useRoute().query.artifactId !== undefined) {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-  const artifactId = useRoute().query.artifactId;
-
-  await useFetch(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      async onResponse({ response }) {
-        if (response.ok) {
-          if (isValidReport(response._data)) {
-            form.value = response._data.body;
-            const problemType = response._data.body.nc_data.system.problem_type;
-            if (
-              problemTypeOptions.value.find((x) => x.value === problemType)
-                ?.value !== undefined
-            ) {
-              form.value.nc_data.system.problem_type =
-                problemTypeOptions.value.find(
-                  (x) => x.value === problemType,
-                )?.value;
-            }
-
-            // Setting .value for each classification item to work in the select
-            response._data.body.nc_data.data.forEach((item) => {
-              const classification = item.classification;
-              if (
-                classificationOptions.value.find(
-                  (x) => x.value === classification,
-                )?.value !== undefined
-              ) {
-                item.classification = classificationOptions.value.find(
-                  (x) => x.value === classification,
-                )?.value;
-              }
-            });
-
-            if (response._data.body.test_results_id) {
-              form.value.test_results_id = response._data.body.test_results_id;
-              const testResults = await fetchArtifact(
-                token.value,
-                model,
-                version,
-                form.value.test_results_id,
-              );
-              findings.value = loadFindings(
-                testResults,
-                form.value.nc_data.system_requirements,
-              );
-            }
-          }
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+if (queryArtifactId !== undefined) {
+  form.value = await loadReportData(
+    token.value as string,
+    queryModel as string,
+    queryVersion as string,
+    queryArtifactId as string,
   );
+
+  if (form.value.test_results_id) {
+    findings.value = await loadTestResults(
+      token.value as string,
+      queryModel as string,
+      queryVersion as string,
+      form.value.test_results_id,
+      form.value.nc_data.system_requirements,
+    );
+  }
 }
 
 async function submit() {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-
-  let identifier = "";
-  if (useRoute().query.artifactId === undefined) {
-    identifier = userInputArtifactId.value;
-  } else {
-    identifier = useRoute().query.artifactId?.toString();
-  }
-
+  const identifier = queryArtifactId || userInputArtifactId.value;
   const artifact = {
     header: {
       identifier,
@@ -315,9 +165,9 @@ async function submit() {
       await $fetch(
         config.public.apiPath +
           "/model/" +
-          model +
+          queryModel +
           "/version/" +
-          version +
+          queryVersion +
           "/artifact",
         {
           retry: 0,
@@ -327,7 +177,7 @@ async function submit() {
           },
           body: {
             artifact,
-            force: forceSaveParam.value,
+            force: forceSaveParam,
             parents: false,
           },
           onRequestError() {
@@ -335,10 +185,9 @@ async function submit() {
           },
           onResponse({ response }) {
             if (response.ok) {
-              successfulArtifactSubmission("report", identifier);
-              forceSaveParam.value = true;
+              successfulArtifactSubmission("report", identifier as string);
               if (useRoute().query.artifactId === undefined) {
-                window.location =
+                window.location.href =
                   "/report-form?" +
                   "model=" +
                   useRoute().query.model +

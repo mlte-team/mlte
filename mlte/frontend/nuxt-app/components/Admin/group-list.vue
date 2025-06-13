@@ -31,12 +31,12 @@
         </div>
       </td>
       <td>
-        <UsaButton class="secondary-button" @click="$emit('editGroup', group)">
+        <UsaButton class="secondary-button" @click="emit('editGroup', group)">
           Edit
         </UsaButton>
         <UsaButton
           class="usa-button usa-button--secondary"
-          @click="$emit('deleteGroup', group.name)"
+          @click="emit('deleteGroup', group.name)"
         >
           Delete
         </UsaButton>
@@ -46,14 +46,11 @@
 </template>
 
 <script setup lang="ts">
-const emits = defineEmits(["addGroup", "editGroup", "deleteGroup"]);
+const emit = defineEmits(["addGroup", "editGroup", "deleteGroup"]);
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<Group>,
     required: true,
-    default() {
-      return [];
-    },
   },
 });
 </script>

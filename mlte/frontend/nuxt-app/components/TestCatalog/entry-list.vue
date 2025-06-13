@@ -32,13 +32,13 @@
         {{ entry.code_type }}
       </td>
       <td>
-        <UsaButton class="secondary-button" @click="$emit('editEntry', entry)">
+        <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
           Edit
         </UsaButton>
         <UsaButton
           class="usa-button usa-button--secondary"
           @click="
-            $emit(
+            emit(
               'deleteEntry',
               entry.header.catalog_id,
               entry.header.identifier,
@@ -53,14 +53,11 @@
 </template>
 
 <script setup lang="ts">
-const emits = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
+const emit = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: Array<TestCatalogEntry>,
     required: true,
-    default() {
-      return [];
-    },
   },
 });
 </script>

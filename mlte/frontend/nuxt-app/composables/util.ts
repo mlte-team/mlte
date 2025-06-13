@@ -1,6 +1,10 @@
+import type { Dictionary } from "../composables/types";
+
 const config = useRuntimeConfig();
 
-export function resetFormErrors(formErrors: object) {
+export function resetFormErrors(
+  formErrors: Dictionary<boolean>,
+): Dictionary<boolean> {
   for (const key in formErrors) {
     formErrors[key] = false;
   }
@@ -14,8 +18,8 @@ export async function fetchArtifact(
   model: string,
   version: string,
   artifactId: string,
-) {
-  const data = await $fetch(
+): Promise<Artifact> {
+  const data: Artifact = await $fetch(
     config.public.apiPath +
       "/model/" +
       model +
