@@ -185,7 +185,7 @@ async function submit() {
           },
           onResponse({ response }) {
             if (response.ok) {
-              successfulArtifactSubmission("report", identifier);
+              successfulArtifactSubmission("report", identifier as string);
               if (useRoute().query.artifactId === undefined) {
                 window.location.href =
                   "/report-form?" +

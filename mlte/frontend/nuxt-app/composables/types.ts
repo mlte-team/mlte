@@ -55,7 +55,7 @@ export interface CustomListEntry {
 
 export interface Artifact {
   header: ArtifactHeader;
-  body: TestResultsModel | EvidenceBody;
+  body: TestResultsModel | EvidenceModel;
 }
 
 export class ArtifactHeader {
@@ -67,6 +67,19 @@ export class ArtifactHeader {
   ) {}
 }
 
+export interface TestCase {
+  identifier: string;
+  goal: string;
+  qas_list: Array<string>;
+  measurement: object;
+  validator: object;
+}
+
+export interface TestSuite {
+  artifact_type: string;
+  test_cases: Array<TestCase>;
+}
+
 export interface TestResultsModel {
   artifact_type: "test_results";
   test_suite_id: string;
@@ -74,7 +87,7 @@ export interface TestResultsModel {
   results: Dictionary<Result>;
 }
 
-export interface EvidenceBody {
+export interface EvidenceModel {
   artifact_type: "evidence";
   metadata: {
     test_case_id: string;
@@ -94,11 +107,6 @@ export interface EvidenceBody {
       unit: string;
     };
   };
-}
-
-export interface Evidence {
-  header: ArtifactHeader;
-  body: EvidenceBody;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -234,14 +242,6 @@ export interface NegotiationApiResponse {
 // Report
 // --------------------------------------------------------------------------------------------------------------
 
-export interface TestCase {
-  identifier: string;
-  goal: string;
-  qas_list: Array<string>;
-  measurement: object;
-  validator: object;
-}
-
 export interface Result {
   type: string;
   message: string;
@@ -253,11 +253,6 @@ export interface Result {
       additional_data: Dictionary<string>;
     };
   };
-}
-
-export interface QualityAttributeScenario {
-  id: string;
-  qa: string;
 }
 
 export class CommentDescriptor {
@@ -281,6 +276,15 @@ export class ReportModel {
 export interface ReportApiResponse {
   header: ArtifactHeader;
   body: ReportModel;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Frontend Report Items
+// --------------------------------------------------------------------------------------------------------------
+
+export interface QualityAttributeScenario {
+  id: string;
+  qa: string;
 }
 
 export class Finding {
