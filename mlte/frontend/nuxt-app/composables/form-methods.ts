@@ -21,14 +21,12 @@ export function cancelFormSubmission(redirect: string) {
 
 // Load findings from a test results.
 export function loadFindings(
-  proxyObject: object,
+  test_results: object,
   system_requirements: Array<object>,
 ) {
   const findings = [];
-  // TODO(Kyle): Standardize conversion of proxy objects.
-  const test_results = JSON.parse(JSON.stringify(proxyObject));
-  const results = test_results.body.results;
-  const test_cases = test_results.body.test_suite.test_cases;
+  const results = test_results.results;
+  const test_cases = test_results.test_suite.test_cases;
   for (const key in results) {
     const result = results[key];
     const matched_case = test_cases.find(

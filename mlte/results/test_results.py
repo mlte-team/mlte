@@ -16,7 +16,7 @@ from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
 
-DEFAULT_TEST_RESULTS_ID = "default.test_results"
+DEFAULT_TEST_RESULTS_ID = "default.results"
 
 # -----------------------------------------------------------------------------
 # TestResults
@@ -110,6 +110,17 @@ class TestResults(Artifact):
                 for test_case_id, test_result_model in body.results.items()
             },
         )
+
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> TestResults:
+        """
+        Load a TestResults from the configured global session.
+        :param identifier: The identifier for the artifact. If None,
+        the default id is used.
+        """
+        suite = super().load(identifier)
+        return typing.cast(TestResults, suite)
 
     # -------------------------------------------------------------------------
     # Helpers.

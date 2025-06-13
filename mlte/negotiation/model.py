@@ -1,12 +1,8 @@
-"""
-mlte/negotiation/model.py
-
-Model implementation for negotiation card artifact.
-"""
+"""Model implementation for negotiation card artifact."""
 
 from __future__ import annotations
 
-from typing import Any, List, Literal, Optional
+from typing import Any, Literal, Optional
 
 from strenum import StrEnum
 
@@ -55,7 +51,7 @@ class GoalDescriptor(BaseModel):
     description: Optional[str] = None
     """A description of the goal."""
 
-    metrics: List[MetricDescriptor] = []
+    metrics: list[MetricDescriptor] = []
     """A collection of metrics related to the goal."""
 
 
@@ -128,10 +124,10 @@ class ModelDescriptor(BaseModel):
     capability_deployment_mechanism: Optional[str] = None
     """A description of how the model capabilities will be made available."""
 
-    input_specification: List[ModelIODescriptor] = []
+    input_specification: list[ModelIODescriptor] = []
     """The model input specification."""
 
-    output_specification: List[ModelIODescriptor] = []
+    output_specification: list[ModelIODescriptor] = []
     """The model output specification."""
 
     production_compute_resources: ModelResourcesDescriptor = (
@@ -209,10 +205,10 @@ class DataDescriptor(BaseModel):
     labeling_method: Optional[str] = None
     """A description of how the data was labeled."""
 
-    labels: List[LabelDescriptor] = []
+    labels: list[LabelDescriptor] = []
     """A description of the labels that appear in the dataset."""
 
-    fields: List[FieldDescriptor] = []
+    fields: list[FieldDescriptor] = []
     """A description of the dataset schema."""
 
     rights: Optional[str] = None
@@ -230,7 +226,7 @@ class DataDescriptor(BaseModel):
 class SystemDescriptor(BaseModel):
     """A description of the system context."""
 
-    goals: List[GoalDescriptor] = []
+    goals: list[GoalDescriptor] = []
     """A description of system goals."""
 
     problem_type: Optional[ProblemType] = None
@@ -247,27 +243,6 @@ class SystemDescriptor(BaseModel):
 
 
 # -----------------------------------------------------------------------------
-# NegotiationCardDataModel
-# -----------------------------------------------------------------------------
-
-
-class NegotiationCardDataModel(BaseModel):
-    """The model implementation for the NegotiationCard information."""
-
-    system: SystemDescriptor = SystemDescriptor()
-    """The descriptor for the system in which the model is integrated."""
-
-    data: List[DataDescriptor] = []
-    """A collection of descriptors for relevant data."""
-
-    model: ModelDescriptor = ModelDescriptor()
-    """The descriptor for the model."""
-
-    system_requirements: List[qas.QASDescriptor] = []
-    """The descriptor of the system-level quality requirements."""
-
-
-# -----------------------------------------------------------------------------
 # NegotiationCardModel
 # -----------------------------------------------------------------------------
 
@@ -280,8 +255,17 @@ class NegotiationCardModel(BaseModel):
     )
     """Union discriminator."""
 
-    nc_data: NegotiationCardDataModel = NegotiationCardDataModel()
-    """The specific data for this negotiation card."""
+    system: SystemDescriptor = SystemDescriptor()
+    """The descriptor for the system in which the model is integrated."""
+
+    data: list[DataDescriptor] = []
+    """A collection of descriptors for relevant data."""
+
+    model: ModelDescriptor = ModelDescriptor()
+    """The descriptor for the model."""
+
+    system_requirements: list[qas.QASDescriptor] = []
+    """The descriptor of the system-level quality requirements."""
 
     # Overriden.
     def post_validation_hook(self, data: Optional[Any] = None) -> Any:
@@ -291,5 +275,5 @@ class NegotiationCardModel(BaseModel):
                 f"Invalid data id received in Negotiation Card model: {data}"
             )
         identifier = str(data)
-        qas.add_qas_ids(identifier, self.nc_data.system_requirements)
+        qas.add_qas_ids(identifier, self.system_requirements)
         return self

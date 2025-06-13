@@ -15,9 +15,11 @@
       </template>
     </UsaTextInput>
 
-    <FormFieldsSystemInformation v-model="form.nc_data.system" />
+    <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
 
-    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
+    <FormFieldsSystemRequirements
+      v-model="form.negotiation_card.system_requirements"
+    />
 
     <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
@@ -33,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="finding in findings" :key="finding.evidence_id">
+        <tr v-for="finding in findings" :key="finding.test_case_id">
           <td
             v-if="finding.status == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
@@ -78,9 +80,9 @@
     <hr />
     <h1 class="section-header">Additional Context</h1>
 
-    <FormFieldsDataFields v-model="form.nc_data.data" />
+    <FormFieldsDataFields v-model="form.negotiation_card.data" />
 
-    <FormFieldsModelFields v-model="form.nc_data.model" />
+    <FormFieldsModelFields v-model="form.negotiation_card.model" />
 
     <div style="text-align: right; margin-top: 1em">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
@@ -114,7 +116,7 @@ const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 const findings = ref(null);
 const form = ref({
   artifact_type: "report",
-  nc_data: {
+  negotiation_card: {
     system: {
       goals: [
         {
@@ -207,7 +209,14 @@ const form = ref({
       },
     ],
   },
+  negotiation_card_id: "",
   test_results_id: "",
+  test_results: {
+    test_suite_id: "",
+    results: [],
+    artifact_type: "test_results",
+    test_suite: { artifact_type: "test_suite", test_cases: [] },
+  },
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -241,19 +250,20 @@ if (useRoute().query.artifactId !== undefined) {
         if (response.ok) {
           if (isValidReport(response._data)) {
             form.value = response._data.body;
-            const problemType = response._data.body.nc_data.system.problem_type;
+            const problemType =
+              response._data.body.negotiation_card.system.problem_type;
             if (
               problemTypeOptions.value.find((x) => x.value === problemType)
                 ?.value !== undefined
             ) {
-              form.value.nc_data.system.problem_type =
+              form.value.negotiation_card.system.problem_type =
                 problemTypeOptions.value.find(
                   (x) => x.value === problemType,
                 )?.value;
             }
 
             // Setting .value for each classification item to work in the select
-            response._data.body.nc_data.data.forEach((item) => {
+            response._data.body.negotiation_card.data.forEach((item) => {
               const classification = item.classification;
               if (
                 classificationOptions.value.find(
@@ -268,15 +278,11 @@ if (useRoute().query.artifactId !== undefined) {
 
             if (response._data.body.test_results_id) {
               form.value.test_results_id = response._data.body.test_results_id;
-              const testResults = await fetchArtifact(
-                token.value,
-                model,
-                version,
-                form.value.test_results_id,
-              );
+            }
+            if (response._data.body.test_results) {
               findings.value = loadFindings(
-                testResults,
-                form.value.nc_data.system_requirements,
+                response._data.body.test_results,
+                form.value.negotiation_card.system_requirements,
               );
             }
           }

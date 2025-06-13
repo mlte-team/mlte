@@ -83,14 +83,14 @@
 
     <FormFieldsSystemInformation
       ref="systemInformationRef"
-      v-model="form.nc_data.system"
+      v-model="form.system"
     />
 
-    <FormFieldsDataFields ref="dataRef" v-model="form.nc_data.data" />
+    <FormFieldsDataFields ref="dataRef" v-model="form.data" />
 
-    <FormFieldsModelFields ref="modelRef" v-model="form.nc_data.model" />
+    <FormFieldsModelFields ref="modelRef" v-model="form.model" />
 
-    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
+    <FormFieldsSystemRequirements v-model="form.system_requirements" />
 
     <div class="submit-footer">
       <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
@@ -112,99 +112,97 @@ const creator = ref("");
 const timestamp = ref("");
 const form = ref({
   artifact_type: "negotiation_card",
-  nc_data: {
-    system: {
-      goals: [
-        {
-          description: "",
-          metrics: [
-            {
-              description: "",
-              baseline: "",
-            },
-          ],
-        },
-      ],
-      problem_type: "classification",
-      task: "",
-      usage_context: "",
-      risks: {
-        fp: "",
-        fn: "",
-        other: "",
-      },
-    },
-    data: [
+  system: {
+    goals: [
       {
         description: "",
-        source: "",
-        classification: "unclassified",
-        access: "",
-        labeling_method: "",
-        labels: [
+        metrics: [
           {
-            name: "",
             description: "",
-            percentage: 0,
+            baseline: "",
           },
         ],
-        fields: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-            missing_values: "",
-            special_values: "",
-          },
-        ],
-        rights: "",
-        policies: "",
       },
     ],
-    model: {
-      development_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
-      deployment_platform: "",
-      capability_deployment_mechanism: "",
-      input_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      output_specification: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-        },
-      ],
-      production_compute_resources: {
-        gpu: "0",
-        cpu: "0",
-        memory: "0",
-        storage: "0",
-      },
+    problem_type: "classification",
+    task: "",
+    usage_context: "",
+    risks: {
+      fp: "",
+      fn: "",
+      other: "",
     },
-    system_requirements: [
+  },
+  data: [
+    {
+      description: "",
+      source: "",
+      classification: "unclassified",
+      access: "",
+      labeling_method: "",
+      labels: [
+        {
+          name: "",
+          description: "",
+          percentage: 0,
+        },
+      ],
+      fields: [
+        {
+          name: "",
+          description: "",
+          type: "",
+          expected_values: "",
+          missing_values: "",
+          special_values: "",
+        },
+      ],
+      rights: "",
+      policies: "",
+    },
+  ],
+  model: {
+    development_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
+    },
+    deployment_platform: "",
+    capability_deployment_mechanism: "",
+    input_specification: [
       {
-        quality: "",
-        stimulus: "<Stimulus>",
-        source: "<Source>",
-        environment: "<Environment>",
-        response: "<Response>",
-        measure: "<Response Measure>",
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
       },
     ],
+    output_specification: [
+      {
+        name: "",
+        description: "",
+        type: "",
+        expected_values: "",
+      },
+    ],
+    production_compute_resources: {
+      gpu: "0",
+      cpu: "0",
+      memory: "0",
+      storage: "0",
+    },
   },
+  system_requirements: [
+    {
+      quality: "",
+      stimulus: "<Stimulus>",
+      source: "<Source>",
+      environment: "<Environment>",
+      response: "<Response>",
+      measure: "<Response Measure>",
+    },
+  ],
 });
 
 const formErrors = ref({
@@ -354,35 +352,31 @@ function descriptorUpload(event: Event, descriptorName: string) {
               metric: string;
               baseline: string;
             }) => {
-              let lastGoalIndex = form.value.nc_data.system.goals.length - 1;
-              if (!goalEmpty(form.value.nc_data.system.goals[lastGoalIndex])) {
+              let lastGoalIndex = form.value.system.goals.length - 1;
+              if (!goalEmpty(form.value.system.goals[lastGoalIndex])) {
                 systemInformationRef.value.parentAddGoal();
                 lastGoalIndex += 1;
               }
 
-              form.value.nc_data.system.goals[lastGoalIndex].description =
-                goal.goal;
-              form.value.nc_data.system.goals[
-                lastGoalIndex
-              ].metrics[0].description = goal.metric;
-              form.value.nc_data.system.goals[
-                lastGoalIndex
-              ].metrics[0].baseline = goal.baseline;
+              form.value.system.goals[lastGoalIndex].description = goal.goal;
+              form.value.system.goals[lastGoalIndex].metrics[0].description =
+                goal.metric;
+              form.value.system.goals[lastGoalIndex].metrics[0].baseline =
+                goal.baseline;
             },
           );
-          form.value.nc_data.system.task = document.task;
-          form.value.nc_data.system.problem_type =
-            document.ml_problem_type.ml_problem
-              .toLowerCase()
-              .split(" ")
-              .join("_");
-          form.value.nc_data.system.usage_context = document.usage_context;
-          form.value.nc_data.system.risks.fp = document.risks.risk_fp;
-          form.value.nc_data.system.risks.fn = document.risks.risk_fn;
-          form.value.nc_data.system.risks.other = document.risks.risk_other;
+          form.value.system.task = document.task;
+          form.value.system.problem_type = document.ml_problem_type.ml_problem
+            .toLowerCase()
+            .split(" ")
+            .join("_");
+          form.value.system.usage_context = document.usage_context;
+          form.value.system.risks.fp = document.risks.risk_fp;
+          form.value.system.risks.fn = document.risks.risk_fn;
+          form.value.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
-          let lastDataIndex = form.value.nc_data.data.length - 1;
-          if (!dataItemEmpty(form.value.nc_data.data[lastDataIndex])) {
+          let lastDataIndex = form.value.data.length - 1;
+          if (!dataItemEmpty(form.value.data[lastDataIndex])) {
             dataRef.value.parentAddDataItem();
             lastDataIndex += 1;
           }
@@ -404,26 +398,24 @@ function descriptorUpload(event: Event, descriptorName: string) {
               }
             },
           );
-          form.value.nc_data.data[lastDataIndex].source = dataSourcesStr;
+          form.value.data[lastDataIndex].source = dataSourcesStr;
 
-          form.value.nc_data.data[lastDataIndex].labels.splice(0, 1);
+          form.value.data[lastDataIndex].labels.splice(0, 1);
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
               dataRef.value.parentAddLabel(lastDataIndex);
-              form.value.nc_data.data[lastDataIndex].labels[i].name =
-                label.label;
-              form.value.nc_data.data[lastDataIndex].labels[i].percentage =
+              form.value.data[lastDataIndex].labels[i].name = label.label;
+              form.value.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
             },
           );
 
-          form.value.nc_data.data[lastDataIndex].rights = document.data_rights;
-          form.value.nc_data.data[lastDataIndex].policies =
-            document.data_policies;
-          form.value.nc_data.data[lastDataIndex].description =
+          form.value.data[lastDataIndex].rights = document.data_rights;
+          form.value.data[lastDataIndex].policies = document.data_policies;
+          form.value.data[lastDataIndex].description =
             document.dataset_description;
 
-          form.value.nc_data.data[lastDataIndex].fields.splice(0, 1);
+          form.value.data[lastDataIndex].fields.splice(0, 1);
           document.schema.forEach(
             (
               fields: {
@@ -437,28 +429,26 @@ function descriptorUpload(event: Event, descriptorName: string) {
               i: number,
             ) => {
               dataRef.value.parentAddField(lastDataIndex);
-              form.value.nc_data.data[lastDataIndex].fields[i].name =
-                fields.field_name;
-              form.value.nc_data.data[lastDataIndex].fields[i].description =
+              form.value.data[lastDataIndex].fields[i].name = fields.field_name;
+              form.value.data[lastDataIndex].fields[i].description =
                 fields.field_description;
-              form.value.nc_data.data[lastDataIndex].fields[i].type =
-                fields.field_type;
-              form.value.nc_data.data[lastDataIndex].fields[i].expected_values =
+              form.value.data[lastDataIndex].fields[i].type = fields.field_type;
+              form.value.data[lastDataIndex].fields[i].expected_values =
                 fields.expected_values;
-              form.value.nc_data.data[lastDataIndex].fields[i].missing_values =
+              form.value.data[lastDataIndex].fields[i].missing_values =
                 fields.interpret_missing;
-              form.value.nc_data.data[lastDataIndex].fields[i].special_values =
+              form.value.data[lastDataIndex].fields[i].special_values =
                 fields.interpret_special;
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.nc_data.model.development_compute_resources.gpu =
+          form.value.model.development_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.nc_data.model.development_compute_resources.cpu =
+          form.value.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.nc_data.model.development_compute_resources.memory =
+          form.value.model.development_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.nc_data.model.development_compute_resources.storage =
+          form.value.model.development_compute_resources.storage =
             document.computing_resources.storage;
 
           document.upstream_components.forEach(
@@ -476,17 +466,17 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               component.output_spec.forEach((spec) => {
                 let lastSpecIndex =
-                  form.value.nc_data.model.input_specification.length - 1;
+                  form.value.model.input_specification.length - 1;
                 if (
                   !specEmpty(
-                    form.value.nc_data.model.input_specification[lastSpecIndex],
+                    form.value.model.input_specification[lastSpecIndex],
                   )
                 ) {
                   modelRef.value.parentAddInputSpec();
                   lastSpecIndex += 1;
                 }
 
-                form.value.nc_data.model.input_specification[lastSpecIndex] = {
+                form.value.model.input_specification[lastSpecIndex] = {
                   name: component.component_name + "." + spec.item_name,
                   description: spec.item_description,
                   type: spec.item_type,
@@ -511,19 +501,17 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               component.input_spec.forEach((spec) => {
                 let lastSpecIndex =
-                  form.value.nc_data.model.output_specification.length - 1;
+                  form.value.model.output_specification.length - 1;
                 if (
                   !specEmpty(
-                    form.value.nc_data.model.output_specification[
-                      lastSpecIndex
-                    ],
+                    form.value.model.output_specification[lastSpecIndex],
                   )
                 ) {
                   modelRef.value.parentAddOutputSpec();
                   lastSpecIndex += 1;
                 }
 
-                form.value.nc_data.model.output_specification[lastSpecIndex] = {
+                form.value.model.output_specification[lastSpecIndex] = {
                   name: component.component_name + "." + spec.item_name,
                   description: spec.item_description,
                   type: spec.item_type,
@@ -533,13 +521,13 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
         } else if (descriptorName === "Production Environment") {
-          form.value.nc_data.model.production_compute_resources.gpu =
+          form.value.model.production_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.nc_data.model.production_compute_resources.cpu =
+          form.value.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.nc_data.model.production_compute_resources.memory =
+          form.value.model.production_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.nc_data.model.production_compute_resources.storage =
+          form.value.model.production_compute_resources.storage =
             document.computing_resources.storage;
         }
       } catch (exception) {

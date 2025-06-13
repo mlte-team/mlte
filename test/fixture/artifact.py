@@ -17,6 +17,7 @@ from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
+from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -27,7 +28,6 @@ from mlte.negotiation.model import (
     ModelDescriptor,
     ModelIODescriptor,
     ModelResourcesDescriptor,
-    NegotiationCardDataModel,
     NegotiationCardModel,
     ProblemType,
     RiskDescriptor,
@@ -41,6 +41,7 @@ from mlte.report.model import (
 )
 from mlte.results.model import ResultModel, TestResultsModel
 from mlte.tests.model import TestCaseModel, TestSuiteModel
+from mlte.tests.test_suite import TestSuite
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 
@@ -158,8 +159,7 @@ def _make_test_results(complete: bool) -> TestResultsModel:
     Make a minimal test results, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    test_suite = make_complete_test_suite_model()
-    return TestResultsModel(test_suite=test_suite)
+    return make_complete_test_results_model()
 
 
 def _make_report(complete: bool) -> ReportModel:
@@ -167,10 +167,7 @@ def _make_report(complete: bool) -> ReportModel:
     Make a minimal report, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    if not complete:
-        return ReportModel()
-    else:
-        return make_complete_report()
+    return make_complete_report()
 
 
 def make_complete_negotiation_card() -> NegotiationCardModel:
@@ -179,13 +176,6 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
     :return: The artifact model
     """
     return NegotiationCardModel(
-        nc_data=_make_nc_data_model(),
-    )
-
-
-def _make_nc_data_model() -> NegotiationCardDataModel:
-    """Helper function to create sample NC data model with data."""
-    return NegotiationCardDataModel(
         system=SystemDescriptor(
             goals=[
                 GoalDescriptor(
@@ -272,7 +262,7 @@ def _make_nc_data_model() -> NegotiationCardDataModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier="default.negotiation_card-qas_1",
+                identifier=f"{NegotiationCard.get_default_id()}-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
@@ -312,14 +302,14 @@ def make_complete_test_results_model() -> TestResultsModel:
     :return: The artifact model
     """
     return TestResultsModel(
-        test_suite_id="",
+        test_suite_id=f"{TestSuite.get_default_id()}",
         test_suite=make_complete_test_suite_model(),
         results={
-            "accuracy": ResultModel(
+            "Test1": ResultModel(
                 type="Success",
                 message="The RF accuracy is greater than 3",
                 evidence_metadata=EvidenceMetadata(
-                    test_case_id="accuracy",
+                    test_case_id="Test1",
                     measurement=MeasurementMetadata(
                         measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
                         output_class="mlte.evidence.types.real.Real",
@@ -337,7 +327,12 @@ def make_complete_report() -> ReportModel:
     :return: The artifact model
     """
     return ReportModel(
-        nc_data=_make_nc_data_model(),
+        negotiation_card_id="default",
+        negotiation_card=_make_negotiation_card(complete=True),
+        test_suite_id="default",
+        test_suite=_make_test_suite(complete=True),
+        test_results_id="default",
+        test_results=_make_test_results(complete=True),
         comments=[CommentDescriptor(content="content")],
         quantitative_analysis=QuantitiveAnalysisDescriptor(content="analysis"),
     )

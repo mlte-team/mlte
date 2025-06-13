@@ -82,8 +82,8 @@ def get_lambda_code(lambda_func: Any, lambda_pos: int = 0):
             try:
                 tree = ast.parse(code_string)
                 self.visit(tree)
-            except SyntaxError as e:
-                print(f"Warning parsing lambda: {e}")
+            except SyntaxError:
+                # print(f"Warning parsing lambda: {e}")
 
                 # If we got an syntax error due to the source code line where
                 # the lambda was defined not being a fully parseable line,
