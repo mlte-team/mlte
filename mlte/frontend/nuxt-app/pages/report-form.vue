@@ -129,60 +129,27 @@ const form = ref<ReportModel>({
   quantitative_analysis: {},
 });
 
-if (useRoute().query.artifactId !== undefined) {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-  const artifactId = useRoute().query.artifactId;
-
-  const { data: reportData, error } = await useFetch<ReportApiResponse>(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+if (queryArtifactId !== undefined) {
+  form.value = await loadReportData(
+    token.value as string,
+    queryModel as string,
+    queryVersion as string,
+    queryArtifactId as string,
   );
-  if (!error.value && reportData.value && isValidReport(reportData.value)) {
-    form.value = reportData.value.body;
-    if (reportData.value.body.test_results_id) {
-      form.value.test_results_id = reportData.value.body.test_results_id;
-      const testResultsRes = await fetchArtifact(
-        token.value!,
-        model as string,
-        version as string,
-        form.value.test_results_id,
-      );
 
-      // TODO : Consider error handling
-      if (testResultsRes.body.artifact_type === "test_results") {
-        findings.value = loadFindings(
-          testResultsRes.body as TestResultsModel,
-          form.value.nc_data.system_requirements,
-        );
-      }
-    }
+  if (form.value.test_results_id) {
+    findings.value = await loadTestResults(
+      token.value as string,
+      queryModel as string,
+      queryVersion as string,
+      form.value.test_results_id,
+      form.value.nc_data.system_requirements,
+    );
   }
 }
 
 async function submit() {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-  const identifier =
-    useRoute().query.artifactId?.toString() || userInputArtifactId.value;
+  const identifier = queryArtifactId || userInputArtifactId.value;
   const artifact = {
     header: {
       identifier,
@@ -198,9 +165,9 @@ async function submit() {
       await $fetch(
         config.public.apiPath +
           "/model/" +
-          model +
+          queryModel +
           "/version/" +
-          version +
+          queryVersion +
           "/artifact",
         {
           retry: 0,

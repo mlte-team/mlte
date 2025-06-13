@@ -213,10 +213,10 @@ export class QASDescriptor {
 
 export class NegotiationCardDataModel {
   constructor(
-    public system: SystemDescriptor,
-    public data: Array<DataDescriptor>,
-    public model: ModelDescriptor,
-    public system_requirements: Array<QASDescriptor>,
+    public system: SystemDescriptor = new SystemDescriptor(),
+    public data: Array<DataDescriptor> = [new DataDescriptor()],
+    public model: ModelDescriptor = new ModelDescriptor(),
+    public system_requirements: Array<QASDescriptor> = [new QASDescriptor()],
   ) {}
 }
 
@@ -260,20 +260,22 @@ export interface QualityAttributeScenario {
   qa: string;
 }
 
-export interface CommentDescriptor {
-  content: string;
+export class CommentDescriptor {
+  constructor(public content: string = "") {}
 }
 
-export interface QuantitativeAnalysisDescriptor {
-  content?: string;
+export class QuantitativeAnalysisDescriptor {
+  constructor(public content?: string) {}
 }
 
-export interface ReportModel {
-  artifact_type: string;
-  nc_data: NegotiationCardDataModel;
-  test_results_id?: string;
-  comments: Array<CommentDescriptor>;
-  quantitative_analysis: QuantitativeAnalysisDescriptor;
+export class ReportModel {
+  constructor(
+    public artifact_type: string = "report",
+    public nc_data: NegotiationCardDataModel = new NegotiationCardDataModel(),
+    public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
+    public quantitative_analysis: QuantitativeAnalysisDescriptor = new QuantitativeAnalysisDescriptor(),
+    public test_results_id?: string,
+  ) {}
 }
 
 export interface ReportApiResponse {

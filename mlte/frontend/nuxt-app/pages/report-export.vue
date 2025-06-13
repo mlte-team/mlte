@@ -27,7 +27,7 @@
       <h3 class="insection-margin">Overview</h3>
       <hr />
       <div
-        v-for="(goal, goalIndex) in pageData.nc_data.system.goals"
+        v-for="(goal, goalIndex) in form.nc_data.system.goals"
         :key="goalIndex"
       >
         <div class="info-box-row insection-margin">
@@ -106,30 +106,30 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ pageData.nc_data.system.problem_type }}
+          {{ form.nc_data.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ pageData.nc_data.system.task }}
+          {{ form.nc_data.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ pageData.nc_data.system.usage_context }}
+          {{ form.nc_data.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ pageData.nc_data.system.risks.fp }}
+          {{ form.nc_data.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ pageData.nc_data.system.risks.fn }}
+          {{ form.nc_data.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br />
-          {{ pageData.nc_data.system.risks.other }}
+          {{ form.nc_data.system.risks.other }}
         </div>
       </div>
     </div>
@@ -137,11 +137,10 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const findings = ref<Array<Finding>>([]);
-const pageData = ref<ReportModel>({
+const form = ref<ReportModel>({
   artifact_type: "report",
   nc_data: {
     system: new SystemDescriptor(),
@@ -158,48 +157,21 @@ const model = useRoute().query.model;
 const version = useRoute().query.version;
 const artifactId = useRoute().query.artifactId;
 
-const { data: reportData, error } = await useFetch<ReportApiResponse>(
-  config.public.apiPath +
-    "/model/" +
-    model +
-    "/version/" +
-    version +
-    "/artifact/" +
-    artifactId,
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  },
+form.value = await loadReportData(
+  token.value as string,
+  model as string,
+  version as string,
+  artifactId as string,
 );
-if (!error.value && reportData.value && isValidReport(reportData.value)) {
-  pageData.value = reportData.value.body;
 
-  if (reportData.value.body.test_results_id) {
-    pageData.value.test_results_id = reportData.value.body.test_results_id;
-    const testResultsRes = await fetchArtifact(
-      token.value as string,
-      model as string,
-      version as string,
-      pageData.value.test_results_id,
-    );
-
-    // TODO : Consider error handling
-    if (testResultsRes.body.artifact_type === "test_results") {
-      findings.value = loadFindings(
-        testResultsRes.body as TestResultsModel,
-        pageData.value.nc_data.system_requirements,
-      );
-    }
-  }
+if (form.value.test_results_id) {
+  findings.value = await loadTestResults(
+    token.value as string,
+    model as string,
+    version as string,
+    form.value.test_results_id,
+    form.value.nc_data.system_requirements,
+  );
 }
 </script>
 

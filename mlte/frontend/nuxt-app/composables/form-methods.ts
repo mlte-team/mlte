@@ -1,3 +1,5 @@
+const config = useRuntimeConfig();
+
 export function successfulArtifactSubmission(
   artifactType: string,
   artifactName: string,
@@ -16,6 +18,42 @@ export function cancelFormSubmission(redirect: string) {
     )
   ) {
     location.href = redirect;
+  }
+}
+
+export async function loadReportData(
+  token: string,
+  model: string,
+  version: string,
+  artifactId: string,
+): Promise<ReportModel> {
+  const { data: reportData, error } = await useFetch<ReportApiResponse>(
+    config.public.apiPath +
+      "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      artifactId,
+    {
+      retry: 0,
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      onRequestError() {
+        requestErrorAlert();
+      },
+      onResponseError({ response }) {
+        handleHttpError(response.status, response._data.error_description);
+      },
+    },
+  );
+  if (!error.value && reportData.value && isValidReport(reportData.value)) {
+    const reportModel: ReportModel = reportData.value.body;
+    return reportModel;
+  } else {
+    return new ReportModel();
   }
 }
 
@@ -61,4 +99,29 @@ export function loadFindings(
     findings.push(finding);
   }
   return findings;
+}
+
+export async function loadTestResults(
+  token: string,
+  model: string,
+  version: string,
+  test_results_id: string,
+  system_requirements: Array<QASDescriptor>,
+): Promise<Array<Finding>> {
+  const testResultsRes = await fetchArtifact(
+    token as string,
+    model as string,
+    version as string,
+    test_results_id,
+  );
+
+  // TODO : Consider error handling
+  if (testResultsRes.body.artifact_type === "test_results") {
+    return loadFindings(
+      testResultsRes.body as TestResultsModel,
+      system_requirements,
+    );
+  } else {
+    return [];
+  }
 }

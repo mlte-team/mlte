@@ -46,6 +46,8 @@ export default withNuxt(
           isValidTestResults: true,
           isValidTestSuite: true,
           loadFindings: true,
+          loadReportData: true,
+          loadTestResults: true,
           requestErrorAlert: true,
           resetFormErrors: true,
           successfulArtifactSubmission: true,
