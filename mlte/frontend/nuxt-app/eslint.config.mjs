@@ -79,7 +79,7 @@ export default withNuxt(
           SystemDescriptor: true,
           TableItem: true,
           TagOption: true,
-          TestResults: true,
+          TestResultsModel: true,
           User: true,
           UserUpdateBody: true,
         },

@@ -55,7 +55,7 @@ export interface CustomListEntry {
 
 export interface Artifact {
   header: ArtifactHeader;
-  body: TestResultsBody | EvidenceBody;
+  body: TestResultsModel | EvidenceBody;
 }
 
 export class ArtifactHeader {
@@ -67,19 +67,11 @@ export class ArtifactHeader {
   ) {}
 }
 
-export interface TestResultsBody {
+export interface TestResultsModel {
   artifact_type: "test_results";
   test_suite_id: string;
-  test_suite: {
-    artifact_type: string;
-    test_cases: Array<TestCase>;
-  };
+  test_suite: TestSuite;
   results: Dictionary<Result>;
-}
-
-export interface TestResults {
-  header: ArtifactHeader;
-  body: TestResultsBody;
 }
 
 export interface EvidenceBody {

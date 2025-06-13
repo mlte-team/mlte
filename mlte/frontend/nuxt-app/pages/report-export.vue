@@ -185,7 +185,7 @@ if (!error.value && reportData.value && isValidReport(reportData.value)) {
 
   if (reportData.value.body.test_results_id) {
     pageData.value.test_results_id = reportData.value.body.test_results_id;
-    const testResults = await fetchArtifact(
+    const testResultsRes = await fetchArtifact(
       token.value as string,
       model as string,
       version as string,
@@ -193,9 +193,9 @@ if (!error.value && reportData.value && isValidReport(reportData.value)) {
     );
 
     // TODO : Consider error handling
-    if (testResults.body.artifact_type === "test_results") {
+    if (testResultsRes.body.artifact_type === "test_results") {
       findings.value = loadFindings(
-        testResults as TestResults,
+        testResultsRes.body as TestResultsModel,
         pageData.value.nc_data.system_requirements,
       );
     }

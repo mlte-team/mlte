@@ -21,12 +21,12 @@ export function cancelFormSubmission(redirect: string) {
 
 // Load findings from a test results.
 export function loadFindings(
-  testResults: TestResults,
+  testResults: TestResultsModel,
   system_requirements: Array<QASDescriptor>,
 ): Array<Finding> {
   const findings: Array<Finding> = [];
-  const results = testResults.body.results;
-  const test_cases = testResults.body.test_suite.test_cases;
+  const results = testResults.results;
+  const test_cases = testResults.test_suite.test_cases;
   for (const key in results) {
     const result = results[key];
     const matched_test_case = test_cases.find(

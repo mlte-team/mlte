@@ -160,7 +160,7 @@ if (useRoute().query.artifactId !== undefined) {
     form.value = reportData.value.body;
     if (reportData.value.body.test_results_id) {
       form.value.test_results_id = reportData.value.body.test_results_id;
-      const testResults = await fetchArtifact(
+      const testResultsRes = await fetchArtifact(
         token.value!,
         model as string,
         version as string,
@@ -168,9 +168,9 @@ if (useRoute().query.artifactId !== undefined) {
       );
 
       // TODO : Consider error handling
-      if (testResults.body.artifact_type === "test_results") {
+      if (testResultsRes.body.artifact_type === "test_results") {
         findings.value = loadFindings(
-          testResults as TestResults,
+          testResultsRes.body as TestResultsModel,
           form.value.nc_data.system_requirements,
         );
       }
