@@ -122,17 +122,7 @@ const form = ref<ReportModel>({
     system: new SystemDescriptor(),
     data: [new DataDescriptor()],
     model: new ModelDescriptor(),
-    system_requirements: [
-      new QASDescriptor(
-        "",
-        "",
-        "<Stimulus>",
-        "<Source>",
-        "<Environment",
-        "<Response",
-        "<Response Measure>",
-      ),
-    ],
+    system_requirements: [new QASDescriptor()],
   },
   test_results_id: "",
   comments: [{ content: "" }],

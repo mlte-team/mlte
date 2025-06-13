@@ -119,16 +119,7 @@ const form = ref({
     system: new SystemDescriptor(),
     data: [new DataDescriptor()],
     model: new ModelDescriptor(),
-    system_requirements: [
-      new QASDescriptor(
-        "",
-        "<Stimulus>",
-        "<Source>",
-        "<Environment",
-        "<Response",
-        "<Response Measure>",
-      ),
-    ],
+    system_requirements: [new QASDescriptor()],
   },
 });
 

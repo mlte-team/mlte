@@ -210,21 +210,21 @@ export class SystemDescriptor {
 export class QASDescriptor {
   constructor(
     public quality: string = "",
-    public stimulus: string = "",
-    public source: string = "",
-    public environment: string = "",
-    public response: string = "",
-    public measure: string = "",
+    public stimulus: string = "<Stimulus>",
+    public source: string = "<Source>",
+    public environment: string = "<Environment>",
+    public response: string = "<Response>",
+    public measure: string = "<Response Measure>",
     public identifier?: string,
   ) {}
 }
 
 export class NegotiationCardDataModel {
   constructor(
-    public system: SystemDescriptor = new SystemDescriptor(),
-    public data: Array<DataDescriptor> = [new DataDescriptor()],
-    public model: ModelDescriptor = new ModelDescriptor(),
-    public system_requirements: Array<QASDescriptor> = [new QASDescriptor()],
+    public system: SystemDescriptor,
+    public data: Array<DataDescriptor>,
+    public model: ModelDescriptor,
+    public system_requirements: Array<QASDescriptor>,
   ) {}
 }
 
