@@ -5,7 +5,6 @@ from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
 from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 
-# from mlte.store.custom_list.underlying.rdbs.store import RelationalDBCustomListStore
 # from mlte.store.custom_list.underlying.rdbs.store import HttpCustomListStore
 
 
@@ -20,7 +19,9 @@ def create_custom_list_store(uri: str) -> CustomListStore:
     if parsed_uri.type == StoreType.LOCAL_MEMORY:
         return InMemoryCustomListStore(parsed_uri)
     #   elif parsed_uri.type == StoreType.RELATIONAL_DB:
-    # return RelationalDBCustomListStore(parsed_uri)
+    #       Import is here to avoid importing SQL libraries if they have not been installed.
+    #       from mlte.store.custom_list.underlying.rdbs.store import RelationalDBCustomListStore
+    #       return RelationalDBCustomListStore(parsed_uri)
     elif parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemCustomListStore(parsed_uri)
     #   elif parsed_uri.type == StoreType.REMOTE_HTTP:

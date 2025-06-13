@@ -8,7 +8,6 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
-from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.store.base import StoreType, StoreURI
 
 
@@ -26,6 +25,11 @@ def create_artifact_store(uri: str) -> ArtifactStore:
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return HttpArtifactStore(uri=parsed_uri)
     if parsed_uri.type == StoreType.RELATIONAL_DB:
+        # Import is here to avoid importing SQL libraries if they have not been installed.
+        from mlte.store.artifact.underlying.rdbs.store import (
+            RelationalDBArtifactStore,
+        )
+
         return RelationalDBArtifactStore(parsed_uri)
     else:
         raise Exception(
