@@ -209,13 +209,13 @@ export class SystemDescriptor {
 
 export class QASDescriptor {
   constructor(
-    public identifier?: string,
     public quality: string = "",
     public stimulus: string = "",
     public source: string = "",
     public environment: string = "",
     public response: string = "",
     public measure: string = "",
+    public identifier?: string,
   ) {}
 }
 

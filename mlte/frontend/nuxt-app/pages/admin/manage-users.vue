@@ -129,7 +129,7 @@ async function saveUser(user: User) {
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: user,
+        body: JSON.stringify(user),
         onRequestError() {
           requestErrorAlert();
         },
@@ -146,7 +146,7 @@ async function saveUser(user: User) {
       await $fetch(config.public.apiPath + "/user", {
         retry: 0,
         method: "PUT",
-        body: user,
+        body: JSON.stringify(user),
         headers: {
           Authorization: "Bearer " + token.value,
         },

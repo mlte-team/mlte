@@ -122,7 +122,6 @@ const form = ref({
     system_requirements: [
       new QASDescriptor(
         "",
-        "",
         "<Stimulus>",
         "<Source>",
         "<Environment",

@@ -247,10 +247,10 @@ async function saveEntry(entry: TestCatalogEntry) {
         {
           retry: 0,
           method: "POST",
+          body: JSON.stringify(entry),
           headers: {
             Authorization: "Bearer " + token.value,
           },
-          body: entry,
           onRequestError() {
             requestErrorAlert();
           },
@@ -273,10 +273,10 @@ async function saveEntry(entry: TestCatalogEntry) {
         {
           retry: 0,
           method: "PUT",
+          body: JSON.stringify(entry),
           headers: {
             Authorization: "Bearer " + token.value,
           },
-          body: entry,
           onRequestError() {
             requestErrorAlert();
           },

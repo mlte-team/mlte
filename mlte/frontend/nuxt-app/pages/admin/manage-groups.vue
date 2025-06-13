@@ -71,7 +71,7 @@ function addGroup() {
 }
 
 function editGroup(group: Group) {
-  selectedGroup.value = group as Group;
+  selectedGroup.value = group;
   editFlag.value = true;
   newGroupFlag.value = false;
 }
@@ -119,7 +119,7 @@ async function saveGroup(group: Group) {
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: group,
+        body: JSON.stringify(group),
         onRequestError() {
           requestErrorAlert();
         },
@@ -139,7 +139,7 @@ async function saveGroup(group: Group) {
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: group,
+        body: JSON.stringify(group),
         onRequestError() {
           requestErrorAlert();
         },
