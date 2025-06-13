@@ -514,7 +514,7 @@ function populateArtifacts(
       if (isValidEvidence(artifact)) {
         evidences.value.push(
           new TableItem(
-            artifact.header.identifier.slice(0, -6),
+            artifact.header.identifier,
             artifact.header.timestamp,
             model,
             version,
