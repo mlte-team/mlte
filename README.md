@@ -18,7 +18,7 @@ The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte
 $ pip install mlte
 ```
 
-To build the MLTE package from source in an isolated Docker environment, without setting up a local environment (the output will be in the `/.dist` folder):
+To build the MLTE package from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder):
 ```bash
 $ make build-in-docker
 ```
