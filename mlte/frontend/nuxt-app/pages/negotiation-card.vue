@@ -63,7 +63,7 @@
     </p>
 
     <UsaTextInput
-      v-if="useRoute().query.artifactId === undefined"
+      v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
       :error="formErrors.identifier"
     >
@@ -83,14 +83,14 @@
 
     <FormFieldsSystemInformation
       ref="systemInformationRef"
-      v-model="form.system"
+      v-model="form.nc_data.system"
     />
 
-    <FormFieldsDataFields ref="dataRef" v-model="form.data" />
+    <FormFieldsDataFields ref="dataRef" v-model="form.nc_data.data" />
 
-    <FormFieldsModelFields ref="modelRef" v-model="form.model" />
+    <FormFieldsModelFields ref="modelRef" v-model="form.nc_data.model" />
 
-    <FormFieldsSystemRequirements v-model="form.system_requirements" />
+    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
 
     <div class="submit-footer">
       <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
@@ -102,8 +102,11 @@
 </template>
 
 <script setup lang="ts">
+import { cancelFormSubmission } from "~/composables/form-methods";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const queryArtifactId = useRoute().query.artifactId;
 
 const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
@@ -112,103 +115,19 @@ const creator = ref("");
 const timestamp = ref("");
 const form = ref({
   artifact_type: "negotiation_card",
-  system: {
-    goals: [
-      {
-        description: "",
-        metrics: [
-          {
-            description: "",
-            baseline: "",
-          },
-        ],
-      },
-    ],
-    problem_type: "classification",
-    task: "",
-    usage_context: "",
-    risks: {
-      fp: "",
-      fn: "",
-      other: "",
-    },
+  nc_data: {
+    system: new SystemDescriptor(),
+    data: [new DataDescriptor()],
+    model: new ModelDescriptor(),
+    system_requirements: [new QASDescriptor()],
   },
-  data: [
-    {
-      description: "",
-      source: "",
-      classification: "unclassified",
-      access: "",
-      labeling_method: "",
-      labels: [
-        {
-          name: "",
-          description: "",
-          percentage: 0,
-        },
-      ],
-      fields: [
-        {
-          name: "",
-          description: "",
-          type: "",
-          expected_values: "",
-          missing_values: "",
-          special_values: "",
-        },
-      ],
-      rights: "",
-      policies: "",
-    },
-  ],
-  model: {
-    development_compute_resources: {
-      gpu: "0",
-      cpu: "0",
-      memory: "0",
-      storage: "0",
-    },
-    deployment_platform: "",
-    capability_deployment_mechanism: "",
-    input_specification: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-      },
-    ],
-    output_specification: [
-      {
-        name: "",
-        description: "",
-        type: "",
-        expected_values: "",
-      },
-    ],
-    production_compute_resources: {
-      gpu: "0",
-      cpu: "0",
-      memory: "0",
-      storage: "0",
-    },
-  },
-  system_requirements: [
-    {
-      quality: "",
-      stimulus: "<Stimulus>",
-      source: "<Source>",
-      environment: "<Environment>",
-      response: "<Response>",
-      measure: "<Response Measure>",
-    },
-  ],
 });
 
 const formErrors = ref({
   identifier: false,
 });
 
+// References to child components used to call their methods when importing descriptors
 const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
@@ -218,7 +137,7 @@ if (useRoute().query.artifactId !== undefined) {
   const version = useRoute().query.version;
   const artifactId = useRoute().query.artifactId;
 
-  await useFetch(
+  const { data: cardData, error } = await useFetch<NegotiationApiResponse>(
     config.public.apiPath +
       "/model/" +
       model +
@@ -235,20 +154,18 @@ if (useRoute().query.artifactId !== undefined) {
       onRequestError() {
         requestErrorAlert();
       },
-      onResponse({ response }) {
-        if (isValidNegotiation(response._data)) {
-          creator.value = response._data.header.creator;
-          timestamp.value = new Date(
-            response._data.header.timestamp * 1000,
-          ).toLocaleString("en-US");
-          form.value = response._data.body;
-        }
-      },
       onResponseError({ response }) {
         handleHttpError(response.status, response._data.error_description);
       },
     },
   );
+  if (!error.value && cardData.value && isValidNegotiation(cardData.value)) {
+    form.value = cardData.value.body;
+    creator.value = cardData.value.header.creator;
+    timestamp.value = new Date(
+      cardData.value.header.timestamp * 1000,
+    ).toLocaleString("en-US");
+  }
 }
 
 async function submit() {
@@ -260,7 +177,7 @@ async function submit() {
   if (useRoute().query.artifactId === undefined) {
     identifier = userInputArtifactId.value;
   } else {
-    identifier = useRoute().query.artifactId?.toString();
+    identifier = useRoute().query.artifactId!.toString();
   }
 
   if (identifier === "") {
@@ -312,7 +229,7 @@ async function submit() {
               successfulArtifactSubmission("negotiation card", identifier);
               forceSaveParam.value = true;
               if (useRoute().query.artifactId === undefined) {
-                window.location =
+                window.location.href =
                   "/negotiation-card?" +
                   "model=" +
                   useRoute().query.model +
@@ -337,6 +254,8 @@ async function submit() {
 }
 
 function descriptorUpload(event: Event, descriptorName: string) {
+  console.log(dataRef.value);
+
   const target = event.target as HTMLInputElement;
   const file = target.files![0];
   if (file !== null) {
@@ -352,31 +271,37 @@ function descriptorUpload(event: Event, descriptorName: string) {
               metric: string;
               baseline: string;
             }) => {
-              let lastGoalIndex = form.value.system.goals.length - 1;
-              if (!goalEmpty(form.value.system.goals[lastGoalIndex])) {
+              let lastGoalIndex = form.value.nc_data.system.goals.length - 1;
+              if (!goalEmpty(form.value.nc_data.system.goals[lastGoalIndex])) {
+                // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                 systemInformationRef.value.parentAddGoal();
                 lastGoalIndex += 1;
               }
 
-              form.value.system.goals[lastGoalIndex].description = goal.goal;
-              form.value.system.goals[lastGoalIndex].metrics[0].description =
-                goal.metric;
-              form.value.system.goals[lastGoalIndex].metrics[0].baseline =
-                goal.baseline;
+              form.value.nc_data.system.goals[lastGoalIndex].description =
+                goal.goal;
+              form.value.nc_data.system.goals[
+                lastGoalIndex
+              ].metrics[0].description = goal.metric;
+              form.value.nc_data.system.goals[
+                lastGoalIndex
+              ].metrics[0].baseline = goal.baseline;
             },
           );
-          form.value.system.task = document.task;
-          form.value.system.problem_type = document.ml_problem_type.ml_problem
-            .toLowerCase()
-            .split(" ")
-            .join("_");
-          form.value.system.usage_context = document.usage_context;
-          form.value.system.risks.fp = document.risks.risk_fp;
-          form.value.system.risks.fn = document.risks.risk_fn;
-          form.value.system.risks.other = document.risks.risk_other;
+          form.value.nc_data.system.task = document.task;
+          form.value.nc_data.system.problem_type =
+            document.ml_problem_type.ml_problem
+              .toLowerCase()
+              .split(" ")
+              .join("_");
+          form.value.nc_data.system.usage_context = document.usage_context;
+          form.value.nc_data.system.risks.fp = document.risks.risk_fp;
+          form.value.nc_data.system.risks.fn = document.risks.risk_fn;
+          form.value.nc_data.system.risks.other = document.risks.risk_other;
         } else if (descriptorName === "Raw Data") {
-          let lastDataIndex = form.value.data.length - 1;
-          if (!dataItemEmpty(form.value.data[lastDataIndex])) {
+          let lastDataIndex = form.value.nc_data.data.length - 1;
+          if (!dataItemEmpty(form.value.nc_data.data[lastDataIndex])) {
+            // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
             dataRef.value.parentAddDataItem();
             lastDataIndex += 1;
           }
@@ -398,24 +323,27 @@ function descriptorUpload(event: Event, descriptorName: string) {
               }
             },
           );
-          form.value.data[lastDataIndex].source = dataSourcesStr;
+          form.value.nc_data.data[lastDataIndex].source = dataSourcesStr;
 
-          form.value.data[lastDataIndex].labels.splice(0, 1);
+          form.value.nc_data.data[lastDataIndex].labels.splice(0, 1);
           document.labels_distribution.forEach(
             (label: { label: string; percentage: number }, i: number) => {
+              // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
               dataRef.value.parentAddLabel(lastDataIndex);
-              form.value.data[lastDataIndex].labels[i].name = label.label;
-              form.value.data[lastDataIndex].labels[i].percentage =
+              form.value.nc_data.data[lastDataIndex].labels[i].name =
+                label.label;
+              form.value.nc_data.data[lastDataIndex].labels[i].percentage =
                 label.percentage;
             },
           );
 
-          form.value.data[lastDataIndex].rights = document.data_rights;
-          form.value.data[lastDataIndex].policies = document.data_policies;
-          form.value.data[lastDataIndex].description =
+          form.value.nc_data.data[lastDataIndex].rights = document.data_rights;
+          form.value.nc_data.data[lastDataIndex].policies =
+            document.data_policies;
+          form.value.nc_data.data[lastDataIndex].description =
             document.dataset_description;
 
-          form.value.data[lastDataIndex].fields.splice(0, 1);
+          form.value.nc_data.data[lastDataIndex].fields.splice(0, 1);
           document.schema.forEach(
             (
               fields: {
@@ -428,27 +356,30 @@ function descriptorUpload(event: Event, descriptorName: string) {
               },
               i: number,
             ) => {
+              // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
               dataRef.value.parentAddField(lastDataIndex);
-              form.value.data[lastDataIndex].fields[i].name = fields.field_name;
-              form.value.data[lastDataIndex].fields[i].description =
+              form.value.nc_data.data[lastDataIndex].fields[i].name =
+                fields.field_name;
+              form.value.nc_data.data[lastDataIndex].fields[i].description =
                 fields.field_description;
-              form.value.data[lastDataIndex].fields[i].type = fields.field_type;
-              form.value.data[lastDataIndex].fields[i].expected_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].type =
+                fields.field_type;
+              form.value.nc_data.data[lastDataIndex].fields[i].expected_values =
                 fields.expected_values;
-              form.value.data[lastDataIndex].fields[i].missing_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].missing_values =
                 fields.interpret_missing;
-              form.value.data[lastDataIndex].fields[i].special_values =
+              form.value.nc_data.data[lastDataIndex].fields[i].special_values =
                 fields.interpret_special;
             },
           );
         } else if (descriptorName === "Development Environment") {
-          form.value.model.development_compute_resources.gpu =
+          form.value.nc_data.model.development_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.development_compute_resources.cpu =
+          form.value.nc_data.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.development_compute_resources.memory =
+          form.value.nc_data.model.development_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.development_compute_resources.storage =
+          form.value.nc_data.model.development_compute_resources.storage =
             document.computing_resources.storage;
 
           document.upstream_components.forEach(
@@ -466,17 +397,18 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               component.output_spec.forEach((spec) => {
                 let lastSpecIndex =
-                  form.value.model.input_specification.length - 1;
+                  form.value.nc_data.model.input_specification.length - 1;
                 if (
                   !specEmpty(
-                    form.value.model.input_specification[lastSpecIndex],
+                    form.value.nc_data.model.input_specification[lastSpecIndex],
                   )
                 ) {
+                  // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                   modelRef.value.parentAddInputSpec();
                   lastSpecIndex += 1;
                 }
 
-                form.value.model.input_specification[lastSpecIndex] = {
+                form.value.nc_data.model.input_specification[lastSpecIndex] = {
                   name: component.component_name + "." + spec.item_name,
                   description: spec.item_description,
                   type: spec.item_type,
@@ -501,17 +433,20 @@ function descriptorUpload(event: Event, descriptorName: string) {
             }) => {
               component.input_spec.forEach((spec) => {
                 let lastSpecIndex =
-                  form.value.model.output_specification.length - 1;
+                  form.value.nc_data.model.output_specification.length - 1;
                 if (
                   !specEmpty(
-                    form.value.model.output_specification[lastSpecIndex],
+                    form.value.nc_data.model.output_specification[
+                      lastSpecIndex
+                    ],
                   )
                 ) {
+                  // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                   modelRef.value.parentAddOutputSpec();
                   lastSpecIndex += 1;
                 }
 
-                form.value.model.output_specification[lastSpecIndex] = {
+                form.value.nc_data.model.output_specification[lastSpecIndex] = {
                   name: component.component_name + "." + spec.item_name,
                   description: spec.item_description,
                   type: spec.item_type,
@@ -521,13 +456,13 @@ function descriptorUpload(event: Event, descriptorName: string) {
             },
           );
         } else if (descriptorName === "Production Environment") {
-          form.value.model.production_compute_resources.gpu =
+          form.value.nc_data.model.production_compute_resources.gpu =
             document.computing_resources.gpu;
-          form.value.model.production_compute_resources.cpu =
+          form.value.nc_data.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.production_compute_resources.memory =
+          form.value.nc_data.model.production_compute_resources.memory =
             document.computing_resources.memory;
-          form.value.model.production_compute_resources.storage =
+          form.value.nc_data.model.production_compute_resources.storage =
             document.computing_resources.storage;
         }
       } catch (exception) {
@@ -539,14 +474,14 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
-function goalEmpty(goal) {
+function goalEmpty(goal: GoalDescriptor) {
   let isEmpty = true;
 
   if (goal.description !== "") {
     isEmpty = false;
   }
 
-  goal.metrics.forEach((metric) => {
+  goal.metrics.forEach((metric: MetricDescriptor) => {
     if (metric.description !== "" || metric.baseline !== "") {
       isEmpty = false;
     }
@@ -555,7 +490,7 @@ function goalEmpty(goal) {
   return isEmpty;
 }
 
-function dataItemEmpty(dataItem) {
+function dataItemEmpty(dataItem: DataDescriptor) {
   let isEmpty = true;
 
   if (
@@ -568,7 +503,7 @@ function dataItemEmpty(dataItem) {
     isEmpty = false;
   }
 
-  dataItem.labels.forEach((label) => {
+  dataItem.labels.forEach((label: LabelDescriptor) => {
     if (
       label.name !== "" ||
       label.description !== "" ||
@@ -578,7 +513,7 @@ function dataItemEmpty(dataItem) {
     }
   });
 
-  dataItem.fields.forEach((field) => {
+  dataItem.fields.forEach((field: FieldDescriptor) => {
     if (
       field.name !== "" ||
       field.description !== "" ||
@@ -594,7 +529,7 @@ function dataItemEmpty(dataItem) {
   return isEmpty;
 }
 
-function specEmpty(spec) {
+function specEmpty(spec: ModelIODescriptor) {
   let isEmpty = true;
 
   if (

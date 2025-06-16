@@ -36,7 +36,7 @@ const config = useRuntimeConfig();
 const username = ref("");
 const password = ref("");
 
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   username: false,
   password: false,
 });
@@ -59,19 +59,19 @@ async function submit() {
     return;
   }
 
-  const details = {
+  const details: Dictionary<string> = {
     grant_type: "password",
     username: username.value,
     password: password.value,
   };
 
-  let formBody = [];
+  const formBodyArray: Array<string> = [];
   for (const property in details) {
     const encodedKey = encodeURIComponent(property);
     const encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
+    formBodyArray.push(encodedKey + "=" + encodedValue);
   }
-  formBody = formBody.join("&");
+  const formBodyStr: string = formBodyArray.join("&");
   let expiresInTemp = 0;
 
   try {
@@ -82,7 +82,7 @@ async function submit() {
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: formBody,
+      body: formBodyStr,
       onRequestError() {
         requestErrorAlert();
       },

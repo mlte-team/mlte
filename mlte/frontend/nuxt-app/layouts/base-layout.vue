@@ -20,7 +20,7 @@
     <div class="flex-container">
       <div class="sidebar left-sidebar">
         <div style="position: fixed">
-          <div v-if="$route.name != 'login-page'" class="grid-row grid-gap">
+          <div v-if="route.name != 'login-page'" class="grid-row grid-gap">
             <div
               class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
             >
@@ -29,7 +29,7 @@
                   <li class="usa-sidenav__item">
                     <NuxtLink
                       :to="{ path: '/' }"
-                      :class="{ 'usa-current': $route.name === 'index' }"
+                      :class="{ 'usa-current': route.name === 'index' }"
                     >
                       Artifact Store
                     </NuxtLink>
@@ -37,7 +37,7 @@
                   <li class="usa-sidenav__item">
                     <NuxtLink
                       :to="{ path: '/test-catalog' }"
-                      :class="{ 'usa-current': $route.name === 'test-catalog' }"
+                      :class="{ 'usa-current': route.name === 'test-catalog' }"
                     >
                       Test Catalog
                     </NuxtLink>
@@ -49,7 +49,7 @@
                         <NuxtLink
                           :to="{ path: '/admin/manage-users' }"
                           :class="{
-                            'usa-current': $route.name === 'admin-manage-users',
+                            'usa-current': route.name === 'admin-manage-users',
                           }"
                         >
                           Manage Users
@@ -59,8 +59,7 @@
                         <NuxtLink
                           :to="{ path: '/admin/manage-groups' }"
                           :class="{
-                            'usa-current':
-                              $route.name === 'admin-manage-groups',
+                            'usa-current': route.name === 'admin-manage-groups',
                           }"
                         >
                           Manage Groups
@@ -76,7 +75,7 @@
                           :to="{ path: '/regular/profile-edit' }"
                           :class="{
                             'usa-current':
-                              $route.name === 'regular-profile-edit',
+                              route.name === 'regular-profile-edit',
                           }"
                         >
                           Edit Profile
@@ -150,7 +149,10 @@
 </template>
 
 <script setup lang="ts">
+import { confirmLogout } from "~/composables/auth";
+
 const config = useRuntimeConfig();
+const route = useRoute();
 const token = useCookie("token");
 const user = useCookie("user");
 const userRole = useCookie("userRole");

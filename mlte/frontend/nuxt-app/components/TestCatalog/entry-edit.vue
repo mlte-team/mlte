@@ -153,7 +153,7 @@
     </UsaTextInput>
 
     <div class="submit-footer">
-      <UsaButton class="primary-button" @click="$emit('cancel')">
+      <UsaButton class="primary-button" @click="emit('cancel')">
         Cancel
       </UsaButton>
       <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
@@ -162,38 +162,20 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const config = useRuntimeConfig();
 const token = useCookie("token");
 
-const emits = defineEmits(["cancel", "submit", "updateEntry"]);
+const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as PropType<TestCatalogEntry>,
     required: true,
-    default() {
-      return {
-        header: {
-          identifier: "",
-          creator: "",
-          created: -1,
-          updated: -1,
-          catalog_id: "",
-        },
-        tags: [],
-        qa_category: "",
-        quality_attribute: "",
-        code_type: "",
-        code: "",
-        description: "",
-        inputs: "",
-        output: "",
-      };
-    },
   },
   newEntryFlag: {
     type: Boolean,
     required: true,
-    default: false,
   },
 });
 
@@ -201,18 +183,13 @@ const timestamp = ref("");
 timestamp.value = new Date(
   props.modelValue.header.created * 1000,
 ).toLocaleString("en-US");
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   catalog: false,
   identifier: false,
   code_type: false,
 });
-const catalogOptions = ref<
-  {
-    value: string;
-    text: string;
-  }[]
->([]);
-const { data: catalogList } = await useFetch<string[]>(
+const catalogOptions = ref<Array<SelectOption>>([]);
+const { data: catalogList } = await useFetch<Array<CatalogReply>>(
   config.public.apiPath + "/catalogs",
   {
     method: "GET",
@@ -222,26 +199,21 @@ const { data: catalogList } = await useFetch<string[]>(
   },
 );
 if (catalogList.value) {
-  catalogList.value.forEach((catalog: object) => {
+  catalogList.value.forEach((catalog: CatalogReply) => {
     if (!catalog.read_only) {
-      catalogOptions.value.push({
-        value: catalog.id,
-        text: catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
-      });
+      catalogOptions.value.push(
+        new SelectOption(
+          catalog.id,
+          catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
+        ),
+      );
     }
   });
 }
 
 // Delete when test catalog no longer saves qa category
-const QACategoryOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QACategoryAPIData } = await useFetch<string[]>(
+const QACategoryOptions = ref<Array<QAOption>>([]);
+const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
   config.public.apiPath + "/custom_list/qa_categories/",
   {
     method: "GET",
@@ -251,26 +223,21 @@ const { data: QACategoryAPIData } = await useFetch<string[]>(
   },
 );
 if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: object) => {
-    QACategoryOptions.value.push({
-      value: category.name,
-      text: category.name,
-      description: category.description,
-      parent: category.parent,
-    });
+  QACategoryAPIData.value.forEach((category: CustomListEntry) => {
+    QACategoryOptions.value.push(
+      new QAOption(
+        category.name,
+        category.name,
+        category.description,
+        category.parent,
+      ),
+    );
   });
 }
 
-const selectedQAOptions = ref([]);
-const AllQAOptions = ref<
-  {
-    value: string;
-    text: string;
-    description: string;
-    parent: string;
-  }[]
->([]);
-const { data: QAapiOptions } = await useFetch<string[]>(
+const selectedQAOptions = ref<Array<QAOption>>([]);
+const AllQAOptions = ref<Array<QAOption>>([]);
+const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
   config.public.apiPath + "/custom_list/quality_attributes/",
   {
     method: "GET",
@@ -280,18 +247,20 @@ const { data: QAapiOptions } = await useFetch<string[]>(
   },
 );
 if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: object) => {
-    AllQAOptions.value.push({
-      value: attribute.name,
-      text: attribute.name,
-      description: attribute.description,
-      parent: attribute.parent,
-    });
+  QAapiOptions.value.forEach((attribute: CustomListEntry) => {
+    AllQAOptions.value.push(
+      new QAOption(
+        attribute.name,
+        attribute.name,
+        attribute.description,
+        attribute.parent,
+      ),
+    );
   });
 }
 // End of delete section
 
-const tagOptions = ref([
+const tagOptions = ref<Array<TagOption>>([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
   { name: "Computer Vision", selected: false },
@@ -309,12 +278,12 @@ const tagOptions = ref([
   { name: "Time Series", selected: false },
 ]);
 
-const codeTypeOptions = ref([
+const codeTypeOptions = ref<Array<SelectOption>>([
   { value: "measurement", text: "Measurement" },
   { value: "validation", text: "Validation " },
 ]);
 
-tagOptions.value.forEach((tagOption: object) => {
+tagOptions.value.forEach((tagOption: TagOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
   }
@@ -355,22 +324,25 @@ async function submit() {
   emit("submit", props.modelValue);
 }
 
-function tagChange(selected: boolean, tagOption: object) {
+function tagChange(selected: boolean, tagName: string) {
   if (selected) {
-    props.modelValue.tags.push(tagOption);
+    props.modelValue.tags.push(tagName);
     props.modelValue.tags.sort();
   } else {
     const objForRemoval = props.modelValue.tags.find(
-      (x) => x.name === tagOption.name,
+      (x: string) => x === tagName,
     );
-    const index = props.modelValue.tags.indexOf(objForRemoval);
-    props.modelValue.tags.splice(index, 1);
+    // TODO : Add error handling
+    if (objForRemoval) {
+      const index = props.modelValue.tags.indexOf(objForRemoval);
+      props.modelValue.tags.splice(index, 1);
+    }
   }
 }
 // Delete when test catalog no longer saves qa category
 function categoryChange(newCategory: string, quality_attribute?: string) {
   selectedQAOptions.value = [];
-  AllQAOptions.value.forEach((attribute: object) => {
+  AllQAOptions.value.forEach((attribute: QAOption) => {
     if (attribute.parent == newCategory) {
       selectedQAOptions.value.push(attribute);
     }

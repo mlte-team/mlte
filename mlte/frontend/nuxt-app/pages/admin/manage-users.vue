@@ -33,18 +33,8 @@ const userCookie = useCookie("user");
 
 const editFlag = ref(false);
 const newUserFlag = ref(false);
-const userList = ref<
-  {
-    username: string;
-    email: string;
-    full_name: string;
-    disabled: boolean;
-    role: string;
-    groups: Array<object>;
-    password: string;
-  }[]
->([]);
-const selectedUser = ref({});
+const userList = ref<Array<User>>([]);
+const selectedUser = ref<User>(new User());
 
 updateUserList();
 resetSelectedUser();
@@ -71,15 +61,7 @@ async function updateUserList() {
 }
 
 function resetSelectedUser() {
-  selectedUser.value = {
-    username: "",
-    email: "",
-    full_name: "",
-    disabled: false,
-    role: "",
-    groups: [],
-    password: "",
-  };
+  selectedUser.value = new User();
 }
 
 function addUser() {
@@ -88,7 +70,7 @@ function addUser() {
   newUserFlag.value = true;
 }
 
-function editUser(user: object) {
+function editUser(user: User) {
   selectedUser.value = user;
   editFlag.value = true;
   newUserFlag.value = false;
@@ -138,7 +120,7 @@ function cancelEdit() {
   }
 }
 
-async function saveUser(user: object) {
+async function saveUser(user: User) {
   try {
     if (newUserFlag.value) {
       await $fetch(config.public.apiPath + "/user", {
@@ -147,7 +129,7 @@ async function saveUser(user: object) {
         headers: {
           Authorization: "Bearer " + token.value,
         },
-        body: user,
+        body: JSON.stringify(user),
         onRequestError() {
           requestErrorAlert();
         },
@@ -164,7 +146,7 @@ async function saveUser(user: object) {
       await $fetch(config.public.apiPath + "/user", {
         retry: 0,
         method: "PUT",
-        body: user,
+        body: JSON.stringify(user),
         headers: {
           Authorization: "Bearer " + token.value,
         },

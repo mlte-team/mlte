@@ -284,44 +284,12 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const props = defineProps({
   modelValue: {
-    type: Object,
+    type: Object as PropType<ModelDescriptor>,
     required: true,
-    default() {
-      return {
-        development_compute_resources: {
-          gpu: "0",
-          cpu: "0",
-          memory: "0",
-          storage: "0",
-        },
-        deployment_platform: "",
-        capability_deployment_mechanism: "",
-        input_specification: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-          },
-        ],
-        output_specification: [
-          {
-            name: "",
-            description: "",
-            type: "",
-            expected_values: "",
-          },
-        ],
-        production_compute_resources: {
-          gpu: "0",
-          cpu: "0",
-          memory: "0",
-          storage: "0",
-        },
-      };
-    },
   },
 });
 
@@ -371,12 +339,7 @@ const outputModalRows = ref([
 ]);
 
 function addInputSpec() {
-  props.modelValue.input_specification.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-  });
+  props.modelValue.input_specification.push(new ModelIODescriptor());
 }
 
 function deleteInputSpec(specIndex: number) {
@@ -386,12 +349,7 @@ function deleteInputSpec(specIndex: number) {
 }
 
 function addOutputSpec() {
-  props.modelValue.output_specification.push({
-    name: "",
-    description: "",
-    type: "",
-    expected_values: "",
-  });
+  props.modelValue.output_specification.push(new ModelIODescriptor());
 }
 
 function deleteOutputSpec(specIndex: number) {
