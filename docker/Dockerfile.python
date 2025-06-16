@@ -1,16 +1,36 @@
-# Dockerfile.python
-#
-# Image definition for base Python image with proxy support.
+# Image definition for MLTE common code, to be used by backend and frontend.
 
 FROM python:3.12.10-slim-bookworm
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
 # but with a .crt extensions, so they can be loaded into the container and used for SSL connections properly.
-RUN apt-get install -y ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates
 RUN mkdir /certs
 COPY ./certs/ /certs/
 RUN if [ -n "$(ls -A /certs/*.crt)" ]; then \
       cp -rf /certs/*.crt /usr/local/share/ca-certificates/; \
       update-ca-certificates; \
     fi
+
+# Base deps for compiling wheels and instaling tools.
+RUN apt-get update && apt-get install -y build-essential pipx
+RUN pipx ensurepath
+
+# Ensure we are not buffering output for clarity.
+ENV PYTHONUNBUFFERED=1
+
+# Setup poetry to handle dependencies.
+RUN pipx install poetry==2.0.1
+ENV PATH="/root/.local/bin:$PATH"
+
+# Install Python deps.
+WORKDIR /mnt/app
+COPY pyproject.toml /mnt/app
+COPY poetry.lock /mnt/app
+COPY README.md /mnt/app
+RUN poetry install --no-root --all-extras
+
+# Copy the rest of the MLTE code.
+# TODO: note that this is also copying all extra nuxt-app frontend code that is not needed.
+COPY mlte /mnt/app/mlte

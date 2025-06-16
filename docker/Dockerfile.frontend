@@ -1,34 +1,12 @@
-# Dockerfile.frontend
-#
 # Image definition for MLTE frontend container.
 
 # First build the static website in a separate image.
-FROM mlte-python AS build
-
-# Set up Node.js
-RUN apt-get update && apt-get install -y npm
-
-# Install Javascript dependencies.
-WORKDIR /mnt/app/mlte/frontend/nuxt-app
-COPY mlte/frontend/nuxt-app/package.json /mnt/app/mlte/frontend/nuxt-app/package.json
-COPY mlte/frontend/nuxt-app/package-lock.json /mnt/app/mlte/frontend/nuxt-app/package-lock.json
-RUN npm ci && npm cache clean --force
-
-# Build USWDS design dependencies.
-COPY mlte/frontend/nuxt-app/assets /mnt/app/mlte/frontend/nuxt-app/assets
-COPY mlte/frontend/nuxt-app/gulpfile.js /mnt/app/mlte/frontend/nuxt-app/
-RUN npx gulp init
-
-# Build the static website, including .env file with specific configs for frontend.
-COPY mlte/frontend/nuxt-app /mnt/app/mlte/frontend/nuxt-app
-COPY docker/deployment/.env.frontend /mnt/app/mlte/frontend/nuxt-app/.env
-WORKDIR /mnt/app/mlte/frontend/nuxt-app
-RUN npm run build
+FROM mlte-node AS build
 
 ###############################################################################
 
 # Create the final frontend image, with the static website.
-FROM mlte-base
+FROM mlte-python
 
 # Copy the static web site back into the MLTE folder structure.
 COPY --from=build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte/frontend/nuxt-app/.output

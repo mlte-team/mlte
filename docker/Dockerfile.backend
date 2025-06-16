@@ -1,8 +1,6 @@
-# Dockerfile.backend
-#
 # Image definition for MLTE backend container.
 
-FROM mlte-base
+FROM mlte-python
 
 # Create the default storage location.
 RUN mkdir /mnt/store
