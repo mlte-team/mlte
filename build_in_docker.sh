@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Stop on error.
-set -e -x
+set -e
 
 # Cleanup.
 rm -r -f dist
