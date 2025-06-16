@@ -449,10 +449,10 @@ async function selectVersion(versionName: string) {
 function populateArtifacts(
   model: string,
   version: string,
-  artifactList: Array<Artifact>,
+  artifactList: Array<ArtifactModel>,
 ) {
   clearArtifacts();
-  artifactList.forEach((artifact: Artifact) => {
+  artifactList.forEach((artifact: ArtifactModel) => {
     artifact.header.timestamp = new Date(
       artifact.header.timestamp * 1000,
     ).toLocaleString("en-US") as unknown as number;

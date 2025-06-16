@@ -53,7 +53,7 @@ export interface CustomListEntry {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export interface Artifact {
+export interface ArtifactModel {
   header: ArtifactHeader;
   body:
     | NegotiationCardModel
