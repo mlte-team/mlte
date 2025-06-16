@@ -108,7 +108,6 @@
 
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
-import { TestSuiteModel } from "~/composables/types";
 
 const config = useRuntimeConfig();
 const token = useCookie("token");
@@ -119,17 +118,7 @@ const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
 const findings = ref<Array<Finding>>([]);
-const form = ref<ReportModel>({
-  artifact_type: "report",
-  negotiation_card_id: "",
-  negotiation_card: new NegotiationCardModel(),
-  test_suite_id: "",
-  test_suite: new TestSuiteModel(),
-  test_results_id: "",
-  test_results: new TestResultsModel(),
-  comments: [{ content: "" }],
-  quantitative_analysis: {},
-});
+const form = ref<ReportModel>(new ReportModel());
 
 if (queryArtifactId !== undefined) {
   form.value = await loadReportData(

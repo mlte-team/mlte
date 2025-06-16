@@ -140,17 +140,7 @@
 const token = useCookie("token");
 
 const findings = ref<Array<Finding>>([]);
-const form = ref<ReportModel>({
-  artifact_type: "report",
-  negotiation_card_id: "",
-  negotiation_card: new NegotiationCardModel(),
-  test_suite_id: "",
-  test_suite: new TestSuiteModel(),
-  test_results_id: "",
-  test_results: new TestResultsModel(),
-  comments: [{ content: "" }],
-  quantitative_analysis: {},
-});
+const form = ref<ReportModel>(new ReportModel());
 
 const model = useRoute().query.model;
 const version = useRoute().query.version;
