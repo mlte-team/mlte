@@ -5,14 +5,16 @@
     <UsaTextInput
       v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
+      :error="formErrors.identifier"
     >
       <template #label>
         Artifact ID
         <InfoIcon>
-          The Artifact ID this negotiation card <br />
+          The Artifact ID this report <br />
           will be saved under upon submission.
         </InfoIcon>
       </template>
+      <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>
 
     <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
@@ -120,6 +122,10 @@ const userInputArtifactId = ref("");
 const findings = ref<Array<Finding>>([]);
 const form = ref<ReportModel>(new ReportModel());
 
+const formErrors = ref({
+  identifier: false,
+});
+
 if (queryArtifactId !== undefined) {
   form.value = await loadReportData(
     token.value as string,
@@ -141,6 +147,11 @@ if (queryArtifactId !== undefined) {
 
 async function submit() {
   const identifier = queryArtifactId || userInputArtifactId.value;
+  if (identifier === "") {
+    inputErrorAlert();
+    return;
+  }
+
   const artifact = {
     header: {
       identifier,

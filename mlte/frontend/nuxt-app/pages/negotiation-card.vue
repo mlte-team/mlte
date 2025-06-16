@@ -106,11 +106,12 @@ import { cancelFormSubmission } from "~/composables/form-methods";
 
 const config = useRuntimeConfig();
 const token = useCookie("token");
+const model = useRoute().query.model;
+const version = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
-
-const userInputArtifactId = ref("");
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
+const userInputArtifactId = ref("");
 const creator = ref("");
 const timestamp = ref("");
 const form = ref({
@@ -130,11 +131,7 @@ const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
 
-if (useRoute().query.artifactId !== undefined) {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-  const artifactId = useRoute().query.artifactId;
-
+if (queryArtifactId !== undefined) {
   const { data: cardData, error } = await useFetch<NegotiationApiResponse>(
     config.public.apiPath +
       "/model/" +
@@ -142,7 +139,7 @@ if (useRoute().query.artifactId !== undefined) {
       "/version/" +
       version +
       "/artifact/" +
-      artifactId,
+      queryArtifactId,
     {
       retry: 0,
       method: "GET",
@@ -167,23 +164,8 @@ if (useRoute().query.artifactId !== undefined) {
 }
 
 async function submit() {
-  const model = useRoute().query.model;
-  const version = useRoute().query.version;
-
-  let inputError = false;
-  let identifier = "";
-  if (useRoute().query.artifactId === undefined) {
-    identifier = userInputArtifactId.value;
-  } else {
-    identifier = useRoute().query.artifactId!.toString();
-  }
-
+  const identifier = queryArtifactId || userInputArtifactId.value;
   if (identifier === "") {
-    formErrors.value.identifier = true;
-    inputError = true;
-  }
-
-  if (inputError) {
     inputErrorAlert();
     return;
   }
