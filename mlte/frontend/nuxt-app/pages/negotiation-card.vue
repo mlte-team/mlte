@@ -164,7 +164,7 @@ if (queryArtifactId !== undefined) {
 }
 
 async function submit() {
-  const identifier = queryArtifactId || userInputArtifactId.value;
+  const identifier = (queryArtifactId as string) || userInputArtifactId.value;
   if (identifier === "") {
     inputErrorAlert();
     return;

@@ -146,7 +146,7 @@ if (queryArtifactId !== undefined) {
 }
 
 async function submit() {
-  const identifier = queryArtifactId || userInputArtifactId.value;
+  const identifier = (queryArtifactId as string) || userInputArtifactId.value;
   if (identifier === "") {
     inputErrorAlert();
     return;
@@ -187,7 +187,7 @@ async function submit() {
           },
           onResponse({ response }) {
             if (response.ok) {
-              successfulArtifactSubmission("report", identifier as string);
+              successfulArtifactSubmission("report", identifier);
               if (useRoute().query.artifactId === undefined) {
                 window.location.href =
                   "/report-form?" +
