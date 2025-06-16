@@ -81,10 +81,8 @@ export interface TestCase {
 }
 
 export class TestSuiteModel {
-  constructor(
-    public artifact_type: string = "test_suite",
-    public test_cases: Array<TestCase> = [],
-  ) {}
+  public readonly artifact_type = "test_suite";
+  constructor(public test_cases: Array<TestCase> = []) {}
 }
 
 export interface Result {
@@ -101,8 +99,8 @@ export interface Result {
 }
 
 export class TestResultsModel {
+  public readonly artifact_type = "test_results";
   constructor(
-    public artifact_type: string = "test_results",
     public test_suite_id: string = "",
     public test_suite: TestSuiteModel = new TestSuiteModel(),
     public results: Dictionary<Result> = {},
@@ -242,8 +240,8 @@ export class QASDescriptor {
 }
 
 export class NegotiationCardModel {
+  public readonly artifact_type = "negotiation_card";
   constructor(
-    public artifact_type: string = "negotiation_card",
     public system: SystemDescriptor = new SystemDescriptor(),
     public data: Array<DataDescriptor> = [new DataDescriptor()],
     public model: ModelDescriptor = new ModelDescriptor(),
@@ -269,8 +267,8 @@ export class QuantitativeAnalysisDescriptor {
 }
 
 export class ReportModel {
+  public readonly artifact_type = "report";
   constructor(
-    public artifact_type: string = "report",
     public negotiation_card_id: string = "",
     public negotiation_card: NegotiationCardModel = new NegotiationCardModel(),
     public test_suite_id: string = "",
