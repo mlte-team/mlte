@@ -144,3 +144,15 @@ clean:
 
 .PHONY: ci
 ci: clean venv frontend-env check-qa test
+
+# -----------------------------------------------------------------------------
+# Build commands.
+# -----------------------------------------------------------------------------
+
+.PHONY: build-local
+build-local:
+	bash build_local.sh
+
+.PHONY: build-in-docker
+build-in-docker:
+	bash build_in_docker.sh

@@ -19,7 +19,7 @@ tools
 .gitignore
 .python-version
 .readthedocs.yaml
-build.sh
+build*.sh
 LICENSE
 Makefile
 

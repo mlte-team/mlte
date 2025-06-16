@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-set -e
+set -e -x
 
 # Build base first.
-cd ..
-docker build -t mlte-python . -f docker/Dockerfile.python
-docker build -t mlte-node . -f docker/Dockerfile.node
-cd docker
+bash build_base.sh
 
 # Now build frontend and backend images.
 export FRONTEND_DOCKERFILE=docker/Dockerfile.frontend

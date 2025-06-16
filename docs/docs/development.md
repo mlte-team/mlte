@@ -265,7 +265,12 @@ We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyP
 
 To build the frontend and then the whole package, it is enough to execute the following command from the main repo folder:
 ```bash
-$ bash build.sh
+$ bash build_local.sh
+```
+
+To build it in a Docker environment, instead of your local environment:
+```bash
+$ bash build_in_docker.sh
 ```
 
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
