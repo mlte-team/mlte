@@ -15,9 +15,11 @@
       </template>
     </UsaTextInput>
 
-    <FormFieldsSystemInformation v-model="form.nc_data.system" />
+    <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
 
-    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
+    <FormFieldsSystemRequirements
+      v-model="form.negotiation_card.system_requirements"
+    />
 
     <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
@@ -78,9 +80,9 @@
     <hr />
     <h1 class="section-header">Additional Context</h1>
 
-    <FormFieldsDataFields v-model="form.nc_data.data" />
+    <FormFieldsDataFields v-model="form.negotiation_card.data" />
 
-    <FormFieldsModelFields v-model="form.nc_data.model" />
+    <FormFieldsModelFields v-model="form.negotiation_card.model" />
 
     <div style="text-align: right; margin-top: 1em">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
@@ -106,6 +108,7 @@
 
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
+import { TestSuiteModel } from "~/composables/types";
 
 const config = useRuntimeConfig();
 const token = useCookie("token");
@@ -118,13 +121,12 @@ const userInputArtifactId = ref("");
 const findings = ref<Array<Finding>>([]);
 const form = ref<ReportModel>({
   artifact_type: "report",
-  nc_data: {
-    system: new SystemDescriptor(),
-    data: [new DataDescriptor()],
-    model: new ModelDescriptor(),
-    system_requirements: [new QASDescriptor()],
-  },
+  negotiation_card_id: "",
+  negotiation_card: new NegotiationCardModel(),
+  test_suite_id: "",
+  test_suite: new TestSuiteModel(),
   test_results_id: "",
+  test_results: new TestResultsModel(),
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -143,7 +145,7 @@ if (queryArtifactId !== undefined) {
       queryModel as string,
       queryVersion as string,
       form.value.test_results_id,
-      form.value.nc_data.system_requirements,
+      form.value.negotiation_card.system_requirements,
     );
   }
 }

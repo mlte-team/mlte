@@ -27,7 +27,7 @@
       <h3 class="insection-margin">Overview</h3>
       <hr />
       <div
-        v-for="(goal, goalIndex) in form.nc_data.system.goals"
+        v-for="(goal, goalIndex) in form.negotiation_card.system.goals"
         :key="goalIndex"
       >
         <div class="info-box-row insection-margin">
@@ -106,30 +106,30 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ form.nc_data.system.problem_type }}
+          {{ form.negotiation_card.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ form.nc_data.system.task }}
+          {{ form.negotiation_card.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ form.nc_data.system.usage_context }}
+          {{ form.negotiation_card.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ form.nc_data.system.risks.fp }}
+          {{ form.negotiation_card.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ form.nc_data.system.risks.fn }}
+          {{ form.negotiation_card.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br />
-          {{ form.nc_data.system.risks.other }}
+          {{ form.negotiation_card.system.risks.other }}
         </div>
       </div>
     </div>
@@ -142,13 +142,12 @@ const token = useCookie("token");
 const findings = ref<Array<Finding>>([]);
 const form = ref<ReportModel>({
   artifact_type: "report",
-  nc_data: {
-    system: new SystemDescriptor(),
-    data: [new DataDescriptor()],
-    model: new ModelDescriptor(),
-    system_requirements: [new QASDescriptor()],
-  },
+  negotiation_card_id: "",
+  negotiation_card: new NegotiationCardModel(),
+  test_suite_id: "",
+  test_suite: new TestSuiteModel(),
   test_results_id: "",
+  test_results: new TestResultsModel(),
   comments: [{ content: "" }],
   quantitative_analysis: {},
 });
@@ -170,7 +169,7 @@ if (form.value.test_results_id) {
     model as string,
     version as string,
     form.value.test_results_id,
-    form.value.nc_data.system_requirements,
+    form.value.negotiation_card.system_requirements,
   );
 }
 </script>
