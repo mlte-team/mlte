@@ -111,7 +111,7 @@ const version = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 
-const userInputArtifactId = ref("");
+const userInputArtifactId = ref("default.card");
 const creator = ref("");
 const timestamp = ref("");
 const form = ref(new NegotiationCardModel());
