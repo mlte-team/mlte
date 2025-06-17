@@ -18,14 +18,13 @@ from mlte.negotiation import qas
 from mlte.negotiation.model import (
     DataDescriptor,
     ModelDescriptor,
-    NegotiationCardDataModel,
     NegotiationCardModel,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 
-DEFAULT_NEGOTIATION_CARD_ID = "default.negotiation_card"
+DEFAULT_NEGOTIATION_CARD_ID = "default.card"
 
 
 class NegotiationCard(Artifact):
@@ -62,12 +61,10 @@ class NegotiationCard(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=NegotiationCardModel(
-                nc_data=NegotiationCardDataModel(
-                    system=self.system,
-                    data=self.data,
-                    model=self.model,
-                    system_requirements=self.quality_scenarios,
-                ),
+                system=self.system,
+                data=self.data,
+                model=self.model,
+                system_requirements=self.quality_scenarios,
             ),
         )
 
@@ -84,10 +81,10 @@ class NegotiationCard(Artifact):
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,
-            system=body.nc_data.system,
-            data=body.nc_data.data,
-            model=body.nc_data.model,
-            quality_scenarios=body.nc_data.system_requirements,
+            system=body.system,
+            data=body.data,
+            model=body.model,
+            quality_scenarios=body.system_requirements,
         )
 
     # Overriden.

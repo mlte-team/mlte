@@ -1,8 +1,4 @@
-"""
-mlte/store/artifact/underlying/rdbs/factory_value.py
-
-Conversions between schema and internal models.
-"""
+"""Conversions between schema and internal models."""
 
 from __future__ import annotations
 
@@ -12,21 +8,23 @@ from mlte._private.fixed_json import json
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, EvidenceType, get_model_class
 from mlte.measurement.model import MeasurementMetadata
-from mlte.store.artifact.underlying.rdbs.metadata import DBArtifactHeader
-from mlte.store.artifact.underlying.rdbs.metadata_evidence import DBEvidence
-from mlte.store.artifact.underlying.rdbs.metadata_spec import DBEvidenceMetadata
+from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
+    DBEvidence,
+    DBEvidenceMetadata,
+)
+from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 
 # -------------------------------------------------------------------------
 # Evidence Factory Methods
 # -------------------------------------------------------------------------
 
 
-def create_evidence_db_from_model(
-    evidence: EvidenceModel, artifact_header: DBArtifactHeader
+def create_evidence_orm(
+    evidence: EvidenceModel, artifact: DBArtifact
 ) -> DBEvidence:
     """Creates the DB object from the corresponding internal model."""
-    value_obj = DBEvidence(
-        artifact_header=artifact_header,
+    value_orm = DBEvidence(
+        artifact=artifact,
         evidence_metadata=DBEvidenceMetadata(
             test_case_id=evidence.metadata.test_case_id,
             measurement=json.dumps(evidence.metadata.measurement.to_json()),
@@ -35,24 +33,24 @@ def create_evidence_db_from_model(
         evidence_type=evidence.value.evidence_type.value,
         data_json=json.dumps(evidence.value.to_json()),
     )
-    return value_obj
+    return value_orm
 
 
-def create_evidence_model_from_db(evidence_obj: DBEvidence) -> EvidenceModel:
+def create_evidence_model(evidence_orm: DBEvidence) -> EvidenceModel:
     """Creates the internal model object from the corresponding DB object."""
     body = EvidenceModel(
         metadata=EvidenceMetadata(
-            test_case_id=evidence_obj.evidence_metadata.test_case_id,
+            test_case_id=evidence_orm.evidence_metadata.test_case_id,
             measurement=typing.cast(
                 MeasurementMetadata,
                 MeasurementMetadata.from_json(
-                    json.loads(evidence_obj.evidence_metadata.measurement)
+                    json.loads(evidence_orm.evidence_metadata.measurement)
                 ),
             ),
         ),
-        evidence_class=evidence_obj.evidence_class,
+        evidence_class=evidence_orm.evidence_class,
         value=get_model_class(
-            EvidenceType(evidence_obj.evidence_type)
-        ).from_json(json.loads(evidence_obj.data_json)),
+            EvidenceType(evidence_orm.evidence_type)
+        ).from_json(json.loads(evidence_orm.data_json)),
     )
     return body

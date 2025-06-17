@@ -53,9 +53,14 @@ export interface CustomListEntry {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export interface Artifact {
+export interface ArtifactModel {
   header: ArtifactHeader;
-  body: TestResultsModel | EvidenceModel;
+  body:
+    | NegotiationCardModel
+    | TestSuiteModel
+    | EvidenceModel
+    | TestResultsModel
+    | ReportModel;
 }
 
 export class ArtifactHeader {
@@ -75,16 +80,31 @@ export interface TestCase {
   validator: object;
 }
 
-export interface TestSuite {
-  artifact_type: string;
-  test_cases: Array<TestCase>;
+export class TestSuiteModel {
+  public readonly artifact_type = "test_suite";
+  constructor(public test_cases: Array<TestCase> = []) {}
 }
 
-export interface TestResultsModel {
-  artifact_type: "test_results";
-  test_suite_id: string;
-  test_suite: TestSuite;
-  results: Dictionary<Result>;
+export interface Result {
+  type: string;
+  message: string;
+  evidence_metadata: {
+    test_case_id: string;
+    measurement: {
+      measurement_class: string;
+      output_class: string;
+      additional_data: Dictionary<string>;
+    };
+  };
+}
+
+export class TestResultsModel {
+  public readonly artifact_type = "test_results";
+  constructor(
+    public test_suite_id: string = "",
+    public test_suite: TestSuiteModel = new TestSuiteModel(),
+    public results: Dictionary<Result> = {},
+  ) {}
 }
 
 export interface EvidenceModel {
@@ -219,18 +239,14 @@ export class QASDescriptor {
   ) {}
 }
 
-export class NegotiationCardDataModel {
+export class NegotiationCardModel {
+  public readonly artifact_type = "negotiation_card";
   constructor(
     public system: SystemDescriptor = new SystemDescriptor(),
     public data: Array<DataDescriptor> = [new DataDescriptor()],
     public model: ModelDescriptor = new ModelDescriptor(),
     public system_requirements: Array<QASDescriptor> = [new QASDescriptor()],
   ) {}
-}
-
-export interface NegotiationCardModel {
-  artifact_type: string;
-  nc_data: NegotiationCardDataModel;
 }
 
 export interface NegotiationApiResponse {
@@ -242,19 +258,6 @@ export interface NegotiationApiResponse {
 // Report
 // --------------------------------------------------------------------------------------------------------------
 
-export interface Result {
-  type: string;
-  message: string;
-  evidence_metadata: {
-    test_case_id: string;
-    measurement: {
-      measurement_class: string;
-      output_class: string;
-      additional_data: Dictionary<string>;
-    };
-  };
-}
-
 export class CommentDescriptor {
   constructor(public content: string = "") {}
 }
@@ -264,12 +267,16 @@ export class QuantitativeAnalysisDescriptor {
 }
 
 export class ReportModel {
+  public readonly artifact_type = "report";
   constructor(
-    public artifact_type: string = "report",
-    public nc_data: NegotiationCardDataModel = new NegotiationCardDataModel(),
+    public negotiation_card_id: string = "",
+    public negotiation_card: NegotiationCardModel = new NegotiationCardModel(),
+    public test_suite_id: string = "",
+    public test_suite: TestSuiteModel = new TestSuiteModel(),
+    public test_results_id: string = "",
+    public test_results: TestResultsModel = new TestResultsModel(),
     public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
     public quantitative_analysis: QuantitativeAnalysisDescriptor = new QuantitativeAnalysisDescriptor(),
-    public test_results_id?: string,
   ) {}
 }
 

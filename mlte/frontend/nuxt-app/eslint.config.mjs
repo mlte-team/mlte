@@ -56,7 +56,7 @@ export default withNuxt(
           isValidNegotiation: true,
 
           // Types
-          Artifact: true,
+          ArtifactModel: true,
           CatalogReply: true,
           CustomListEntry: true,
           DataDescriptor: true,

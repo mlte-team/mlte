@@ -11,14 +11,6 @@ from test.fixture.artifact import ArtifactFactory
 from . import util as util
 
 
-def test_empty_instance() -> None:
-    """An empty instance validates successfully."""
-    report = Report()
-
-    doc = report.to_model().to_json()
-    util.validate_report_schema(doc["body"])
-
-
 def test_valid_instance() -> None:
     """A complete instance validates successfully."""
     artifact_model = ArtifactFactory.make(ArtifactType.REPORT, id="id0")
