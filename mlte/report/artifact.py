@@ -11,7 +11,7 @@ import typing
 from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
@@ -37,9 +37,12 @@ class Report(Artifact):
     def __init__(
         self,
         identifier: str = DEFAULT_REPORT_ID,
-        negotiation_card: Optional[NegotiationCard] = None,
-        test_suite: Optional[TestSuite] = None,
-        test_results: Optional[TestResults] = None,
+        negotiation_card_id: str = NegotiationCard.get_default_id(),
+        negotiation_card_model: Optional[NegotiationCardModel] = None,
+        test_suite_id: str = TestSuite.get_default_id(),
+        test_suite_model: Optional[TestSuiteModel] = None,
+        test_results_id: str = TestResults.get_default_id(),
+        test_results_model: Optional[TestResultsModel] = None,
         comments: List[CommentDescriptor] = [],
         quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
     ) -> None:
@@ -47,23 +50,47 @@ class Report(Artifact):
         Creates a Report.
 
         :param identifier: The Report id (default value used if not provided).
-        :param negotiation_card: A NegotiationCard object; if None, NegotiationCard with default id will be loaded.
-        :param test_suite: A TestSuite object; if None, TestSuite with default id will be loaded.
-        :param test_results: A TestResults object; if None, TestResults with default id will be loaded.
+        :param negotiation_card_id: The id of the negotiation card to use (defaults to default card id).
+        :param negotiation_card_model: A NegotiationCardModel object; if None, NegotiationCard from the provided id will be loaded.
+        :param test_suite_id: The id of the test suite to use (defaults to default suite id).
+        :param test_suite_model: A TestSuiteModel object; if None, TestSuite from the provided id will be loaded.
+        :param test_results_id: The id of the test results to use (defaults to default results id).
+        :param test_results_model: A TestResultsModel object; if None, TestResults from the provided id will be loaded.
         :param comments: Optional comments to add.
         :quantitative_analysis: Optional additional analysis to add.
         """
         super().__init__(identifier, ArtifactType.REPORT)
 
-        self.negotiation_card = (
-            negotiation_card if negotiation_card else NegotiationCard.load()
+        self.negotiation_card_id = negotiation_card_id
+        self.negotiation_card_model = (
+            negotiation_card_model
+            if negotiation_card_model
+            else typing.cast(
+                NegotiationCardModel,
+                NegotiationCard.load(negotiation_card_id).to_model().body,
+            )
         )
         """The Negotiation Card with the requirements."""
 
-        self.test_suite = test_suite if test_suite else TestSuite.load()
+        self.test_suite_id = test_suite_id
+        self.test_suite_model = (
+            test_suite_model
+            if test_suite_model
+            else typing.cast(
+                TestSuiteModel, TestSuite.load(test_suite_id).to_model().body
+            )
+        )
         """The test suite used to generate these results."""
 
-        self.test_results = test_results if test_results else TestResults.load()
+        self.test_results_id = test_results_id
+        self.test_results_model = (
+            test_results_model
+            if test_results_model
+            else typing.cast(
+                TestResultsModel,
+                TestResults.load(test_results_id).to_model().body,
+            )
+        )
         """A summary of model performance evaluation."""
 
         self.comments = comments
@@ -77,18 +104,12 @@ class Report(Artifact):
         return ArtifactModel(
             header=self.build_artifact_header(),
             body=ReportModel(
-                negotiation_card_id=self.negotiation_card.identifier,
-                negotiation_card=typing.cast(
-                    NegotiationCardModel, self.negotiation_card.to_model().body
-                ),
-                test_suite_id=self.test_suite.identifier,
-                test_suite=typing.cast(
-                    TestSuiteModel, self.test_suite.to_model().body
-                ),
-                test_results_id=self.test_results.identifier,
-                test_results=typing.cast(
-                    TestResultsModel, self.test_results.to_model().body
-                ),
+                negotiation_card_id=self.negotiation_card_id,
+                negotiation_card=self.negotiation_card_model,
+                test_suite_id=self.test_suite_id,
+                test_suite=self.test_suite_model,
+                test_results_id=self.test_results_id,
+                test_results=self.test_results_model,
                 comments=self.comments,
                 quantitative_analysis=self.quantitative_analysis,
             ),
@@ -106,33 +127,12 @@ class Report(Artifact):
         body = typing.cast(ReportModel, model.body)
         return Report(
             identifier=model.header.identifier,
-            negotiation_card=NegotiationCard.from_model(
-                ArtifactModel(
-                    header=ArtifactHeaderModel(
-                        identifier=body.negotiation_card_id,
-                        type=ArtifactType.NEGOTIATION_CARD,
-                    ),
-                    body=body.negotiation_card,
-                )
-            ),
-            test_suite=TestSuite.from_model(
-                ArtifactModel(
-                    header=ArtifactHeaderModel(
-                        identifier=body.test_suite_id,
-                        type=ArtifactType.TEST_SUITE,
-                    ),
-                    body=body.test_suite,
-                )
-            ),
-            test_results=TestResults.from_model(
-                ArtifactModel(
-                    header=ArtifactHeaderModel(
-                        identifier=body.test_results_id,
-                        type=ArtifactType.TEST_RESULTS,
-                    ),
-                    body=body.test_results,
-                )
-            ),
+            negotiation_card_id=body.negotiation_card_id,
+            negotiation_card_model=body.negotiation_card,
+            test_suite_id=body.test_suite_id,
+            test_suite_model=body.test_suite,
+            test_results_id=body.test_results_id,
+            test_results_model=body.test_results,
             comments=body.comments,
             quantitative_analysis=body.quantitative_analysis,
         )

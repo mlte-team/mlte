@@ -4,6 +4,7 @@ test/artifact/test_artifact.py
 Unit tests for MLTE artifact protocol implementation.
 """
 
+import typing
 from typing import Tuple
 
 import pytest
@@ -14,11 +15,14 @@ from mlte.context.context import Context
 from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.negotiation.artifact import NegotiationCard
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.artifact import Report
+from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
 from mlte.session.session import set_context, set_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
+from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
@@ -54,8 +58,28 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
     m2 = get_sample_evidence_metadata(test_case_id="id2")
     v2 = Real(3.14).with_metadata(m2)
 
-    r1 = Report("r1", negotiation_card=n1, test_suite=s1, test_results=vs1)
-    r2 = Report("r2", negotiation_card=n2, test_suite=s2, test_results=vs2)
+    r1 = Report(
+        "r1",
+        negotiation_card_id=n1.identifier,
+        negotiation_card_model=typing.cast(
+            NegotiationCardModel, n1.to_model().body
+        ),
+        test_suite_id=s1.identifier,
+        test_suite_model=typing.cast(TestSuiteModel, s1.to_model().body),
+        test_results_id=vs1.identifier,
+        test_results_model=typing.cast(TestResultsModel, vs1.to_model().body),
+    )
+    r2 = Report(
+        "r2",
+        negotiation_card_id=n2.identifier,
+        negotiation_card_model=typing.cast(
+            NegotiationCardModel, n2.to_model().body
+        ),
+        test_suite_id=s2.identifier,
+        test_suite_model=typing.cast(TestSuiteModel, s2.to_model().body),
+        test_results_id=vs2.identifier,
+        test_results_model=typing.cast(TestResultsModel, vs2.to_model().body),
+    )
 
     n1.save_with(ctx, store, parents=True)
     n2.save_with(ctx, store)
