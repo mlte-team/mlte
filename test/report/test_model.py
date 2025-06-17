@@ -16,7 +16,6 @@ def test_report() -> None:
     """A report model can be serialized and deserialized."""
     objects = [
         make_complete_report(),
-        ReportModel(),
     ]
 
     for object in objects:

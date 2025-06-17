@@ -32,7 +32,7 @@ class ArtifactHeaderModel(BaseModel):
     timestamp: Optional[int] = -1
     """The timestamp of creation of this artifact, as Unix time."""
 
-    creator: Optional[str]
+    creator: Optional[str] = None
     """The user that created this artifact."""
 
     model_config = ConfigDict(use_enum_values=True)
@@ -50,7 +50,6 @@ class ArtifactModel(Filterable):
         TestSuiteModel,
         TestResultsModel,
         ReportModel,
-        TestSuiteModel,
     ] = Field(..., discriminator="artifact_type")
     """The artifact body."""
 

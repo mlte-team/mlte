@@ -474,64 +474,6 @@
       "title": "ModelResourcesDescriptor",
       "type": "object"
     },
-    "NegotiationCardDataModel": {
-      "description": "The model implementation for the NegotiationCard information.",
-      "properties": {
-        "system": {
-          "$ref": "#/$defs/SystemDescriptor",
-          "default": {
-            "goals": [],
-            "problem_type": null,
-            "task": null,
-            "usage_context": null,
-            "risks": {
-              "fn": null,
-              "fp": null,
-              "other": null
-            }
-          }
-        },
-        "data": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/DataDescriptor"
-          },
-          "title": "Data",
-          "type": "array"
-        },
-        "model": {
-          "$ref": "#/$defs/ModelDescriptor",
-          "default": {
-            "development_compute_resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            },
-            "deployment_platform": null,
-            "capability_deployment_mechanism": null,
-            "input_specification": [],
-            "output_specification": [],
-            "production_compute_resources": {
-              "cpu": null,
-              "gpu": null,
-              "memory": null,
-              "storage": null
-            }
-          }
-        },
-        "system_requirements": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/QASDescriptor"
-          },
-          "title": "System Requirements",
-          "type": "array"
-        }
-      },
-      "title": "NegotiationCardDataModel",
-      "type": "object"
-    },
     "ProblemType": {
       "description": "An enumeration over machine learning problem types.",
       "enum": [
@@ -750,41 +692,56 @@
       "title": "Artifact Type",
       "type": "string"
     },
-    "nc_data": {
-      "$ref": "#/$defs/NegotiationCardDataModel",
+    "system": {
+      "$ref": "#/$defs/SystemDescriptor",
       "default": {
-        "system": {
-          "goals": [],
-          "problem_type": null,
-          "risks": {
-            "fn": null,
-            "fp": null,
-            "other": null
-          },
-          "task": null,
-          "usage_context": null
-        },
-        "data": [],
-        "model": {
-          "capability_deployment_mechanism": null,
-          "deployment_platform": null,
-          "development_compute_resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          },
-          "input_specification": [],
-          "output_specification": [],
-          "production_compute_resources": {
-            "cpu": null,
-            "gpu": null,
-            "memory": null,
-            "storage": null
-          }
-        },
-        "system_requirements": []
+        "goals": [],
+        "problem_type": null,
+        "task": null,
+        "usage_context": null,
+        "risks": {
+          "fn": null,
+          "fp": null,
+          "other": null
+        }
       }
+    },
+    "data": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/DataDescriptor"
+      },
+      "title": "Data",
+      "type": "array"
+    },
+    "model": {
+      "$ref": "#/$defs/ModelDescriptor",
+      "default": {
+        "development_compute_resources": {
+          "cpu": null,
+          "gpu": null,
+          "memory": null,
+          "storage": null
+        },
+        "deployment_platform": null,
+        "capability_deployment_mechanism": null,
+        "input_specification": [],
+        "output_specification": [],
+        "production_compute_resources": {
+          "cpu": null,
+          "gpu": null,
+          "memory": null,
+          "storage": null
+        }
+      }
+    },
+    "system_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QASDescriptor"
+      },
+      "title": "System Requirements",
+      "type": "array"
     }
   },
   "title": "NegotiationCardModel",

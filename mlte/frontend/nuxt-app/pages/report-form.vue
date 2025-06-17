@@ -5,19 +5,23 @@
     <UsaTextInput
       v-if="queryArtifactId === undefined"
       v-model="userInputArtifactId"
+      :error="formErrors.identifier"
     >
       <template #label>
         Artifact ID
         <InfoIcon>
-          The Artifact ID this negotiation card <br />
+          The Artifact ID this report <br />
           will be saved under upon submission.
         </InfoIcon>
       </template>
+      <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>
 
-    <FormFieldsSystemInformation v-model="form.nc_data.system" />
+    <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
 
-    <FormFieldsSystemRequirements v-model="form.nc_data.system_requirements" />
+    <FormFieldsSystemRequirements
+      v-model="form.negotiation_card.system_requirements"
+    />
 
     <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
     <table class="table usa-table usa-table--borderless">
@@ -78,9 +82,9 @@
     <hr />
     <h1 class="section-header">Additional Context</h1>
 
-    <FormFieldsDataFields v-model="form.nc_data.data" />
+    <FormFieldsDataFields v-model="form.negotiation_card.data" />
 
-    <FormFieldsModelFields v-model="form.nc_data.model" />
+    <FormFieldsModelFields v-model="form.negotiation_card.model" />
 
     <div style="text-align: right; margin-top: 1em">
       <UsaButton class="secondary-button" @click="cancelFormSubmission('/')">
@@ -116,17 +120,10 @@ const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
 const findings = ref<Array<Finding>>([]);
-const form = ref<ReportModel>({
-  artifact_type: "report",
-  nc_data: {
-    system: new SystemDescriptor(),
-    data: [new DataDescriptor()],
-    model: new ModelDescriptor(),
-    system_requirements: [new QASDescriptor()],
-  },
-  test_results_id: "",
-  comments: [{ content: "" }],
-  quantitative_analysis: {},
+const form = ref<ReportModel>(new ReportModel());
+
+const formErrors = ref({
+  identifier: false,
 });
 
 if (queryArtifactId !== undefined) {
@@ -143,13 +140,18 @@ if (queryArtifactId !== undefined) {
       queryModel as string,
       queryVersion as string,
       form.value.test_results_id,
-      form.value.nc_data.system_requirements,
+      form.value.negotiation_card.system_requirements,
     );
   }
 }
 
 async function submit() {
-  const identifier = queryArtifactId || userInputArtifactId.value;
+  const identifier = (queryArtifactId as string) || userInputArtifactId.value;
+  if (identifier === "") {
+    inputErrorAlert();
+    return;
+  }
+
   const artifact = {
     header: {
       identifier,
@@ -185,7 +187,7 @@ async function submit() {
           },
           onResponse({ response }) {
             if (response.ok) {
-              successfulArtifactSubmission("report", identifier as string);
+              successfulArtifactSubmission("report", identifier);
               if (useRoute().query.artifactId === undefined) {
                 window.location.href =
                   "/report-form?" +
