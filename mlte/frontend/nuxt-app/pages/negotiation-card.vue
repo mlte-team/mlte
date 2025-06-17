@@ -114,13 +114,7 @@ const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 const userInputArtifactId = ref("");
 const creator = ref("");
 const timestamp = ref("");
-const form = ref({
-  artifact_type: "negotiation_card",
-  system: new SystemDescriptor(),
-  data: [new DataDescriptor()],
-  model: new ModelDescriptor(),
-  system_requirements: [new QASDescriptor()],
-});
+const form = ref(new NegotiationCardModel());
 
 const formErrors = ref({
   identifier: false,
