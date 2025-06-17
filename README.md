@@ -24,6 +24,11 @@ To use the web UI (frontend/backend functionality), the `frontend` optional depe
 $ pip install "mlte[frontend,rdbs]"
 ```
 
+To build the MLTE package from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder):
+```bash
+$ make build-in-docker
+```
+
 ### Running `MLTE`
 
 The `MLTE` web-based user interface (UI) allows you to create/edit system artifacts and review existing models and test catalogs. To access the UI, first start the backend server with the following command:

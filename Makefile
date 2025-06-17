@@ -146,8 +146,20 @@ check-qa: check-schema check-isort check-format lint check-lint-frontend typeche
 
 # Clean cache files
 .PHONY: clean
-clean: 
+clean:
 	rm -r -f .mypy_cache .pytest_cache
 
 .PHONY: ci
 ci: clean venv frontend-env check-qa test
+
+# -----------------------------------------------------------------------------
+# Build commands.
+# -----------------------------------------------------------------------------
+
+.PHONY: build-local
+build-local:
+	bash build_local.sh
+
+.PHONY: build-in-docker
+build-in-docker:
+	bash build_in_docker.sh

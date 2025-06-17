@@ -2,10 +2,7 @@
 set -e
 
 # Build base first.
-cd ..
-docker build -t mlte-python . -f docker/Dockerfile.python
-docker build -t mlte-base . -f docker/Dockerfile.mlte
-cd docker
+bash build_base.sh
 
 # Now build frontend and backend images.
 export FRONTEND_DOCKERFILE=docker/Dockerfile.frontend

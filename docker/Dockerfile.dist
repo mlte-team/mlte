@@ -1,0 +1,20 @@
+# Image for creating a distributable package of MLTE.
+
+# First build the static website in a separate image.
+FROM mlte-node AS frontend-build
+
+###############################################################################
+
+# Create the package from the python environment.
+FROM mlte-python
+
+# Copy the static web site back into the MLTE folder structure.
+COPY --from=frontend-build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte/frontend/nuxt-app/.output
+
+# Validate pyproject.toml and lock file for consistency, and build sdist and wheel.
+RUN poetry install --no-root --with dev
+RUN poetry check
+RUN poetry build
+
+# Check if the description/readme in the created packages are ok for PyPi.
+RUN poetry run twine check dist/*

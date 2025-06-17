@@ -263,9 +263,14 @@ where `patch` may be replaced with `minor` or `major` as appropriate for the rel
 
 We publish the `MLTE` package on <a href="https://pypi.org/" target="_blank">PyPi</a>. Ensure you have properly incremented the version for the new release, as described in [Versioning](#versioning).
 
-To build the frontend and then the whole package, it is enough to execute the following command from the main repo folder:
+To build the frontend and then the whole package, it is enough to execute the following command from the main repo folder. Note that you need to have the venv and node environments properly setup before this will work.
 ```bash
-$ bash build.sh
+$ make build-local
+```
+
+To build it in a Docker environment, instead of your local environment:
+```bash
+$ make build-in-docker
 ```
 
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
