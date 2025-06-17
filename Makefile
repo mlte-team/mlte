@@ -96,6 +96,10 @@ frontend-env:
 	npm install && \
 	npx gulp init
 
+.PHONY: frontend-env-clean
+frontend-env-clean:
+	rm -rf mlte/frontend/nuxt-app/node_modules
+
 # Lint frontend source code
 .PHONY: lint-frontend
 lint-frontend:
