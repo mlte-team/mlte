@@ -5,7 +5,7 @@ FROM mlte-node AS frontend-build
 
 ###############################################################################
 
-# Create the pacakge from the python environment.
+# Create the package from the python environment.
 FROM mlte-python
 
 # Copy the static web site back into the MLTE folder structure.
