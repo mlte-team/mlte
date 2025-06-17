@@ -49,7 +49,6 @@ def create_suite_model(
     test_suite_orm: DBTestSuite,
 ) -> TestSuiteModel:
     """Creates the internal model object from the corresponding DB object."""
-    # Creating a TestSuite from DB data.
     body = TestSuiteModel(
         test_cases=[
             TestCaseModel(
