@@ -610,16 +610,12 @@
           "title": "Fn"
         },
         "other": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Other"
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Other",
+          "type": "array"
         }
       },
       "title": "RiskDescriptor",
@@ -676,7 +672,7 @@
           "default": {
             "fp": null,
             "fn": null,
-            "other": null
+            "other": []
           }
         }
       },
@@ -702,7 +698,7 @@
         "risks": {
           "fn": null,
           "fp": null,
-          "other": null
+          "other": []
         }
       }
     },

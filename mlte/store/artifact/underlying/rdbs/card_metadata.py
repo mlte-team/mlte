@@ -40,7 +40,9 @@ class DBNegotiationCard(DBBase):
     sys_usage_context: Mapped[Optional[str]]
     sys_risks_fp: Mapped[Optional[str]]
     sys_risks_fn: Mapped[Optional[str]]
-    sys_risks_other: Mapped[Optional[str]]
+    sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
+        cascade="all, delete-orphan"
+    )
 
     # Data
     data_descriptors: Mapped[list[DBDataDescriptor]] = relationship(
@@ -82,11 +84,6 @@ class DBNegotiationCard(DBBase):
     )
 
 
-# -------------------------------------------------------------------------
-# Shared Elements
-# -------------------------------------------------------------------------
-
-
 class DBGoalDescriptor(DBBase):
     __tablename__ = "nc_goal_descriptor"
 
@@ -119,7 +116,20 @@ class DBMetricDescriptor(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"MetricDescriptor(id={self.id!r}, name={self.description!r}, baseline={self.baseline!r})"
+        return f"MetricDescriptor(id={self.id!r}, description={self.description!r}, baseline={self.baseline!r})"
+
+
+class DBGeneralRisk(DBBase):
+    __tablename__ = "nc_general_risk"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    description: Mapped[str]
+    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey(DBNegotiationCard.get_id_column())
+    )
+
+    def __repr__(self) -> str:
+        return f"Risk(id={self.id!r}, description={self.description!r})"
 
 
 class DBProblemType(DBBase):
@@ -130,6 +140,11 @@ class DBProblemType(DBBase):
 
     def __repr__(self) -> str:
         return f"ProblemType(id={self.id!r}, name={self.name!r})"
+
+
+# -------------------------------------------------------------------------
+# Data description.
+# -------------------------------------------------------------------------
 
 
 class DBDataClassification(DBBase):
@@ -211,6 +226,11 @@ class DBFieldDescriptor(DBBase):
 
     def __repr__(self) -> str:
         return f"LabelDescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r}, expected_values={self.expected_values!r}, missing_values={self.missing_values!r}, special_values={self.special_values!r})"
+
+
+# -------------------------------------------------------------------------
+# Model and QAS data.
+# -------------------------------------------------------------------------
 
 
 class DBModelIODescriptor(DBBase):

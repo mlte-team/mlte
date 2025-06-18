@@ -69,7 +69,7 @@ class RiskDescriptor(BaseModel):
     fn: Optional[str] = None
     """A description of risks associated with false-negatives."""
 
-    other: Optional[str] = None
+    other: list[str] = []
     """A description of risks associated with other failures."""
 
 
