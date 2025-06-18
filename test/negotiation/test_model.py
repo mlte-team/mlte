@@ -67,7 +67,7 @@ def test_system_descriptor() -> None:
             problem_type=ProblemType.CLASSIFICATION,
             task="task",
             usage_context="usage_context",
-            risks=RiskDescriptor(fp="fp", fn="fn", other="other"),
+            risks=RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
         ),
         SystemDescriptor(),
     ]
@@ -135,7 +135,7 @@ def test_goal_descriptor() -> None:
 def test_risk_descriptor() -> None:
     """A risk descriptor model can be serialized and deserialized successfully."""
     objects = [
-        RiskDescriptor(fp="fp", fn="fn", other="other"),
+        RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
         RiskDescriptor(),
     ]
 

@@ -151,7 +151,7 @@ export class RiskDescriptor {
   constructor(
     public fp: string = "",
     public fn: string = "",
-    public other: string = "",
+    public other: Array<string> = [],
   ) {}
 }
 
