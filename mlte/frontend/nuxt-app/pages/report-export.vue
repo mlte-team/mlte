@@ -128,8 +128,19 @@
           {{ form.negotiation_card.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
-          Other Risks: <br />
-          {{ form.negotiation_card.system.risks.other }}
+          Other Risks: <br /><br />
+          <div
+            v-for="(risk, riskIndex) in form.negotiation_card.system.risks
+              .other"
+            :key="riskIndex"
+          >
+            <div class="info-box-row insection-margin">
+              <div class="info-box-third rounded-border">
+                Risk {{ riskIndex + 1 }}:<br />
+                {{ risk }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
