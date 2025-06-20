@@ -91,6 +91,12 @@ class Image(Evidence):
         )
         return validator
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Image:
+        evidence = super().load(identifier)
+        return typing.cast(Image, evidence)
+
     def __str__(self) -> str:
         """Return a string representation of this Evidence."""
         return f"Image size: {len(self.image)}"

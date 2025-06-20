@@ -58,6 +58,12 @@ class Array(Evidence):
         ), "Broken Precondition."
         return Array(array=body.value.data).with_metadata(body.metadata)
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Array:
+        evidence = super().load(identifier)
+        return typing.cast(Array, evidence)
+
     def __str__(self) -> str:
         return str(self.array)
 
