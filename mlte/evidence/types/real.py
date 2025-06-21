@@ -184,3 +184,9 @@ class Real(Evidence):
             input_types=[Real],
         )
         return validator
+
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Real:
+        evidence = super().load(identifier)
+        return typing.cast(Real, evidence)

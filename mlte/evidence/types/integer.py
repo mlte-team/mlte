@@ -139,3 +139,9 @@ class Integer(Evidence):
             input_types=[Integer],
         )
         return validator
+
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Integer:
+        evidence = super().load(identifier)
+        return typing.cast(Integer, evidence)

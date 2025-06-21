@@ -89,6 +89,12 @@ class String(Evidence):
         )
         return validator
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> String:
+        evidence = super().load(identifier)
+        return typing.cast(String, evidence)
+
     def __str__(self) -> str:
         """Return a string representation of the value."""
         return f"{self.value}"
