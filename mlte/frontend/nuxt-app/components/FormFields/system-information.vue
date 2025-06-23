@@ -191,15 +191,15 @@
             Short description for the risk.
             <br />
             <br />
-            <i
-              >Example: Model may not indicate proper results if data is out of
-              bounds.</i
-            >
+            <i>
+              Example: Model may not indicate proper results if data is out of
+              bounds.
+            </i>
           </InfoIcon>
         </template>
       </UsaTextInput>
 
-      <div class="inline-button" style="vertical-align: bottom">
+      <div class="margin-button">
         <DeleteButton @click="deleteRisk(riskIndex)">
           Delete Risk
         </DeleteButton>
