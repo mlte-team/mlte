@@ -2,11 +2,7 @@
 
 from sqlalchemy.orm import Session
 
-from mlte.report.model import (
-    CommentDescriptor,
-    QuantitiveAnalysisDescriptor,
-    ReportModel,
-)
+from mlte.report.model import CommentDescriptor, ReportModel
 from mlte.store.artifact.underlying.rdbs import (
     card_factory,
     result_factory,
@@ -51,7 +47,6 @@ def create_report_orm(
         test_results_identifier=report.test_results_id,
         test_results=results_orm,
         comments=[],
-        quantitative_analysis_content=report.quantitative_analysis.content,
     )
 
     # Create list of comment objects.
@@ -82,8 +77,5 @@ def create_report_model(report_orm: DBReport) -> ReportModel:
             for comment in report_orm.comments
             if comment.content is not None
         ],
-        quantitative_analysis=QuantitiveAnalysisDescriptor(
-            content=report_orm.quantitative_analysis_content
-        ),
     )
     return body

@@ -17,11 +17,7 @@ from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.report.model import (
-    CommentDescriptor,
-    QuantitiveAnalysisDescriptor,
-    ReportModel,
-)
+from mlte.report.model import CommentDescriptor, ReportModel
 from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
 from mlte.store.artifact.store import ArtifactStore
@@ -44,7 +40,6 @@ class Report(Artifact):
         test_results_id: str = TestResults.get_default_id(),
         test_results_model: Optional[TestResultsModel] = None,
         comments: List[CommentDescriptor] = [],
-        quantitative_analysis: QuantitiveAnalysisDescriptor = QuantitiveAnalysisDescriptor(),
     ) -> None:
         """
         Creates a Report.
@@ -57,7 +52,6 @@ class Report(Artifact):
         :param test_results_id: The id of the test results to use (defaults to default results id).
         :param test_results_model: A TestResultsModel object; if None, TestResults from the provided id will be loaded.
         :param comments: Optional comments to add.
-        :quantitative_analysis: Optional additional analysis to add.
         """
         super().__init__(identifier, ArtifactType.REPORT)
 
@@ -96,9 +90,6 @@ class Report(Artifact):
         self.comments = comments
         """A collection of comments for the report."""
 
-        self.quantitative_analysis = quantitative_analysis
-        """The quantitative analysis for the evaluation."""
-
     def to_model(self) -> ArtifactModel:
         """Convert a report artifact to its corresponding model."""
         return ArtifactModel(
@@ -111,7 +102,6 @@ class Report(Artifact):
                 test_results_id=self.test_results_id,
                 test_results=self.test_results_model,
                 comments=self.comments,
-                quantitative_analysis=self.quantitative_analysis,
             ),
         )
 
@@ -134,7 +124,6 @@ class Report(Artifact):
             test_results_id=body.test_results_id,
             test_results_model=body.test_results,
             comments=body.comments,
-            quantitative_analysis=body.quantitative_analysis,
         )
 
     # Overriden.

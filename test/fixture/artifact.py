@@ -34,11 +34,7 @@ from mlte.negotiation.model import (
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
-from mlte.report.model import (
-    CommentDescriptor,
-    QuantitiveAnalysisDescriptor,
-    ReportModel,
-)
+from mlte.report.model import CommentDescriptor, ReportModel
 from mlte.results.model import ResultModel, TestResultsModel
 from mlte.tests.model import TestCaseModel, TestSuiteModel
 from mlte.tests.test_suite import TestSuite
@@ -334,5 +330,4 @@ def make_complete_report() -> ReportModel:
         test_results_id="default",
         test_results=_make_test_results(complete=True),
         comments=[CommentDescriptor(content="content")],
-        quantitative_analysis=QuantitiveAnalysisDescriptor(content="analysis"),
     )

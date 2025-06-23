@@ -262,10 +262,6 @@ export class CommentDescriptor {
   constructor(public content: string = "") {}
 }
 
-export class QuantitativeAnalysisDescriptor {
-  constructor(public content?: string) {}
-}
-
 export class ReportModel {
   public readonly artifact_type = "report";
   constructor(
@@ -276,7 +272,6 @@ export class ReportModel {
     public test_results_id: string = "",
     public test_results: TestResultsModel = new TestResultsModel(),
     public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
-    public quantitative_analysis: QuantitativeAnalysisDescriptor = new QuantitativeAnalysisDescriptor(),
   ) {}
 }
 
