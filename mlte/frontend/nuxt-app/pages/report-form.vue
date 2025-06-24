@@ -75,10 +75,6 @@
       <UsaTextarea v-model="comment.content"> </UsaTextarea>
     </div> -->
 
-    <!-- TODO: Implement this visualization -->
-    <!-- <h3>Quantitative Analysis</h3>
-    <p>No quantitative analysis included with this report.</p> -->
-
     <hr />
     <h1 class="section-header">Additional Context</h1>
 
