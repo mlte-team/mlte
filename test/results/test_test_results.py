@@ -11,7 +11,7 @@ import pytest
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.types.integer import Integer
-from mlte.results.result import Result
+from mlte.results.result import Failure, Info, Result
 from mlte.results.test_results import TestResults
 from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.test_suite import TestSuite
@@ -51,3 +51,25 @@ def test_no_result():
     results: Dict[str, Result] = {}
     with pytest.raises(RuntimeError):
         _ = TestResults(test_suite=test_suite, results=results)
+
+
+def test_convert_results():
+    # Results can be converted.
+
+    test_id = "Test2"
+    auto_msg = "please check manually"
+    manual_msg = "I vouch for this"
+
+    test_results = TestResults.from_model(
+        ArtifactFactory.make(ArtifactType.TEST_RESULTS, complete=True)
+    )
+    test_results.results[test_id] = Info(manual_msg)
+
+    test_results.convert_result(test_id, Failure, auto_msg)
+
+    result = test_results.results[test_id]
+    assert type(result) is Failure
+    assert (
+        result.message
+        == f"Manually validated: {auto_msg} (original message: {manual_msg})"
+    )

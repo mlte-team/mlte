@@ -232,7 +232,6 @@ To communicate results and examine findings, `MLTE` produces a report. The `MLTE
 from mlte.report.artifact import (
     Report,
     CommentDescriptor,
-    QuantitiveAnalysisDescriptor,
 )
 from mlte.negotiation.artifact import NegotiationCard
 
@@ -243,9 +242,6 @@ report = Report(
             content="This model should not be used for nefarious purposes."
         )
     ],
-    quantitative_analysis=QuantitiveAnalysisDescriptor(
-        content="Insert graph here."
-    ),
 )
 
 negotiation_card = NegotiationCard.load()

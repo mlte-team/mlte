@@ -52,9 +52,6 @@ class DBReport(DBBase):
         back_populates="report", cascade="all, delete-orphan"
     )
 
-    # Analysis.
-    quantitative_analysis_content: Mapped[Optional[str]]
-
     def __repr__(self) -> str:
         return f"Report(id={self.id!r}, artifact={self.artifact!r})"
 

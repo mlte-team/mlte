@@ -23,7 +23,7 @@
       v-model="form.negotiation_card.system_requirements"
     />
 
-    <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
+    <h2 class="section-header">Test Results</h2>
     <table class="table usa-table usa-table--borderless">
       <thead>
         <tr>
@@ -74,10 +74,6 @@
     <div v-for="(comment, commentIndex) in form.comments" :key="commentIndex">
       <UsaTextarea v-model="comment.content"> </UsaTextarea>
     </div> -->
-
-    <!-- TODO: Implement this visualization -->
-    <!-- <h3>Quantitative Analysis</h3>
-    <p>No quantitative analysis included with this report.</p> -->
 
     <hr />
     <h1 class="section-header">Additional Context</h1>

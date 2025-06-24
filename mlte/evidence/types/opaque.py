@@ -58,6 +58,12 @@ class Opaque(Evidence):
         ), "Broken Precondition."
         return Opaque(data=body.value.data).with_metadata(body.metadata)
 
+    # Overriden.
+    @classmethod
+    def load(cls, identifier: typing.Optional[str] = None) -> Opaque:
+        evidence = super().load(identifier)
+        return typing.cast(Opaque, evidence)
+
     def __getitem__(self, key: str) -> Any:
         """
         Access an item from the wrapped data object.

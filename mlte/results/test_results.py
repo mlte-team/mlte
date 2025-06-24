@@ -5,13 +5,14 @@ TestResults class implementation.
 from __future__ import annotations
 
 import typing
+from typing import Type, Union
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.results.model import TestResultsModel
-from mlte.results.result import Result
+from mlte.results.result import Failure, Info, Result, Success
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
@@ -127,7 +128,7 @@ class TestResults(Artifact):
     # -------------------------------------------------------------------------
 
     def print_results(self, result_type: str = "all"):
-        """Prints the validated results per property, can be filtered by result type."""
+        """Prints the validated results per test case, can be filtered by result type."""
         if result_type not in ["all", "Success", "Failure", "Info"]:
             raise RuntimeError(f"Invalid type: {result_type}")
 
@@ -136,6 +137,33 @@ class TestResults(Artifact):
                 print(
                     f" > Test Case: {test_case_id}, result: {result}, details: {result.message}"
                 )
+
+    def convert_result(
+        self,
+        test_case_id: str,
+        result_type: Union[Type[Success], Type[Failure]],
+        message: str,
+    ) -> None:
+        """Converts a given Info result into the provided type."""
+        if test_case_id not in self.results:
+            raise RuntimeError(
+                f"Test case {test_case_id} is not in the list of results."
+            )
+
+        result = self.results[test_case_id]
+        if not isinstance(result, Info):
+            raise RuntimeError(
+                "Only results of type Info can be manually validated."
+            )
+
+        # Create new result based on given type.
+        new_result_msg = f"Manually validated: {message} (original message: {result.message})"
+        new_result = result_type(new_result_msg)
+        self.results[test_case_id] = new_result
+
+    # -------------------------------------------------------------------------
+    # Default overriden.
+    # -------------------------------------------------------------------------
 
     @staticmethod
     def get_default_id() -> str:

@@ -705,25 +705,6 @@
       "title": "QASDescriptor",
       "type": "object"
     },
-    "QuantitiveAnalysisDescriptor": {
-      "description": "The model implementation for report quantitative analysis.",
-      "properties": {
-        "content": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Content"
-        }
-      },
-      "title": "QuantitiveAnalysisDescriptor",
-      "type": "object"
-    },
     "ResultModel": {
       "description": "A description of a Result.",
       "properties": {
@@ -1104,12 +1085,6 @@
       },
       "title": "Comments",
       "type": "array"
-    },
-    "quantitative_analysis": {
-      "$ref": "#/$defs/QuantitiveAnalysisDescriptor",
-      "default": {
-        "content": null
-      }
     }
   },
   "required": [
