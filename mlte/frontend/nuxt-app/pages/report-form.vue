@@ -23,7 +23,7 @@
       v-model="form.negotiation_card.system_requirements"
     />
 
-    <h2 class="section-header">Test Results (Quantitative Analysis)</h2>
+    <h2 class="section-header">Test Results</h2>
     <table class="table usa-table usa-table--borderless">
       <thead>
         <tr>
