@@ -40,7 +40,9 @@ class DBNegotiationCard(DBBase):
     sys_usage_context: Mapped[Optional[str]]
     sys_risks_fp: Mapped[Optional[str]]
     sys_risks_fn: Mapped[Optional[str]]
-    sys_risks_other: Mapped[Optional[str]]
+    sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
+        cascade="all, delete-orphan"
+    )
 
     # Data
     data_descriptors: Mapped[list[DBDataDescriptor]] = relationship(
@@ -82,11 +84,6 @@ class DBNegotiationCard(DBBase):
     )
 
 
-# -------------------------------------------------------------------------
-# Shared Elements
-# -------------------------------------------------------------------------
-
-
 class DBGoalDescriptor(DBBase):
     __tablename__ = "nc_goal_descriptor"
 
@@ -111,7 +108,7 @@ class DBMetricDescriptor(DBBase):
     description: Mapped[Optional[str]]
     baseline: Mapped[Optional[str]]
     goal_descriptor_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_goal_descriptor.id")
+        ForeignKey(DBGoalDescriptor.get_id_column())
     )
 
     goal_descriptor: Mapped[DBGoalDescriptor] = relationship(
@@ -119,7 +116,20 @@ class DBMetricDescriptor(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"MetricDescriptor(id={self.id!r}, name={self.description!r}, baseline={self.baseline!r})"
+        return f"MetricDescriptor(id={self.id!r}, description={self.description!r}, baseline={self.baseline!r})"
+
+
+class DBGeneralRisk(DBBase):
+    __tablename__ = "nc_general_risk"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    description: Mapped[str]
+    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey(DBNegotiationCard.get_id_column())
+    )
+
+    def __repr__(self) -> str:
+        return f"Risk(id={self.id!r}, description={self.description!r})"
 
 
 class DBProblemType(DBBase):
@@ -130,6 +140,21 @@ class DBProblemType(DBBase):
 
     def __repr__(self) -> str:
         return f"ProblemType(id={self.id!r}, name={self.name!r})"
+
+
+# -------------------------------------------------------------------------
+# Data description.
+# -------------------------------------------------------------------------
+
+
+class DBDataClassification(DBBase):
+    __tablename__ = "nc_data_classification"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+
+    def __repr__(self) -> str:
+        return f"DataClassification(id={self.id!r}, name={self.name!r})"
 
 
 class DBDataDescriptor(DBBase):
@@ -144,7 +169,7 @@ class DBDataDescriptor(DBBase):
     rights: Mapped[Optional[str]]
     policies: Mapped[Optional[str]]
     classification_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_data_classification.id")
+        ForeignKey(DBDataClassification.get_id_column())
     )
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
@@ -162,16 +187,6 @@ class DBDataDescriptor(DBBase):
         return f"DataDescriptor(id={self.id!r}, description={self.description!r}, source={self.source!r}, access={self.access!r}, rights={self.rights!r}, policies={self.policies!r})"
 
 
-class DBDataClassification(DBBase):
-    __tablename__ = "nc_data_classification"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-
-    def __repr__(self) -> str:
-        return f"DataClassification(id={self.id!r}, name={self.name!r})"
-
-
 class DBLabelDescriptor(DBBase):
     __tablename__ = "nc_label_descriptor"
 
@@ -180,7 +195,7 @@ class DBLabelDescriptor(DBBase):
     description: Mapped[Optional[str]]
     percentage: Mapped[Optional[float]]
     data_descriptor_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_data_descriptor.id")
+        ForeignKey(DBDataDescriptor.get_id_column())
     )
 
     data_descriptor: Mapped[DBDataDescriptor] = relationship(
@@ -202,7 +217,7 @@ class DBFieldDescriptor(DBBase):
     missing_values: Mapped[Optional[str]]
     special_values: Mapped[Optional[str]]
     data_descriptor_id: Mapped[int] = mapped_column(
-        ForeignKey("nc_data_descriptor.id")
+        ForeignKey(DBDataDescriptor.get_id_column())
     )
 
     data_descriptor: Mapped[DBDataDescriptor] = relationship(
@@ -211,6 +226,11 @@ class DBFieldDescriptor(DBBase):
 
     def __repr__(self) -> str:
         return f"LabelDescriptor(id={self.id!r}, name={self.name!r}, description={self.description!r}, type={self.type!r}, expected_values={self.expected_values!r}, missing_values={self.missing_values!r}, special_values={self.special_values!r})"
+
+
+# -------------------------------------------------------------------------
+# Model and QAS data.
+# -------------------------------------------------------------------------
 
 
 class DBModelIODescriptor(DBBase):

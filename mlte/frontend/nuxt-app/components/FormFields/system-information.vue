@@ -154,7 +154,7 @@
     </template>
   </UsaTextInput>
 
-  <UsaTextInput v-model="props.modelValue.risks.fn">
+  <UsaTextInput v-model="props.modelValue.risks.fn" style="margin-bottom: 1em">
     <template #label>
       False Negative Risk
       <InfoIcon>
@@ -172,14 +172,43 @@
     </template>
   </UsaTextInput>
 
-  <UsaTextInput v-model="props.modelValue.risks.other">
-    <template #label>
+  <div class="input-group">
+    <SubHeader :render-example="false">
       Other Risks of Producing Incorrect Results
-      <InfoIcon>
+      <template #info>
         What are other risks of producing incorrect results?
-      </InfoIcon>
-    </template>
-  </UsaTextInput>
+      </template>
+    </SubHeader>
+    <div
+      v-for="(risk, riskIndex) in props.modelValue.risks.other"
+      :key="riskIndex"
+    >
+      <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
+      <UsaTextInput v-model="props.modelValue.risks.other[riskIndex]">
+        <template #label>
+          Risk
+          <InfoIcon>
+            Short description for the risk.
+            <br />
+            <br />
+            <i>
+              Example: Model may not indicate proper results if data is out of
+              bounds.
+            </i>
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
+
+      <div class="margin-button">
+        <DeleteButton @click="deleteRisk(riskIndex)">
+          Delete Risk
+        </DeleteButton>
+      </div>
+      <hr />
+    </div>
+
+    <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -198,8 +227,13 @@ const parentAddGoal = () => {
   addGoal();
 };
 
+const parentAddRisk = () => {
+  addRisk();
+};
+
 defineExpose({
   parentAddGoal,
+  parentAddRisk,
 });
 
 function addGoal() {
@@ -209,6 +243,16 @@ function addGoal() {
 function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
     props.modelValue.goals.splice(goalIndex, 1);
+  }
+}
+
+function addRisk() {
+  props.modelValue.risks.other.push("");
+}
+
+function deleteRisk(riskIndex: number) {
+  if (confirm("Are you sure you want to delete this risk?")) {
+    props.modelValue.risks.other.splice(riskIndex, 1);
   }
 }
 

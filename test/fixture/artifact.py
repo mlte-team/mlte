@@ -190,7 +190,7 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
             problem_type=ProblemType.CLASSIFICATION,
             task="task",
             usage_context="usage_context",
-            risks=RiskDescriptor(fp="fp", fn="fn", other="other"),
+            risks=RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
         ),
         data=[
             DataDescriptor(

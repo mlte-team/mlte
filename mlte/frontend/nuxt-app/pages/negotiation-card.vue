@@ -246,7 +246,10 @@ function descriptorUpload(event: Event, descriptorName: string) {
               baseline: string;
             }) => {
               let lastGoalIndex = form.value.system.goals.length - 1;
-              if (!goalEmpty(form.value.system.goals[lastGoalIndex])) {
+              if (
+                lastGoalIndex < 0 ||
+                !goalEmpty(form.value.system.goals[lastGoalIndex])
+              ) {
                 // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
                 systemInformationRef.value.parentAddGoal();
                 lastGoalIndex += 1;
@@ -267,10 +270,23 @@ function descriptorUpload(event: Event, descriptorName: string) {
           form.value.system.usage_context = document.usage_context;
           form.value.system.risks.fp = document.risks.risk_fp;
           form.value.system.risks.fn = document.risks.risk_fn;
-          form.value.system.risks.other = document.risks.risk_other;
+          let lastRiskIndex = form.value.system.risks.other.length - 1;
+          if (
+            lastRiskIndex < 0 ||
+            form.value.system.risks.other[lastRiskIndex] == ""
+          ) {
+            // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
+            systemInformationRef.value.parentAddRisk();
+            lastRiskIndex += 1;
+            form.value.system.risks.other[lastRiskIndex] =
+              document.risks.risk_other;
+          }
         } else if (descriptorName === "Raw Data") {
           let lastDataIndex = form.value.data.length - 1;
-          if (!dataItemEmpty(form.value.data[lastDataIndex])) {
+          if (
+            lastDataIndex < 0 ||
+            !dataItemEmpty(form.value.data[lastDataIndex])
+          ) {
             // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
             dataRef.value.parentAddDataItem();
             lastDataIndex += 1;
@@ -365,6 +381,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
                 let lastSpecIndex =
                   form.value.model.input_specification.length - 1;
                 if (
+                  lastSpecIndex < 0 ||
                   !specEmpty(
                     form.value.model.input_specification[lastSpecIndex],
                   )

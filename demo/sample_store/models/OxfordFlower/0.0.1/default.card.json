@@ -38,7 +38,7 @@
             "risks": {
                 "fp": "Poor user experience due to incorrectly identified flowers",
                 "fn": "Poor user experience due to inability to identify flowers",
-                "other": ""
+                "other": ["Wrong results due to unknown flowers", "Users do not like the results due to strange behavior."]
             }
         },
         "data": [

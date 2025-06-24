@@ -26,6 +26,7 @@ from mlte.store.artifact.underlying.rdbs.card_metadata import (
     DBQAS,
     DBDataDescriptor,
     DBFieldDescriptor,
+    DBGeneralRisk,
     DBGoalDescriptor,
     DBLabelDescriptor,
     DBMetricDescriptor,
@@ -79,7 +80,7 @@ def create_card_orm(
         sys_usage_context=negotiation_card.system.usage_context,
         sys_risks_fp=negotiation_card.system.risks.fp,
         sys_risks_fn=negotiation_card.system.risks.fn,
-        sys_risks_other=negotiation_card.system.risks.other,
+        sys_risks=[],
         model_dev_resources=model_dev_resources_orm,
         model_prod_resources=model_prod_resources_orm,
         model_prod_deployment_platform=negotiation_card.model.deployment_platform,
@@ -89,6 +90,11 @@ def create_card_orm(
         data_descriptors=[],
         system_requirements=[],
     )
+
+    # Create list of risks.
+    for risk in negotiation_card.system.risks.other:
+        risk_orm = DBGeneralRisk(description=risk)
+        negotiation_card_orm.sys_risks.append(risk_orm)
 
     # Create list of system goal objects.
     for goal in negotiation_card.system.goals:
@@ -137,7 +143,9 @@ def create_card_model(
             risks=RiskDescriptor(
                 fp=negotiation_card_orm.sys_risks_fp,
                 fn=negotiation_card_orm.sys_risks_fn,
-                other=negotiation_card_orm.sys_risks_other,
+                other=[
+                    risk.description for risk in negotiation_card_orm.sys_risks
+                ],
             ),
             problem_type=(
                 ProblemType(negotiation_card_orm.sys_problem_type.name)
