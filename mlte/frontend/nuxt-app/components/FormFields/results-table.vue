@@ -34,7 +34,8 @@
         <td v-else>{{ result.type }}</td>
         <td>
           <div
-            v-for="(test_case, test_case_index) in props.modelValue.test_suite.test_cases"
+            v-for="(test_case, test_case_index) in props.modelValue.test_suite
+              .test_cases"
             :key="test_case_index"
           >
             <span v-if="key == test_case.identifier">
