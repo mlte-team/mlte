@@ -37,34 +37,51 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(finding, index) in findings" :key="index">
+        <tr v-for="(result, key) in form.test_results.results" :key="key">
           <td
-            v-if="finding.status == 'Success'"
+            v-if="result.type == 'Success'"
             style="background-color: rgba(210, 232, 221, 255)"
           >
-            {{ finding.status }}
+            {{ result.type }}
           </td>
           <td
-            v-else-if="finding.status == 'Info'"
+            v-else-if="result.type == 'Info'"
             style="background-color: rgba(255, 243, 205, 255)"
           >
-            {{ finding.status }}
+            {{ result.type }}
           </td>
           <td
-            v-else-if="finding.status == 'Failure'"
+            v-else-if="result.type == 'Failure'"
             style="background-color: rgba(248, 216, 219, 255)"
           >
-            {{ finding.status }}
+            {{ result.type }}
           </td>
-          <td v-else>{{ finding.status }}</td>
+          <td v-else>{{ result.type }}</td>
           <td>
-            <div v-for="(item, qasIndex) in finding.qas_list" :key="qasIndex">
-              {{ item.id }} - {{ item.qa }}
+            <div
+              v-for="(test_case, test_case_index) in form.test_results
+                .test_suite.test_cases"
+              :key="test_case_index"
+            >
+              <span v-if="key == test_case.identifier">
+                <span
+                  v-for="(qas, qasIndex) in test_case.qas_list"
+                  :key="qasIndex"
+                >
+                  {{ qas }} - {{ key }}
+                </span>
+              </span>
             </div>
           </td>
-          <td>{{ finding.measurement }}</td>
-          <td>{{ finding.test_case_id }}</td>
-          <td>{{ finding.message }}</td>
+          <td v-if="result.evidence_metadata">
+            {{ result.evidence_metadata.measurement.measurement_class }}
+          </td>
+          <td v-else>Manually validated</td>
+          <td v-if="result.evidence_metadata">
+            {{ result.evidence_metadata.test_case_id }}
+          </td>
+          <td v-else>Manually validated</td>
+          <td>{{ result.message }}</td>
         </tr>
       </tbody>
     </table>
@@ -115,7 +132,6 @@ const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = queryArtifactId !== undefined;
 
 const userInputArtifactId = ref("");
-const findings = ref<Array<Finding>>([]);
 const form = ref<ReportModel>(new ReportModel());
 
 const formErrors = ref({
@@ -129,16 +145,6 @@ if (queryArtifactId !== undefined) {
     queryVersion as string,
     queryArtifactId as string,
   );
-
-  if (form.value.test_results_id) {
-    findings.value = await loadTestResults(
-      token.value as string,
-      queryModel as string,
-      queryVersion as string,
-      form.value.test_results_id,
-      form.value.negotiation_card.system_requirements,
-    );
-  }
 }
 
 async function submit() {
