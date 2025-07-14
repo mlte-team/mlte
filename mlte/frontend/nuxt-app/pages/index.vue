@@ -152,7 +152,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/report-form',
+                      path: '/report-view',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -160,7 +160,7 @@
                       },
                     }"
                   >
-                    <UsaButton class="primary-button"> Edit </UsaButton>
+                    <UsaButton class="primary-button"> View </UsaButton>
                   </NuxtLink>
                   <NuxtLink
                     target="_blank"
@@ -179,29 +179,6 @@
               </tr>
             </tbody>
           </table>
-          <NuxtLink
-            :to="{
-              path: '/report-form',
-              query: {
-                model: selectedModel,
-                version: selectedVersion,
-              },
-            }"
-          >
-            <UsaButton
-              :disabled="selectedModel === '' || selectedVersion === ''"
-              class="primary-button"
-              style="float: left"
-            >
-              New
-            </UsaButton>
-          </NuxtLink>
-          <p
-            v-if="selectedModel === '' || selectedVersion === ''"
-            style="float: left; color: red"
-          >
-            Select a model and version to start a new report.
-          </p>
         </div>
       </UsaAccordionItem>
 
