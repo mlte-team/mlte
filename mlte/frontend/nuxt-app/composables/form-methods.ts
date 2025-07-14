@@ -27,6 +27,7 @@ export async function loadReportData(
   version: string,
   artifactId: string,
 ): Promise<ReportModel> {
+  // Gets report from backend and returns report response body
   const { data: reportData, error } = await useFetch<ReportApiResponse>(
     config.public.apiPath +
       "/model/" +

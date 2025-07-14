@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-if="!newUserFlag">
-      <h2 class="section-header" style="display: inline">
+      <h1 class="section-header" style="display: inline">
         {{ modelValue.username }}
-      </h2>
+      </h1>
       <UsaButton
         v-if="!changePasswordFlag"
         class="secondary-button sub-header-float-button"

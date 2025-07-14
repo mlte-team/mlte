@@ -2,20 +2,7 @@
   <NuxtLayout name="base-layout">
     <title>Report</title>
     <template #page-title>Report</template>
-    <UsaTextInput
-      v-if="queryArtifactId === undefined"
-      v-model="userInputArtifactId"
-      :error="formErrors.identifier"
-    >
-      <template #label>
-        Artifact ID
-        <InfoIcon>
-          The Artifact ID this report <br />
-          will be saved under upon submission.
-        </InfoIcon>
-      </template>
-      <template #error-message> Identifier cannot be empty </template>
-    </UsaTextInput>
+    <h1 class="section-header">{{ queryArtifactId }}</h1>
 
     <FormFieldsSystemInformation v-model="form.negotiation_card.system" />
 
@@ -68,12 +55,7 @@ const queryModel = useRoute().query.model;
 const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 
-const userInputArtifactId = ref("");
 const form = ref<ReportModel>(new ReportModel());
-
-const formErrors = ref({
-  identifier: false,
-});
 
 if (queryArtifactId !== undefined) {
   form.value = await loadReportData(
