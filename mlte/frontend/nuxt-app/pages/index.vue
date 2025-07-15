@@ -245,13 +245,14 @@ const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel", {
   decode(value) {
-    return value;
+    return decodeURIComponent(value);
   },
 });
+
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
   decode(value) {
-    return value;
+    return decodeURIComponent(value);
   },
 });
 selectedVersion.value = selectedVersion.value || "";
@@ -533,6 +534,7 @@ async function submitNewModel(modelName: string) {
           populateModelVersionLists();
           alert(`Model, ${modelName} has been created.`);
           newModelIdentifier.value = "";
+          selectModel(modelName, true);
         }
       },
       onResponseError({ response }) {
@@ -565,6 +567,7 @@ async function submitNewVersion(modelName: string, versionName: string) {
             `Version, ${versionName} for model, ${modelName} has been created`,
           );
           newVersionIdentifier.value = "";
+          selectVersion(versionName);
         }
       },
       onResponseError({ response }) {
