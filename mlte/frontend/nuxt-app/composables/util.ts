@@ -19,7 +19,7 @@ export async function fetchArtifact(
   version: string,
   artifactId: string,
 ): Promise<ArtifactModel> {
-  const data: ArtifactModel = await $fetch(
+  const data: ArtifactModel = await $fetch<ArtifactModel>(
     config.public.apiPath +
       "/model/" +
       model +
