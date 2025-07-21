@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const editFlag = ref(false);
@@ -37,45 +36,52 @@ const selectedGroup = ref<Group>(new Group());
 
 updateGroupList();
 
+/**
+ * 
+ */
 async function updateGroupList() {
-  await $fetch(config.public.apiPath + "/groups/details", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        response._data.forEach((group: Group) => {
-          groupList.value.push(new Group(group.name, group.permissions));
-        });
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const data: Array<Group> | null = await useApi(
+    "/groups/details",
+    "GET",
+    token.value as string,
+  );
+  if (data) {
+    groupList.value = [];
+    data.forEach((group: Group) => {
+      groupList.value.push(group);
+    });
+  }
 }
 
+/**
+ * 
+ */
 function resetSelectedGroup() {
   selectedGroup.value = new Group();
 }
 
+/**
+ * 
+ */
 function addGroup() {
   resetSelectedGroup();
   editFlag.value = true;
   newGroupFlag.value = true;
 }
 
+/**
+ * 
+ * @param group 
+ */
 function editGroup(group: Group) {
   selectedGroup.value = group;
   editFlag.value = true;
   newGroupFlag.value = false;
 }
 
+/**
+ * 
+ */
 async function deleteGroup(groupName: string) {
   if (
     !confirm("Are you sure you want to delete the group: " + groupName + "?")
@@ -83,26 +89,20 @@ async function deleteGroup(groupName: string) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/group/" + groupName, {
-    retry: 0,
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        updateGroupList();
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const data = await useApi(
+    "/group/" + groupName,
+    "DELETE",
+    token.value as string,
+  );
+  if (data) {
+    updateGroupList();
+    successfulSubmission("Group", groupName, "deleted");
+  }
 }
 
+/**
+ * 
+ */
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -110,56 +110,33 @@ function cancelEdit() {
   }
 }
 
+/**
+ * 
+ */
 async function saveGroup(group: Group) {
-  try {
-    if (newGroupFlag.value) {
-      await $fetch(config.public.apiPath + "/group", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(group),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateGroupList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    } else {
-      await $fetch(config.public.apiPath + "/group", {
-        retry: 0,
-        method: "PUT",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(group),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateGroupList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+  let error = true;
+
+  if (newGroupFlag.value) {
+    const data = await useApi("/group", "POST", token.value as string, {
+      body: JSON.stringify(group),
+    });
+    if (data) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const data = await useApi("/group", "PUT", token.value as string, {
+      body: JSON.stringify(group),
+    });
+    if (data) {
+      error = false;
+    }
   }
-  alert("Group has been saved successfully.");
-  resetSelectedGroup();
-  editFlag.value = false;
+
+  if (!error) {
+    updateGroupList();
+    resetSelectedGroup();
+    editFlag.value = false;
+    successfulSubmission("Group", group.name, "saved");
+  }
 }
 </script>

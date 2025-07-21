@@ -1,7 +1,5 @@
 import type { Dictionary } from "../composables/types";
 
-const config = useRuntimeConfig();
-
 export function resetFormErrors(
   formErrors: Dictionary<boolean>,
 ): Dictionary<boolean> {
@@ -10,40 +8,4 @@ export function resetFormErrors(
   }
 
   return formErrors;
-}
-
-// Fetch a artifact by ID.
-export async function fetchArtifact(
-  token: string,
-  model: string,
-  version: string,
-  artifactId: string,
-): Promise<ArtifactModel> {
-  const data: ArtifactModel = await $fetch<ArtifactModel>(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        return response._data;
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
-  );
-
-  return data;
 }

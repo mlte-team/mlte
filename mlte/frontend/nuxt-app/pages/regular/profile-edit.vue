@@ -58,20 +58,13 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const config = useRuntimeConfig();
 const token = useCookie("token");
 const userCookie = useCookie("user");
 
-const { data: user } = await useFetch<User>(
-  config.public.apiPath + "/user/me",
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const user = ref<User>(new User());
+user.value =
+  (await useApi("/user/me", "GET", token.value as string)) || new User();
+
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -112,40 +105,23 @@ async function submit() {
     return;
   }
 
-  try {
-    const requestBody: UserUpdateBody = {
-      username: user.value!.username,
-      email: user.value!.email,
-      full_name: user.value!.full_name,
-      disabled: false,
-      role: user.value!.role,
-    };
+  const requestBody: UserUpdateBody = {
+    username: user.value!.username,
+    email: user.value!.email,
+    full_name: user.value!.full_name,
+    disabled: false,
+    role: user.value!.role,
+  };
 
-    if (resetPasswordFlag.value) {
-      requestBody.password = newPassword.value;
-    }
+  if (resetPasswordFlag.value) {
+    requestBody.password = newPassword.value;
+  }
 
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "PUT",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: requestBody,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          navigateTo("/");
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
-  } catch (exception) {
-    console.log(exception);
+  const data = await useApi("/user", "PUT", token.value as string, {
+    body: requestBody,
+  });
+  if (data) {
+    navigateTo("/");
   }
 }
 </script>

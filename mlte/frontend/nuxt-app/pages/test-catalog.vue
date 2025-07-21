@@ -45,7 +45,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
 const token = useCookie("token");
 
 const editFlag = ref(false);
@@ -58,122 +57,72 @@ const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 populateFullEntryList();
 
 async function populateFullEntryList() {
-  await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-    retry: 0,
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    body: {
-      filter: {
-        type: "all",
-      },
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        entryList.value = response._data;
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const data: Array<TestCatalogEntry> | null = await useApi(
+    "/catalogs/entry/search",
+    "POST",
+    token.value as string,
+    { body: { filter: { type: "all" } } },
+  );
+  entryList.value = data || [];
 }
 
 async function search() {
   if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
   } else if (QACategorySearchValue.value === "") {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "tag",
-          name: "tags",
-          value: tagSearchValue.value,
+    const data: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      token.value as string,
+      {
+        body: {
+          filter: { type: "tag", name: "tags", value: tagSearchValue.value },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    entryList.value = data || [];
   } else if (tagSearchValue.value === "") {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "property",
-          name: "qa_category",
-          value: QACategorySearchValue.value,
+    const data: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      token.value as string,
+      {
+        body: {
+          filter: {
+            type: "property",
+            name: "qa_category",
+            value: QACategorySearchValue.value,
+          },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    entryList.value = data || [];
   } else {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "and",
-          filters: [
-            {
-              type: "tag",
-              name: "tags",
-              value: tagSearchValue.value,
-            },
-            {
-              type: "property",
-              name: "qa_category",
-              value: QACategorySearchValue.value,
-            },
-          ],
+    const data: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      token.value as string,
+      {
+        body: {
+          filter: {
+            type: "and",
+            filters: [
+              {
+                type: "tag",
+                name: "tags",
+                value: tagSearchValue.value,
+              },
+              {
+                type: "property",
+                name: "qa_category",
+                value: QACategorySearchValue.value,
+              },
+            ],
+          },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    entryList.value = data || [];
   }
 }
 
@@ -206,27 +155,15 @@ async function deleteEntry(catalogId: string, entryId: string) {
     return;
   }
 
-  await $fetch(
-    config.public.apiPath + "/catalog/" + catalogId + "/entry/" + entryId,
-    {
-      retry: 0,
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          populateFullEntryList();
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+  const data = await useApi(
+    "/catalog/" + catalogId + "/entry/" + entryId,
+    "DELETE",
+    token.value as string,
   );
+  if (data) {
+    populateFullEntryList();
+    successfulSubmission("Entry", entryId, "deleted");
+  }
 }
 
 function cancelEdit() {
@@ -237,68 +174,35 @@ function cancelEdit() {
 }
 
 async function saveEntry(entry: TestCatalogEntry) {
-  try {
-    if (newEntryFlag.value) {
-      await $fetch(
-        config.public.apiPath +
-          "/catalog/" +
-          entry.header.catalog_id +
-          "/entry",
-        {
-          retry: 0,
-          method: "POST",
-          body: JSON.stringify(entry),
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              populateFullEntryList();
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
-    } else {
-      await $fetch(
-        config.public.apiPath +
-          "/catalog/" +
-          entry.header.catalog_id +
-          "/entry",
-        {
-          retry: 0,
-          method: "PUT",
-          body: JSON.stringify(entry),
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              populateFullEntryList();
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
+  let error = true;
+
+  if (newEntryFlag.value) {
+    const data = await useApi(
+      "/catalog/" + entry.header.catalog_id + "/entry",
+      "POST",
+      token.value as string,
+      { body: JSON.stringify(entry) },
+    );
+    if (data) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const data = await useApi(
+      "catalog/" + entry.header.catalog_id + "/entry",
+      "PUT",
+      token.value as string,
+      { body: JSON.stringify(entry) },
+    );
+    if (data) {
+      error = false;
+    }
   }
 
-  alert("Entry has been saved successfully.");
-  resetSelectedEntry();
-  editFlag.value = false;
+  if (!error) {
+    populateFullEntryList();
+    resetSelectedEntry();
+    editFlag.value = false;
+    successfulSubmission("Entry", entry.header.identifier, "saved");
+  }
 }
 </script>

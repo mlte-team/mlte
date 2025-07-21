@@ -105,56 +105,39 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const config = useRuntimeConfig();
 const token = useCookie("token");
 const model = useRoute().query.model;
 const version = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
-
-const userInputArtifactId = ref("default.card");
-const creator = ref("");
-const timestamp = ref("");
-const form = ref(new NegotiationCardModel());
-
-const formErrors = ref({
-  identifier: false,
-});
-
 // References to child components used to call their methods when importing descriptors
 const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
 
+const userInputArtifactId = ref("default.card");
+const creator = ref("");
+const timestamp = ref("");
+const form = ref(new NegotiationCardModel());
+const formErrors = ref({
+  identifier: false,
+});
+
 if (queryArtifactId !== undefined) {
-  const { data: cardData, error } = await useFetch<NegotiationApiResponse>(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      queryArtifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+  const cardData: ArtifactModel | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + queryArtifactId,
+    "GET",
+    token.value as string,
   );
-  if (!error.value && cardData.value && isValidNegotiation(cardData.value)) {
-    form.value = cardData.value.body;
-    creator.value = cardData.value.header.creator;
-    timestamp.value = new Date(
-      cardData.value.header.timestamp * 1000,
-    ).toLocaleString("en-US");
+
+  if (cardData && cardData.body.artifact_type == "negotiation_card") {
+    form.value = cardData.body;
+    creator.value = cardData.header.creator;
+    timestamp.value = new Date(cardData.header.timestamp * 1000).toLocaleString(
+      "en-US",
+    );
+  } else {
+    form.value = new NegotiationCardModel();
   }
 }
 
@@ -177,54 +160,28 @@ async function submit() {
   };
 
   if (isValidNegotiation(artifact)) {
-    try {
-      await $fetch(
-        config.public.apiPath +
-          "/model/" +
-          model +
-          "/version/" +
-          version +
-          "/artifact",
-        {
-          retry: 0,
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          body: {
-            artifact,
-            force: forceSaveParam.value,
-            parents: false,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              successfulArtifactSubmission("negotiation card", identifier);
-              forceSaveParam.value = true;
-              if (useRoute().query.artifactId === undefined) {
-                window.location.href =
-                  "/negotiation-card?" +
-                  "model=" +
-                  useRoute().query.model +
-                  "&version=" +
-                  useRoute().query.version +
-                  "&artifactId=" +
-                  identifier;
-              }
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
-    } catch (exception) {
-      console.log(exception);
+    const data = await useApi(
+      "/model/" + model + "/version/" + version + "/artifact",
+      "POST",
+      token.value as string,
+      { body: { artifact, force: forceSaveParam.value, parents: false } },
+    );
+    if (data) {
+      successfulSubmission("Negotiation card", identifier, "saved");
+      forceSaveParam.value = true;
+      if (useRoute().query.artifactId === undefined) {
+        window.location.href =
+          "/negotiation-card?" +
+          "model=" +
+          useRoute().query.model +
+          "&version=" +
+          useRoute().query.version +
+          "&artifactId=" +
+          identifier;
+      }
     }
   } else {
-    console.log("Invalid document attempting to be submitted.");
+    console.log("Invalid negotiation card.");
   }
 }
 

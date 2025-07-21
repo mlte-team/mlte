@@ -29,11 +29,8 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
 const token = useCookie("token");
-
 const emit = defineEmits(["updateAttribute"]);
-
 const props = defineProps({
   initialQualityAttribute: {
     type: String,
@@ -45,30 +42,25 @@ const qaCategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 
 const QACategoryOptions = ref<Array<QAOption>>([]);
-const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QACategoryAPIData = ref([]);
+QACategoryAPIData.value =
+  (await useApi("/custom_list/qa_categories/", "GET", token.value as string)) ||
+  [];
+
 if (QACategoryAPIData.value) {
   addOptionsToList(QACategoryOptions.value, QACategoryAPIData.value);
 }
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
-const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/quality_attributes/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QAapiOptions = ref<Array<CustomListEntry>>([]);
+QAapiOptions.value =
+  (await useApi(
+    "/custom_list/quality_attributes",
+    "GET",
+    token.value as string,
+  )) || [];
+
 if (QAapiOptions.value) {
   addOptionsToList(AllQAOptions.value, QAapiOptions.value);
 }

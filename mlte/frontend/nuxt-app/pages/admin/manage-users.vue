@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
 const token = useCookie("token");
 const userCookie = useCookie("user");
 
@@ -39,80 +38,80 @@ const selectedUser = ref<User>(new User());
 updateUserList();
 resetSelectedUser();
 
+/**
+ * 
+ */
 async function updateUserList() {
-  await $fetch(config.public.apiPath + "/users/details", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        userList.value = response._data;
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const data: Array<User> | null = await useApi(
+    "/users/details",
+    "GET",
+    token.value as string,
+  );
+  if (data) {
+    userList.value = data;
+  }
 }
 
+/**
+ * 
+ */
 function resetSelectedUser() {
   selectedUser.value = new User();
 }
 
+/**
+ * 
+ */
 function addUser() {
   resetSelectedUser();
   editFlag.value = true;
   newUserFlag.value = true;
 }
 
+/**
+ * 
+ */
 function editUser(user: User) {
   selectedUser.value = user;
   editFlag.value = true;
   newUserFlag.value = false;
 }
 
-async function deleteUser(usernameToDelete: string) {
-  if (userCookie.value === usernameToDelete) {
+/**
+ * 
+ * @param username 
+ */
+async function deleteUser(username: string) {
+  if (userCookie.value === username) {
     alert("Cannot delete the active user.");
     return;
   }
-  if (
-    !confirm("Are you sure you want to delete user, " + usernameToDelete + "?")
-  ) {
+  if (!confirm("Are you sure you want to delete user, " + username + "?")) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/user/" + usernameToDelete, {
-    retry: 0,
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        updateUserList();
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const data = await useApi(
+    "/user/" + username,
+    "DELETE",
+    token.value as string,
+  );
+  if (data) {
+    updateUserList();
+  }
 }
 
+/**
+ * 
+ */
 function manageUserClick() {
   if (editFlag.value) {
     cancelEdit();
   }
 }
 
+/**
+ * 
+ */
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -120,56 +119,32 @@ function cancelEdit() {
   }
 }
 
+/**
+ * 
+ * @param user 
+ */
 async function saveUser(user: User) {
-  try {
-    if (newUserFlag.value) {
-      await $fetch(config.public.apiPath + "/user", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(user),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateUserList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    } else {
-      await $fetch(config.public.apiPath + "/user", {
-        retry: 0,
-        method: "PUT",
-        body: JSON.stringify(user),
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateUserList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+  let error = true;
+
+  if (newUserFlag.value) {
+    const data = await useApi("/user", "POST", token.value as string, {
+      body: JSON.stringify(user),
+    });
+    if (data) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const data = await useApi("/user", "PUT", token.value as string);
+    if (data) {
+      error = false;
+    }
   }
-  alert("User has been saved successfully.");
-  resetSelectedUser();
-  editFlag.value = false;
+
+  if (!error) {
+    updateUserList();
+    resetSelectedUser();
+    editFlag.value = false;
+    successfulSubmission("User", user.username, "saved");
+  }
 }
 </script>

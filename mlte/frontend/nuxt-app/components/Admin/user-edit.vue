@@ -106,9 +106,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
 const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
@@ -135,16 +133,10 @@ const formErrors = ref<Dictionary<boolean>>({
   confirmPassword: false,
 });
 const groupOptions = ref<Array<GroupCheckboxOption>>([]);
-const { data: groupList } = await useFetch<Array<Group>>(
-  config.public.apiPath + "/groups/details",
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const groupList = ref<Array<Group>>([]);
+groupList.value =
+  (await useApi("/groups/details", "GET", token.value as string)) || [];
+
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
     groupOptions.value.push(
@@ -200,14 +192,20 @@ async function submit() {
       inputError = true;
     }
 
-    if (props.modelValue.password && props.modelValue.password.trim() === "") {
+    if (
+      props.modelValue.password == undefined ||
+      props.modelValue.password.trim() === ""
+    ) {
       formErrors.value.password = true;
       inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
-    if (props.modelValue.password && props.modelValue.password.trim() === "") {
+    if (
+      props.modelValue.password == undefined ||
+      props.modelValue.password.trim() === ""
+    ) {
       formErrors.value.password = true;
       inputError = true;
     }

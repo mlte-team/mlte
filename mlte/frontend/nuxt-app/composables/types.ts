@@ -2,6 +2,12 @@ export interface Dictionary<T> {
   [key: string]: T;
 }
 
+export interface TokenData {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 // --------------------------------------------------------------------------------------------------------------
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
@@ -37,16 +43,6 @@ export class SelectOption {
 export interface TagOption {
   name: string;
   selected: boolean;
-}
-
-// --------------------------------------------------------------------------------------------------------------
-// Backend Internals
-// --------------------------------------------------------------------------------------------------------------
-
-export interface CustomListEntry {
-  name: string;
-  description: string;
-  parent: string;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -227,6 +223,12 @@ export class SystemDescriptor {
   ) {}
 }
 
+export interface CustomListEntry {
+  name: string;
+  description: string;
+  parent: string;
+}
+
 export class QASDescriptor {
   constructor(
     public quality: string = "",
@@ -249,11 +251,6 @@ export class NegotiationCardModel {
   ) {}
 }
 
-export interface NegotiationApiResponse {
-  header: ArtifactHeader;
-  body: NegotiationCardModel;
-}
-
 // --------------------------------------------------------------------------------------------------------------
 // Report
 // --------------------------------------------------------------------------------------------------------------
@@ -273,11 +270,6 @@ export class ReportModel {
     public test_results: TestResultsModel = new TestResultsModel(),
     public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
   ) {}
-}
-
-export interface ReportApiResponse {
-  header: ArtifactHeader;
-  body: ReportModel;
 }
 
 // --------------------------------------------------------------------------------------------------------------

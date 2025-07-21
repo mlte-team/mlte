@@ -313,7 +313,7 @@ const queryArtifactId = useRoute().query.artifactId;
 const report = ref<ReportModel>(new ReportModel());
 
 if (queryArtifactId !== undefined) {
-  report.value = await loadReportData(
+  report.value = await getReport(
     token.value as string,
     queryModel as string,
     queryVersion as string,

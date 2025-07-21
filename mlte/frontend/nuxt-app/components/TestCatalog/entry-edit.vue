@@ -164,9 +164,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
 const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
@@ -189,15 +187,10 @@ const formErrors = ref<Dictionary<boolean>>({
   code_type: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const { data: catalogList } = await useFetch<Array<CatalogReply>>(
-  config.public.apiPath + "/catalogs",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const catalogList = ref<Array<CatalogReply>>([]);
+catalogList.value =
+  (await useApi("/catalogs", "GET", token.value as string)) || [];
+
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
     if (!catalog.read_only) {
@@ -213,15 +206,11 @@ if (catalogList.value) {
 
 // Delete when test catalog no longer saves qa category
 const QACategoryOptions = ref<Array<QAOption>>([]);
-const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
+QACategoryAPIData.value =
+  (await useApi("/custom_list/qa_categories", "GET", token.value as string)) ||
+  [];
+
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: CustomListEntry) => {
     QACategoryOptions.value.push(
@@ -237,15 +226,14 @@ if (QACategoryAPIData.value) {
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
-const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/quality_attributes/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QAapiOptions = ref<Array<CustomListEntry>>([]);
+QAapiOptions.value =
+  (await useApi(
+    "custom_list/quality_attributes",
+    "GET",
+    token.value as string,
+  )) || [];
+
 if (QAapiOptions.value) {
   QAapiOptions.value.forEach((attribute: CustomListEntry) => {
     AllQAOptions.value.push(

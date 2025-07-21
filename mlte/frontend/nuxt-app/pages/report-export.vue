@@ -113,7 +113,7 @@ const model = useRoute().query.model;
 const version = useRoute().query.version;
 const artifactId = useRoute().query.artifactId;
 
-form.value = await loadReportData(
+form.value = await getReport(
   token.value as string,
   model as string,
   version as string,

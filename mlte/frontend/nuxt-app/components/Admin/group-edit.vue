@@ -48,9 +48,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
 const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
@@ -68,15 +66,11 @@ const formErrors = ref<Dictionary<boolean>>({
   name: false,
 });
 const permissionOptions = ref<Array<PermissionCheckboxOption>>([]);
-const { data: permissionList } = await useFetch<Array<Permission>>(
-  config.public.apiPath + "/groups/permissions/details",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const permissionList = ref<Array<Permission>>([]);
+permissionList.value =
+  (await useApi("groups/permissions/details", "GET", token.value as string)) ||
+  [];
+
 if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {
     permissionOptions.value.push(

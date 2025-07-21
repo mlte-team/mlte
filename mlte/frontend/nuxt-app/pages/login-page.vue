@@ -31,8 +31,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-
 const username = ref("");
 const password = ref("");
 
@@ -74,63 +72,43 @@ async function submit() {
   const formBodyStr: string = formBodyArray.join("&");
   let expiresInTemp = 0;
 
-  try {
-    await $fetch(config.public.apiPath + "/token", {
-      retry: 0,
-      method: "POST",
+  const tokenData: TokenData | null = await useApi(
+    "/token",
+    "POST",
+    undefined,
+    {
       headers: {
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: formBodyStr,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          expiresInTemp = response?._data?.expires_in;
-          const token = useCookie("token", {
-            maxAge: expiresInTemp,
-          });
-          const user = useCookie("user", {
-            maxAge: expiresInTemp,
-          });
-          token.value = response?._data?.access_token;
-          user.value = username.value;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    },
+  );
 
-    const token = useCookie("token");
-    await $fetch(config.public.apiPath + "/user/me", {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          const userRole = useCookie("userRole", {
-            maxAge: expiresInTemp,
-          });
-          userRole.value = response._data.role;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
+  if (tokenData) {
+    expiresInTemp = tokenData.expires_in;
+    const token = useCookie("token", {
+      maxAge: tokenData.expires_in,
     });
+    const user = useCookie("user", {
+      maxAge: expiresInTemp,
+    });
+    token.value = tokenData.access_token;
+    user.value = username.value;
 
-    navigateTo("/");
-  } catch (exception) {
-    console.log("Error in login: ");
-    console.log(exception);
+    const userData: User | null = await useApi(
+      "/user/me",
+      "GET",
+      token.value as string,
+    );
+    if (userData) {
+      const userRole = useCookie("userRole", {
+        maxAge: expiresInTemp,
+      });
+      userRole.value = userData.role;
+    }
   }
+
+  navigateTo("/");
 }
 </script>
