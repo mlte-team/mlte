@@ -2,10 +2,6 @@ import type { NitroFetchOptions } from "nitropack";
 
 const config = useRuntimeConfig();
 
-// TODO : Adjust all other HTTP $fetch to use useAPI
-// Consider necessity of having getReport style method for each artifact, or not. Also have getReport get the ArtifactModel so that the header is availalbe and maybe shown in page
-// Then at some point continue with the comparison lol
-
 /**
  * Generic $fetch function for HTTP requests to API.
  *
