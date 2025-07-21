@@ -5,12 +5,12 @@ const config = useRuntimeConfig();
 /**
  * Generic $fetch function for HTTP requests to API.
  *
- * @template T The expected type of the data returned from the API.
- * @param {string} url The URL to fetch data from.
+ * @template T Expected type of the data returned from the API
+ * @param {string} url URL to fetch data from
  * @param {string} method HTTP method to use for request
- * @param {string} [token] Token used to authenticate with API.
- * @param {NitroFetchOptions<string>} [options] Optional configuration for $fetch.
- * @returns {Promise<T> | null} Promise that resolves to the data from request or null if there is an error.
+ * @param {string} [token] Token to authenticate with API
+ * @param {NitroFetchOptions<string>} [options] Optional configuration for $fetch
+ * @returns {Promise<T> | null} Promise that resolves to the data from request or null if there is an error
  */
 export function useApi<T>(
   url: string,
@@ -50,9 +50,10 @@ export function useApi<T>(
   }
 }
 
-/** Get list of versions in a model
- * @param {string} token  api token to be used to make the request
- * @param {string} model  model to get the versions of
+/** Get list of versions in a model.
+ *
+ * @param {string} token Token to authenticate with API.
+ * @param {string} model Model to get the versions of.
  * @returns {Array<string>} Sorted list of versions of the model
  */
 export async function getModelVersions(
@@ -67,8 +68,12 @@ export async function getModelVersions(
   return data?.sort() || [];
 }
 
-/**
+/** Get list of artifacts in a model version
  *
+ * @param {string} token Token to authenticate with API
+ * @param {string} model Model containing the version
+ * @param {string} version version containing the artifacts
+ * @returns {Array<string>} List of all artifacts of the model version
  */
 export async function getVersionArtifacts(
   token: string,
@@ -83,18 +88,12 @@ export async function getVersionArtifacts(
   return data || [];
 }
 
-// export async function getVersionReports(
-//   token: string,
-//   model: string,
-//   version: string,
-// ): Promise<Array<ReportModel>> {
-//   const { data, error } = await useFetch<Array<ArtifactModel>>(
-//     config.public.apiPath
-//   )
-// }
-
-/**
- * Get report from API and return report response body
+/** Get report from API and return report response body
+ *
+ * @param {string} token Token to authenticate with API.
+ * @param {string} model Model containing the version
+ * @param {string} version Version containing the report
+ * @returns {Promise<ReportModel>} Promise that resolves to report
  */
 export async function getReport(
   token: string,
@@ -114,55 +113,11 @@ export async function getReport(
   }
 }
 
-/**
+/** Generic alert function for API interactions.
  *
- */
-// export async function getTestSuite(
-//   token: string,
-//   model: string,
-//   version: string,
-//   testSuiteId: string,
-// ): Promise {
-//   const { data, error } = await useFetch<ArtifactModel>(
-//     config.public.apiPath +
-//       "/model/" +
-//       model +
-//       "/version/" +
-//       version +
-//       "/artifact/" +
-//       testSuiteId,
-//     {
-//       retry: 0,
-//       method: "GET",
-//       headers: {
-//         Authorization: "Bearer " + token,
-//       },
-//       onRequestError() {
-//         requestErrorAlert();
-//       },
-//       onResponseError({ response }) {
-//         handleHttpError(response.status, response._data.error_description);
-//       },
-//     },
-//   );
-
-//   if (
-//     !error.value &&
-//     data.value &&
-//     data.value.body.artifact_type == "test_suite" &&
-//     isValidTestSuite(data.value)
-//   ) {
-//     const testSuiteModel: TestSuiteModel = data.value.body;
-//     return testSuiteModel;
-//   } else {
-//     return new ReportModel();
-//   }
-// }
-
-/**
- *
- * @param artifactType
- * @param artifactName
+ * @param {string} artifactType Type of artifact
+ * @param {string} artifactName Name of artifact
+ * @param {string} operation Name of operation performed
  */
 export function successfulSubmission(
   artifactType: string,
