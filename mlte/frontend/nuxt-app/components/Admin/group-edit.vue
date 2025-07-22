@@ -95,6 +95,12 @@ permissionOptions.value.forEach((permissionOption) => {
   }
 });
 
+/**
+ * Handle a permission change either adding the item to selections, or removing it.
+ *
+ * @param {boolean} selected Flag indicating if item was selected or deselected
+ * @param {Permission} permissionOption Permission that was selected or deselected
+ */
 function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
     props.modelValue.permissions.push(
@@ -119,6 +125,7 @@ function permissionChange(selected: boolean, permissionOption: Permission) {
   }
 }
 
+// Handle submission of form.
 function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;

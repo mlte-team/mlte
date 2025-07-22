@@ -139,6 +139,7 @@ if (queryArtifactId !== undefined) {
   }
 }
 
+// Handle submission of form.
 async function submit() {
   const identifier = (queryArtifactId as string) || userInputArtifactId.value;
   if (identifier === "") {
@@ -182,6 +183,12 @@ async function submit() {
   }
 }
 
+/**
+ * Upload data from a TEC Descriptor into Negotiation Card
+ *
+ * @param {Event} event Event object from file submission that contains uploaded file
+ * @param {string} descriptorName Name of descriptor
+ */
 function descriptorUpload(event: Event, descriptorName: string) {
   console.log(dataRef.value);
 
@@ -410,6 +417,12 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
+/**
+ * Determine if a GoalDescriptor is completely empty.
+ *
+ * @param {GoalDescriptor} goal GoalDescriptor to be checked
+ * @return Boolean indicating if goal is empty or not
+ */
 function goalEmpty(goal: GoalDescriptor) {
   let isEmpty = true;
 
@@ -426,6 +439,12 @@ function goalEmpty(goal: GoalDescriptor) {
   return isEmpty;
 }
 
+/**
+ * Determine if a DataDescriptor is completely empty.
+ *
+ * @param {DataDescriptor} dataItem DataDescriptor to be checked
+ * @return Boolean indicating if dataItem is empty or not
+ */
 function dataItemEmpty(dataItem: DataDescriptor) {
   let isEmpty = true;
 
@@ -465,6 +484,12 @@ function dataItemEmpty(dataItem: DataDescriptor) {
   return isEmpty;
 }
 
+/**
+ * Determine if a ModelIODescriptor is completely empty.
+ *
+ * @param {ModelIODescriptor} spec ModelIODescriptor to be checked
+ * @return Boolean indicating if spec is empty or not
+ */
 function specEmpty(spec: ModelIODescriptor) {
   let isEmpty = true;
 

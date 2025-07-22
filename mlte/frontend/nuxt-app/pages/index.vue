@@ -278,7 +278,7 @@ const reports = ref<Array<TableItem>>([]);
 const testResults = ref<Array<TableItem>>([]);
 const evidences = ref<Array<TableItem>>([]);
 
-await populateModelVersionLists();
+await populateModelList();
 if (modelOptions.value !== null) {
   const modelList = modelOptions.value.map((model) => {
     return model.value;
@@ -302,19 +302,25 @@ if (modelOptions.value !== null) {
   }
 }
 
-async function populateModelVersionLists() {
+// Populate the list of Models.
+async function populateModelList() {
   const data: Array<string> | null = await useApi("/user/me/models/", "GET");
   modelList.value = data || [];
 
-  modelOptions.value = [];
   if (modelList.value) {
+    modelOptions.value = [];
     modelList.value.forEach((modelName: string) => {
       modelOptions.value.push(new SelectOption(modelName, modelName));
     });
   }
 }
 
-// Update the selected model for the artifact store.
+/**
+ * Update the selected model for the artifact store.
+ *
+ * @param {string} modelName Model to select
+ * @param {boolean} resetSelectedVersion Flag to reset selectedVersion or not
+ */
 async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   selectedModel.value = modelName;
   if (resetSelectedVersion) {
@@ -336,7 +342,11 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   }
 }
 
-// Update the selected version for the artifact store.
+/**
+ * Update the selected version.
+ *
+ * @param {string} versionName Version to select
+ */
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
   if (selectedVersion.value === "") {
@@ -355,7 +365,13 @@ async function selectVersion(versionName: string) {
   );
 }
 
-// Populate artifacts for a given model and version.
+/**
+ * Populate Artifacts for a given Model and Version.
+ *
+ * @param {string} model Model that contains the Version
+ * @param {string} version Version that contains the Artifacts
+ * @param {Array<ArtifactModel>} artifactList List of Artifacts of the Model Version
+ */
 function populateArtifacts(
   model: string,
   version: string,
@@ -438,7 +454,7 @@ function populateArtifacts(
   });
 }
 
-// Clear all artifacts from local state.
+// Clear all Artifacts from local state.
 function clearArtifacts() {
   negotiationCards.value = [];
   reports.value = [];
@@ -447,18 +463,29 @@ function clearArtifacts() {
   evidences.value = [];
 }
 
+/**
+ * Save a new Model.
+ *
+ * @param {string} modelName Name of Model to be created
+ */
 async function submitNewModel(modelName: string) {
   const data = await useApi("/model/", "POST", {
     body: { identifier: modelName },
   });
   if (data) {
-    populateModelVersionLists();
+    populateModelList();
     successfulSubmission("Model", modelName, "created");
     newModelIdentifier.value = "";
     selectModel(modelName, true);
   }
 }
 
+/**
+ * Save a new Version.
+ *
+ * @param {string} modelName Name of model to create new Version for.
+ * @param {string} versionName Name of the new Version.
+ */
 async function submitNewVersion(modelName: string, versionName: string) {
   const data = await useApi("/model/" + modelName + "/version", "POST", {
     body: { identifier: versionName },

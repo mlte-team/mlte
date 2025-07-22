@@ -39,6 +39,7 @@ const formErrors = ref<Dictionary<boolean>>({
   password: false,
 });
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;

@@ -54,6 +54,7 @@ const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 populateFullEntryList();
 
+// Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
   const data: Array<TestCatalogEntry> | null = await useApi(
     "/catalogs/entry/search",
@@ -63,6 +64,7 @@ async function populateFullEntryList() {
   entryList.value = data || [];
 }
 
+// Handle a search query.
 async function search() {
   if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
@@ -120,22 +122,31 @@ async function search() {
   }
 }
 
+// Reset selectedEntry, for example when an edit is completed.
 function resetSelectedEntry() {
   selectedEntry.value = new TestCatalogEntry();
 }
 
+// Switch to the edit entry view with newEntryFlag enabled.
 function addEntry() {
   resetSelectedEntry();
   editFlag.value = true;
   newEntryFlag.value = true;
 }
 
+// Switch to the edit entry view with newEntryFlag disabled.
 function editEntry(entry: TestCatalogEntry) {
   selectedEntry.value = entry;
   editFlag.value = true;
   newEntryFlag.value = false;
 }
 
+/**
+ * Delete a TestCatalogEntry
+ *
+ * @param {string} catalogId Catalog containing the TestCatalogEntry to be deleted
+ * @param {string} entryId ID of the TestCatalogEntry to be deleted
+ */
 async function deleteEntry(catalogId: string, entryId: string) {
   if (
     !confirm(
@@ -159,6 +170,7 @@ async function deleteEntry(catalogId: string, entryId: string) {
   }
 }
 
+// Return to entry list view from the edit view.
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -166,6 +178,11 @@ function cancelEdit() {
   }
 }
 
+/**
+ * Save new entry, or save changes to entry.
+ *
+ * @param {TestCatalogEntry} entry TestCatalogEntry to be saved
+ */
 async function saveEntry(entry: TestCatalogEntry) {
   let error = true;
 

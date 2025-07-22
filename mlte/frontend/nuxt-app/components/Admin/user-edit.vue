@@ -153,16 +153,24 @@ if (props.newUserFlag) {
   props.modelValue.role = "regular";
 }
 
+// Enable the form fields to change password.
 function enablePasswordReset() {
   changePasswordFlag.value = true;
   props.modelValue.password = "";
 }
 
+// Disable the form fields to change password.
 function disablePasswordReset() {
   changePasswordFlag.value = false;
   delete props.modelValue.password;
 }
 
+/**
+ * Handle a group change either adding the item to selections, or removing it.
+ *
+ * @param {boolean} selected Flag indicating if item was selected or deselected
+ * @param {Group} groupOption Group that was selected or deselected
+ */
 function groupChange(selected: boolean, groupOption: Group) {
   if (selected) {
     props.modelValue.groups.push(
@@ -180,6 +188,7 @@ function groupChange(selected: boolean, groupOption: Group) {
   }
 }
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;

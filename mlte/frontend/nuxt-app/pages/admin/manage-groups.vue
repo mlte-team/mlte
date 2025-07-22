@@ -34,14 +34,9 @@ const selectedGroup = ref<Group>(new Group());
 
 updateGroupList();
 
-/**
- * 
- */
+// Get list of Groups from API and populate page with them.
 async function updateGroupList() {
-  const data: Array<Group> | null = await useApi(
-    "/groups/details",
-    "GET",
-  );
+  const data: Array<Group> | null = await useApi("/groups/details", "GET");
   if (data) {
     groupList.value = [];
     data.forEach((group: Group) => {
@@ -50,26 +45,19 @@ async function updateGroupList() {
   }
 }
 
-/**
- * 
- */
+// Reset selectedGroup, for example after an edit is completed.
 function resetSelectedGroup() {
   selectedGroup.value = new Group();
 }
 
-/**
- * 
- */
+// Switch to the edit group view with the newGroupFlag enabled.
 function addGroup() {
   resetSelectedGroup();
   editFlag.value = true;
   newGroupFlag.value = true;
 }
 
-/**
- * 
- * @param group 
- */
+// Switch to the edit group view with the newGroupFlag disabled
 function editGroup(group: Group) {
   selectedGroup.value = group;
   editFlag.value = true;
@@ -77,7 +65,9 @@ function editGroup(group: Group) {
 }
 
 /**
- * 
+ * Delete a group.
+ *
+ * @param {string} groupName Name of group to be deleted
  */
 async function deleteGroup(groupName: string) {
   if (
@@ -86,19 +76,14 @@ async function deleteGroup(groupName: string) {
     return;
   }
 
-  const data = await useApi(
-    "/group/" + groupName,
-    "DELETE",
-  );
+  const data = await useApi("/group/" + groupName, "DELETE");
   if (data) {
     updateGroupList();
     successfulSubmission("Group", groupName, "deleted");
   }
 }
 
-/**
- * 
- */
+// Return to the group list view from the edit view.
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -107,7 +92,9 @@ function cancelEdit() {
 }
 
 /**
- * 
+ * Save new Group, or save changes to Group.
+ *
+ * @param {Group} group Group to be saved
  */
 async function saveGroup(group: Group) {
   let error = true;

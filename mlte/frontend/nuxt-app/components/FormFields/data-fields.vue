@@ -305,18 +305,22 @@ const props = defineProps({
   },
 });
 
+// Provide hook for parent page to call addDataItem. Needed for descriptor import.
 const parentAddDataItem = () => {
   addDataItem();
 };
 
+// Provide hook for parent page to call addLabel. Needed for descriptor import.
 const parentAddLabel = (dataIndex: number) => {
   addLabel(dataIndex);
 };
 
+// Provide hook for parent page to call addField. Needed for descriptor import.
 const parentAddField = (dataIndex: number) => {
   addField(dataIndex);
 };
 
+// Expose the hooks to parent page.
 defineExpose({
   parentAddDataItem,
   parentAddLabel,
@@ -415,30 +419,58 @@ const dataModalRows = ref([
   },
 ]);
 
+// Add DataDescriptor to data list.
 function addDataItem() {
   props.modelValue.push(new DataDescriptor());
 }
 
+/**
+ * Delete DataDescriptor from data list.
+ *
+ * @param {number} dataItemIndex Index of DataDescriptor to delete
+ */
 function deleteDataItem(dataItemIndex: number) {
   if (confirm("Are you sure you want to delete this data item?")) {
     props.modelValue.splice(dataItemIndex, 1);
   }
 }
 
+/**
+ * Add LabelDescriptor to specified DataDescriptor.
+ *
+ * @param {number} dataItemIndex Index of DataDescriptor to add LabelDescriptor to.
+ */
 function addLabel(dataItemIndex: number) {
   props.modelValue[dataItemIndex].labels.push(new LabelDescriptor());
 }
 
+/**
+ * Delete LabelDescriptor from list in DataDescriptor.
+ *
+ * @param {number} dataItemIndex Index of DataDescriptor
+ * @param {number} labelIndex Index of LabelDescriptor to delete
+ */
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
   if (confirm("Are you sure you want to delete this label?")) {
     props.modelValue[dataItemIndex].labels.splice(labelIndex, 1);
   }
 }
 
+/**
+ * Add FieldDescriptor to specified DataDescriptor.
+ *
+ * @param {number} dataItemIndex Index of DataDescriptor to add FieldDescriptor to.
+ */
 function addField(dataItemIndex: number) {
   props.modelValue[dataItemIndex].fields.push(new FieldDescriptor());
 }
 
+/**
+ * Delete FieldDescriptor from list in DataDescriptor.
+ *
+ * @param {number} dataItemIndex Index of DataDescriptor
+ * @param {number} fieldIndex Index of FieldDescriptor to delete
+ */
 function deleteField(dataItemIndex: number, fieldIndex: number) {
   if (confirm("Are you sure you want to delete this field?")) {
     props.modelValue[dataItemIndex].fields.splice(fieldIndex, 1);

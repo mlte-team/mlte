@@ -71,18 +71,21 @@ const formErrors = ref<Dictionary<boolean>>({
   confirmPassword: false,
 });
 
+// Enables the password and confirm password form fields.
 function enablePasswordReset() {
   newPassword.value = "";
   confirmPassword.value = "";
   resetPasswordFlag.value = true;
 }
 
+// Disables the password and confirm password form fields.
 function disablePasswordReset() {
   resetPasswordFlag.value = false;
   newPassword.value = "";
   confirmPassword.value = "";
 }
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;

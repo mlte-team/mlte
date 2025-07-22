@@ -9,8 +9,8 @@ const config = useRuntimeConfig();
  * @param {string} url URL to fetch data from
  * @param {string} method HTTP method to use for request
  * @param {NitroFetchOptions<string>} [options] Optional configuration for $fetch
- * @param {string} [tokenOverride] Token provided to authenticate with API instead of cookie.
- * @param {boolean} [auth] Flag to add token to request or not. Default true.
+ * @param {string} [tokenOverride] Token provided to authenticate with API instead of cookie
+ * @param {boolean} [auth] Flag to add token to request or not. Default true
  * @returns {Promise<T> | null} Promise that resolves to the data from request or null if there is an error
  */
 export function useApi<T>(
@@ -60,7 +60,7 @@ export function useApi<T>(
 /**
  * Get list of versions in a model.
  *
- * @param {string} model Model to get the versions of.
+ * @param {string} model Model to get the versions of
  * @returns {Array<string>} Sorted list of versions of the model
  */
 export async function getModelVersions(model: string): Promise<Array<string>> {
@@ -72,7 +72,7 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 }
 
 /**
- * Get list of artifacts in a model version
+ * Get list of artifacts in a model version.
  *
  * @param {string} model Model containing the version
  * @param {string} version version containing the artifacts
@@ -90,7 +90,7 @@ export async function getVersionArtifacts(
 }
 
 /**
- * Get report from API and return report response body
+ * Get report from API and return report response body.
  *
  * @param {string} model Model containing the version
  * @param {string} version Version containing the report

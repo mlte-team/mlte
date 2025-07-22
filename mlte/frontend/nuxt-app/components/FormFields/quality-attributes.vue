@@ -46,7 +46,7 @@ QACategoryAPIData.value =
   (await useApi("/custom_list/qa_categories/", "GET")) || [];
 
 if (QACategoryAPIData.value) {
-  addOptionsToList(QACategoryOptions.value, QACategoryAPIData.value);
+  populateList(QACategoryOptions.value, QACategoryAPIData.value);
 }
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
@@ -56,7 +56,7 @@ QAapiOptions.value =
   (await useApi("/custom_list/quality_attributes", "GET")) || [];
 
 if (QAapiOptions.value) {
-  addOptionsToList(AllQAOptions.value, QAapiOptions.value);
+  populateList(AllQAOptions.value, QAapiOptions.value);
 }
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
@@ -69,7 +69,12 @@ if (props.initialQualityAttribute) {
   });
 }
 
-// initialAttribute is used on startup to set the value of category and parent
+/**
+ * Handle QA Category change.
+ *
+ * @param {string} newCategory The newly selected category
+ * @param {string} [initialAttribute] Optional param to set QA when changing QA Category. Used on startup
+ */
 function categoryChange(newCategory: string, initialAttrbute?: string) {
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: QAOption) => {
@@ -85,7 +90,13 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   }
 }
 
-function addOptionsToList(
+/**
+ * Populate initialList with appendList as QAOption's
+ *
+ * @param {Array<QAOption>} initialList List of QAOption to be added to, generally empty
+ * @param {Array<CustomListEntry>} appendList List of CustomListEntry to add to initialList
+ */
+function populateList(
   initialList: Array<QAOption>,
   appendList: Array<CustomListEntry>,
 ) {
