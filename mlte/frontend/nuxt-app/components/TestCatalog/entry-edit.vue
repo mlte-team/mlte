@@ -164,7 +164,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const token = useCookie("token");
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
@@ -188,8 +187,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const catalogList = ref<Array<CatalogReply>>([]);
-catalogList.value =
-  (await useApi("/catalogs", "GET", token.value as string)) || [];
+catalogList.value = (await useApi("/catalogs", "GET")) || [];
 
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
@@ -208,8 +206,7 @@ if (catalogList.value) {
 const QACategoryOptions = ref<Array<QAOption>>([]);
 const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
 QACategoryAPIData.value =
-  (await useApi("/custom_list/qa_categories", "GET", token.value as string)) ||
-  [];
+  (await useApi("/custom_list/qa_categories", "GET")) || [];
 
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: CustomListEntry) => {
@@ -228,11 +225,7 @@ const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
 const QAapiOptions = ref<Array<CustomListEntry>>([]);
 QAapiOptions.value =
-  (await useApi(
-    "custom_list/quality_attributes",
-    "GET",
-    token.value as string,
-  )) || [];
+  (await useApi("custom_list/quality_attributes", "GET")) || [];
 
 if (QAapiOptions.value) {
   QAapiOptions.value.forEach((attribute: CustomListEntry) => {

@@ -233,9 +233,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const newModelIdentifier = ref("");
 const newVersionIdentifier = ref("");
 
@@ -306,11 +303,7 @@ if (modelOptions.value !== null) {
 }
 
 async function populateModelVersionLists() {
-  const data: Array<string> | null = await useApi(
-    "/user/me/models/",
-    "GET",
-    token.value as string,
-  );
+  const data: Array<string> | null = await useApi("/user/me/models/", "GET");
   modelList.value = data || [];
 
   modelOptions.value = [];
@@ -334,10 +327,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
     return;
   }
 
-  const modelVersions = await getModelVersions(
-    token.value as string,
-    modelName,
-  );
+  const modelVersions = await getModelVersions(modelName);
   if (modelVersions) {
     versionOptions.value = [];
     modelVersions.forEach((version: string) => {
@@ -355,7 +345,6 @@ async function selectVersion(versionName: string) {
   }
 
   const versionArtifacts = await getVersionArtifacts(
-    token.value as string,
     selectedModel.value,
     selectedVersion.value,
   );
@@ -459,7 +448,7 @@ function clearArtifacts() {
 }
 
 async function submitNewModel(modelName: string) {
-  const data = await useApi("/model/", "POST", token.value as string, {
+  const data = await useApi("/model/", "POST", {
     body: { identifier: modelName },
   });
   if (data) {
@@ -471,12 +460,9 @@ async function submitNewModel(modelName: string) {
 }
 
 async function submitNewVersion(modelName: string, versionName: string) {
-  const data = await useApi(
-    "/model/" + modelName + "/version",
-    "POST",
-    token.value as string,
-    { body: { identifier: versionName } },
-  );
+  const data = await useApi("/model/" + modelName + "/version", "POST", {
+    body: { identifier: versionName },
+  });
   if (data) {
     selectModel(modelName, false);
     successfulSubmission("Version", versionName, "created");

@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
 const emit = defineEmits(["updateAttribute"]);
 const props = defineProps({
   initialQualityAttribute: {
@@ -44,8 +43,7 @@ const qualityAttribute = ref(props.initialQualityAttribute);
 const QACategoryOptions = ref<Array<QAOption>>([]);
 const QACategoryAPIData = ref([]);
 QACategoryAPIData.value =
-  (await useApi("/custom_list/qa_categories/", "GET", token.value as string)) ||
-  [];
+  (await useApi("/custom_list/qa_categories/", "GET")) || [];
 
 if (QACategoryAPIData.value) {
   addOptionsToList(QACategoryOptions.value, QACategoryAPIData.value);
@@ -55,11 +53,7 @@ const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
 const QAapiOptions = ref<Array<CustomListEntry>>([]);
 QAapiOptions.value =
-  (await useApi(
-    "/custom_list/quality_attributes",
-    "GET",
-    token.value as string,
-  )) || [];
+  (await useApi("/custom_list/quality_attributes", "GET")) || [];
 
 if (QAapiOptions.value) {
   addOptionsToList(AllQAOptions.value, QAapiOptions.value);

@@ -105,7 +105,6 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const token = useCookie("token");
 const model = useRoute().query.model;
 const version = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
@@ -127,7 +126,6 @@ if (queryArtifactId !== undefined) {
   const cardData: ArtifactModel | null = await useApi(
     "/model/" + model + "/version/" + version + "/artifact/" + queryArtifactId,
     "GET",
-    token.value as string,
   );
 
   if (cardData && cardData.body.artifact_type == "negotiation_card") {
@@ -163,7 +161,6 @@ async function submit() {
     const data = await useApi(
       "/model/" + model + "/version/" + version + "/artifact",
       "POST",
-      token.value as string,
       { body: { artifact, force: forceSaveParam.value, parents: false } },
     );
     if (data) {

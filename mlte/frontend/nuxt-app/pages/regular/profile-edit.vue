@@ -58,12 +58,10 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const token = useCookie("token");
 const userCookie = useCookie("user");
 
 const user = ref<User>(new User());
-user.value =
-  (await useApi("/user/me", "GET", token.value as string)) || new User();
+user.value = (await useApi("/user/me", "GET")) || new User();
 
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
@@ -117,7 +115,7 @@ async function submit() {
     requestBody.password = newPassword.value;
   }
 
-  const data = await useApi("/user", "PUT", token.value as string, {
+  const data = await useApi("/user", "PUT", {
     body: requestBody,
   });
   if (data) {

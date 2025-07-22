@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const token = useCookie("token");
 const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
@@ -68,8 +67,7 @@ const formErrors = ref<Dictionary<boolean>>({
 const permissionOptions = ref<Array<PermissionCheckboxOption>>([]);
 const permissionList = ref<Array<Permission>>([]);
 permissionList.value =
-  (await useApi("groups/permissions/details", "GET", token.value as string)) ||
-  [];
+  (await useApi("groups/permissions/details", "GET")) || [];
 
 if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {

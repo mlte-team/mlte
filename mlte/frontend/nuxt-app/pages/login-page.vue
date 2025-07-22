@@ -75,7 +75,6 @@ async function submit() {
   const tokenData: TokenData | null = await useApi(
     "/token",
     "POST",
-    undefined,
     {
       headers: {
         accept: "application/json",
@@ -83,6 +82,8 @@ async function submit() {
       },
       body: formBodyStr,
     },
+    undefined,
+    false,
   );
 
   if (tokenData) {
@@ -99,6 +100,7 @@ async function submit() {
     const userData: User | null = await useApi(
       "/user/me",
       "GET",
+      undefined,
       token.value as string,
     );
     if (userData) {

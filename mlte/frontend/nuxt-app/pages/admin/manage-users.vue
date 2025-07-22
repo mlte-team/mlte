@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
 const userCookie = useCookie("user");
 
 const editFlag = ref(false);
@@ -42,11 +41,7 @@ resetSelectedUser();
  * 
  */
 async function updateUserList() {
-  const data: Array<User> | null = await useApi(
-    "/users/details",
-    "GET",
-    token.value as string,
-  );
+  const data: Array<User> | null = await useApi("/users/details", "GET");
   if (data) {
     userList.value = data;
   }
@@ -90,11 +85,7 @@ async function deleteUser(username: string) {
     return;
   }
 
-  const data = await useApi(
-    "/user/" + username,
-    "DELETE",
-    token.value as string,
-  );
+  const data = await useApi("/user/" + username, "DELETE");
   if (data) {
     updateUserList();
   }
@@ -127,14 +118,14 @@ async function saveUser(user: User) {
   let error = true;
 
   if (newUserFlag.value) {
-    const data = await useApi("/user", "POST", token.value as string, {
+    const data = await useApi("/user", "POST", {
       body: JSON.stringify(user),
     });
     if (data) {
       error = false;
     }
   } else {
-    const data = await useApi("/user", "PUT", token.value as string);
+    const data = await useApi("/user", "PUT");
     if (data) {
       error = false;
     }

@@ -8,15 +8,17 @@ const config = useRuntimeConfig();
  * @template T Expected type of the data returned from the API
  * @param {string} url URL to fetch data from
  * @param {string} method HTTP method to use for request
- * @param {string} [token] Token to authenticate with API
  * @param {NitroFetchOptions<string>} [options] Optional configuration for $fetch
+ * @param {string} [tokenOverride] Token provided to authenticate with API instead of cookie.
+ * @param {boolean} [auth] Flag to add token to request or not. Default true.
  * @returns {Promise<T> | null} Promise that resolves to the data from request or null if there is an error
  */
 export function useApi<T>(
   url: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
-  token?: string,
   options?: NitroFetchOptions<string>,
+  tokenOverride?: string,
+  auth: boolean = true,
 ): Promise<T> | null {
   const defaultOptions: NitroFetchOptions<string> = {
     baseURL: config.public.apiPath,
@@ -31,8 +33,13 @@ export function useApi<T>(
     },
   };
 
-  if (token) {
-    defaultOptions["headers"] = { Authorization: "Bearer " + token };
+  if (auth) {
+    if (tokenOverride) {
+      defaultOptions["headers"] = { Authorization: "Bearer " + tokenOverride };
+    } else {
+      const token = useCookie("token");
+      defaultOptions["headers"] = { Authorization: "Bearer " + token.value };
+    }
   }
 
   // Merge default options with any provided options
@@ -50,53 +57,46 @@ export function useApi<T>(
   }
 }
 
-/** Get list of versions in a model.
+/**
+ * Get list of versions in a model.
  *
- * @param {string} token Token to authenticate with API.
  * @param {string} model Model to get the versions of.
  * @returns {Array<string>} Sorted list of versions of the model
  */
-export async function getModelVersions(
-  token: string,
-  model: string,
-): Promise<Array<string>> {
+export async function getModelVersions(model: string): Promise<Array<string>> {
   const data: Array<string> | null = await useApi(
     "/model/" + model + "/version",
     "GET",
-    token,
   );
   return data?.sort() || [];
 }
 
-/** Get list of artifacts in a model version
+/**
+ * Get list of artifacts in a model version
  *
- * @param {string} token Token to authenticate with API
  * @param {string} model Model containing the version
  * @param {string} version version containing the artifacts
  * @returns {Array<string>} List of all artifacts of the model version
  */
 export async function getVersionArtifacts(
-  token: string,
   model: string,
   version: string,
 ): Promise<Array<ArtifactModel>> {
   const data: Array<ArtifactModel> | null = await useApi(
     "/model/" + model + "/version/" + version + "/artifact",
     "GET",
-    token,
   );
   return data || [];
 }
 
-/** Get report from API and return report response body
+/**
+ * Get report from API and return report response body
  *
- * @param {string} token Token to authenticate with API.
  * @param {string} model Model containing the version
  * @param {string} version Version containing the report
  * @returns {Promise<ReportModel>} Promise that resolves to report
  */
 export async function getReport(
-  token: string,
   model: string,
   version: string,
   reportId: string,
@@ -104,7 +104,6 @@ export async function getReport(
   const data: ArtifactModel | null = await useApi(
     "/model/" + model + "/version/" + version + "/artifact/" + reportId,
     "GET",
-    token,
   );
   if (data && data.body.artifact_type == "report") {
     return data.body;
@@ -113,7 +112,8 @@ export async function getReport(
   }
 }
 
-/** Generic alert function for API interactions.
+/**
+ * Generic alert function for API interactions.
  *
  * @param {string} artifactType Type of artifact
  * @param {string} artifactName Name of artifact

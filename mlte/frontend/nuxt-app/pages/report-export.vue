@@ -105,8 +105,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
-
 const form = ref<ReportModel>(new ReportModel());
 
 const model = useRoute().query.model;
@@ -114,7 +112,6 @@ const version = useRoute().query.version;
 const artifactId = useRoute().query.artifactId;
 
 form.value = await getReport(
-  token.value as string,
   model as string,
   version as string,
   artifactId as string,

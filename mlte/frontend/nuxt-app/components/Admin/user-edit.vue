@@ -106,7 +106,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const token = useCookie("token");
 const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
@@ -134,8 +133,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const groupOptions = ref<Array<GroupCheckboxOption>>([]);
 const groupList = ref<Array<Group>>([]);
-groupList.value =
-  (await useApi("/groups/details", "GET", token.value as string)) || [];
+groupList.value = (await useApi("/groups/details", "GET")) || [];
 
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
@@ -192,6 +190,7 @@ async function submit() {
       inputError = true;
     }
 
+    // TODO : Bug fix this between edit and new user style
     if (
       props.modelValue.password == undefined ||
       props.modelValue.password.trim() === ""

@@ -45,8 +45,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
-
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
@@ -60,7 +58,6 @@ async function populateFullEntryList() {
   const data: Array<TestCatalogEntry> | null = await useApi(
     "/catalogs/entry/search",
     "POST",
-    token.value as string,
     { body: { filter: { type: "all" } } },
   );
   entryList.value = data || [];
@@ -73,7 +70,6 @@ async function search() {
     const data: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
-      token.value as string,
       {
         body: {
           filter: { type: "tag", name: "tags", value: tagSearchValue.value },
@@ -85,7 +81,6 @@ async function search() {
     const data: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
-      token.value as string,
       {
         body: {
           filter: {
@@ -101,7 +96,6 @@ async function search() {
     const data: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
-      token.value as string,
       {
         body: {
           filter: {
@@ -158,7 +152,6 @@ async function deleteEntry(catalogId: string, entryId: string) {
   const data = await useApi(
     "/catalog/" + catalogId + "/entry/" + entryId,
     "DELETE",
-    token.value as string,
   );
   if (data) {
     populateFullEntryList();
@@ -180,7 +173,6 @@ async function saveEntry(entry: TestCatalogEntry) {
     const data = await useApi(
       "/catalog/" + entry.header.catalog_id + "/entry",
       "POST",
-      token.value as string,
       { body: JSON.stringify(entry) },
     );
     if (data) {
@@ -190,7 +182,6 @@ async function saveEntry(entry: TestCatalogEntry) {
     const data = await useApi(
       "catalog/" + entry.header.catalog_id + "/entry",
       "PUT",
-      token.value as string,
       { body: JSON.stringify(entry) },
     );
     if (data) {

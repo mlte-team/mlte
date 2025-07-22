@@ -305,7 +305,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
 const queryModel = useRoute().query.model;
 const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
@@ -314,7 +313,6 @@ const report = ref<ReportModel>(new ReportModel());
 
 if (queryArtifactId !== undefined) {
   report.value = await getReport(
-    token.value as string,
     queryModel as string,
     queryVersion as string,
     queryArtifactId as string,

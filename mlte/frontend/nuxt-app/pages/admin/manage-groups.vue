@@ -27,8 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
-
 const editFlag = ref(false);
 const newGroupFlag = ref(false);
 const groupList = ref<Array<Group>>([]);
@@ -43,7 +41,6 @@ async function updateGroupList() {
   const data: Array<Group> | null = await useApi(
     "/groups/details",
     "GET",
-    token.value as string,
   );
   if (data) {
     groupList.value = [];
@@ -92,7 +89,6 @@ async function deleteGroup(groupName: string) {
   const data = await useApi(
     "/group/" + groupName,
     "DELETE",
-    token.value as string,
   );
   if (data) {
     updateGroupList();
@@ -117,14 +113,14 @@ async function saveGroup(group: Group) {
   let error = true;
 
   if (newGroupFlag.value) {
-    const data = await useApi("/group", "POST", token.value as string, {
+    const data = await useApi("/group", "POST", {
       body: JSON.stringify(group),
     });
     if (data) {
       error = false;
     }
   } else {
-    const data = await useApi("/group", "PUT", token.value as string, {
+    const data = await useApi("/group", "PUT", {
       body: JSON.stringify(group),
     });
     if (data) {
