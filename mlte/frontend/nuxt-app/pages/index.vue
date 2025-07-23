@@ -354,15 +354,21 @@ async function selectVersion(versionName: string) {
     return;
   }
 
-  const versionArtifacts = await getVersionArtifacts(
-    selectedModel.value,
-    selectedVersion.value,
+  const versionArtifacts: Array<ArtifactModel> | null = await useApi(
+    "/model/" +
+      selectedModel.value +
+      "/version/" +
+      selectedVersion.value +
+      "/artifact",
+    "GET",
   );
-  populateArtifacts(
-    selectedModel.value,
-    selectedVersion.value,
-    versionArtifacts,
-  );
+  if (versionArtifacts) {
+    populateArtifacts(
+      selectedModel.value,
+      selectedVersion.value,
+      versionArtifacts,
+    );
+  }
 }
 
 /**

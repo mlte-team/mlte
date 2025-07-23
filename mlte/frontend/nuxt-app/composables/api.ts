@@ -58,7 +58,7 @@ export function useApi<T>(
 }
 
 /**
- * Get list of versions in a model.
+ * Get sorted list of versions in a model.
  *
  * @param {string} model Model to get the versions of
  * @returns {Array<string>} Sorted list of versions of the model
@@ -69,24 +69,6 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
     "GET",
   );
   return data?.sort() || [];
-}
-
-/**
- * Get list of artifacts in a model version.
- *
- * @param {string} model Model containing the version
- * @param {string} version version containing the artifacts
- * @returns {Array<string>} List of all artifacts of the model version
- */
-export async function getVersionArtifacts(
-  model: string,
-  version: string,
-): Promise<Array<ArtifactModel>> {
-  const data: Array<ArtifactModel> | null = await useApi(
-    "/model/" + model + "/version/" + version + "/artifact",
-    "GET",
-  );
-  return data || [];
 }
 
 /**
