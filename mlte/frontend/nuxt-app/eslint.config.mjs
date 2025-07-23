@@ -36,6 +36,7 @@ export default withNuxt(
 
           // Functions
           cancelFormSubmission: true,
+          getCard: true,
           getModelVersions: true,
           getReport: true,
           getVersionArtifacts: true,
@@ -50,6 +51,7 @@ export default withNuxt(
           requestErrorAlert: true,
           resetFormErrors: true,
           successfulSubmission: true,
+          timestampToString: true,
           useApi: true,
           useClassificationOptions: true,
           useProblemTypeOptions: true,

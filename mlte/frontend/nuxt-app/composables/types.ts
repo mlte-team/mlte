@@ -49,14 +49,16 @@ export interface TagOption {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export interface ArtifactModel {
-  header: ArtifactHeader;
-  body:
+export interface ArtifactModel<
+  TBody =
     | NegotiationCardModel
     | TestSuiteModel
     | EvidenceModel
     | TestResultsModel
-    | ReportModel;
+    | ReportModel,
+> {
+  header: ArtifactHeader;
+  body: TBody;
 }
 
 export class ArtifactHeader {
@@ -64,7 +66,7 @@ export class ArtifactHeader {
     public identifier: string = "",
     public type: string = "",
     public timestamp: number = -1,
-    public creator: string,
+    public creator: string = "",
   ) {}
 }
 

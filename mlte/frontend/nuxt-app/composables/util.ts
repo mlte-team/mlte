@@ -9,3 +9,13 @@ export function resetFormErrors(
 
   return formErrors;
 }
+
+/**
+ * Convert a unix timestamp to a date string.
+ *
+ * @param {number} timestamp Unix timestamp to be converted
+ * @returns Timestamp as date string
+ */
+export function timestampToString(timestamp: number): string {
+  return new Date(timestamp * 1000).toLocaleString("en-US");
+}

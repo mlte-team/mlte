@@ -17,8 +17,7 @@
     </UsaTextInput>
     <div v-else>
       <h1 class="section-header">{{ queryArtifactId }}</h1>
-      <h3 style="display: inline">Last Modified by:</h3>
-      {{ creator }} - {{ timestamp }}
+      <CreatorDisplay :creator="creator" :timestamp="timestamp" />
     </div>
 
     <template #page-title>Negotiation Card</template>
@@ -105,8 +104,8 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const model = useRoute().query.model;
-const version = useRoute().query.version;
+const queryModel = useRoute().query.model;
+const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
 // References to child components used to call their methods when importing descriptors
@@ -123,19 +122,15 @@ const formErrors = ref({
 });
 
 if (queryArtifactId !== undefined) {
-  const cardData: ArtifactModel | null = await useApi(
-    "/model/" + model + "/version/" + version + "/artifact/" + queryArtifactId,
-    "GET",
+  const card = await getCard(
+    queryModel as string,
+    queryVersion as string,
+    queryArtifactId as string,
   );
-
-  if (cardData && cardData.body.artifact_type == "negotiation_card") {
-    form.value = cardData.body;
-    creator.value = cardData.header.creator;
-    timestamp.value = new Date(cardData.header.timestamp * 1000).toLocaleString(
-      "en-US",
-    );
-  } else {
-    form.value = new NegotiationCardModel();
+  if (card) {
+    creator.value = card.header.creator;
+    timestamp.value = timestampToString(card.header.timestamp);
+    form.value = card.body;
   }
 }
 
@@ -160,7 +155,7 @@ async function submit() {
 
   if (isValidNegotiation(artifact)) {
     const response = await useApi(
-      "/model/" + model + "/version/" + version + "/artifact",
+      "/model/" + queryModel + "/version/" + queryVersion + "/artifact",
       "POST",
       { body: { artifact, force: forceSaveParam.value, parents: false } },
     );

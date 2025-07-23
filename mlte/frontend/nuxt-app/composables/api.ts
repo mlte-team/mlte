@@ -58,10 +58,10 @@ export function useApi<T>(
 }
 
 /**
- * Get sorted list of versions in a model.
+ * Get sorted list of Versions in a Model.
  *
- * @param {string} model Model to get the versions of
- * @returns {Array<string>} Sorted list of versions of the model
+ * @param {string} model Model to get the Versions of
+ * @returns {Array<string>} Sorted list of Versions of the Model
  */
 export async function getModelVersions(model: string): Promise<Array<string>> {
   const versions: Array<string> | null = await useApi(
@@ -72,25 +72,48 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 }
 
 /**
- * Get report from API and return report response body.
+ * Get Negotiation Card from API.
  *
- * @param {string} model Model containing the version
- * @param {string} version Version containing the report
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Negotiation Card
+ * @returns {Promise<NegotiationCardModel>} Promise that resolves to Negotiation Card
+ */
+export async function getCard(
+  model: string,
+  version: string,
+  cardId: string,
+): Promise<ArtifactModel<NegotiationCardModel> | null> {
+  const card: ArtifactModel<NegotiationCardModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + cardId,
+    "GET",
+  );
+  if (card && card.body.artifact_type == "negotiation_card") {
+    return card;
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get report from API.
+ *
+ * @param {string} model Model of the version
+ * @param {string} version Version of the report
  * @returns {Promise<ReportModel>} Promise that resolves to report
  */
 export async function getReport(
   model: string,
   version: string,
   reportId: string,
-): Promise<ReportModel> {
-  const report: ArtifactModel | null = await useApi(
+): Promise<ArtifactModel<ReportModel> | null> {
+  const report: ArtifactModel<ReportModel> | null = await useApi(
     "/model/" + model + "/version/" + version + "/artifact/" + reportId,
     "GET",
   );
   if (report && report.body.artifact_type == "report") {
-    return report.body;
+    return report;
   } else {
-    return new ReportModel();
+    return null;
   }
 }
 
