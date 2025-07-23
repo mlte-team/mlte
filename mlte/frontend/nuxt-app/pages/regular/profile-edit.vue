@@ -118,10 +118,10 @@ async function submit() {
     requestBody.password = newPassword.value;
   }
 
-  const data = await useApi("/user", "PUT", {
+  const response = await useApi("/user", "PUT", {
     body: requestBody,
   });
-  if (data) {
+  if (response) {
     navigateTo("/");
   }
 }

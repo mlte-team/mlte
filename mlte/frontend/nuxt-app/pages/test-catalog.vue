@@ -56,12 +56,14 @@ populateFullEntryList();
 
 // Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
-  const data: Array<TestCatalogEntry> | null = await useApi(
+  const entries: Array<TestCatalogEntry> | null = await useApi(
     "/catalogs/entry/search",
     "POST",
     { body: { filter: { type: "all" } } },
   );
-  entryList.value = data || [];
+  if (entries) {
+    entryList.value = entries;
+  }
 }
 
 // Handle a search query.
@@ -69,7 +71,7 @@ async function search() {
   if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
   } else if (QACategorySearchValue.value === "") {
-    const data: Array<TestCatalogEntry> | null = await useApi(
+    const entries: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
       {
@@ -78,9 +80,11 @@ async function search() {
         },
       },
     );
-    entryList.value = data || [];
+    if (entries) {
+      entryList.value = entries;
+    }
   } else if (tagSearchValue.value === "") {
-    const data: Array<TestCatalogEntry> | null = await useApi(
+    const entries: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
       {
@@ -93,9 +97,11 @@ async function search() {
         },
       },
     );
-    entryList.value = data || [];
+    if (entries) {
+      entryList.value = entries;
+    }
   } else {
-    const data: Array<TestCatalogEntry> | null = await useApi(
+    const entries: Array<TestCatalogEntry> | null = await useApi(
       "/catalogs/entry/search",
       "POST",
       {
@@ -118,7 +124,9 @@ async function search() {
         },
       },
     );
-    entryList.value = data || [];
+    if (entries) {
+      entryList.value = entries;
+    }
   }
 }
 
@@ -160,11 +168,11 @@ async function deleteEntry(catalogId: string, entryId: string) {
     return;
   }
 
-  const data = await useApi(
+  const response = await useApi(
     "/catalog/" + catalogId + "/entry/" + entryId,
     "DELETE",
   );
-  if (data) {
+  if (response) {
     populateFullEntryList();
     successfulSubmission("Entry", entryId, "deleted");
   }
@@ -187,21 +195,21 @@ async function saveEntry(entry: TestCatalogEntry) {
   let error = true;
 
   if (newEntryFlag.value) {
-    const data = await useApi(
+    const response = await useApi(
       "/catalog/" + entry.header.catalog_id + "/entry",
       "POST",
       { body: JSON.stringify(entry) },
     );
-    if (data) {
+    if (response) {
       error = false;
     }
   } else {
-    const data = await useApi(
+    const response = await useApi(
       "catalog/" + entry.header.catalog_id + "/entry",
       "PUT",
       { body: JSON.stringify(entry) },
     );
-    if (data) {
+    if (response) {
       error = false;
     }
   }

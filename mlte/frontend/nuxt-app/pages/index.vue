@@ -304,10 +304,9 @@ if (modelOptions.value !== null) {
 
 // Populate the list of Models.
 async function populateModelList() {
-  const data: Array<string> | null = await useApi("/user/me/models/", "GET");
-  modelList.value = data || [];
-
-  if (modelList.value) {
+  const models: Array<string> | null = await useApi("/user/me/models/", "GET");
+  if (models) {
+    modelList.value = models;
     modelOptions.value = [];
     modelList.value.forEach((modelName: string) => {
       modelOptions.value.push(new SelectOption(modelName, modelName));
@@ -343,7 +342,7 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
 }
 
 /**
- * Update the selected version.
+ * Update the selected version and load its artifacts.
  *
  * @param {string} versionName Version to select
  */
@@ -475,10 +474,10 @@ function clearArtifacts() {
  * @param {string} modelName Name of Model to be created
  */
 async function submitNewModel(modelName: string) {
-  const data = await useApi("/model/", "POST", {
+  const response = await useApi("/model/", "POST", {
     body: { identifier: modelName },
   });
-  if (data) {
+  if (response) {
     populateModelList();
     successfulSubmission("Model", modelName, "created");
     newModelIdentifier.value = "";
@@ -493,10 +492,10 @@ async function submitNewModel(modelName: string) {
  * @param {string} versionName Name of the new Version.
  */
 async function submitNewVersion(modelName: string, versionName: string) {
-  const data = await useApi("/model/" + modelName + "/version", "POST", {
+  const response = await useApi("/model/" + modelName + "/version", "POST", {
     body: { identifier: versionName },
   });
-  if (data) {
+  if (response) {
     selectModel(modelName, false);
     successfulSubmission("Version", versionName, "created");
     newVersionIdentifier.value = "";

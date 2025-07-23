@@ -36,10 +36,10 @@ updateGroupList();
 
 // Get list of Groups from API and populate page with them.
 async function updateGroupList() {
-  const data: Array<Group> | null = await useApi("/groups/details", "GET");
-  if (data) {
+  const groups: Array<Group> | null = await useApi("/groups/details", "GET");
+  if (groups) {
     groupList.value = [];
-    data.forEach((group: Group) => {
+    groups.forEach((group: Group) => {
       groupList.value.push(group);
     });
   }
@@ -76,8 +76,8 @@ async function deleteGroup(groupName: string) {
     return;
   }
 
-  const data = await useApi("/group/" + groupName, "DELETE");
-  if (data) {
+  const response = await useApi("/group/" + groupName, "DELETE");
+  if (response) {
     updateGroupList();
     successfulSubmission("Group", groupName, "deleted");
   }
@@ -100,17 +100,17 @@ async function saveGroup(group: Group) {
   let error = true;
 
   if (newGroupFlag.value) {
-    const data = await useApi("/group", "POST", {
+    const response = await useApi("/group", "POST", {
       body: JSON.stringify(group),
     });
-    if (data) {
+    if (response) {
       error = false;
     }
   } else {
-    const data = await useApi("/group", "PUT", {
+    const response = await useApi("/group", "PUT", {
       body: JSON.stringify(group),
     });
-    if (data) {
+    if (response) {
       error = false;
     }
   }

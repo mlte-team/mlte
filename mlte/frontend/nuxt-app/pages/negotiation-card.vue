@@ -159,12 +159,12 @@ async function submit() {
   };
 
   if (isValidNegotiation(artifact)) {
-    const data = await useApi(
+    const response = await useApi(
       "/model/" + model + "/version/" + version + "/artifact",
       "POST",
       { body: { artifact, force: forceSaveParam.value, parents: false } },
     );
-    if (data) {
+    if (response) {
       successfulSubmission("Negotiation card", identifier, "saved");
       forceSaveParam.value = true;
       if (useRoute().query.artifactId === undefined) {

@@ -64,11 +64,11 @@ export function useApi<T>(
  * @returns {Array<string>} Sorted list of versions of the model
  */
 export async function getModelVersions(model: string): Promise<Array<string>> {
-  const data: Array<string> | null = await useApi(
+  const versions: Array<string> | null = await useApi(
     "/model/" + model + "/version",
     "GET",
   );
-  return data?.sort() || [];
+  return versions?.sort() || [];
 }
 
 /**
@@ -83,12 +83,12 @@ export async function getReport(
   version: string,
   reportId: string,
 ): Promise<ReportModel> {
-  const data: ArtifactModel | null = await useApi(
+  const report: ArtifactModel | null = await useApi(
     "/model/" + model + "/version/" + version + "/artifact/" + reportId,
     "GET",
   );
-  if (data && data.body.artifact_type == "report") {
-    return data.body;
+  if (report && report.body.artifact_type == "report") {
+    return report.body;
   } else {
     return new ReportModel();
   }

@@ -39,9 +39,9 @@ resetSelectedUser();
 
 // Get list of Users form API and populate page with them.
 async function updateUserList() {
-  const data: Array<User> | null = await useApi("/users/details", "GET");
-  if (data) {
-    userList.value = data;
+  const users: Array<User> | null = await useApi("/users/details", "GET");
+  if (users) {
+    userList.value = users;
   }
 }
 
@@ -78,8 +78,8 @@ async function deleteUser(username: string) {
     return;
   }
 
-  const data = await useApi("/user/" + username, "DELETE");
-  if (data) {
+  const response = await useApi("/user/" + username, "DELETE");
+  if (response) {
     updateUserList();
   }
 }
@@ -110,15 +110,15 @@ async function saveUser(user: User) {
   let error = true;
 
   if (newUserFlag.value) {
-    const data = await useApi("/user", "POST", {
+    const response = await useApi("/user", "POST", {
       body: JSON.stringify(user),
     });
-    if (data) {
+    if (response) {
       error = false;
     }
   } else {
-    const data = await useApi("/user", "PUT");
-    if (data) {
+    const response = await useApi("/user", "PUT");
+    if (response) {
       error = false;
     }
   }
