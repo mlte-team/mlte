@@ -95,11 +95,11 @@ export async function getCard(
 }
 
 /**
- * Get report from API.
+ * Get Report from API.
  *
- * @param {string} model Model of the version
- * @param {string} version Version of the report
- * @returns {Promise<ReportModel>} Promise that resolves to report
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Report
+ * @returns {Promise<ReportModel>} Promise that resolves to Report
  */
 export async function getReport(
   model: string,
@@ -112,6 +112,29 @@ export async function getReport(
   );
   if (report && report.body.artifact_type == "report") {
     return report;
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get Test Suite from API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Test Suite
+ * @returns {Promise<ReportModel>} Promise that resolves to Test Suite
+ */
+export async function getSuite(
+  model: string,
+  version: string,
+  suiteId: string,
+): Promise<ArtifactModel<TestSuiteModel> | null> {
+  const suite: ArtifactModel<TestSuiteModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + suiteId,
+    "GET",
+  );
+  if (suite && suite.body.artifact_type == "test_suite") {
+    return suite;
   } else {
     return null;
   }

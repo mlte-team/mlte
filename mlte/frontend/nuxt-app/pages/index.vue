@@ -152,7 +152,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/report-view',
+                      path: '/artifact-views/report-view',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -188,12 +188,35 @@
             A test suite defines the model requirements that must be satisfied
             to ensure successful integration with the target system.
           </p>
-          <UsaTable
-            :headers="testSuiteHeaders"
-            :rows="testSuites"
-            borderless
-            class="table"
-          />
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="suite in testSuites" :key="suite.id">
+                <th scope="row">{{ suite.id }}</th>
+                <td>{{ suite.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: '/artifact-views/suite-view',
+                      query: {
+                        model: suite.model,
+                        version: suite.version,
+                        artifactId: suite.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> View </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </UsaAccordionItem>
 
@@ -253,11 +276,6 @@ const selectedVersion = useCookie("selectedVersion", {
   },
 });
 selectedVersion.value = selectedVersion.value || "";
-
-const testSuiteHeaders = ref([
-  { id: "id", label: "ID", sortable: true },
-  { id: "timestamp", label: "Timestamp", sortable: true },
-]);
 
 const testResultHeaders = ref([
   { id: "id", label: "ID", sortable: true },

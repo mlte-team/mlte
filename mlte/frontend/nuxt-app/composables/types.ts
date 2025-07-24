@@ -49,6 +49,15 @@ export interface TagOption {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
+export class ArtifactHeader {
+  constructor(
+    public identifier: string = "",
+    public type: string = "",
+    public timestamp: number = -1,
+    public creator: string = "",
+  ) {}
+}
+
 export interface ArtifactModel<
   TBody =
     | NegotiationCardModel
@@ -61,21 +70,31 @@ export interface ArtifactModel<
   body: TBody;
 }
 
-export class ArtifactHeader {
-  constructor(
-    public identifier: string = "",
-    public type: string = "",
-    public timestamp: number = -1,
-    public creator: string = "",
-  ) {}
+export interface Measurement {
+  measurement_class: string;
+  output_class: string;
+  additional_data: Dictionary<string>;
+}
+
+export interface Validator {
+  bool_exp: string;
+  bool_exp_str: string;
+  thresholds: Array<string>;
+  success: string;
+  failure: string;
+  info: string | null;
+  input_types: Array<string>;
+  creator_entity: Array<string>;
+  creator_function: string;
+  creator_args: Array<string>;
 }
 
 export interface TestCase {
   identifier: string;
   goal: string;
   qas_list: Array<string>;
-  measurement: object;
-  validator: object;
+  measurement: Measurement;
+  validator: Validator;
 }
 
 export class TestSuiteModel {

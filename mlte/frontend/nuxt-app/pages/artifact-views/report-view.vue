@@ -102,7 +102,7 @@
     <form-fields-results-table v-model="reportBody.test_results" />
 
     <hr />
-    <h1 class="section-header">Additional Context</h1>
+    <h2 class="section-header">Additional Context</h2>
 
     <div>
       <ol>
