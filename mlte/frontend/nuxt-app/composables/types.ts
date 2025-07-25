@@ -250,7 +250,7 @@ export class ImageValueModel {
 
 export class ArrayValueModel {
   public readonly evidence_type = "array";
-  constructor(public unit: string | null = null) {}
+  constructor(public data: Array<any>) {}
 }
 
 export class StringValueModel {
@@ -312,14 +312,7 @@ export class TestResultsModel {
 export interface Result {
   type: string;
   message: string;
-  evidence_metadata: {
-    test_case_id: string;
-    measurement: {
-      measurement_class: string;
-      output_class: string;
-      additional_data: Dictionary<string>;
-    };
-  };
+  evidence_metadata: EvidenceMetadata;
 }
 
 // --------------------------------------------------------------------------------------------------------------

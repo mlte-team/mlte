@@ -76,7 +76,7 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
  *
  * @param {string} model Model of the Version
  * @param {string} version Version of the Negotiation Card
- * @returns {Promise<NegotiationCardModel>} Promise that resolves to Negotiation Card
+ * @returns {Promise<NegotiationCardModel>} Promise that resolves to the Negotiation Card
  */
 export async function getCard(
   model: string,
@@ -99,7 +99,7 @@ export async function getCard(
  *
  * @param {string} model Model of the Version
  * @param {string} version Version of the Report
- * @returns {Promise<ReportModel>} Promise that resolves to Report
+ * @returns {Promise<ReportModel>} Promise that resolves to the Report
  */
 export async function getReport(
   model: string,
@@ -122,7 +122,7 @@ export async function getReport(
  *
  * @param {string} model Model of the Version
  * @param {string} version Version of the Test Suite
- * @returns {Promise<ReportModel>} Promise that resolves to Test Suite
+ * @returns {Promise<TestSuiteModel>} Promise that resolves to the Test Suite
  */
 export async function getSuite(
   model: string,
@@ -135,6 +135,52 @@ export async function getSuite(
   );
   if (suite && suite.body.artifact_type == "test_suite") {
     return suite;
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get Test Results from API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Test Results
+ * @returns {Promise<TestResultsModel>} Promise that resolves to the Test Results
+ */
+export async function getResults(
+  model: string,
+  version: string,
+  suiteId: string,
+): Promise<ArtifactModel<TestResultsModel> | null> {
+  const results: ArtifactModel<TestResultsModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + suiteId,
+    "GET",
+  );
+  if (results && results.body.artifact_type == "test_results") {
+    return results;
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get Evidence from API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Evidence
+ * @returns {Promise<EvidenceModel>} Promise that resolves to the Evidence
+ */
+export async function getEvidence(
+  model: string,
+  version: string,
+  suiteId: string,
+): Promise<ArtifactModel<EvidenceModel> | null> {
+  const evidence: ArtifactModel<EvidenceModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + suiteId,
+    "GET",
+  );
+  if (evidence && evidence.body.artifact_type == "evidence") {
+    return evidence;
   } else {
     return null;
   }

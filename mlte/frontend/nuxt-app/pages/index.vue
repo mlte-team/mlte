@@ -86,7 +86,7 @@
             </thead>
             <tbody>
               <tr v-for="card in negotiationCards" :key="card.id">
-                <th scope="row">{{ card.id }}</th>
+                <td>{{ card.id }}</td>
                 <td>{{ card.timestamp }}</td>
                 <td>
                   <NuxtLink
@@ -147,7 +147,7 @@
             </thead>
             <tbody>
               <tr v-for="report in reports" :key="report.id">
-                <th scope="row">{{ report.id }}</th>
+                <td>{{ report.id }}</td>
                 <td>{{ report.timestamp }}</td>
                 <td>
                   <NuxtLink
@@ -198,7 +198,7 @@
             </thead>
             <tbody>
               <tr v-for="suite in testSuites" :key="suite.id">
-                <th scope="row">{{ suite.id }}</th>
+                <td>{{ suite.id }}</td>
                 <td>{{ suite.timestamp }}</td>
                 <td>
                   <NuxtLink
@@ -227,12 +227,39 @@
             corresponding results; this artifact communicates how well a model
             performed against all of its requirements.
           </p>
-          <UsaTable
-            :headers="testResultHeaders"
-            :rows="testResults"
-            borderless
-            class="table"
-          />
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">
+                  Test Suite ID
+                </th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="result in testResults" :key="result.id">
+                <td>{{ result.id }}</td>
+                <td>{{ result.test_suite_id }}</td>
+                <td>{{ result.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: '/artifact-views/results-view',
+                      query: {
+                        model: result.model,
+                        version: result.version,
+                        artifactId: result.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> View </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </UsaAccordionItem>
 
@@ -243,12 +270,41 @@
             is any artifact produced by a MLTE measurement for the purposes of
             model evaluation.
           </p>
-          <UsaTable
-            :headers="evidencesHeaders"
-            :rows="evidences"
-            borderless
-            class="table"
-          />
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">
+                  Measurement
+                </th>
+                <th data-sortable scope="col" role="columnheader">Type</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="evidence in evidences" :key="evidence.id">
+                <td>{{ evidence.id }}</td>
+                <td>{{ evidence.measurement }}</td>
+                <td>{{ evidence.type }}</td>
+                <td>{{ evidence.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: '/artifact-views/evidence-view',
+                      query: {
+                        model: evidence.model,
+                        version: evidence.version,
+                        artifactId: evidence.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> View </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </UsaAccordionItem>
     </UsaAccordion>
@@ -276,19 +332,6 @@ const selectedVersion = useCookie("selectedVersion", {
   },
 });
 selectedVersion.value = selectedVersion.value || "";
-
-const testResultHeaders = ref([
-  { id: "id", label: "ID", sortable: true },
-  { id: "test_suite_id", label: "Test Suite ID", sortable: true },
-  { id: "timestamp", label: "Timestamp", sortable: true },
-]);
-
-const evidencesHeaders = ref([
-  { id: "id", label: "ID", sortable: true },
-  { id: "measurement", label: "Measurement", sortable: true },
-  { id: "type", label: "Type", sortable: true },
-  { id: "timestamp", label: "Timestamp", sortable: true },
-]);
 
 const negotiationCards = ref<Array<TableItem>>([]);
 const testSuites = ref<Array<TableItem>>([]);
