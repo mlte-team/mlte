@@ -152,7 +152,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/report-form',
+                      path: '/report-view',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -160,7 +160,7 @@
                       },
                     }"
                   >
-                    <UsaButton class="primary-button"> Edit </UsaButton>
+                    <UsaButton class="primary-button"> View </UsaButton>
                   </NuxtLink>
                   <NuxtLink
                     target="_blank"
@@ -179,29 +179,6 @@
               </tr>
             </tbody>
           </table>
-          <NuxtLink
-            :to="{
-              path: '/report-form',
-              query: {
-                model: selectedModel,
-                version: selectedVersion,
-              },
-            }"
-          >
-            <UsaButton
-              :disabled="selectedModel === '' || selectedVersion === ''"
-              class="primary-button"
-              style="float: left"
-            >
-              New
-            </UsaButton>
-          </NuxtLink>
-          <p
-            v-if="selectedModel === '' || selectedVersion === ''"
-            style="float: left; color: red"
-          >
-            Select a model and version to start a new report.
-          </p>
         </div>
       </UsaAccordionItem>
 
@@ -268,13 +245,14 @@ const modelList = ref<string[]>([]);
 
 const selectedModel = useCookie("selectedModel", {
   decode(value) {
-    return value;
+    return decodeURIComponent(value);
   },
 });
+
 selectedModel.value = selectedModel.value || "";
 const selectedVersion = useCookie("selectedVersion", {
   decode(value) {
-    return value;
+    return decodeURIComponent(value);
   },
 });
 selectedVersion.value = selectedVersion.value || "";
@@ -556,6 +534,7 @@ async function submitNewModel(modelName: string) {
           populateModelVersionLists();
           alert(`Model, ${modelName} has been created.`);
           newModelIdentifier.value = "";
+          selectModel(modelName, true);
         }
       },
       onResponseError({ response }) {
@@ -588,6 +567,7 @@ async function submitNewVersion(modelName: string, versionName: string) {
             `Version, ${versionName} for model, ${modelName} has been created`,
           );
           newVersionIdentifier.value = "";
+          selectVersion(versionName);
         }
       },
       onResponseError({ response }) {

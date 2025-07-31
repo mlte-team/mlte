@@ -27,6 +27,7 @@ export async function loadReportData(
   version: string,
   artifactId: string,
 ): Promise<ReportModel> {
+  // Gets report from backend and returns report response body
   const { data: reportData, error } = await useFetch<ReportApiResponse>(
     config.public.apiPath +
       "/model/" +
@@ -54,74 +55,5 @@ export async function loadReportData(
     return reportModel;
   } else {
     return new ReportModel();
-  }
-}
-
-// Load findings from a test results.
-export function loadFindings(
-  testResults: TestResultsModel,
-  system_requirements: Array<QASDescriptor>,
-): Array<Finding> {
-  const findings: Array<Finding> = [];
-  const results = testResults.results;
-  const test_cases = testResults.test_suite.test_cases;
-  for (const key in results) {
-    const result = results[key];
-    const matched_test_case = test_cases.find(
-      (x) => x.identifier === result.evidence_metadata.test_case_id,
-    );
-
-    if (matched_test_case === undefined) {
-      console.log(
-        "Error: Test case identifier did not match a result test_case_id.",
-      );
-      continue;
-    }
-
-    const new_qas_list: Array<QualityAttributeScenario> = [];
-    matched_test_case.qas_list.forEach((qas_id) => {
-      const matched_req = system_requirements.find(
-        (x) => x.identifier === qas_id,
-      );
-      new_qas_list.push({
-        id: qas_id,
-        qa: matched_req!.quality,
-      });
-    });
-
-    const finding = new Finding(
-      result.type,
-      result.evidence_metadata.measurement.measurement_class,
-      result.evidence_metadata.test_case_id,
-      result.message,
-      new_qas_list,
-    );
-    findings.push(finding);
-  }
-  return findings;
-}
-
-export async function loadTestResults(
-  token: string,
-  model: string,
-  version: string,
-  test_results_id: string,
-  system_requirements: Array<QASDescriptor>,
-): Promise<Array<Finding>> {
-  const testResultsRes = await fetchArtifact(
-    token as string,
-    model as string,
-    version as string,
-    test_results_id,
-  );
-
-  // TODO : Consider error handling
-  if (testResultsRes.body.artifact_type === "test_results") {
-    return loadFindings(
-      testResultsRes.body as TestResultsModel,
-      system_requirements,
-    );
-  } else {
-    return [];
   }
 }

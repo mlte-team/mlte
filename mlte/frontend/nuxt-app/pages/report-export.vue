@@ -52,53 +52,10 @@
     <div class="rounded-border insection-margin">
       <h3>Results</h3>
     </div>
-    <table
-      class="table usa-table usa-table--borderless section-margin"
-      style="margin-top: 0px"
-    >
-      <thead>
-        <tr>
-          <th data-sortable scope="col" role="columnheader">Status</th>
-          <th data-sortable scope="col" role="columnheader">
-            Quality Attribute Scenario
-          </th>
-          <th data-sortable scope="col" role="columnheader">Measurement</th>
-          <th data-sortable scope="col" role="columnheader">Test Case ID</th>
-          <th data-sortable scope="col" role="columnheader">Message</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="finding in findings" :key="finding.test_case_id">
-          <td
-            v-if="finding.status == 'Success'"
-            style="background-color: rgba(210, 232, 221, 255)"
-          >
-            {{ finding.status }}
-          </td>
-          <td
-            v-else-if="finding.status == 'Info'"
-            style="background-color: rgba(255, 243, 205, 255)"
-          >
-            {{ finding.status }}
-          </td>
-          <td
-            v-else-if="finding.status == 'Failure'"
-            style="background-color: rgba(248, 216, 219, 255)"
-          >
-            {{ finding.status }}
-          </td>
-          <td v-else>{{ finding.status }}</td>
-          <td>
-            <div v-for="(item, index) in finding.qas_list" :key="index">
-              {{ item.id }} - {{ item.qa }}
-            </div>
-          </td>
-          <td>{{ finding.measurement }}</td>
-          <td>{{ finding.test_case_id }}</td>
-          <td>{{ finding.message }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <form-fields-results-table
+      v-model="form.test_results"
+      class="section-margin"
+    />
 
     <div class="rounded-border">
       <h3>System Information</h3>
@@ -150,7 +107,6 @@
 <script setup lang="ts">
 const token = useCookie("token");
 
-const findings = ref<Array<Finding>>([]);
 const form = ref<ReportModel>(new ReportModel());
 
 const model = useRoute().query.model;
@@ -163,16 +119,6 @@ form.value = await loadReportData(
   version as string,
   artifactId as string,
 );
-
-if (form.value.test_results_id) {
-  findings.value = await loadTestResults(
-    token.value as string,
-    model as string,
-    version as string,
-    form.value.test_results_id,
-    form.value.negotiation_card.system_requirements,
-  );
-}
 </script>
 
 <style>

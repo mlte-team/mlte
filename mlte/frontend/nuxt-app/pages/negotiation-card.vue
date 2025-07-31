@@ -1,6 +1,26 @@
 <template>
   <NuxtLayout name="base-layout">
     <title>Negotiation Card</title>
+    <UsaTextInput
+      v-if="queryArtifactId === undefined"
+      v-model="userInputArtifactId"
+      :error="formErrors.identifier"
+    >
+      <template #label>
+        Artifact ID
+        <InfoIcon>
+          The Artifact ID this negotiation card <br />
+          will be saved under upon submission.
+        </InfoIcon>
+      </template>
+      <template #error-message> Identifier cannot be empty </template>
+    </UsaTextInput>
+    <div v-else>
+      <h1 class="section-header">{{ queryArtifactId }}</h1>
+      <h3 style="display: inline">Last Modified by:</h3>
+      {{ creator }} - {{ timestamp }}
+    </div>
+
     <template #page-title>Negotiation Card</template>
     <template #right-sidebar>
       <div>
@@ -61,25 +81,6 @@
       information icons next to each field to get more information about that
       field. Click on the Example button to see specific examples for a section.
     </p>
-
-    <UsaTextInput
-      v-if="queryArtifactId === undefined"
-      v-model="userInputArtifactId"
-      :error="formErrors.identifier"
-    >
-      <template #label>
-        Artifact ID
-        <InfoIcon>
-          The Artifact ID this negotiation card <br />
-          will be saved under upon submission.
-        </InfoIcon>
-      </template>
-      <template #error-message> Identifier cannot be empty </template>
-    </UsaTextInput>
-    <div v-else>
-      <h3 style="display: inline">Last Modified by:</h3>
-      {{ creator }} - {{ timestamp }}
-    </div>
 
     <FormFieldsSystemInformation
       ref="systemInformationRef"
