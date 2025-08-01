@@ -9,7 +9,10 @@ const config = useRuntimeConfig();
  * @param {string} url URL to fetch data from
  * @param {string} method HTTP method to use for request
  * @param {NitroFetchOptions<string>} [options] Optional configuration for $fetch
- * @param {string} [tokenOverride] Token provided to authenticate with API instead of cookie
+ * @param {string} [tokenOverride] Token provided to authenticate with API instead of cookie. Used in cases
+ *                                  where token is set and then needs to be used immediately for a request.
+ *                                  In theory, should only be needed if SSR is enabled but cookie is unable
+ *                                  to be retrieved if this is not passed in these cases
  * @param {boolean} [auth] Flag to add token to request or not. Default true
  * @returns {Promise<T> | null} Promise that resolves to the data from request or null if there is an error
  */
