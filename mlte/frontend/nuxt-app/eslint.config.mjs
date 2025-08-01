@@ -37,6 +37,7 @@ export default withNuxt(
           // Functions
           cancelFormSubmission: true,
           getCard: true,
+          getCustomList: true,
           getGroupList: true,
           getModelVersions: true,
           getPermissionList: true,

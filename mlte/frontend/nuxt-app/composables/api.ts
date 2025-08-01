@@ -133,11 +133,11 @@ export async function getCard(
 }
 
 /**
- * Get report from API.
+ * Get Report from API.
  *
  * @param {string} model Model of the version
- * @param {string} version Version of the report
- * @returns {Promise<ReportModel>} Promise that resolves to report
+ * @param {string} version Version of the Report
+ * @returns {Promise<ReportModel>} Promise that resolves to Report
  */
 export async function getReport(
   model: string,
@@ -153,6 +153,26 @@ export async function getReport(
   } else {
     return null;
   }
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Custom List
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get Custom List from API.
+ *
+ * @param {string} customListId ID of the custom list
+ * @returns {Promise<Array<CustomListEntry>>} Promise that resolves to Custom List
+ */
+export async function getCustomList(
+  customListId: string,
+): Promise<Array<CustomListEntry>> {
+  const customList: Array<CustomListEntry> | null = await useApi(
+    "/custom_list/" + customListId,
+    "GET",
+  );
+  return customList || [];
 }
 
 // --------------------------------------------------------------------------------------------------------------

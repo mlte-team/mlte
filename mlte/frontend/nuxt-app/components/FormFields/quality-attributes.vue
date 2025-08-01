@@ -41,9 +41,8 @@ const qaCategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 
 const QACategoryOptions = ref<Array<QAOption>>([]);
-const QACategoryAPIData = ref([]);
-QACategoryAPIData.value =
-  (await useApi("/custom_list/qa_categories/", "GET")) || [];
+const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
+QACategoryAPIData.value = await getCustomList("qa_categories");
 
 if (QACategoryAPIData.value) {
   populateList(QACategoryOptions.value, QACategoryAPIData.value);
@@ -52,8 +51,7 @@ if (QACategoryAPIData.value) {
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
 const QAapiOptions = ref<Array<CustomListEntry>>([]);
-QAapiOptions.value =
-  (await useApi("/custom_list/quality_attributes", "GET")) || [];
+QAapiOptions.value = await getCustomList("quality_attributes");
 
 if (QAapiOptions.value) {
   populateList(AllQAOptions.value, QAapiOptions.value);
