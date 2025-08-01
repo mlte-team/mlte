@@ -106,6 +106,23 @@ export async function getPermissionList(): Promise<Array<Permission>> {
 }
 
 // --------------------------------------------------------------------------------------------------------------
+// Catalog
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get list of Catalogs from API.
+ *
+ * @return {Promise<Array<CatalogReply>>} Promise that resolves to list of Catalogs
+ */
+export async function getCatalogList(): Promise<Array<CatalogReply>> {
+  const catalogList: Array<CatalogReply> | null = await useApi(
+    "/catalogs",
+    "GET",
+  );
+  return catalogList || [];
+}
+
+// --------------------------------------------------------------------------------------------------------------
 // Artifact
 // --------------------------------------------------------------------------------------------------------------
 

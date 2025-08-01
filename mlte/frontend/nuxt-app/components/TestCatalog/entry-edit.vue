@@ -187,7 +187,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const catalogList = ref<Array<CatalogReply>>([]);
-catalogList.value = (await useApi("/catalogs", "GET")) || [];
+catalogList.value = await getCatalogList();
 
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
