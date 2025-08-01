@@ -45,9 +45,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
@@ -57,142 +54,107 @@ const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 populateFullEntryList();
 
+// Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
-  await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-    retry: 0,
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    body: {
-      filter: {
-        type: "all",
-      },
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        entryList.value = response._data;
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const entries: Array<TestCatalogEntry> | null = await useApi(
+    "/catalogs/entry/search",
+    "POST",
+    { body: { filter: { type: "all" } } },
+  );
+  if (entries) {
+    entryList.value = entries;
+  }
 }
 
+// Handle a search query.
 async function search() {
   if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
   } else if (QACategorySearchValue.value === "") {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "tag",
-          name: "tags",
-          value: tagSearchValue.value,
+    const entries: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      {
+        body: {
+          filter: { type: "tag", name: "tags", value: tagSearchValue.value },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    if (entries) {
+      entryList.value = entries;
+    }
   } else if (tagSearchValue.value === "") {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "property",
-          name: "qa_category",
-          value: QACategorySearchValue.value,
+    const entries: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      {
+        body: {
+          filter: {
+            type: "property",
+            name: "qa_category",
+            value: QACategorySearchValue.value,
+          },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    if (entries) {
+      entryList.value = entries;
+    }
   } else {
-    await $fetch(config.public.apiPath + "/catalogs/entry/search", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        filter: {
-          type: "and",
-          filters: [
-            {
-              type: "tag",
-              name: "tags",
-              value: tagSearchValue.value,
-            },
-            {
-              type: "property",
-              name: "qa_category",
-              value: QACategorySearchValue.value,
-            },
-          ],
+    const entries: Array<TestCatalogEntry> | null = await useApi(
+      "/catalogs/entry/search",
+      "POST",
+      {
+        body: {
+          filter: {
+            type: "and",
+            filters: [
+              {
+                type: "tag",
+                name: "tags",
+                value: tagSearchValue.value,
+              },
+              {
+                type: "property",
+                name: "qa_category",
+                value: QACategorySearchValue.value,
+              },
+            ],
+          },
         },
       },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          entryList.value = response._data;
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
+    );
+    if (entries) {
+      entryList.value = entries;
+    }
   }
 }
 
+// Reset selectedEntry, for example when an edit is completed.
 function resetSelectedEntry() {
   selectedEntry.value = new TestCatalogEntry();
 }
 
+// Switch to the edit entry view with newEntryFlag enabled.
 function addEntry() {
   resetSelectedEntry();
   editFlag.value = true;
   newEntryFlag.value = true;
 }
 
+// Switch to the edit entry view with newEntryFlag disabled.
 function editEntry(entry: TestCatalogEntry) {
   selectedEntry.value = entry;
   editFlag.value = true;
   newEntryFlag.value = false;
 }
 
+/**
+ * Delete a TestCatalogEntry
+ *
+ * @param {string} catalogId Catalog containing the TestCatalogEntry to be deleted
+ * @param {string} entryId ID of the TestCatalogEntry to be deleted
+ */
 async function deleteEntry(catalogId: string, entryId: string) {
   if (
     !confirm(
@@ -206,29 +168,17 @@ async function deleteEntry(catalogId: string, entryId: string) {
     return;
   }
 
-  await $fetch(
-    config.public.apiPath + "/catalog/" + catalogId + "/entry/" + entryId,
-    {
-      retry: 0,
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          populateFullEntryList();
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+  const response = await useApi(
+    "/catalog/" + catalogId + "/entry/" + entryId,
+    "DELETE",
   );
+  if (response) {
+    populateFullEntryList();
+    successfulSubmission("Entry", entryId, "deleted");
+  }
 }
 
+// Return to entry list view from the edit view.
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -236,69 +186,39 @@ function cancelEdit() {
   }
 }
 
+/**
+ * Save new entry, or save changes to entry.
+ *
+ * @param {TestCatalogEntry} entry TestCatalogEntry to be saved
+ */
 async function saveEntry(entry: TestCatalogEntry) {
-  try {
-    if (newEntryFlag.value) {
-      await $fetch(
-        config.public.apiPath +
-          "/catalog/" +
-          entry.header.catalog_id +
-          "/entry",
-        {
-          retry: 0,
-          method: "POST",
-          body: JSON.stringify(entry),
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              populateFullEntryList();
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
-    } else {
-      await $fetch(
-        config.public.apiPath +
-          "/catalog/" +
-          entry.header.catalog_id +
-          "/entry",
-        {
-          retry: 0,
-          method: "PUT",
-          body: JSON.stringify(entry),
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              populateFullEntryList();
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
+  let error = true;
+
+  if (newEntryFlag.value) {
+    const response = await useApi(
+      "/catalog/" + entry.header.catalog_id + "/entry",
+      "POST",
+      { body: JSON.stringify(entry) },
+    );
+    if (response) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const response = await useApi(
+      "catalog/" + entry.header.catalog_id + "/entry",
+      "PUT",
+      { body: JSON.stringify(entry) },
+    );
+    if (response) {
+      error = false;
+    }
   }
 
-  alert("Entry has been saved successfully.");
-  resetSelectedEntry();
-  editFlag.value = false;
+  if (!error) {
+    populateFullEntryList();
+    resetSelectedEntry();
+    editFlag.value = false;
+    successfulSubmission("Entry", entry.header.identifier, "saved");
+  }
 }
 </script>
