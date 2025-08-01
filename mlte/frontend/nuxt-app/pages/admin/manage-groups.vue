@@ -36,13 +36,7 @@ updateGroupList();
 
 // Get list of Groups from API and populate page with them.
 async function updateGroupList() {
-  const groups: Array<Group> | null = await useApi("/groups/details", "GET");
-  if (groups) {
-    groupList.value = [];
-    groups.forEach((group: Group) => {
-      groupList.value.push(group);
-    });
-  }
+  groupList.value = await getGroupList();
 }
 
 // Reset selectedGroup, for example after an edit is completed.

@@ -83,7 +83,19 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 // --------------------------------------------------------------------------------------------------------------
 
 /**
- * 
+ * Get list of Groups from API.
+ *
+ * @return {Promise<Array<Group>>} Promise that resolves to list of Groups
+ */
+export async function getGroupList(): Promise<Array<Group>> {
+  const groupList: Array<Group> | null = await useApi("/groups/details", "GET");
+  return groupList || [];
+}
+
+/**
+ * Get list of Permissions from API.
+ *
+ * @returns {Promise<Array<Permission>>} Promise that resolves to list of Permissions
  */
 export async function getPermissionList(): Promise<Array<Permission>> {
   const permissionList: Array<Permission> | null = await useApi(

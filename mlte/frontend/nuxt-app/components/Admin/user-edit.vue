@@ -133,7 +133,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const groupOptions = ref<Array<GroupCheckboxOption>>([]);
 const groupList = ref<Array<Group>>([]);
-groupList.value = (await useApi("/groups/details", "GET")) || [];
+groupList.value = await getGroupList();
 
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
