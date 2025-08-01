@@ -38,6 +38,7 @@ export default withNuxt(
           cancelFormSubmission: true,
           getCard: true,
           getModelVersions: true,
+          getPermissionList: true,
           getReport: true,
           getVersionArtifacts: true,
           handleHttpError: true,

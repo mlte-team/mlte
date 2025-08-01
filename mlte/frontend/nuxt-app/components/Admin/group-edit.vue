@@ -66,8 +66,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const permissionOptions = ref<Array<PermissionCheckboxOption>>([]);
 const permissionList = ref<Array<Permission>>([]);
-permissionList.value =
-  (await useApi("groups/permissions/details", "GET")) || [];
+permissionList.value = await getPermissionList();
 
 if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {
