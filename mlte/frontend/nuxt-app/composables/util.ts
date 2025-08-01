@@ -1,7 +1,5 @@
 import type { Dictionary } from "../composables/types";
 
-const config = useRuntimeConfig();
-
 export function resetFormErrors(
   formErrors: Dictionary<boolean>,
 ): Dictionary<boolean> {
@@ -12,38 +10,12 @@ export function resetFormErrors(
   return formErrors;
 }
 
-// Fetch a artifact by ID.
-export async function fetchArtifact(
-  token: string,
-  model: string,
-  version: string,
-  artifactId: string,
-): Promise<ArtifactModel> {
-  const data: ArtifactModel = await $fetch<ArtifactModel>(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      artifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        return response._data;
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
-  );
-
-  return data;
+/**
+ * Convert a unix timestamp to a date string.
+ *
+ * @param {number} timestamp Unix timestamp to be converted
+ * @returns Timestamp as date string
+ */
+export function timestampToString(timestamp: number): string {
+  return new Date(timestamp * 1000).toLocaleString("en-US");
 }

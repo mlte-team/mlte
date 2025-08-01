@@ -3,19 +3,21 @@
     <title>Report</title>
     <template #page-title>Report</template>
     <h1 class="section-header">{{ queryArtifactId }}</h1>
+    <CreatorDisplay :creator="creator" :timestamp="timestamp" />
 
     <div>
       <h2 class="section-header">System Information</h2>
       <div>
         <b>Usage Context for the Model: </b>
-        {{ report.negotiation_card.system.usage_context }}
+        {{ reportBody.negotiation_card.system.usage_context }}
       </div>
 
       <div>
         <b>Goals:</b>
         <ol>
           <li
-            v-for="(goal, goalIndex) in report.negotiation_card.system.goals"
+            v-for="(goal, goalIndex) in reportBody.negotiation_card.system
+              .goals"
             :key="goalIndex"
           >
             <b>Goal {{ goalIndex + 1 }}</b>
@@ -43,29 +45,29 @@
 
       <div>
         <b>ML Problem Type: </b>
-        {{ report.negotiation_card.system.problem_type }}
+        {{ reportBody.negotiation_card.system.problem_type }}
       </div>
 
       <div>
         <b>ML Task: </b>
-        {{ report.negotiation_card.system.task }}
+        {{ reportBody.negotiation_card.system.task }}
       </div>
 
       <div>
         <b>False Positive Risk: </b>
-        {{ report.negotiation_card.system.risks.fp }}
+        {{ reportBody.negotiation_card.system.risks.fp }}
       </div>
 
       <div>
         <b>False Negative Risk: </b>
-        {{ report.negotiation_card.system.risks.fn }}
+        {{ reportBody.negotiation_card.system.risks.fn }}
       </div>
 
       <div>
         <b>Other Risks of Producing Incorrect Results</b>
         <ol>
           <li
-            v-for="(risk, riskIndex) in report.negotiation_card.system.risks
+            v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
               .other"
             :key="riskIndex"
           >
@@ -79,7 +81,7 @@
       <h2 class="section-header">System Requirements</h2>
       <ol>
         <li
-          v-for="(requirement, requirementIndex) in report.negotiation_card
+          v-for="(requirement, requirementIndex) in reportBody.negotiation_card
             .system_requirements"
           :key="requirementIndex"
         >
@@ -97,7 +99,7 @@
     </div>
 
     <h2 class="section-header">Test Results</h2>
-    <form-fields-results-table v-model="report.test_results" />
+    <form-fields-results-table v-model="reportBody.test_results" />
 
     <hr />
     <h1 class="section-header">Additional Context</h1>
@@ -105,7 +107,7 @@
     <div>
       <ol>
         <li
-          v-for="(dataItem, datasetIndex) in report.negotiation_card.data"
+          v-for="(dataItem, datasetIndex) in reportBody.negotiation_card.data"
           :key="datasetIndex"
         >
           <b>Description: </b>{{ dataItem.description }}
@@ -175,25 +177,28 @@
           <li>
             <b>Graphics Processing Units (GPUs): </b
             >{{
-              report.negotiation_card.model.development_compute_resources.gpu
+              reportBody.negotiation_card.model.development_compute_resources
+                .gpu
             }}
           </li>
           <li>
             <b>Central Processing Units (CPUs): </b
             >{{
-              report.negotiation_card.model.development_compute_resources.cpu
+              reportBody.negotiation_card.model.development_compute_resources
+                .cpu
             }}
           </li>
           <li>
             <b>Memory: </b
             >{{
-              report.negotiation_card.model.development_compute_resources.memory
+              reportBody.negotiation_card.model.development_compute_resources
+                .memory
             }}
           </li>
           <li>
             <b>Storage: </b
             >{{
-              report.negotiation_card.model.development_compute_resources
+              reportBody.negotiation_card.model.development_compute_resources
                 .storage
             }}
           </li>
@@ -202,20 +207,20 @@
 
       <div>
         <b>Deployment Platform: </b>
-        {{ report.negotiation_card.model.deployment_platform }}
+        {{ reportBody.negotiation_card.model.deployment_platform }}
       </div>
 
       <div>
         <b>Capability Deployment Mechanism: </b>
-        {{ report.negotiation_card.model.capability_deployment_mechanism }}
+        {{ reportBody.negotiation_card.model.capability_deployment_mechanism }}
       </div>
 
       <div>
         <b>Input Specification</b>
         <ol>
           <li
-            v-for="(inputSpec, inputSpecIndex) in report.negotiation_card.model
-              .input_specification"
+            v-for="(inputSpec, inputSpecIndex) in reportBody.negotiation_card
+              .model.input_specification"
             :key="inputSpecIndex"
           >
             <b>Input {{ inputSpecIndex + 1 }}</b>
@@ -233,7 +238,7 @@
         <b>Output Specification</b>
         <ol>
           <li
-            v-for="(outputSpec, outputSpecIndex) in report.negotiation_card
+            v-for="(outputSpec, outputSpecIndex) in reportBody.negotiation_card
               .model.output_specification"
             :key="outputSpecIndex"
           >
@@ -254,25 +259,27 @@
           <li>
             <b>Graphics Processing Units (GPUs): </b
             >{{
-              report.negotiation_card.model.production_compute_resources.gpu
+              reportBody.negotiation_card.model.production_compute_resources.gpu
             }}
           </li>
           <li>
             <b>Central Processing Units (CPUs): </b
             >{{
-              report.negotiation_card.model.production_compute_resources.cpu
+              reportBody.negotiation_card.model.production_compute_resources.cpu
             }}
           </li>
           <li>
             <b>Memory: </b
             >{{
-              report.negotiation_card.model.production_compute_resources.memory
+              reportBody.negotiation_card.model.production_compute_resources
+                .memory
             }}
           </li>
           <li>
             <b>Storage: </b
             >{{
-              report.negotiation_card.model.production_compute_resources.storage
+              reportBody.negotiation_card.model.production_compute_resources
+                .storage
             }}
           </li>
         </ul>
@@ -305,19 +312,24 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
 const queryModel = useRoute().query.model;
 const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 
-const report = ref<ReportModel>(new ReportModel());
+const creator = ref("");
+const timestamp = ref("");
+const reportBody = ref<ReportModel>(new ReportModel());
 
 if (queryArtifactId !== undefined) {
-  report.value = await loadReportData(
-    token.value as string,
+  const report = await getReport(
     queryModel as string,
     queryVersion as string,
     queryArtifactId as string,
   );
+  if (report) {
+    creator.value = report.header.creator;
+    timestamp.value = timestampToString(report.header.timestamp);
+    reportBody.value = report.body;
+  }
 }
 </script>

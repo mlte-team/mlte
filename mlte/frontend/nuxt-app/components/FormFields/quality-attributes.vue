@@ -29,11 +29,7 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const emit = defineEmits(["updateAttribute"]);
-
 const props = defineProps({
   initialQualityAttribute: {
     type: String,
@@ -45,32 +41,20 @@ const qaCategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 
 const QACategoryOptions = ref<Array<QAOption>>([]);
-const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
+QACategoryAPIData.value = await getCustomList("qa_categories");
+
 if (QACategoryAPIData.value) {
-  addOptionsToList(QACategoryOptions.value, QACategoryAPIData.value);
+  populateList(QACategoryOptions.value, QACategoryAPIData.value);
 }
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
-const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/quality_attributes/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QAapiOptions = ref<Array<CustomListEntry>>([]);
+QAapiOptions.value = await getCustomList("quality_attributes");
+
 if (QAapiOptions.value) {
-  addOptionsToList(AllQAOptions.value, QAapiOptions.value);
+  populateList(AllQAOptions.value, QAapiOptions.value);
 }
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
@@ -83,7 +67,12 @@ if (props.initialQualityAttribute) {
   });
 }
 
-// initialAttribute is used on startup to set the value of category and parent
+/**
+ * Handle QA Category change.
+ *
+ * @param {string} newCategory The newly selected category
+ * @param {string} [initialAttribute] Optional param to set QA when changing QA Category. Used on startup
+ */
 function categoryChange(newCategory: string, initialAttrbute?: string) {
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: QAOption) => {
@@ -99,7 +88,13 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   }
 }
 
-function addOptionsToList(
+/**
+ * Populate initialList with appendList as QAOption's
+ *
+ * @param {Array<QAOption>} initialList List of QAOption to be added to, generally empty
+ * @param {Array<CustomListEntry>} appendList List of CustomListEntry to add to initialList
+ */
+function populateList(
   initialList: Array<QAOption>,
   appendList: Array<CustomListEntry>,
 ) {

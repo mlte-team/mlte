@@ -293,14 +293,17 @@ const props = defineProps({
   },
 });
 
+// Provide hook for parent page to call addInputspec. Needed for descriptor import.
 const parentAddInputSpec = () => {
   addInputSpec();
 };
 
+// Provide hook for parent page to call addOutputSpec. Needed for descriptor import.
 const parentAddOutputSpec = () => {
   addOutputSpec();
 };
 
+// Expose the hooks to parent page.
 defineExpose({
   parentAddInputSpec,
   parentAddOutputSpec,
@@ -338,20 +341,32 @@ const outputModalRows = ref([
   },
 ]);
 
+// Add ModelIODescriptor to Input Specification.
 function addInputSpec() {
   props.modelValue.input_specification.push(new ModelIODescriptor());
 }
 
+/**
+ * Delete ModelIODescriptor from specified Input Specification.
+ *
+ * @param specIndex Index of ModelIODescriptor to delete
+ */
 function deleteInputSpec(specIndex: number) {
   if (confirm("Are you sure you want to delete this spec?")) {
     props.modelValue.input_specification.splice(specIndex, 1);
   }
 }
 
+// Add ModelIODescriptor to Output Specification.
 function addOutputSpec() {
   props.modelValue.output_specification.push(new ModelIODescriptor());
 }
 
+/**
+ * Delete ModelIODescriptor from specified Output Specification.
+ *
+ * @param specIndex Index of ModelIODescriptor to delete
+ */
 function deleteOutputSpec(specIndex: number) {
   if (confirm("Are you sure you want to delete this spec?")) {
     props.modelValue.output_specification.splice(specIndex, 1);

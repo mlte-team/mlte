@@ -48,9 +48,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
@@ -68,15 +65,9 @@ const formErrors = ref<Dictionary<boolean>>({
   name: false,
 });
 const permissionOptions = ref<Array<PermissionCheckboxOption>>([]);
-const { data: permissionList } = await useFetch<Array<Permission>>(
-  config.public.apiPath + "/groups/permissions/details",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const permissionList = ref<Array<Permission>>([]);
+permissionList.value = await getPermissionList();
+
 if (permissionList.value) {
   permissionList.value.forEach((permission: Permission) => {
     permissionOptions.value.push(
@@ -103,6 +94,12 @@ permissionOptions.value.forEach((permissionOption) => {
   }
 });
 
+/**
+ * Handle a permission change either adding the item to selections, or removing it.
+ *
+ * @param {boolean} selected Flag indicating if item was selected or deselected
+ * @param {Permission} permissionOption Permission that was selected or deselected
+ */
 function permissionChange(selected: boolean, permissionOption: Permission) {
   if (selected) {
     props.modelValue.permissions.push(
@@ -127,6 +124,7 @@ function permissionChange(selected: boolean, permissionOption: Permission) {
   }
 }
 
+// Handle submission of form.
 function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;

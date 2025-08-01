@@ -223,43 +223,69 @@ const props = defineProps({
 
 const problemTypeOptions = useProblemTypeOptions();
 
+// Provide hook for parent page to call addGoal. Needed for descriptor import.
 const parentAddGoal = () => {
   addGoal();
 };
 
+// Provide hook for parent page to call addRisk. Needed for descriptor import.
 const parentAddRisk = () => {
   addRisk();
 };
 
+// Expose the hooks to parent page.
 defineExpose({
   parentAddGoal,
   parentAddRisk,
 });
 
+// Add GoalDescriptor to goal list.
 function addGoal() {
   props.modelValue.goals.push(new GoalDescriptor());
 }
 
+/**
+ * Delete GoalDescriptor from goal list.
+ *
+ * @param {number} goalIndex Index of GoalDescriptor to delete
+ */
 function deleteGoal(goalIndex: number) {
   if (confirm("Are you sure you want to delete this goal?")) {
     props.modelValue.goals.splice(goalIndex, 1);
   }
 }
 
+// Add risk to Other Risk list.
 function addRisk() {
   props.modelValue.risks.other.push("");
 }
 
+/**
+ * Delete risk from Other Risk list.
+ *
+ * @param {number} riskIndex Index of risk to delete
+ */
 function deleteRisk(riskIndex: number) {
   if (confirm("Are you sure you want to delete this risk?")) {
     props.modelValue.risks.other.splice(riskIndex, 1);
   }
 }
 
+/**
+ * Add MetricDescriptor to list in a goal.
+ *
+ * @param {number} goalIndex Index of the goal to add a MetricDesriptor to
+ */
 function addMetric(goalIndex: number) {
   props.modelValue.goals[goalIndex].metrics.push(new MetricDescriptor());
 }
 
+/**
+ * Delete MetricDescriptor from list in a goal.
+ *
+ * @param {number} goalIndex Index of goal
+ * @param {number} metricIndex Index of MetricDescriptor in goal to delete
+ */
 function deleteMetric(goalIndex: number, metricIndex: number) {
   if (confirm("Are you sure you want to delete this metric?")) {
     props.modelValue.goals[goalIndex].metrics.splice(metricIndex, 1);
