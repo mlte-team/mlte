@@ -6,14 +6,14 @@
       <div>
         <UsaTextInput
           v-model="newModelIdentifier"
-          @keyup.enter="submitNewModel(newModelIdentifier)"
+          @keyup.enter="createNewModel(newModelIdentifier)"
         >
           <template #label> New Model </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
           style="margin-left: 0px"
-          @click="submitNewModel(newModelIdentifier)"
+          @click="createNewModel(newModelIdentifier)"
         >
           Create Model
         </UsaButton>
@@ -469,10 +469,8 @@ function clearArtifacts() {
  *
  * @param {string} modelName Name of Model to be created
  */
-async function submitNewModel(modelName: string) {
-  const response = await useApi("/model/", "POST", {
-    body: { identifier: modelName },
-  });
+async function createNewModel(modelName: string) {
+  const response = await createModel(modelName);
   if (response) {
     populateModelList();
     successfulSubmission("Model", modelName, "created");

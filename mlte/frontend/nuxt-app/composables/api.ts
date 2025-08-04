@@ -65,17 +65,20 @@ export function useApi<T>(
 // --------------------------------------------------------------------------------------------------------------
 
 /**
- * Get sorted list of Models available to User.
+ * Create new Model with API.
  *
- * @return {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
+ * @param {string} modelName Name of model to be created
+ * @returns {Promise<Model | null>} Promise that resolves to crated model or null on failure
  */
-export async function getUserModels(): Promise<Array<string>> {
-  const models: Array<string> | null = await useApi("/user/me/models", "GET");
-  return models?.sort() || [];
+export async function createModel(modelName: string): Promise<Model | null> {
+  const response: Model | null = await useApi("/model/", "POST", {
+    body: { identifier: modelName },
+  });
+  return response;
 }
 
 /**
- * Get sorted list of Versions in a Model.
+ * Get sorted list of Versions in a Model from API.
  *
  * @param {string} model Model to get the Versions of
  * @returns {Array<string>} Promise that resolves to sorted list of Versions of the Model
@@ -86,6 +89,20 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
     "GET",
   );
   return versions?.sort() || [];
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// User
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get sorted list of Models available to User from API.
+ *
+ * @return {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
+ */
+export async function getUserModels(): Promise<Array<string>> {
+  const models: Array<string> | null = await useApi("/user/me/models", "GET");
+  return models?.sort() || [];
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -154,7 +171,7 @@ export async function searchCatalog(
  *
  * @param {string} catalogId ID of Test Catalog to add entry to
  * @param {TestCatalogEntry} entry Test Catalog Entry to create
- * @returns {Promise<TestCatalogEntry | null>} Created Test Catalog Entry, or null on a failure
+ * @returns {Promise<TestCatalogEntry | null>} Promise that resolves to created Test Catalog Entry, or null on a failure
  */
 export async function createCatalogEntry(
   catalogId: string,

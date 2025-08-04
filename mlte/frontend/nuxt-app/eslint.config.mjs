@@ -37,6 +37,7 @@ export default withNuxt(
           // Functions
           cancelFormSubmission: true,
           createCatalogEntry: true,
+          createModel: true,
           deleteCatalogEntry: true,
           getCard: true,
           getCatalogList: true,
