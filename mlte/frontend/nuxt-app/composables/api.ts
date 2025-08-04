@@ -19,8 +19,8 @@ const config = useRuntimeConfig();
 export function useApi<T>(
   url: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
-  options?: NitroFetchOptions<string>,
-  tokenOverride?: string,
+  options: NitroFetchOptions<string> | null = null,
+  tokenOverride: string | null = null,
   auth: boolean = true,
 ): Promise<T> | null {
   const defaultOptions: NitroFetchOptions<string> = {
@@ -106,7 +106,7 @@ export async function getPermissionList(): Promise<Array<Permission>> {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-// Catalog
+// Test Catalog
 // --------------------------------------------------------------------------------------------------------------
 
 /**
@@ -120,6 +120,81 @@ export async function getCatalogList(): Promise<Array<CatalogReply>> {
     "GET",
   );
   return catalogList || [];
+}
+
+/**
+ * Perform a search for Test Catalog Entries with API.
+ *
+ * @param {object} filter Filter object to be sent with request
+ * @return {Promise<Array<TestCatalogEntry>>} Promise that resolves to list of Test Catalog Entries meeting search criteria
+ */
+export async function searchCatalog(
+  filter: object,
+): Promise<Array<TestCatalogEntry>> {
+  const catalogList: Array<TestCatalogEntry> | null = await useApi(
+    "/catalogs/entry/search",
+    "POST",
+    { body: filter },
+  );
+  return catalogList || [];
+}
+
+/**
+ * Create new Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog to add entry to
+ * @param {TestCatalogEntry} entry Test Catalog Entry to create
+ * @returns {Promise<TestCatalogEntry | null>} Created Test Catalog Entry, or null on a failure
+ */
+export async function createCatalogEntry(
+  catalogId: string,
+  entry: TestCatalogEntry,
+): Promise<TestCatalogEntry | null> {
+  const response: TestCatalogEntry | null = await useApi(
+    "/catalog/" + catalogId + "/entry",
+    "POST",
+    {
+      body: JSON.stringify(entry),
+    },
+  );
+  return response;
+}
+
+/**
+ * Update Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog containing entry to update
+ * @param {TestCatalogEntry} entry Test Catalog Entry to update
+ * @returns {Promise<TestCatalogEntry | null>} Updated Test Catalog Entry, or null on a failure
+ */
+export async function updateCatalogEntry(
+  catalogId: string,
+  entry: TestCatalogEntry,
+): Promise<TestCatalogEntry | null> {
+  const response: TestCatalogEntry | null = await useApi(
+    "catalog/" + catalogId + "/entry",
+    "PUT",
+    { body: JSON.stringify(entry) },
+  );
+  return response;
+}
+
+/**
+ * Delete a Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog containing entry to be deleted
+ * @param {string} entryId ID of the Test Catalog Entry to be deleted
+ * @return {Promise<TestCatalogEntry | null>} Promise that resolves to deleted Test Catalog Entry, or null on a failure
+ */
+export async function deleteCatalogEntry(
+  catalogId: string,
+  entryId: string,
+): Promise<TestCatalogEntry | null> {
+  const deletedEntry: TestCatalogEntry | null = await useApi(
+    "/catalog/" + catalogId + "/entry/" + entryId,
+    "DELETE",
+  );
+  return deletedEntry;
 }
 
 // --------------------------------------------------------------------------------------------------------------

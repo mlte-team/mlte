@@ -36,6 +36,8 @@ export default withNuxt(
 
           // Functions
           cancelFormSubmission: true,
+          createCatalogEntry: true,
+          deleteCatalogEntry: true,
           getCard: true,
           getCatalogList: true,
           getCustomList: true,
@@ -52,8 +54,10 @@ export default withNuxt(
           isValidReport: true,
           isValidTestResults: true,
           isValidTestSuite: true,
+          updateCatalogEntry: true,
           requestErrorAlert: true,
           resetFormErrors: true,
+          searchCatalog: true,
           successfulSubmission: true,
           timestampToString: true,
           useApi: true,
