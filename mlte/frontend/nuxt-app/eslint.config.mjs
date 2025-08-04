@@ -62,6 +62,7 @@ export default withNuxt(
           updateCatalogEntry: true,
           requestErrorAlert: true,
           resetFormErrors: true,
+          saveCard: true,
           searchCatalog: true,
           successfulSubmission: true,
           timestampToString: true,

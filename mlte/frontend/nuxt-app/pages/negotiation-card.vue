@@ -142,39 +142,25 @@ async function submit() {
     return;
   }
 
-  // Construct the object to be submitted to the backend here
-  const artifact = {
-    header: {
-      identifier,
-      type: "negotiation_card",
-      timestamp: -1,
-      creator: "",
-    },
-    body: form.value,
-  };
-
-  if (isValidNegotiation(artifact)) {
-    const response = await useApi(
-      "/model/" + queryModel + "/version/" + queryVersion + "/artifact",
-      "POST",
-      { body: { artifact, force: forceSaveParam.value, parents: false } },
-    );
-    if (response) {
-      successfulSubmission("Negotiation card", identifier, "saved");
-      forceSaveParam.value = true;
-      if (useRoute().query.artifactId === undefined) {
-        window.location.href =
-          "/negotiation-card?" +
-          "model=" +
-          useRoute().query.model +
-          "&version=" +
-          useRoute().query.version +
-          "&artifactId=" +
-          identifier;
-      }
+  const response = await saveCard(
+    queryModel as string,
+    queryVersion as string,
+    identifier,
+    forceSaveParam.value,
+    form.value,
+  );
+  if (response) {
+    forceSaveParam.value = true;
+    if (useRoute().query.artifactId === undefined) {
+      window.location.href =
+        "/negotiation-card?" +
+        "model=" +
+        useRoute().query.model +
+        "&version=" +
+        useRoute().query.version +
+        "&artifactId=" +
+        identifier;
     }
-  } else {
-    console.log("Invalid negotiation card.");
   }
 }
 

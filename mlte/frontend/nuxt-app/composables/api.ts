@@ -154,7 +154,7 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 // User
 // --------------------------------------------------------------------------------------------------------------
 
-export async function getUserMe(token: string){
+export async function getUserMe(token: string) {
   const user: User | null = await useApi(
     "/user/me",
     "GET",
@@ -316,6 +316,50 @@ export async function getVersionArtifacts(
 }
 
 /**
+ * Save a Negotiation Card with API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version to contain the Negotiation Card
+ * @param {string} identifier Identifier for the Negotiation Card
+ * @param {boolean} forceSave Force save true incidates an update to a Negotiatoin Card, false indates a new Negotation Card
+ * @param {NegotiationCardModel} card Negotiation Card to be saved
+ * @return {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
+ */
+export async function saveCard(
+  model: string,
+  version: string,
+  identifier: string,
+  forceSave: boolean,
+  card: NegotiationCardModel,
+): Promise<NegotiationCardModel | null> {
+  // Construct the object to be submitted to the backend
+  const artifact = {
+    header: {
+      identifier,
+      type: "negotiation_card",
+      timestamp: -1,
+      creator: "",
+    },
+    body: card,
+  };
+
+  if (isValidNegotiation(artifact)) {
+    const response: NegotiationCardModel | null = await useApi(
+      "/model/" + model + "/version/" + version + "/artifact",
+      "POST",
+      { body: { artifact, force: forceSave, parents: false } },
+    );
+    if (response) {
+      successfulSubmission("Negotiation card", identifier, "saved");
+      return response;
+    }
+  } else {
+    invalidArtifactAlert("Negotiation card", identifier, "saved");
+  }
+  return null;
+}
+
+/**
  * Get Negotiation Card from API.
  *
  * @param {string} model Model of the Version
@@ -332,10 +376,17 @@ export async function getCard(
     "GET",
   );
   if (card && card.body.artifact_type == "negotiation_card") {
-    return card;
-  } else {
-    return null;
+    if (isValidNegotiation(card)) {
+      return card;
+    } else {
+      invalidArtifactAlert(
+        "Negotiation card",
+        card.header.identifier,
+        "loaded",
+      );
+    }
   }
+  return null;
 }
 
 /**
@@ -355,10 +406,13 @@ export async function getReport(
     "GET",
   );
   if (report && report.body.artifact_type == "report") {
-    return report;
-  } else {
-    return null;
+    if (isValidReport(report)) {
+      return report;
+    } else {
+      invalidArtifactAlert("Report", report.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -386,7 +440,7 @@ export async function getCustomList(
 // --------------------------------------------------------------------------------------------------------------
 
 /**
- * Generic alert function for API interactions.
+ * Generic alert function for successful API interactions.
  *
  * @param {string} artifactType Type of artifact
  * @param {string} artifactName Name of artifact
@@ -399,5 +453,18 @@ export function successfulSubmission(
 ) {
   alert(
     `${artifactType}, ${artifactName}, has been ${operation} successfully.`,
+  );
+}
+
+/**
+ * 
+ */
+export function invalidArtifactAlert(
+  artifactType: string,
+  artifactName: string,
+  operation: string,
+) {
+  alert(
+    `${artifactType}, ${artifactName}, is invalid and cannot be ${operation} successfully.`,
   );
 }
