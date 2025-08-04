@@ -54,6 +54,10 @@ export interface Model {
   versions: Array<string>;
 }
 
+export interface Version {
+  identifier: string;
+}
+
 export interface ArtifactModel<
   TBody =
     | NegotiationCardModel

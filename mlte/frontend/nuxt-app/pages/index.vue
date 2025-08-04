@@ -486,9 +486,7 @@ async function createNewModel(modelName: string) {
  * @param {string} versionName Name of the new Version.
  */
 async function submitNewVersion(modelName: string, versionName: string) {
-  const response = await useApi("/model/" + modelName + "/version", "POST", {
-    body: { identifier: versionName },
-  });
+  const response = await createVersion(modelName, versionName);
   if (response) {
     selectModel(modelName, false);
     successfulSubmission("Version", versionName, "created");

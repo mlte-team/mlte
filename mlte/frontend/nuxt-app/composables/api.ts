@@ -68,12 +68,33 @@ export function useApi<T>(
  * Create new Model with API.
  *
  * @param {string} modelName Name of model to be created
- * @returns {Promise<Model | null>} Promise that resolves to crated model or null on failure
+ * @returns {Promise<Model | null>} Promise that resolves to crated Model or null on failure
  */
 export async function createModel(modelName: string): Promise<Model | null> {
   const response: Model | null = await useApi("/model/", "POST", {
     body: { identifier: modelName },
   });
+  return response;
+}
+
+/**
+ * Create new Version with API.
+ *
+ * @param {string} modelName Name of model
+ * @param {string} versionName Name of Version to be created
+ * @returns {Promise<Model | null>} Promise that resolves to crated Version or null on failure
+ */
+export async function createVersion(
+  modelName: string,
+  versionName: string,
+): Promise<Version | null> {
+  const response: Version | null = await useApi(
+    "/model/" + modelName + "/version",
+    "POST",
+    {
+      body: { identifier: versionName },
+    },
+  );
   return response;
 }
 

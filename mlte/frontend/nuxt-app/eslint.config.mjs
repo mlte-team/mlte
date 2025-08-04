@@ -38,6 +38,7 @@ export default withNuxt(
           cancelFormSubmission: true,
           createCatalogEntry: true,
           createModel: true,
+          createVersion: true,
           deleteCatalogEntry: true,
           getCard: true,
           getCatalogList: true,
