@@ -302,9 +302,9 @@ if (modelOptions.value !== null) {
   }
 }
 
-// Populate the list of Models.
+// Populate the list of Model options.
 async function populateModelList() {
-  const models: Array<string> | null = await useApi("/user/me/models/", "GET");
+  const models: Array<string> = await getUserModels();
   if (models) {
     modelList.value = models;
     modelOptions.value = [];
@@ -315,7 +315,7 @@ async function populateModelList() {
 }
 
 /**
- * Update the selected model for the artifact store.
+ * Update the selected Model for the artifact store.
  *
  * @param {string} modelName Model to select
  * @param {boolean} resetSelectedVersion Flag to reset selectedVersion or not
@@ -353,13 +353,9 @@ async function selectVersion(versionName: string) {
     return;
   }
 
-  const versionArtifacts: Array<ArtifactModel> | null = await useApi(
-    "/model/" +
-      selectedModel.value +
-      "/version/" +
-      selectedVersion.value +
-      "/artifact",
-    "GET",
+  const versionArtifacts: Array<ArtifactModel> = await getVersionArtifacts(
+    selectedModel.value,
+    selectedVersion.value,
   );
   if (versionArtifacts) {
     populateArtifacts(

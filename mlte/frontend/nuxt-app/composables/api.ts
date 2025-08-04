@@ -65,10 +65,20 @@ export function useApi<T>(
 // --------------------------------------------------------------------------------------------------------------
 
 /**
+ * Get sorted list of Models available to User.
+ *
+ * @return {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
+ */
+export async function getUserModels(): Promise<Array<string>> {
+  const models: Array<string> | null = await useApi("/user/me/models", "GET");
+  return models?.sort() || [];
+}
+
+/**
  * Get sorted list of Versions in a Model.
  *
  * @param {string} model Model to get the Versions of
- * @returns {Array<string>} Sorted list of Versions of the Model
+ * @returns {Array<string>} Promise that resolves to sorted list of Versions of the Model
  */
 export async function getModelVersions(model: string): Promise<Array<string>> {
   const versions: Array<string> | null = await useApi(
@@ -200,6 +210,24 @@ export async function deleteCatalogEntry(
 // --------------------------------------------------------------------------------------------------------------
 // Artifact
 // --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get all Artifacts of a Model Version.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Artifacts
+ * @returns {Promise<Array<ArtifactModel>>} Promise that resolves to list of Artifacts
+ */
+export async function getVersionArtifacts(
+  model: string,
+  version: string,
+): Promise<Array<ArtifactModel>> {
+  const versionArtifacts: Array<ArtifactModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact",
+    "GET",
+  );
+  return versionArtifacts || [];
+}
 
 /**
  * Get Negotiation Card from API.

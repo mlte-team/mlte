@@ -45,6 +45,7 @@ export default withNuxt(
           getModelVersions: true,
           getPermissionList: true,
           getReport: true,
+          getUserModels: true,
           getVersionArtifacts: true,
           handleHttpError: true,
           inputErrorAlert: true,
