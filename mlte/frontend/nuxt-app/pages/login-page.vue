@@ -58,55 +58,24 @@ async function submit() {
     return;
   }
 
-  const details: Dictionary<string> = {
-    grant_type: "password",
-    username: username.value,
-    password: password.value,
-  };
-
-  const formBodyArray: Array<string> = [];
-  for (const property in details) {
-    const encodedKey = encodeURIComponent(property);
-    const encodedValue = encodeURIComponent(details[property]);
-    formBodyArray.push(encodedKey + "=" + encodedValue);
-  }
-  const formBodyStr: string = formBodyArray.join("&");
-  let expiresInTemp = 0;
-
-  const tokenData: TokenData | null = await useApi(
-    "/token",
-    "POST",
-    {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formBodyStr,
-    },
-    undefined,
-    false,
+  const tokenData: TokenData | null = await getToken(
+    username.value,
+    password.value,
   );
-
   if (tokenData) {
-    expiresInTemp = tokenData.expires_in;
     const token = useCookie("token", {
       maxAge: tokenData.expires_in,
     });
     const user = useCookie("user", {
-      maxAge: expiresInTemp,
+      maxAge: tokenData.expires_in,
     });
     token.value = tokenData.access_token;
     user.value = username.value;
 
-    const userData: User | null = await useApi(
-      "/user/me",
-      "GET",
-      undefined,
-      token.value as string,
-    );
+    const userData: User | null = await getUserMe(token.value as string);
     if (userData) {
       const userRole = useCookie("userRole", {
-        maxAge: expiresInTemp,
+        maxAge: tokenData.expires_in,
       });
       userRole.value = userData.role;
     }

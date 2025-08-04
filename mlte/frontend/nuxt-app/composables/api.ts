@@ -61,6 +61,44 @@ export function useApi<T>(
 }
 
 // --------------------------------------------------------------------------------------------------------------
+// Token
+// --------------------------------------------------------------------------------------------------------------
+
+export async function getToken(
+  username: string,
+  password: string,
+): Promise<TokenData | null> {
+  const details: Dictionary<string> = {
+    grant_type: "password",
+    username: username,
+    password: password,
+  };
+
+  const formBodyArray: Array<string> = [];
+  for (const property in details) {
+    const encodedKey = encodeURIComponent(property);
+    const encodedValue = encodeURIComponent(details[property]);
+    formBodyArray.push(encodedKey + "=" + encodedValue);
+  }
+  const formBodyStr: string = formBodyArray.join("&");
+
+  const tokenData: TokenData | null = await useApi(
+    "/token",
+    "POST",
+    {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBodyStr,
+    },
+    undefined,
+    false,
+  );
+  return tokenData;
+}
+
+// --------------------------------------------------------------------------------------------------------------
 // Context
 // --------------------------------------------------------------------------------------------------------------
 
@@ -115,6 +153,16 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 // --------------------------------------------------------------------------------------------------------------
 // User
 // --------------------------------------------------------------------------------------------------------------
+
+export async function getUserMe(token: string){
+  const user: User | null = await useApi(
+    "/user/me",
+    "GET",
+    undefined,
+    token as string,
+  );
+  return user;
+}
 
 /**
  * Get sorted list of Models available to User from API.
