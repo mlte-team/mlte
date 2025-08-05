@@ -167,7 +167,7 @@ export async function getUserMe(token: string) {
 /**
  * Get sorted list of Models available to User from API.
  *
- * @return {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
+ * @returns {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
  */
 export async function getUserModels(): Promise<Array<string>> {
   const models: Array<string> | null = await useApi("/user/me/models", "GET");
@@ -179,13 +179,59 @@ export async function getUserModels(): Promise<Array<string>> {
 // --------------------------------------------------------------------------------------------------------------
 
 /**
+ * Create Group with API.
+ *
+ * @param {Group} group Group to be create
+ * @returns {Promise<Group | null>} Promise that resolves to created Group or null on failure
+ */
+export async function createGroup(group: Group): Promise<Group | null> {
+  const response: Group | null = await useApi("/group", "POST", {
+    body: JSON.stringify(group),
+  });
+  if (response) {
+    successfulSubmission("Group", group.name, "created");
+  }
+  return response;
+}
+
+/**
+ * Update Group with API.
+ *
+ * @param {Group} group Updated version of Group
+ * @returns {Promise<Group | null>} Promise that resolves to updated Group or null on failure
+ */
+export async function updateGroup(group: Group): Promise<Group | null> {
+  const response: Group | null = await useApi("/group", "PUT", {
+    body: JSON.stringify(group),
+  });
+  if (response) {
+    successfulSubmission("Group", group.name, "saved");
+  }
+  return response;
+}
+
+/**
  * Get list of Groups from API.
  *
- * @return {Promise<Array<Group>>} Promise that resolves to list of Groups
+ * @returns {Promise<Array<Group>>} Promise that resolves to list of Groups
  */
 export async function getGroupList(): Promise<Array<Group>> {
   const groupList: Array<Group> | null = await useApi("/groups/details", "GET");
   return groupList || [];
+}
+
+/**
+ * Delete Group with API
+ *
+ * @param {string} groupName Name of Group to be deleted
+ * @returns {Promise<Group | null>} Promise that resolves to deleted Group or null on failure
+ */
+export async function deleteGroup(groupName: string): Promise<Group | null> {
+  const group: Group | null = await useApi("/group/" + groupName, "DELETE");
+  if (group) {
+    successfulSubmission("Group", groupName, "deleted");
+  }
+  return group;
 }
 
 /**
@@ -208,7 +254,7 @@ export async function getPermissionList(): Promise<Array<Permission>> {
 /**
  * Get list of Catalogs from API.
  *
- * @return {Promise<Array<CatalogReply>>} Promise that resolves to list of Catalogs
+ * @returns {Promise<Array<CatalogReply>>} Promise that resolves to list of Catalogs
  */
 export async function getCatalogList(): Promise<Array<CatalogReply>> {
   const catalogList: Array<CatalogReply> | null = await useApi(
@@ -222,7 +268,7 @@ export async function getCatalogList(): Promise<Array<CatalogReply>> {
  * Perform a search for Test Catalog Entries with API.
  *
  * @param {object} filter Filter object to be sent with request
- * @return {Promise<Array<TestCatalogEntry>>} Promise that resolves to list of Test Catalog Entries meeting search criteria
+ * @returns {Promise<Array<TestCatalogEntry>>} Promise that resolves to list of Test Catalog Entries meeting search criteria
  */
 export async function searchCatalog(
   filter: object,
@@ -280,7 +326,7 @@ export async function updateCatalogEntry(
  *
  * @param {string} catalogId ID of Test Catalog containing entry to be deleted
  * @param {string} entryId ID of the Test Catalog Entry to be deleted
- * @return {Promise<TestCatalogEntry | null>} Promise that resolves to deleted Test Catalog Entry, or null on a failure
+ * @returns {Promise<TestCatalogEntry | null>} Promise that resolves to deleted Test Catalog Entry, or null on a failure
  */
 export async function deleteCatalogEntry(
   catalogId: string,
@@ -323,7 +369,7 @@ export async function getVersionArtifacts(
  * @param {string} identifier Identifier for the Negotiation Card
  * @param {boolean} forceSave Force save true incidates an update to a Negotiatoin Card, false indates a new Negotation Card
  * @param {NegotiationCardModel} card Negotiation Card to be saved
- * @return {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
+ * @returns {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
  */
 export async function saveCard(
   model: string,
@@ -457,7 +503,7 @@ export function successfulSubmission(
 }
 
 /**
- * 
+ *
  */
 export function invalidArtifactAlert(
   artifactType: string,
