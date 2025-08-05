@@ -199,7 +199,6 @@ async function submit() {
       inputError = true;
     }
 
-    // TODO : Bug fix this between edit and new user style
     if (
       props.modelValue.password == undefined ||
       props.modelValue.password.trim() === ""
