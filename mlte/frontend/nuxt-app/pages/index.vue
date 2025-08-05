@@ -473,7 +473,6 @@ async function createNewModel(modelName: string) {
   const response = await createModel(modelName);
   if (response) {
     populateModelList();
-    successfulSubmission("Model", modelName, "created");
     newModelIdentifier.value = "";
     selectModel(modelName, true);
   }
@@ -489,7 +488,6 @@ async function submitNewVersion(modelName: string, versionName: string) {
   const response = await createVersion(modelName, versionName);
   if (response) {
     selectModel(modelName, false);
-    successfulSubmission("Version", versionName, "created");
     newVersionIdentifier.value = "";
     selectVersion(versionName);
   }

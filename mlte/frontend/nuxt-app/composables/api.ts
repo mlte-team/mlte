@@ -112,6 +112,9 @@ export async function createModel(modelName: string): Promise<Model | null> {
   const response: Model | null = await useApi("/model/", "POST", {
     body: { identifier: modelName },
   });
+  if (response) {
+    successfulSubmission("Model", modelName, "created");
+  }
   return response;
 }
 
@@ -133,6 +136,9 @@ export async function createVersion(
       body: { identifier: versionName },
     },
   );
+  if (response) {
+    successfulSubmission("Version", versionName, "created");
+  }
   return response;
 }
 
@@ -355,6 +361,13 @@ export async function createCatalogEntry(
       body: JSON.stringify(entry),
     },
   );
+  if (response) {
+    successfulSubmission(
+      "Test Catalog Entry",
+      entry.header.identifier,
+      "created",
+    );
+  }
   return response;
 }
 
@@ -374,6 +387,13 @@ export async function updateCatalogEntry(
     "PUT",
     { body: JSON.stringify(entry) },
   );
+  if (response) {
+    successfulSubmission(
+      "Test Catalog Entry",
+      entry.header.identifier,
+      "updated",
+    );
+  }
   return response;
 }
 
@@ -388,11 +408,14 @@ export async function deleteCatalogEntry(
   catalogId: string,
   entryId: string,
 ): Promise<TestCatalogEntry | null> {
-  const deletedEntry: TestCatalogEntry | null = await useApi(
+  const response: TestCatalogEntry | null = await useApi(
     "/catalog/" + catalogId + "/entry/" + entryId,
     "DELETE",
   );
-  return deletedEntry;
+  if (response) {
+    successfulSubmission("Test Catalog Entry", entryId, "deleted");
+  }
+  return response;
 }
 
 // --------------------------------------------------------------------------------------------------------------

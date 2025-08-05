@@ -139,7 +139,6 @@ async function deleteEntry(catalogId: string, entryId: string) {
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
     populateFullEntryList();
-    successfulSubmission("Entry", entryId, "deleted");
   }
 }
 
@@ -175,7 +174,6 @@ async function saveEntry(entry: TestCatalogEntry) {
     populateFullEntryList();
     resetSelectedEntry();
     editFlag.value = false;
-    successfulSubmission("Entry", entry.header.identifier, "saved");
   }
 }
 </script>
