@@ -6,14 +6,14 @@
       <div>
         <UsaTextInput
           v-model="newModelIdentifier"
-          @keyup.enter="submitNewModel(newModelIdentifier)"
+          @keyup.enter="createNewModel(newModelIdentifier)"
         >
           <template #label> New Model </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
           style="margin-left: 0px"
-          @click="submitNewModel(newModelIdentifier)"
+          @click="createNewModel(newModelIdentifier)"
         >
           Create Model
         </UsaButton>
@@ -233,15 +233,12 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const newModelIdentifier = ref("");
 const newVersionIdentifier = ref("");
 
-const modelOptions = ref<{ value: string; text: string }[]>([]);
-const versionOptions = ref<{ value: string; text: string }[]>([]);
-const modelList = ref<string[]>([]);
+const modelOptions = ref<Array<SelectOption>>([]);
+const versionOptions = ref<Array<SelectOption>>([]);
+const modelList = ref<Array<string>>([]);
 
 const selectedModel = useCookie("selectedModel", {
   decode(value) {
@@ -281,7 +278,7 @@ const reports = ref<Array<TableItem>>([]);
 const testResults = ref<Array<TableItem>>([]);
 const evidences = ref<Array<TableItem>>([]);
 
-await populateModelVersionLists();
+await populateModelList();
 if (modelOptions.value !== null) {
   const modelList = modelOptions.value.map((model) => {
     return model.value;
@@ -305,39 +302,29 @@ if (modelOptions.value !== null) {
   }
 }
 
-async function populateModelVersionLists() {
-  await $fetch(config.public.apiPath + "/user/me/models/", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        modelList.value = response._data;
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
-
-  modelOptions.value = [];
-  if (modelList.value) {
+// Populate the list of Model options.
+async function populateModelList() {
+  const models: Array<string> = await getUserModels();
+  if (models) {
+    modelList.value = models;
+    modelOptions.value = [];
     modelList.value.forEach((modelName: string) => {
       modelOptions.value.push(new SelectOption(modelName, modelName));
     });
   }
 }
 
-// Update the selected model for the artifact store.
+/**
+ * Update the selected Model for the artifact store.
+ *
+ * @param {string} modelName Model to select
+ * @param {boolean} resetSelectedVersion Flag to reset selectedVersion or not
+ */
 async function selectModel(modelName: string, resetSelectedVersion: boolean) {
   selectedModel.value = modelName;
   if (resetSelectedVersion) {
     selectedVersion.value = "";
+    clearArtifacts();
   }
   if (modelName === "") {
     versionOptions.value = [];
@@ -345,45 +332,20 @@ async function selectModel(modelName: string, resetSelectedVersion: boolean) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok && response._data) {
-        clearArtifacts();
-        selectedModel.value = modelName;
-        versionOptions.value = [];
-        response._data.forEach((version: string) => {
-          versionOptions.value.push(new SelectOption(version, version));
-        });
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
-
-  versionOptions.value.sort(function (
-    a: { value: string; text: string },
-    b: { value: string; text: string },
-  ) {
-    if (a.value < b.value) {
-      return -1;
-    } else if (a.value > b.value) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+  const modelVersions = await getModelVersions(modelName);
+  if (modelVersions) {
+    versionOptions.value = [];
+    modelVersions.forEach((version: string) => {
+      versionOptions.value.push(new SelectOption(version, version));
+    });
+  }
 }
 
-// Update the selected version for the artifact store.
+/**
+ * Update the selected version and load its artifacts.
+ *
+ * @param {string} versionName Version to select
+ */
 async function selectVersion(versionName: string) {
   selectedVersion.value = versionName;
   if (selectedVersion.value === "") {
@@ -391,39 +353,26 @@ async function selectVersion(versionName: string) {
     return;
   }
 
-  await $fetch(
-    config.public.apiPath +
-      "/model/" +
-      selectedModel.value +
-      "/version/" +
-      selectedVersion.value +
-      "/artifact",
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok && response._data) {
-          populateArtifacts(
-            selectedModel.value,
-            selectedVersion.value,
-            response._data,
-          );
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+  const versionArtifacts: Array<ArtifactModel> = await getVersionArtifacts(
+    selectedModel.value,
+    selectedVersion.value,
   );
+  if (versionArtifacts) {
+    populateArtifacts(
+      selectedModel.value,
+      selectedVersion.value,
+      versionArtifacts,
+    );
+  }
 }
 
-// Populate artifacts for a given model and version.
+/**
+ * Populate Artifacts for a given Model and Version.
+ *
+ * @param {string} model Model that contains the Version
+ * @param {string} version Version that contains the Artifacts
+ * @param {Array<ArtifactModel>} artifactList List of Artifacts of the Model Version
+ */
 function populateArtifacts(
   model: string,
   version: string,
@@ -488,7 +437,7 @@ function populateArtifacts(
       }
     }
     // Evidence
-    if (artifact.body.artifact_type === "evidence") {
+    else if (artifact.body.artifact_type === "evidence") {
       if (isValidEvidence(artifact)) {
         evidences.value.push(
           new TableItem(
@@ -506,7 +455,7 @@ function populateArtifacts(
   });
 }
 
-// Clear all artifacts from local state.
+// Clear all Artifacts from local state.
 function clearArtifacts() {
   negotiationCards.value = [];
   reports.value = [];
@@ -515,67 +464,32 @@ function clearArtifacts() {
   evidences.value = [];
 }
 
-async function submitNewModel(modelName: string) {
-  try {
-    await $fetch(config.public.apiPath + "/model/", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        identifier: modelName,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          populateModelVersionLists();
-          alert(`Model, ${modelName} has been created.`);
-          newModelIdentifier.value = "";
-          selectModel(modelName, true);
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
-  } catch (exception) {
-    console.log(exception);
+/**
+ * Save a new Model.
+ *
+ * @param {string} modelName Name of Model to be created
+ */
+async function createNewModel(modelName: string) {
+  const response = await createModel(modelName);
+  if (response) {
+    populateModelList();
+    newModelIdentifier.value = "";
+    selectModel(modelName, true);
   }
 }
 
+/**
+ * Save a new Version.
+ *
+ * @param {string} modelName Name of model to create new Version for.
+ * @param {string} versionName Name of the new Version.
+ */
 async function submitNewVersion(modelName: string, versionName: string) {
-  try {
-    await $fetch(config.public.apiPath + "/model/" + modelName + "/version", {
-      retry: 0,
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: {
-        identifier: versionName,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          selectModel(modelName, false);
-          alert(
-            `Version, ${versionName} for model, ${modelName} has been created`,
-          );
-          newVersionIdentifier.value = "";
-          selectVersion(versionName);
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
-  } catch (exception) {
-    console.log(exception);
+  const response = await createVersion(modelName, versionName);
+  if (response) {
+    selectModel(modelName, false);
+    newVersionIdentifier.value = "";
+    selectVersion(versionName);
   }
 }
 </script>

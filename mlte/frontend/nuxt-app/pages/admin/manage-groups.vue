@@ -12,7 +12,7 @@
       <AdminGroupList
         v-model="groupList"
         @edit-group="editGroup"
-        @delete-group="deleteGroup"
+        @delete-group="pageDeleteGroup"
       />
     </div>
     <div v-if="editFlag">
@@ -27,9 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const editFlag = ref(false);
 const newGroupFlag = ref(false);
 const groupList = ref<Array<Group>>([]);
@@ -37,72 +34,49 @@ const selectedGroup = ref<Group>(new Group());
 
 updateGroupList();
 
+// Get list of Groups from API and populate page with them.
 async function updateGroupList() {
-  await $fetch(config.public.apiPath + "/groups/details", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        response._data.forEach((group: Group) => {
-          groupList.value.push(new Group(group.name, group.permissions));
-        });
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  groupList.value = await getGroupList();
 }
 
+// Reset selectedGroup, for example after an edit is completed.
 function resetSelectedGroup() {
   selectedGroup.value = new Group();
 }
 
+// Switch to the edit group view with the newGroupFlag enabled.
 function addGroup() {
   resetSelectedGroup();
   editFlag.value = true;
   newGroupFlag.value = true;
 }
 
+// Switch to the edit group view with the newGroupFlag disabled
 function editGroup(group: Group) {
   selectedGroup.value = group;
   editFlag.value = true;
   newGroupFlag.value = false;
 }
 
-async function deleteGroup(groupName: string) {
+/**
+ * Delete a group.
+ *
+ * @param {string} groupName Name of group to be deleted
+ */
+async function pageDeleteGroup(groupName: string) {
   if (
     !confirm("Are you sure you want to delete the group: " + groupName + "?")
   ) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/group/" + groupName, {
-    retry: 0,
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        updateGroupList();
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const response = await deleteGroup(groupName);
+  if (response) {
+    updateGroupList();
+  }
 }
 
+// Return to the group list view from the edit view.
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -110,56 +84,30 @@ function cancelEdit() {
   }
 }
 
+/**
+ * Save new Group, or save changes to Group.
+ *
+ * @param {Group} group Group to be saved
+ */
 async function saveGroup(group: Group) {
-  try {
-    if (newGroupFlag.value) {
-      await $fetch(config.public.apiPath + "/group", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(group),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateGroupList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    } else {
-      await $fetch(config.public.apiPath + "/group", {
-        retry: 0,
-        method: "PUT",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(group),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateGroupList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+  let error = true;
+
+  if (newGroupFlag.value) {
+    const response = await createGroup(group);
+    if (response) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const response = await updateGroup(group);
+    if (response) {
+      error = false;
+    }
   }
-  alert("Group has been saved successfully.");
-  resetSelectedGroup();
-  editFlag.value = false;
+
+  if (!error) {
+    updateGroupList();
+    resetSelectedGroup();
+    editFlag.value = false;
+  }
 }
 </script>

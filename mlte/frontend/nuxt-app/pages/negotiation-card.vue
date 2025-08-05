@@ -17,8 +17,7 @@
     </UsaTextInput>
     <div v-else>
       <h1 class="section-header">{{ queryArtifactId }}</h1>
-      <h3 style="display: inline">Last Modified by:</h3>
-      {{ creator }} - {{ timestamp }}
+      <CreatorDisplay :creator="creator" :timestamp="timestamp" />
     </div>
 
     <template #page-title>Negotiation Card</template>
@@ -105,59 +104,37 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const config = useRuntimeConfig();
-const token = useCookie("token");
-const model = useRoute().query.model;
-const version = useRoute().query.version;
+const queryModel = useRoute().query.model;
+const queryVersion = useRoute().query.version;
 const queryArtifactId = useRoute().query.artifactId;
 const forceSaveParam = ref(useRoute().query.artifactId !== undefined);
-
-const userInputArtifactId = ref("default.card");
-const creator = ref("");
-const timestamp = ref("");
-const form = ref(new NegotiationCardModel());
-
-const formErrors = ref({
-  identifier: false,
-});
-
 // References to child components used to call their methods when importing descriptors
 const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
 
+const userInputArtifactId = ref("default.card");
+const creator = ref("");
+const timestamp = ref("");
+const form = ref(new NegotiationCardModel());
+const formErrors = ref({
+  identifier: false,
+});
+
 if (queryArtifactId !== undefined) {
-  const { data: cardData, error } = await useFetch<NegotiationApiResponse>(
-    config.public.apiPath +
-      "/model/" +
-      model +
-      "/version/" +
-      version +
-      "/artifact/" +
-      queryArtifactId,
-    {
-      retry: 0,
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    },
+  const card = await getCard(
+    queryModel as string,
+    queryVersion as string,
+    queryArtifactId as string,
   );
-  if (!error.value && cardData.value && isValidNegotiation(cardData.value)) {
-    form.value = cardData.value.body;
-    creator.value = cardData.value.header.creator;
-    timestamp.value = new Date(
-      cardData.value.header.timestamp * 1000,
-    ).toLocaleString("en-US");
+  if (card) {
+    creator.value = card.header.creator;
+    timestamp.value = timestampToString(card.header.timestamp);
+    form.value = card.body;
   }
 }
 
+// Handle submission of form.
 async function submit() {
   const identifier = (queryArtifactId as string) || userInputArtifactId.value;
   if (identifier === "") {
@@ -165,69 +142,34 @@ async function submit() {
     return;
   }
 
-  // Construct the object to be submitted to the backend here
-  const artifact = {
-    header: {
-      identifier,
-      type: "negotiation_card",
-      timestamp: -1,
-      creator: "",
-    },
-    body: form.value,
-  };
-
-  if (isValidNegotiation(artifact)) {
-    try {
-      await $fetch(
-        config.public.apiPath +
-          "/model/" +
-          model +
-          "/version/" +
-          version +
-          "/artifact",
-        {
-          retry: 0,
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token.value,
-          },
-          body: {
-            artifact,
-            force: forceSaveParam.value,
-            parents: false,
-          },
-          onRequestError() {
-            requestErrorAlert();
-          },
-          onResponse({ response }) {
-            if (response.ok) {
-              successfulArtifactSubmission("negotiation card", identifier);
-              forceSaveParam.value = true;
-              if (useRoute().query.artifactId === undefined) {
-                window.location.href =
-                  "/negotiation-card?" +
-                  "model=" +
-                  useRoute().query.model +
-                  "&version=" +
-                  useRoute().query.version +
-                  "&artifactId=" +
-                  identifier;
-              }
-            }
-          },
-          onResponseError({ response }) {
-            handleHttpError(response.status, response._data.error_description);
-          },
-        },
-      );
-    } catch (exception) {
-      console.log(exception);
+  const response = await saveCard(
+    queryModel as string,
+    queryVersion as string,
+    identifier,
+    forceSaveParam.value,
+    form.value,
+  );
+  if (response) {
+    forceSaveParam.value = true;
+    if (useRoute().query.artifactId === undefined) {
+      window.location.href =
+        "/negotiation-card?" +
+        "model=" +
+        useRoute().query.model +
+        "&version=" +
+        useRoute().query.version +
+        "&artifactId=" +
+        identifier;
     }
-  } else {
-    console.log("Invalid document attempting to be submitted.");
   }
 }
 
+/**
+ * Upload data from a TEC Descriptor into Negotiation Card
+ *
+ * @param {Event} event Event object from file submission that contains uploaded file
+ * @param {string} descriptorName Name of descriptor
+ */
 function descriptorUpload(event: Event, descriptorName: string) {
   console.log(dataRef.value);
 
@@ -456,6 +398,12 @@ function descriptorUpload(event: Event, descriptorName: string) {
   }
 }
 
+/**
+ * Determine if a GoalDescriptor is completely empty.
+ *
+ * @param {GoalDescriptor} goal GoalDescriptor to be checked
+ * @return Boolean indicating if goal is empty or not
+ */
 function goalEmpty(goal: GoalDescriptor) {
   let isEmpty = true;
 
@@ -472,6 +420,12 @@ function goalEmpty(goal: GoalDescriptor) {
   return isEmpty;
 }
 
+/**
+ * Determine if a DataDescriptor is completely empty.
+ *
+ * @param {DataDescriptor} dataItem DataDescriptor to be checked
+ * @return Boolean indicating if dataItem is empty or not
+ */
 function dataItemEmpty(dataItem: DataDescriptor) {
   let isEmpty = true;
 
@@ -511,6 +465,12 @@ function dataItemEmpty(dataItem: DataDescriptor) {
   return isEmpty;
 }
 
+/**
+ * Determine if a ModelIODescriptor is completely empty.
+ *
+ * @param {ModelIODescriptor} spec ModelIODescriptor to be checked
+ * @return Boolean indicating if spec is empty or not
+ */
 function specEmpty(spec: ModelIODescriptor) {
   let isEmpty = true;
 

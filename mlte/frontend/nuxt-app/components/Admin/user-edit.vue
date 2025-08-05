@@ -106,9 +106,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit", "updateUserGroups"]);
 const props = defineProps({
   modelValue: {
@@ -135,16 +132,9 @@ const formErrors = ref<Dictionary<boolean>>({
   confirmPassword: false,
 });
 const groupOptions = ref<Array<GroupCheckboxOption>>([]);
-const { data: groupList } = await useFetch<Array<Group>>(
-  config.public.apiPath + "/groups/details",
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const groupList = ref<Array<Group>>([]);
+groupList.value = await getGroupList();
+
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
     groupOptions.value.push(
@@ -163,16 +153,24 @@ if (props.newUserFlag) {
   props.modelValue.role = "regular";
 }
 
+// Enable the form fields to change password.
 function enablePasswordReset() {
   changePasswordFlag.value = true;
   props.modelValue.password = "";
 }
 
+// Disable the form fields to change password.
 function disablePasswordReset() {
   changePasswordFlag.value = false;
   delete props.modelValue.password;
 }
 
+/**
+ * Handle a group change either adding the item to selections, or removing it.
+ *
+ * @param {boolean} selected Flag indicating if item was selected or deselected
+ * @param {Group} groupOption Group that was selected or deselected
+ */
 function groupChange(selected: boolean, groupOption: Group) {
   if (selected) {
     props.modelValue.groups.push(
@@ -190,6 +188,7 @@ function groupChange(selected: boolean, groupOption: Group) {
   }
 }
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;
@@ -200,14 +199,20 @@ async function submit() {
       inputError = true;
     }
 
-    if (props.modelValue.password && props.modelValue.password.trim() === "") {
+    if (
+      props.modelValue.password == undefined ||
+      props.modelValue.password.trim() === ""
+    ) {
       formErrors.value.password = true;
       inputError = true;
     }
   }
 
   if (changePasswordFlag.value) {
-    if (props.modelValue.password && props.modelValue.password.trim() === "") {
+    if (
+      props.modelValue.password == undefined ||
+      props.modelValue.password.trim() === ""
+    ) {
       formErrors.value.password = true;
       inputError = true;
     }

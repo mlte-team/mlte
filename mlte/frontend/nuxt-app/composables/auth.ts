@@ -1,3 +1,6 @@
+/**
+ * Create alert to confirm logout and reset cookies if confirmed.
+ */
 export function confirmLogout() {
   const token = useCookie("token");
   const user = useCookie("user");

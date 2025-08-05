@@ -2,6 +2,12 @@ export interface Dictionary<T> {
   [key: string]: T;
 }
 
+export interface TokenData {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 // --------------------------------------------------------------------------------------------------------------
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
@@ -40,27 +46,28 @@ export interface TagOption {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-// Backend Internals
-// --------------------------------------------------------------------------------------------------------------
-
-export interface CustomListEntry {
-  name: string;
-  description: string;
-  parent: string;
-}
-
-// --------------------------------------------------------------------------------------------------------------
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export interface ArtifactModel {
-  header: ArtifactHeader;
-  body:
+export interface Model {
+  identifier: string;
+  versions: Array<string>;
+}
+
+export interface Version {
+  identifier: string;
+}
+
+export interface ArtifactModel<
+  TBody =
     | NegotiationCardModel
     | TestSuiteModel
     | EvidenceModel
     | TestResultsModel
-    | ReportModel;
+    | ReportModel,
+> {
+  header: ArtifactHeader;
+  body: TBody;
 }
 
 export class ArtifactHeader {
@@ -68,7 +75,7 @@ export class ArtifactHeader {
     public identifier: string = "",
     public type: string = "",
     public timestamp: number = -1,
-    public creator: string,
+    public creator: string = "",
   ) {}
 }
 
@@ -227,6 +234,12 @@ export class SystemDescriptor {
   ) {}
 }
 
+export interface CustomListEntry {
+  name: string;
+  description: string;
+  parent: string;
+}
+
 export class QASDescriptor {
   constructor(
     public quality: string = "",
@@ -249,11 +262,6 @@ export class NegotiationCardModel {
   ) {}
 }
 
-export interface NegotiationApiResponse {
-  header: ArtifactHeader;
-  body: NegotiationCardModel;
-}
-
 // --------------------------------------------------------------------------------------------------------------
 // Report
 // --------------------------------------------------------------------------------------------------------------
@@ -273,11 +281,6 @@ export class ReportModel {
     public test_results: TestResultsModel = new TestResultsModel(),
     public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
   ) {}
-}
-
-export interface ReportApiResponse {
-  header: ArtifactHeader;
-  body: ReportModel;
 }
 
 // --------------------------------------------------------------------------------------------------------------

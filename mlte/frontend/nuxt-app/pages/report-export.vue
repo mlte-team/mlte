@@ -10,7 +10,7 @@
       <div class="header-title centered-container">
         <h3>
           MLTE REPORT <br />
-          {{ model }} Model
+          {{ queryModel }} Model
         </h3>
       </div>
 
@@ -27,7 +27,7 @@
       <h3 class="insection-margin">Overview</h3>
       <hr />
       <div
-        v-for="(goal, goalIndex) in form.negotiation_card.system.goals"
+        v-for="(goal, goalIndex) in reportBody.negotiation_card.system.goals"
         :key="goalIndex"
       >
         <div class="info-box-row insection-margin">
@@ -53,7 +53,7 @@
       <h3>Results</h3>
     </div>
     <form-fields-results-table
-      v-model="form.test_results"
+      v-model="reportBody.test_results"
       class="section-margin"
     />
 
@@ -63,31 +63,31 @@
       <div class="info-box-row insection-margin">
         <div class="info-box-third rounded-border">
           ML Problem Type: <br />
-          {{ form.negotiation_card.system.problem_type }}
+          {{ reportBody.negotiation_card.system.problem_type }}
         </div>
         <div class="info-box-third rounded-border">
           ML Task: <br />
-          {{ form.negotiation_card.system.task }}
+          {{ reportBody.negotiation_card.system.task }}
         </div>
         <div class="info-box-third rounded-border">
           Usage Context: <br />
-          {{ form.negotiation_card.system.usage_context }}
+          {{ reportBody.negotiation_card.system.usage_context }}
         </div>
       </div>
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
           FP Risk: <br />
-          {{ form.negotiation_card.system.risks.fp }}
+          {{ reportBody.negotiation_card.system.risks.fp }}
         </div>
         <div class="info-box-third rounded-border">
           FN Risk: <br />
-          {{ form.negotiation_card.system.risks.fn }}
+          {{ reportBody.negotiation_card.system.risks.fn }}
         </div>
         <div class="info-box-third rounded-border">
           Other Risks: <br /><br />
           <div
-            v-for="(risk, riskIndex) in form.negotiation_card.system.risks
+            v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
               .other"
             :key="riskIndex"
           >
@@ -105,20 +105,26 @@
 </template>
 
 <script setup lang="ts">
-const token = useCookie("token");
+const queryModel = useRoute().query.model;
+const queryVersion = useRoute().query.version;
+const queryArtifactId = useRoute().query.artifactId;
 
-const form = ref<ReportModel>(new ReportModel());
+const creator = ref("");
+const timestamp = ref("");
+const reportBody = ref<ReportModel>(new ReportModel());
 
-const model = useRoute().query.model;
-const version = useRoute().query.version;
-const artifactId = useRoute().query.artifactId;
-
-form.value = await loadReportData(
-  token.value as string,
-  model as string,
-  version as string,
-  artifactId as string,
-);
+if (queryArtifactId !== undefined) {
+  const report = await getReport(
+    queryModel as string,
+    queryVersion as string,
+    queryArtifactId as string,
+  );
+  if (report) {
+    creator.value = report.header.creator;
+    timestamp.value = timestampToString(report.header.timestamp);
+    reportBody.value = report.body;
+  }
+}
 </script>
 
 <style>
