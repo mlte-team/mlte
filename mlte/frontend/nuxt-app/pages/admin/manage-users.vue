@@ -12,7 +12,7 @@
       <AdminUserList
         v-model="userList"
         @edit-user="editUser"
-        @delete-user="deleteUser"
+        @delete-user="pageDeleteUser"
       />
     </div>
     <div v-if="editFlag">
@@ -39,7 +39,7 @@ resetSelectedUser();
 
 // Get list of Users form API and populate page with them.
 async function updateUserList() {
-  const users: Array<User> | null = await useApi("/users/details", "GET");
+  const users: Array<User> | null = await getUsersDetails();
   if (users) {
     userList.value = users;
   }
@@ -69,7 +69,7 @@ function editUser(user: User) {
  *
  * @param {string} username Username of user to be deleted
  */
-async function deleteUser(username: string) {
+async function pageDeleteUser(username: string) {
   if (userCookie.value === username) {
     alert("Cannot delete the active user.");
     return;
@@ -78,7 +78,7 @@ async function deleteUser(username: string) {
     return;
   }
 
-  const response = await useApi("/user/" + username, "DELETE");
+  const response = await deleteUser(username);
   if (response) {
     updateUserList();
   }
@@ -110,14 +110,12 @@ async function saveUser(user: User) {
   let error = true;
 
   if (newUserFlag.value) {
-    const response = await useApi("/user", "POST", {
-      body: JSON.stringify(user),
-    });
+    const response = await createUser(user);
     if (response) {
       error = false;
     }
   } else {
-    const response = await useApi("/user", "PUT");
+    const response = await updateUser(user);
     if (response) {
       error = false;
     }
@@ -127,7 +125,6 @@ async function saveUser(user: User) {
     updateUserList();
     resetSelectedUser();
     editFlag.value = false;
-    successfulSubmission("User", user.username, "saved");
   }
 }
 </script>

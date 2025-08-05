@@ -154,7 +154,7 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
 // User
 // --------------------------------------------------------------------------------------------------------------
 
-export async function getUserMe(token: string) {
+export async function getUserMe(token: string = "") {
   const user: User | null = await useApi(
     "/user/me",
     "GET",
@@ -172,6 +172,62 @@ export async function getUserMe(token: string) {
 export async function getUserModels(): Promise<Array<string>> {
   const models: Array<string> | null = await useApi("/user/me/models", "GET");
   return models?.sort() || [];
+}
+
+/**
+ * Create User with API.
+ *
+ * @param {User} user User object to create
+ * @returns {Promise<User | null>} Promise that resolves to created User or null on failure
+ */
+export async function createUser(user: User): Promise<User | null> {
+  const response: User | null = await useApi("/user", "POST", {
+    body: JSON.stringify(user),
+  });
+  if (response) {
+    successfulSubmission("User", user.username, "created");
+  }
+  return response;
+}
+
+/**
+ * Get all User details from API.
+ *
+ * @returns {Promise<Array<User> | null>} Promise that resolves to list of Users with details or null on failure
+ */
+export async function getUsersDetails(): Promise<Array<User> | null> {
+  const users: Array<User> | null = await useApi("/users/details", "GET");
+  return users;
+}
+
+/**
+ * Update User with API.
+ *
+ * @param {User} user Updated version of the user
+ * @returns {Promise<User | null>} Promise that resolves to updated User or null on failure
+ */
+export async function updateUser(user: User): Promise<User | null> {
+  const response: User | null = await useApi("/user", "PUT", {
+    body: JSON.stringify(user),
+  });
+  if (response) {
+    successfulSubmission("User", user.username, "updated");
+  }
+  return response;
+}
+
+/**
+ * Delete User with API.
+ *
+ * @param {string} username Username of the User to delete
+ * @returns {Promise<User | null>} Promise that resolves to deleted User or null on failure
+ */
+export async function deleteUser(username: string): Promise<User | null> {
+  const response: User | null = await useApi("/user/" + username, "DELETE");
+  if (response) {
+    successfulSubmission("User", username, "deleted");
+  }
+  return response;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -195,6 +251,16 @@ export async function createGroup(group: Group): Promise<Group | null> {
 }
 
 /**
+ * Get list of Groups from API.
+ *
+ * @returns {Promise<Array<Group>>} Promise that resolves to list of Groups
+ */
+export async function getGroupList(): Promise<Array<Group>> {
+  const groupList: Array<Group> | null = await useApi("/groups/details", "GET");
+  return groupList || [];
+}
+
+/**
  * Update Group with API.
  *
  * @param {Group} group Updated version of Group
@@ -205,19 +271,9 @@ export async function updateGroup(group: Group): Promise<Group | null> {
     body: JSON.stringify(group),
   });
   if (response) {
-    successfulSubmission("Group", group.name, "saved");
+    successfulSubmission("Group", group.name, "updated");
   }
   return response;
-}
-
-/**
- * Get list of Groups from API.
- *
- * @returns {Promise<Array<Group>>} Promise that resolves to list of Groups
- */
-export async function getGroupList(): Promise<Array<Group>> {
-  const groupList: Array<Group> | null = await useApi("/groups/details", "GET");
-  return groupList || [];
 }
 
 /**
@@ -362,6 +418,36 @@ export async function getVersionArtifacts(
 }
 
 /**
+ * Get Negotiation Card from API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Negotiation Card
+ * @returns {Promise<NegotiationCardModel>} Promise that resolves to Negotiation Card
+ */
+export async function getCard(
+  model: string,
+  version: string,
+  cardId: string,
+): Promise<ArtifactModel<NegotiationCardModel> | null> {
+  const card: ArtifactModel<NegotiationCardModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact/" + cardId,
+    "GET",
+  );
+  if (card && card.body.artifact_type == "negotiation_card") {
+    if (isValidNegotiation(card)) {
+      return card;
+    } else {
+      invalidArtifactAlert(
+        "Negotiation card",
+        card.header.identifier,
+        "loaded",
+      );
+    }
+  }
+  return null;
+}
+
+/**
  * Save a Negotiation Card with API.
  *
  * @param {string} model Model of the Version
@@ -401,36 +487,6 @@ export async function saveCard(
     }
   } else {
     invalidArtifactAlert("Negotiation card", identifier, "saved");
-  }
-  return null;
-}
-
-/**
- * Get Negotiation Card from API.
- *
- * @param {string} model Model of the Version
- * @param {string} version Version of the Negotiation Card
- * @returns {Promise<NegotiationCardModel>} Promise that resolves to Negotiation Card
- */
-export async function getCard(
-  model: string,
-  version: string,
-  cardId: string,
-): Promise<ArtifactModel<NegotiationCardModel> | null> {
-  const card: ArtifactModel<NegotiationCardModel> | null = await useApi(
-    "/model/" + model + "/version/" + version + "/artifact/" + cardId,
-    "GET",
-  );
-  if (card && card.body.artifact_type == "negotiation_card") {
-    if (isValidNegotiation(card)) {
-      return card;
-    } else {
-      invalidArtifactAlert(
-        "Negotiation card",
-        card.header.identifier,
-        "loaded",
-      );
-    }
   }
   return null;
 }

@@ -61,7 +61,7 @@ import { cancelFormSubmission } from "~/composables/form-methods";
 const userCookie = useCookie("user");
 
 const user = ref<User>(new User());
-user.value = (await useApi("/user/me", "GET")) || new User();
+user.value = (await getUserMe()) || new User();
 
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
@@ -106,21 +106,7 @@ async function submit() {
     return;
   }
 
-  const requestBody: UserUpdateBody = {
-    username: user.value!.username,
-    email: user.value!.email,
-    full_name: user.value!.full_name,
-    disabled: false,
-    role: user.value!.role,
-  };
-
-  if (resetPasswordFlag.value) {
-    requestBody.password = newPassword.value;
-  }
-
-  const response = await useApi("/user", "PUT", {
-    body: requestBody,
-  });
+  const response = await updateUser(user.value);
   if (response) {
     navigateTo("/");
   }
