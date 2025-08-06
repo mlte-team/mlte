@@ -133,7 +133,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const groupOptions = ref<Array<GroupCheckboxOption>>([]);
 const groupList = ref<Array<Group>>([]);
-groupList.value = (await useApi("/groups/details", "GET")) || [];
+groupList.value = await getGroupList();
 
 if (groupList.value) {
   groupList.value.forEach((group: Group) => {
@@ -199,7 +199,6 @@ async function submit() {
       inputError = true;
     }
 
-    // TODO : Bug fix this between edit and new user style
     if (
       props.modelValue.password == undefined ||
       props.modelValue.password.trim() === ""

@@ -49,6 +49,15 @@ export interface TagOption {
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
+export interface Model {
+  identifier: string;
+  versions: Array<string>;
+}
+
+export interface Version {
+  identifier: string;
+}
+
 export interface ArtifactModel<
   TBody =
     | NegotiationCardModel

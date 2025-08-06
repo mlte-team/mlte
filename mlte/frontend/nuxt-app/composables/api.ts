@@ -19,8 +19,8 @@ const config = useRuntimeConfig();
 export function useApi<T>(
   url: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
-  options?: NitroFetchOptions<string>,
-  tokenOverride?: string,
+  options: NitroFetchOptions<string> | null = null,
+  tokenOverride: string | null = null,
   auth: boolean = true,
 ): Promise<T> | null {
   const defaultOptions: NitroFetchOptions<string> = {
@@ -60,11 +60,93 @@ export function useApi<T>(
   }
 }
 
+// --------------------------------------------------------------------------------------------------------------
+// Token
+// --------------------------------------------------------------------------------------------------------------
+
+export async function getToken(
+  username: string,
+  password: string,
+): Promise<TokenData | null> {
+  const details: Dictionary<string> = {
+    grant_type: "password",
+    username: username,
+    password: password,
+  };
+
+  const formBodyArray: Array<string> = [];
+  for (const property in details) {
+    const encodedKey = encodeURIComponent(property);
+    const encodedValue = encodeURIComponent(details[property]);
+    formBodyArray.push(encodedKey + "=" + encodedValue);
+  }
+  const formBodyStr: string = formBodyArray.join("&");
+
+  const tokenData: TokenData | null = await useApi(
+    "/token",
+    "POST",
+    {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBodyStr,
+    },
+    undefined,
+    false,
+  );
+  return tokenData;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Context
+// --------------------------------------------------------------------------------------------------------------
+
 /**
- * Get sorted list of Versions in a Model.
+ * Create new Model with API.
+ *
+ * @param {string} modelName Name of model to be created
+ * @returns {Promise<Model | null>} Promise that resolves to crated Model or null on failure
+ */
+export async function createModel(modelName: string): Promise<Model | null> {
+  const response: Model | null = await useApi("/model/", "POST", {
+    body: { identifier: modelName },
+  });
+  if (response) {
+    successfulSubmission("Model", modelName, "created");
+  }
+  return response;
+}
+
+/**
+ * Create new Version with API.
+ *
+ * @param {string} modelName Name of model
+ * @param {string} versionName Name of Version to be created
+ * @returns {Promise<Model | null>} Promise that resolves to crated Version or null on failure
+ */
+export async function createVersion(
+  modelName: string,
+  versionName: string,
+): Promise<Version | null> {
+  const response: Version | null = await useApi(
+    "/model/" + modelName + "/version",
+    "POST",
+    {
+      body: { identifier: versionName },
+    },
+  );
+  if (response) {
+    successfulSubmission("Version", versionName, "created");
+  }
+  return response;
+}
+
+/**
+ * Get sorted list of Versions in a Model from API.
  *
  * @param {string} model Model to get the Versions of
- * @returns {Array<string>} Sorted list of Versions of the Model
+ * @returns {Array<string>} Promise that resolves to sorted list of Versions of the Model
  */
 export async function getModelVersions(model: string): Promise<Array<string>> {
   const versions: Array<string> | null = await useApi(
@@ -72,6 +154,290 @@ export async function getModelVersions(model: string): Promise<Array<string>> {
     "GET",
   );
   return versions?.sort() || [];
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// User
+// --------------------------------------------------------------------------------------------------------------
+
+export async function getUserMe(token: string = "") {
+  const user: User | null = await useApi(
+    "/user/me",
+    "GET",
+    undefined,
+    token as string,
+  );
+  return user;
+}
+
+/**
+ * Get sorted list of Models available to User from API.
+ *
+ * @returns {Promise<Array<string>>} Promise that resolves to sorted list of Models available to User
+ */
+export async function getUserModels(): Promise<Array<string>> {
+  const models: Array<string> | null = await useApi("/user/me/models", "GET");
+  return models?.sort() || [];
+}
+
+/**
+ * Create User with API.
+ *
+ * @param {User} user User object to create
+ * @returns {Promise<User | null>} Promise that resolves to created User or null on failure
+ */
+export async function createUser(user: User): Promise<User | null> {
+  const response: User | null = await useApi("/user", "POST", {
+    body: JSON.stringify(user),
+  });
+  if (response) {
+    successfulSubmission("User", user.username, "created");
+  }
+  return response;
+}
+
+/**
+ * Get all User details from API.
+ *
+ * @returns {Promise<Array<User> | null>} Promise that resolves to list of Users with details or null on failure
+ */
+export async function getUsersDetails(): Promise<Array<User> | null> {
+  const users: Array<User> | null = await useApi("/users/details", "GET");
+  return users;
+}
+
+/**
+ * Update User with API.
+ *
+ * @param {User} user Updated version of the user
+ * @returns {Promise<User | null>} Promise that resolves to updated User or null on failure
+ */
+export async function updateUser(user: User): Promise<User | null> {
+  const response: User | null = await useApi("/user", "PUT", {
+    body: JSON.stringify(user),
+  });
+  if (response) {
+    successfulSubmission("User", user.username, "updated");
+  }
+  return response;
+}
+
+/**
+ * Delete User with API.
+ *
+ * @param {string} username Username of the User to delete
+ * @returns {Promise<User | null>} Promise that resolves to deleted User or null on failure
+ */
+export async function deleteUser(username: string): Promise<User | null> {
+  const response: User | null = await useApi("/user/" + username, "DELETE");
+  if (response) {
+    successfulSubmission("User", username, "deleted");
+  }
+  return response;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Group
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create Group with API.
+ *
+ * @param {Group} group Group to be create
+ * @returns {Promise<Group | null>} Promise that resolves to created Group or null on failure
+ */
+export async function createGroup(group: Group): Promise<Group | null> {
+  const response: Group | null = await useApi("/group", "POST", {
+    body: JSON.stringify(group),
+  });
+  if (response) {
+    successfulSubmission("Group", group.name, "created");
+  }
+  return response;
+}
+
+/**
+ * Get list of Groups from API.
+ *
+ * @returns {Promise<Array<Group>>} Promise that resolves to list of Groups
+ */
+export async function getGroupList(): Promise<Array<Group>> {
+  const groupList: Array<Group> | null = await useApi("/groups/details", "GET");
+  return groupList || [];
+}
+
+/**
+ * Update Group with API.
+ *
+ * @param {Group} group Updated version of Group
+ * @returns {Promise<Group | null>} Promise that resolves to updated Group or null on failure
+ */
+export async function updateGroup(group: Group): Promise<Group | null> {
+  const response: Group | null = await useApi("/group", "PUT", {
+    body: JSON.stringify(group),
+  });
+  if (response) {
+    successfulSubmission("Group", group.name, "updated");
+  }
+  return response;
+}
+
+/**
+ * Delete Group with API
+ *
+ * @param {string} groupName Name of Group to be deleted
+ * @returns {Promise<Group | null>} Promise that resolves to deleted Group or null on failure
+ */
+export async function deleteGroup(groupName: string): Promise<Group | null> {
+  const group: Group | null = await useApi("/group/" + groupName, "DELETE");
+  if (group) {
+    successfulSubmission("Group", groupName, "deleted");
+  }
+  return group;
+}
+
+/**
+ * Get list of Permissions from API.
+ *
+ * @returns {Promise<Array<Permission>>} Promise that resolves to list of Permissions
+ */
+export async function getPermissionList(): Promise<Array<Permission>> {
+  const permissionList: Array<Permission> | null = await useApi(
+    "/groups/permissions/details",
+    "GET",
+  );
+  return permissionList || [];
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Test Catalog
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get list of Catalogs from API.
+ *
+ * @returns {Promise<Array<CatalogReply>>} Promise that resolves to list of Catalogs
+ */
+export async function getCatalogList(): Promise<Array<CatalogReply>> {
+  const catalogList: Array<CatalogReply> | null = await useApi(
+    "/catalogs",
+    "GET",
+  );
+  return catalogList || [];
+}
+
+/**
+ * Perform a search for Test Catalog Entries with API.
+ *
+ * @param {object} filter Filter object to be sent with request
+ * @returns {Promise<Array<TestCatalogEntry>>} Promise that resolves to list of Test Catalog Entries meeting search criteria
+ */
+export async function searchCatalog(
+  filter: object,
+): Promise<Array<TestCatalogEntry>> {
+  const catalogList: Array<TestCatalogEntry> | null = await useApi(
+    "/catalogs/entry/search",
+    "POST",
+    { body: filter },
+  );
+  return catalogList || [];
+}
+
+/**
+ * Create new Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog to add entry to
+ * @param {TestCatalogEntry} entry Test Catalog Entry to create
+ * @returns {Promise<TestCatalogEntry | null>} Promise that resolves to created Test Catalog Entry, or null on a failure
+ */
+export async function createCatalogEntry(
+  catalogId: string,
+  entry: TestCatalogEntry,
+): Promise<TestCatalogEntry | null> {
+  const response: TestCatalogEntry | null = await useApi(
+    "/catalog/" + catalogId + "/entry",
+    "POST",
+    {
+      body: JSON.stringify(entry),
+    },
+  );
+  if (response) {
+    successfulSubmission(
+      "Test Catalog Entry",
+      entry.header.identifier,
+      "created",
+    );
+  }
+  return response;
+}
+
+/**
+ * Update Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog containing entry to update
+ * @param {TestCatalogEntry} entry Test Catalog Entry to update
+ * @returns {Promise<TestCatalogEntry | null>} Updated Test Catalog Entry, or null on a failure
+ */
+export async function updateCatalogEntry(
+  catalogId: string,
+  entry: TestCatalogEntry,
+): Promise<TestCatalogEntry | null> {
+  const response: TestCatalogEntry | null = await useApi(
+    "catalog/" + catalogId + "/entry",
+    "PUT",
+    { body: JSON.stringify(entry) },
+  );
+  if (response) {
+    successfulSubmission(
+      "Test Catalog Entry",
+      entry.header.identifier,
+      "updated",
+    );
+  }
+  return response;
+}
+
+/**
+ * Delete a Test Catalog Entry with API.
+ *
+ * @param {string} catalogId ID of Test Catalog containing entry to be deleted
+ * @param {string} entryId ID of the Test Catalog Entry to be deleted
+ * @returns {Promise<TestCatalogEntry | null>} Promise that resolves to deleted Test Catalog Entry, or null on a failure
+ */
+export async function deleteCatalogEntry(
+  catalogId: string,
+  entryId: string,
+): Promise<TestCatalogEntry | null> {
+  const response: TestCatalogEntry | null = await useApi(
+    "/catalog/" + catalogId + "/entry/" + entryId,
+    "DELETE",
+  );
+  if (response) {
+    successfulSubmission("Test Catalog Entry", entryId, "deleted");
+  }
+  return response;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Artifact
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get all Artifacts of a Model Version.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version of the Artifacts
+ * @returns {Promise<Array<ArtifactModel>>} Promise that resolves to list of Artifacts
+ */
+export async function getVersionArtifacts(
+  model: string,
+  version: string,
+): Promise<Array<ArtifactModel>> {
+  const versionArtifacts: Array<ArtifactModel> | null = await useApi(
+    "/model/" + model + "/version/" + version + "/artifact",
+    "GET",
+  );
+  return versionArtifacts || [];
 }
 
 /**
@@ -91,10 +457,61 @@ export async function getCard(
     "GET",
   );
   if (card && card.body.artifact_type == "negotiation_card") {
-    return card;
-  } else {
-    return null;
+    if (isValidNegotiation(card)) {
+      return card;
+    } else {
+      invalidArtifactAlert(
+        "Negotiation card",
+        card.header.identifier,
+        "loaded",
+      );
+    }
   }
+  return null;
+}
+
+/**
+ * Save a Negotiation Card with API.
+ *
+ * @param {string} model Model of the Version
+ * @param {string} version Version to contain the Negotiation Card
+ * @param {string} identifier Identifier for the Negotiation Card
+ * @param {boolean} forceSave Force save true incidates an update to a Negotiatoin Card, false indates a new Negotation Card
+ * @param {NegotiationCardModel} card Negotiation Card to be saved
+ * @returns {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
+ */
+export async function saveCard(
+  model: string,
+  version: string,
+  identifier: string,
+  forceSave: boolean,
+  card: NegotiationCardModel,
+): Promise<NegotiationCardModel | null> {
+  // Construct the object to be submitted to the backend
+  const artifact = {
+    header: {
+      identifier,
+      type: "negotiation_card",
+      timestamp: -1,
+      creator: "",
+    },
+    body: card,
+  };
+
+  if (isValidNegotiation(artifact)) {
+    const response: NegotiationCardModel | null = await useApi(
+      "/model/" + model + "/version/" + version + "/artifact",
+      "POST",
+      { body: { artifact, force: forceSave, parents: false } },
+    );
+    if (response) {
+      successfulSubmission("Negotiation card", identifier, "saved");
+      return response;
+    }
+  } else {
+    invalidArtifactAlert("Negotiation card", identifier, "saved");
+  }
+  return null;
 }
 
 /**
@@ -102,7 +519,7 @@ export async function getCard(
  *
  * @param {string} model Model of the Version
  * @param {string} version Version of the Report
- * @returns {Promise<ReportModel>} Promise that resolves to the Report
+ * @returns {Promise<ReportModel>} Promise that resolves to Report
  */
 export async function getReport(
   model: string,
@@ -114,10 +531,13 @@ export async function getReport(
     "GET",
   );
   if (report && report.body.artifact_type == "report") {
-    return report;
-  } else {
-    return null;
+    if (isValidReport(report)) {
+      return report;
+    } else {
+      invalidArtifactAlert("Report", report.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 /**
@@ -189,8 +609,34 @@ export async function getEvidence(
   }
 }
 
+// --------------------------------------------------------------------------------------------------------------
+// Custom List
+// --------------------------------------------------------------------------------------------------------------
+
 /**
- * Generic alert function for API interactions.
+ * Get Custom List from API.
+ *
+ * @param {string} customListId ID of the custom list
+ * @returns {Promise<Array<CustomListEntry>>} Promise that resolves to Custom List
+ */
+export async function getCustomList(
+  customListId: string,
+): Promise<Array<CustomListEntry>> {
+  const customList: Array<CustomListEntry> | null = await useApi(
+    "/custom_list/" + customListId,
+    "GET",
+  );
+  return customList || [];
+}
+
+
+
+// --------------------------------------------------------------------------------------------------------------
+// Util
+// --------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generic alert function for successful API interactions.
  *
  * @param {string} artifactType Type of artifact
  * @param {string} artifactName Name of artifact
@@ -203,5 +649,18 @@ export function successfulSubmission(
 ) {
   alert(
     `${artifactType}, ${artifactName}, has been ${operation} successfully.`,
+  );
+}
+
+/**
+ *
+ */
+export function invalidArtifactAlert(
+  artifactType: string,
+  artifactName: string,
+  operation: string,
+) {
+  alert(
+    `${artifactType}, ${artifactName}, is invalid and cannot be ${operation} successfully.`,
   );
 }

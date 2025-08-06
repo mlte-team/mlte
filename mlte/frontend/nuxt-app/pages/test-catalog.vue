@@ -56,14 +56,9 @@ populateFullEntryList();
 
 // Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
-  const entries: Array<TestCatalogEntry> | null = await useApi(
-    "/catalogs/entry/search",
-    "POST",
-    { body: { filter: { type: "all" } } },
-  );
-  if (entries) {
-    entryList.value = entries;
-  }
+  entryList.value = await searchCatalog({
+    filter: { type: "all" },
+  });
 }
 
 // Handle a search query.
@@ -71,62 +66,35 @@ async function search() {
   if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
     populateFullEntryList();
   } else if (QACategorySearchValue.value === "") {
-    const entries: Array<TestCatalogEntry> | null = await useApi(
-      "/catalogs/entry/search",
-      "POST",
-      {
-        body: {
-          filter: { type: "tag", name: "tags", value: tagSearchValue.value },
-        },
-      },
-    );
-    if (entries) {
-      entryList.value = entries;
-    }
+    entryList.value = await searchCatalog({
+      filter: { type: "tag", name: "tags", value: tagSearchValue.value },
+    });
   } else if (tagSearchValue.value === "") {
-    const entries: Array<TestCatalogEntry> | null = await useApi(
-      "/catalogs/entry/search",
-      "POST",
-      {
-        body: {
-          filter: {
+    entryList.value = await searchCatalog({
+      filter: {
+        type: "property",
+        name: "qa_category",
+        value: QACategorySearchValue.value,
+      },
+    });
+  } else {
+    entryList.value = await searchCatalog({
+      filter: {
+        type: "and",
+        filters: [
+          {
+            type: "tag",
+            name: "tags",
+            value: tagSearchValue.value,
+          },
+          {
             type: "property",
             name: "qa_category",
             value: QACategorySearchValue.value,
           },
-        },
+        ],
       },
-    );
-    if (entries) {
-      entryList.value = entries;
-    }
-  } else {
-    const entries: Array<TestCatalogEntry> | null = await useApi(
-      "/catalogs/entry/search",
-      "POST",
-      {
-        body: {
-          filter: {
-            type: "and",
-            filters: [
-              {
-                type: "tag",
-                name: "tags",
-                value: tagSearchValue.value,
-              },
-              {
-                type: "property",
-                name: "qa_category",
-                value: QACategorySearchValue.value,
-              },
-            ],
-          },
-        },
-      },
-    );
-    if (entries) {
-      entryList.value = entries;
-    }
+    });
   }
 }
 
@@ -168,13 +136,9 @@ async function deleteEntry(catalogId: string, entryId: string) {
     return;
   }
 
-  const response = await useApi(
-    "/catalog/" + catalogId + "/entry/" + entryId,
-    "DELETE",
-  );
+  const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
     populateFullEntryList();
-    successfulSubmission("Entry", entryId, "deleted");
   }
 }
 
@@ -195,20 +159,12 @@ async function saveEntry(entry: TestCatalogEntry) {
   let error = true;
 
   if (newEntryFlag.value) {
-    const response = await useApi(
-      "/catalog/" + entry.header.catalog_id + "/entry",
-      "POST",
-      { body: JSON.stringify(entry) },
-    );
+    const response = await createCatalogEntry(entry.header.catalog_id, entry);
     if (response) {
       error = false;
     }
   } else {
-    const response = await useApi(
-      "catalog/" + entry.header.catalog_id + "/entry",
-      "PUT",
-      { body: JSON.stringify(entry) },
-    );
+    const response = await updateCatalogEntry(entry.header.catalog_id, entry);
     if (response) {
       error = false;
     }
@@ -218,7 +174,6 @@ async function saveEntry(entry: TestCatalogEntry) {
     populateFullEntryList();
     resetSelectedEntry();
     editFlag.value = false;
-    successfulSubmission("Entry", entry.header.identifier, "saved");
   }
 }
 </script>

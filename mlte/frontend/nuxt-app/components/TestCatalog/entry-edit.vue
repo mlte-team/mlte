@@ -187,7 +187,7 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const catalogList = ref<Array<CatalogReply>>([]);
-catalogList.value = (await useApi("/catalogs", "GET")) || [];
+catalogList.value = await getCatalogList();
 
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
@@ -205,8 +205,7 @@ if (catalogList.value) {
 // Delete when test catalog no longer saves qa category
 const QACategoryOptions = ref<Array<QAOption>>([]);
 const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
-QACategoryAPIData.value =
-  (await useApi("/custom_list/qa_categories", "GET")) || [];
+QACategoryAPIData.value = await getCustomList("qa_categories");
 
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: CustomListEntry) => {
@@ -224,8 +223,7 @@ if (QACategoryAPIData.value) {
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
 const QAapiOptions = ref<Array<CustomListEntry>>([]);
-QAapiOptions.value =
-  (await useApi("custom_list/quality_attributes", "GET")) || [];
+QAapiOptions.value = await getCustomList("quality_attributes");
 
 if (QAapiOptions.value) {
   QAapiOptions.value.forEach((attribute: CustomListEntry) => {

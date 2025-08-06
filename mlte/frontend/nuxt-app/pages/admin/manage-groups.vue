@@ -12,7 +12,7 @@
       <AdminGroupList
         v-model="groupList"
         @edit-group="editGroup"
-        @delete-group="deleteGroup"
+        @delete-group="pageDeleteGroup"
       />
     </div>
     <div v-if="editFlag">
@@ -36,13 +36,7 @@ updateGroupList();
 
 // Get list of Groups from API and populate page with them.
 async function updateGroupList() {
-  const groups: Array<Group> | null = await useApi("/groups/details", "GET");
-  if (groups) {
-    groupList.value = [];
-    groups.forEach((group: Group) => {
-      groupList.value.push(group);
-    });
-  }
+  groupList.value = await getGroupList();
 }
 
 // Reset selectedGroup, for example after an edit is completed.
@@ -69,17 +63,16 @@ function editGroup(group: Group) {
  *
  * @param {string} groupName Name of group to be deleted
  */
-async function deleteGroup(groupName: string) {
+async function pageDeleteGroup(groupName: string) {
   if (
     !confirm("Are you sure you want to delete the group: " + groupName + "?")
   ) {
     return;
   }
 
-  const response = await useApi("/group/" + groupName, "DELETE");
+  const response = await deleteGroup(groupName);
   if (response) {
     updateGroupList();
-    successfulSubmission("Group", groupName, "deleted");
   }
 }
 
@@ -100,16 +93,12 @@ async function saveGroup(group: Group) {
   let error = true;
 
   if (newGroupFlag.value) {
-    const response = await useApi("/group", "POST", {
-      body: JSON.stringify(group),
-    });
+    const response = await createGroup(group);
     if (response) {
       error = false;
     }
   } else {
-    const response = await useApi("/group", "PUT", {
-      body: JSON.stringify(group),
-    });
+    const response = await updateGroup(group);
     if (response) {
       error = false;
     }
@@ -119,7 +108,6 @@ async function saveGroup(group: Group) {
     updateGroupList();
     resetSelectedGroup();
     editFlag.value = false;
-    successfulSubmission("Group", group.name, "saved");
   }
 }
 </script>

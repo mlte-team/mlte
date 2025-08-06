@@ -6,14 +6,14 @@
       <div>
         <UsaTextInput
           v-model="newModelIdentifier"
-          @keyup.enter="submitNewModel(newModelIdentifier)"
+          @keyup.enter="createNewModel(newModelIdentifier)"
         >
           <template #label> New Model </template>
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
           style="margin-left: 0px"
-          @click="submitNewModel(newModelIdentifier)"
+          @click="createNewModel(newModelIdentifier)"
         >
           Create Model
         </UsaButton>
@@ -363,9 +363,9 @@ if (modelOptions.value !== null) {
   }
 }
 
-// Populate the list of Models.
+// Populate the list of Model options.
 async function populateModelList() {
-  const models: Array<string> | null = await useApi("/user/me/models/", "GET");
+  const models: Array<string> = await getUserModels();
   if (models) {
     modelList.value = models;
     modelOptions.value = [];
@@ -376,7 +376,7 @@ async function populateModelList() {
 }
 
 /**
- * Update the selected model for the artifact store.
+ * Update the selected Model for the artifact store.
  *
  * @param {string} modelName Model to select
  * @param {boolean} resetSelectedVersion Flag to reset selectedVersion or not
@@ -414,13 +414,9 @@ async function selectVersion(versionName: string) {
     return;
   }
 
-  const versionArtifacts: Array<ArtifactModel> | null = await useApi(
-    "/model/" +
-      selectedModel.value +
-      "/version/" +
-      selectedVersion.value +
-      "/artifact",
-    "GET",
+  const versionArtifacts: Array<ArtifactModel> = await getVersionArtifacts(
+    selectedModel.value,
+    selectedVersion.value,
   );
   if (versionArtifacts) {
     populateArtifacts(
@@ -534,13 +530,10 @@ function clearArtifacts() {
  *
  * @param {string} modelName Name of Model to be created
  */
-async function submitNewModel(modelName: string) {
-  const response = await useApi("/model/", "POST", {
-    body: { identifier: modelName },
-  });
+async function createNewModel(modelName: string) {
+  const response = await createModel(modelName);
   if (response) {
     populateModelList();
-    successfulSubmission("Model", modelName, "created");
     newModelIdentifier.value = "";
     selectModel(modelName, true);
   }
@@ -553,12 +546,9 @@ async function submitNewModel(modelName: string) {
  * @param {string} versionName Name of the new Version.
  */
 async function submitNewVersion(modelName: string, versionName: string) {
-  const response = await useApi("/model/" + modelName + "/version", "POST", {
-    body: { identifier: versionName },
-  });
+  const response = await createVersion(modelName, versionName);
   if (response) {
     selectModel(modelName, false);
-    successfulSubmission("Version", versionName, "created");
     newVersionIdentifier.value = "";
     selectVersion(versionName);
   }
