@@ -7,7 +7,7 @@ Implementation of relational database system artifact store.
 from __future__ import annotations
 
 import typing
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -184,7 +184,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def write_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact: ArtifactModel,
         *,
         force: bool = False,

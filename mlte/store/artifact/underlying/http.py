@@ -117,7 +117,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def write_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact: ArtifactModel,
         *,
         force: bool = False,
