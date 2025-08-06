@@ -249,7 +249,7 @@ export class RealValueModel {
 
 export class OpaqueValueModel {
   public readonly evidence_type = "opaque";
-  constructor(public data: Dictionary<any>) {}
+  constructor(public data: Dictionary<unknown>) {}
 }
 
 export class ImageValueModel {
@@ -259,7 +259,7 @@ export class ImageValueModel {
 
 export class ArrayValueModel {
   public readonly evidence_type = "array";
-  constructor(public data: Array<any>) {}
+  constructor(public data: Array<unknown>) {}
 }
 
 export class StringValueModel {

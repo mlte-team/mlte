@@ -81,7 +81,7 @@ import MeasurementDisplay from "./measurement-display.vue";
 
 const props = defineProps({
   testCases: {
-    type: Object as PropType<Array<TestCase>>,
+    type: Object as PropType<Array<TestCaseModel>>,
     required: true,
   },
 });
