@@ -4,6 +4,8 @@ test/store/test_underlying.py
 Unit tests for the underlying artifact store implementations.
 """
 
+from typing import Optional
+
 import pytest
 
 import mlte.store.error as errors
@@ -34,7 +36,7 @@ from .fixture import (  # noqa
 def write_artifact_with_deps(
     handle: ArtifactStoreSession,
     model_id: str,
-    version_id: str,
+    version_id: Optional[str],
     artifact: ArtifactModel,
     force: bool = False,
     parents: bool = False,
@@ -208,7 +210,7 @@ def test_version_list(
 def check_artifact_writing(
     handle: ArtifactStoreSession,
     model_id: str,
-    version_id: str,
+    version_id: Optional[str],
     artifact_id: str,
     artifact: ArtifactModel,
     user: str,
@@ -302,6 +304,43 @@ def test_artifact(
         # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
         check_artifact_writing(
             handle, model_id, version_id, artifact_id, artifact, user
+        )
+
+
+@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+def test_artifact_model_level(
+    store_fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    """An artifact can be stored at the model level."""
+    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+
+    model_id = "model0"
+    version_id = "version0"
+    artifact_id = "myid"
+    artifact_type = ArtifactType.TEST_SUITE
+    user = TEST_API_USERNAME
+
+    with ManagedArtifactSession(store.session()) as handle:
+        handle.create_model(Model(identifier=model_id))
+
+        artifact = ArtifactFactory.make(
+            artifact_type, artifact_id, complete=True
+        )
+
+        # First check we can write and load an artifact, without version.
+        check_artifact_writing(
+            handle, model_id, None, artifact_id, artifact, user
+        )
+
+        # Second check that we can delete the artifact, and that it is really deleted.
+        handle.delete_artifact(model_id, version_id, artifact_id)
+
+        with pytest.raises(errors.ErrorNotFound):
+            _ = handle.read_artifact(model_id, version_id, artifact_id)
+
+        # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
+        check_artifact_writing(
+            handle, model_id, None, artifact_id, artifact, user
         )
 
 

@@ -40,6 +40,16 @@ class ModelArtifacts:
         all_artifacts.update(self.versions[version_id])
         return all_artifacts
 
+    def delete_artifact(self, artifact_id: str, version_id: str):
+        """Removes the given artifact, from the given version, or from the model list."""
+        if version_id in self.versions:
+            if artifact_id in self.versions[version_id]:
+                del self.versions[version_id][artifact_id]
+            else:
+                # If the artifact was on in the provided version, assume it was in the model level ones.
+                if artifact_id in self.artifacts:
+                    del self.artifacts[artifact_id]
+
 
 class MemoryStorage:
     """A simple storage wrapper for the in-memory store."""
@@ -249,7 +259,11 @@ class InMemoryStoreSession(ArtifactStoreSession):
         if artifact_id not in artifacts:
             raise errors.ErrorNotFound(f"Artifact '{artifact_id}'")
         artifact = artifacts[artifact_id]
-        del artifacts[artifact_id]
+
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model: {model_id}")
+        self.storage.models[model_id].delete_artifact(artifact_id, version_id)
+
         return artifact
 
     def _get_artifacts(
