@@ -144,7 +144,7 @@ class ArtifactStoreSession(StoreSession):
     def write_artifact_with_header(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact: ArtifactModel,
         *,
         force: bool = False,
@@ -194,7 +194,7 @@ class ArtifactStoreSession(StoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         """
@@ -211,7 +211,7 @@ class ArtifactStoreSession(StoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
@@ -230,7 +230,7 @@ class ArtifactStoreSession(StoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         query: Query = Query(),
     ) -> List[ArtifactModel]:
         """
@@ -247,7 +247,7 @@ class ArtifactStoreSession(StoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         """

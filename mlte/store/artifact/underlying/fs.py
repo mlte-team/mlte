@@ -196,7 +196,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
@@ -207,7 +207,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         limit: int = 100,
         offset: int = 0,
     ) -> list[ArtifactModel]:
@@ -220,7 +220,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         artifacts = self.read_artifacts(model_id, version_id)
@@ -231,7 +231,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
@@ -244,11 +244,14 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     # -------------------------------------------------------------------------
 
     def _get_artifact_groups(
-        self, model_id: str, version_id: str, artifact_id: str
+        self, model_id: str, version_id: Optional[str], artifact_id: str
     ) -> list[str]:
         """Finds at what level an artifact is stored, and returns a list of those groups."""
         # First trying at the model/version level, then at the model level.
-        group_ids = [model_id, version_id]
+        if version_id:
+            group_ids = [model_id, version_id]
+        else:
+            group_ids = [model_id]
         try:
             self.storage.ensure_resource_exists(artifact_id, group_ids)
         except errors.ErrorNotFound:

@@ -126,19 +126,24 @@ class DBReader:
     @staticmethod
     def get_artifacts(
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         session: Session,
     ) -> list[ArtifactModel]:
         """Loads and returns a list with all the artifacts, for the given model/version."""
-        artifact_orms: ScalarResult[DBArtifact] = session.scalars(
-            (
-                select(DBArtifact)
-                .where(DBVersion.name == version_id)
-                .where(DBModel.name == model_id)
-                .where(DBVersion.id == DBArtifact.version_id)
+        select_stmt = select(DBArtifact).where(DBModel.name == model_id)
+        if version_id:
+            select_stmt = (
+                select_stmt.where(DBVersion.id == DBArtifact.version_id)
                 .where(DBModel.id == DBVersion.model_id)
+                .where(DBVersion.name == version_id)
             )
-        )
+        else:
+            select_stmt = select_stmt.where(
+                DBArtifact.version_id.is_(None)
+            ).where(DBModel.id == DBArtifact.model_id)
+
+        artifact_orms: ScalarResult[DBArtifact] = session.scalars(select_stmt)
+
         artifacts_models = []
         for artifact_orm in artifact_orms:
             artifact_model = main_factory.create_artifact_model(artifact_orm)

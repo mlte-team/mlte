@@ -232,7 +232,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         with Session(self.storage.engine) as session:
@@ -244,7 +244,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
@@ -256,7 +256,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         query: Query = Query(),
     ) -> List[ArtifactModel]:
         # TODO: not the most efficient way, since it loads all artifacts first, before filtering.
@@ -268,7 +268,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         with Session(self.storage.engine) as session:

@@ -40,15 +40,15 @@ class ModelArtifacts:
         all_artifacts.update(self.versions[version_id])
         return all_artifacts
 
-    def delete_artifact(self, artifact_id: str, version_id: str):
+    def delete_artifact(self, artifact_id: str, version_id: Optional[str]):
         """Removes the given artifact, from the given version, or from the model list."""
-        if version_id in self.versions:
+        if version_id and version_id in self.versions:
             if artifact_id in self.versions[version_id]:
                 del self.versions[version_id][artifact_id]
-            else:
-                # If the artifact was on in the provided version, assume it was in the model level ones.
-                if artifact_id in self.artifacts:
-                    del self.artifacts[artifact_id]
+        else:
+            # If the artifact was on in the provided version, assume it was in the model level ones.
+            if artifact_id in self.artifacts:
+                del self.artifacts[artifact_id]
 
 
 class MemoryStorage:
@@ -214,7 +214,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         artifacts = self._get_artifacts(model_id, version_id)
@@ -226,7 +226,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         limit: int = 100,
         offset: int = 0,
     ) -> list[ArtifactModel]:
@@ -238,7 +238,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         artifacts = self._get_artifacts(model_id, version_id)
@@ -251,7 +251,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         artifacts = self._get_artifacts(model_id, version_id)

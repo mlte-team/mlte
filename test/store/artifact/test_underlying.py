@@ -315,7 +315,6 @@ def test_artifact_model_level(
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
     model_id = "model0"
-    version_id = "version0"
     artifact_id = "myid"
     artifact_type = ArtifactType.TEST_SUITE
     user = TEST_API_USERNAME
@@ -333,10 +332,10 @@ def test_artifact_model_level(
         )
 
         # Second check that we can delete the artifact, and that it is really deleted.
-        handle.delete_artifact(model_id, version_id, artifact_id)
+        handle.delete_artifact(model_id, None, artifact_id)
 
         with pytest.raises(errors.ErrorNotFound):
-            _ = handle.read_artifact(model_id, version_id, artifact_id)
+            _ = handle.read_artifact(model_id, None, artifact_id)
 
         # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
         check_artifact_writing(

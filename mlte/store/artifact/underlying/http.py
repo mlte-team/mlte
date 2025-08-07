@@ -134,7 +134,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         response = self.storage.get(
@@ -146,7 +146,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
@@ -159,7 +159,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         query: Query = Query(),
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
@@ -174,7 +174,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
     ) -> ArtifactModel:
         response = self.storage.delete(
