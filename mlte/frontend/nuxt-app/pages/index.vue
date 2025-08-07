@@ -220,6 +220,51 @@
         </div>
       </UsaAccordionItem>
 
+      <UsaAccordionItem label="Test Evidence">
+        <div class="scrollable-table-div">
+          <p>
+            Test Evidence is the atomic unit of model evaluation in MLTE. A
+            value is any artifact produced by a MLTE measurement for the
+            purposes of model evaluation.
+          </p>
+          <table class="table usa-table usa-table--borderless">
+            <thead>
+              <tr>
+                <th data-sortable scope="col" role="columnheader">ID</th>
+                <th data-sortable scope="col" role="columnheader">
+                  Measurement
+                </th>
+                <th data-sortable scope="col" role="columnheader">Type</th>
+                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="evidence in evidences" :key="evidence.id">
+                <td>{{ evidence.id }}</td>
+                <td>{{ evidence.measurement }}</td>
+                <td>{{ evidence.type }}</td>
+                <td>{{ evidence.timestamp }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      path: '/artifact-views/evidence-view',
+                      query: {
+                        model: evidence.model,
+                        version: evidence.version,
+                        artifactId: evidence.id,
+                      },
+                    }"
+                  >
+                    <UsaButton class="primary-button"> View </UsaButton>
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </UsaAccordionItem>
+
       <UsaAccordionItem label="Test Results">
         <div class="scrollable-table-div">
           <p>
@@ -251,51 +296,6 @@
                         model: result.model,
                         version: result.version,
                         artifactId: result.id,
-                      },
-                    }"
-                  >
-                    <UsaButton class="primary-button"> View </UsaButton>
-                  </NuxtLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </UsaAccordionItem>
-
-      <UsaAccordionItem label="Evidences">
-        <div class="scrollable-table-div">
-          <p>
-            Evidences are the atomic unit of model evaluation in MLTE. A value
-            is any artifact produced by a MLTE measurement for the purposes of
-            model evaluation.
-          </p>
-          <table class="table usa-table usa-table--borderless">
-            <thead>
-              <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">
-                  Measurement
-                </th>
-                <th data-sortable scope="col" role="columnheader">Type</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="evidence in evidences" :key="evidence.id">
-                <td>{{ evidence.id }}</td>
-                <td>{{ evidence.measurement }}</td>
-                <td>{{ evidence.type }}</td>
-                <td>{{ evidence.timestamp }}</td>
-                <td>
-                  <NuxtLink
-                    :to="{
-                      path: '/artifact-views/evidence-view',
-                      query: {
-                        model: evidence.model,
-                        version: evidence.version,
-                        artifactId: evidence.id,
                       },
                     }"
                   >

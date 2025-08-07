@@ -65,20 +65,24 @@
 
       <div>
         <b>Other Risks of Producing Incorrect Results</b>
-        <ol>
+        <ul>
+          <li v-if="reportBody.negotiation_card.system.risks.other.length == 0">
+            None
+          </li>
           <li
             v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
               .other"
+            v-else
             :key="riskIndex"
           >
             {{ risk }}
           </li>
-        </ol>
+        </ul>
       </div>
     </div>
 
     <div>
-      <h2 class="section-header">System Requirements</h2>
+      <h2 class="section-header">System Derived Requirements</h2>
       <ul>
         <li
           v-for="(requirement, requirementIndex) in reportBody.negotiation_card

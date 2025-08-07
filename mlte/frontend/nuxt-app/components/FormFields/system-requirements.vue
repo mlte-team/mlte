@@ -1,5 +1,5 @@
 <template>
-  <h2 class="section-header">System Requirements</h2>
+  <h2 class="section-header">System Derived Requirements</h2>
   <p>
     System-dependent requirements and constraints placed on the model under
     development. The fields below correspond to parts of a quality attribute
