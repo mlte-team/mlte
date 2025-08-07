@@ -195,8 +195,10 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 storeutil.create_parents(self, model_id, version_id)
             else:
                 # Ensure parents exist.
-                _ = DBReader.get_version(model_id, version_id, session)
-
+                if version_id:
+                    _ = DBReader.get_version(model_id, version_id, session)
+                else:
+                    _ = DBReader.get_model(model_id, session)
             # Check if artifact already exists.
             try:
                 _, artifact_orm = DBReader.get_artifact(

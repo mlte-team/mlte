@@ -34,7 +34,7 @@ from mlte.tests.model import TestSuiteModel
 def create_artifact_orm(
     artifact: ArtifactModel,
     model_id: str,
-    version_id: str,
+    version_id: typing.Optional[str],
     session: Session,
 ) -> typing.Union[
     DBTestSuite, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
@@ -44,7 +44,14 @@ def create_artifact_orm(
     artifact_type_orm = DBReader.get_artifact_type(
         artifact.header.type, session
     )
-    _, version_orm = DBReader.get_version(model_id, version_id, session)
+    if version_id:
+        _, version_orm = DBReader.get_version(model_id, version_id, session)
+        version_orm_id = version_orm.id
+        model_orm_id = None
+    else:
+        _, model_orm = DBReader.get_model(model_id, session)
+        model_orm_id = model_orm.id
+        version_orm_id = None
 
     # Create the artifact object, without the specific body.
     artifact_orm = DBArtifact(
@@ -52,7 +59,8 @@ def create_artifact_orm(
         type=artifact_type_orm,
         timestamp=artifact.header.timestamp,
         username=artifact.header.creator,
-        version_id=version_orm.id,
+        version_id=version_orm_id,
+        model_id=model_orm_id,
     )
 
     # Create the body ORM object and return it.

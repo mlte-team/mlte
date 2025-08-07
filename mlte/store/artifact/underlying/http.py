@@ -188,8 +188,14 @@ def _version_group(model_id: str) -> OrderedDict[str, str]:
     return OrderedDict([(model_id, VERSION_URL_KEY)])
 
 
-def _artifact_groups(model_id: str, version_id: str) -> OrderedDict[str, str]:
+def _artifact_groups(
+    model_id: str, version_id: Optional[str]
+) -> OrderedDict[str, str]:
     """Returns the resource group info for artifacts inside a version inside a model."""
-    groups = _version_group(model_id)
-    groups[version_id] = ARTIFACT_URL_KEY
+    if version_id:
+        groups = _version_group(model_id)
+        groups[version_id] = ARTIFACT_URL_KEY
+    else:
+        # TODO: update endpoints, note that this would confuse the API if the third item is sometimes "version" and sometimes an artifact id.
+        groups = OrderedDict([(model_id, ARTIFACT_URL_KEY)])
     return groups

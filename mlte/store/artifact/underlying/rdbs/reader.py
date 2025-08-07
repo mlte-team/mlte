@@ -90,19 +90,28 @@ class DBReader:
     @staticmethod
     def get_artifact(
         model_id: str,
-        version_id: str,
+        version_id: Optional[str],
         artifact_id: str,
         session: Session,
     ) -> tuple[ArtifactModel, DBArtifact]:
         """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
-        artifact_orm: Optional[DBArtifact] = session.scalar(
+        select_stmt = (
             select(DBArtifact)
             .where(DBArtifact.identifier == artifact_id)
-            .where(DBVersion.name == version_id)
             .where(DBModel.name == model_id)
-            .where(DBVersion.id == DBArtifact.version_id)
-            .where(DBModel.id == DBVersion.model_id)
         )
+        if version_id:
+            select_stmt = (
+                select_stmt.where(DBVersion.id == DBArtifact.version_id)
+                .where(DBModel.id == DBVersion.model_id)
+                .where(DBVersion.name == version_id)
+            )
+        else:
+            select_stmt = select_stmt.where(
+                DBArtifact.version_id.is_(None)
+            ).where(DBModel.id == DBArtifact.model_id)
+
+        artifact_orm: Optional[DBArtifact] = session.scalar(select_stmt)
 
         if artifact_orm is None:
             raise errors.ErrorNotFound(
