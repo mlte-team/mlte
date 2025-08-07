@@ -14,7 +14,7 @@
 
       <div>
         <b>Goals:</b>
-        <ol>
+        <ul>
           <li
             v-for="(goal, goalIndex) in reportBody.negotiation_card.system
               .goals"
@@ -25,7 +25,7 @@
               <li><b>Goal Description: </b>{{ goal.description }}</li>
               <li>
                 <b>Metrics</b>
-                <ol>
+                <ul>
                   <li
                     v-for="(metric, metricIndex) in goal.metrics"
                     :key="metricIndex"
@@ -36,11 +36,11 @@
                       <li><b>Baseline Source: </b>{{ metric.baseline }}</li>
                     </ul>
                   </li>
-                </ol>
+                </ul>
               </li>
             </ul>
           </li>
-        </ol>
+        </ul>
       </div>
 
       <div>
@@ -65,21 +65,25 @@
 
       <div>
         <b>Other Risks of Producing Incorrect Results</b>
-        <ol>
+        <ul>
+          <li v-if="reportBody.negotiation_card.system.risks.other.length == 0">
+            None
+          </li>
           <li
             v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
               .other"
+            v-else
             :key="riskIndex"
           >
             {{ risk }}
           </li>
-        </ol>
+        </ul>
       </div>
     </div>
 
     <div>
-      <h2 class="section-header">System Requirements</h2>
-      <ol>
+      <h2 class="section-header">System Derived Requirements</h2>
+      <ul>
         <li
           v-for="(requirement, requirementIndex) in reportBody.negotiation_card
             .system_requirements"
@@ -95,22 +99,22 @@
             </li>
           </ul>
         </li>
-      </ol>
+      </ul>
     </div>
 
     <h2 class="section-header">Test Results</h2>
     <form-fields-results-table v-model="reportBody.test_results" />
 
     <hr />
-    <h1 class="section-header">Additional Context</h1>
+    <h2 class="section-header">Additional Context</h2>
 
     <div>
-      <ol>
+      <ul>
         <li
           v-for="(dataItem, datasetIndex) in reportBody.negotiation_card.data"
           :key="datasetIndex"
         >
-          <b>Description: </b>{{ dataItem.description }}
+          {{ dataItem.description }}
           <ul>
             <li><b>Source: </b> {{ dataItem.source }}</li>
             <li><b>Data Classification: </b> {{ dataItem.classification }}</li>
@@ -127,17 +131,17 @@
                   :key="labelIndex"
                 >
                   <b>Label {{ labelIndex + 1 }}</b>
-                  <ol>
+                  <ul>
                     <li><b>Label Name: </b>{{ label.name }}</li>
                     <li><b>Label Description: </b>{{ label.description }}</li>
                     <li><b>Percentage: </b>{{ label.percentage }}</li>
-                  </ol>
+                  </ul>
                 </li>
               </ul>
             </li>
             <li>
               <b>Data Schema</b>
-              <ol>
+              <ul>
                 <li
                   v-for="(field, fieldIndex) in dataItem.fields"
                   :key="fieldIndex"
@@ -160,13 +164,13 @@
                     </li>
                   </ul>
                 </li>
-              </ol>
+              </ul>
             </li>
             <li><b>Data Rights: </b>{{ dataItem.rights }}</li>
             <li><b>Data Policies: </b>{{ dataItem.policies }}</li>
           </ul>
         </li>
-      </ol>
+      </ul>
     </div>
 
     <div>
@@ -217,7 +221,7 @@
 
       <div>
         <b>Input Specification</b>
-        <ol>
+        <ul>
           <li
             v-for="(inputSpec, inputSpecIndex) in reportBody.negotiation_card
               .model.input_specification"
@@ -231,12 +235,12 @@
               <li><b>Expected Values: </b>{{ inputSpec.expected_values }}</li>
             </ul>
           </li>
-        </ol>
+        </ul>
       </div>
 
       <div>
         <b>Output Specification</b>
-        <ol>
+        <ul>
           <li
             v-for="(outputSpec, outputSpecIndex) in reportBody.negotiation_card
               .model.output_specification"
@@ -250,7 +254,7 @@
               <li><b>Expected Values: </b>{{ outputSpec.expected_values }}</li>
             </ul>
           </li>
-        </ol>
+        </ul>
       </div>
 
       <div>
