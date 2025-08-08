@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Any, Optional, Union
 
 from pydantic import ConfigDict, Field, model_validator
+from strenum import StrEnum
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.model import EvidenceModel
@@ -18,6 +19,16 @@ from mlte.report.model import ReportModel
 from mlte.results.model import TestResultsModel
 from mlte.store.query import Filterable
 from mlte.tests.model import TestSuiteModel
+
+
+class ArtifactLevel(StrEnum):
+    """Level the artifact will exist at (model or version)."""
+
+    MODEL = "model"
+    """Store this artifact at the model level."""
+
+    VERSION = "version"
+    """Store this artifact at the version level."""
 
 
 class ArtifactHeaderModel(BaseModel):
@@ -34,6 +45,9 @@ class ArtifactHeaderModel(BaseModel):
 
     creator: Optional[str] = None
     """The user that created this artifact."""
+
+    level: ArtifactLevel = ArtifactLevel.VERSION
+    """The level this artifact will exist at (model or version)."""
 
     model_config = ConfigDict(use_enum_values=True)
 

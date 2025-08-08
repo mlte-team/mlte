@@ -9,7 +9,11 @@ from __future__ import annotations
 import typing
 from typing import Optional
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import (
+    ArtifactHeaderModel,
+    ArtifactLevel,
+    ArtifactModel,
+)
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.serializable import Serializable
@@ -45,6 +49,9 @@ class Artifact(Serializable):
 
         self.creator = None
         """The user that created this artifact."""
+
+        self.level = ArtifactLevel.VERSION
+        """The artifact level, be it model or version, defaults to version."""
 
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""
@@ -220,6 +227,7 @@ class Artifact(Serializable):
             type=self.type,
             timestamp=self.timestamp,
             creator=self.creator,
+            level=self.level,
         )
 
     def __str__(self) -> str:

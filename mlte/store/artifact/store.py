@@ -149,7 +149,6 @@ class ArtifactStoreSession(StoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
         user: Optional[str] = None,
     ) -> ArtifactModel:
         """
@@ -159,8 +158,6 @@ class ArtifactStoreSession(StoreSession):
         :param artifact: The artifact
         :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
-        :param ignore_version: If True, version_id is ignored when storing,
-                               and artifact is stored at model level.
         for artifact should be implictly created (default: False)
         :param user: The username of the user executing this action.
         """
@@ -171,7 +168,6 @@ class ArtifactStoreSession(StoreSession):
             artifact,
             force=force,
             parents=parents,
-            ignore_version=ignore_version,
         )
 
     def write_artifact(
@@ -182,7 +178,6 @@ class ArtifactStoreSession(StoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
     ) -> ArtifactModel:
         """
         Write an artifact.
@@ -191,8 +186,6 @@ class ArtifactStoreSession(StoreSession):
         :param artifact: The artifact
         :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
-        :param ignore_version: If True, version_id is ignored when storing,
-                               and artifact is stored at model level.
         for artifact should be implictly created (default: False)
         """
         raise NotImplementedError(

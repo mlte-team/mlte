@@ -10,7 +10,7 @@ from typing import Optional
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
@@ -171,7 +171,6 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
     ) -> ArtifactModel:
         if parents:
             storeutil.create_parents(self, model_id, version_id)
@@ -184,7 +183,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
         # Only store in version subgroup if it was requested.
         group_ids = [model_id]
-        if not ignore_version:
+        if artifact.header.level == ArtifactLevel.VERSION:
             group_ids += [version_id]
 
         self.storage.write_resource(

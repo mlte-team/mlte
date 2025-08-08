@@ -122,7 +122,6 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
     ) -> ArtifactModel:
         response = self.storage.post(
             groups=_artifact_groups(model_id, version_id),
@@ -130,7 +129,6 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
                 artifact=artifact,
                 force=force,
                 parents=parents,
-                ignore_version=ignore_version,
             ).to_json(),
         )
         return ArtifactModel(**(response["artifact"]))

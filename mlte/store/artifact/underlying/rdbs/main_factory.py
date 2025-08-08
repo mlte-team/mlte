@@ -4,7 +4,11 @@ import typing
 
 from sqlalchemy.orm import Session
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import (
+    ArtifactHeaderModel,
+    ArtifactLevel,
+    ArtifactModel,
+)
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.model import EvidenceModel
 from mlte.negotiation.model import NegotiationCardModel
@@ -35,7 +39,7 @@ def create_artifact_orm(
     artifact: ArtifactModel,
     model_id: str,
     version_id: str,
-    ignore_version: bool,
+    level: ArtifactLevel,
     session: Session,
 ) -> typing.Union[
     DBTestSuite, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
@@ -45,7 +49,7 @@ def create_artifact_orm(
     artifact_type_orm = DBReader.get_artifact_type(
         artifact.header.type, session
     )
-    if not ignore_version:
+    if level == ArtifactLevel.VERSION:
         _, version_orm = DBReader.get_version(model_id, version_id, session)
         version_orm_id = version_orm.id
         model_orm_id = None

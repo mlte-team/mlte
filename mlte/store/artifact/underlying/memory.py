@@ -11,7 +11,7 @@ from typing import Optional
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
@@ -62,10 +62,10 @@ class MemoryStorage:
         artifact: ArtifactModel,
         model_id: str,
         version_id: str,
-        ignore_version: bool,
+        level: ArtifactLevel,
     ):
         """Adds an artifact to the model or version level list."""
-        if ignore_version:
+        if level == ArtifactLevel.MODEL:
             self.models[model_id].artifacts[
                 artifact.header.identifier
             ] = artifact
@@ -202,7 +202,6 @@ class InMemoryStoreSession(ArtifactStoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
     ) -> ArtifactModel:
         if parents:
             storeutil.create_parents(self, model_id, version_id)
@@ -214,7 +213,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
                 f"Artifact '{artifact.header.identifier}'"
             )
         self.storage.add_artifact(
-            artifact, model_id, version_id, ignore_version
+            artifact, model_id, version_id, artifact.header.level
         )
         return artifact
 

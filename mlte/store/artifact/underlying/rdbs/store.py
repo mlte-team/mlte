@@ -188,7 +188,6 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         *,
         force: bool = False,
         parents: bool = False,
-        ignore_version: bool = False,
     ) -> ArtifactModel:
         with Session(self.storage.engine) as session:
             if parents:
@@ -218,7 +217,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
 
             # Create the actual object.
             new_artifact_orm = main_factory.create_artifact_orm(
-                artifact, model_id, version_id, ignore_version, session
+                artifact, model_id, version_id, artifact.header.level, session
             )
 
             # Use session to add object.
