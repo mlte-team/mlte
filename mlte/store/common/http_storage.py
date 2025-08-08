@@ -124,6 +124,7 @@ class HttpStorage(Storage):
             base_url = self.build_resource_url(resource_type)
 
         url = f"{base_url}{url_parse.quote(path_url)}{query}"
+        print(url)
         if method == MethodType.POST:
             res = self.client.post(url, json=json)
         elif method == MethodType.PUT:

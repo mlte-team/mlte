@@ -27,6 +27,9 @@ class WriteArtifactRequest(BaseModel):
     parents: bool = False
     """Indicates whether organizational elements should be created."""
 
+    ignore_version: bool = False
+    """Indicates whether to ignore the version and store at model level."""
+
 
 class WriteArtifactResponse(BaseModel):
     """Defines the data in a response to writing an artifact."""

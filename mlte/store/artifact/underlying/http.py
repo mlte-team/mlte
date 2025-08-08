@@ -117,16 +117,20 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def write_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact: ArtifactModel,
         *,
         force: bool = False,
         parents: bool = False,
+        ignore_version: bool = False,
     ) -> ArtifactModel:
         response = self.storage.post(
             groups=_artifact_groups(model_id, version_id),
             json=WriteArtifactRequest(
-                artifact=artifact, force=force, parents=parents
+                artifact=artifact,
+                force=force,
+                parents=parents,
+                ignore_version=ignore_version,
             ).to_json(),
         )
         return ArtifactModel(**(response["artifact"]))
@@ -134,9 +138,13 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
+        if not version_id:
+            raise Exception(
+                "Can't read artifacts on HTTP store without providing a version id due to API limitations."
+            )
         response = self.storage.get(
             id=artifact_id,
             groups=_artifact_groups(model_id, version_id),
@@ -146,7 +154,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
@@ -159,7 +167,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         query: Query = Query(),
     ) -> List[ArtifactModel]:
         # NOTE(Kyle): This operation always uses the "advanced search" functionality
@@ -174,7 +182,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         response = self.storage.delete(

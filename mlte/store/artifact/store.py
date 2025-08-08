@@ -144,11 +144,12 @@ class ArtifactStoreSession(StoreSession):
     def write_artifact_with_header(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact: ArtifactModel,
         *,
         force: bool = False,
         parents: bool = False,
+        ignore_version: bool = False,
         user: Optional[str] = None,
     ) -> ArtifactModel:
         """
@@ -158,6 +159,8 @@ class ArtifactStoreSession(StoreSession):
         :param artifact: The artifact
         :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
+        :param ignore_version: If True, version_id is ignored when storing,
+                               and artifact is stored at model level.
         for artifact should be implictly created (default: False)
         """
         artifact = self._add_header_data(artifact, user)
@@ -167,16 +170,18 @@ class ArtifactStoreSession(StoreSession):
             artifact,
             force=force,
             parents=parents,
+            ignore_version=ignore_version,
         )
 
     def write_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact: ArtifactModel,
         *,
         force: bool = False,
         parents: bool = False,
+        ignore_version: bool = False,
     ) -> ArtifactModel:
         """
         Write an artifact.
@@ -185,6 +190,8 @@ class ArtifactStoreSession(StoreSession):
         :param artifact: The artifact
         :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
+        :param ignore_version: If True, version_id is ignored when storing,
+                               and artifact is stored at model level.
         for artifact should be implictly created (default: False)
         """
         raise NotImplementedError(
@@ -194,7 +201,7 @@ class ArtifactStoreSession(StoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         """
@@ -211,7 +218,7 @@ class ArtifactStoreSession(StoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> List[ArtifactModel]:
@@ -230,7 +237,7 @@ class ArtifactStoreSession(StoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         query: Query = Query(),
     ) -> List[ArtifactModel]:
         """
@@ -247,7 +254,7 @@ class ArtifactStoreSession(StoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         """

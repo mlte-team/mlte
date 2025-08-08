@@ -166,11 +166,12 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def write_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact: ArtifactModel,
         *,
         force: bool = False,
         parents: bool = False,
+        ignore_version: bool = False,
     ) -> ArtifactModel:
         if parents:
             storeutil.create_parents(self, model_id, version_id)
@@ -181,9 +182,9 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
                 f"Artifact '{artifact.header.identifier}'"
             )
 
-        # Only store in version subgroup if it was provided.
+        # Only store in version subgroup if it was requested.
         group_ids = [model_id]
-        if version_id:
+        if not ignore_version:
             group_ids += [version_id]
 
         self.storage.write_resource(
@@ -196,7 +197,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def read_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
@@ -207,7 +208,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> list[ArtifactModel]:
@@ -220,7 +221,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         artifacts = self.read_artifacts(model_id, version_id)
@@ -231,7 +232,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)

@@ -51,6 +51,7 @@ def write_artifact(
                 request.artifact,
                 force=request.force,
                 parents=request.parents,
+                ignore_version=request.ignore_version,
                 user=current_user.username,
             )
             return WriteArtifactResponse(artifact=artifact)

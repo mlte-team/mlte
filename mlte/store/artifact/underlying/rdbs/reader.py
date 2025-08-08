@@ -6,7 +6,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import ScalarResult, select
+from sqlalchemy import ScalarResult
+from sqlalchemy import or_ as sql_or_
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
@@ -90,7 +92,7 @@ class DBReader:
     @staticmethod
     def get_artifact(
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
         session: Session,
     ) -> tuple[ArtifactModel, DBArtifact]:
@@ -100,16 +102,16 @@ class DBReader:
             .where(DBArtifact.identifier == artifact_id)
             .where(DBModel.name == model_id)
         )
-        if version_id:
-            select_stmt = (
-                select_stmt.where(DBVersion.id == DBArtifact.version_id)
-                .where(DBModel.id == DBVersion.model_id)
-                .where(DBVersion.name == version_id)
+        select_stmt = (
+            select_stmt.where(
+                sql_or_(
+                    DBVersion.id == DBArtifact.version_id,
+                    DBArtifact.version_id.is_(None),
+                )
             )
-        else:
-            select_stmt = select_stmt.where(
-                DBArtifact.version_id.is_(None)
-            ).where(DBModel.id == DBArtifact.model_id)
+            .where(DBModel.id == DBVersion.model_id)
+            .where(DBVersion.name == version_id)
+        )
 
         artifact_orm: Optional[DBArtifact] = session.scalar(select_stmt)
 

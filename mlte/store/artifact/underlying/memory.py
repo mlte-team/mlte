@@ -58,15 +58,19 @@ class MemoryStorage:
         self.models: dict[str, ModelArtifacts] = {}
 
     def add_artifact(
-        self, artifact: ArtifactModel, model_id: str, version_id: Optional[str]
+        self,
+        artifact: ArtifactModel,
+        model_id: str,
+        version_id: str,
+        ignore_version: bool,
     ):
         """Adds an artifact to the model or version level list."""
-        if version_id:
-            self.models[model_id].versions[version_id][
+        if ignore_version:
+            self.models[model_id].artifacts[
                 artifact.header.identifier
             ] = artifact
         else:
-            self.models[model_id].artifacts[
+            self.models[model_id].versions[version_id][
                 artifact.header.identifier
             ] = artifact
 
@@ -193,11 +197,12 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def write_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact: ArtifactModel,
         *,
         force: bool = False,
         parents: bool = False,
+        ignore_version: bool = False,
     ) -> ArtifactModel:
         if parents:
             storeutil.create_parents(self, model_id, version_id)
@@ -208,13 +213,15 @@ class InMemoryStoreSession(ArtifactStoreSession):
             raise errors.ErrorAlreadyExists(
                 f"Artifact '{artifact.header.identifier}'"
             )
-        self.storage.add_artifact(artifact, model_id, version_id)
+        self.storage.add_artifact(
+            artifact, model_id, version_id, ignore_version
+        )
         return artifact
 
     def read_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         artifacts = self._get_artifacts(model_id, version_id)
@@ -226,7 +233,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def read_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         limit: int = 100,
         offset: int = 0,
     ) -> list[ArtifactModel]:
@@ -238,7 +245,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def search_artifacts(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         query: Query = Query(),
     ) -> list[ArtifactModel]:
         artifacts = self._get_artifacts(model_id, version_id)
@@ -251,7 +258,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
     def delete_artifact(
         self,
         model_id: str,
-        version_id: Optional[str],
+        version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
         artifacts = self._get_artifacts(model_id, version_id)
@@ -267,7 +274,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
         return artifact
 
     def _get_artifacts(
-        self, model_id: str, version_id: Optional[str]
+        self, model_id: str, version_id: str
     ) -> OrderedDict[str, ArtifactModel]:
         """
         Get the artifcats from storage.
@@ -280,14 +287,10 @@ class InMemoryStoreSession(ArtifactStoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
         model = self.storage.models[model_id]
 
-        if version_id and version_id not in model.versions:
+        if version_id not in model.versions:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
-        if not version_id:
-            # Return model-level artifacts only.
-            return model.artifacts
-        else:
-            return model.get_all_artifacts(version_id)
+        return model.get_all_artifacts(version_id)
 
 
 class InMemoryStore(ArtifactStore):
