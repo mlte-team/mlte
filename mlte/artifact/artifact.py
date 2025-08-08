@@ -72,7 +72,13 @@ class Artifact(Serializable):
         # Default implementation is a no-op
         pass
 
-    def save(self, *, force: bool = False, parents: bool = False) -> None:
+    def save(
+        self,
+        *,
+        force: bool = False,
+        parents: bool = False,
+        user: Optional[str] = None,
+    ) -> ArtifactModel:
         """
         Save an artifact with parameters from the configured global session.
 
@@ -82,12 +88,15 @@ class Artifact(Serializable):
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
+        :param user: The username of the user executing this action.
+        :return: The ArtifactModel of the saved artifact.
         """
-        self.save_with(
+        return self.save_with(
             session().context,
             session().artifact_store,
             force=force,
             parents=parents,
+            user=user,
         )
 
     def save_with(
@@ -97,7 +106,8 @@ class Artifact(Serializable):
         *,
         force: bool = False,
         parents: bool = False,
-    ) -> None:
+        user: Optional[str] = None,
+    ) -> ArtifactModel:
         """
         Save an artifact with the given context and store configuration.
         :param context: The context in which to save the artifact
@@ -105,6 +115,8 @@ class Artifact(Serializable):
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
+        :param user: The username of the user executing this action.
+        :return: The ArtifactModel of the saved artifact.
         """
         self.pre_save_hook(context, store)
 
@@ -113,12 +125,13 @@ class Artifact(Serializable):
             model, ArtifactModel
         ), "Can't create object from non-ArtifactModel model."
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact_with_header(
+            return handle.write_artifact_with_header(
                 context.model,
                 context.version,
                 model,
                 force=force,
                 parents=parents,
+                user=user,
             )
 
     @classmethod

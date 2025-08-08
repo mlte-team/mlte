@@ -162,6 +162,7 @@ class ArtifactStoreSession(StoreSession):
         :param ignore_version: If True, version_id is ignored when storing,
                                and artifact is stored at model level.
         for artifact should be implictly created (default: False)
+        :param user: The username of the user executing this action.
         """
         artifact = self._add_header_data(artifact, user)
         return self.write_artifact(
