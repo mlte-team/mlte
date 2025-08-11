@@ -6,8 +6,6 @@ Implementation of local file system artifact store.
 
 from __future__ import annotations
 
-from typing import Optional
-
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
@@ -260,9 +258,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
         return group_ids
 
-    def _get_artifact_ids(
-        self, model_id: str, version_id: str
-    ) -> list[str]:
+    def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:
         """Returns all artifact idss from both model/version levels, and just model level."""
         version_artifacts = []
         version_artifacts = self._get_version_level_artifacts(
