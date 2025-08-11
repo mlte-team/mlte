@@ -8,20 +8,17 @@ from __future__ import annotations
 
 import random
 import string
+import typing
 from typing import List, Optional, Union
 
 from mlte._private import meta
-from mlte.artifact.model import (
-    ArtifactHeaderModel,
-    ArtifactLevel,
-    ArtifactModel,
-)
+from mlte.artifact.factory import ArtifactFactory
+from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
-from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -55,7 +52,20 @@ def _random_id(length: int = 5) -> str:
     return "".join(random.choices(string.ascii_lowercase, k=length))
 
 
-class ArtifactFactory:
+class TypeUtil:
+    """A static class for artifact type utilities."""
+
+    @staticmethod
+    def all_others(type: ArtifactType) -> List[ArtifactType]:
+        """
+        Return a collection of all artifact types that are not the given one.
+        :param type: The excluded type
+        :return: The included types
+        """
+        return [t for t in ArtifactType if t != type]
+
+
+class ArtifactModelFactory:
     """A class for build artifacts."""
 
     @staticmethod
@@ -72,56 +82,34 @@ class ArtifactFactory:
         :param complete: Whether to create a complete, fully defined artifact model (True), or a simple empty one (False)
         :return: The artifact model
         """
-        model = ArtifactModel(
-            header=ArtifactHeaderModel(identifier=id, type=type, creator=user),
-            body=_make_body(type, id, complete),
+        header = ArtifactHeaderModel(identifier=id, type=type, creator=user)
+
+        body_model: Union[
+            NegotiationCardModel,
+            EvidenceModel,
+            TestSuiteModel,
+            TestResultsModel,
+            ReportModel,
+        ]
+        if type == ArtifactType.NEGOTIATION_CARD:
+            body_model = _make_negotiation_card(complete)
+        elif type == ArtifactType.EVIDENCE:
+            body_model = _make_evidence(id)
+        elif type == ArtifactType.TEST_SUITE:
+            body_model = _make_test_suite(complete)
+        elif type == ArtifactType.TEST_RESULTS:
+            body_model = _make_test_results()
+        elif type == ArtifactType.REPORT:
+            body_model = _make_report()
+        else:
+            raise RuntimeError(
+                f"Unkown artifact type provided when creating body: {type}."
+            )
+
+        artifact = ArtifactFactory.from_model(
+            ArtifactModel(header=header, body=body_model)
         )
-
-        # Special cases, these are stored at the model level.
-        if type in [ArtifactType.NEGOTIATION_CARD, ArtifactType.TEST_SUITE]:
-            model.header.level = ArtifactLevel.MODEL
-
-        return model
-
-
-class TypeUtil:
-    """A static class for artifact type utilities."""
-
-    @staticmethod
-    def all_others(type: ArtifactType) -> List[ArtifactType]:
-        """
-        Return a collection of all artifact types that are not the given one.
-        :param type: The excluded type
-        :return: The included types
-        """
-        return [t for t in ArtifactType if t != type]
-
-
-def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
-    NegotiationCardModel,
-    EvidenceModel,
-    TestSuiteModel,
-    TestResultsModel,
-    ReportModel,
-]:
-    """
-    Make the body of the artifact for a given type.
-    :param type: The artifact type
-    :param id: The identifier for the artifact
-    :return: The artifact body model
-    """
-    if type == ArtifactType.NEGOTIATION_CARD:
-        return _make_negotiation_card(complete)
-    if type == ArtifactType.EVIDENCE:
-        return _make_value(id, complete)
-    if type == ArtifactType.TEST_SUITE:
-        return _make_test_suite(complete)
-    if type == ArtifactType.TEST_RESULTS:
-        return _make_test_results(complete)
-    if type == ArtifactType.REPORT:
-        return _make_report(complete)
-
-    assert False, f"Unkown artifact type provided when creating body: {type}."
+        return typing.cast(ArtifactModel, artifact.to_model())
 
 
 def _make_negotiation_card(complete: bool) -> NegotiationCardModel:
@@ -135,7 +123,7 @@ def _make_negotiation_card(complete: bool) -> NegotiationCardModel:
         return make_complete_negotiation_card()
 
 
-def _make_value(id: str, complete: bool) -> EvidenceModel:
+def _make_evidence(id: str) -> EvidenceModel:
     """
     Make a minimal value, or a fully featured one, depending on complete.
     :return: The artifact
@@ -160,20 +148,58 @@ def _make_test_suite(complete: bool) -> TestSuiteModel:
         return make_complete_test_suite_model()
 
 
-def _make_test_results(complete: bool) -> TestResultsModel:
+def _make_test_results() -> TestResultsModel:
     """
     Make a minimal test results, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    return make_complete_test_results_model()
+    return TestResultsModel(
+        test_suite_id=f"{TestSuite.get_default_id()}",
+        test_suite=make_complete_test_suite_model(),
+        results={
+            "Test1": ResultModel(
+                type="Success",
+                message="The RF accuracy is greater than 3",
+                evidence_metadata=EvidenceMetadata(
+                    test_case_id="Test1",
+                    measurement=MeasurementMetadata(
+                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                        output_class="mlte.evidence.types.real.Real",
+                        additional_data={"function": "skleran.accu()"},
+                    ),
+                ),
+            )
+        },
+    )
 
 
-def _make_report(complete: bool) -> ReportModel:
+def _make_report() -> ReportModel:
     """
     Make a minimal report, or a fully featured one, depending on complete.
     :return: The artifact
     """
-    return make_complete_report()
+    return ReportModel(
+        negotiation_card_id="default",
+        negotiation_card=typing.cast(
+            NegotiationCardModel,
+            ArtifactModelFactory.make(
+                ArtifactType.NEGOTIATION_CARD, complete=True
+            ).body,
+        ),
+        test_suite_id="default",
+        test_suite=typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(
+                ArtifactType.TEST_SUITE, complete=True
+            ).body,
+        ),
+        test_results_id="default",
+        test_results=typing.cast(
+            TestResultsModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_RESULTS).body,
+        ),
+        comments=[CommentDescriptor(content="content")],
+    )
 
 
 def make_complete_negotiation_card() -> NegotiationCardModel:
@@ -268,7 +294,6 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier=f"{NegotiationCard.get_default_id()}-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
@@ -299,45 +324,4 @@ def make_complete_test_suite_model() -> TestSuiteModel:
                 ),
             )
         ],
-    )
-
-
-def make_complete_test_results_model() -> TestResultsModel:
-    """
-    Make a filled in TestResults model.
-    :return: The artifact model
-    """
-    return TestResultsModel(
-        test_suite_id=f"{TestSuite.get_default_id()}",
-        test_suite=make_complete_test_suite_model(),
-        results={
-            "Test1": ResultModel(
-                type="Success",
-                message="The RF accuracy is greater than 3",
-                evidence_metadata=EvidenceMetadata(
-                    test_case_id="Test1",
-                    measurement=MeasurementMetadata(
-                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-                        output_class="mlte.evidence.types.real.Real",
-                        additional_data={"function": "skleran.accu()"},
-                    ),
-                ),
-            )
-        },
-    )
-
-
-def make_complete_report() -> ReportModel:
-    """
-    Make a filled in Report model.
-    :return: The artifact model
-    """
-    return ReportModel(
-        negotiation_card_id="default",
-        negotiation_card=_make_negotiation_card(complete=True),
-        test_suite_id="default",
-        test_suite=_make_test_suite(complete=True),
-        test_results_id="default",
-        test_results=_make_test_results(complete=True),
-        comments=[CommentDescriptor(content="content")],
     )

@@ -16,28 +16,28 @@ from mlte.store.query import (
     TypeFilter,
 )
 
-from ...fixture.artifact import ArtifactFactory, TypeUtil
+from ...fixture.artifact import ArtifactModelFactory, TypeUtil
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_all_match(artifact_type: ArtifactType) -> None:
     """The all filter matches all artifacts."""
-    a = ArtifactFactory.make(artifact_type)
+    a = ArtifactModelFactory.make(artifact_type)
     assert AllFilter().match(a)
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_none_match(artifact_type: ArtifactType) -> None:
     """The none filter matches no artifacts."""
-    a = ArtifactFactory.make(artifact_type)
+    a = ArtifactModelFactory.make(artifact_type)
     assert not NoneFilter().match(a)
 
 
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_identifier_match(artifact_type: ArtifactType) -> None:
     """The identifier filter matches the expected artifacts."""
-    a = ArtifactFactory.make(artifact_type, "id0")
-    b = ArtifactFactory.make(artifact_type, "id1")
+    a = ArtifactModelFactory.make(artifact_type, "id0")
+    b = ArtifactModelFactory.make(artifact_type, "id1")
 
     filter = IdentifierFilter(id="id0")
     assert filter.match(a)
@@ -47,7 +47,7 @@ def test_identifier_match(artifact_type: ArtifactType) -> None:
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_type_match(artifact_type: ArtifactType) -> None:
     """The type filter matches expected artifacts."""
-    a = ArtifactFactory.make(artifact_type)
+    a = ArtifactModelFactory.make(artifact_type)
 
     filter = TypeFilter(item_type=artifact_type)
     assert filter.match(a)
@@ -60,8 +60,8 @@ def test_type_match(artifact_type: ArtifactType) -> None:
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_and_match(artifact_type: ArtifactType) -> None:
     """The and filter matches the expected artifacts."""
-    a = ArtifactFactory.make(artifact_type, "id0")
-    b = ArtifactFactory.make(artifact_type, "id1")
+    a = ArtifactModelFactory.make(artifact_type, "id0")
+    b = ArtifactModelFactory.make(artifact_type, "id1")
 
     filter = AndFilter(
         filters=[
@@ -80,9 +80,9 @@ def test_and_match(artifact_type: ArtifactType) -> None:
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_or_match(artifact_type: ArtifactType) -> None:
     """The or filter matches the expected artifacts."""
-    a = ArtifactFactory.make(artifact_type, "id0")
-    b = ArtifactFactory.make(artifact_type, "id1")
-    c = ArtifactFactory.make(artifact_type, "id3")
+    a = ArtifactModelFactory.make(artifact_type, "id0")
+    b = ArtifactModelFactory.make(artifact_type, "id1")
+    c = ArtifactModelFactory.make(artifact_type, "id3")
 
     filter = OrFilter(
         filters=[

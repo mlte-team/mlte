@@ -17,7 +17,7 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.fixture.artifact import ArtifactFactory
+from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.fixture import store_with_context  # noqa
 
 
@@ -25,7 +25,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     test_suite = TestSuite.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 
@@ -45,7 +45,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 def test_no_result():
     # TestSuite does not have Result for evidence.
     test_suite = TestSuite.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
     )
 
     results: Dict[str, Result] = {}
@@ -61,7 +61,7 @@ def test_convert_results():
     manual_msg = "I vouch for this"
 
     test_results = TestResults.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_RESULTS, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_RESULTS, complete=True)
     )
     test_results.results[test_id] = Info(manual_msg)
 

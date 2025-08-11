@@ -20,7 +20,7 @@ from test.backend.fixture.user_generator import TEST_API_USERNAME
 from test.fixture.artifact import _random_id
 from test.store.artifact import artifact_store_creators
 
-from ...fixture.artifact import ArtifactFactory
+from ...fixture.artifact import ArtifactModelFactory
 from .fixture import (  # noqa
     artifact_stores,
     artifact_stores_and_types,
@@ -248,8 +248,8 @@ def test_search(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        a0 = ArtifactFactory.make(artifact_type, "id0", complete=complete)
-        a1 = ArtifactFactory.make(artifact_type, "id1", complete=complete)
+        a0 = ArtifactModelFactory.make(artifact_type, "id0", complete=complete)
+        a1 = ArtifactModelFactory.make(artifact_type, "id1", complete=complete)
 
         for artifact in [a0, a1]:
             write_artifact_with_deps(handle, model_id, version_id, artifact)
@@ -284,7 +284,7 @@ def test_artifact(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactFactory.make(
+        artifact = ArtifactModelFactory.make(
             artifact_type, artifact_id, complete=complete
         )
 
@@ -321,7 +321,7 @@ def test_artifact_without_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(
+    artifact = ArtifactModelFactory.make(
         artifact_type, artifact_id, complete=complete
     )
 
@@ -347,7 +347,7 @@ def test_artifact_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(
+    artifact = ArtifactModelFactory.make(
         artifact_type, artifact_id, complete=complete
     )
 
@@ -385,7 +385,7 @@ def test_artifact_overwrite(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactFactory.make(
+        artifact = ArtifactModelFactory.make(
             artifact_type, artifact_id, complete=complete
         )
 
@@ -422,7 +422,7 @@ def test_invalid_chars(
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
-        artifact = ArtifactFactory.make(ArtifactType.REPORT, artifact_id)
+        artifact = ArtifactModelFactory.make(ArtifactType.REPORT, artifact_id)
         handle.write_artifact_with_header(
             model_id, version_id, artifact, user=user
         )
