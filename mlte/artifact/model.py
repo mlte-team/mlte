@@ -6,7 +6,7 @@ Model implementation for MLTE artifacts.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 from pydantic import ConfigDict, Field, model_validator
 from strenum import StrEnum
@@ -70,7 +70,7 @@ class ArtifactModel(Filterable):
     def get_identifier(self) -> str:
         return self.header.identifier
 
-    def get_type(self) -> Any:
+    def get_type(self) -> ArtifactType:
         return self.header.type
 
     @model_validator(mode="after")
