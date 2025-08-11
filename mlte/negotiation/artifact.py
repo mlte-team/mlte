@@ -55,6 +55,9 @@ class NegotiationCard(Artifact):
         self.level = ArtifactLevel.MODEL
         """Indicate that this type of artifact will exist at the model level."""
 
+        # Add ids to QAS as needed.
+        qas.add_qas_ids(self.identifier, self.quality_scenarios)
+
     # ----------------------------------------------------------------------------------
     # Serialization methods.
     # ----------------------------------------------------------------------------------

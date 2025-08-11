@@ -106,6 +106,7 @@ class DBArtifact(DBBase):
     identifier: Mapped[str]
     timestamp: Mapped[int] = mapped_column(BigInteger)
     username: Mapped[Optional[str]]
+    level: Mapped[str]
 
     type_id: Mapped[int] = mapped_column(
         ForeignKey(DBArtifactType.get_id_column())

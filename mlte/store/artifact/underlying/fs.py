@@ -244,14 +244,11 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
     # -------------------------------------------------------------------------
 
     def _get_artifact_groups(
-        self, model_id: str, version_id: Optional[str], artifact_id: str
+        self, model_id: str, version_id: str, artifact_id: str
     ) -> list[str]:
         """Finds at what level an artifact is stored, and returns a list of those groups."""
         # First trying at the model/version level, then at the model level.
-        if version_id:
-            group_ids = [model_id, version_id]
-        else:
-            group_ids = [model_id]
+        group_ids = [model_id, version_id]
         try:
             self.storage.ensure_resource_exists(artifact_id, group_ids)
         except errors.ErrorNotFound:
@@ -264,14 +261,13 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         return group_ids
 
     def _get_artifact_ids(
-        self, model_id: str, version_id: Optional[str]
+        self, model_id: str, version_id: str
     ) -> list[str]:
         """Returns all artifact idss from both model/version levels, and just model level."""
         version_artifacts = []
-        if version_id:
-            version_artifacts = self._get_version_level_artifacts(
-                model_id, version_id
-            )
+        version_artifacts = self._get_version_level_artifacts(
+            model_id, version_id
+        )
         model_artifacts = self._get_model_level_artifacts(model_id)
         return version_artifacts + model_artifacts
 

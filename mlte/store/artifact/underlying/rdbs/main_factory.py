@@ -64,6 +64,7 @@ def create_artifact_orm(
         type=artifact_type_orm,
         timestamp=artifact.header.timestamp,
         username=artifact.header.creator,
+        level=artifact.header.level,
         version_id=version_orm_id,
         model_id=model_orm_id,
     )
@@ -105,6 +106,7 @@ def create_artifact_model(artifact_orm: DBArtifact) -> ArtifactModel:
     artifact_header = ArtifactHeaderModel(
         identifier=artifact_orm.identifier,
         type=ArtifactType(artifact_orm.type.name),
+        level=ArtifactLevel(artifact_orm.level),
         timestamp=artifact_orm.timestamp,
         creator=artifact_orm.username,
     )
