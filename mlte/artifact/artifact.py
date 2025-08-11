@@ -9,6 +9,7 @@ from __future__ import annotations
 import typing
 from typing import Optional
 
+import mlte.store.artifact.util as storeutil
 from mlte.artifact.model import (
     ArtifactHeaderModel,
     ArtifactLevel,
@@ -125,13 +126,19 @@ class Artifact(Serializable):
         :param user: The username of the user executing this action.
         :return: The ArtifactModel of the saved artifact.
         """
-        self.pre_save_hook(context, store)
-
-        model = self.to_model()
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
         with ManagedArtifactSession(store.session()) as handle:
+            # If we are forcing parent creation, ensure they are there before any hooks.
+            if parents:
+                storeutil.create_parents(handle, context.model, context.version)
+
+            # Run any artifact-type specific pre save hooks.
+            self.pre_save_hook(context, store)
+
+            # Convert to model and save.
+            model = self.to_model()
+            assert isinstance(
+                model, ArtifactModel
+            ), "Can't create object from non-ArtifactModel model."
             return handle.write_artifact_with_header(
                 context.model,
                 context.version,
