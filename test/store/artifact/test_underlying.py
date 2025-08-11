@@ -230,12 +230,11 @@ def check_artifact_writing(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_search(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store store supports queries."""
@@ -248,8 +247,8 @@ def test_search(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        a0 = ArtifactModelFactory.make(artifact_type, "id0", complete=complete)
-        a1 = ArtifactModelFactory.make(artifact_type, "id1", complete=complete)
+        a0 = ArtifactModelFactory.make(artifact_type, "id0")
+        a1 = ArtifactModelFactory.make(artifact_type, "id1")
 
         for artifact in [a0, a1]:
             write_artifact_with_deps(handle, model_id, version_id, artifact)
@@ -264,12 +263,11 @@ def test_search(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store supports basic artifact operations."""
@@ -284,9 +282,7 @@ def test_artifact(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactModelFactory.make(
-            artifact_type, artifact_id, complete=complete
-        )
+        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
         # First check we can write and load an artifact.
         check_artifact_writing(
@@ -306,12 +302,11 @@ def test_artifact(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_without_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact does not create organizational elements by default, on write."""
@@ -321,9 +316,7 @@ def test_artifact_without_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactModelFactory.make(
-        artifact_type, artifact_id, complete=complete
-    )
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
@@ -332,12 +325,11 @@ def test_artifact_without_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store can create organizational elements implicitly, on write."""
@@ -347,9 +339,7 @@ def test_artifact_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactModelFactory.make(
-        artifact_type, artifact_id, complete=complete
-    )
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
@@ -366,12 +356,11 @@ def test_artifact_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_overwrite(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact cam be overwritten with the `force` option."""
@@ -385,9 +374,7 @@ def test_artifact_overwrite(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactModelFactory.make(
-            artifact_type, artifact_id, complete=complete
-        )
+        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
         # The initial write succeeds
         write_artifact_with_deps(handle, model_id, version_id, artifact)

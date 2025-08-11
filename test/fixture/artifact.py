@@ -73,13 +73,11 @@ class ArtifactModelFactory:
         type: ArtifactType,
         id: str = _random_id(),
         user: Optional[str] = None,
-        complete: bool = False,
     ) -> ArtifactModel:
         """
         Construct an artifact model of the given type.
         :param type: The artifact type
         :param id: The artifact identifier (default: randomly generated)
-        :param complete: Whether to create a complete, fully defined artifact model (True), or a simple empty one (False)
         :return: The artifact model
         """
         header = ArtifactHeaderModel(identifier=id, type=type, creator=user)
@@ -92,11 +90,11 @@ class ArtifactModelFactory:
             ReportModel,
         ]
         if type == ArtifactType.NEGOTIATION_CARD:
-            body_model = _make_negotiation_card(complete)
+            body_model = _make_negotiation_card()
         elif type == ArtifactType.EVIDENCE:
             body_model = _make_evidence(id)
         elif type == ArtifactType.TEST_SUITE:
-            body_model = _make_test_suite(complete)
+            body_model = _make_test_suite()
         elif type == ArtifactType.TEST_RESULTS:
             body_model = _make_test_results()
         elif type == ArtifactType.REPORT:
@@ -112,100 +110,10 @@ class ArtifactModelFactory:
         return typing.cast(ArtifactModel, artifact.to_model())
 
 
-def _make_negotiation_card(complete: bool) -> NegotiationCardModel:
+def _make_negotiation_card() -> NegotiationCardModel:
     """
-    Make a minimal negotiation card, or a fully featured one, depending on complete.
+    Make a simple negotiation card.
     :return: The artifact
-    """
-    if not complete:
-        return NegotiationCardModel()
-    else:
-        return make_complete_negotiation_card()
-
-
-def _make_evidence(id: str) -> EvidenceModel:
-    """
-    Make a minimal value, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    m = get_sample_evidence_metadata(test_case_id=id)
-
-    return EvidenceModel(
-        metadata=m,
-        evidence_class=meta.get_qualified_name(Integer),
-        value=IntegerValueModel(integer=1),
-    )
-
-
-def _make_test_suite(complete: bool) -> TestSuiteModel:
-    """
-    Make a minimal test suite, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    if not complete:
-        return TestSuiteModel()
-    else:
-        return make_complete_test_suite_model()
-
-
-def _make_test_results() -> TestResultsModel:
-    """
-    Make a minimal test results, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    return TestResultsModel(
-        test_suite_id=f"{TestSuite.get_default_id()}",
-        test_suite=make_complete_test_suite_model(),
-        results={
-            "Test1": ResultModel(
-                type="Success",
-                message="The RF accuracy is greater than 3",
-                evidence_metadata=EvidenceMetadata(
-                    test_case_id="Test1",
-                    measurement=MeasurementMetadata(
-                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
-                        output_class="mlte.evidence.types.real.Real",
-                        additional_data={"function": "skleran.accu()"},
-                    ),
-                ),
-            )
-        },
-    )
-
-
-def _make_report() -> ReportModel:
-    """
-    Make a minimal report, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    return ReportModel(
-        negotiation_card_id="default",
-        negotiation_card=typing.cast(
-            NegotiationCardModel,
-            ArtifactModelFactory.make(
-                ArtifactType.NEGOTIATION_CARD, complete=True
-            ).body,
-        ),
-        test_suite_id="default",
-        test_suite=typing.cast(
-            TestSuiteModel,
-            ArtifactModelFactory.make(
-                ArtifactType.TEST_SUITE, complete=True
-            ).body,
-        ),
-        test_results_id="default",
-        test_results=typing.cast(
-            TestResultsModel,
-            ArtifactModelFactory.make(ArtifactType.TEST_RESULTS).body,
-        ),
-        comments=[CommentDescriptor(content="content")],
-    )
-
-
-def make_complete_negotiation_card() -> NegotiationCardModel:
-    """
-    Make a filled in NegotiationCard model.
-    :return: The artifact model
     """
     return NegotiationCardModel(
         system=SystemDescriptor(
@@ -305,10 +213,24 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
     )
 
 
-def make_complete_test_suite_model() -> TestSuiteModel:
+def _make_evidence(id: str) -> EvidenceModel:
     """
-    Make a filled in TestSuite model.
-    :return: The artifact model
+    Make an evidence artifact.
+    :return: The artifact
+    """
+    m = get_sample_evidence_metadata(test_case_id=id)
+
+    return EvidenceModel(
+        metadata=m,
+        evidence_class=meta.get_qualified_name(Integer),
+        value=IntegerValueModel(integer=1),
+    )
+
+
+def _make_test_suite() -> TestSuiteModel:
+    """
+    Make a minimal test suite.
+    :return: The artifact
     """
     return TestSuiteModel(
         test_cases=[
@@ -324,4 +246,57 @@ def make_complete_test_suite_model() -> TestSuiteModel:
                 ),
             )
         ],
+    )
+
+
+def _make_test_results() -> TestResultsModel:
+    """
+    Make a test results artifact.
+    :return: The artifact
+    """
+    return TestResultsModel(
+        test_suite_id=f"{TestSuite.get_default_id()}",
+        test_suite=typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
+        ),
+        results={
+            "Test1": ResultModel(
+                type="Success",
+                message="The RF accuracy is greater than 3",
+                evidence_metadata=EvidenceMetadata(
+                    test_case_id="Test1",
+                    measurement=MeasurementMetadata(
+                        measurement_class="mlte.measurement.external_measurement.ExternalMeasurement",
+                        output_class="mlte.evidence.types.real.Real",
+                        additional_data={"function": "skleran.accu()"},
+                    ),
+                ),
+            )
+        },
+    )
+
+
+def _make_report() -> ReportModel:
+    """
+    Make a report.
+    :return: The artifact
+    """
+    return ReportModel(
+        negotiation_card_id="default",
+        negotiation_card=typing.cast(
+            NegotiationCardModel,
+            ArtifactModelFactory.make(ArtifactType.NEGOTIATION_CARD).body,
+        ),
+        test_suite_id="default",
+        test_suite=typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
+        ),
+        test_results_id="default",
+        test_results=typing.cast(
+            TestResultsModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_RESULTS).body,
+        ),
+        comments=[CommentDescriptor(content="content")],
     )

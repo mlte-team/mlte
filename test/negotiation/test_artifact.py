@@ -27,9 +27,7 @@ from test.store.artifact.fixture import (  # noqa
 
 
 def get_sample_negotiation_card(id: str = "my-card"):
-    card_model = ArtifactModelFactory.make(
-        ArtifactType.NEGOTIATION_CARD, id, complete=True
-    )
+    card_model = ArtifactModelFactory.make(ArtifactType.NEGOTIATION_CARD, id)
     return NegotiationCard.from_model(card_model)
 
 

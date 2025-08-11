@@ -25,7 +25,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
     store, ctx = store_with_context
 
     test_suite = TestSuite.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 
@@ -45,7 +45,7 @@ def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
 def test_no_result():
     # TestSuite does not have Result for evidence.
     test_suite = TestSuite.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
 
     results: Dict[str, Result] = {}
@@ -61,7 +61,7 @@ def test_convert_results():
     manual_msg = "I vouch for this"
 
     test_results = TestResults.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_RESULTS, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_RESULTS)
     )
     test_results.results[test_id] = Info(manual_msg)
 

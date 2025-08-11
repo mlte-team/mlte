@@ -20,7 +20,7 @@ from test.fixture.artifact import ArtifactModelFactory
 def test_no_requirement():
     # Test Sute Validator does not have value for evidence.
     test_suite = TestSuite.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 
@@ -33,7 +33,7 @@ def test_no_requirement():
 
 def test_success():
     test_suite = TestSuite.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
 
@@ -53,7 +53,7 @@ def test_success_defaults(store_with_context: tuple[ArtifactStore, Context]):
     session()._set_artifact_store(store)
 
     test_suite = TestSuite.from_model(
-        ArtifactModelFactory.make(ArtifactType.TEST_SUITE, complete=True)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
     test_suite.identifier = TestSuite.get_default_id()
     test_suite.save_with(ctx, store, parents=True)
