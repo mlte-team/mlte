@@ -11,7 +11,11 @@ import string
 from typing import List, Optional, Union
 
 from mlte._private import meta
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import (
+    ArtifactHeaderModel,
+    ArtifactLevel,
+    ArtifactModel,
+)
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
@@ -68,10 +72,16 @@ class ArtifactFactory:
         :param complete: Whether to create a complete, fully defined artifact model (True), or a simple empty one (False)
         :return: The artifact model
         """
-        return ArtifactModel(
+        model = ArtifactModel(
             header=ArtifactHeaderModel(identifier=id, type=type, creator=user),
             body=_make_body(type, id, complete),
         )
+
+        # Special cases, these are stored at the model level.
+        if type in [ArtifactType.NEGOTIATION_CARD, ArtifactType.TEST_SUITE]:
+            model.header.level = ArtifactLevel.MODEL
+
+        return model
 
 
 class TypeUtil:
