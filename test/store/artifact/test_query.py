@@ -39,7 +39,7 @@ def test_identifier_match(artifact_type: ArtifactType) -> None:
     a = ArtifactModelFactory.make(artifact_type, "id0")
     b = ArtifactModelFactory.make(artifact_type, "id1")
 
-    filter = IdentifierFilter(id="id0")
+    filter = IdentifierFilter(id=a.header.identifier)
     assert filter.match(a)
     assert not filter.match(b)
 
@@ -65,7 +65,7 @@ def test_and_match(artifact_type: ArtifactType) -> None:
 
     filter = AndFilter(
         filters=[
-            IdentifierFilter(id="id0"),
+            IdentifierFilter(id=a.header.identifier),
             TypeFilter(item_type=ArtifactType.NEGOTIATION_CARD),
         ],
     )
@@ -86,8 +86,8 @@ def test_or_match(artifact_type: ArtifactType) -> None:
 
     filter = OrFilter(
         filters=[
-            IdentifierFilter(id="id0"),
-            IdentifierFilter(id="id1"),
+            IdentifierFilter(id=a.header.identifier),
+            IdentifierFilter(id=b.header.identifier),
         ],
     )
 
