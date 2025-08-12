@@ -139,10 +139,6 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        if not version_id:
-            raise Exception(
-                "Can't read artifacts on HTTP store without providing a version id due to API limitations."
-            )
         response = self.storage.get(
             id=artifact_id,
             groups=_artifact_groups(model_id, version_id),
