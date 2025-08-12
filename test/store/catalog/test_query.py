@@ -74,9 +74,13 @@ def test_and_match() -> None:
     b = create_test_entry("id0")
     c = create_test_entry("id3")
 
+    a.tags = ["t1", "t2"]
+    b.tags = ["t1", "t3"]
+
     filter = AndFilter(
         filters=[
             IdentifierFilter(id="id0"),
+            TagFilter(name="tags", value="t2"),
         ],
     )
 
