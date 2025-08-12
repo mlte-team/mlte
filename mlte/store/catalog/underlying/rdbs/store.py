@@ -1,15 +1,10 @@
-"""
-mlte/store/catalog/underlying/rdbs/store.py
-
-Implementation of relational database system catalog store.
-"""
+"""Implementation of relational database system catalog store."""
 
 from __future__ import annotations
 
 import typing
-from typing import Any, List
+from typing import Any
 
-from sqlalchemy import Engine
 from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.error as errors
@@ -19,10 +14,7 @@ from mlte.store.catalog.store import (
     CatalogStore,
     CatalogStoreSession,
 )
-from mlte.store.catalog.underlying.rdbs.metadata import (
-    DBBase,
-    init_catalog_entry_types,
-)
+from mlte.store.catalog.underlying.rdbs.metadata import DBBase
 from mlte.store.catalog.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
 
@@ -40,7 +32,6 @@ class RelationalDBCatalogStore(CatalogStore):
         self.storage = RDBStorage(
             uri,
             base_class=typing.cast(DeclarativeBase, DBBase),
-            init_tables_func=init_catalog_tables,
             **kwargs,
         )
         """The relational DB storage."""
@@ -53,12 +44,6 @@ class RelationalDBCatalogStore(CatalogStore):
         return RelationalDBCatalogStoreSession(
             storage=self.storage, read_only=self.read_only
         )
-
-
-def init_catalog_tables(engine: Engine):
-    """Pre-populate tables."""
-    with Session(engine) as session:
-        init_catalog_entry_types(session)
 
 
 # -----------------------------------------------------------------------------
@@ -132,7 +117,7 @@ class RDBEntryMapper(CatalogEntryMapper):
             catalog_entry, _ = DBReader.get_entry(entry_id, session)
             return catalog_entry
 
-    def list(self, context: Any = None) -> List[str]:
+    def list(self, context: Any = None) -> list[str]:
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_entries(session)
             return [entry.header.identifier for entry in entries]

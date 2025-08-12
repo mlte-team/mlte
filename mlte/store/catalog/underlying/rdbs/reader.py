@@ -14,15 +14,10 @@ from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
 from mlte._private.fixed_json import json
-from mlte.catalog.model import (
-    CatalogEntry,
-    CatalogEntryHeader,
-    CatalogEntryType,
-)
+from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 from mlte.store.catalog.underlying.rdbs.metadata import (
     DBCatalogEntry,
     DBCatalogEntryHeader,
-    DBCatalogEntryType,
 )
 
 
@@ -68,7 +63,6 @@ class DBReader:
             description=entry_obj.description,
             inputs=entry_obj.inputs,
             output=entry_obj.outputs,
-            code_type=CatalogEntryType(entry_obj.catalog_entry_type.name),
             header=entry_header,
         )
 
@@ -85,12 +79,6 @@ class DBReader:
         else:
             entry_header_obj = entry_obj.entry_header
 
-        entry_type_obj = (
-            DBReader.get_entry_type(entry.code_type, session)
-            if entry.code_type is not None
-            else None
-        )
-
         entry_header_obj.identifier = entry.header.identifier
         entry_header_obj.created = typing.cast(int, entry.header.created)
         entry_header_obj.updated = typing.cast(int, entry.header.updated)
@@ -104,7 +92,6 @@ class DBReader:
         entry_obj.description = entry.description
         entry_obj.inputs = entry.inputs
         entry_obj.outputs = entry.output
-        entry_obj.catalog_entry_type = entry_type_obj
         entry_obj.entry_header = entry_header_obj
 
         return entry_obj
@@ -123,16 +110,3 @@ class DBReader:
             entries.append(entry)
 
         return entries, entries_obj
-
-    @staticmethod
-    def get_entry_type(
-        type: CatalogEntryType, session: Session
-    ) -> DBCatalogEntryType:
-        """Gets the catalog entry type DB object corresponding to the given internal type."""
-        type_obj = session.scalar(
-            select(DBCatalogEntryType).where(DBCatalogEntryType.name == type)
-        )
-
-        if type_obj is None:
-            raise Exception(f"Unknown catalog etnry type requested: {type}")
-        return type_obj

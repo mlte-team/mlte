@@ -1,25 +1,9 @@
-"""
-mlte/catalog/entry/model.py
+"""Model implementation for MLTE catalog entries."""
 
-Model implementation for MLTE catalog entries.
-"""
-
-from typing import Any, List, Optional
-
-from strenum import StrEnum
+from typing import Any, Optional
 
 from mlte.model import BaseModel
 from mlte.store.query import Filterable
-
-
-class CatalogEntryType(StrEnum):
-    """Types of catalog entries."""
-
-    MEASUREMENT = "measurement"
-    """Classes that calculate a metric."""
-
-    VALIDATION = "validation"
-    """Validator method or class that compare measuremets to conditions."""
 
 
 class CatalogEntryHeader(BaseModel):
@@ -50,7 +34,7 @@ class CatalogEntry(Filterable):
     header: CatalogEntryHeader
     """The header."""
 
-    tags: List[str] = []
+    tags: list[str] = []
     """Tags for the problem for the entry."""
 
     qa_category: Optional[str] = None
@@ -58,9 +42,6 @@ class CatalogEntry(Filterable):
 
     quality_attribute: Optional[str] = None
     """The quality attribute for the entry."""
-
-    code_type: CatalogEntryType
-    """The code type the entry."""
 
     code: str
     """The actual code for the entry."""
@@ -78,4 +59,5 @@ class CatalogEntry(Filterable):
         return self.header.identifier
 
     def get_type(self) -> Any:
-        return self.code_type
+        """Just to implement abstract class, not really needed."""
+        return "entry"
