@@ -2,6 +2,12 @@ export interface Dictionary<T> {
   [key: string]: T;
 }
 
+export interface TokenData {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 // --------------------------------------------------------------------------------------------------------------
 // General Page Items
 // --------------------------------------------------------------------------------------------------------------
@@ -40,27 +46,28 @@ export interface TagOption {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-// Backend Internals
-// --------------------------------------------------------------------------------------------------------------
-
-export interface CustomListEntry {
-  name: string;
-  description: string;
-  parent: string;
-}
-
-// --------------------------------------------------------------------------------------------------------------
 // General Artifacts
 // --------------------------------------------------------------------------------------------------------------
 
-export interface ArtifactModel {
-  header: ArtifactHeader;
-  body:
+export interface Model {
+  identifier: string;
+  versions: Array<string>;
+}
+
+export interface Version {
+  identifier: string;
+}
+
+export interface ArtifactModel<
+  TBody =
     | NegotiationCardModel
-    | TestSuiteModel
     | EvidenceModel
+    | TestSuiteModel
     | TestResultsModel
-    | ReportModel;
+    | ReportModel,
+> {
+  header: ArtifactHeader;
+  body: TBody;
 }
 
 export class ArtifactHeader {
@@ -68,66 +75,9 @@ export class ArtifactHeader {
     public identifier: string = "",
     public type: string = "",
     public timestamp: number = -1,
-    public creator: string,
+    public creator: string = "",
     public level: string = "version",
   ) {}
-}
-
-export interface TestCase {
-  identifier: string;
-  goal: string;
-  qas_list: Array<string>;
-  measurement: object;
-  validator: object;
-}
-
-export class TestSuiteModel {
-  public readonly artifact_type = "test_suite";
-  constructor(public test_cases: Array<TestCase> = []) {}
-}
-
-export interface Result {
-  type: string;
-  message: string;
-  evidence_metadata: {
-    test_case_id: string;
-    measurement: {
-      measurement_class: string;
-      output_class: string;
-      additional_data: Dictionary<string>;
-    };
-  };
-}
-
-export class TestResultsModel {
-  public readonly artifact_type = "test_results";
-  constructor(
-    public test_suite_id: string = "",
-    public test_suite: TestSuiteModel = new TestSuiteModel(),
-    public results: Dictionary<Result> = {},
-  ) {}
-}
-
-export interface EvidenceModel {
-  artifact_type: "evidence";
-  metadata: {
-    test_case_id: string;
-    measurement: {
-      measurement_class: string;
-      output_class: string;
-      additional_data: object;
-    };
-  };
-  evidence_class: string;
-  value: {
-    evidence_type: string;
-    data: {
-      avg: number;
-      min: number;
-      max: number;
-      unit: string;
-    };
-  };
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -228,6 +178,12 @@ export class SystemDescriptor {
   ) {}
 }
 
+export interface CustomListEntry {
+  name: string;
+  description: string;
+  parent: string;
+}
+
 export class QASDescriptor {
   constructor(
     public quality: string = "",
@@ -250,9 +206,123 @@ export class NegotiationCardModel {
   ) {}
 }
 
-export interface NegotiationApiResponse {
-  header: ArtifactHeader;
-  body: NegotiationCardModel;
+// --------------------------------------------------------------------------------------------------------------
+// Evidence
+// --------------------------------------------------------------------------------------------------------------
+
+export class EvidenceModel {
+  public readonly artifact_type = "evidence";
+  constructor(
+    public metadata: EvidenceMetadata = new EvidenceMetadata(),
+    public evidence_class: string = "",
+    public value:
+      | IntegerValueModel
+      | RealValueModel
+      | OpaqueValueModel
+      | ImageValueModel
+      | ArrayValueModel
+      | StringValueModel = new StringValueModel(),
+  ) {}
+}
+
+export class EvidenceMetadata {
+  constructor(
+    public test_case_id: string = "",
+    public measurement: MeasurementMetadata = new MeasurementMetadata(),
+  ) {}
+}
+
+export class IntegerValueModel {
+  public readonly evidence_type = "integer";
+  constructor(
+    public integer: number = -1,
+    public unit: string | null = null,
+  ) {}
+}
+
+export class RealValueModel {
+  public readonly evidence_type = "real";
+  constructor(
+    public real: number = -1,
+    public unit: string | null = null,
+  ) {}
+}
+
+export class OpaqueValueModel {
+  public readonly evidence_type = "opaque";
+  constructor(public data: Dictionary<unknown>) {}
+}
+
+export class ImageValueModel {
+  public readonly evidence_type = "image";
+  constructor(public data: string = "") {}
+}
+
+export class ArrayValueModel {
+  public readonly evidence_type = "array";
+  constructor(public data: Array<unknown>) {}
+}
+
+export class StringValueModel {
+  public readonly evidence_type = "string";
+  constructor(public string: string = "") {}
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Test Suite
+// --------------------------------------------------------------------------------------------------------------
+
+export class TestSuiteModel {
+  public readonly artifact_type = "test_suite";
+  constructor(public test_cases: Array<TestCaseModel> = []) {}
+}
+
+export interface TestCaseModel {
+  identifier: string;
+  goal: string;
+  qas_list: Array<string>;
+  measurement: MeasurementMetadata;
+  validator: Validator;
+}
+
+export class MeasurementMetadata {
+  constructor(
+    public measurement_class = "",
+    public output_class = "",
+    public additional_data: Dictionary<string> = {},
+  ) {}
+}
+
+export interface Validator {
+  bool_exp: string;
+  bool_exp_str: string;
+  thresholds: Array<string>;
+  success: string;
+  failure: string;
+  info: string | null;
+  input_types: Array<string>;
+  creator_entity: Array<string>;
+  creator_function: string;
+  creator_args: Array<string>;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Test Results
+// --------------------------------------------------------------------------------------------------------------
+
+export class TestResultsModel {
+  public readonly artifact_type = "test_results";
+  constructor(
+    public test_suite_id: string = "",
+    public test_suite: TestSuiteModel = new TestSuiteModel(),
+    public results: Dictionary<Result> = {},
+  ) {}
+}
+
+export interface Result {
+  type: string;
+  message: string;
+  evidence_metadata: EvidenceMetadata;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -274,11 +344,6 @@ export class ReportModel {
     public test_results: TestResultsModel = new TestResultsModel(),
     public comments: Array<CommentDescriptor> = [new CommentDescriptor()],
   ) {}
-}
-
-export interface ReportApiResponse {
-  header: ArtifactHeader;
-  body: ReportModel;
 }
 
 // --------------------------------------------------------------------------------------------------------------

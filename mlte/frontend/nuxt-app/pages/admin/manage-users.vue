@@ -12,7 +12,7 @@
       <AdminUserList
         v-model="userList"
         @edit-user="editUser"
-        @delete-user="deleteUser"
+        @delete-user="pageDeleteUser"
       />
     </div>
     <div v-if="editFlag">
@@ -27,8 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const token = useCookie("token");
 const userCookie = useCookie("user");
 
 const editFlag = ref(false);
@@ -39,80 +37,63 @@ const selectedUser = ref<User>(new User());
 updateUserList();
 resetSelectedUser();
 
+// Get list of Users form API and populate page with them.
 async function updateUserList() {
-  await $fetch(config.public.apiPath + "/users/details", {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        userList.value = response._data;
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const users: Array<User> | null = await getUsersDetails();
+  if (users) {
+    userList.value = users;
+  }
 }
 
+// Reset selectedUser, for example after an edit is completed.
 function resetSelectedUser() {
   selectedUser.value = new User();
 }
 
+// Switch to the edit user view with newUserFlag enabled.
 function addUser() {
   resetSelectedUser();
   editFlag.value = true;
   newUserFlag.value = true;
 }
 
+// Switch to the edit user view with newUserFlag disbled.
 function editUser(user: User) {
   selectedUser.value = user;
   editFlag.value = true;
   newUserFlag.value = false;
 }
 
-async function deleteUser(usernameToDelete: string) {
-  if (userCookie.value === usernameToDelete) {
+/**
+ * Delete a user.
+ *
+ * @param {string} username Username of user to be deleted
+ */
+async function pageDeleteUser(username: string) {
+  if (userCookie.value === username) {
     alert("Cannot delete the active user.");
     return;
   }
-  if (
-    !confirm("Are you sure you want to delete user, " + usernameToDelete + "?")
-  ) {
+  if (!confirm("Are you sure you want to delete user, " + username + "?")) {
     return;
   }
 
-  await $fetch(config.public.apiPath + "/user/" + usernameToDelete, {
-    retry: 0,
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-    onRequestError() {
-      requestErrorAlert();
-    },
-    onResponse({ response }) {
-      if (response.ok) {
-        updateUserList();
-      }
-    },
-    onResponseError({ response }) {
-      handleHttpError(response.status, response._data.error_description);
-    },
-  });
+  const response = await deleteUser(username);
+  if (response) {
+    updateUserList();
+  }
 }
 
+// Intended to return to user list view when Manage Users in sidebar is clicked and edit view is enabled
+// TODO : Fix this, currently doesn't work. Base layout doesn't seem to emit the event this listens for.
+// TODO : Mirror this fixed functionality in Manage Groups
 function manageUserClick() {
   if (editFlag.value) {
     cancelEdit();
   }
 }
 
+// Return to user list view from the edit view.
 function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
@@ -120,56 +101,30 @@ function cancelEdit() {
   }
 }
 
+/**
+ * Save new User, or save changes to User.
+ *
+ * @param {User} user User to be saved
+ */
 async function saveUser(user: User) {
-  try {
-    if (newUserFlag.value) {
-      await $fetch(config.public.apiPath + "/user", {
-        retry: 0,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        body: JSON.stringify(user),
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateUserList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
-    } else {
-      await $fetch(config.public.apiPath + "/user", {
-        retry: 0,
-        method: "PUT",
-        body: JSON.stringify(user),
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-        onRequestError() {
-          requestErrorAlert();
-        },
-        onResponse({ response }) {
-          if (response.ok) {
-            updateUserList();
-          }
-        },
-        onResponseError({ response }) {
-          handleHttpError(response.status, response._data.error_description);
-        },
-      });
+  let error = true;
+
+  if (newUserFlag.value) {
+    const response = await createUser(user);
+    if (response) {
+      error = false;
     }
-  } catch (exception) {
-    console.log("Error in submit.");
-    console.log(exception);
-    return;
+  } else {
+    const response = await updateUser(user);
+    if (response) {
+      error = false;
+    }
   }
-  alert("User has been saved successfully.");
-  resetSelectedUser();
-  editFlag.value = false;
+
+  if (!error) {
+    updateUserList();
+    resetSelectedUser();
+    editFlag.value = false;
+  }
 }
 </script>

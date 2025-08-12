@@ -1,5 +1,5 @@
 <template>
-  <h2 class="section-header">System Requirements</h2>
+  <h2 class="section-header">System Derived Requirements</h2>
   <p>
     System-dependent requirements and constraints placed on the model under
     development. The fields below correspond to parts of a quality attribute
@@ -211,10 +211,16 @@ const systemModalRows = ref([
   },
 ]);
 
+// Add QASDescriptor to System Requirements list.
 function addRequirement() {
   props.modelValue.push(new QASDescriptor());
 }
 
+/**
+ * Delete QASDescriptor from System Requrements list.
+ *
+ * @param {number} Index of QASDescriptor to delete
+ */
 function deleteRequirement(requirementIndex: number) {
   if (confirm("Are you sure you want to delete this requirement?")) {
     props.modelValue.splice(requirementIndex, 1);

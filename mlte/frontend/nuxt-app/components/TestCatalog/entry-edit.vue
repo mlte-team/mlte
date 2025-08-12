@@ -164,9 +164,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const config = useRuntimeConfig();
-const token = useCookie("token");
-
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
   modelValue: {
@@ -189,15 +186,9 @@ const formErrors = ref<Dictionary<boolean>>({
   code_type: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const { data: catalogList } = await useFetch<Array<CatalogReply>>(
-  config.public.apiPath + "/catalogs",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const catalogList = ref<Array<CatalogReply>>([]);
+catalogList.value = await getCatalogList();
+
 if (catalogList.value) {
   catalogList.value.forEach((catalog: CatalogReply) => {
     if (!catalog.read_only) {
@@ -213,15 +204,9 @@ if (catalogList.value) {
 
 // Delete when test catalog no longer saves qa category
 const QACategoryOptions = ref<Array<QAOption>>([]);
-const { data: QACategoryAPIData } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/qa_categories/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
+QACategoryAPIData.value = await getCustomList("qa_categories");
+
 if (QACategoryAPIData.value) {
   QACategoryAPIData.value.forEach((category: CustomListEntry) => {
     QACategoryOptions.value.push(
@@ -237,15 +222,9 @@ if (QACategoryAPIData.value) {
 
 const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
-const { data: QAapiOptions } = await useFetch<Array<CustomListEntry>>(
-  config.public.apiPath + "/custom_list/quality_attributes/",
-  {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const QAapiOptions = ref<Array<CustomListEntry>>([]);
+QAapiOptions.value = await getCustomList("quality_attributes");
+
 if (QAapiOptions.value) {
   QAapiOptions.value.forEach((attribute: CustomListEntry) => {
     AllQAOptions.value.push(
@@ -297,6 +276,7 @@ categoryChange(
 );
 // End of delete section
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;
@@ -324,6 +304,12 @@ async function submit() {
   emit("submit", props.modelValue);
 }
 
+/**
+ * Handle a tag change either adding the item to selections, or removing it.
+ *
+ * @param {boolean} selected Flag indicating if item was selected or deselected
+ * @param {string} tagName Tag that was selected or deselected
+ */
 function tagChange(selected: boolean, tagName: string) {
   if (selected) {
     props.modelValue.tags.push(tagName);
@@ -339,6 +325,7 @@ function tagChange(selected: boolean, tagName: string) {
     }
   }
 }
+
 // Delete when test catalog no longer saves qa category
 function categoryChange(newCategory: string, quality_attribute?: string) {
   selectedQAOptions.value = [];
@@ -356,6 +343,7 @@ function categoryChange(newCategory: string, quality_attribute?: string) {
 }
 // End of delete section
 
+// Copies contents of code form field to the clipboard.
 function copyCode() {
   navigator.clipboard.writeText(props.modelValue.code);
 }

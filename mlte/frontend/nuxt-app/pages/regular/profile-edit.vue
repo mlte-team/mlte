@@ -58,20 +58,11 @@
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
 
-const config = useRuntimeConfig();
-const token = useCookie("token");
 const userCookie = useCookie("user");
 
-const { data: user } = await useFetch<User>(
-  config.public.apiPath + "/user/me",
-  {
-    retry: 0,
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token.value,
-    },
-  },
-);
+const user = ref<User>(new User());
+user.value = (await getUserMe()) || new User();
+
 const resetPasswordFlag = ref(false);
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -80,18 +71,21 @@ const formErrors = ref<Dictionary<boolean>>({
   confirmPassword: false,
 });
 
+// Enables the password and confirm password form fields.
 function enablePasswordReset() {
   newPassword.value = "";
   confirmPassword.value = "";
   resetPasswordFlag.value = true;
 }
 
+// Disables the password and confirm password form fields.
 function disablePasswordReset() {
   resetPasswordFlag.value = false;
   newPassword.value = "";
   confirmPassword.value = "";
 }
 
+// Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
   let inputError = false;
@@ -112,40 +106,9 @@ async function submit() {
     return;
   }
 
-  try {
-    const requestBody: UserUpdateBody = {
-      username: user.value!.username,
-      email: user.value!.email,
-      full_name: user.value!.full_name,
-      disabled: false,
-      role: user.value!.role,
-    };
-
-    if (resetPasswordFlag.value) {
-      requestBody.password = newPassword.value;
-    }
-
-    await $fetch(config.public.apiPath + "/user", {
-      retry: 0,
-      method: "PUT",
-      headers: {
-        Authorization: "Bearer " + token.value,
-      },
-      body: requestBody,
-      onRequestError() {
-        requestErrorAlert();
-      },
-      onResponse({ response }) {
-        if (response.ok) {
-          navigateTo("/");
-        }
-      },
-      onResponseError({ response }) {
-        handleHttpError(response.status, response._data.error_description);
-      },
-    });
-  } catch (exception) {
-    console.log(exception);
+  const response = await updateUser(user.value);
+  if (response) {
+    navigateTo("/");
   }
 }
 </script>
