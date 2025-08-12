@@ -4,14 +4,19 @@ test/report/test_model.py
 Unit tests for report model.
 """
 
+import typing
+
+from mlte.artifact.type import ArtifactType
 from mlte.report.model import CommentDescriptor, ReportModel
-from test.fixture.artifact import make_complete_report
+from test.fixture.artifact import ArtifactModelFactory
 
 
 def test_report() -> None:
     """A report model can be serialized and deserialized."""
     objects = [
-        make_complete_report(),
+        typing.cast(
+            ReportModel, ArtifactModelFactory.make(ArtifactType.REPORT).body
+        ),
     ]
 
     for object in objects:

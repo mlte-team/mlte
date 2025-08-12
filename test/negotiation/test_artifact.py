@@ -17,7 +17,7 @@ from mlte.negotiation import qas
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
-from test.fixture.artifact import ArtifactFactory
+from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.fixture import (  # noqa
     FX_MODEL_ID,
     FX_VERSION_ID,
@@ -27,9 +27,7 @@ from test.store.artifact.fixture import (  # noqa
 
 
 def get_sample_negotiation_card(id: str = "my-card"):
-    card_model = ArtifactFactory.make(
-        ArtifactType.NEGOTIATION_CARD, id, complete=True
-    )
+    card_model = ArtifactModelFactory.make(ArtifactType.NEGOTIATION_CARD, id)
     return NegotiationCard.from_model(card_model)
 
 

@@ -29,7 +29,7 @@ from test.backend.api.endpoints.artifact.test_version import (
 )
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
-from test.fixture.artifact import ArtifactFactory
+from test.fixture.artifact import ArtifactModelFactory
 
 ARTIFACT_ENDPOINT = "/artifact"
 ARTIFACT_URI = f"{VERSION_URI}" + "/{}" + f"{ARTIFACT_ENDPOINT}"
@@ -86,7 +86,7 @@ def test_write(
     create_context(test_api)
     test_client = test_api.get_test_client()
 
-    a = ArtifactFactory.make(artifact_type)
+    a = ArtifactModelFactory.make(artifact_type)
     r = WriteArtifactRequest(artifact=a)
     res = test_client.post(
         ARTIFACT_URI.format(model.identifier, version.identifier),
@@ -114,7 +114,7 @@ def test_read(
     create_context(test_api)
     test_client = test_api.get_test_client()
 
-    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_model = ArtifactModelFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
     art_json = create_artifact_using_admin(art_model, test_api)
     artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)
@@ -146,7 +146,7 @@ def test_list(
     create_context(test_api)
     test_client = test_api.get_test_client()
 
-    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_model = ArtifactModelFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
     art_json = create_artifact_using_admin(art_model, test_api)
     artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)
@@ -182,7 +182,7 @@ def test_search(
     create_context(test_api)
     test_client = test_api.get_test_client()
 
-    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_model = ArtifactModelFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
     art_json = create_artifact_using_admin(art_model, test_api)
     artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)
@@ -219,7 +219,7 @@ def test_delete(
     create_context(test_api)
     test_client = test_api.get_test_client()
 
-    art_model = ArtifactFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
+    art_model = ArtifactModelFactory.make(artifact_type, id=DEFAULT_ARTIFACT_ID)
     art_json = create_artifact_using_admin(art_model, test_api)
     artifact = art_json["artifact"]
     created = ArtifactModel(**artifact)

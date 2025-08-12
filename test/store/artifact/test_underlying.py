@@ -7,7 +7,7 @@ Unit tests for the underlying artifact store implementations.
 import pytest
 
 import mlte.store.error as errors
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import (
@@ -17,10 +17,9 @@ from mlte.store.artifact.store import (
 )
 from mlte.store.query import Query, TypeFilter
 from test.backend.fixture.user_generator import TEST_API_USERNAME
-from test.fixture.artifact import _random_id
 from test.store.artifact import artifact_store_creators
 
-from ...fixture.artifact import ArtifactFactory
+from ...fixture.artifact import ArtifactModelFactory
 from .fixture import (  # noqa
     artifact_stores,
     artifact_stores_and_types,
@@ -38,28 +37,8 @@ def write_artifact_with_deps(
     artifact: ArtifactModel,
     force: bool = False,
     parents: bool = False,
-):
-    if artifact.get_type() == ArtifactType.TEST_RESULTS:
-        test_suite_id = _random_id()
-        test_suite_artifact = ArtifactModel(
-            header=ArtifactHeaderModel(
-                identifier=test_suite_id,  # type: ignore
-                type=ArtifactType.TEST_SUITE,
-                creator=None,
-            ),
-            body=artifact.body.test_suite,  # type: ignore
-        )
-        handle.write_artifact(
-            model_id,
-            version_id,
-            test_suite_artifact,
-            force=force,
-            parents=parents,
-        )
-
-        artifact.body.test_suite_id = test_suite_id  # type: ignore
-
-    handle.write_artifact(
+) -> ArtifactModel:
+    return handle.write_artifact(
         model_id, version_id, artifact, force=force, parents=parents
     )
 
@@ -212,11 +191,15 @@ def check_artifact_writing(
     artifact_id: str,
     artifact: ArtifactModel,
     user: str,
-):
+) -> ArtifactModel:
     """Helper function that writes an artifact, and then reads it and check they are the same."""
     # First write it.
     artifact = handle._add_header_data(artifact, user)
-    write_artifact_with_deps(handle, model_id, version_id, artifact)
+    written_artifact = write_artifact_with_deps(
+        handle, model_id, version_id, artifact
+    )
+    artifact.header.identifier = written_artifact.header.identifier
+    artifact_id = artifact.header.identifier
 
     # Then read it from storage.
     read = handle.read_artifact(model_id, version_id, artifact_id)
@@ -228,14 +211,15 @@ def check_artifact_writing(
     # Check that we have the same artifact.
     assert artifact.to_json() == read.to_json()
 
+    return written_artifact
+
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_search(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store store supports queries."""
@@ -248,8 +232,8 @@ def test_search(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        a0 = ArtifactFactory.make(artifact_type, "id0", complete=complete)
-        a1 = ArtifactFactory.make(artifact_type, "id1", complete=complete)
+        a0 = ArtifactModelFactory.make(artifact_type, "id0")
+        a1 = ArtifactModelFactory.make(artifact_type, "id1")
 
         for artifact in [a0, a1]:
             write_artifact_with_deps(handle, model_id, version_id, artifact)
@@ -259,17 +243,15 @@ def test_search(
             version_id,
             Query(filter=TypeFilter(item_type=artifact_type)),
         )
-        print(artifacts)
         assert len(artifacts) == 2
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store supports basic artifact operations."""
@@ -284,14 +266,14 @@ def test_artifact(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactFactory.make(
-            artifact_type, artifact_id, complete=complete
-        )
+        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
+        artifact_id = artifact.header.identifier
 
         # First check we can write and load an artifact.
-        check_artifact_writing(
+        written_artifact = check_artifact_writing(
             handle, model_id, version_id, artifact_id, artifact, user
         )
+        artifact_id = written_artifact.header.identifier
 
         # Second check that we can delete the artifact, and that it is really deleted.
         handle.delete_artifact(model_id, version_id, artifact_id)
@@ -306,12 +288,11 @@ def test_artifact(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_without_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact does not create organizational elements by default, on write."""
@@ -321,9 +302,8 @@ def test_artifact_without_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(
-        artifact_type, artifact_id, complete=complete
-    )
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
+    artifact_id = artifact.header.identifier
 
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
@@ -332,12 +312,11 @@ def test_artifact_without_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_parents(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact store can create organizational elements implicitly, on write."""
@@ -347,15 +326,15 @@ def test_artifact_parents(
     version_id = "version0"
     artifact_id = "myid"
 
-    artifact = ArtifactFactory.make(
-        artifact_type, artifact_id, complete=complete
-    )
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
+    artifact_id = artifact.header.identifier
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
-        write_artifact_with_deps(
+        written_artifact = write_artifact_with_deps(
             handle, model_id, version_id, artifact, parents=True
         )
+        artifact_id = written_artifact.header.identifier
 
         # The organizational elements are present
         assert len(handle.list_models()) == 1
@@ -366,12 +345,11 @@ def test_artifact_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type,complete", artifact_stores_and_types()
+    "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
 def test_artifact_overwrite(
     store_fixture_name: str,
     artifact_type: ArtifactType,
-    complete: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     """An artifact cam be overwritten with the `force` option."""
@@ -385,12 +363,13 @@ def test_artifact_overwrite(
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
 
-        artifact = ArtifactFactory.make(
-            artifact_type, artifact_id, complete=complete
-        )
+        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
         # The initial write succeeds
-        write_artifact_with_deps(handle, model_id, version_id, artifact)
+        written_artifact = write_artifact_with_deps(
+            handle, model_id, version_id, artifact
+        )
+        artifact_id = written_artifact.header.identifier
 
         # Another attempt to write fails
         with pytest.raises(errors.ErrorAlreadyExists):
@@ -422,7 +401,7 @@ def test_invalid_chars(
     with ManagedArtifactSession(store.session()) as handle:
         handle.create_model(Model(identifier=model_id))
         handle.create_version(model_id, Version(identifier=version_id))
-        artifact = ArtifactFactory.make(ArtifactType.REPORT, artifact_id)
+        artifact = ArtifactModelFactory.make(ArtifactType.REPORT, artifact_id)
         handle.write_artifact_with_header(
             model_id, version_id, artifact, user=user
         )

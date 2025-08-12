@@ -4,7 +4,11 @@ import typing
 
 from sqlalchemy.orm import Session
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+from mlte.artifact.model import (
+    ArtifactHeaderModel,
+    ArtifactLevel,
+    ArtifactModel,
+)
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.model import EvidenceModel
 from mlte.negotiation.model import NegotiationCardModel
@@ -35,6 +39,7 @@ def create_artifact_orm(
     artifact: ArtifactModel,
     model_id: str,
     version_id: str,
+    level: ArtifactLevel,
     session: Session,
 ) -> typing.Union[
     DBTestSuite, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
@@ -44,7 +49,14 @@ def create_artifact_orm(
     artifact_type_orm = DBReader.get_artifact_type(
         artifact.header.type, session
     )
-    _, version_orm = DBReader.get_version(model_id, version_id, session)
+    if level == ArtifactLevel.VERSION:
+        _, version_orm = DBReader.get_version(model_id, version_id, session)
+        version_orm_id = version_orm.id
+        model_orm_id = None
+    else:
+        _, model_orm = DBReader.get_model(model_id, session)
+        model_orm_id = model_orm.id
+        version_orm_id = None
 
     # Create the artifact object, without the specific body.
     artifact_orm = DBArtifact(
@@ -52,7 +64,9 @@ def create_artifact_orm(
         type=artifact_type_orm,
         timestamp=artifact.header.timestamp,
         username=artifact.header.creator,
-        version_id=version_orm.id,
+        level=artifact.header.level,
+        version_id=version_orm_id,
+        model_id=model_orm_id,
     )
 
     # Create the body ORM object and return it.
@@ -92,6 +106,7 @@ def create_artifact_model(artifact_orm: DBArtifact) -> ArtifactModel:
     artifact_header = ArtifactHeaderModel(
         identifier=artifact_orm.identifier,
         type=ArtifactType(artifact_orm.type.name),
+        level=ArtifactLevel(artifact_orm.level),
         timestamp=artifact_orm.timestamp,
         creator=artifact_orm.username,
     )

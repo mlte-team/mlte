@@ -9,7 +9,12 @@ from __future__ import annotations
 import typing
 from typing import Optional
 
-from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
+import mlte.store.artifact.util as storeutil
+from mlte.artifact.model import (
+    ArtifactHeaderModel,
+    ArtifactLevel,
+    ArtifactModel,
+)
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.serializable import Serializable
@@ -46,6 +51,9 @@ class Artifact(Serializable):
         self.creator = None
         """The user that created this artifact."""
 
+        self.level = ArtifactLevel.VERSION
+        """The artifact level, be it model or version, defaults to version."""
+
     def __eq__(self, other: object) -> bool:
         """Test instance for equality."""
         if not isinstance(other, Artifact):
@@ -72,7 +80,13 @@ class Artifact(Serializable):
         # Default implementation is a no-op
         pass
 
-    def save(self, *, force: bool = False, parents: bool = False) -> None:
+    def save(
+        self,
+        *,
+        force: bool = False,
+        parents: bool = False,
+        user: Optional[str] = None,
+    ) -> ArtifactModel:
         """
         Save an artifact with parameters from the configured global session.
 
@@ -82,12 +96,15 @@ class Artifact(Serializable):
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
+        :param user: The username of the user executing this action.
+        :return: The ArtifactModel of the saved artifact.
         """
-        self.save_with(
+        return self.save_with(
             session().context,
             session().artifact_store,
             force=force,
             parents=parents,
+            user=user,
         )
 
     def save_with(
@@ -97,7 +114,8 @@ class Artifact(Serializable):
         *,
         force: bool = False,
         parents: bool = False,
-    ) -> None:
+        user: Optional[str] = None,
+    ) -> ArtifactModel:
         """
         Save an artifact with the given context and store configuration.
         :param context: The context in which to save the artifact
@@ -105,20 +123,29 @@ class Artifact(Serializable):
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
         artifact are created implicitly on write (default: False)
+        :param user: The username of the user executing this action.
+        :return: The ArtifactModel of the saved artifact.
         """
-        self.pre_save_hook(context, store)
-
-        model = self.to_model()
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact_with_header(
+            # If we are forcing parent creation, ensure they are there before any hooks.
+            if parents:
+                storeutil.create_parents(handle, context.model, context.version)
+
+            # Run any artifact-type specific pre save hooks.
+            self.pre_save_hook(context, store)
+
+            # Convert to model and save.
+            model = self.to_model()
+            assert isinstance(
+                model, ArtifactModel
+            ), "Can't create object from non-ArtifactModel model."
+            return handle.write_artifact_with_header(
                 context.model,
                 context.version,
                 model,
                 force=force,
                 parents=parents,
+                user=user,
             )
 
     @classmethod
@@ -207,6 +234,7 @@ class Artifact(Serializable):
             type=self.type,
             timestamp=self.timestamp,
             creator=self.creator,
+            level=self.level,
         )
 
     def __str__(self) -> str:

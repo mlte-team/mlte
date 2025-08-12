@@ -7,14 +7,14 @@ from mlte.evidence.types.integer import Integer
 from mlte.tests.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.fixture.artifact import ArtifactFactory
+from test.fixture.artifact import ArtifactModelFactory
 
 from . import util as util
 
 
 def test_schema():
     test_suite = TestSuite.from_model(
-        ArtifactFactory.make(ArtifactType.TEST_SUITE)
+        ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
     test_suite_validator = TestSuiteValidator(test_suite)
     i = Integer(1).with_metadata(

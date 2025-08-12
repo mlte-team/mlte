@@ -6,10 +6,12 @@ Unit tests for negotiation card model.
 
 from __future__ import annotations
 
+import typing
 from typing import Any, Dict
 
 from deepdiff import DeepDiff  # type: ignore
 
+from mlte.artifact.type import ArtifactType
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -25,7 +27,7 @@ from mlte.negotiation.model import (
     RiskDescriptor,
     SystemDescriptor,
 )
-from test.fixture.artifact import make_complete_negotiation_card
+from test.fixture.artifact import ArtifactModelFactory
 
 # -----------------------------------------------------------------------------
 # NegotiationCardModel
@@ -35,7 +37,10 @@ from test.fixture.artifact import make_complete_negotiation_card
 def test_negotiation_card() -> None:
     """A negotiation card model can be serialized and deserialized."""
     objects = [
-        make_complete_negotiation_card(),
+        typing.cast(
+            NegotiationCardModel,
+            ArtifactModelFactory.make(ArtifactType.NEGOTIATION_CARD).body,
+        ),
         NegotiationCardModel(),
     ]
 

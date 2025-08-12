@@ -10,7 +10,7 @@ import typing
 from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.base_model import BaseModel
@@ -51,6 +51,12 @@ class NegotiationCard(Artifact):
 
         self.quality_scenarios = quality_scenarios
         """A list of quality attribute scenarios."""
+
+        self.level = ArtifactLevel.MODEL
+        """Indicate that this type of artifact will exist at the model level."""
+
+        # Add ids to QAS as needed.
+        qas.add_qas_ids(self.identifier, self.quality_scenarios)
 
     # ----------------------------------------------------------------------------------
     # Serialization methods.

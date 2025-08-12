@@ -4,14 +4,20 @@ Unit tests for specification model.
 
 from __future__ import annotations
 
+import typing
+
+from mlte.artifact.type import ArtifactType
 from mlte.tests.model import TestSuiteModel
-from test.fixture.artifact import make_complete_test_suite_model
+from test.fixture.artifact import ArtifactModelFactory
 
 
 def test_spec_body() -> None:
     """A TestSuite model can be serialized and deserialized."""
     objects = [
-        make_complete_test_suite_model(),
+        typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
+        ),
         TestSuiteModel(),
     ]
 

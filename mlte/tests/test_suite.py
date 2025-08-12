@@ -7,7 +7,7 @@ from __future__ import annotations
 import typing
 
 from mlte.artifact.artifact import Artifact
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.artifact import Evidence
@@ -38,6 +38,9 @@ class TestSuite(Artifact):
         :param test_cases: The collection of test cases.
         """
         super().__init__(identifier, ArtifactType.TEST_SUITE)
+
+        self.level = ArtifactLevel.MODEL
+        """Indicate that this type of artifact will exist at the model level."""
 
         # Check that no tests cases have the same id.
         found_ids = []

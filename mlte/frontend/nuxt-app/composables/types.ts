@@ -76,6 +76,7 @@ export class ArtifactHeader {
     public type: string = "",
     public timestamp: number = -1,
     public creator: string = "",
+    public level: string = "version",
   ) {}
 }
 

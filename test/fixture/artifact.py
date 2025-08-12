@@ -8,16 +8,17 @@ from __future__ import annotations
 
 import random
 import string
+import typing
 from typing import List, Optional, Union
 
 from mlte._private import meta
+from mlte.artifact.factory import ArtifactFactory
 from mlte.artifact.model import ArtifactHeaderModel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
-from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import (
     DataClassification,
     DataDescriptor,
@@ -51,29 +52,6 @@ def _random_id(length: int = 5) -> str:
     return "".join(random.choices(string.ascii_lowercase, k=length))
 
 
-class ArtifactFactory:
-    """A class for build artifacts."""
-
-    @staticmethod
-    def make(
-        type: ArtifactType,
-        id: str = _random_id(),
-        user: Optional[str] = None,
-        complete: bool = False,
-    ) -> ArtifactModel:
-        """
-        Construct an artifact model of the given type.
-        :param type: The artifact type
-        :param id: The artifact identifier (default: randomly generated)
-        :param complete: Whether to create a complete, fully defined artifact model (True), or a simple empty one (False)
-        :return: The artifact model
-        """
-        return ArtifactModel(
-            header=ArtifactHeaderModel(identifier=id, type=type, creator=user),
-            body=_make_body(type, id, complete),
-        )
-
-
 class TypeUtil:
     """A static class for artifact type utilities."""
 
@@ -87,89 +65,55 @@ class TypeUtil:
         return [t for t in ArtifactType if t != type]
 
 
-def _make_body(type: ArtifactType, id: str, complete: bool) -> Union[
-    NegotiationCardModel,
-    EvidenceModel,
-    TestSuiteModel,
-    TestResultsModel,
-    ReportModel,
-]:
-    """
-    Make the body of the artifact for a given type.
-    :param type: The artifact type
-    :param id: The identifier for the artifact
-    :return: The artifact body model
-    """
-    if type == ArtifactType.NEGOTIATION_CARD:
-        return _make_negotiation_card(complete)
-    if type == ArtifactType.EVIDENCE:
-        return _make_value(id, complete)
-    if type == ArtifactType.TEST_SUITE:
-        return _make_test_suite(complete)
-    if type == ArtifactType.TEST_RESULTS:
-        return _make_test_results(complete)
-    if type == ArtifactType.REPORT:
-        return _make_report(complete)
+class ArtifactModelFactory:
+    """A class for build artifacts."""
 
-    assert False, f"Unkown artifact type provided when creating body: {type}."
+    @staticmethod
+    def make(
+        type: ArtifactType,
+        id: str = _random_id(),
+        user: Optional[str] = None,
+    ) -> ArtifactModel:
+        """
+        Construct an artifact model of the given type.
+        :param type: The artifact type
+        :param id: The artifact identifier (default: randomly generated)
+        :return: The artifact model
+        """
+        header = ArtifactHeaderModel(identifier=id, type=type, creator=user)
+
+        body_model: Union[
+            NegotiationCardModel,
+            EvidenceModel,
+            TestSuiteModel,
+            TestResultsModel,
+            ReportModel,
+        ]
+        if type == ArtifactType.NEGOTIATION_CARD:
+            body_model = _make_negotiation_card()
+        elif type == ArtifactType.EVIDENCE:
+            body_model = _make_evidence(id)
+        elif type == ArtifactType.TEST_SUITE:
+            body_model = _make_test_suite()
+        elif type == ArtifactType.TEST_RESULTS:
+            body_model = _make_test_results()
+        elif type == ArtifactType.REPORT:
+            body_model = _make_report()
+        else:
+            raise RuntimeError(
+                f"Unkown artifact type provided when creating body: {type}."
+            )
+
+        artifact = ArtifactFactory.from_model(
+            ArtifactModel(header=header, body=body_model)
+        )
+        return typing.cast(ArtifactModel, artifact.to_model())
 
 
-def _make_negotiation_card(complete: bool) -> NegotiationCardModel:
+def _make_negotiation_card() -> NegotiationCardModel:
     """
-    Make a minimal negotiation card, or a fully featured one, depending on complete.
+    Make a simple negotiation card.
     :return: The artifact
-    """
-    if not complete:
-        return NegotiationCardModel()
-    else:
-        return make_complete_negotiation_card()
-
-
-def _make_value(id: str, complete: bool) -> EvidenceModel:
-    """
-    Make a minimal value, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    m = get_sample_evidence_metadata(test_case_id=id)
-
-    return EvidenceModel(
-        metadata=m,
-        evidence_class=meta.get_qualified_name(Integer),
-        value=IntegerValueModel(integer=1),
-    )
-
-
-def _make_test_suite(complete: bool) -> TestSuiteModel:
-    """
-    Make a minimal test suite, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    if not complete:
-        return TestSuiteModel()
-    else:
-        return make_complete_test_suite_model()
-
-
-def _make_test_results(complete: bool) -> TestResultsModel:
-    """
-    Make a minimal test results, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    return make_complete_test_results_model()
-
-
-def _make_report(complete: bool) -> ReportModel:
-    """
-    Make a minimal report, or a fully featured one, depending on complete.
-    :return: The artifact
-    """
-    return make_complete_report()
-
-
-def make_complete_negotiation_card() -> NegotiationCardModel:
-    """
-    Make a filled in NegotiationCard model.
-    :return: The artifact model
     """
     return NegotiationCardModel(
         system=SystemDescriptor(
@@ -258,7 +202,6 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                identifier=f"{NegotiationCard.get_default_id()}-qas_1",
                 quality="fairness",
                 stimulus="new data arrives",
                 source="from new area",
@@ -270,10 +213,24 @@ def make_complete_negotiation_card() -> NegotiationCardModel:
     )
 
 
-def make_complete_test_suite_model() -> TestSuiteModel:
+def _make_evidence(id: str) -> EvidenceModel:
     """
-    Make a filled in TestSuite model.
-    :return: The artifact model
+    Make an evidence artifact.
+    :return: The artifact
+    """
+    m = get_sample_evidence_metadata(test_case_id=id)
+
+    return EvidenceModel(
+        metadata=m,
+        evidence_class=meta.get_qualified_name(Integer),
+        value=IntegerValueModel(integer=1),
+    )
+
+
+def _make_test_suite() -> TestSuiteModel:
+    """
+    Make a minimal test suite.
+    :return: The artifact
     """
     return TestSuiteModel(
         test_cases=[
@@ -292,14 +249,17 @@ def make_complete_test_suite_model() -> TestSuiteModel:
     )
 
 
-def make_complete_test_results_model() -> TestResultsModel:
+def _make_test_results() -> TestResultsModel:
     """
-    Make a filled in TestResults model.
-    :return: The artifact model
+    Make a test results artifact.
+    :return: The artifact
     """
     return TestResultsModel(
         test_suite_id=f"{TestSuite.get_default_id()}",
-        test_suite=make_complete_test_suite_model(),
+        test_suite=typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
+        ),
         results={
             "Test1": ResultModel(
                 type="Success",
@@ -317,17 +277,26 @@ def make_complete_test_results_model() -> TestResultsModel:
     )
 
 
-def make_complete_report() -> ReportModel:
+def _make_report() -> ReportModel:
     """
-    Make a filled in Report model.
-    :return: The artifact model
+    Make a report.
+    :return: The artifact
     """
     return ReportModel(
         negotiation_card_id="default",
-        negotiation_card=_make_negotiation_card(complete=True),
+        negotiation_card=typing.cast(
+            NegotiationCardModel,
+            ArtifactModelFactory.make(ArtifactType.NEGOTIATION_CARD).body,
+        ),
         test_suite_id="default",
-        test_suite=_make_test_suite(complete=True),
+        test_suite=typing.cast(
+            TestSuiteModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
+        ),
         test_results_id="default",
-        test_results=_make_test_results(complete=True),
+        test_results=typing.cast(
+            TestResultsModel,
+            ArtifactModelFactory.make(ArtifactType.TEST_RESULTS).body,
+        ),
         comments=[CommentDescriptor(content="content")],
     )

@@ -3,7 +3,8 @@
         "identifier": "default.card",
         "type": "negotiation_card",
         "timestamp": 1745958596,
-        "creator": "admin"
+        "creator": "admin",
+        "level": "model"
     },
     "body": {
         "artifact_type": "negotiation_card",
@@ -38,7 +39,10 @@
             "risks": {
                 "fp": "Poor user experience due to incorrectly identified flowers",
                 "fn": "Poor user experience due to inability to identify flowers",
-                "other": ["Wrong results due to unknown flowers", "Users do not like the results due to strange behavior."]
+                "other": [
+                    "Wrong results due to unknown flowers",
+                    "Users do not like the results due to strange behavior."
+                ]
             }
         },
         "data": [

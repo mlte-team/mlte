@@ -57,6 +57,9 @@ class DBModel(DBBase):
     versions: Mapped[list[DBVersion]] = relationship(
         back_populates="model", cascade="all, delete-orphan"
     )
+    artifacts: Mapped[list[DBArtifact]] = relationship(
+        back_populates="model", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (UniqueConstraint("name", name="_model_identifier_uc"),)
 
@@ -103,16 +106,21 @@ class DBArtifact(DBBase):
     identifier: Mapped[str]
     timestamp: Mapped[int] = mapped_column(BigInteger)
     username: Mapped[Optional[str]]
+    level: Mapped[str]
 
     type_id: Mapped[int] = mapped_column(
         ForeignKey(DBArtifactType.get_id_column())
     )
-    version_id: Mapped[int] = mapped_column(
+    version_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBVersion.get_id_column())
+    )
+    model_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey(DBModel.get_id_column())
     )
 
     type: Mapped[DBArtifactType] = relationship()
-    version: Mapped[DBVersion] = relationship()
+    version: Mapped[Optional[DBVersion]] = relationship()
+    model: Mapped[Optional[DBModel]] = relationship()
 
     body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"

@@ -7,7 +7,6 @@ Implementation of relational database system artifact store.
 from __future__ import annotations
 
 import typing
-from typing import List
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -113,8 +112,8 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             model, _ = DBReader.get_model(model_id, session)
             return model
 
-    def list_models(self) -> List[str]:
-        models: List[str] = []
+    def list_models(self) -> list[str]:
+        models: list[str] = []
         with Session(self.storage.engine) as session:
             model_orms = session.scalars(select(DBModel))
             for model_orm in model_orms:
@@ -154,8 +153,8 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             version, _ = DBReader.get_version(model_id, version_id, session)
             return version
 
-    def list_versions(self, model_id: str) -> List[str]:
-        versions: List[str] = []
+    def list_versions(self, model_id: str) -> list[str]:
+        versions: list[str] = []
         with Session(self.storage.engine) as session:
             version_orms = session.scalars(
                 (
@@ -196,7 +195,6 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             else:
                 # Ensure parents exist.
                 _ = DBReader.get_version(model_id, version_id, session)
-
             # Check if artifact already exists.
             try:
                 _, artifact_orm = DBReader.get_artifact(
@@ -219,7 +217,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
 
             # Create the actual object.
             new_artifact_orm = main_factory.create_artifact_orm(
-                artifact, model_id, version_id, session
+                artifact, model_id, version_id, artifact.header.level, session
             )
 
             # Use session to add object.
@@ -245,7 +243,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         version_id: str,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[ArtifactModel]:
+    ) -> list[ArtifactModel]:
         # TODO: not the best support of offset and limit, still loading everything from DB.
         with Session(self.storage.engine) as session:
             artifacts = DBReader.get_artifacts(model_id, version_id, session)
@@ -256,7 +254,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         model_id: str,
         version_id: str,
         query: Query = Query(),
-    ) -> List[ArtifactModel]:
+    ) -> list[ArtifactModel]:
         # TODO: not the most efficient way, since it loads all artifacts first, before filtering.
         artifacts = self.read_artifacts(model_id, version_id)
         return [
