@@ -5,7 +5,7 @@
     <h1 class="section-header">{{ queryArtifactId }}</h1>
     <CreatorDisplay :creator="creator" :timestamp="timestamp" />
 
-    <TestCaseDisplay :test-cases="suiteBody.test_cases" />
+    <TestSuiteTestCaseList :test-cases="suiteBody.test_cases" />
   </NuxtLayout>
 </template>
 

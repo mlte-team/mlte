@@ -29,6 +29,10 @@
     width: 28ch;
 }
 
+.half-line-input {
+    width: 28ch;
+}
+
 .primary-button {   
     background-color: #d8ac16 !important;
     color: black !important;
