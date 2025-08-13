@@ -126,7 +126,7 @@
             v-if="selectedModel === '' || selectedVersion === ''"
             style="float: left; color: red"
           >
-            Select a model and version to start a new negotiation card here.
+            Select a model and version to start a new negotiation card.
           </p>
         </div>
       </UsaAccordionItem>
@@ -217,6 +217,25 @@
               </tr>
             </tbody>
           </table>
+          <NuxtLink
+            :to="{
+              path: '/artifact-compare',
+              query: {
+                model: selectedModel,
+              },
+            }"
+          >
+            <UsaButton
+              :disabled="selectedModel === ''"
+              class="primary-button"
+              style="float: left"
+            >
+              Compare Test Suites
+            </UsaButton>
+          </NuxtLink>
+          <p v-if="selectedModel === ''" style="float: left; color: red">
+            Select a model to compare Test Suites.
+          </p>
         </div>
       </UsaAccordionItem>
 
