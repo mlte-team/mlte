@@ -70,6 +70,21 @@
         :test-suite2="artifact2"
       />
     </div>
+    <div
+      v-if="
+        artifact1 &&
+        artifact2 &&
+        artifact1.body.artifact_type == 'report' &&
+        artifact2.body.artifact_type == 'report'
+      "
+    >
+      <ReportCompare
+        :version1="versionSelection1"
+        :version2="versionSelection2"
+        :report1="artifact1"
+        :report2="artifact2"
+      />
+    </div>
   </NuxtLayout>
 </template>
 
