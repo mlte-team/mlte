@@ -10,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import { TestSuiteTestCaseDisplay } from "#components";
 import type { PropType } from "vue";
 
 const props = defineProps({
