@@ -22,7 +22,7 @@
       </ul>
     </div>
 
-    <TestCaseDisplay :test-cases="resultsBody.test_suite.test_cases" />
+    <TestSuiteTestCaseList :test-cases="resultsBody.test_suite.test_cases" />
   </NuxtLayout>
 </template>
 
