@@ -179,6 +179,23 @@
               </tr>
             </tbody>
           </table>
+          <NuxtLink
+            :to="{
+              path: '/artifact-compare',
+              query: {
+                model: selectedModel,
+                type: 'report',
+              },
+            }"
+          >
+            <UsaButton
+              :disabled="selectedModel === ''"
+              class="primary-button"
+              style="float: left"
+            >
+              Compare Reports
+            </UsaButton>
+          </NuxtLink>
         </div>
       </UsaAccordionItem>
 
@@ -222,6 +239,7 @@
               path: '/artifact-compare',
               query: {
                 model: selectedModel,
+                type: 'test_suite',
               },
             }"
           >

@@ -90,11 +90,12 @@
 
 <script setup lang="ts">
 const queryModel = useRoute().query.model;
+const queryType = useRoute().query.type;
 const typeOptions = ref<Array<SelectOption>>([
   new SelectOption("report", "Report"),
   new SelectOption("test_suite", "Test Suite"),
 ]);
-const typeSelection = ref<string>("test_suite");
+const typeSelection = ref<string>("");
 const versionOptions = ref<Array<SelectOption>>([]);
 
 const versionSelection1 = ref<string>("");
@@ -108,6 +109,10 @@ const artifactList2 = ref<Array<ArtifactModel>>([]);
 const artifactOptions2 = ref<Array<SelectOption>>([]);
 const artifactSelection2 = ref<string>("");
 const artifact2 = ref<ArtifactModel>();
+
+if (queryType) {
+  typeSelection.value = queryType as string;
+}
 
 const modelVersions = await getModelVersions(queryModel as string);
 if (modelVersions) {
