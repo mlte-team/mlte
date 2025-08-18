@@ -7,24 +7,32 @@
   <h3>Test Results</h3>
   <div v-for="key in keySet" :key="key">
     <p><b>Result for: </b>{{ key }}</p>
-    <b>Version: </b>{{ version1 }}
-    <div v-if="key in report1.body.test_results.results">
-      <TestSuiteResultView
-        :result-key="key"
-        :result="report1.body.test_results.results[key]"
-        :test-cases="report1.body.test_suite.test_cases"
-      />
-    </div>
-    <div v-else>No result</div>
-    <b>Version: </b>{{ version2 }}
-    <div v-if="key in report2.body.test_results.results">
-      <TestSuiteResultView
-        :result-key="key"
-        :result="report2.body.test_results.results[key]"
-        :test-cases="report2.body.test_suite.test_cases"
-      />
-    </div>
-    <div v-else>No result</div>
+    <ul>
+      <li>
+        <b>Version: </b>{{ version1 }}
+        <div v-if="key in report1.body.test_results.results">
+          <TestSuiteResultView
+            :result-key="key"
+            :result="report1.body.test_results.results[key]"
+            :test-cases="report1.body.test_suite.test_cases"
+          />
+        </div>
+        <div v-else>No result</div>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <b>Version: </b>{{ version2 }}
+        <div v-if="key in report2.body.test_results.results">
+          <TestSuiteResultView
+            :result-key="key"
+            :result="report2.body.test_results.results[key]"
+            :test-cases="report2.body.test_suite.test_cases"
+          />
+        </div>
+        <div v-else>No result</div>
+      </li>
+    </ul>
   </div>
 </template>
 
