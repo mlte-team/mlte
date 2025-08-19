@@ -120,8 +120,14 @@ if (modelVersions) {
     versionOptions.value.push(new SelectOption(version, version));
   });
 }
-selectVersion(1, modelVersions[modelVersions.length - 2]);
-selectVersion(2, modelVersions[modelVersions.length - 1]);
+
+if (modelVersions.length > 1) {
+  selectVersion(1, modelVersions[modelVersions.length - 2]);
+  selectVersion(2, modelVersions[modelVersions.length - 1]);
+} else if (modelVersions.length === 1) {
+  selectVersion(1, modelVersions[modelVersions.length - 1]);
+  selectVersion(2, modelVersions[modelVersions.length - 1]);
+}
 
 // Reset Artifact selections, and load options for new Artifact type
 async function selectType() {
@@ -141,9 +147,11 @@ async function selectType() {
  */
 async function selectVersion(compareNumber: number, versionName: string) {
   if (compareNumber === 1) {
+    versionSelection1.value = versionName;
     artifactSelection1.value = "";
     artifact1.value = undefined;
   } else if (compareNumber === 2) {
+    versionSelection2.value = versionName;
     artifactSelection2.value = "";
     artifact2.value = undefined;
   }
