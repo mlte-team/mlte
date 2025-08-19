@@ -1,6 +1,7 @@
 """A simple measurement class derived from ExternalMeasurement, to import data."""
 
 import json
+import typing
 from typing import Any, Callable, Optional
 
 from mlte.evidence.artifact import Evidence
@@ -38,5 +39,5 @@ class ImportMeasurement(ExternalMeasurement):
 def _load_json(import_path: str) -> dict[str, Any]:
     """Loads a JSON into a dict."""
     with open(import_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
+        data = typing.cast(dict[str, Any], json.load(file))
         return data
