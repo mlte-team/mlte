@@ -184,7 +184,6 @@
               path: '/artifact-compare',
               query: {
                 model: selectedModel,
-                type: 'report',
               },
             }"
           >
@@ -234,23 +233,6 @@
               </tr>
             </tbody>
           </table>
-          <NuxtLink
-            :to="{
-              path: '/artifact-compare',
-              query: {
-                model: selectedModel,
-                type: 'test_suite',
-              },
-            }"
-          >
-            <UsaButton
-              :disabled="selectedModel === ''"
-              class="primary-button"
-              style="float: left"
-            >
-              Compare Test Suites
-            </UsaButton>
-          </NuxtLink>
           <p v-if="selectedModel === ''" style="float: left; color: red">
             Select a model to compare Test Suites.
           </p>

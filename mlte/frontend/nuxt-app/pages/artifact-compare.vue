@@ -1,18 +1,9 @@
 <template>
   <NuxtLayout name="base-layout">
-    <title>Artifact Compare</title>
-    <template #page-title>Artifact Compare</template>
+    <title>Report Compare</title>
+    <template #page-title>Report Compare</template>
     <h1 class="section-header">{{ queryModel }}</h1>
 
-    <div class="half-line-input">
-      <UsaSelect
-        v-model="typeSelection"
-        :options="typeOptions"
-        @update:model-value="selectType()"
-      >
-        <template #label> Artifact Type </template>
-      </UsaSelect>
-    </div>
     <div class="row">
       <div class="column">
         <div class="half-line-input">
@@ -21,16 +12,16 @@
             :options="versionOptions"
             @update:model-value="selectVersion(1, $event)"
           >
-            <template #label> Version 1 </template>
+            <template #label>Version 1 </template>
           </UsaSelect>
         </div>
         <div class="half-line-input">
           <UsaSelect
-            v-model="artifactSelection1"
-            :options="artifactOptions1"
-            @update:model-value="selectArtifact(1, $event)"
+            v-model="reportSelection1"
+            :options="reportOptions1"
+            @update:model-value="selectReport(1, $event)"
           >
-            <template #label> Artifact 1 </template>
+            <template #label>Report 1 </template>
           </UsaSelect>
         </div>
       </div>
@@ -46,43 +37,21 @@
         </div>
         <div class="half-line-input">
           <UsaSelect
-            v-model="artifactSelection2"
-            :options="artifactOptions2"
-            @update:model-value="selectArtifact(2, $event)"
+            v-model="reportSelection2"
+            :options="reportOptions2"
+            @update:model-value="selectReport(2, $event)"
           >
-            <template #label> Artifact 2 </template>
+            <template #label>Report 2 </template>
           </UsaSelect>
         </div>
       </div>
     </div>
-    <div
-      v-if="
-        artifact1 &&
-        artifact2 &&
-        artifact1.body.artifact_type == 'test_suite' &&
-        artifact2.body.artifact_type == 'test_suite'
-      "
-    >
-      <TestSuiteCompare
-        :version1="versionSelection1"
-        :version2="versionSelection2"
-        :test-suite1="artifact1"
-        :test-suite2="artifact2"
-      />
-    </div>
-    <div
-      v-if="
-        artifact1 &&
-        artifact2 &&
-        artifact1.body.artifact_type == 'report' &&
-        artifact2.body.artifact_type == 'report'
-      "
-    >
+    <div v-if="report1 && report2">
       <ReportCompare
         :version1="versionSelection1"
         :version2="versionSelection2"
-        :report1="artifact1"
-        :report2="artifact2"
+        :report1="report1"
+        :report2="report2"
       />
     </div>
   </NuxtLayout>
@@ -90,29 +59,19 @@
 
 <script setup lang="ts">
 const queryModel = useRoute().query.model;
-const queryType = useRoute().query.type;
-const typeOptions = ref<Array<SelectOption>>([
-  new SelectOption("report", "Report"),
-  new SelectOption("test_suite", "Test Suite"),
-]);
-const typeSelection = ref<string>("");
 const versionOptions = ref<Array<SelectOption>>([]);
 
 const versionSelection1 = ref<string>("");
-const artifactList1 = ref<Array<ArtifactModel>>([]);
-const artifactOptions1 = ref<Array<SelectOption>>([]);
-const artifactSelection1 = ref<string>("");
-const artifact1 = ref<ArtifactModel>();
+const reportList1 = ref<Array<ArtifactModel<ReportModel>>>([]);
+const reportOptions1 = ref<Array<SelectOption>>([]);
+const reportSelection1 = ref<string>("");
+const report1 = ref<ArtifactModel<ReportModel>>();
 
 const versionSelection2 = ref<string>("");
-const artifactList2 = ref<Array<ArtifactModel>>([]);
-const artifactOptions2 = ref<Array<SelectOption>>([]);
-const artifactSelection2 = ref<string>("");
-const artifact2 = ref<ArtifactModel>();
-
-if (queryType) {
-  typeSelection.value = queryType as string;
-}
+const reportList2 = ref<Array<ArtifactModel<ReportModel>>>([]);
+const reportOptions2 = ref<Array<SelectOption>>([]);
+const reportSelection2 = ref<string>("");
+const report2 = ref<ArtifactModel<ReportModel>>();
 
 const modelVersions = await getModelVersions(queryModel as string);
 if (modelVersions) {
@@ -129,16 +88,6 @@ if (modelVersions.length > 1) {
   selectVersion(2, modelVersions[modelVersions.length - 1]);
 }
 
-// Reset Artifact selections, and load options for new Artifact type
-async function selectType() {
-  selectVersion(1, versionSelection1.value);
-  selectVersion(2, versionSelection2.value);
-  artifactSelection1.value = "";
-  artifactSelection2.value = "";
-  artifact1.value = undefined;
-  artifact2.value = undefined;
-}
-
 /**
  * Handle selection of a new Version. Loads new Artifact options from API.
  *
@@ -148,12 +97,12 @@ async function selectType() {
 async function selectVersion(compareNumber: number, versionName: string) {
   if (compareNumber === 1) {
     versionSelection1.value = versionName;
-    artifactSelection1.value = "";
-    artifact1.value = undefined;
+    reportSelection1.value = "";
+    report1.value = undefined;
   } else if (compareNumber === 2) {
     versionSelection2.value = versionName;
-    artifactSelection2.value = "";
-    artifact2.value = undefined;
+    reportSelection2.value = "";
+    report2.value = undefined;
   }
 
   if (versionName == "") {
@@ -167,14 +116,14 @@ async function selectVersion(compareNumber: number, versionName: string) {
 
   if (!artifacts) {
     return;
-  } else if (compareNumber === 1) {
-    artifactList1.value = [];
-    artifactOptions1.value = [];
+  } else {
+    const tempReportList: Array<ArtifactModel<ReportModel>> = [];
+    const tempOptionsList: Array<SelectOption> = [];
 
     artifacts.forEach((artifact: ArtifactModel) => {
-      if (typeSelection.value === artifact.body.artifact_type) {
-        artifactList1.value.push(artifact);
-        artifactOptions1.value.push(
+      if (artifact.body.artifact_type === "report") {
+        tempReportList.push(artifact as ArtifactModel<ReportModel>);
+        tempOptionsList.push(
           new SelectOption(
             artifact.header.identifier,
             artifact.header.identifier,
@@ -182,38 +131,31 @@ async function selectVersion(compareNumber: number, versionName: string) {
         );
       }
     });
-  } else if (compareNumber === 2) {
-    artifactList2.value = [];
-    artifactOptions2.value = [];
 
-    artifacts.forEach((artifact: ArtifactModel) => {
-      if (typeSelection.value === artifact.body.artifact_type) {
-        artifactList2.value.push(artifact);
-        artifactOptions2.value.push(
-          new SelectOption(
-            artifact.header.identifier,
-            artifact.header.identifier,
-          ),
-        );
-      }
-    });
+    if (compareNumber === 1) {
+      reportList1.value = tempReportList;
+      reportOptions1.value = tempOptionsList;
+    } else if (compareNumber === 2) {
+      reportList2.value = tempReportList;
+      reportOptions2.value = tempOptionsList;
+    }
   }
 }
 
 /**
- * Handle selection of a new Artifact. Selects Artifact from artifactList.
+ * Handle selection of a new Report. Selects Report from reportList.
  *
- * @param {number} compareNumber Which compare Artifact was selected, 1 or 2
- * @param {string} artifactName Name of Artifact that was selected
+ * @param {number} compareNumber Which compare Report was selected, 1 or 2
+ * @param {string} reportName Name of Artifact that was selected
  */
-async function selectArtifact(compareNumber: number, artifactName: string) {
+async function selectReport(compareNumber: number, reportName: string) {
   if (compareNumber === 1) {
-    artifact1.value = artifactList1.value.find(
-      (i) => i.header.identifier === artifactName,
+    report1.value = reportList1.value.find(
+      (i) => i.header.identifier === reportName,
     );
   } else if (compareNumber === 2) {
-    artifact2.value = artifactList2.value.find(
-      (i) => i.header.identifier === artifactName,
+    report2.value = reportList2.value.find(
+      (i) => i.header.identifier === reportName,
     );
   }
 }
