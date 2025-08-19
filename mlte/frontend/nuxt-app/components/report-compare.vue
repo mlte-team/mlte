@@ -1,5 +1,6 @@
 <template>
   <h3>Header</h3>
+  <div><b>Differences: </b> {{ headerDifferences.join(", ") }}</div>
   <b>{{ version1 }}</b>
   <HeaderDisplay :header="report1.header" />
   <b>{{ version2 }}</b>
@@ -9,6 +10,9 @@
     <p><b>Result for: </b>{{ key }}</p>
     <ul>
       <li>
+        <div><b>Differences: </b> {{ resultsDifferences[key].join(", ") }}</div>
+      </li>
+      <li>
         <b>Version: </b>{{ version1 }}
         <div v-if="key in report1.body.test_results.results">
           <TestSuiteResultView
@@ -17,7 +21,11 @@
             :test-cases="report1.body.test_suite.test_cases"
           />
         </div>
-        <div v-else>No result</div>
+        <div v-else>
+          <ul>
+            <li>No Result</li>
+          </ul>
+        </div>
       </li>
     </ul>
     <ul>
@@ -30,7 +38,11 @@
             :test-cases="report2.body.test_suite.test_cases"
           />
         </div>
-        <div v-else>No result</div>
+        <div v-else>
+          <ul>
+            <li>No Result</li>
+          </ul>
+        </div>
       </li>
     </ul>
   </div>
@@ -69,5 +81,17 @@ const keySet = computed(() => {
   ];
   const keySet = new Set(combinedKeys);
   return [...keySet];
+});
+
+const headerDifferences = computed(() => {
+  return compareHeaders(props.report1.header, props.report2.header);
+});
+
+const resultsDifferences = computed(() => {
+  return compareResults(
+    keySet.value,
+    props.report1.body.test_results.results,
+    props.report2.body.test_results.results,
+  );
 });
 </script>

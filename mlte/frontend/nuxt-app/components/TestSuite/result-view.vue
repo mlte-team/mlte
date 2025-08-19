@@ -11,7 +11,7 @@
       </li>
       <li><b>Message: </b> {{ result.message }}</li>
       <li>
-        <b>Quality Attribute Scenario</b>
+        <b>Quality Attribute Scenarios:</b>
         <ul>
           <span
             v-for="(test_case, test_case_index) in props.testCases"
