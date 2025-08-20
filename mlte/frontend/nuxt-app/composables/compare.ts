@@ -20,6 +20,11 @@ export function compareHeaders(
   if (header1.creator != header2.creator) {
     differences.push("Creator");
   }
+
+  if (differences.length === 0) {
+    differences.push("None");
+  }
+
   return differences;
 }
 
