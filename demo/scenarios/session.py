@@ -14,7 +14,6 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # global constants about folders and model to use.
 
 store_path = Path.cwd() / "store"
-os.makedirs(store_path, exist_ok=True)
 
 set_context("OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")
