@@ -30,7 +30,7 @@
 }
 
 .half-line-input {
-    width: 28ch;
+    max-width: 60ch;
 }
 
 .primary-button {   
