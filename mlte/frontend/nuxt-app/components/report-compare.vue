@@ -1,6 +1,11 @@
 <template>
   <h3>Header</h3>
-  <div><b>Differences: </b> {{ headerDifferences.join(", ") }}</div>
+  <div v-if="headerDifferences[0] == 'None'" style="color: green">
+    <b>Differences: </b> {{ headerDifferences.join(", ") }}
+  </div>
+  <div v-else style="color: red">
+    <b>Differences: </b> {{ headerDifferences.join(", ") }}
+  </div>
   <b>{{ version1 }}</b>
   <HeaderDisplay :header="report1.header" />
   <b>{{ version2 }}</b>
@@ -10,7 +15,12 @@
     <p><b>Result for: </b>{{ key }}</p>
     <ul>
       <li>
-        <div><b>Differences: </b> {{ resultsDifferences[key].join(", ") }}</div>
+        <div v-if="resultsDifferences[key][0] == 'None'" style="color: green">
+          <b>Differences: </b> {{ resultsDifferences[key].join(", ") }}
+        </div>
+        <div v-else style="color: red">
+          <b>Differences: </b> {{ resultsDifferences[key].join(", ") }}
+        </div>
       </li>
       <li>
         <b>Version: </b>{{ version1 }}
