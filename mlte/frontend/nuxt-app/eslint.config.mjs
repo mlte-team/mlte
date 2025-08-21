@@ -36,6 +36,8 @@ export default withNuxt(
 
           // Functions
           cancelFormSubmission: true,
+          compareHeaders: true,
+          compareResults: true,
           createCatalogEntry: true,
           createGroup: true,
           createModel: true,
