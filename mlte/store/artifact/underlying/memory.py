@@ -225,9 +225,13 @@ class InMemoryStoreSession(ArtifactStoreSession):
             if not force:
                 # If it exists and we are not "forcing" (overriting/editing), complain.
                 raise errors.ErrorAlreadyExists(f"Artifact '{artifact_id}'")
-        except errors.ErrorNotFound:
-            # It is ok if it was not found, it just means we are creating it.
-            pass
+        except errors.ErrorNotFound as ex:
+            if "Artifact" in str(ex):
+                # It is ok if artifact it was not found, it just means we are creating it.
+                pass
+            else:
+                # If model or version were not found.
+                raise ex
 
         self.storage.add_artifact(
             artifact, model_id, version_id, artifact.header.level
