@@ -7,6 +7,7 @@ Implementation of in-memory artifact store.
 from __future__ import annotations
 
 from collections import OrderedDict
+from typing import Optional
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
@@ -28,26 +29,39 @@ class ModelArtifacts:
         self.artifacts: OrderedDict[str, ArtifactModel] = OrderedDict()
         """The artifacts associated with the model only."""
 
-        self.versions: dict[str, OrderedDict[str, ArtifactModel]] = {}
-        """The versions in the model, along with the artifacts per version."""
+        self.version_artifacts: dict[str, OrderedDict[str, ArtifactModel]] = {}
+        """The version level artifacts, by version."""
 
     def get_all_artifacts(
         self, version_id: str
     ) -> OrderedDict[str, ArtifactModel]:
         """Returns all artifacts, from model and version level."""
         all_artifacts = self.artifacts.copy()
-        all_artifacts.update(self.versions[version_id])
+        all_artifacts.update(self.version_artifacts[version_id])
         return all_artifacts
 
-    def delete_artifact(self, artifact_id: str, version_id: str):
-        """Removes the given artifact, from the given version, or from the model list."""
-        if version_id in self.versions:
-            if artifact_id in self.versions[version_id]:
-                del self.versions[version_id][artifact_id]
+    def get_artifact(
+        self, version_id: str, artifact_id: str
+    ) -> Optional[ArtifactModel]:
+        """Gets an artifact from a model or version level."""
+        # First check at the model level.
+        if artifact_id in self.artifacts:
+            return self.artifacts[artifact_id]
+        else:
+            # Then check at the version level.
+            if artifact_id in self.version_artifacts[version_id]:
+                return self.version_artifacts[version_id][artifact_id]
             else:
-                # If the artifact was not in the provided version, assume it was in the model level ones.
-                if artifact_id in self.artifacts:
-                    del self.artifacts[artifact_id]
+                return None
+
+    def delete_artifact(
+        self, artifact_id: str, version_id: Optional[str] = None
+    ):
+        """Removes the given artifact, from the given version, or from the model list."""
+        if version_id:
+            del self.version_artifacts[version_id][artifact_id]
+        else:
+            del self.artifacts[artifact_id]
 
 
 class MemoryStorage:
@@ -69,7 +83,7 @@ class MemoryStorage:
                 artifact.header.identifier
             ] = artifact
         else:
-            self.models[model_id].versions[version_id][
+            self.models[model_id].version_artifacts[version_id][
                 artifact.header.identifier
             ] = artifact
 
@@ -122,10 +136,10 @@ class InMemoryStoreSession(ArtifactStoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
 
         model = self.storage.models[model_id]
-        if version.identifier in model.versions:
+        if version.identifier in model.version_artifacts:
             raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
 
-        model.versions[version.identifier] = OrderedDict()
+        model.version_artifacts[version.identifier] = OrderedDict()
         return Version(identifier=version.identifier)
 
     def read_version(self, model_id: str, version_id: str) -> Version:
@@ -133,7 +147,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
 
         model = self.storage.models[model_id]
-        if version_id not in model.versions:
+        if version_id not in model.version_artifacts:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
         return self._read_version(model_id, version_id)
@@ -143,18 +157,18 @@ class InMemoryStoreSession(ArtifactStoreSession):
             raise errors.ErrorNotFound(f"Model {model_id}")
 
         model = self.storage.models[model_id]
-        return [version_id for version_id in model.versions.keys()]
+        return [version_id for version_id in model.version_artifacts.keys()]
 
     def delete_version(self, model_id: str, version_id: str) -> Version:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
         model = self.storage.models[model_id]
-        if version_id not in model.versions:
+        if version_id not in model.version_artifacts:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
         popped = self._read_version(model_id, version_id)
-        del model.versions[version_id]
+        del model.version_artifacts[version_id]
         return popped
 
     def _read_model(self, model_id: str) -> Model:
@@ -170,7 +184,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
             identifier=model_id,
             versions=[
                 self._read_version(model_id, id)
-                for id in self.storage.models[model_id].versions.keys()
+                for id in self.storage.models[model_id].version_artifacts.keys()
             ],
         )
 
@@ -185,7 +199,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
             model_id in self.storage.models
         ), f"Model {model_id} not found in list of models."
         assert (
-            version_id in self.storage.models[model_id].versions
+            version_id in self.storage.models[model_id].version_artifacts
         ), f"Version {version_id} not found int list for model {model_id}."
         return Version(identifier=version_id)
 
@@ -205,12 +219,16 @@ class InMemoryStoreSession(ArtifactStoreSession):
         if parents:
             storeutil.create_parents(self, model_id, version_id)
 
-        artifacts = self._get_artifacts(model_id, version_id)
+        artifact_id = artifact.header.identifier
+        try:
+            artifact = self._get_artifact(model_id, version_id, artifact_id)
+            if not force:
+                # If it exists and we are not "forcing" (overriting/editing), complain.
+                raise errors.ErrorAlreadyExists(f"Artifact '{artifact_id}'")
+        except errors.ErrorNotFound:
+            # It is ok if it was not found, it just means we are creating it.
+            pass
 
-        if artifact.header.identifier in artifacts and not force:
-            raise errors.ErrorAlreadyExists(
-                f"Artifact '{artifact.header.identifier}'"
-            )
         self.storage.add_artifact(
             artifact, model_id, version_id, artifact.header.level
         )
@@ -222,11 +240,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        artifacts = self._get_artifacts(model_id, version_id)
-
-        if artifact_id not in artifacts:
-            raise errors.ErrorNotFound(f"Artifact '{artifact_id}'")
-        return artifacts[artifact_id]
+        return self._get_artifact(model_id, version_id, artifact_id)
 
     def read_artifacts(
         self,
@@ -259,17 +273,44 @@ class InMemoryStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        artifacts = self._get_artifacts(model_id, version_id)
+        artifact = self.read_artifact(model_id, version_id, artifact_id)
 
-        if artifact_id not in artifacts:
-            raise errors.ErrorNotFound(f"Artifact '{artifact_id}'")
-        artifact = artifacts[artifact_id]
-
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model: {model_id}")
-        self.storage.models[model_id].delete_artifact(artifact_id, version_id)
+        if artifact.header.level == ArtifactLevel.VERSION:
+            self.storage.models[model_id].delete_artifact(
+                artifact_id, version_id
+            )
+        else:
+            self.storage.models[model_id].delete_artifact(artifact_id)
 
         return artifact
+
+    def _get_artifact(
+        self, model_id: str, version_id: str, artifact_id: str
+    ) -> ArtifactModel:
+        """
+        Get the artifact from storage.
+        :param model_id: The identifier for the model.
+        :param version_id: The identifier for the version.
+        :param artifact_id: The identifier for the artifact.
+        :raises ErrorNotFound: If the model or version are not present.
+        :return: The artifcat.
+        """
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+        model_artifacts = self.storage.models[model_id]
+
+        if version_id not in model_artifacts.version_artifacts:
+            raise errors.ErrorNotFound(
+                f"Version: {version_id} for model {model_id}"
+            )
+
+        artifact = model_artifacts.get_artifact(version_id, artifact_id)
+        if not artifact:
+            raise errors.ErrorNotFound(
+                f"Artifact: {artifact_id} for version {version_id} and model {model_id}"
+            )
+        else:
+            return artifact
 
     def _get_artifacts(
         self, model_id: str, version_id: str
@@ -283,12 +324,12 @@ class InMemoryStoreSession(ArtifactStoreSession):
         """
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
-        model = self.storage.models[model_id]
+        model_artifacts = self.storage.models[model_id]
 
-        if version_id not in model.versions:
+        if version_id not in model_artifacts.version_artifacts:
             raise errors.ErrorNotFound(f"Version {version_id}")
 
-        return model.get_all_artifacts(version_id)
+        return model_artifacts.get_all_artifacts(version_id)
 
 
 class InMemoryStore(ArtifactStore):
