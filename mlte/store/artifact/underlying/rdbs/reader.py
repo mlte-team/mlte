@@ -100,7 +100,7 @@ class DBReader:
         )
 
     @staticmethod
-    def _get_version_level_artifacts_stmt(
+    def _get_version_artifacts_stmt(
         model_id: str,
         version_id: str,
     ) -> Select[tuple[DBArtifact]]:
@@ -121,9 +121,7 @@ class DBReader:
         session: Session,
     ) -> tuple[ArtifactModel, DBArtifact]:
         """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
-        select_stmt = DBReader._get_version_level_artifacts_stmt(
-            model_id, version_id
-        )
+        select_stmt = DBReader._get_version_artifacts_stmt(model_id, version_id)
         select_stmt = select_stmt.where(DBArtifact.identifier == artifact_id)
         artifact_orm: Optional[DBArtifact] = session.scalar(select_stmt)
 
@@ -152,9 +150,7 @@ class DBReader:
         session: Session,
     ) -> list[ArtifactModel]:
         """Loads and returns a list with all the artifacts, for the given model/version."""
-        select_stmt = DBReader._get_version_level_artifacts_stmt(
-            model_id, version_id
-        )
+        select_stmt = DBReader._get_version_artifacts_stmt(model_id, version_id)
         artifact_models = DBReader._load_artifact_models(select_stmt, session)
 
         # Also get model level artifacts.

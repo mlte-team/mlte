@@ -259,15 +259,13 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         return group_ids
 
     def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:
-        """Returns all artifact idss from both model/version levels, and just model level."""
+        """Returns all artifact ids from both model/version levels, and just model level."""
         version_artifacts = []
-        version_artifacts = self._get_version_level_artifacts(
-            model_id, version_id
-        )
+        version_artifacts = self._get_version_artifacts(model_id, version_id)
         model_artifacts = self._get_model_level_artifacts(model_id)
         return version_artifacts + model_artifacts
 
-    def _get_version_level_artifacts(
+    def _get_version_artifacts(
         self, model_id: str, version_id: str
     ) -> list[str]:
         """
