@@ -159,6 +159,7 @@ class ArtifactStoreSession(StoreSession):
         :param force: Overwrite an artifact if it already exists
         :param parents: Indicates whether organizational elements
         for artifact should be implictly created (default: False)
+        :param user: The username of the user executing this action.
         """
         artifact = self._add_header_data(artifact, user)
         return self.write_artifact(

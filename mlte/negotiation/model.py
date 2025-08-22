@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Literal, Optional
+from typing import Literal, Optional
 
 from strenum import StrEnum
 
@@ -266,14 +266,3 @@ class NegotiationCardModel(BaseModel):
 
     system_requirements: list[qas.QASDescriptor] = []
     """The descriptor of the system-level quality requirements."""
-
-    # Overriden.
-    def post_validation_hook(self, data: Optional[Any] = None) -> Any:
-        """Called after validation, allows us to generate ids for QASs."""
-        if not data or not isinstance(data, str):
-            raise RuntimeError(
-                f"Invalid data id received in Negotiation Card model: {data}"
-            )
-        identifier = str(data)
-        qas.add_qas_ids(identifier, self.system_requirements)
-        return self

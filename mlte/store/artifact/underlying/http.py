@@ -126,7 +126,9 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
         response = self.storage.post(
             groups=_artifact_groups(model_id, version_id),
             json=WriteArtifactRequest(
-                artifact=artifact, force=force, parents=parents
+                artifact=artifact,
+                force=force,
+                parents=parents,
             ).to_json(),
         )
         return ArtifactModel(**(response["artifact"]))
