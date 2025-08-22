@@ -182,9 +182,7 @@ def check_artifact_writing(
     """Helper function that writes an artifact, and then reads it and check they are the same."""
     # First write it.
     artifact = handle._add_header_data(artifact, user)
-    written_artifact = handle.write_artifact(
-        handle, model_id, version_id, artifact
-    )
+    written_artifact = handle.write_artifact(model_id, version_id, artifact)
     artifact.header.identifier = written_artifact.header.identifier
     artifact_id = artifact.header.identifier
 
@@ -223,7 +221,7 @@ def test_search(
         a1 = ArtifactModelFactory.make(artifact_type, "id1")
 
         for artifact in [a0, a1]:
-            handle.write_artifact(handle, model_id, version_id, artifact)
+            handle.write_artifact(model_id, version_id, artifact)
 
         artifacts = handle.search_artifacts(
             model_id,
@@ -295,7 +293,7 @@ def test_artifact_without_parents(
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact(handle, model_id, version_id, artifact)
+            handle.write_artifact(model_id, version_id, artifact)
 
 
 @pytest.mark.parametrize(
@@ -319,7 +317,7 @@ def test_artifact_parents(
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
         written_artifact = handle.write_artifact(
-            handle, model_id, version_id, artifact, parents=True
+            model_id, version_id, artifact, parents=True
         )
         artifact_id = written_artifact.header.identifier
 
@@ -353,24 +351,19 @@ def test_artifact_overwrite(
         artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
         # The initial write succeeds
-        written_artifact = handle.write_artifact(
-            handle, model_id, version_id, artifact
-        )
+        written_artifact = handle.write_artifact(model_id, version_id, artifact)
         artifact_id = written_artifact.header.identifier
 
         # Another attempt to write fails
         with pytest.raises(errors.ErrorAlreadyExists):
             handle.write_artifact(
-                handle,
                 model_id,
                 version_id,
                 artifact,
             )
 
         # Attempt to write with `force` succeeds
-        handle.write_artifact(
-            handle, model_id, version_id, artifact, force=True
-        )
+        handle.write_artifact(model_id, version_id, artifact, force=True)
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
