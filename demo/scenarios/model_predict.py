@@ -9,12 +9,22 @@ from typing import Optional
 import garden
 import tensorflow as tf
 
+LOG_FILE = "./log.txt"
+
 
 def setup_log():
+    # Remove old log.
+    try:
+        print("Deleting log")
+        os.remove(LOG_FILE)
+    except OSError:
+        pass
+
     logging.basicConfig(
-        filename="./log.txt",
+        filename=LOG_FILE,
         format="%(asctime)s %(message)s",
         level=logging.DEBUG,
+        force=True,
     )
 
 
@@ -26,7 +36,7 @@ def print_and_log(message: Optional[str]):
 
 def load_log() -> str:
     """Loads the log contents and returns it as a string."""
-    with open("log.txt", "r") as f:
+    with open(LOG_FILE, "r") as f:
         content = f.read()
     return content
 
