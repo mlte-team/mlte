@@ -3,27 +3,30 @@
     <title>Report Evolution</title>
     <template #page-title>Artifact Store</template>
 
-    <div class="multi-line-checkbox-div" style="width: 100%">
-      <label class="usa-label">Versions</label>
-      <span
-        v-for="(versionOption, index) in versionOptions"
-        :key="index"
-        class="multiple-per-line-checkbox"
-        style="width: 30%"
-      >
-        <UsaCheckbox
-          v-model="versionOption.selected"
-          @update:model-value="
-            versionChange(versionOption.selected, versionOption.name)
-          "
-        >
-          {{ versionOption.name }}
-        </UsaCheckbox>
-      </span>
-    </div>
-
     <div v-if="versionList.length === 0">No versions in model.</div>
+    <div v-else-if="firstReportIndex === -1">
+      No reports in any model versions.
+    </div>
     <div v-else>
+      <div class="multi-line-checkbox-div" style="width: 100%">
+        <label class="usa-label">Versions</label>
+        <span
+          v-for="(versionOption, index) in versionOptions"
+          :key="index"
+          class="multiple-per-line-checkbox"
+          style="width: 30%"
+        >
+          <UsaCheckbox
+            v-model="versionOption.selected"
+            @update:model-value="
+              versionChange(versionOption.selected, versionOption.name)
+            "
+          >
+            {{ versionOption.name }}
+          </UsaCheckbox>
+        </span>
+      </div>
+
       <UsaTable
         :headers="tableHeaders"
         :rows="filteredTableRows"
@@ -47,6 +50,7 @@ const tableHeaders = ref([
 const allTableRows = ref<Array<Dictionary<string>>>([]);
 const filteredTableRows = ref<Array<Dictionary<string>>>([]);
 
+const firstReportIndex = ref(-1);
 if (versionList.length > 0) {
   // Populate versionOptions
   versionList.forEach((version: string) => {
@@ -64,12 +68,17 @@ if (versionList.length > 0) {
     });
   }
 
-  // TOOD: This isn't the best check, if the first version doesn't have a report, but later ones do this will break
-  // TODO: Also needs to in some way account for the test case names changing, as this just takes the one from the first
-  if (reports.value[versionList[0]].length > 0) {
+  firstReportIndex.value = Object.keys(reports.value).findIndex(
+    (version: string) => {
+      return reports.value[version].length > 0;
+    },
+  );
+  if (firstReportIndex.value > -1) {
     // Populate table headers
+    // TODO: Needs to in some way account for the test case names changing, as this just takes the one from the first
     Object.keys(
-      reports.value[versionList[0]][0].body.test_results.results,
+      reports.value[versionList[firstReportIndex.value]][0].body.test_results
+        .results,
     ).forEach((key) => {
       tableHeaders.value.push({ id: key, label: key, sortable: false });
     });
