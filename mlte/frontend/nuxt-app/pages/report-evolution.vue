@@ -8,7 +8,10 @@
       No reports in any model versions.
     </div>
     <div v-else>
-      <div class="multi-line-checkbox-div" style="width: 100%">
+      <div
+        class="multi-line-checkbox-div"
+        style="width: 100%; display: inline-block"
+      >
         <label class="usa-label">Versions</label>
         <span
           v-for="(versionOption, index) in versionOptions"
@@ -27,12 +30,35 @@
         </span>
       </div>
 
-      <UsaTable
-        :headers="tableHeaders"
-        :rows="filteredTableRows"
-        borderless
-        class="table"
-      />
+      <table class="table usa-table usa-table--borderless sortable">
+        <thead>
+          <tr data-sort-method="none">
+            <th
+              v-for="(header, index) in tableHeaders"
+              :key="index"
+              data-sortable
+              scope="col"
+              role="columnheader"
+            >
+              {{ header.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, index) in filteredTableRows" :key="index">
+            <template v-for="(value, key) in row" :key="key">
+              <td v-if="value === 'Success'" class="success-td">{{ value }}</td>
+              <td v-else-if="value === 'Info'" class="info-td">{{ value }}</td>
+              <td v-else-if="value === 'Failure'" class="failure-td">
+                {{ value }}
+              </td>
+              <td v-else>
+                {{ value }}
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </NuxtLayout>
 </template>
@@ -51,6 +77,7 @@ const allTableRows = ref<Array<Dictionary<string>>>([]);
 const filteredTableRows = ref<Array<Dictionary<string>>>([]);
 
 const firstReportIndex = ref(-1);
+
 if (versionList.length > 0) {
   // Populate versionOptions
   versionList.forEach((version: string) => {
@@ -92,14 +119,17 @@ if (versionList.length > 0) {
         };
         tableHeaders.value.forEach((header) => {
           if (header.id !== "version" && header.id !== "identifier") {
-            row[header.id] = report.body.test_results.results[header.id].type;
+            if (header.id in report.body.test_results.results) {
+              row[header.id] = report.body.test_results.results[header.id].type;
+            } else {
+              row[header.id] = "N/A";
+            }
           }
         });
         allTableRows.value.push(row);
       });
     });
   }
-
   filteredTableRows.value = allTableRows.value;
 }
 

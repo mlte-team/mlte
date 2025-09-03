@@ -77,6 +77,18 @@ hr {
     width: 30%;
 }
 
+.success-td {
+   background-color: rgba(210, 232, 221, 255) !important;
+}
+
+.info-td {
+    background: rgba(255, 243, 205, 255) !important;
+}
+
+.failure-td {
+    background-color: rgba(248, 216, 219, 255) !important;
+}
+
 .submit-footer {
     background-color: #000000;
     border: 1px solid #000000;
