@@ -30,35 +30,41 @@
         </span>
       </div>
 
-      <table class="table usa-table usa-table--borderless sortable">
-        <thead>
-          <tr data-sort-method="none">
-            <th
-              v-for="(header, index) in tableHeaders"
-              :key="index"
-              data-sortable
-              scope="col"
-              role="columnheader"
-            >
-              {{ header }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in filteredTableRows" :key="index">
-            <template v-for="(value, key) in row" :key="key">
-              <td v-if="value === 'Success'" class="success-td">{{ value }}</td>
-              <td v-else-if="value === 'Info'" class="info-td">{{ value }}</td>
-              <td v-else-if="value === 'Failure'" class="failure-td">
-                {{ value }}
-              </td>
-              <td v-else>
-                {{ value }}
-              </td>
-            </template>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: scroll">
+        <table class="table usa-table usa-table--borderless sortable">
+          <thead>
+            <tr data-sort-method="none">
+              <th
+                v-for="(header, index) in tableHeaders"
+                :key="index"
+                data-sortable
+                scope="col"
+                role="columnheader"
+              >
+                {{ header }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in filteredTableRows" :key="index">
+              <template v-for="(value, key) in row" :key="key">
+                <td v-if="value === 'Success'" class="success-td">
+                  {{ value }}
+                </td>
+                <td v-else-if="value === 'Info'" class="info-td">
+                  {{ value }}
+                </td>
+                <td v-else-if="value === 'Failure'" class="failure-td">
+                  {{ value }}
+                </td>
+                <td v-else>
+                  {{ value }}
+                </td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </NuxtLayout>
 </template>
