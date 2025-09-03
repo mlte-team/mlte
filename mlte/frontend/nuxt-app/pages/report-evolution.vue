@@ -40,7 +40,7 @@
               scope="col"
               role="columnheader"
             >
-              {{ header.label }}
+              {{ header }}
             </th>
           </tr>
         </thead>
@@ -69,10 +69,7 @@ const queryModel = useRoute().query.model;
 const reports = ref<Dictionary<Array<ArtifactModel<ReportModel>>>>({});
 const versionOptions = ref<Array<CheckboxOption>>([]);
 const versionList = await getModelVersions(queryModel as string);
-const tableHeaders = ref([
-  { id: "version", label: "Version", sortable: true },
-  { id: "identifier", label: "Identifier", sortable: true },
-]);
+const tableHeaders = ref<Array<string>>(["Version", "Identifier"]);
 const allTableRows = ref<Array<Dictionary<string>>>([]);
 const filteredTableRows = ref<Array<Dictionary<string>>>([]);
 
@@ -101,13 +98,17 @@ if (versionList.length > 0) {
     },
   );
   if (firstReportIndex.value > -1) {
-    // Populate table headers
-    // TODO: Needs to in some way account for the test case names changing, as this just takes the one from the first
-    Object.keys(
-      reports.value[versionList[firstReportIndex.value]][0].body.test_results
-        .results,
-    ).forEach((key) => {
-      tableHeaders.value.push({ id: key, label: key, sortable: false });
+    // Populate table headers with all test result id's from any report
+    Object.keys(reports.value).forEach((reportKey: string) => {
+      reports.value[reportKey].forEach((report: ArtifactModel<ReportModel>) => {
+        Object.keys(report.body.test_results.results).forEach(
+          (test_result_id: string) => {
+            if (!tableHeaders.value.includes(test_result_id)) {
+              tableHeaders.value.push(test_result_id);
+            }
+          },
+        );
+      });
     });
 
     // Populate table rows
@@ -118,11 +119,11 @@ if (versionList.length > 0) {
           identifier: report.header.identifier,
         };
         tableHeaders.value.forEach((header) => {
-          if (header.id !== "version" && header.id !== "identifier") {
-            if (header.id in report.body.test_results.results) {
-              row[header.id] = report.body.test_results.results[header.id].type;
+          if (header !== "Version" && header !== "Identifier") {
+            if (header in report.body.test_results.results) {
+              row[header] = report.body.test_results.results[header].type;
             } else {
-              row[header.id] = "N/A";
+              row[header] = "N/A";
             }
           }
         });
