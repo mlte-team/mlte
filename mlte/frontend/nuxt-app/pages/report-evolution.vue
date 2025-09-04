@@ -48,7 +48,22 @@
           <tbody>
             <tr v-for="(row, index) in filteredTableRows" :key="index">
               <template v-for="(value, key) in row" :key="key">
-                <td v-if="value === 'Success'" class="success-td">
+                <td v-if="key === 'identifier'">
+                  <NuxtLink
+                    :to="{
+                      path: '/artifact-views/report-view',
+                      query: {
+                        model: queryModel,
+                        version: row.version,
+                        artifactId: row.identifier,
+                      },
+                    }"
+                    target="_blank"
+                  >
+                    {{ value }}
+                  </NuxtLink>
+                </td>
+                <td v-else-if="value === 'Success'" class="success-td">
                   {{ value }}
                 </td>
                 <td v-else-if="value === 'Info'" class="info-td">
