@@ -54,8 +54,8 @@
                       path: '/artifact-views/report-view',
                       query: {
                         model: queryModel,
-                        version: row.version,
-                        artifactId: row.identifier,
+                        version: row.version.value,
+                        artifactId: row.identifier.value,
                       },
                     }"
                     target="_blank"
