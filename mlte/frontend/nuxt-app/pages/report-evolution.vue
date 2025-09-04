@@ -60,20 +60,35 @@
                     }"
                     target="_blank"
                   >
-                    {{ value }}
+                    {{ value.value }}
                   </NuxtLink>
                 </td>
-                <td v-else-if="value === 'Success'" class="success-td">
-                  {{ value }}
+                <td v-else-if="value.value === 'Success'" class="success-td">
+                  <span class="tooltip">
+                    {{ value.value }}
+                    <span class="tooltiptext">
+                      {{ value.value }}: {{ value.message }}
+                    </span>
+                  </span>
                 </td>
-                <td v-else-if="value === 'Info'" class="info-td">
-                  {{ value }}
+                <td v-else-if="value.value === 'Info'" class="info-td">
+                  <span class="tooltip">
+                    {{ value.value }}
+                    <span class="tooltiptext">
+                      {{ value.value }}: {{ value.message }}
+                    </span>
+                  </span>
                 </td>
-                <td v-else-if="value === 'Failure'" class="failure-td">
-                  {{ value }}
+                <td v-else-if="value.value === 'Failure'" class="failure-td">
+                  <span class="tooltip">
+                    {{ value.value }}
+                    <span class="tooltiptext">
+                      {{ value.value }}: {{ value.message }}
+                    </span>
+                  </span>
                 </td>
                 <td v-else>
-                  {{ value }}
+                  {{ value.value }}
                 </td>
               </template>
             </tr>
@@ -91,8 +106,8 @@ const reports = ref<Dictionary<Array<ArtifactModel<ReportModel>>>>({});
 const versionOptions = ref<Array<CheckboxOption>>([]);
 const versionList = await getModelVersions(queryModel as string);
 const tableHeaders = ref<Array<string>>(["Version", "Identifier"]);
-const allTableRows = ref<Array<Dictionary<string>>>([]);
-const filteredTableRows = ref<Array<Dictionary<string>>>([]);
+const allTableRows = ref<Array<Dictionary<Dictionary<string>>>>([]);
+const filteredTableRows = ref<Array<Dictionary<Dictionary<string>>>>([]);
 
 const firstReportIndex = ref(-1);
 
@@ -135,16 +150,22 @@ if (versionList.length > 0) {
     // Populate table rows
     versionList.forEach((version: string) => {
       reports.value[version].forEach((report) => {
-        const row: Dictionary<string> = {
-          version: version,
-          identifier: report.header.identifier,
+        const row: Dictionary<Dictionary<string>> = {
+          version: { value: version },
+          identifier: { value: report.header.identifier },
         };
         tableHeaders.value.forEach((header) => {
           if (header !== "Version" && header !== "Identifier") {
             if (header in report.body.test_results.results) {
-              row[header] = report.body.test_results.results[header].type;
+              row[header] = {
+                value: report.body.test_results.results[header].type,
+                message: report.body.test_results.results[header].message,
+              };
             } else {
-              row[header] = "N/A";
+              row[header] = {
+                value: "N/A",
+                message: "N/A",
+              };
             }
           }
         });
@@ -163,15 +184,15 @@ if (versionList.length > 0) {
  */
 function versionChange(selected: boolean, version: string) {
   if (selected) {
-    allTableRows.value.forEach((row: Dictionary<string>) => {
-      if (row.version == version) {
+    allTableRows.value.forEach((row: Dictionary<Dictionary<string>>) => {
+      if (row.version.value == version) {
         filteredTableRows.value.push(row);
       }
     });
     filteredTableRows.value.sort((a, b) => {
-      if (a.version < b.version) {
+      if (a.version.value < b.version.value) {
         return -1;
-      } else if (a.version > b.version) {
+      } else if (a.version.value > b.version.value) {
         return 1;
       } else {
         return 0;
@@ -179,7 +200,7 @@ function versionChange(selected: boolean, version: string) {
     });
   } else {
     filteredTableRows.value = filteredTableRows.value.filter(
-      (item) => item.version !== version,
+      (item) => item.version.value !== version,
     );
   }
 }
