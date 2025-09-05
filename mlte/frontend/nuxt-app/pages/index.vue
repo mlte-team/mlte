@@ -195,6 +195,22 @@
               Compare Reports
             </UsaButton>
           </NuxtLink>
+          <NuxtLink
+            :to="{
+              path: '/report-evolution',
+              query: {
+                model: selectedModel,
+              },
+            }"
+          >
+            <UsaButton
+              :disabled="selectedModel === ''"
+              class="primary-button"
+              style="float: left"
+            >
+              See Report Evolution
+            </UsaButton>
+          </NuxtLink>
         </div>
       </UsaAccordionItem>
 

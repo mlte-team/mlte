@@ -40,9 +40,11 @@ export class SelectOption {
   ) {}
 }
 
-export interface TagOption {
-  name: string;
-  selected: boolean;
+export class CheckboxOption {
+  constructor(
+    public name: string,
+    public selected: boolean,
+  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------
