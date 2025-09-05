@@ -89,32 +89,10 @@ hr {
     background-color: rgba(248, 216, 219, 255) !important;
 }
 
-.tooltip {
-  position: relative;
+.modal-button {
   display: inline-block;
   border-bottom: 1px dotted black;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 200px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
- 
-  position: absolute;
-  z-index: 5;
-
-  /* Make it display on the bottom */
-  top: 100%;
-  left: 50%;
-  margin-left: -100px;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
+  cursor: pointer;
 }
 
 .submit-footer {

@@ -30,6 +30,14 @@
         </span>
       </div>
 
+      <ModalWrapper
+        :visible="modalVisible"
+        @toggle-visible="(value: boolean) => (modalVisible = value)"
+      >
+        <template #heading>{{ modalHeading }}</template>
+        {{ modalData }}
+      </ModalWrapper>
+
       <div style="overflow-x: scroll">
         <table class="table usa-table usa-table--borderless sortable">
           <thead>
@@ -64,28 +72,46 @@
                   </NuxtLink>
                 </td>
                 <td v-else-if="value.value === 'Success'" class="success-td">
-                  <span class="tooltip">
+                  <div
+                    class="modal-button"
+                    @click="
+                      displayModal(
+                        row.identifier.value,
+                        value.value,
+                        value.message,
+                      )
+                    "
+                  >
                     {{ value.value }}
-                    <span class="tooltiptext">
-                      {{ value.value }}: {{ value.message }}
-                    </span>
-                  </span>
+                  </div>
                 </td>
                 <td v-else-if="value.value === 'Info'" class="info-td">
-                  <span class="tooltip">
+                  <div
+                    class="modal-button"
+                    @click="
+                      displayModal(
+                        row.identifier.value,
+                        value.value,
+                        value.message,
+                      )
+                    "
+                  >
                     {{ value.value }}
-                    <span class="tooltiptext">
-                      {{ value.value }}: {{ value.message }}
-                    </span>
-                  </span>
+                  </div>
                 </td>
                 <td v-else-if="value.value === 'Failure'" class="failure-td">
-                  <span class="tooltip">
+                  <div
+                    class="modal-button"
+                    @click="
+                      displayModal(
+                        row.identifier.value,
+                        value.value,
+                        value.message,
+                      )
+                    "
+                  >
                     {{ value.value }}
-                    <span class="tooltiptext">
-                      {{ value.value }}: {{ value.message }}
-                    </span>
-                  </span>
+                  </div>
                 </td>
                 <td v-else>
                   {{ value.value }}
@@ -101,6 +127,10 @@
 
 <script setup lang="ts">
 const queryModel = useRoute().query.model;
+
+const modalVisible = ref(false);
+const modalHeading = ref<string>("");
+const modalData = ref<string>();
 
 const reports = ref<Dictionary<Array<ArtifactModel<ReportModel>>>>({});
 const versionOptions = ref<Array<CheckboxOption>>([]);
@@ -203,5 +233,18 @@ function versionChange(selected: boolean, version: string) {
       (item) => item.version.value !== version,
     );
   }
+}
+
+/**
+ * Populates modal data and makes it visible
+ *
+ * @param {string} identifier Identifier to use as modal heading
+ * @param {string} type Type of result, success, failure or info
+ * @param {string} message Message of the result
+ */
+function displayModal(identifier: string, type: string, message: string) {
+  modalHeading.value = identifier;
+  modalData.value = type + ": " + message;
+  modalVisible.value = true;
 }
 </script>
