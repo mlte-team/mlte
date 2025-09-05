@@ -90,7 +90,9 @@ hr {
 }
 
 .tooltip {
-  position: absolute;
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
 }
 
 .tooltip .tooltiptext {
@@ -103,7 +105,12 @@ hr {
   border-radius: 6px;
  
   position: absolute;
-  z-index: 1;
+  z-index: 5;
+
+  /* Make it display on the bottom */
+  top: 100%;
+  left: 50%;
+  margin-left: -100px;
 }
 
 .tooltip:hover .tooltiptext {
