@@ -480,7 +480,7 @@ function populateArtifacts(
       artifact.header.timestamp * 1000,
     ).toLocaleString("en-US") as unknown as number;
     // Negotiation card
-    if (artifact.body.artifact_type === "negotiation_card") {
+    if (artifact.body.artifact_type === "card") {
       if (isValidNegotiation(artifact)) {
         negotiationCards.value.push(
           new TableItem(
@@ -506,7 +506,7 @@ function populateArtifacts(
       }
     }
     // Test Suite
-    else if (artifact.body.artifact_type === "test_suite") {
+    else if (artifact.body.artifact_type === "suite") {
       if (isValidTestSuite(artifact)) {
         testSuites.value.push(
           new TableItem(
@@ -519,7 +519,7 @@ function populateArtifacts(
       }
     }
     // Test Results
-    else if (artifact.body.artifact_type === "test_results") {
+    else if (artifact.body.artifact_type === "results") {
       if (isValidTestResults(artifact)) {
         testResults.value.push(
           new TableItem(

@@ -683,8 +683,8 @@
   "description": "The model implementation for the NegotiationCard artifact.",
   "properties": {
     "artifact_type": {
-      "const": "negotiation_card",
-      "default": "negotiation_card",
+      "const": "card",
+      "default": "card",
       "title": "Artifact Type",
       "type": "string"
     },

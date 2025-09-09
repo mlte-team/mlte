@@ -14,16 +14,16 @@ from strenum import StrEnum
 class ArtifactType(StrEnum):
     """Enumerates all supported artifact types."""
 
-    NEGOTIATION_CARD = "negotiation_card"
+    NEGOTIATION_CARD = "card"
     """The negotiation card artifact type."""
 
     EVIDENCE = "evidence"
     """The evidence card artifact type."""
 
-    TEST_SUITE = "test_suite"
+    TEST_SUITE = "suite"
     """The specification artifact type."""
 
-    TEST_RESULTS = "test_results"
+    TEST_RESULTS = "results"
     """The results for a test suite artifact type."""
 
     REPORT = "report"
