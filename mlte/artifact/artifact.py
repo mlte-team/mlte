@@ -243,7 +243,10 @@ class Artifact(Serializable, abc.ABC):
     @staticmethod
     def _build_id(prefix: str, base: str) -> str:
         """Builds the common id structure for an artifact."""
-        return f"{prefix}.{base}"
+        if not base.startswith(f"{prefix}."):
+            return f"{prefix}.{base}"
+        else:
+            return base
 
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""
