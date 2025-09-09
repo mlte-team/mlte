@@ -77,7 +77,7 @@ def test_save_load_default(
     store_with_context: tuple[ArtifactStore, Context]  # noqa
 ):
     store, ctx = store_with_context
-    test_suite = get_sample_test_suite(identifier=TestSuite.get_default_id())
+    test_suite = get_sample_test_suite(identifier=TestSuite.build_full_id())
 
     test_suite.save_with(ctx, store)
 

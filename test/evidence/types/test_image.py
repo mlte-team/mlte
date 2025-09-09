@@ -56,7 +56,7 @@ def test_save_load(
     i.save_with(ctx, store)
 
     # NOTE(Kyle): No equality test implemented.
-    _ = Image.load_with("test_id.evidence", context=ctx, store=store)
+    _ = Image.load_with("evidence.test_id", context=ctx, store=store)
 
 
 def test_ignore() -> None:

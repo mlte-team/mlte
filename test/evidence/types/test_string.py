@@ -65,7 +65,7 @@ def test_save_load(
     i = String("test").with_metadata(get_sample_evidence_metadata())
     i.save_with(ctx, store)
 
-    loaded = String.load_with("test_id.evidence", context=ctx, store=store)
+    loaded = String.load_with("evidence.test_id", context=ctx, store=store)
     assert loaded == i
 
 

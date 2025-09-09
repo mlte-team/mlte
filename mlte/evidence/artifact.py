@@ -19,9 +19,6 @@ from mlte.evidence.model import EvidenceModel
 from mlte.model.base_model import BaseModel
 from mlte.store.artifact.store import ArtifactStore
 
-DEFAULT_EVIDENCE_ID = "default.evidence"
-"""This is supposed to be a temporary id, not for permanent use."""
-
 T = TypeVar("T", bound="Evidence")
 """Needed for generic return of type."""
 
@@ -36,10 +33,13 @@ class Evidence(Artifact, ABC):
     associate evaluation results with the originating measurement.
     """
 
+    type = ArtifactType.EVIDENCE
+    """Class attribute indicating type."""
+
     def __init__(self):
         """Initialize a Evidence instance"""
         """We use the default id for now, it will be updated later with the metadata."""
-        super().__init__(self.get_default_id(), ArtifactType.EVIDENCE)
+        super().__init__()
 
         self.typename: str = meta.get_qualified_name(self.__class__)
         """The class type of the evidence itself."""
@@ -51,15 +51,10 @@ class Evidence(Artifact, ABC):
         """Sets the evidence metadata, returns updated object."""
         self.metadata = evidence_metadata
 
-        # Also set an identifier associated to the metadata.
-        self.identifier = f"{evidence_metadata.test_case_id}.evidence"
+        # Also set the identifier associated to the metadata.
+        self.identifier = self.build_full_id(evidence_metadata.test_case_id)
 
         return self
-
-    @staticmethod
-    def get_default_id() -> str:
-        """Default evidence id."""
-        return DEFAULT_EVIDENCE_ID
 
     def __str__(self) -> str:
         """Return a string representation."""

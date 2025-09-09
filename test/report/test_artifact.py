@@ -38,7 +38,9 @@ def test_save_load(
     report.save_with(ctx, store)
 
     report_id = report.identifier
-    assert report_id != initial_id and report_id.startswith(initial_id)
+    assert report_id != initial_id and report_id.startswith(
+        Report.build_full_id(initial_id)
+    )
 
     loaded = Report.load_with(report_id, context=ctx, store=store)
     assert loaded == report

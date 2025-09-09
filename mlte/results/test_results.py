@@ -5,7 +5,7 @@ TestResults class implementation.
 from __future__ import annotations
 
 import typing
-from typing import Type, Union
+from typing import Optional, Type, Union
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -17,8 +17,6 @@ from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
 
-DEFAULT_TEST_RESULTS_ID = "default.results"
-
 # -----------------------------------------------------------------------------
 # TestResults
 # -----------------------------------------------------------------------------
@@ -29,10 +27,13 @@ class TestResults(Artifact):
     TestResults represents a the results for a TestSuite.
     """
 
+    type = ArtifactType.TEST_RESULTS
+    """Class attribute indicating type."""
+
     def __init__(
         self,
         test_suite: TestSuite,
-        identifier: str = DEFAULT_TEST_RESULTS_ID,
+        identifier: Optional[str] = None,
         results: dict[str, Result] = {},
     ):
         """
@@ -42,7 +43,7 @@ class TestResults(Artifact):
         :param test_suite: The TestSuite
         :param results: The validation Results for the TestSuite
         """
-        super().__init__(identifier, ArtifactType.TEST_RESULTS)
+        super().__init__(identifier)
 
         self.test_suite = test_suite
         """The id of the TestSuite that we validated."""
@@ -164,11 +165,6 @@ class TestResults(Artifact):
     # -------------------------------------------------------------------------
     # Default overriden.
     # -------------------------------------------------------------------------
-
-    @staticmethod
-    def get_default_id() -> str:
-        """Overriden"""
-        return DEFAULT_TEST_RESULTS_ID
 
     def __eq__(self, other: object) -> bool:
         """Test TestResults instance for equality."""

@@ -24,20 +24,21 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_suite import TestSuite
 
-DEFAULT_REPORT_ID = "default.report"
-
 
 class Report(Artifact):
     """The report artifact contains the results of MLTE model evaluation."""
 
+    type = ArtifactType.REPORT
+    """Class attribute indicating type."""
+
     def __init__(
         self,
-        identifier: str = DEFAULT_REPORT_ID,
-        negotiation_card_id: str = NegotiationCard.get_default_id(),
+        identifier: Optional[str] = None,
+        negotiation_card_id: str = NegotiationCard.build_full_id(),
         negotiation_card_model: Optional[NegotiationCardModel] = None,
-        test_suite_id: str = TestSuite.get_default_id(),
+        test_suite_id: str = TestSuite.build_full_id(),
         test_suite_model: Optional[TestSuiteModel] = None,
-        test_results_id: str = TestResults.get_default_id(),
+        test_results_id: str = TestResults.build_full_id(),
         test_results_model: Optional[TestResultsModel] = None,
         comments: List[CommentDescriptor] = [],
     ) -> None:
@@ -53,7 +54,7 @@ class Report(Artifact):
         :param test_results_model: A TestResultsModel object; if None, TestResults from the provided id will be loaded.
         :param comments: Optional comments to add.
         """
-        super().__init__(identifier, ArtifactType.REPORT)
+        super().__init__(identifier)
 
         self.negotiation_card_id = negotiation_card_id
         self.negotiation_card_model = (
@@ -150,11 +151,6 @@ class Report(Artifact):
     # ----------------------------------------------------------------------------------
     # Helper methods.
     # ----------------------------------------------------------------------------------
-
-    @staticmethod
-    def get_default_id() -> str:
-        """Get the default identifier for the artifact."""
-        return DEFAULT_REPORT_ID
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Report):

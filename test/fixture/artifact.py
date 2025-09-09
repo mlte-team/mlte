@@ -255,7 +255,7 @@ def _make_test_results() -> TestResultsModel:
     :return: The artifact
     """
     return TestResultsModel(
-        test_suite_id=f"{TestSuite.get_default_id()}",
+        test_suite_id=f"{TestSuite.build_full_id()}",
         test_suite=typing.cast(
             TestSuiteModel,
             ArtifactModelFactory.make(ArtifactType.TEST_SUITE).body,
