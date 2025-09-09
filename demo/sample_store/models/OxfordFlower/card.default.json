@@ -1,13 +1,13 @@
 {
     "header": {
-        "identifier": "default.card",
-        "type": "negotiation_card",
+        "identifier": "card.default",
+        "type": "card",
         "timestamp": 1745958596,
         "creator": "admin",
         "level": "model"
     },
     "body": {
-        "artifact_type": "negotiation_card",
+        "artifact_type": "card",
         "system": {
             "goals": [
                 {

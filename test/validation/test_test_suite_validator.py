@@ -55,7 +55,7 @@ def test_success_defaults(store_with_context: tuple[ArtifactStore, Context]):
     test_suite = TestSuite.from_model(
         ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
-    test_suite.identifier = TestSuite.get_default_id()
+    test_suite.identifier = TestSuite.build_full_id()
     test_suite.save_with(ctx, store, parents=True)
 
     m = get_sample_evidence_metadata(test_case_id="Test1")
