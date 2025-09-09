@@ -113,7 +113,7 @@ const systemInformationRef = ref(null);
 const dataRef = ref(null);
 const modelRef = ref(null);
 
-const userInputArtifactId = ref("default.card");
+const userInputArtifactId = ref("default");
 const creator = ref("");
 const timestamp = ref("");
 const form = ref(new NegotiationCardModel());

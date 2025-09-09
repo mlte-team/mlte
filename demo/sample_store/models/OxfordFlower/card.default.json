@@ -203,7 +203,7 @@
         },
         "system_requirements": [
             {
-                "identifier": "default.card-qas_001",
+                "identifier": "card.default-qas_001",
                 "quality": "Model Impartial to Photo Location",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the flower identification application",
@@ -212,7 +212,7 @@
                 "measure": "at least 90% of the time"
             },
             {
-                "identifier": "default.card-qas_002",
+                "identifier": "card.default-qas_002",
                 "quality": "Model Robust to Noise (Image Blur)",
                 "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry,",
                 "source": "the flower identification application",
@@ -221,7 +221,7 @@
                 "measure": "at the same rate as non-blurry images"
             },
             {
-                "identifier": "default.card-qas_003",
+                "identifier": "card.default-qas_003",
                 "quality": "Model Robust to Noise (Channel Loss)",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the flower identification application running on a loaned device ",
@@ -230,7 +230,7 @@
                 "measure": "at the same rate as full images"
             },
             {
-                "identifier": "default.card-qas_004",
+                "identifier": "card.default-qas_004",
                 "quality": "Resource Consumption on Operational Platform",
                 "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                 "source": "the flower identification application",
@@ -239,7 +239,7 @@
                 "measure": "without any errors due to unavailable resources"
             },
             {
-                "identifier": "default.card-qas_005",
+                "identifier": "card.default-qas_005",
                 "quality": "Understanding Model Results",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the flower identification application",
@@ -248,7 +248,7 @@
                 "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
             },
             {
-                "identifier": "default.card-qas_006",
+                "identifier": "card.default-qas_006",
                 "quality": "Accuracy",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "flower identification application",
@@ -257,7 +257,7 @@
                 "measure": "at least 90% of the time"
             },
             {
-                "identifier": "default.card-qas_007",
+                "identifier": "card.default-qas_007",
                 "quality": "Input and Output Specification",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "flower identification application",
@@ -266,7 +266,7 @@
                 "measure": "according to established input and output specifications without exceptions"
             },
             {
-                "identifier": "default.card-qas_008",
+                "identifier": "card.default-qas_008",
                 "quality": "Input Validation",
                 "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
                 "source": "the flower identification application",
@@ -275,7 +275,7 @@
                 "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input."
             },
             {
-                "identifier": "default.card-qas_009",
+                "identifier": "card.default-qas_009",
                 "quality": "Detect Out-of-Distribution (OOD) Inputs",
                 "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
                 "source": "the flower identification application",
@@ -284,7 +284,7 @@
                 "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
             },
             {
-                "identifier": "default.card-qas_010",
+                "identifier": "card.default-qas_010",
                 "quality": "Detect Shifts in Output (Confidence) Distribution",
                 "stimulus": "The ML pipeline detects an output distribution change",
                 "source": "the output produced by the model",
@@ -293,7 +293,7 @@
                 "measure": "with the tag \"Model - Output Confidence Error - <Output>, where <Output> is the output produced by the model that triggered the condition"
             },
             {
-                "identifier": "default.card-qas_011",
+                "identifier": "card.default-qas_011",
                 "quality": "Inference Time on Operational Platform",
                 "stimulus": "Model running on the loaned device receives a picture",
                 "source": "the flower identification application",
