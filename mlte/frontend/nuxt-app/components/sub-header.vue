@@ -4,12 +4,13 @@
       <slot />
       <ExampleButton v-if="props.renderExample" @click="visible = true" />
     </h3>
-    <ExampleModal
+    <ModalWrapper
       :visible="visible"
       @toggle-visible="(value) => (visible = value)"
     >
+      <template #heading> Example: </template>
       <slot name="example" />
-    </ExampleModal>
+    </ModalWrapper>
     <p v-if="props.renderInfo">
       <slot name="info" />
     </p>

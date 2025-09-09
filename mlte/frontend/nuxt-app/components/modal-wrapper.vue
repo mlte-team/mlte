@@ -18,7 +18,7 @@
         />
       </button>
     </template>
-    <template #heading> Example: </template>
+    <template #heading> <slot name="heading" /> </template>
     <slot />
     <template #footer>
       <slot name="footer" />

@@ -1,18 +1,13 @@
-"""
-mlte/store/api/endpoints/artifact.py
-
-API definition for MLTE artifacts.
-"""
+"""API definition for MLTE artifacts."""
 
 from __future__ import annotations
-
-from typing import List
 
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte._private import url as url_utils
+from mlte.artifact.factory import ArtifactFactory
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
@@ -21,6 +16,8 @@ from mlte.backend.api.models.artifact_model import (
     WriteArtifactResponse,
 )
 from mlte.backend.core import state_stores
+from mlte.backend.core.state import state
+from mlte.context.context import Context
 from mlte.store.query import Query
 
 # The router exported by this submodule
@@ -43,27 +40,27 @@ def write_artifact(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
-    with state_stores.artifact_store_session() as artifact_store:
-        try:
-            artifact = artifact_store.write_artifact_with_header(
-                model_id,
-                version_id,
-                request.artifact,
-                force=request.force,
-                parents=request.parents,
-                user=current_user.username,
-            )
-            return WriteArtifactResponse(artifact=artifact)
-        except errors.ErrorNotFound as e:
-            raise HTTPException(
-                status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
-        except errors.ErrorAlreadyExists as e:
-            raise HTTPException(
-                status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
-        except Exception as ex:
-            raise_http_internal_error(ex)
+
+    try:
+        artifact = ArtifactFactory.from_model(request.artifact)
+        model = artifact.save_with(
+            Context(model_id, version_id),
+            state.artifact_store,
+            force=request.force,
+            parents=request.parents,
+            user=current_user.username,
+        )
+        return WriteArtifactResponse(artifact=model)
+    except errors.ErrorNotFound as e:
+        raise HTTPException(
+            status_code=codes.NOT_FOUND, detail=f"{e} not found."
+        )
+    except errors.ErrorAlreadyExists as e:
+        raise HTTPException(
+            status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
+        )
+    except Exception as ex:
+        raise_http_internal_error(ex)
 
 
 @router.get("/{artifact_id}")
@@ -101,7 +98,7 @@ def read_artifacts(
     current_user: AuthorizedUser,
     limit: int = 100,
     offset: int = 0,
-) -> List[ArtifactModel]:
+) -> list[ArtifactModel]:
     """
     Read artifacts with limit and offset.
     :param model_id: The model identifier
@@ -127,7 +124,7 @@ def search_artifacts(
     version_id: str,
     query: Query,
     current_user: AuthorizedUser,
-) -> List[ArtifactModel]:
+) -> list[ArtifactModel]:
     """
     Search artifacts.
 

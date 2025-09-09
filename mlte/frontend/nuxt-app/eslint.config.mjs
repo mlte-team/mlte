@@ -36,6 +36,8 @@ export default withNuxt(
 
           // Functions
           cancelFormSubmission: true,
+          compareHeaders: true,
+          compareResults: true,
           createCatalogEntry: true,
           createGroup: true,
           createModel: true,
@@ -83,6 +85,7 @@ export default withNuxt(
           // Types
           ArtifactModel: true,
           CatalogReply: true,
+          CheckboxOption: true,
           CustomListEntry: true,
           DataDescriptor: true,
           Dictionary: true,
@@ -106,7 +109,6 @@ export default withNuxt(
           SelectOption: true,
           SystemDescriptor: true,
           TableItem: true,
-          TagOption: true,
           TestResultsModel: true,
           TestSuiteModel: true,
           TokenData: true,

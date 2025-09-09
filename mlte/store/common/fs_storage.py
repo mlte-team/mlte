@@ -92,9 +92,7 @@ class FileSystemStorage(Storage):
         """Root folder, that exists, where the storage will be located."""
 
         if not self.root.exists():
-            raise FileNotFoundError(
-                f"Root data storage location does not exist: {self.root}."
-            )
+            self.root.mkdir(parents=True, exist_ok=True)
 
         self.sub_folder = sub_folder
         """The specific folder for this storage."""

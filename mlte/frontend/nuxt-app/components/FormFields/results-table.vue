@@ -2,33 +2,22 @@
   <table class="table usa-table usa-table--borderless">
     <thead>
       <tr>
-        <th data-sortable scope="col" role="columnheader">Status</th>
-        <th data-sortable scope="col" role="columnheader">
-          Quality Attribute Scenario
-        </th>
-        <th data-sortable scope="col" role="columnheader">Measurement</th>
-        <th data-sortable scope="col" role="columnheader">Test Case ID</th>
-        <th data-sortable scope="col" role="columnheader">Message</th>
+        <th scope="col" role="columnheader">Status</th>
+        <th scope="col" role="columnheader">Quality Attribute Scenario</th>
+        <th scope="col" role="columnheader">Measurement</th>
+        <th scope="col" role="columnheader">Test Case ID</th>
+        <th scope="col" role="columnheader">Message</th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="(result, key) in props.modelValue.results" :key="key">
-        <td
-          v-if="result.type == 'Success'"
-          style="background-color: rgba(210, 232, 221, 255)"
-        >
+        <td v-if="result.type == 'Success'" class="success-td">
           {{ result.type }}
         </td>
-        <td
-          v-else-if="result.type == 'Info'"
-          style="background-color: rgba(255, 243, 205, 255)"
-        >
+        <td v-else-if="result.type == 'Info'" class="info-td">
           {{ result.type }}
         </td>
-        <td
-          v-else-if="result.type == 'Failure'"
-          style="background-color: rgba(248, 216, 219, 255)"
-        >
+        <td v-else-if="result.type == 'Failure'" class="failure-td">
           {{ result.type }}
         </td>
         <td v-else>{{ result.type }}</td>

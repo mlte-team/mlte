@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
-from mlte.artifact.model import ArtifactModel
+from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
 from mlte.store.base import StoreURI
@@ -173,16 +173,21 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         if parents:
             storeutil.create_parents(self, model_id, version_id)
 
-        artifacts = self._get_version_artifacts(model_id, version_id)
+        artifacts = self._get_artifact_ids(model_id, version_id)
         if artifact.header.identifier in artifacts and not force:
             raise errors.ErrorAlreadyExists(
                 f"Artifact '{artifact.header.identifier}'"
             )
 
+        # Only store in version subgroup if it was requested.
+        group_ids = [model_id]
+        if artifact.header.level == ArtifactLevel.VERSION:
+            group_ids += [version_id]
+
         self.storage.write_resource(
             artifact.header.identifier,
             artifact.to_json(),
-            group_ids=[model_id, version_id],
+            group_ids,
         )
         return artifact
 
@@ -192,14 +197,9 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
-        artifacts = self._get_version_artifacts(model_id, version_id)
-
-        self._ensure_artifact_exists(artifact_id, artifacts)
+        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
         return ArtifactModel(
-            **self.storage.read_resource(
-                artifact_id,
-                group_ids=[model_id, version_id],
-            )
+            **self.storage.read_resource(artifact_id, group_ids)
         )
 
     def read_artifacts(
@@ -209,15 +209,10 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         limit: int = 100,
         offset: int = 0,
     ) -> list[ArtifactModel]:
-        artifacts = self._get_version_artifacts(model_id, version_id)
+        artifact_ids = self._get_artifact_ids(model_id, version_id)
         return [
-            ArtifactModel(
-                **self.storage.read_resource(
-                    artifact_id,
-                    group_ids=[model_id, version_id],
-                )
-            )
-            for artifact_id in artifacts
+            self.read_artifact(model_id, version_id, artifact_id)
+            for artifact_id in artifact_ids
         ][offset : offset + limit]
 
     def search_artifacts(
@@ -237,30 +232,45 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         version_id: str,
         artifact_id: str,
     ) -> ArtifactModel:
+        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
         artifact = self.read_artifact(model_id, version_id, artifact_id)
-        self.storage.delete_resource(
-            artifact.header.identifier,
-            group_ids=[model_id, version_id],
-        )
+        self.storage.delete_resource(artifact_id, group_ids)
         return artifact
 
     # -------------------------------------------------------------------------
     # Internal helpers.
     # -------------------------------------------------------------------------
 
-    def _ensure_artifact_exists(
-        self, artifact_id: str, artifacts: list[str]
-    ) -> None:
-        """Throws an ErrorNotFound if the given artifact does not exist."""
-        if artifact_id not in artifacts:
-            raise errors.ErrorNotFound(f"Artifact {artifact_id}")
+    def _get_artifact_groups(
+        self, model_id: str, version_id: str, artifact_id: str
+    ) -> list[str]:
+        """Finds at what level an artifact is stored, and returns a list of those groups."""
+        # First trying at the model/version level, then at the model level.
+        group_ids = [model_id, version_id]
+        try:
+            self.storage.ensure_resource_exists(artifact_id, group_ids)
+        except errors.ErrorNotFound:
+            try:
+                group_ids = [model_id]
+                self.storage.ensure_resource_exists(artifact_id, group_ids)
+            except errors.ErrorNotFound:
+                raise errors.ErrorNotFound(f"Artifact {artifact_id}")
+
+        return group_ids
+
+    def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:
+        """Returns all artifact ids from both model/version levels, and just model level."""
+        version_artifacts = []
+        version_artifacts = self._get_version_artifacts(model_id, version_id)
+        model_artifacts = self._get_model_level_artifacts(model_id)
+        return version_artifacts + model_artifacts
 
     def _get_version_artifacts(
         self, model_id: str, version_id: str
     ) -> list[str]:
         """
         Get artifacts for a version from storage.
-         :param model_id: The identifier for the model
+        :param model_id: The identifier for the model
         :param version_id: The identifier for the version
         :raises ErrorNotFound: If the required structural elements are not present
         :return: The associated artifacts
@@ -269,3 +279,13 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self._ensure_version_exists(model_id, version_id)
 
         return self.storage.list_resources(group_ids=[model_id, version_id])
+
+    def _get_model_level_artifacts(self, model_id: str) -> list[str]:
+        """
+        Get artifacts for a model from storage, which are not inside a version, but at model-level.
+        :param model_id: The identifier for the model
+        :raises ErrorNotFound: If the required structural elements are not present
+        :return: The associated artifacts
+        """
+        self._ensure_model_exists(model_id)
+        return self.storage.list_resources(group_ids=[model_id])

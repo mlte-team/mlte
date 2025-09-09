@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import ScalarResult, select
+from sqlalchemy import ScalarResult, Select, select
 from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
@@ -88,6 +88,32 @@ class DBReader:
         return artifact_type_orm
 
     @staticmethod
+    def _get_model_level_artifacts_stmt(
+        model_id: str,
+    ) -> Select[tuple[DBArtifact]]:
+        """General statement to get artifacts stored at a model level."""
+        return (
+            select(DBArtifact)
+            .where(DBArtifact.model_id == DBModel.id)
+            .where(DBModel.name == model_id)
+            .where(DBArtifact.version_id.is_(None))
+        )
+
+    @staticmethod
+    def _get_version_artifacts_stmt(
+        model_id: str,
+        version_id: str,
+    ) -> Select[tuple[DBArtifact]]:
+        """General statement to get artifacts stored at a model and version level."""
+        return (
+            select(DBArtifact)
+            .where(DBArtifact.version_id == DBVersion.id)
+            .where(DBVersion.name == version_id)
+            .where(DBVersion.model_id == DBModel.id)
+            .where(DBModel.name == model_id)
+        )
+
+    @staticmethod
     def get_artifact(
         model_id: str,
         version_id: str,
@@ -95,24 +121,27 @@ class DBReader:
         session: Session,
     ) -> tuple[ArtifactModel, DBArtifact]:
         """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
-        artifact_orm: Optional[DBArtifact] = session.scalar(
-            select(DBArtifact)
-            .where(DBArtifact.identifier == artifact_id)
-            .where(DBVersion.name == version_id)
-            .where(DBModel.name == model_id)
-            .where(DBVersion.id == DBArtifact.version_id)
-            .where(DBModel.id == DBVersion.model_id)
-        )
+        select_stmt = DBReader._get_version_artifacts_stmt(model_id, version_id)
+        select_stmt = select_stmt.where(DBArtifact.identifier == artifact_id)
+        artifact_orm: Optional[DBArtifact] = session.scalar(select_stmt)
 
         if artifact_orm is None:
-            raise errors.ErrorNotFound(
-                f"Artifact with identifier {artifact_id}  and associated to model {model_id}, and version {version_id} was not found in the artifact store."
+            # Try at model level.
+            select_stmt = DBReader._get_model_level_artifacts_stmt(model_id)
+            select_stmt = select_stmt.where(
+                DBArtifact.identifier == artifact_id
             )
-        else:
-            return (
-                main_factory.create_artifact_model(artifact_orm),
-                artifact_orm,
-            )
+            artifact_orm = session.scalar(select_stmt)
+
+            if artifact_orm is None:
+                raise errors.ErrorNotFound(
+                    f"Artifact with identifier {artifact_id}  and associated to model {model_id}, and version {version_id} was not found in the artifact store."
+                )
+
+        return (
+            main_factory.create_artifact_model(artifact_orm),
+            artifact_orm,
+        )
 
     @staticmethod
     def get_artifacts(
@@ -121,20 +150,29 @@ class DBReader:
         session: Session,
     ) -> list[ArtifactModel]:
         """Loads and returns a list with all the artifacts, for the given model/version."""
-        artifact_orms: ScalarResult[DBArtifact] = session.scalars(
-            (
-                select(DBArtifact)
-                .where(DBVersion.name == version_id)
-                .where(DBModel.name == model_id)
-                .where(DBVersion.id == DBArtifact.version_id)
-                .where(DBModel.id == DBVersion.model_id)
-            )
+        select_stmt = DBReader._get_version_artifacts_stmt(model_id, version_id)
+        artifact_models = DBReader._load_artifact_models(select_stmt, session)
+
+        # Also get model level artifacts.
+        select_stmt = DBReader._get_model_level_artifacts_stmt(model_id)
+        artifact_models.extend(
+            DBReader._load_artifact_models(select_stmt, session)
         )
-        artifacts_models = []
+
+        return artifact_models
+
+    @staticmethod
+    def _load_artifact_models(
+        select_stmt: Select[tuple[DBArtifact]], session: Session
+    ) -> list[ArtifactModel]:
+        """Load the artifacts obtained from the given statement into a list as ArtifactModels."""
+        artifact_orms: ScalarResult[DBArtifact] = session.scalars(select_stmt)
+        artifact_models: list[ArtifactModel] = []
         for artifact_orm in artifact_orms:
             artifact_model = main_factory.create_artifact_model(artifact_orm)
-            artifacts_models.append(artifact_model)
-        return artifacts_models
+            artifact_models.append(artifact_model)
+
+        return artifact_models
 
     @staticmethod
     def get_problem_type(type: ProblemType, session: Session) -> DBProblemType:

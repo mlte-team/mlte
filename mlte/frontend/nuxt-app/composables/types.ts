@@ -40,9 +40,11 @@ export class SelectOption {
   ) {}
 }
 
-export interface TagOption {
-  name: string;
-  selected: boolean;
+export class CheckboxOption {
+  constructor(
+    public name: string,
+    public selected: boolean,
+  ) {}
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -76,6 +78,7 @@ export class ArtifactHeader {
     public type: string = "",
     public timestamp: number = -1,
     public creator: string = "",
+    public level: string = "version",
   ) {}
 }
 

@@ -239,7 +239,7 @@ if (QAapiOptions.value) {
 }
 // End of delete section
 
-const tagOptions = ref<Array<TagOption>>([
+const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
   { name: "Computer Vision", selected: false },
@@ -262,7 +262,7 @@ const codeTypeOptions = ref<Array<SelectOption>>([
   { value: "validation", text: "Validation " },
 ]);
 
-tagOptions.value.forEach((tagOption: TagOption) => {
+tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
   }

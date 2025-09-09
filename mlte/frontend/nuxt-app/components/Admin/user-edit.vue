@@ -169,9 +169,9 @@ function disablePasswordReset() {
  * Handle a group change either adding the item to selections, or removing it.
  *
  * @param {boolean} selected Flag indicating if item was selected or deselected
- * @param {Group} groupOption Group that was selected or deselected
+ * @param {GroupCheckboxOption} groupOption Group that was selected or deselected
  */
-function groupChange(selected: boolean, groupOption: Group) {
+function groupChange(selected: boolean, groupOption: GroupCheckboxOption) {
   if (selected) {
     props.modelValue.groups.push(
       new Group(groupOption.name, groupOption.permissions),

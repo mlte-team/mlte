@@ -29,6 +29,10 @@
     width: 28ch;
 }
 
+.half-line-input {
+    max-width: 60ch;
+}
+
 .primary-button {   
     background-color: #d8ac16 !important;
     color: black !important;
@@ -71,6 +75,24 @@ hr {
 .multiple-per-line-checkbox {
     float: left;
     width: 30%;
+}
+
+.success-td {
+   background-color: rgba(210, 232, 221, 255) !important;
+}
+
+.info-td {
+    background: rgba(255, 243, 205, 255) !important;
+}
+
+.failure-td {
+    background-color: rgba(248, 216, 219, 255) !important;
+}
+
+.modal-button {
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  cursor: pointer;
 }
 
 .submit-footer {
