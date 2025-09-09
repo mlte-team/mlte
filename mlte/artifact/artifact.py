@@ -185,9 +185,7 @@ class Artifact(Serializable, abc.ABC):
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """
-        # If id is not received, we try to load an artifact with the default id for this type.
-        if identifier is None:
-            identifier = cls.build_full_id()
+        identifier = cls.build_full_id(identifier)
 
         with ManagedArtifactSession(store.session()) as handle:
             artifact = typing.cast(
