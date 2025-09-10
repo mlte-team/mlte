@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 from mlte.context.context import Context
 from mlte.measurement.memory import (
     LocalNvidiaGPUMemoryConsumption,
-    NvidiaGPUMemoryStatistics, LocalProcessMemoryConsumption,
+    NvidiaGPUMemoryStatistics
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.measurement.units import Quantity, Units
