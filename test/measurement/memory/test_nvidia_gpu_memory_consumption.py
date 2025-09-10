@@ -42,12 +42,12 @@ def get_cuda_load_command(delay_sec: int = 2):
     # python -c "import time; import torch;
     # torch.ones(1024, 1024, device='cuda', dtype=torch.int32); time.sleep(2)"
     cmd = [
-        "import time"
-        "import torch"
-        "torch.ones(1024, 1024, device='cuda', dtype=torch.int32)"
+        "import time",
+        "import torch",
+        "torch.ones(1024, 1024, device='cuda', dtype=torch.int32)",
         f"time.sleep({delay_sec})"
     ]
-    cmd_str = ";".join(cmd)
+    cmd_str = "; ".join(cmd)
 
     # Wrap in python and return
     return f"python -c \"{cmd_str}\""
