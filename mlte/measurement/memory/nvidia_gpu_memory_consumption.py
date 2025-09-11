@@ -1,7 +1,7 @@
 """
-mlte/measurement/memory/local_process_memory_consumption.py
+mlte/measurement/memory/nvidia_gpu_memory_consumption.py
 
-Memory consumption measurement for local training processes.
+Memory consumption measurement for gpu processes.
 """
 
 from __future__ import annotations
@@ -11,6 +11,8 @@ from importlib import import_module
 import subprocess
 import time
 from typing import Any, Callable, Optional
+
+import psutil
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.process_measurement import ProcessMeasurement
@@ -219,7 +221,7 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # -----------------------------------------------------------------------------
 
 class NvidiaGPUMemoryConsumption(ProcessMeasurement):
-    """Measure memory consumption for a gpu."""
+    """Measure memory consumption for a specific gpu."""
 
     def __init__(self, identifier: Optional[str] = None, gpu_id: id = 0):
         """
@@ -251,18 +253,28 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         total = 0
         count = 0
 
-        # TODO: Do we care about the actual pid of the gpu execution process?
-
+        # Keep collecting stats untl the controlling process goes away.
+        # It might actualy take the controlling process a while to start up the memory consumption
+        # so just collect the entire time whether we have consumption or not.
         while True:
-            size_in_bytes = _get_nvml_memory_usage_bytes(self.gpu_id)
-            # Minus 1 is our sentinel value that we are done.
-            if size_in_bytes == -1:
+            try:
+                # This is just so that we check to see if our task is running
+                p = psutil.Process(pid)
+                size_in_bytes = _get_nvml_memory_usage_bytes(self.gpu_id)
+
+                # If invalid, then we get this. We might want to keep track of how many we get.
+                if size_in_bytes == -1:
+                    break
+
+                minimum = min(minimum, size_in_bytes)
+                maximum = max(maximum, size_in_bytes)
+                total += size_in_bytes
+                count += 1
+
+                time.sleep(poll_interval)
+            except psutil.NoSuchProcess as e:
+                # This is by design as the process went away
                 break
-            minimum = min(minimum, size_in_bytes)
-            maximum = max(maximum, size_in_bytes)
-            total += size_in_bytes
-            count += 1
-            time.sleep(poll_interval)
 
         # Coerce to the quantity type with units multiplier
         avg = 0 * Units.bytes
@@ -275,7 +287,6 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         avg = avg.to(unit)
         minimum = minimum.to(unit)
         maximum = maximum.to(unit)
-
         return NvidiaGPUMemoryStatistics(avg, minimum, maximum, unit=unit)
 
     # Overriden.

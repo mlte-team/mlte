@@ -146,6 +146,7 @@ def test_memory_evaluate() -> None:
         delay = 2
         stats = m.evaluate(get_cuda_load_command(delay))
 
+        # TODO: Shouldn't we see consumption?
         assert len(str(stats)) > 0
         assert int(time.time() - start) >= delay
 
@@ -156,46 +157,51 @@ def test_memory_evaluate() -> None:
     # Do we add a warning and make it noisier?
     # Basically, how do we ensure that eventually some tests with cude.
 
-
-"""
-
 def test_memory_evaluate_async() -> None:
-    start = time.time()
+    if torch_cuda_check():
+        start = time.time()
 
-    pid = ProcessMeasurement.start_process(SPIN_COMMAND[0], SPIN_COMMAND[1:])
-    m = LocalNvidiaGPUMemoryConsumption("identifier")
+        delay = 2
+        cmd = get_cuda_load_command(delay)
 
-    # Capture memory consumption; blocks until process exit
-    m.evaluate_async(pid)
-    stats = m.wait_for_output()
+        pid = ProcessMeasurement.start_process(cmd[0], cmd[1:])
+        m = NvidiaGPUMemoryConsumption("identifier")
 
-    assert len(str(stats)) > 0
-    assert int(time.time() - start) >= SPIN_DURATION
+        # Capture gpu memory consumption; blocks until process exit
+        m.evaluate_async(pid)
+        stats = m.wait_for_output()
+
+        # TODO: Shouldn't we see consumption?
+        assert len(str(stats)) > 0
+        assert int(time.time() - start) >= delay
 
 
 def test_memory_validate_success() -> None:
-    m = LocalNvidiaGPUMemoryConsumption("identifier")
+    if torch_cuda_check():
+        m = NvidiaGPUMemoryConsumption("identifier")
 
-    # Blocks until process exit
-    stats = m.evaluate(SPIN_COMMAND, unit=Units.megabyte)
+        # Blocks until process exit
+        delay = 2
+        # TODO: Why specify units?
+        stats = m.evaluate(get_cuda_load_command(delay), unit=Units.mebibyte)
 
-    validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
-    vr = validator.validate(stats)
-    assert bool(vr)
+        validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
+        vr = validator.validate(stats)
+        assert bool(vr)
 
 
 def test_memory_validate_failure() -> None:
-    m = LocalProcessMemoryConsumption("identifier")
+    if torch_cuda_check():
+        m = NvidiaGPUMemoryConsumption("identifier")
 
-    # Blocks until process exit
-    stats = m.evaluate(SPIN_COMMAND)
+        # Blocks until process exit
+        delay = 2
+        stats = m.evaluate(get_cuda_load_command(delay))
 
-    vr = Validator(
-        bool_exp=lambda _: False, success="yay", failure="oh"
-    ).validate(stats)
-    assert not bool(vr)
-
-"""
+        vr = Validator(
+            bool_exp=lambda _: False, success="yay", failure="oh"
+        ).validate(stats)
+        assert not bool(vr)
 
 
 # =================================================================================================
