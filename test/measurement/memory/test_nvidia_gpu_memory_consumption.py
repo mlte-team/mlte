@@ -4,20 +4,23 @@ test/measurement/memory/test_local_process_memory_consumption.py
 Unit test for LocalProcessMemoryConsumption measurement.
 """
 import importlib
-from collections import namedtuple
 import os
 import time
 import typing
+from collections import namedtuple
 from typing import Tuple
+from unittest.mock import MagicMock, patch
 
 import pint
 import pytest
-from unittest.mock import MagicMock, patch
 
 from mlte.context.context import Context
 from mlte.measurement.memory import (
     NvidiaGPUMemoryConsumption,
-    NvidiaGPUMemoryStatistics
+    NvidiaGPUMemoryStatistics,
+)
+from mlte.measurement.memory.nvidia_gpu_memory_consumption import (
+    _get_nvml_memory_usage_bytes,
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.measurement.units import Quantity, Units
@@ -25,9 +28,6 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
-from test.support.meta import path_to_support
-
-from mlte.measurement.memory.nvidia_gpu_memory_consumption import _get_nvml_memory_usage_bytes
 
 
 # =================================================================================================
@@ -156,6 +156,7 @@ def test_memory_evaluate() -> None:
     # Prining something is useless because people won't look at the logs for prints
     # Do we add a warning and make it noisier?
     # Basically, how do we ensure that eventually some tests with cude.
+
 
 def test_memory_evaluate_async() -> None:
     if torch_cuda_check():
