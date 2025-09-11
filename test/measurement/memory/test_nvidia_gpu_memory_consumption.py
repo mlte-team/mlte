@@ -29,7 +29,6 @@ from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.store.artifact.fixture import store_with_context  # noqa
 
-
 # =================================================================================================
 #  _   _ _   _ _ _ _   _
 # | | | | |_(_) (_) |_(_)___ ___
