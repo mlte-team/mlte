@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 
 from mlte.context.context import Context
 from mlte.measurement.memory import (
-    LocalNvidiaGPUMemoryConsumption,
+    NvidiaGPUMemoryConsumption,
     NvidiaGPUMemoryStatistics
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
@@ -30,7 +30,14 @@ from test.support.meta import path_to_support
 from mlte.measurement.memory.nvidia_gpu_memory_consumption import _get_nvml_memory_usage_bytes
 
 
-def get_cuda_load_command(delay_sec: int = 2):
+# =================================================================================================
+#  _   _ _   _ _ _ _   _
+# | | | | |_(_) (_) |_(_)___ ___
+# | |_| |  _| | | |  _| / -_|_-<
+#  \___/ \__|_|_|_|\__|_\___/__/
+# =================================================================================================
+
+def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
     """
     Returns a command that allocates some memory (4MB) on the cuda device then sleeps for dealy.
     :param delay_sec: The amount of time to sleep.
@@ -47,10 +54,9 @@ def get_cuda_load_command(delay_sec: int = 2):
         "torch.ones(1024, 1024, device='cuda', dtype=torch.int32)",
         f"time.sleep({delay_sec})"
     ]
-    cmd_str = "; ".join(cmd)
 
-    # Wrap in python and return
-    return f"python -c \"{cmd_str}\""
+    # The command must be a list. So, add python and join the python command
+    return ["python", "-c", "; ".join(cmd)]
 
 
 def torch_cuda_check() -> bool:
@@ -69,21 +75,22 @@ def torch_cuda_check() -> bool:
         # The module isn't there, so we can't run our experiment anyway
         return False
     except AttributeError as e:
-        # We had some other weird error so we can't run the test with cuda.
+        # We had some other weird errors so we can't run the test with cuda.
         return False
 
 
 # =================================================================================================
-# LocalNvidiaGPUMemoryConsumption
+# NvidiaGPUMemoryConsumption
 # =================================================================================================
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = LocalNvidiaGPUMemoryConsumption("id")
+    m = NvidiaGPUMemoryConsumption("id", 1)
 
     assert (m.evidence_metadata
             and m.evidence_metadata.measurement.measurement_class
-            == "mlte.measurement.memory.nvidia_gpu_memory_consumption.LocalNvidiaGPUMemoryConsumption"
+            == "mlte.measurement.memory.nvidia_gpu_memory_consumption.NvidiaGPUMemoryConsumption"
             )
+    assert m.gpu_id == 1
 
 
 def test_nvidia_faking_gpu():
@@ -118,32 +125,36 @@ def test_nvidia_faking_gpu():
 def test_nvidia_get_memory_usage():
     """
     Use the low level API without mocking nvml to see that it can get a value
-    :return:
+    :return: None
     """
-    # TODO: The test needs to detect cuda vs not.
     if torch_cuda_check():
         # If we don't have a gpu, we'll just get some value back and just should crash
         _get_nvml_memory_usage_bytes(0)
     else:
-        # Without torch/cuda we should get zero because
-        assert _get_nvml_memory_usage_bytes(0) == 0
+        # Without torch/cuda we should get a -1 sentinel value.
+        assert _get_nvml_memory_usage_bytes(0) == -1
 
 
 def test_memory_evaluate() -> None:
     if torch_cuda_check():
         start = time.time()
 
-        m = LocalNvidiaGPUMemoryConsumption("identifier")
+        # NOTE: This assumes that the testing environment has access to gpu0
+        m = NvidiaGPUMemoryConsumption("identifier")
 
         # Capture memory consumption; blocks until process exit
         delay = 2
-        stats = m.evaluate([get_cuda_load_command(delay)])
+        stats = m.evaluate(get_cuda_load_command(delay))
 
         assert len(str(stats)) > 0
         assert int(time.time() - start) >= delay
 
     # TODO: Can we do anything meaningful w/o cuda? On my mac I fire up torch, but I
-    # that is a test for a different module.
+    # think that is a test for a different module.
+
+    # Prining something is useless because people won't look at the logs for prints
+    # Do we add a warning and make it noisier?
+    # Basically, how do we ensure that eventually some tests with cude.
 
 
 """
@@ -308,7 +319,6 @@ def test_avg_consumption_less_than() -> None:
     assert not bool(res)
 
 
-
 def test_avg_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
@@ -336,4 +346,3 @@ def test_avg_consumption_less_than_in_bytes() -> None:
 def test_average_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
         _ = NvidiaGPUMemoryStatistics.average_consumption_less_than(3000, Units.fakeunit)
-

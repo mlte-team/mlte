@@ -218,21 +218,23 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # |_|  |_\___\__,_/__/\_,_|_| \___|_|_|_\___|_||_\__|
 # -----------------------------------------------------------------------------
 
-class LocalNvidiaGPUMemoryConsumption(ProcessMeasurement):
+class NvidiaGPUMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a gpu."""
 
-    def __init__(self, identifier: Optional[str] = None):
+    def __init__(self, identifier: Optional[str] = None, gpu_id: id = 0):
         """
         Initialize a LocalProcessMemoryConsumption instance.
 
         :param identifier: A unique identifier for the measurement
+        :param gpu_id: The id of the gpu
         """
         super().__init__(identifier)
+        self.gpu_id = gpu_id
 
     # Overriden.
     def __call__(
             self,
-            gpu_id: int,
+            pid: int,
             unit: Unit = NvidiaGPUMemoryStatistics.DEFAULT_UNIT,
             poll_interval: int = 1
     ) -> NvidiaGPUMemoryStatistics:
@@ -249,9 +251,12 @@ class LocalNvidiaGPUMemoryConsumption(ProcessMeasurement):
         total = 0
         count = 0
 
+        # TODO: Do we care about the actual pid of the gpu execution process?
+
         while True:
-            size_in_bytes = _get_nvml_memory_usage_bytes(gpu_id)
-            if size_in_bytes == 0:
+            size_in_bytes = _get_nvml_memory_usage_bytes(self.gpu_id)
+            # Minus 1 is our sentinel value that we are done.
+            if size_in_bytes == -1:
                 break
             minimum = min(minimum, size_in_bytes)
             maximum = max(maximum, size_in_bytes)
@@ -260,7 +265,9 @@ class LocalNvidiaGPUMemoryConsumption(ProcessMeasurement):
             time.sleep(poll_interval)
 
         # Coerce to the quantity type with units multiplier
-        avg = (total // count) * Units.bytes
+        avg = 0 * Units.bytes
+        if count > 0:
+            avg = (total // count) * Units.bytes
         minimum = minimum * Units.bytes
         maximum = maximum * Units.bytes
 
@@ -282,7 +289,6 @@ class LocalNvidiaGPUMemoryConsumption(ProcessMeasurement):
 # -----------------------------------------------------------------------------
 
 def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
-    # TODO: Should we return -1 for no nvml?
     """
     Gets the memory usage for the INDEX specified gpu. NOTE: This is for
     the entire GPU not just a single process.
@@ -302,7 +308,7 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
             if gpu_id > device_count - 1:
                 # TODO: What are we doing for logging? This seems like a configuration error.
                 print(f"GPU monitor requested for {gpu_id} gpu but there are only {device_count} gpus available.")
-                return 0
+                return -1
 
             # Error checking to see if they have too many.
             handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
@@ -315,15 +321,15 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
         except pynvml.NVMLError as error:
             # TODO: What are we doing for logging? I want to do a warning here
             print(error)
-            return 0
+            return -1
 
     except ModuleNotFoundError:
         # TODO: What are we doing for logging? I want to do a warning here
         print(f"Warning: pynvml not found.")
-        return 0
+        return -1
     except AttributeError as e:
         print(f"Error: {e} Attribute not found in module 'pynvml'.")
-        return 0
+        return -1
 
 
 """
