@@ -3,6 +3,7 @@ test/measurement/memory/test_local_process_memory_consumption.py
 
 Unit test for LocalProcessMemoryConsumption measurement.
 """
+
 import importlib
 import os
 import time
@@ -36,6 +37,7 @@ from test.store.artifact.fixture import store_with_context  # noqa
 #  \___/ \__|_|_|_|\__|_\___/__/
 # =================================================================================================
 
+
 def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
     """
     Returns a command that allocates some memory (4MB) on the cuda device then sleeps for dealy.
@@ -51,7 +53,7 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
         "import time",
         "import torch",
         "torch.ones(1024, 1024, device='cuda', dtype=torch.int32)",
-        f"time.sleep({delay_sec})"
+        f"time.sleep({delay_sec})",
     ]
 
     # The command must be a list. So, add python and join the python command
@@ -85,10 +87,11 @@ def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = NvidiaGPUMemoryConsumption("id", 1)
 
-    assert (m.evidence_metadata
-            and m.evidence_metadata.measurement.measurement_class
-            == "mlte.measurement.memory.nvidia_gpu_memory_consumption.NvidiaGPUMemoryConsumption"
-            )
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.memory.nvidia_gpu_memory_consumption.NvidiaGPUMemoryConsumption"
+    )
     assert m.gpu_id == 1
 
 
@@ -99,14 +102,18 @@ def test_nvidia_faking_gpu():
     :return: None
     """
     # TODO: Should I used pint here?
-    one_GiB = 1024 ** 3
+    one_GiB = 1024**3
     MemInfoMock = namedtuple("MemInfoMock", ["total", "free", "used"])
 
     # We have to patch the path to where it was actually included to make sure we get the right
     # instance mocked
-    with patch('mlte.measurement.memory.nvidia_gpu_memory_consumption.import_module') as mock_import_module:
+    with patch(
+        "mlte.measurement.memory.nvidia_gpu_memory_consumption.import_module"
+    ) as mock_import_module:
         # Configure the mock to return a specific mock object
-        mem_info_mock = MemInfoMock(total=3 * one_GiB, free=2 * one_GiB, used=1 * one_GiB)
+        mem_info_mock = MemInfoMock(
+            total=3 * one_GiB, free=2 * one_GiB, used=1 * one_GiB
+        )
 
         mocked_pynvml = MagicMock()
         mocked_pynvml.nvmlDeviceGetCount.return_value = 2
@@ -185,7 +192,9 @@ def test_memory_validate_success() -> None:
         # TODO: Why specify units?
         stats = m.evaluate(get_cuda_load_command(delay), unit=Units.mebibyte)
 
-        validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
+        validator = Validator(
+            bool_exp=lambda _: True, success="yay", failure="oh"
+        )
         vr = validator.validate(stats)
         assert bool(vr)
 
@@ -226,7 +235,7 @@ def test_statistics_construction():
 
 
 def test_result_save_load(
-        store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context]  # noqa
 ) -> None:
     store, ctx = store_with_context
 
@@ -275,30 +284,40 @@ def test_max_consumption_less_than_in_bytes() -> None:
     # The units shouldn't matter
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(3, unit=Units.bytes)
+    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+        3, unit=Units.bytes
+    )
 
     # Less than case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=2, max=2, min=1, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=2, max=2, min=1, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert bool(res)
 
     # Greater than case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=2, max=4, min=1, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=2, max=4, min=1, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert not bool(res)
 
     # Equals case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=2, max=3, min=1, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=2, max=3, min=1, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert not bool(res)
 
 
 def test_max_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.max_consumption_less_than(3000, Units.fakeunit)
+        _ = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+            3000, Units.fakeunit
+        )
 
 
 def test_avg_consumption_less_than() -> None:
@@ -328,27 +347,37 @@ def test_avg_consumption_less_than() -> None:
 def test_avg_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(3000, Units.bytes)
+    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+        3000, Units.bytes
+    )
 
     # Less than case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=2000, max=2000, min=1000, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=2000, max=2000, min=1000, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert bool(res)
 
     # Greater than case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=4000, max=2000, min=1000, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=4000, max=2000, min=1000, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert not bool(res)
 
     # Equals case
     res = validator.validate(
-        NvidiaGPUMemoryStatistics(avg=3000, max=2000, min=1000, unit=Units.bytes).with_metadata(m)
+        NvidiaGPUMemoryStatistics(
+            avg=3000, max=2000, min=1000, unit=Units.bytes
+        ).with_metadata(m)
     )
     assert not bool(res)
 
 
 def test_average_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.average_consumption_less_than(3000, Units.fakeunit)
+        _ = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+            3000, Units.fakeunit
+        )

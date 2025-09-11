@@ -8,5 +8,9 @@ from .nvidia_gpu_memory_consumption import (
 )
 
 # TODO(Kyle): Find a more elegant way to do this
-__all__ = ["LocalProcessMemoryConsumption", "MemoryStatistics",
-           "NvidiaGPUMemoryConsumption", "NvidiaGPUMemoryStatistics"]
+__all__ = [
+    "LocalProcessMemoryConsumption",
+    "MemoryStatistics",
+    "NvidiaGPUMemoryConsumption",
+    "NvidiaGPUMemoryStatistics",
+]

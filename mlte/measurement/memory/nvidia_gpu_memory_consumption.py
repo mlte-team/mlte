@@ -111,17 +111,21 @@ class CommonStatistics(ExternalEvidence):
 
     def __str__(self) -> str:
         """Return a string representation."""
-        return f"Average: {self.avg}\n" + \
-            f"Minimum: {self.min}\n" + \
-            f"Maximum: {self.max}"
+        return (
+            f"Average: {self.avg}\n"
+            + f"Minimum: {self.min}\n"
+            + f"Maximum: {self.max}"
+        )
 
     def __repr__(self) -> str:
         """Return a string representation for debugging."""
-        return f"avg={self.avg}, min={self.min}, max={self.max}, unit={self.unit}"
+        return (
+            f"avg={self.avg}, min={self.min}, max={self.max}, unit={self.unit}"
+        )
 
     @classmethod
     def max_consumption_less_than(
-            cls, threshold: int, unit: Unit = None
+        cls, threshold: int, unit: Unit = None
     ) -> Validator:
         """
         Construct and invoke a validator for maximum memory consumption.
@@ -151,7 +155,7 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def average_consumption_less_than(
-            cls, threshold: float, unit: Unit = None
+        cls, threshold: float, unit: Unit = None
     ) -> Validator:
         """
         Construct and invoke a validator for average memory consumption.
@@ -187,6 +191,7 @@ class CommonStatistics(ExternalEvidence):
 # |___/\__\__,_|\__|_/__/\__|_\__/__/
 # -----------------------------------------------------------------------------
 
+
 class NvidiaGPUMemoryStatistics(CommonStatistics):
     # Nvidia-smi cli uses MiB so we use that make it easy to visually compare
     # and we suspect this is what people are calibrated to.
@@ -198,9 +203,7 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
     consumption statistics for an NVIDIA GPU.
     """
 
-    def __init__(
-            self, avg: int, min: int, max: int, unit: Unit = DEFAULT_UNIT
-    ):
+    def __init__(self, avg: int, min: int, max: int, unit: Unit = DEFAULT_UNIT):
         """
         Initialize a NvidiaGPUMemoryStatistics instance.
 
@@ -219,6 +222,7 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # |_|  |_\___\__,_/__/\_,_|_| \___|_|_|_\___|_||_\__|
 # -----------------------------------------------------------------------------
 
+
 class NvidiaGPUMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a specific gpu."""
 
@@ -234,10 +238,10 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
 
     # Overriden.
     def __call__(
-            self,
-            pid: int,
-            unit: Unit = NvidiaGPUMemoryStatistics.DEFAULT_UNIT,
-            poll_interval: int = 1
+        self,
+        pid: int,
+        unit: Unit = NvidiaGPUMemoryStatistics.DEFAULT_UNIT,
+        poll_interval: int = 1,
     ) -> NvidiaGPUMemoryStatistics:
         """
         Monitor memory usage on a specific gpu.
@@ -298,6 +302,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
 # Helpers
 # -----------------------------------------------------------------------------
 
+
 def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
     """
     Gets the memory usage for the INDEX specified gpu. NOTE: This is for
@@ -317,7 +322,9 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
 
             if gpu_id > device_count - 1:
                 # TODO: What are we doing for logging? This seems like a configuration error.
-                print(f"GPU monitor requested for {gpu_id} gpu but there are only {device_count} gpus available.")
+                print(
+                    f"GPU monitor requested for {gpu_id} gpu but there are only {device_count} gpus available."
+                )
                 return -1
 
             # Error checking to see if they have too many.
