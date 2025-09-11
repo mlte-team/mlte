@@ -1,11 +1,10 @@
 from .local_process_memory_consumption import (
     LocalProcessMemoryConsumption,
-    MemoryStatistics
+    MemoryStatistics,
 )
-
 from .nvidia_gpu_memory_consumption import (
     NvidiaGPUMemoryConsumption,
-    NvidiaGPUMemoryStatistics
+    NvidiaGPUMemoryStatistics,
 )
 
 # TODO(Kyle): Find a more elegant way to do this

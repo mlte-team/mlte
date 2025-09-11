@@ -7,9 +7,8 @@ Memory consumption measurement for gpu processes.
 from __future__ import annotations
 
 import sys
-from importlib import import_module
-import subprocess
 import time
+from importlib import import_module
 from typing import Any, Callable, Optional
 
 import psutil
