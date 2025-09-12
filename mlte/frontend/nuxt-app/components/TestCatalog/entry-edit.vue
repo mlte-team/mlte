@@ -97,16 +97,6 @@
       </InfoIcon>
      </FormFieldsQualityAttributes> -->
 
-    <UsaSelect
-      v-model="modelValue.code_type"
-      :error="formErrors.code_type"
-      :options="codeTypeOptions"
-      @change="formErrors.code_type = false"
-    >
-      <template #label>Code Type</template>
-      <template #error-message>Code Type must be selected</template>
-    </UsaSelect>
-
     <UsaTextarea
       v-model="modelValue.code"
       style="resize: both; width: 30rem; max-width: 100%"
@@ -183,7 +173,6 @@ timestamp.value = new Date(
 const formErrors = ref<Dictionary<boolean>>({
   catalog: false,
   identifier: false,
-  code_type: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const catalogList = ref<Array<CatalogReply>>([]);
@@ -257,11 +246,6 @@ const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Time Series", selected: false },
 ]);
 
-const codeTypeOptions = ref<Array<SelectOption>>([
-  { value: "measurement", text: "Measurement" },
-  { value: "validation", text: "Validation " },
-]);
-
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
@@ -288,11 +272,6 @@ async function submit() {
 
   if (props.modelValue.header.identifier === "") {
     formErrors.value.identifier = true;
-    inputError = true;
-  }
-
-  if (props.modelValue.code_type === "") {
-    formErrors.value.code_type = true;
     inputError = true;
   }
 

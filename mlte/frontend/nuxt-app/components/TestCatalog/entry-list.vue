@@ -8,7 +8,6 @@
         <th data-sortable scope="col" role="columnheader">
           Quality Attribute Category
         </th>
-        <th data-sortable scope="col" role="columnheader">Code Type</th>
         <th data-sortable scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
@@ -27,9 +26,6 @@
       </td>
       <td>
         {{ entry.qa_category }}
-      </td>
-      <td>
-        {{ entry.code_type }}
       </td>
       <td>
         <UsaButton class="secondary-button" @click="emit('editEntry', entry)">

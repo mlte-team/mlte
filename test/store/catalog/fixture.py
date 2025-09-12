@@ -12,11 +12,7 @@ from typing import Generator, Optional
 import pytest
 
 from mlte.backend.core.config import settings
-from mlte.catalog.model import (
-    CatalogEntry,
-    CatalogEntryHeader,
-    CatalogEntryType,
-)
+from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 from mlte.store.base import StoreType
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.http import (
@@ -39,7 +35,6 @@ CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 DEFAULT_ENTRY_ID = "e1"
 DEFAULT_ENTRY_DESC = "Code sample"
 DEFAULT_ENTRY_CODE = "print('hello')"
-DEFAULT_ENTRY_TYPE = CatalogEntryType.MEASUREMENT
 TEST_CATALOG_ID = "cat1"
 """Default values."""
 
@@ -124,7 +119,6 @@ def get_test_entry(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    code_type: CatalogEntryType = DEFAULT_ENTRY_TYPE,
     catalog_id: str = TEST_CATALOG_ID,
     creator: Optional[str] = None,
     updater: Optional[str] = None,
@@ -140,7 +134,6 @@ def get_test_entry(
         header=header,
         code=code,
         description=description,
-        code_type=code_type,
     )
 
     return test_entry
@@ -150,12 +143,11 @@ def get_test_entry_for_store(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    code_type: CatalogEntryType = DEFAULT_ENTRY_TYPE,
     catalog_id: str = TEST_CATALOG_ID,
     store_name: str = "",
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
-    entry = get_test_entry(id, description, code, code_type, catalog_id)
+    entry = get_test_entry(id, description, code, catalog_id)
 
     if store_name == StoreType.REMOTE_HTTP.value:
         entry.header.identifier = (

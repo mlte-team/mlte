@@ -73,15 +73,6 @@
       ],
       "title": "CatalogEntryHeader",
       "type": "object"
-    },
-    "CatalogEntryType": {
-      "description": "Types of catalog entries.",
-      "enum": [
-        "measurement",
-        "validation"
-      ],
-      "title": "CatalogEntryType",
-      "type": "string"
     }
   },
   "description": "The base model for MLTE catalog entries.",
@@ -120,9 +111,6 @@
       ],
       "default": null,
       "title": "Quality Attribute"
-    },
-    "code_type": {
-      "$ref": "#/$defs/CatalogEntryType"
     },
     "code": {
       "title": "Code",
@@ -167,7 +155,6 @@
   },
   "required": [
     "header",
-    "code_type",
     "code"
   ],
   "title": "CatalogEntry",

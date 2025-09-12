@@ -146,7 +146,7 @@ check-qa: check-schema check-isort check-format lint check-lint-frontend typeche
 
 # Clean cache files
 .PHONY: clean
-clean:
+clean: frontend-env-clean
 	rm -r -f .mypy_cache .pytest_cache
 
 .PHONY: ci

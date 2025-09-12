@@ -8,16 +8,8 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import BigInteger, ForeignKey, select
-from sqlalchemy.orm import (
-    DeclarativeBase,
-    Mapped,
-    Session,
-    mapped_column,
-    relationship,
-)
-
-from mlte.catalog.model import CatalogEntryType
+from sqlalchemy import BigInteger, ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class DBBase(DeclarativeBase):
@@ -73,25 +65,5 @@ class DBCatalogEntry(DBBase):
         back_populates="body", cascade="all"
     )
 
-    catalog_entry_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("catalog_entry_type.id")
-    )
-    catalog_entry_type: Mapped[DBCatalogEntryType] = relationship()
-
     def __repr__(self) -> str:
         return f"CatalogEntry(id={self.id!r}, description={self.description!r}, code={self.code!r}, qa_category={self.qa_category}, quality_attribute={self.quality_attribute!r})"
-
-
-# -------------------------------------------------------------------------
-# Pre-filled table functions.
-# -------------------------------------------------------------------------
-
-
-def init_catalog_entry_types(session: Session):
-    """Initializes the table with the configured catalog entry types."""
-    if session.scalars(select(DBCatalogEntryType)).first() is None:
-        types = [e.value for e in CatalogEntryType]
-        for type in types:
-            type_obj = DBCatalogEntryType(name=type)
-            session.add(type_obj)
-        session.commit()
