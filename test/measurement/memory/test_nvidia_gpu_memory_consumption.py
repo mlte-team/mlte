@@ -5,7 +5,6 @@ Unit test for LocalProcessMemoryConsumption measurement.
 """
 
 import importlib
-import os
 import time
 import typing
 from collections import namedtuple
@@ -75,8 +74,8 @@ def torch_cuda_check() -> bool:
     except ModuleNotFoundError:
         # The module isn't there, so we can't run our experiment anyway
         return False
-    except AttributeError as e:
-        # We had some other weird errors so we can't run the test with cuda.
+    except AttributeError:
+        # We had some other error so we can't run the test with cuda either.
         return False
 
 
@@ -221,13 +220,13 @@ def test_memory_validate_failure() -> None:
 def test_statistics_construction():
     m = get_sample_evidence_metadata()
 
-    stats = NvidiaGPUMemoryStatistics(1, 2, 4)
+    stats = NvidiaGPUMemoryStatistics(1, 2, 4).with_metadata(m)
     assert stats.avg == Quantity(1, Units.mebibyte)
     assert stats.min == Quantity(2, Units.mebibyte)
     assert stats.max == Quantity(4, Units.mebibyte)
     assert stats.unit == Units.mebibyte
 
-    stats = NvidiaGPUMemoryStatistics(4, 6, 8, Units.gibibyte)
+    stats = NvidiaGPUMemoryStatistics(4, 6, 8, Units.gibibyte).with_metadata(m)
     assert stats.avg == Quantity(4, Units.gibibyte)
     assert stats.min == Quantity(6, Units.gibibyte)
     assert stats.max == Quantity(8, Units.gibibyte)
