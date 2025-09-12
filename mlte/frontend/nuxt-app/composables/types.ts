@@ -394,7 +394,6 @@ export class TestCatalogEntry {
     public tags: Array<string> = [],
     public qa_category: string = "",
     public quality_attribute: string = "",
-    public code_type: string = "",
     public code: string = "",
     public description: string = "",
     public inputs: string = "",
