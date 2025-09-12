@@ -9,7 +9,7 @@ from __future__ import annotations
 import sys
 import time
 from importlib import import_module
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Self
 
 import psutil
 
@@ -55,7 +55,9 @@ https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvm
 
 class CommonStatistics(ExternalEvidence):
     # TODO Is there a better default unit for "NONE"
-    DEFAULT_UNIT = None
+    # TODO There isn't a unit that is for none, but if I use None it pisses off
+    # flake.
+    DEFAULT_UNIT = Units.moles
 
     def __init__(self, avg: int, min: int, max: int, unit: Unit):
         """
@@ -106,7 +108,7 @@ class CommonStatistics(ExternalEvidence):
             avg=data["avg"],
             min=data["min"],
             max=data["max"],
-            unit=unit,
+            unit=unit if unit else cls.DEFAULT_UNIT,
         )
 
     def __str__(self) -> str:
@@ -125,7 +127,7 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def max_consumption_less_than(
-        cls, threshold: int, unit: Unit = None
+        cls, threshold: int, unit: Unit = Units.moles
     ) -> Validator:
         """
         Construct and invoke a validator for maximum memory consumption.
@@ -135,13 +137,13 @@ class CommonStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
-
+        # TODO: Fix the rotten units.moles thing. I want to be able to do None
         # This allows us to get the unit from a subclass
-        if unit is None:
+        if unit == Units.moles:
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[cls], bool] = (
+        bool_exp: Callable[[Self], bool] = (
             lambda stats: stats.max < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
@@ -155,7 +157,7 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def average_consumption_less_than(
-        cls, threshold: float, unit: Unit = None
+        cls, threshold: float, unit: Unit = Units.moles
     ) -> Validator:
         """
         Construct and invoke a validator for average memory consumption.
@@ -167,11 +169,11 @@ class CommonStatistics(ExternalEvidence):
         """
 
         # This allows us to get the unit from a subclass
-        if unit is None:
+        if unit == Units.moles:
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[cls], bool] = (
+        bool_exp: Callable[[Self], bool] = (
             lambda stats: stats.avg < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
@@ -226,7 +228,7 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 class NvidiaGPUMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a specific gpu."""
 
-    def __init__(self, identifier: Optional[str] = None, gpu_id: id = 0):
+    def __init__(self, identifier: Optional[str] = None, gpu_id: int = 0):
         """
         Initialize a LocalProcessMemoryConsumption instance.
 
@@ -262,7 +264,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         while True:
             try:
                 # This is just so that we check to see if our task is running
-                p = psutil.Process(pid)
+                psutil.Process(pid)
                 size_in_bytes = _get_nvml_memory_usage_bytes(self.gpu_id)
 
                 # If invalid, then we get this. We might want to keep track of how many we get.
@@ -275,24 +277,25 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
                 count += 1
 
                 time.sleep(poll_interval)
-            except psutil.NoSuchProcess as e:
+            except psutil.NoSuchProcess:
                 # This is by design as the process went away
                 break
 
-        # Coerce to the quantity type with units multiplier
-        avg = 0 * Units.bytes
+        # Coerce to the quantity type with bytes then conver to target
+        avg_unit = Quantity(0, Units.bytes).to(unit)
         if count > 0:
-            avg = (total // count) * Units.bytes
-        minimum = minimum * Units.bytes
-        maximum = maximum * Units.bytes
-
-        # Convert to desired unit
-        avg = avg.to(unit)
-        minimum = minimum.to(unit)
-        maximum = maximum.to(unit)
-        return NvidiaGPUMemoryStatistics(avg, minimum, maximum, unit=unit)
+            avg_unit = Quantity(total // count, Units.bytes).to(unit)
+        min_unit = Quantity(minimum, Units.bytes).to(unit)
+        max_unit = Quantity(maximum, Units.bytes).to(unit)
+        return NvidiaGPUMemoryStatistics(
+            avg_unit.magnitude,
+            min_unit.magnitude,
+            max_unit.magnitude,
+            unit=unit,
+        )
 
     # Overriden.
+
     @classmethod
     def get_output_type(cls) -> type[NvidiaGPUMemoryStatistics]:
         return NvidiaGPUMemoryStatistics
@@ -333,7 +336,7 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
             # NOTE: Pynvml exposes version 1 of the structure which has:
             # total, used, free
             memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-            return memory_info.used
+            return int(memory_info.used)
 
         except pynvml.NVMLError as error:
             # TODO: What are we doing for logging? I want to do a warning here
@@ -342,7 +345,7 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
 
     except ModuleNotFoundError:
         # TODO: What are we doing for logging? I want to do a warning here
-        print(f"Warning: pynvml not found.")
+        print("Warning: pynvml not found.")
         return -1
     except AttributeError as e:
         print(f"Error: {e} Attribute not found in module 'pynvml'.")

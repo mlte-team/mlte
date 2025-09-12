@@ -71,7 +71,7 @@ def torch_cuda_check() -> bool:
 
     try:
         torch = importlib.import_module("torch")
-        return torch.cuda.is_available()
+        return bool(torch.cuda.is_available())
     except ModuleNotFoundError:
         # The module isn't there, so we can't run our experiment anyway
         return False
