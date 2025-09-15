@@ -93,21 +93,21 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
     artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
     if artifact_store.uri.type == StoreType.REMOTE_HTTP:
         raise RuntimeError("Cannot run backend with HTTP artifact store.")
-    state.set_artifact_store(artifact_store)
+    state.stores.set_artifact_store(artifact_store)
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here?
     user_store = user_store_factory.create_user_store(stores_uri)
-    state.set_user_store(user_store)
+    state.stores.set_user_store(user_store)
 
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
     # TODO: allow for separate config of uri here?
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
-    state.set_custom_list_store(custom_list_store)
+    state.stores.set_custom_list_store(custom_list_store)
 
     # Catalogs: first add the sample catalog store.
     sample_catalog = SampleCatalog.setup_sample_catalog(stores_uri)
-    state.add_catalog_store(
+    state.stores.add_catalog_store(
         store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
     )
 
@@ -116,7 +116,7 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
         logging.info(
             f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
         )
-        state.add_catalog_store_from_uri(uri, id)
+        state.stores.add_catalog_store_from_uri(uri, id)
 
 
 def main() -> int:
