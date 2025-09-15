@@ -305,7 +305,7 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.NOT_FOUND
 
     assert not Policy(ResourceType.USER, user.username).is_stored(
-        state.user_store.session()
+        state.stores.user_store.session()
     )
 
 
@@ -350,7 +350,7 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
     # Give user permissions to some models.
     user.groups.extend(Policy(ResourceType.MODEL, resource_id=m1_id).groups)
     user.groups.extend(Policy(ResourceType.MODEL, resource_id=m2_id).groups)
-    user_store = state.user_store.session()
+    user_store = state.stores.user_store.session()
     user_store.user_mapper.edit(user)
 
     res = test_client.get(f"{USER_URI}/{user.username}/models")
@@ -384,7 +384,7 @@ def test_list_user_groups_me(
     # Give user permissions to some models.
     api_user.groups.extend(Policy(ResourceType.MODEL, resource_id=m1_id).groups)
     api_user.groups.extend(Policy(ResourceType.MODEL, resource_id=m2_id).groups)
-    user_store = state.user_store.session()
+    user_store = state.stores.user_store.session()
     user_store.user_mapper.edit(BasicUser(**api_user.to_json()))
 
     res = test_client.get(f"{USER_URI}/me/models")
