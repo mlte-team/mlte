@@ -3,12 +3,15 @@
 import os
 from typing import Optional
 
+from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
+from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
+from mlte.store.user import factory as user_store_factory
 from mlte.store.user.factory import create_user_store
 from mlte.store.user.store import UserStore
 
@@ -26,6 +29,9 @@ class SessionStores:
 
     ENV_USER_STORE_URI_VAR = "MLTE_CUSTOM_LIST_STORE_URI"
     """Environment variable to get the custom list store URI from, if needed."""
+
+    DEFAULT_CATALOG_STORE_ID = "local"
+    """Name of the default catalog store."""
 
     def __init__(self):
         """Defines the existing stores, none loaded yet."""
@@ -118,3 +124,51 @@ class SessionStores:
     def _get_env_var(self, env_var: str) -> Optional[str]:
         """Get env var or return none if does not exist."""
         return os.environ.get(env_var, None)
+
+
+def setup_stores(
+    stores_uri: str,
+    catalog_uris: dict[str, str] = {},
+    set_user_store: bool = False,
+) -> SessionStores:
+    """
+    Sets up all stores required by MLTE, from the provided URIs.
+
+    :param stores_uri: The store URI string, used as the common type and root location for all non-catalog stores.
+    :param catalog_uris: A dict of URIs for catalog stores.
+    :param set_user_store: Whether to set up a user store or not.
+    """
+    stores = SessionStores()
+
+    # Initialize the backing artifact store instance.
+    artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
+    stores.set_artifact_store(artifact_store)
+
+    # Initialize the backing user store instance. Assume same store as artifact one for now.
+    # TODO: allow for separate config of uri here?
+    if set_user_store:
+        user_store = user_store_factory.create_user_store(stores_uri)
+        stores.set_user_store(user_store)
+
+    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
+    # TODO: allow for separate config of uri here?
+    custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
+    stores.set_custom_list_store(custom_list_store)
+
+    # Catalogs: first add the sample catalog store.
+    sample_catalog = SampleCatalog.setup_sample_catalog(stores_uri)
+    stores.add_catalog_store(
+        store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
+    )
+
+    # Create default catalog if not configured.
+    if SessionStores.DEFAULT_CATALOG_STORE_ID not in catalog_uris:
+        stores.add_catalog_store_from_uri(
+            stores_uri, SessionStores.DEFAULT_CATALOG_STORE_ID
+        )
+
+    # Catalogs: Add all configured catalog stores.
+    for id, uri in catalog_uris.items():
+        stores.add_catalog_store_from_uri(uri, id)
+
+    return stores

@@ -1,8 +1,4 @@
-"""
-mlte/backend/main.py
-
-Entry point for MLTE artifact store server.
-"""
+"""Entry point for MLTE artifact store server."""
 
 import logging
 import sys
@@ -15,11 +11,8 @@ import mlte._private.hosts as util
 import mlte.backend.core.app_factory as app_factory
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.store.artifact import factory as artifact_store_factory
+from mlte.session.session_stores import setup_stores
 from mlte.store.base import StoreType, StoreURI
-from mlte.store.catalog.sample_catalog import SampleCatalog
-from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
-from mlte.store.user import factory as user_store_factory
 
 # Application exit codes
 EXIT_SUCCESS = 0
@@ -88,35 +81,12 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
     """
     parsed_uri = StoreURI.from_string(stores_uri)
     logging.info(f"Backend using stores URI of type: {parsed_uri.type}")
-
-    # Initialize the backing artifact store instance.
-    artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
-    if artifact_store.uri.type == StoreType.REMOTE_HTTP:
+    if parsed_uri.type == StoreType.REMOTE_HTTP:
         raise RuntimeError("Cannot run backend with HTTP artifact store.")
-    state.stores.set_artifact_store(artifact_store)
 
-    # Initialize the backing user store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here?
-    user_store = user_store_factory.create_user_store(stores_uri)
-    state.stores.set_user_store(user_store)
+    logging.info(f"Backend will add catalog stores: {catalog_uris}")
 
-    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here?
-    custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
-    state.stores.set_custom_list_store(custom_list_store)
-
-    # Catalogs: first add the sample catalog store.
-    sample_catalog = SampleCatalog.setup_sample_catalog(stores_uri)
-    state.stores.add_catalog_store(
-        store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
-    )
-
-    # Catalogs: Add all configured catalog stores.
-    for id, uri in catalog_uris.items():
-        logging.info(
-            f"Adding catalog with id '{id}' and URI of type: {StoreURI.from_string(uri).type}"
-        )
-        state.stores.add_catalog_store_from_uri(uri, id)
+    state.stores = setup_stores(stores_uri, catalog_uris, set_user_store=True)
 
 
 def main() -> int:

@@ -8,9 +8,7 @@ from typing import Optional
 import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
-from mlte.session.session_stores import SessionStores
-from mlte.store.artifact.factory import create_artifact_store
-from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
+from mlte.session.session_stores import SessionStores, setup_stores
 
 
 class Session:
@@ -114,10 +112,7 @@ def set_store(store_uri: str):
     :param store_uri: The store URI string
     """
     session = Session.get_session()
-    session.stores.set_artifact_store(create_artifact_store(store_uri))
-    session.stores.set_custom_list_store(
-        InitialCustomLists.setup_custom_list_store(store_uri)
-    )
+    session.stores = setup_stores(store_uri)
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
