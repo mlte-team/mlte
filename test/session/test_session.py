@@ -121,10 +121,10 @@ def test_no_store_setup():
     model = "model"
     version = "v0.0.1"
 
-    set_context(model, version)
-
-    s = session()
-
     with pytest.raises(RuntimeError):
+        set_context(model, version)
+
+        s = session()
+
         _ = s.stores.artifact_store
         _ = s.stores.custom_list_store

@@ -145,13 +145,11 @@ def setup_stores(
     stores.set_artifact_store(artifact_store)
 
     # Initialize the backing user store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here?
     if set_user_store:
         user_store = user_store_factory.create_user_store(stores_uri)
         stores.set_user_store(user_store)
 
     # Initialize the backing custom list store instance. Assume same store as artifact one for now.
-    # TODO: allow for separate config of uri here?
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
     stores.set_custom_list_store(custom_list_store)
 

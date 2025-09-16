@@ -23,15 +23,6 @@ class Session:
     MLTE_CONTEXT_VERSION_VAR = "MLTE_CONTEXT_VERSION"
     """Environment variables to get model and version from, if needed."""
 
-    _instance: Optional[Session] = None
-    """Singleton instance."""
-
-    def __new__(self):
-        """Overload to ensure it is a singleton."""
-        if self._instance is None:
-            self._instance = super(Session, self).__new__(self)
-        return self._instance
-
     def __init__(self):
         """Constructors, just resets all vars."""
         self.reset()
@@ -43,11 +34,6 @@ class Session:
 
         self.stores = SessionStores()
         """All stores in this session."""
-
-    @staticmethod
-    def get_session() -> Session:
-        """Obtains the singleton instance."""
-        return Session()
 
     @property
     def context(self) -> Context:
@@ -83,14 +69,18 @@ class Session:
         )
 
 
+# Globally-accessible application state
+g_session = Session()
+
+
 def reset_session() -> None:
     """Used to reset session if needed."""
-    Session.get_session().reset()
+    g_session.reset()
 
 
 def session() -> Session:
     """Return the package global session."""
-    return Session.get_session()
+    return g_session
 
 
 def set_context(model_id: str, version_id: str, lazy: bool = True):
@@ -100,10 +90,9 @@ def set_context(model_id: str, version_id: str, lazy: bool = True):
     :param version_id: The version identifier
     :param lazy: Whether to wait to create the context until an artifact is written (True), or to eagerly create it immediately (False).
     """
-    session = Session.get_session()
-    session._set_context(Context(model_id, version_id))
+    g_session._set_context(Context(model_id, version_id))
     if not lazy:
-        session.create_context()
+        g_session.create_context()
 
 
 def set_store(store_uri: str):
@@ -111,8 +100,7 @@ def set_store(store_uri: str):
     Set the global MLTE context store URI.
     :param store_uri: The store URI string
     """
-    session = Session.get_session()
-    session.stores = setup_stores(store_uri)
+    g_session.stores = setup_stores(store_uri)
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
@@ -120,14 +108,12 @@ def add_catalog_store(catalog_store_uri: str, id: str):
     Adds a global MLTE catalog store URI.
     :param catalog_store_uri: The catalog store URI string
     """
-    session = Session.get_session()
-    session.stores.add_catalog_store_from_uri(catalog_store_uri, id)
+    g_session.stores.add_catalog_store_from_uri(catalog_store_uri, id)
 
 
 def print_custom_list_entries(list_name: CustomListName) -> None:
     """Prints custom list entries in a user-friendly way."""
-    session = Session.get_session()
-    entry_list = session.stores.custom_list_store.session().custom_list_entry_mapper.list_details(
+    entry_list = g_session.stores.custom_list_store.session().custom_list_entry_mapper.list_details(
         list_name
     )
     for entry in entry_list:
