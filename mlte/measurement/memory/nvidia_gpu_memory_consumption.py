@@ -9,7 +9,7 @@ from __future__ import annotations
 import sys
 import time
 from importlib import import_module
-from typing import Any, Callable, Optional, Self
+from typing import Any, Callable, Optional
 
 import psutil
 
@@ -143,7 +143,7 @@ class CommonStatistics(ExternalEvidence):
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Self], bool] = (
+        bool_exp: Callable[[Any], bool] = (
             lambda stats: stats.max < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
@@ -173,7 +173,7 @@ class CommonStatistics(ExternalEvidence):
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Self], bool] = (
+        bool_exp: Callable[[Any], bool] = (
             lambda stats: stats.avg < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
