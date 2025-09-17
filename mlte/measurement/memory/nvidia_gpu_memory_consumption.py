@@ -2,6 +2,24 @@
 mlte/measurement/memory/nvidia_gpu_memory_consumption.py
 
 Memory consumption measurement for gpu processes.
+
+It relies on the pynvml package for status. We dynamically import it, so that we can can return useful
+results when it isn't available.
+
+We are using the 'nvidia-ml-py' version of the library. Thus: 'pip install nvidia-ml-py'
+
+API DOCS:
+
+NVIDIA Management Library (NVML) - https://developer.nvidia.com/management-library-nvml
+
+Links at bottom:
+API Docs - https://docs.nvidia.com/deploy/nvml-api/index.html
+Python Binding Docs - https://pypi.org/project/nvidia-ml-py/
+
+Example for getting memory utilization (nvmlDeviceGetMemoryInfo):
+
+https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvmlDeviceQueries_1g2dfeb1db82aa1de91aa6edf941c85ca8
+
 """
 
 from __future__ import annotations
@@ -23,27 +41,6 @@ from mlte.measurement.units import (
     unit_to_str,
 )
 from mlte.validation.validator import Validator
-
-"""
-For prototyping:
-
-nvidia-smi -q -i 1 -d MEMORY
-
-API DOCS:
-
-NVIDIA Management Library (NVML) - https://developer.nvidia.com/management-library-nvml
-
-Links at bottom:
-API Docs - https://docs.nvidia.com/deploy/nvml-api/index.html
-Python Binding Docs - https://pypi.org/project/nvidia-ml-py/
-
-Example for getting memory utilization (nvmlDeviceGetMemoryInfo):
-
-https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvmlDeviceQueries_1g2dfeb1db82aa1de91aa6edf941c85ca8
-
-
-"""
-
 
 # -----------------------------------------------------------------------------
 #   ___
@@ -248,7 +245,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         """
         Monitor memory usage on a specific gpu.
 
-        :param gpu_id: The device id (index)
+        :param pid: The process identifier
         :param poll_interval: The poll interval, in seconds
         :param unit: The unit to return the memory size in, defaults to statistics default unit.
         :return: The captured statistics
