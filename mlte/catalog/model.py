@@ -1,6 +1,6 @@
 """Model implementation for MLTE catalog entries."""
 
-from typing import Any, Optional
+from typing import Optional
 
 from mlte.model import BaseModel
 from mlte.store.query import Filterable
@@ -57,7 +57,3 @@ class CatalogEntry(Filterable):
 
     def get_identifier(self) -> str:
         return self.header.identifier
-
-    def get_type(self) -> Any:
-        """Just to implement abstract class, not really needed."""
-        return "entry"
