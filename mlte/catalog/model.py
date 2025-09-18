@@ -37,9 +37,6 @@ class CatalogEntry(Filterable):
     tags: list[str] = []
     """Tags for the problem for the entry."""
 
-    qa_category: Optional[str] = None
-    """The QA category for the entry."""
-
     quality_attribute: Optional[str] = None
     """The quality attribute for the entry."""
 
