@@ -265,23 +265,6 @@ function tagChange(selected: boolean, tagName: string) {
   }
 }
 
-// Delete when test catalog no longer saves qa category
-function categoryChange(newCategory: string, quality_attribute?: string) {
-  selectedQAOptions.value = [];
-  AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.parent == newCategory) {
-      selectedQAOptions.value.push(attribute);
-    }
-  });
-
-  if (typeof quality_attribute === "undefined") {
-    props.modelValue.quality_attribute = "";
-  } else {
-    props.modelValue.quality_attribute = quality_attribute;
-  }
-}
-// End of delete section
-
 // Copies contents of code form field to the clipboard.
 function copyCode() {
   navigator.clipboard.writeText(props.modelValue.code);
