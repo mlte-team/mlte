@@ -79,10 +79,16 @@ class TestSuiteValidator:
         :return: The results of the test validation.
         """
         # Check that all test cases have evidence to be validated.
-        for test_case_id in self.test_suite.test_cases.keys():
-            if test_case_id not in self.evidence:
+        for test_case_id, test_case in self.test_suite.test_cases.items():
+            # Make exception for info cases, where there is no bool exp to validate, but just info to be manually validated later.
+            is_info_case = (
+                test_case.validator
+                and not test_case.validator.bool_exp
+                and test_case.validator.info
+            )
+            if test_case_id not in self.evidence and not is_info_case:
                 raise RuntimeError(
-                    f"Test Case '{test_case_id}' does not have evidence that can be validated."
+                    f"Test Case '{test_case_id}' will be automatically validated, and does not have evidence that can be validated."
                 )
 
         # Validate and aggregate the results.
