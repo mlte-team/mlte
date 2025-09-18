@@ -177,7 +177,6 @@ if (QACategoryAPIData.value) {
   });
 }
 
-const selectedQAOptions = ref<Array<QAOption>>([]);
 const AllQAOptions = ref<Array<QAOption>>([]);
 const QAapiOptions = ref<Array<CustomListEntry>>([]);
 QAapiOptions.value = await getCustomList("quality_attributes");
