@@ -20,7 +20,7 @@ def artifact_store_session() -> Generator[ArtifactStoreSession, None, None]:
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: ArtifactStoreSession = state.artifact_store.session()
+    session: ArtifactStoreSession = state.stores.artifact_store.session()
     try:
         yield session
     finally:
@@ -33,7 +33,7 @@ def user_store_session() -> Generator[UserStoreSession, None, None]:
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: UserStoreSession = state.user_store.session()
+    session: UserStoreSession = state.stores.user_store.session()
     try:
         yield session
     finally:
@@ -46,7 +46,7 @@ def catalog_stores_session() -> Generator[CatalogStoreGroupSession, None, None]:
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: CatalogStoreGroupSession = state.catalog_stores.session()
+    session: CatalogStoreGroupSession = state.stores.catalog_stores.session()
     try:
         yield session
     finally:
@@ -61,7 +61,7 @@ def custom_list_stores_session() -> (
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: CustomListStoreSession = state.custom_list_store.session()
+    session: CustomListStoreSession = state.stores.custom_list_store.session()
     try:
         yield session
     finally:

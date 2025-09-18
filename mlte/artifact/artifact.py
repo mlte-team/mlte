@@ -101,7 +101,7 @@ class Artifact(Serializable):
         """
         return self.save_with(
             session().context,
-            session().artifact_store,
+            session().stores.artifact_store,
             force=force,
             parents=parents,
             user=user,
@@ -161,7 +161,7 @@ class Artifact(Serializable):
         return cls.load_with(
             identifier,
             context=session().context,
-            store=session().artifact_store,
+            store=session().stores.artifact_store,
         )
 
     @classmethod
@@ -205,7 +205,7 @@ class Artifact(Serializable):
         return Artifact.load_models(
             artifact_type,
             context=session().context,
-            store=session().artifact_store,
+            store=session().stores.artifact_store,
         )
 
     @staticmethod

@@ -45,7 +45,7 @@ def write_artifact(
         artifact = ArtifactFactory.from_model(request.artifact)
         model = artifact.save_with(
             Context(model_id, version_id),
-            state.artifact_store,
+            state.stores.artifact_store,
             force=request.force,
             parents=request.parents,
             user=current_user.username,

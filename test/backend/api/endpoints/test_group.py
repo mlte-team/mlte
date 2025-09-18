@@ -64,7 +64,7 @@ def get_test_group() -> Group:
 def create_group_using_admin(api: TestAPI):
     """Create test group."""
     group = get_test_group()
-    with ManagedUserSession(state.user_store.session()) as user_store:
+    with ManagedUserSession(state.stores.user_store.session()) as user_store:
         setup_group_permisisons(group, user_store)
 
     api.admin_create_entity(get_test_group(), GROUP_URI)
@@ -127,7 +127,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
         resource_id="mod1",
         method=MethodType.DELETE,
     )
-    with ManagedUserSession(state.user_store.session()) as user_store:
+    with ManagedUserSession(state.stores.user_store.session()) as user_store:
         user_store.permission_mapper.create(p3)
 
     # Create test group.
@@ -159,7 +159,7 @@ def test_edit_no_permission(
         resource_id="mod1",
         method=MethodType.DELETE,
     )
-    with ManagedUserSession(state.user_store.session()) as user_store:
+    with ManagedUserSession(state.stores.user_store.session()) as user_store:
         user_store.permission_mapper.create(p3)
 
     # Create test group.

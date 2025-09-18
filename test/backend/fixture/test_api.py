@@ -93,13 +93,15 @@ class TestAPI:
 
         # Set up API global state.
         state.reset()
-        state.set_user_store(user_store_fixture.create_memory_store())
-        state.set_artifact_store(artifact_store_creators.create_memory_store())
+        state.stores.set_user_store(user_store_fixture.create_memory_store())
+        state.stores.set_artifact_store(
+            artifact_store_creators.create_memory_store()
+        )
         if default_catalog_id:
-            state.add_catalog_store(
+            state.stores.add_catalog_store(
                 catalog_store_creators.create_memory_store(), default_catalog_id
             )
-        state.set_custom_list_store(
+        state.stores.set_custom_list_store(
             custom_list_store_creators.create_memory_store()
         )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
@@ -110,14 +112,14 @@ class TestAPI:
 
     def set_user(self, user: Optional[UserWithPassword]):
         """Set up default user to use API."""
-        user_store = typing.cast(InMemoryUserStore, state.user_store)
+        user_store = typing.cast(InMemoryUserStore, state.stores.user_store)
         self.user = user
         if user is not None:
             self._set_user_in_mem_store(user, user_store)
 
     def set_admin_user(self):
         """Sets an admin user."""
-        user_store = typing.cast(InMemoryUserStore, state.user_store)
+        user_store = typing.cast(InMemoryUserStore, state.stores.user_store)
         self._set_user_in_mem_store(
             user_generator.build_admin_user(), user_store
         )
