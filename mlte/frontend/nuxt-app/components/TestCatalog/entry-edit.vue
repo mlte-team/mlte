@@ -54,48 +54,16 @@
       </span>
     </div>
 
-    <!-- Delete when test catalog no longer saves qa category -->
-    <UsaSelect
-      v-model="modelValue.qa_category"
-      :options="QACategoryOptions"
-      @change="categoryChange(modelValue.qa_category)"
+    <FormFieldsQualityAttributes
+      :initial-quality-attribute="props.modelValue.quality_attribute"
+      @update-attribute="props.modelValue.quality_attribute = $event"
     >
-      <template #label>
-        Quality Attribute Category
-        <InfoIcon>
-          High-level quality attribute category that the test example is
-          validating, e.g., functional correctness, performance, robustness.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-
-    <UsaSelect
-      v-model="modelValue.quality_attribute"
-      :options="selectedQAOptions"
-    >
-      <template #label>
-        Quality Attribute
-        <InfoIcon>
-          More specific quality attribute that the test example is validating,
-          e.g., accuracy, inference time, robustness to image blur.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-    <!-- End of delete section -->
-
-    <!-- Add back when test catalog no longer saves qa category -->
-    <!-- <FormFieldsQualityAttributes
-       @update-category="props.modelValue.qa_category = $event"
-       @update-attribute="props.modelValue.quality_attribute = $event"
-     >
       Quality Attribute Category
       <InfoIcon>
-        High-level quality attribute category that the test example is 
+        High-level quality attribute category that the test example is
         validating, e.g., functional correctness, performance, robustness.
       </InfoIcon>
-     </FormFieldsQualityAttributes> -->
+    </FormFieldsQualityAttributes>
 
     <UsaTextarea
       v-model="modelValue.code"
