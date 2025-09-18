@@ -53,7 +53,6 @@ class Filterable(BaseModel):
             "Can't call get id without a specific implementation."
         )
 
-    @abstractmethod
     def get_type(self) -> Any:
         """Returns the class-specific type for filtering."""
         raise NotImplementedError(

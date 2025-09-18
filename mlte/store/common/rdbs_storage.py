@@ -24,7 +24,7 @@ class RDBStorage(Storage):
         self,
         uri: StoreURI,
         base_class: DeclarativeBase,
-        init_tables_func: Optional[Callable[[sqlalchemy.Engine], None]],
+        init_tables_func: Optional[Callable[[sqlalchemy.Engine], None]] = None,
         **kwargs,
     ) -> None:
         super().__init__(uri)
