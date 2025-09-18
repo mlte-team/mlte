@@ -17,9 +17,9 @@
 
       <div class="inline-input-right">
         <label class="usa-label" style="margin-top: 0px">
-          Search by Quality Attribute Category
+          Search by Quality Attribute
         </label>
-        <UsaTextInput v-model="QACategorySearchValue" @keyup.enter="search()" />
+        <UsaTextInput v-model="QASearchValue" @keyup.enter="search()" />
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
@@ -48,7 +48,7 @@
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
-const QACategorySearchValue = ref("");
+const QASearchValue = ref("");
 const entryList = ref<TestCatalogEntry[]>([]);
 const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
@@ -63,9 +63,9 @@ async function populateFullEntryList() {
 
 // Handle a search query.
 async function search() {
-  if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
+  if (tagSearchValue.value === "" && QASearchValue.value === "") {
     populateFullEntryList();
-  } else if (QACategorySearchValue.value === "") {
+  } else if (QASearchValue.value === "") {
     entryList.value = await searchCatalog({
       filter: { type: "tag", name: "tags", value: tagSearchValue.value },
     });
@@ -73,8 +73,8 @@ async function search() {
     entryList.value = await searchCatalog({
       filter: {
         type: "property",
-        name: "qa_category",
-        value: QACategorySearchValue.value,
+        name: "quality_attribute",
+        value: QASearchValue.value,
       },
     });
   } else {
@@ -89,8 +89,8 @@ async function search() {
           },
           {
             type: "property",
-            name: "qa_category",
-            value: QACategorySearchValue.value,
+            name: "quality_attribute",
+            value: QASearchValue.value,
           },
         ],
       },

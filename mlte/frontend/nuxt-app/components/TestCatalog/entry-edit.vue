@@ -220,14 +220,6 @@ tagOptions.value.forEach((tagOption: CheckboxOption) => {
   }
 });
 
-// Delete when test catalog no longer saves qa category
-// On page load, populate Quality Attribute field if one is selected
-categoryChange(
-  props.modelValue.qa_category,
-  props.modelValue.quality_attribute,
-);
-// End of delete section
-
 // Handle submission of form.
 async function submit() {
   formErrors.value = resetFormErrors(formErrors.value);
