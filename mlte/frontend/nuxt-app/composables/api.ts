@@ -456,7 +456,7 @@ export async function getCard(
     "/model/" + model + "/version/" + version + "/artifact/" + cardId,
     "GET",
   );
-  if (card && card.body.artifact_type == "negotiation_card") {
+  if (card && card.body.artifact_type == "card") {
     if (isValidNegotiation(card)) {
       return card;
     } else {
@@ -491,7 +491,7 @@ export async function saveCard(
   const artifact = {
     header: {
       identifier,
-      type: "negotiation_card",
+      type: "card",
       timestamp: -1,
       creator: "",
     },
@@ -556,7 +556,7 @@ export async function getSuite(
     "/model/" + model + "/version/" + version + "/artifact/" + suiteId,
     "GET",
   );
-  if (suite && suite.body.artifact_type == "test_suite") {
+  if (suite && suite.body.artifact_type == "suite") {
     return suite;
   } else {
     return null;
@@ -579,7 +579,7 @@ export async function getResults(
     "/model/" + model + "/version/" + version + "/artifact/" + suiteId,
     "GET",
   );
-  if (results && results.body.artifact_type == "test_results") {
+  if (results && results.body.artifact_type == "results") {
     return results;
   } else {
     return null;

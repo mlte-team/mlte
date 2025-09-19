@@ -18,8 +18,6 @@ from mlte.store.query import Query, TypeFilter
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
 
-DEFAULT_TEST_SUITE_ID = "default.suite"
-
 
 class TestSuite(Artifact):
     """
@@ -27,9 +25,12 @@ class TestSuite(Artifact):
     measured and validated.
     """
 
+    type = ArtifactType.TEST_SUITE
+    """Class attribute indicating type."""
+
     def __init__(
         self,
-        identifier: str = DEFAULT_TEST_SUITE_ID,
+        identifier: typing.Optional[str] = None,
         test_cases: list[TestCase] = [],
     ):
         """
@@ -37,7 +38,7 @@ class TestSuite(Artifact):
 
         :param test_cases: The collection of test cases.
         """
-        super().__init__(identifier, ArtifactType.TEST_SUITE)
+        super().__init__(identifier)
 
         self.level = ArtifactLevel.MODEL
         """Indicate that this type of artifact will exist at the model level."""
@@ -73,15 +74,6 @@ class TestSuite(Artifact):
             evidence = self.test_cases[case_id].measure(*args)
             evidences.append(evidence)
         return evidences
-
-    # -------------------------------------------------------------------------
-    # Artifact overrides.
-    # -------------------------------------------------------------------------
-
-    @staticmethod
-    def get_default_id() -> str:
-        """Overriden"""
-        return DEFAULT_TEST_SUITE_ID
 
     # -------------------------------------------------------------------------
     # Model serialization.
