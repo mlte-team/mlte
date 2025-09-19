@@ -5,7 +5,9 @@
         <th data-sortable scope="col" role="columnheader">Identifier</th>
         <th data-sortable scope="col" role="columnheader">Catalog</th>
         <th data-sortable scope="col" role="columnheader">Tags</th>
-        <th data-sortable scope="col" role="columnheader">Quality Attribute</th>
+        <th data-sortable scope="col" role="columnheader">
+          Quality Attribute Category
+        </th>
         <th data-sortable scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
@@ -22,33 +24,48 @@
           <span v-if="tagIndex + 1 < entry.tags.length">, </span>
         </span>
       </td>
-      <td>{{ entry.quality_attribute }}</td>
       <td>
-        <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
-          Edit
-        </UsaButton>
-        <UsaButton
-          class="usa-button usa-button--secondary"
-          @click="
-            emit(
-              'deleteEntry',
-              entry.header.catalog_id,
-              entry.header.identifier,
-            )
-          "
-        >
-          Delete
-        </UsaButton>
+        {{ entry.quality_attribute }}
+      </td>
+      <td>
+        <template v-if="catalogLookup[entry.header.catalog_id].read_only">
+          <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
+            View
+          </UsaButton>
+        </template>
+        <template v-else>
+          <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
+            Edit
+          </UsaButton>
+          <UsaButton
+            class="usa-button usa-button--secondary"
+            @click="
+              emit(
+                'deleteEntry',
+                entry.header.catalog_id,
+                entry.header.identifier,
+              )
+            "
+          >
+            Delete
+          </UsaButton>
+        </template>
       </td>
     </tr>
   </table>
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const emit = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
 const props = defineProps({
   modelValue: {
     type: Array<TestCatalogEntry>,
+    required: true,
+  },
+  catalogLookup: {
+    type: Object as PropType<Dictionary<CatalogReply>>,
     required: true,
   },
 });
