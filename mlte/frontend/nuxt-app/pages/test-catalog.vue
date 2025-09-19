@@ -29,6 +29,7 @@
 
       <TestCatalogEntryList
         v-model="entryList"
+        :catalog-lookup="catalogLookup"
         @edit-entry="editEntry"
         @delete-entry="deleteEntry"
       />
@@ -37,6 +38,11 @@
       <TestCatalogEntryEdit
         v-model="selectedEntry"
         :new-entry-flag="newEntryFlag"
+        :read-only="
+          catalogLookup[selectedEntry.header.catalog_id]
+            ? catalogLookup[selectedEntry.header.catalog_id].read_only
+            : false
+        "
         @cancel="cancelEdit"
         @submit="saveEntry"
       />
@@ -49,10 +55,20 @@ const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QASearchValue = ref("");
+const catalogLookup = ref<Dictionary<CatalogReply>>({});
 const entryList = ref<TestCatalogEntry[]>([]);
 const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
+makeCatalogLookup();
 populateFullEntryList();
+
+// Make lookup of catalogs to know if entries are readonly
+async function makeCatalogLookup() {
+  const catalogList = await getCatalogList();
+  catalogList.forEach((catalog: CatalogReply) => {
+    catalogLookup.value[catalog.id] = catalog;
+  });
+}
 
 // Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
@@ -142,9 +158,16 @@ async function deleteEntry(catalogId: string, entryId: string) {
   }
 }
 
-// Return to entry list view from the edit view.
-function cancelEdit() {
-  if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
+/**
+ * Return to entry list view from the edit view
+ *
+ * @param force Cancel the edit without confirmation
+ */
+function cancelEdit(force: boolean = false) {
+  if (
+    force ||
+    confirm("Are you sure you want to cancel? All changes will be lost.")
+  ) {
     editFlag.value = false;
     resetSelectedEntry();
   }

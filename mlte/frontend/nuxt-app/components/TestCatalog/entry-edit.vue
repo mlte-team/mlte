@@ -45,6 +45,7 @@
       >
         <UsaCheckbox
           v-model="tag.selected"
+          :disabled="props.readOnly"
           @update:model-value="tagChange(tag.selected, tag.name)"
         >
           <template #default>
@@ -56,6 +57,7 @@
 
     <FormFieldsQualityAttributes
       :initial-quality-attribute="props.modelValue.quality_attribute"
+      :disabled="props.readOnly"
       @update-attribute="props.modelValue.quality_attribute = $event"
     >
       Quality Attribute Category
@@ -67,6 +69,7 @@
 
     <UsaTextarea
       v-model="modelValue.code"
+      :disabled="props.readOnly"
       style="resize: both; width: 30rem; max-width: 100%"
     >
       <template #label>
@@ -79,6 +82,7 @@
 
     <UsaTextarea
       v-model="modelValue.description"
+      :disabled="props.readOnly"
       style="resize: both; width: 30rem; max-width: 100%"
     >
       <template #label>
@@ -88,7 +92,7 @@
       <template #error-message>Not defined</template>
     </UsaTextarea>
 
-    <UsaTextInput v-model="modelValue.inputs">
+    <UsaTextInput v-model="modelValue.inputs" :disabled="props.readOnly">
       <template #label>
         Inputs
         <InfoIcon>
@@ -99,7 +103,7 @@
       <template #error-message>Not defined</template>
     </UsaTextInput>
 
-    <UsaTextInput v-model="modelValue.output">
+    <UsaTextInput v-model="modelValue.output" :disabled="props.readOnly">
       <template #label>
         Output
         <InfoIcon>
@@ -111,10 +115,17 @@
     </UsaTextInput>
 
     <div class="submit-footer">
-      <UsaButton class="primary-button" @click="emit('cancel')">
-        Cancel
-      </UsaButton>
-      <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
+      <template v-if="props.readOnly">
+        <UsaButton class="primary-button" @click="emit('cancel', true)">
+          Back
+        </UsaButton>
+      </template>
+      <template v-else>
+        <UsaButton class="primary-button" @click="emit('cancel')">
+          Cancel
+        </UsaButton>
+        <UsaButton class="primary-button" @click="submit"> Save </UsaButton>
+      </template>
     </div>
   </div>
 </template>
@@ -129,6 +140,10 @@ const props = defineProps({
     required: true,
   },
   newEntryFlag: {
+    type: Boolean,
+    required: true,
+  },
+  readOnly: {
     type: Boolean,
     required: true,
   },
