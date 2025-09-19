@@ -392,7 +392,6 @@ export class TestCatalogEntry {
   constructor(
     public header: TestCatalogHeader = new TestCatalogHeader(),
     public tags: Array<string> = [],
-    public qa_category: string = "",
     public quality_attribute: string = "",
     public code: string = "",
     public description: string = "",

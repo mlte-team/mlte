@@ -54,48 +54,16 @@
       </span>
     </div>
 
-    <!-- Delete when test catalog no longer saves qa category -->
-    <UsaSelect
-      v-model="modelValue.qa_category"
-      :options="QACategoryOptions"
-      @change="categoryChange(modelValue.qa_category)"
+    <FormFieldsQualityAttributes
+      :initial-quality-attribute="props.modelValue.quality_attribute"
+      @update-attribute="props.modelValue.quality_attribute = $event"
     >
-      <template #label>
-        Quality Attribute Category
-        <InfoIcon>
-          High-level quality attribute category that the test example is
-          validating, e.g., functional correctness, performance, robustness.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-
-    <UsaSelect
-      v-model="modelValue.quality_attribute"
-      :options="selectedQAOptions"
-    >
-      <template #label>
-        Quality Attribute
-        <InfoIcon>
-          More specific quality attribute that the test example is validating,
-          e.g., accuracy, inference time, robustness to image blur.
-        </InfoIcon>
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-    <!-- End of delete section -->
-
-    <!-- Add back when test catalog no longer saves qa category -->
-    <!-- <FormFieldsQualityAttributes
-       @update-category="props.modelValue.qa_category = $event"
-       @update-attribute="props.modelValue.quality_attribute = $event"
-     >
       Quality Attribute Category
       <InfoIcon>
-        High-level quality attribute category that the test example is 
+        High-level quality attribute category that the test example is
         validating, e.g., functional correctness, performance, robustness.
       </InfoIcon>
-     </FormFieldsQualityAttributes> -->
+    </FormFieldsQualityAttributes>
 
     <UsaTextarea
       v-model="modelValue.code"
@@ -191,43 +159,6 @@ if (catalogList.value) {
   });
 }
 
-// Delete when test catalog no longer saves qa category
-const QACategoryOptions = ref<Array<QAOption>>([]);
-const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
-QACategoryAPIData.value = await getCustomList("qa_categories");
-
-if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: CustomListEntry) => {
-    QACategoryOptions.value.push(
-      new QAOption(
-        category.name,
-        category.name,
-        category.description,
-        category.parent,
-      ),
-    );
-  });
-}
-
-const selectedQAOptions = ref<Array<QAOption>>([]);
-const AllQAOptions = ref<Array<QAOption>>([]);
-const QAapiOptions = ref<Array<CustomListEntry>>([]);
-QAapiOptions.value = await getCustomList("quality_attributes");
-
-if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: CustomListEntry) => {
-    AllQAOptions.value.push(
-      new QAOption(
-        attribute.name,
-        attribute.name,
-        attribute.description,
-        attribute.parent,
-      ),
-    );
-  });
-}
-// End of delete section
-
 const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
@@ -251,14 +182,6 @@ tagOptions.value.forEach((tagOption: CheckboxOption) => {
     tagOption.selected = true;
   }
 });
-
-// Delete when test catalog no longer saves qa category
-// On page load, populate Quality Attribute field if one is selected
-categoryChange(
-  props.modelValue.qa_category,
-  props.modelValue.quality_attribute,
-);
-// End of delete section
 
 // Handle submission of form.
 async function submit() {
@@ -304,23 +227,6 @@ function tagChange(selected: boolean, tagName: string) {
     }
   }
 }
-
-// Delete when test catalog no longer saves qa category
-function categoryChange(newCategory: string, quality_attribute?: string) {
-  selectedQAOptions.value = [];
-  AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.parent == newCategory) {
-      selectedQAOptions.value.push(attribute);
-    }
-  });
-
-  if (typeof quality_attribute === "undefined") {
-    props.modelValue.quality_attribute = "";
-  } else {
-    props.modelValue.quality_attribute = quality_attribute;
-  }
-}
-// End of delete section
 
 // Copies contents of code form field to the clipboard.
 function copyCode() {

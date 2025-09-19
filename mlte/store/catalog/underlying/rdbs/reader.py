@@ -57,7 +57,6 @@ class DBReader:
 
         return CatalogEntry(
             tags=json.loads(entry_obj.tags),
-            qa_category=entry_obj.qa_category,
             quality_attribute=entry_obj.quality_attribute,
             code=entry_obj.code,
             description=entry_obj.description,
@@ -86,7 +85,6 @@ class DBReader:
         entry_header_obj.catalog_identifier = entry.header.catalog_id
 
         entry_obj.tags = json.dumps(entry.tags)
-        entry_obj.qa_category = entry.qa_category
         entry_obj.quality_attribute = entry.quality_attribute
         entry_obj.code = entry.code
         entry_obj.description = entry.description

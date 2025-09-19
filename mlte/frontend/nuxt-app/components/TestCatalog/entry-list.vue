@@ -5,9 +5,7 @@
         <th data-sortable scope="col" role="columnheader">Identifier</th>
         <th data-sortable scope="col" role="columnheader">Catalog</th>
         <th data-sortable scope="col" role="columnheader">Tags</th>
-        <th data-sortable scope="col" role="columnheader">
-          Quality Attribute Category
-        </th>
+        <th data-sortable scope="col" role="columnheader">Quality Attribute</th>
         <th data-sortable scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
@@ -24,9 +22,7 @@
           <span v-if="tagIndex + 1 < entry.tags.length">, </span>
         </span>
       </td>
-      <td>
-        {{ entry.qa_category }}
-      </td>
+      <td>{{ entry.quality_attribute }}</td>
       <td>
         <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
           Edit

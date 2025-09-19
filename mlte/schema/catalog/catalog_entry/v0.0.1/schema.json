@@ -88,18 +88,6 @@
       "title": "Tags",
       "type": "array"
     },
-    "qa_category": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Qa Category"
-    },
     "quality_attribute": {
       "anyOf": [
         {
