@@ -94,8 +94,12 @@ class TestSuiteValidator:
         # Validate and aggregate the results.
         results: dict[str, Result] = {}
         for test_case_id, test_case in self.test_suite.test_cases.items():
-            results[test_case_id] = test_case.validate(
+            # Manage case where there is no evidence, typically for an info validator.
+            evidence = (
                 self.evidence[test_case_id]
+                if test_case_id in self.evidence
+                else None
             )
+            results[test_case_id] = test_case.validate(evidence)
 
         return TestResults(test_suite=self.test_suite, results=results)

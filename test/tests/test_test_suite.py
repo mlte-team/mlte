@@ -1,6 +1,4 @@
-"""
-Unit tests for TestSuite functionality.
-"""
+"""Unit tests for TestSuite functionality."""
 
 from __future__ import annotations
 
@@ -96,6 +94,7 @@ def test_save_invalid_qasids():
 def test_load_failure(
     store_with_context: tuple[ArtifactStore, Context]  # noqa
 ):
+    """Fail to load a suite that doesn't exist."""
     store, ctx = store_with_context
     with pytest.raises(RuntimeError):
         _ = TestSuite.load_with("test_suite", context=ctx, store=store)
