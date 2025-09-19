@@ -159,42 +159,6 @@ if (catalogList.value) {
   });
 }
 
-// Delete when test catalog no longer saves qa category
-const QACategoryOptions = ref<Array<QAOption>>([]);
-const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
-QACategoryAPIData.value = await getCustomList("qa_categories");
-
-if (QACategoryAPIData.value) {
-  QACategoryAPIData.value.forEach((category: CustomListEntry) => {
-    QACategoryOptions.value.push(
-      new QAOption(
-        category.name,
-        category.name,
-        category.description,
-        category.parent,
-      ),
-    );
-  });
-}
-
-const AllQAOptions = ref<Array<QAOption>>([]);
-const QAapiOptions = ref<Array<CustomListEntry>>([]);
-QAapiOptions.value = await getCustomList("quality_attributes");
-
-if (QAapiOptions.value) {
-  QAapiOptions.value.forEach((attribute: CustomListEntry) => {
-    AllQAOptions.value.push(
-      new QAOption(
-        attribute.name,
-        attribute.name,
-        attribute.description,
-        attribute.parent,
-      ),
-    );
-  });
-}
-// End of delete section
-
 const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
