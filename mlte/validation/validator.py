@@ -115,6 +115,19 @@ class Validator(Serializable):
         )
         return validator
 
+    @staticmethod
+    def build_info_validator(info: str) -> Validator:
+        """
+        Creates a genering Validator with no bool exp and with the given info.
+        Useful for validations that can't be automated but need to be recorded.
+        :param info: The information to record.
+        :return: The Validator that can be used.
+        """
+        validator: Validator = Validator.build_validator(
+            info=info, input_types=[]
+        )
+        return validator
+
     def validate(self, *args, **kwargs) -> Result:
         """
         Generates a result based on the arguments received, and the configured attributes in the Validator.

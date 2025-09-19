@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     """The store URI string; defaults to in-memory store."""
 
     CATALOG_URIS: Dict[str, str] = {}
-    """The dict of catalog URI strings; defaults to one in-memory store."""
+    """The dict of catalog URI strings."""
 
     LOG_LEVEL: str = "ERROR"
     """The application log level; defaults to ERROR."""
