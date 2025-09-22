@@ -153,7 +153,7 @@ async function submit() {
     forceSaveParam.value = true;
     if (useRoute().query.artifactId === undefined) {
       window.location.href =
-        "/negotiation-card?" +
+        "/artifact/negotiation-card?" +
         "model=" +
         useRoute().query.model +
         "&version=" +
