@@ -301,7 +301,7 @@
       <NuxtLink
         target="_blank"
         :to="{
-          path: '/report-export',
+          path: '/artifact/report-export',
           query: {
             model: queryModel,
             version: queryVersion,

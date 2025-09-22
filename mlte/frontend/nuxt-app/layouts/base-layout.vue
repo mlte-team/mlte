@@ -36,8 +36,10 @@
                   </li>
                   <li class="usa-sidenav__item">
                     <NuxtLink
-                      :to="{ path: '/test-catalog' }"
-                      :class="{ 'usa-current': route.name === 'test-catalog' }"
+                      :to="{ path: '/catalog/test-catalog' }"
+                      :class="{
+                        'usa-current': route.name === 'catalog-test-catalog',
+                      }"
                     >
                       Test Catalog
                     </NuxtLink>
