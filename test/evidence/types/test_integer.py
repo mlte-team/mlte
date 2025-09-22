@@ -74,7 +74,7 @@ def test_save_load(
     )
     i.save_with(ctx, store)
 
-    loaded = Integer.load_with("test_id.evidence", context=ctx, store=store)
+    loaded = Integer.load_with("evidence.test_id", context=ctx, store=store)
     assert loaded == i
 
 

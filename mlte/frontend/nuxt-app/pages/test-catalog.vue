@@ -17,9 +17,9 @@
 
       <div class="inline-input-right">
         <label class="usa-label" style="margin-top: 0px">
-          Search by Quality Attribute Category
+          Search by Quality Attribute
         </label>
-        <UsaTextInput v-model="QACategorySearchValue" @keyup.enter="search()" />
+        <UsaTextInput v-model="QASearchValue" @keyup.enter="search()" />
       </div>
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
@@ -29,6 +29,7 @@
 
       <TestCatalogEntryList
         v-model="entryList"
+        :catalog-lookup="catalogLookup"
         @edit-entry="editEntry"
         @delete-entry="deleteEntry"
       />
@@ -37,6 +38,11 @@
       <TestCatalogEntryEdit
         v-model="selectedEntry"
         :new-entry-flag="newEntryFlag"
+        :read-only="
+          catalogLookup[selectedEntry.header.catalog_id]
+            ? catalogLookup[selectedEntry.header.catalog_id].read_only
+            : false
+        "
         @cancel="cancelEdit"
         @submit="saveEntry"
       />
@@ -48,11 +54,21 @@
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
-const QACategorySearchValue = ref("");
+const QASearchValue = ref("");
+const catalogLookup = ref<Dictionary<CatalogReply>>({});
 const entryList = ref<TestCatalogEntry[]>([]);
 const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
+makeCatalogLookup();
 populateFullEntryList();
+
+// Make lookup of catalogs to know if entries are readonly
+async function makeCatalogLookup() {
+  const catalogList = await getCatalogList();
+  catalogList.forEach((catalog: CatalogReply) => {
+    catalogLookup.value[catalog.id] = catalog;
+  });
+}
 
 // Get list of TestCatalogEntry from API and populate page with them.
 async function populateFullEntryList() {
@@ -63,9 +79,9 @@ async function populateFullEntryList() {
 
 // Handle a search query.
 async function search() {
-  if (tagSearchValue.value === "" && QACategorySearchValue.value === "") {
+  if (tagSearchValue.value === "" && QASearchValue.value === "") {
     populateFullEntryList();
-  } else if (QACategorySearchValue.value === "") {
+  } else if (QASearchValue.value === "") {
     entryList.value = await searchCatalog({
       filter: { type: "tag", name: "tags", value: tagSearchValue.value },
     });
@@ -73,8 +89,8 @@ async function search() {
     entryList.value = await searchCatalog({
       filter: {
         type: "property",
-        name: "qa_category",
-        value: QACategorySearchValue.value,
+        name: "quality_attribute",
+        value: QASearchValue.value,
       },
     });
   } else {
@@ -89,8 +105,8 @@ async function search() {
           },
           {
             type: "property",
-            name: "qa_category",
-            value: QACategorySearchValue.value,
+            name: "quality_attribute",
+            value: QASearchValue.value,
           },
         ],
       },
@@ -142,9 +158,16 @@ async function deleteEntry(catalogId: string, entryId: string) {
   }
 }
 
-// Return to entry list view from the edit view.
-function cancelEdit() {
-  if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
+/**
+ * Return to entry list view from the edit view
+ *
+ * @param force Cancel the edit without confirmation
+ */
+function cancelEdit(force: boolean = false) {
+  if (
+    force ||
+    confirm("Are you sure you want to cancel? All changes will be lost.")
+  ) {
     editFlag.value = false;
     resetSelectedEntry();
   }

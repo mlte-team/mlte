@@ -25,34 +25,47 @@
         </span>
       </td>
       <td>
-        {{ entry.qa_category }}
+        {{ entry.quality_attribute }}
       </td>
       <td>
-        <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
-          Edit
-        </UsaButton>
-        <UsaButton
-          class="usa-button usa-button--secondary"
-          @click="
-            emit(
-              'deleteEntry',
-              entry.header.catalog_id,
-              entry.header.identifier,
-            )
-          "
-        >
-          Delete
-        </UsaButton>
+        <template v-if="catalogLookup[entry.header.catalog_id].read_only">
+          <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
+            View
+          </UsaButton>
+        </template>
+        <template v-else>
+          <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
+            Edit
+          </UsaButton>
+          <UsaButton
+            class="usa-button usa-button--secondary"
+            @click="
+              emit(
+                'deleteEntry',
+                entry.header.catalog_id,
+                entry.header.identifier,
+              )
+            "
+          >
+            Delete
+          </UsaButton>
+        </template>
       </td>
     </tr>
   </table>
 </template>
 
 <script setup lang="ts">
+import type { PropType } from "vue";
+
 const emit = defineEmits(["addEntry", "editEntry", "deleteEntry"]);
 const props = defineProps({
   modelValue: {
     type: Array<TestCatalogEntry>,
+    required: true,
+  },
+  catalogLookup: {
+    type: Object as PropType<Dictionary<CatalogReply>>,
     required: true,
   },
 });

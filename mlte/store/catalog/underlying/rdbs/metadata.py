@@ -51,7 +51,6 @@ class DBCatalogEntry(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tags: Mapped[str]
-    qa_category: Mapped[Optional[str]]
     quality_attribute: Mapped[Optional[str]]
     code: Mapped[str]
     description: Mapped[Optional[str]]
@@ -66,4 +65,4 @@ class DBCatalogEntry(DBBase):
     )
 
     def __repr__(self) -> str:
-        return f"CatalogEntry(id={self.id!r}, description={self.description!r}, code={self.code!r}, qa_category={self.qa_category}, quality_attribute={self.quality_attribute!r})"
+        return f"CatalogEntry(id={self.id!r}, description={self.description!r}, code={self.code!r}, quality_attribute={self.quality_attribute!r})"

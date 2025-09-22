@@ -199,7 +199,7 @@ export class QASDescriptor {
 }
 
 export class NegotiationCardModel {
-  public readonly artifact_type = "negotiation_card";
+  public readonly artifact_type = "card";
   constructor(
     public system: SystemDescriptor = new SystemDescriptor(),
     public data: Array<DataDescriptor> = [new DataDescriptor()],
@@ -275,7 +275,7 @@ export class StringValueModel {
 // --------------------------------------------------------------------------------------------------------------
 
 export class TestSuiteModel {
-  public readonly artifact_type = "test_suite";
+  public readonly artifact_type = "suite";
   constructor(public test_cases: Array<TestCaseModel> = []) {}
 }
 
@@ -313,7 +313,7 @@ export interface Validator {
 // --------------------------------------------------------------------------------------------------------------
 
 export class TestResultsModel {
-  public readonly artifact_type = "test_results";
+  public readonly artifact_type = "results";
   constructor(
     public test_suite_id: string = "",
     public test_suite: TestSuiteModel = new TestSuiteModel(),
@@ -392,7 +392,6 @@ export class TestCatalogEntry {
   constructor(
     public header: TestCatalogHeader = new TestCatalogHeader(),
     public tags: Array<string> = [],
-    public qa_category: string = "",
     public quality_attribute: string = "",
     public code: string = "",
     public description: string = "",
