@@ -85,6 +85,14 @@ typecheck:
 	poetry run mypy test/
 	poetry run mypy tools/
 
+# QA for Python bits.
+.PHONY: qa-python
+qa-python: schema isort format lint typecheck docs
+
+# Check all QA tasks for Python.
+.PHONY: check-qa-python
+check-qa-python: check-schema check-isort check-format lint typecheck docs
+
 # -----------------------------------------------------------------------------
 # Frontend QA
 # -----------------------------------------------------------------------------
@@ -117,6 +125,14 @@ check-lint-frontend:
 typecheck-frontend:
 	cd mlte/frontend/nuxt-app && npx vue-tsc
 
+# QA for frontend (node.js) bits.
+.PHONY: qa-frontend
+qa-frontend: lint-frontend typecheck-frontend
+
+# Check all QA tasks for frontend
+.PHONY: check-qa-frontend
+check-qa-frontend: check-lint-frontend typecheck-frontend
+
 # -----------------------------------------------------------------------------
 # Unit Tests
 # -----------------------------------------------------------------------------
@@ -138,22 +154,23 @@ demo-test:
 
 # All quality assurance, as well as schema generation
 .PHONY: qa
-qa: schema isort format lint lint-frontend typecheck typecheck-frontend docs
+qa: qa-python qa-frontend
 
 # Check all QA tasks
 .PHONY: check-qa
-check-qa: check-schema check-isort check-format lint check-lint-frontend typecheck typecheck-frontend docs
+check-qa: check-qa-python check-qa-frontend
 
 # Clean cache files
 .PHONY: clean
 clean: frontend-env-clean
 	rm -r -f .mypy_cache .pytest_cache
 
+# This is basically equivalent to what the CI server will do.
 .PHONY: ci
 ci: clean venv frontend-env check-qa test
 
 # -----------------------------------------------------------------------------
-# Build commands.
+# Build commands to create a packaged wheel.
 # -----------------------------------------------------------------------------
 
 .PHONY: build-local
