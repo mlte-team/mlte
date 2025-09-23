@@ -180,10 +180,12 @@ export class SystemDescriptor {
   ) {}
 }
 
-export interface CustomListEntry {
-  name: string;
-  description: string;
-  parent: string;
+export class CustomListEntry {
+  constructor(
+    public name: string = "",
+    public description: string = "",
+    public parent: string = "",
+  ) {}
 }
 
 export class QASDescriptor {
