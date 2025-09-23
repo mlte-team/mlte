@@ -127,8 +127,8 @@
       "description": "The model implementation for the TestSuite artifact.",
       "properties": {
         "artifact_type": {
-          "const": "test_suite",
-          "default": "test_suite",
+          "const": "suite",
+          "default": "suite",
           "title": "Artifact Type",
           "type": "string"
         },
@@ -263,8 +263,8 @@
   "description": "The model implementation for the TestResults artifact.",
   "properties": {
     "artifact_type": {
-      "const": "test_results",
-      "default": "test_results",
+      "const": "results",
+      "default": "results",
       "title": "Artifact Type",
       "type": "string"
     },

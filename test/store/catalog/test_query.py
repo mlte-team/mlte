@@ -1,14 +1,6 @@
-"""
-test/store/catalog/test_query.py
+"""Unit tests for store query functionality."""
 
-Unit tests for store query functionality.
-"""
-
-from mlte.catalog.model import (
-    CatalogEntry,
-    CatalogEntryHeader,
-    CatalogEntryType,
-)
+from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 from mlte.store.query import (
     AllFilter,
     AndFilter,
@@ -17,20 +9,16 @@ from mlte.store.query import (
     OrFilter,
     PropertyFilter,
     TagFilter,
-    TypeFilter,
 )
 
 
-class QACategoryPropertyFilter(PropertyFilter):
-    name: str = "qa_category"
+class QAPropertyFilter(PropertyFilter):
+    name: str = "quality_attribute"
 
 
-def create_test_entry(
-    id: str = "def_id", type: CatalogEntryType = CatalogEntryType.MEASUREMENT
-) -> CatalogEntry:
+def create_test_entry(id: str = "def_id") -> CatalogEntry:
     entry = CatalogEntry(
         header=CatalogEntryHeader(identifier=id),
-        code_type=type,
         code="hello world",
     )
     return entry
@@ -58,22 +46,11 @@ def test_identifier_match() -> None:
     assert not filter.match(b)
 
 
-def test_type_match() -> None:
-    """The type filter matches expected entries."""
-    entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
-
-    filter = TypeFilter(item_type=CatalogEntryType.MEASUREMENT)
-    assert filter.match(entry)
-
-    filter = TypeFilter(item_type=CatalogEntryType.VALIDATION)
-    assert not filter.match(entry)
-
-
-def test_qa_category_match() -> None:
+def test_qa_ca_match() -> None:
     """The filter matches expected entries."""
-    entry = create_test_entry(type=CatalogEntryType.MEASUREMENT)
+    entry = create_test_entry()
     entry.tags = ["type1", "type2"]
-    entry.qa_category = "cat1"
+    entry.quality_attribute = "qa1"
 
     filter1 = TagFilter(name="tags", value="type1")
     assert filter1.match(entry)
@@ -84,23 +61,26 @@ def test_qa_category_match() -> None:
     filter1 = TagFilter(name="tags", value="type3")
     assert not filter1.match(entry)
 
-    filter3 = QACategoryPropertyFilter(value="cat1")
+    filter3 = QAPropertyFilter(value="qa1")
     assert filter3.match(entry)
 
-    filter3 = QACategoryPropertyFilter(value="cat3")
+    filter3 = QAPropertyFilter(value="cat3")
     assert not filter3.match(entry)
 
 
 def test_and_match() -> None:
     """The and filter matches the expected entries."""
-    a = create_test_entry("id0", type=CatalogEntryType.MEASUREMENT)
-    b = create_test_entry("id0", type=CatalogEntryType.VALIDATION)
-    c = create_test_entry("id3", type=CatalogEntryType.MEASUREMENT)
+    a = create_test_entry("id0")
+    b = create_test_entry("id0")
+    c = create_test_entry("id3")
+
+    a.tags = ["t1", "t2"]
+    b.tags = ["t1", "t3"]
 
     filter = AndFilter(
         filters=[
             IdentifierFilter(id="id0"),
-            TypeFilter(item_type=CatalogEntryType.MEASUREMENT),
+            TagFilter(name="tags", value="t2"),
         ],
     )
 

@@ -6,6 +6,7 @@ Artifact protocol implementation.
 
 from __future__ import annotations
 
+import abc
 import typing
 from typing import Optional
 
@@ -22,8 +23,11 @@ from mlte.session.session import session
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 
+DEFAULT_ID = "default"
+"""Default id used if none is provided. Full id will be prefixed by type."""
 
-class Artifact(Serializable):
+
+class Artifact(Serializable, abc.ABC):
     """
     The MLTE artifact protocol implementation.
 
@@ -34,16 +38,18 @@ class Artifact(Serializable):
     operations with them, namely persistence.
     """
 
-    def __init__(self, identifier: str, type: ArtifactType) -> None:
-        self.identifier = identifier
+    type: Optional[ArtifactType] = None
+    """By default have no type, but a base Artifact should never be instantiated."""
+
+    def __init__(self, identifier: Optional[str] = None) -> None:
+        """Main constructor for all artifacts."""
+
+        self.identifier = self.build_full_id(identifier)
         """
-        The identifier for the artifact.
+        The identifier for the artifact, always having its type as prefix.
         An artifact identifier is unique within a MLTE context
         (model, version) and for a given artifact type.
         """
-
-        self.type = type
-        """The identifier for the artifact type"""
 
         self.timestamp = -1
         """The Unix timestamp of when the artifact was saved to a store."""
@@ -101,7 +107,7 @@ class Artifact(Serializable):
         """
         return self.save_with(
             session().context,
-            session().artifact_store,
+            session().stores.artifact_store,
             force=force,
             parents=parents,
             user=user,
@@ -161,7 +167,7 @@ class Artifact(Serializable):
         return cls.load_with(
             identifier,
             context=session().context,
-            store=session().artifact_store,
+            store=session().stores.artifact_store,
         )
 
     @classmethod
@@ -179,8 +185,7 @@ class Artifact(Serializable):
         :param context: The context from which to load the artifact
         :param store: The store from which to load the artifact
         """
-        if identifier is None:
-            identifier = cls.get_default_id()
+        identifier = cls.build_full_id(identifier)
 
         with ManagedArtifactSession(store.session()) as handle:
             artifact = typing.cast(
@@ -205,7 +210,7 @@ class Artifact(Serializable):
         return Artifact.load_models(
             artifact_type,
             context=session().context,
-            store=session().artifact_store,
+            store=session().stores.artifact_store,
         )
 
     @staticmethod
@@ -222,13 +227,31 @@ class Artifact(Serializable):
             )
             return artifact_models
 
+    @classmethod
+    def build_full_id(cls, base: Optional[str] = None) -> str:
+        """Builds the full id for this artifact. If base is None, default base is used."""
+        if not cls.type:
+            raise RuntimeError(
+                "Malformed artifact class, type has not been set."
+            )
+        if not base:
+            base = DEFAULT_ID
+        return Artifact._build_id(cls.type.value, base)
+
     @staticmethod
-    def get_default_id() -> str:
-        """To be overriden by derived classes."""
-        return "default"
+    def _build_id(prefix: str, base: str) -> str:
+        """Builds the common id structure for an artifact."""
+        if not base.startswith(f"{prefix}."):
+            return f"{prefix}.{base}"
+        else:
+            return base
 
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""
+        if not self.type:
+            raise RuntimeError(
+                "Malformed artifact class, type has not been set."
+            )
         return ArtifactHeaderModel(
             identifier=self.identifier,
             type=self.type,

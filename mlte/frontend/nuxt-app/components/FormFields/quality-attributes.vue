@@ -3,6 +3,7 @@
     <UsaSelect
       v-model="qaCategory"
       :options="QACategoryOptions"
+      :disabled="props.disabled"
       @change="categoryChange(qaCategory)"
     >
       <template #label>
@@ -14,6 +15,7 @@
     <UsaSelect
       v-model="qualityAttribute"
       :options="selectedQAOptions"
+      :disabled="props.disabled"
       @change="emit('updateAttribute', $event.target.value)"
     >
       <template #label>
@@ -34,6 +36,10 @@ const props = defineProps({
   initialQualityAttribute: {
     type: String,
     required: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 });
 

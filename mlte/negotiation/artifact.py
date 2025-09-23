@@ -24,21 +24,22 @@ from mlte.negotiation.model import (
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 
-DEFAULT_NEGOTIATION_CARD_ID = "default.card"
-
 
 class NegotiationCard(Artifact):
     """The negotiation card contains information produced at MLTE negotiation points."""
 
+    type = ArtifactType.NEGOTIATION_CARD
+    """Class attribute indicating type."""
+
     def __init__(
         self,
-        identifier: str = DEFAULT_NEGOTIATION_CARD_ID,
+        identifier: Optional[str] = None,
         system: SystemDescriptor = SystemDescriptor(),
         data: List[DataDescriptor] = [],
         model: ModelDescriptor = ModelDescriptor(),
         quality_scenarios: List[QASDescriptor] = [],
     ) -> None:
-        super().__init__(identifier, ArtifactType.NEGOTIATION_CARD)
+        super().__init__(identifier)
 
         self.system = system
         """A descriptor for the system into which the model is integrated."""
@@ -118,11 +119,6 @@ class NegotiationCard(Artifact):
     # ----------------------------------------------------------------------------------
     # Helper methods.
     # ----------------------------------------------------------------------------------
-
-    # Overriden.
-    @staticmethod
-    def get_default_id() -> str:
-        return DEFAULT_NEGOTIATION_CARD_ID
 
     # Overriden.
     def __eq__(self, other: object) -> bool:

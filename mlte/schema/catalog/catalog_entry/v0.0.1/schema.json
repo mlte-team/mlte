@@ -73,15 +73,6 @@
       ],
       "title": "CatalogEntryHeader",
       "type": "object"
-    },
-    "CatalogEntryType": {
-      "description": "Types of catalog entries.",
-      "enum": [
-        "measurement",
-        "validation"
-      ],
-      "title": "CatalogEntryType",
-      "type": "string"
     }
   },
   "description": "The base model for MLTE catalog entries.",
@@ -97,18 +88,6 @@
       "title": "Tags",
       "type": "array"
     },
-    "qa_category": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Qa Category"
-    },
     "quality_attribute": {
       "anyOf": [
         {
@@ -120,9 +99,6 @@
       ],
       "default": null,
       "title": "Quality Attribute"
-    },
-    "code_type": {
-      "$ref": "#/$defs/CatalogEntryType"
     },
     "code": {
       "title": "Code",
@@ -167,7 +143,6 @@
   },
   "required": [
     "header",
-    "code_type",
     "code"
   ],
   "title": "CatalogEntry",

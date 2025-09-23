@@ -86,10 +86,7 @@ class Image(Evidence):
         :param info: The information to record.
         :return: The Validator that can be used.
         """
-        validator: Validator = Validator.build_validator(
-            info=info, input_types=[]
-        )
-        return validator
+        return Validator.build_info_validator(info)
 
     # Overriden.
     @classmethod

@@ -5,7 +5,7 @@ DEMO_FOLDER="${1:-.}"
 set -e 
 
 # Remove everything from temp stores to avoid outdated data.
-rm -r ${DEMO_FOLDER}/store/models
+rm -rf ${DEMO_FOLDER}/store/models
 mkdir -p ${DEMO_FOLDER}/store/models
 
 # Copy sample negotiation card to store.

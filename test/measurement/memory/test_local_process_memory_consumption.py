@@ -108,7 +108,7 @@ def test_result_save_load(
     r: MemoryStatistics = typing.cast(
         MemoryStatistics,
         MemoryStatistics.load_with(
-            "test_id.evidence", context=ctx, store=store
+            "evidence.test_id", context=ctx, store=store
         ),
     )
     assert r.avg == stats.avg
