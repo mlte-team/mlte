@@ -614,6 +614,19 @@ export async function getEvidence(
 // --------------------------------------------------------------------------------------------------------------
 
 /**
+ * Get list of Custom Lists from API
+ *
+ * @returns {Promise<Array<string>>} Promise that resolves to list of Custom List names
+ */
+export async function getCustomListList(): Promise<Array<string>> {
+  const customLists: Array<string> | null = await useApi(
+    "/custom_lists",
+    "GET",
+  );
+  return customLists || [];
+}
+
+/**
  * Get Custom List from API.
  *
  * @param {string} customListId ID of the custom list
