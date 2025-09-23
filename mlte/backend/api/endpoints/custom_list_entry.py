@@ -11,6 +11,7 @@ from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
+from mlte.custom_list.custom_list_names import CustomListParentMappings
 
 router = APIRouter()
 
@@ -87,7 +88,8 @@ def list_custom_list_details(
 ) -> List[CustomListEntryModel]:
     """
     List MLTE custom list, with details for each entry in list.
-    :return: A collection of custom list entries with their details.
+    :param custom_list_id: Name of custom list to read
+    :return: A collection of custom list entries with their details
     """
     with state_stores.custom_list_stores_session() as custom_list_store:
         try:
@@ -144,3 +146,18 @@ def delete_custom_list_entry(
             )
         except Exception as e:
             raise_http_internal_error(e)
+
+@router.get("/{custom_list_id}/parent")
+def get_custom_list_parent(
+    *,
+    custom_list_id: CustomListName,
+    current_user: AuthorizedUser,
+) -> CustomListName | None:
+    """
+    Get the name of parent custom list list.
+    :param custom_list_id: Name of custom list to read
+    :return: Name of parent custom list
+    """
+    if custom_list_id in CustomListParentMappings.parent_mappings:
+        return CustomListParentMappings.parent_mappings[custom_list_id]
+    return None
