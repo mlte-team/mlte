@@ -73,7 +73,11 @@ const formErrors = ref<Dictionary<boolean>>({
 });
 
 await populateCustomListOptions();
-await updateParentOptions(customListOptions.value[0].value);
+if (props.newEntryFlag) {
+  await updateParentOptions(customListOptions.value[0].value);
+} else {
+  await updateParentOptions(props.customListName);
+}
 
 // Populate list of custom lists to options
 async function populateCustomListOptions() {
