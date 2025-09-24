@@ -642,6 +642,87 @@ export async function getCustomList(
   return customList || [];
 }
 
+/**
+ * Get name of parent Custom list from API.
+ *
+ * @param {string} customListId ID of the custom list
+ * @returns {Promise<Array<string>>} Promise that resolves to Custom List name, or null if no parent
+ */
+export async function getCustomListParent(
+  customListId: string,
+): Promise<string | null> {
+  const parentId: string | null = await useApi(
+    "/custom_list/" + customListId + "/parent",
+    "GET",
+  );
+  return parentId;
+}
+
+/**
+ * Create new Custom List Entry with API.
+ *
+ * @param {string} customListId ID of Custom List to add entry to
+ * @param {CustomListEntry} entry Custom List Entry to create
+ * @returns {Promise<CustomListEntry | null>} Promise that resolves to created Custom List Entry, or null on a failure
+ */
+export async function createCustomListEntry(
+  customListId: string,
+  entry: CustomListEntry,
+): Promise<CustomListEntry | null> {
+  const response: CustomListEntry | null = await useApi(
+    "/custom_list/" + customListId + "/entry",
+    "POST",
+    { body: JSON.stringify(entry) },
+  );
+  if (response) {
+    successfulSubmission("Custom List Entry", entry.name, "created");
+  }
+  return response;
+}
+
+/**
+ * Update Custom List Entry with API.
+ *
+ * @param {string} customListId ID of Custom List to add entry to
+ * @param {CustomListEntry} entry Custom List Entry to update
+ * @returns {Promise<CustomListEntry | null>} Promise that resolves to updated Custom List Entry, or null on a failure
+ */
+export async function updateCustomListEntry(
+  customListId: string,
+  entry: CustomListEntry,
+): Promise<CustomListEntry | null> {
+  const response: CustomListEntry | null = await useApi(
+    "/custom_list/" + customListId + "/entry",
+    "PUT",
+    { body: JSON.stringify(entry) },
+  );
+  if (response) {
+    successfulSubmission("Custom List Entry", entry.name, "updated");
+  }
+  return response;
+}
+
+/**
+ * Delete Custom List Entry with API.
+ *
+ * @param {string} customListId ID of custom list to remove entry from
+ * @param {string} entryId Custom List Entry name to delete
+ * @returns {Promise<CustomListEntry | null>} Promise that resolves to deleted Custtom List Entry, or null on a failure
+ */
+export async function deleteCustomListEntry(
+  customListId: string,
+  entryId: string,
+): Promise<CustomListEntry | null> {
+  const response: CustomListEntry | null = await useApi(
+    "/custom_list/" + customListId + "/entry/" + entryId,
+    "DELETE",
+  );
+  if (response) {
+    successfulSubmission("Custom List Entry", entryId, "deleted");
+  }
+  return response;
+}
+
 // --------------------------------------------------------------------------------------------------------------
 // Util
 // --------------------------------------------------------------------------------------------------------------
