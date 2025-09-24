@@ -28,7 +28,8 @@
       <CustomListEntryEdit
         v-model="selectedEntry"
         :new-entry-flag="newEntryFlag"
-        :custom-list-name="selectedCustomList"
+        :initial-custom-list-name="selectedCustomList"
+        :custom-list-options="customListOptions"
         @cancel="cancelEdit"
         @submit="saveEntry"
       />

@@ -3,7 +3,7 @@
     <div v-if="!newEntryFlag">
       <h1 class="section-header">{{ modelValue.name }}</h1>
       <h3 style="display: inline">Custom List:</h3>
-      {{ customListName }}
+      {{ initialCustomListName }}
     </div>
     <div v-if="newEntryFlag">
       <UsaSelect
@@ -56,14 +56,17 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  customListName: {
+  initialCustomListName: {
     type: String,
+    required: true,
+  },
+  customListOptions: {
+    type: Array<SelectOption>,
     required: true,
   },
 });
 
-const customListOptions = ref<Array<SelectOption>>([]);
-const selectedCustomList = ref<string>("");
+const selectedCustomList = ref<string>(props.initialCustomListName);
 const parentOptions = ref<Array<SelectOption>>([]);
 
 const formErrors = ref<Dictionary<boolean>>({
@@ -72,19 +75,10 @@ const formErrors = ref<Dictionary<boolean>>({
   parent: false,
 });
 
-await populateCustomListOptions();
 if (props.newEntryFlag) {
-  await updateParentOptions(customListOptions.value[0].value);
+  await updateParentOptions(props.customListOptions[0].value);
 } else {
-  await updateParentOptions(props.customListName);
-}
-
-// Populate list of custom lists to options
-async function populateCustomListOptions() {
-  const listList = await getCustomListList();
-  listList.forEach((list: string) => {
-    customListOptions.value.push(new SelectOption(list, list));
-  });
+  await updateParentOptions(props.initialCustomListName);
 }
 
 // Update list of parent Custom List options
@@ -128,7 +122,7 @@ async function submit() {
   if (props.newEntryFlag) {
     emit("submit", selectedCustomList.value, props.modelValue);
   } else {
-    emit("submit", props.customListName, props.modelValue);
+    emit("submit", props.initialCustomListName, props.modelValue);
   }
 }
 </script>
