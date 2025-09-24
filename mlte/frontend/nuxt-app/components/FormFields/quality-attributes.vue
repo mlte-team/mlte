@@ -20,7 +20,9 @@
       </div>
 
       <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submitCategory">Submit new Category</UsaButton>
+        <UsaButton class="secondary-button" @click="submitCategory"
+          >Submit new Category</UsaButton
+        >
       </div>
     </div>
 
@@ -48,7 +50,9 @@
       </div>
 
       <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submitQA">Submit new Quality Attribute</UsaButton>
+        <UsaButton class="secondary-button" @click="submitQA">
+          Submit new Quality Attribute
+        </UsaButton>
       </div>
     </div>
   </div>
@@ -172,7 +176,7 @@ async function submitCategory() {
 async function submitQA() {
   const response = await createCustomListEntry(
     "quality_attributes",
-    new CustomListEntry(newQualityAttribute.value, "", qaCategory.value)
+    new CustomListEntry(newQualityAttribute.value, "", qaCategory.value),
   );
   if (response) {
     await updateQAOptions();

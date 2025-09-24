@@ -39,6 +39,7 @@ export default withNuxt(
           compareHeaders: true,
           compareResults: true,
           createCatalogEntry: true,
+          createCustomListEntry: true,
           createGroup: true,
           createModel: true,
           createUser: true,
