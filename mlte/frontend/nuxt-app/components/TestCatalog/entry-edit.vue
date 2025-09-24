@@ -158,22 +158,6 @@ const formErrors = ref<Dictionary<boolean>>({
   identifier: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const catalogList = ref<Array<CatalogReply>>([]);
-catalogList.value = await getCatalogList();
-
-if (catalogList.value) {
-  catalogList.value.forEach((catalog: CatalogReply) => {
-    if (!catalog.read_only) {
-      catalogOptions.value.push(
-        new SelectOption(
-          catalog.id,
-          catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
-        ),
-      );
-    }
-  });
-}
-
 const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Audio Analysis", selected: false },
   { name: "Classification", selected: false },
@@ -192,11 +176,28 @@ const tagOptions = ref<Array<CheckboxOption>>([
   { name: "Time Series", selected: false },
 ]);
 
+populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
   }
 });
+
+async function populateCatalogOptions() {
+  const catalogList = await getCatalogList();
+  if (catalogList) {
+    catalogList.forEach((catalog: CatalogReply) => {
+      if (!catalog.read_only) {
+        catalogOptions.value.push(
+          new SelectOption(
+            catalog.id,
+            catalog.id + " (" + catalog.type.replaceAll("_", " ") + ")",
+          ),
+        );
+      }
+    });
+  }
+}
 
 // Handle submission of form.
 async function submit() {
