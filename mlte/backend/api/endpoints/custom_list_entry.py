@@ -1,6 +1,6 @@
 """Custom list Entry CRUD endpoints."""
 
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException
 
@@ -155,7 +155,7 @@ def get_custom_list_parent(
     *,
     custom_list_id: str,
     current_user: AuthorizedUser,
-) -> CustomListName | None:
+) -> Optional[CustomListName]:
     """
     Get the name of parent custom list list.
     :param custom_list_id: Name of custom list to read

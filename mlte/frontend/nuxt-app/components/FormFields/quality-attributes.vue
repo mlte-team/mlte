@@ -113,7 +113,6 @@ async function updateQAOptions() {
   if (QAapiOptions) {
     appendList(AllQAOptions.value, QAapiOptions);
   }
-  console.log(AllQAOptions.value);
 }
 
 /**
