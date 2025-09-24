@@ -9,9 +9,11 @@ import mlte.store.error as errors
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
-from mlte.custom_list.custom_list_names import CustomListName, CustomListNameDict
+from mlte.custom_list.custom_list_names import (
+    CustomListName,
+    CustomListParentMappings,
+)
 from mlte.custom_list.model import CustomListEntryModel
-from mlte.custom_list.custom_list_names import CustomListParentMappings
 
 router = APIRouter()
 
@@ -161,7 +163,9 @@ def get_custom_list_parent(
     """
     if custom_list_id in CustomListParentMappings.parent_mappings:
         try:
-            return CustomListParentMappings.parent_mappings[CustomListName(custom_list_id)]
+            return CustomListParentMappings.parent_mappings[
+                CustomListName(custom_list_id)
+            ]
         except Exception as e:
             raise_http_internal_error(e)
     return None

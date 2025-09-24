@@ -116,7 +116,7 @@ function cancelEdit() {
 }
 
 /**
- * 
+ *
  */
 async function saveEntry(customListId: string, entry: CustomListEntry) {
   let error = true;
