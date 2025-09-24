@@ -57,6 +57,6 @@ class CustomListParentMappings:
                     list_name
                 )
             ]
-            return child_list_name
+            return CustomListName(child_list_name)
         else:
             return None
