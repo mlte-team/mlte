@@ -86,6 +86,7 @@ export default withNuxt(
           useApi: true,
 
           // State objects
+          updateQAData: true,
           useClassificationOptions: true,
           useCustomListOptions: true,
           useProblemTypeOptions: true,

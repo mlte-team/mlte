@@ -149,11 +149,6 @@ const props = defineProps({
   },
 });
 
-const { fetchQACData } = await useQACategoryOptions();
-await fetchQACData();
-const { fetchQAData } = await useQualityAttributeOptions();
-await fetchQAData();
-
 const timestamp = ref("");
 timestamp.value = new Date(
   props.modelValue.header.created * 1000,
@@ -165,6 +160,7 @@ const formErrors = ref<Dictionary<boolean>>({
 const catalogOptions = ref<Array<SelectOption>>([]);
 const tagOptions = useTagOptions();
 
+updateQAData();
 populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
