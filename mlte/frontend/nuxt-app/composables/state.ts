@@ -36,12 +36,35 @@ export const useProblemTypeOptions = () =>
     { value: "other", text: "Other" },
   ]);
 
+// TODO: Pull these from the schema or a custom list
+export const useTagOptions = () =>
+  useState<Array<CheckboxOption>>("tagOptions", () => [
+    { name: "Audio Analysis", selected: false },
+    { name: "Classification", selected: false },
+    { name: "Computer Vision", selected: false },
+    { name: "Decoder", selected: false },
+    { name: "Encoder", selected: false },
+    { name: "General", selected: false },
+    { name: "Generative Model", selected: false },
+    { name: "Infrared", selected: false },
+    { name: "NLP", selected: false },
+    { name: "Object Detection", selected: false },
+    { name: "Sentiment Analysis", selected: false },
+    { name: "Regression", selected: false },
+    { name: "Segmentation", selected: false },
+    { name: "Tabular", selected: false },
+    { name: "Time Series", selected: false },
+  ]);
+
 // --------------------------------------------------------------------------------------------------------------
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
 
 export const useCustomListOptions = async () => {
-  const customListOptions = useState<Array<SelectOption>>("customListOptions", () => []);
+  const customListOptions = useState<Array<SelectOption>>(
+    "customListOptions",
+    () => [],
+  );
 
   const fetchData = async () => {
     const apiData = await getCustomListNames();

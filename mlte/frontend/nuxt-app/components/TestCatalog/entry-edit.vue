@@ -163,23 +163,7 @@ const formErrors = ref<Dictionary<boolean>>({
   identifier: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const tagOptions = ref<Array<CheckboxOption>>([
-  { name: "Audio Analysis", selected: false },
-  { name: "Classification", selected: false },
-  { name: "Computer Vision", selected: false },
-  { name: "Decoder", selected: false },
-  { name: "Encoder", selected: false },
-  { name: "General", selected: false },
-  { name: "Generative Model", selected: false },
-  { name: "Infrared", selected: false },
-  { name: "NLP", selected: false },
-  { name: "Object Detection", selected: false },
-  { name: "Sentiment Analysis", selected: false },
-  { name: "Regression", selected: false },
-  { name: "Segmentation", selected: false },
-  { name: "Tabular", selected: false },
-  { name: "Time Series", selected: false },
-]);
+const tagOptions = useTagOptions();
 
 populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {

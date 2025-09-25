@@ -84,13 +84,14 @@ export default withNuxt(
           successfulSubmission: true,
           timestampToString: true,
           useApi: true,
-          useClassificationOptions: true,
-          useProblemTypeOptions: true,
 
           // State objects
+          useClassificationOptions: true,
           useCustomListOptions: true,
+          useProblemTypeOptions: true,
           useQACategoryOptions: true,
           useQualityAttributeOptions: true,
+          useTagOptions: true,
 
           // Types
           ArtifactModel: true,
