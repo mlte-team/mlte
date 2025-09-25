@@ -100,7 +100,6 @@ export const useQACategoryOptions = async () => {
   );
 
   const fetchQACData = async () => {
-    console.log('fetch qac')
     const apiData = await getCustomList("qa_categories");
     if (apiData) {
       QACategoryOptions.value = [];
@@ -130,8 +129,6 @@ export const useQualityAttributeOptions = async () => {
   );
 
   const fetchQAData = async () => {
-    console.log('fetch qa')
-
     const apiData = await getCustomList("quality_attributes");
     if (apiData) {
       qualityAttributeOptions.value = [];
