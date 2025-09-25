@@ -21,7 +21,7 @@
 
       <div class="inline-button">
         <UsaButton class="secondary-button" @click="submitCategory"
-          >Submit new Category</UsaButton
+          >Save</UsaButton
         >
       </div>
     </div>
@@ -50,9 +50,7 @@
       </div>
 
       <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submitQA">
-          Submit new Quality Attribute
-        </UsaButton>
+        <UsaButton class="secondary-button" @click="submitQA"> Save </UsaButton>
       </div>
     </div>
   </div>
@@ -76,12 +74,12 @@ const newQACategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 const newQualityAttribute = ref("");
 
-const QACategoryOptions = ref<Array<QAOption>>([]);
+const QACategoryOptions = useQACategoryOptions();
+const AllQAOptions = useQualityAttributeOptions();
 const selectedQAOptions = ref<Array<QAOption>>([]);
-const AllQAOptions = ref<Array<QAOption>>([]);
 
-updateQACategoryOptions();
-updateQAOptions();
+await updateQACategoryOptions();
+await updateQAOptions();
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
@@ -92,27 +90,6 @@ if (props.initialQualityAttribute) {
       categoryChange(qaCategory.value, props.initialQualityAttribute);
     }
   });
-}
-
-// Update QA Category Options with categories from the API
-async function updateQACategoryOptions() {
-  QACategoryOptions.value = [];
-  const QACategoryAPIData: Array<CustomListEntry> =
-    await getCustomList("qa_categories");
-
-  if (QACategoryAPIData) {
-    appendList(QACategoryOptions.value, QACategoryAPIData);
-  }
-  appendList(QACategoryOptions.value, [new CustomListEntry("Other", "", "")]);
-}
-
-// Update QA Options with QA from the API
-async function updateQAOptions() {
-  AllQAOptions.value = [];
-  const QAapiOptions = await getCustomList("quality_attributes");
-  if (QAapiOptions) {
-    appendList(AllQAOptions.value, QAapiOptions);
-  }
 }
 
 /**
@@ -140,23 +117,6 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   }
 }
 
-/**
- * Append initialList with appendList as QAOption's
- *
- * @param {Array<QAOption>} initialList List of QAOption to be added to, generally empty
- * @param {Array<CustomListEntry>} appendList List of CustomListEntry to add to initialList
- */
-function appendList(
-  initialList: Array<QAOption>,
-  appendList: Array<CustomListEntry>,
-) {
-  appendList.forEach((entry: CustomListEntry) => {
-    initialList.push(
-      new QAOption(entry.name, entry.name, entry.description, entry.parent),
-    );
-  });
-}
-
 //
 async function submitCategory() {
   const response = await createCustomListEntry(
@@ -179,8 +139,9 @@ async function submitQA() {
   );
   if (response) {
     await updateQAOptions();
-    categoryChange(qaCategory.value);
+    categoryChange(qaCategory.value, qualityAttribute.value);
     qualityAttribute.value = newQualityAttribute.value;
+    emit("updateAttribute", qualityAttribute.value);
     newQualityAttribute.value = "";
   }
 }
