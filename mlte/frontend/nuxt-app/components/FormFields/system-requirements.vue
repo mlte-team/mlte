@@ -162,6 +162,8 @@ const props = defineProps({
   },
 });
 
+updateQAData();
+
 const systemModalHeaders = ref([
   { id: "systemQuality", label: "System Quality", sortable: false },
   { id: "stimulus", label: "Stimulus", sortable: false },
