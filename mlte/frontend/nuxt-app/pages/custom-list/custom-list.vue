@@ -41,20 +41,15 @@
 const editFlag = ref(false);
 const newEntryFlag = ref(false);
 
-const customListOptions = ref<Array<SelectOption>>([]);
+const { customListOptions } = await useCustomListOptions();
 const selectedCustomList = ref<string>("");
 const entryList = ref<Array<CustomListEntry>>([]);
 const selectedEntry = ref<CustomListEntry>(new CustomListEntry());
 
-populateCustomListOptions();
+pageSetup();
 
-// Get list of Custom Lists from API and populate select with them.
-async function populateCustomListOptions() {
-  const customListList: Array<string> = await getCustomListList();
-  customListList.forEach((listName: string) => {
-    customListOptions.value.push(new SelectOption(listName, listName));
-  });
-
+// Select an initial list on page load
+async function pageSetup() {
   if (customListOptions.value.length > 0) {
     selectedCustomList.value = customListOptions.value[0].value;
     updateList(customListOptions.value[0].value);
