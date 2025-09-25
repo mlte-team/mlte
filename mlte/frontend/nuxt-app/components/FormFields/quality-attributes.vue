@@ -114,7 +114,7 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   }
 }
 
-//
+// Submit new QA Category to API
 async function submitCategory() {
   const response = await createCustomListEntry(
     "qa_categories",
@@ -128,7 +128,7 @@ async function submitCategory() {
   }
 }
 
-//
+// Submit new QA to API
 async function submitQA() {
   const response = await createCustomListEntry(
     "quality_attributes",
