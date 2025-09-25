@@ -158,7 +158,7 @@ async function submit() {
         useRoute().query.model +
         "&version=" +
         useRoute().query.version +
-        "&artifactId=" +
+        "&artifactId=card." +
         identifier;
     }
   }
