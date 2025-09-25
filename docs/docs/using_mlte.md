@@ -124,12 +124,12 @@ They are described and used in the following way:
 
 - ``set_context("model_name", "model_version")``: this command indicates the model and version you will be working on for the rest of the script. It is mostly used to point to the proper location in the store when saving and loading artifacts. The model name and version can be any string.
 
-- ``set_store("store_uri")``: this command indicates the location of the artifact store you will be using for the rest of the script. There are four store types, with the structure described in the [Store URIs](#store-uris) section.
+- ``set_store("store_uri")``: this command indicates the location of the store you will be using for the rest of the script. There are four store types, with the structure described in the [Store URIs](#store-uris) section.
 
 Alternatively, these two things can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
 
 - ``MLTE_CONTEXT_MODEL`` and ``MLTE_CONTEXT_VERSION`` to set the model and version.
-- ``MLTE_ARTIFACT_STORE_URI`` to set the artifact store URI.
+- ``MLTE_STORE_URI`` to set the store URI.
 
 ## Negotiate Model Quality Requirements
 
