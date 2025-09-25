@@ -149,6 +149,11 @@ const props = defineProps({
   },
 });
 
+const { fetchQACData } = await useQACategoryOptions();
+await fetchQACData();
+const { fetchQAData } = await useQualityAttributeOptions();
+await fetchQAData();
+
 const timestamp = ref("");
 timestamp.value = new Date(
   props.modelValue.header.created * 1000,

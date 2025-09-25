@@ -74,18 +74,15 @@ const newQACategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
 const newQualityAttribute = ref("");
 
-const QACategoryOptions = useQACategoryOptions();
-const AllQAOptions = useQualityAttributeOptions();
+const { QACategoryOptions, fetchQACData } = await useQACategoryOptions();
+const { qualityAttributeOptions: AllQAOptions, fetchQAData } =
+  await useQualityAttributeOptions();
 const selectedQAOptions = ref<Array<QAOption>>([]);
-
-await updateQACategoryOptions();
-await updateQAOptions();
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
-  const QAapiOptions = await getCustomList("quality_attributes");
-  QAapiOptions.forEach((attribute: CustomListEntry) => {
-    if (attribute.name === props.initialQualityAttribute) {
+  AllQAOptions.value.forEach((attribute: QAOption) => {
+    if (attribute.text === props.initialQualityAttribute) {
       qaCategory.value = attribute.parent;
       categoryChange(qaCategory.value, props.initialQualityAttribute);
     }
@@ -124,7 +121,7 @@ async function submitCategory() {
     new CustomListEntry(newQACategory.value, "", ""),
   );
   if (response) {
-    await updateQACategoryOptions();
+    await fetchQACData();
     qaCategory.value = newQACategory.value;
     categoryChange(newQACategory.value);
     newQACategory.value = "";
@@ -138,7 +135,7 @@ async function submitQA() {
     new CustomListEntry(newQualityAttribute.value, "", qaCategory.value),
   );
   if (response) {
-    await updateQAOptions();
+    await fetchQAData();
     categoryChange(qaCategory.value, qualityAttribute.value);
     qualityAttribute.value = newQualityAttribute.value;
     emit("updateAttribute", qualityAttribute.value);

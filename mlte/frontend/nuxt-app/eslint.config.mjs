@@ -45,11 +45,14 @@ export default withNuxt(
           createUser: true,
           createVersion: true,
           deleteCatalogEntry: true,
+          deleteCustomListEntry: true,
           deleteGroup: true,
           deleteUser: true,
           getCard: true,
           getCatalogList: true,
           getCustomList: true,
+          getCustomListNames: true,
+          getCustomListParent: true,
           getEvidence: true,
           getGroupList: true,
           getModelVersions: true,
@@ -71,6 +74,7 @@ export default withNuxt(
           isValidTestResults: true,
           isValidTestSuite: true,
           updateCatalogEntry: true,
+          updateCustomListEntry: true,
           updateGroup: true,
           updateUser: true,
           requestErrorAlert: true,
@@ -82,6 +86,11 @@ export default withNuxt(
           useApi: true,
           useClassificationOptions: true,
           useProblemTypeOptions: true,
+
+          // State objects
+          useCustomListOptions: true,
+          useQACategoryOptions: true,
+          useQualityAttributeOptions: true,
 
           // Types
           ArtifactModel: true,

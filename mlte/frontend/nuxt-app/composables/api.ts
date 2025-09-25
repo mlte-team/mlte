@@ -614,11 +614,11 @@ export async function getEvidence(
 // --------------------------------------------------------------------------------------------------------------
 
 /**
- * Get list of Custom Lists from API
+ * Get names of Custom Lists from API
  *
  * @returns {Promise<Array<string>>} Promise that resolves to list of Custom List names
  */
-export async function getCustomListList(): Promise<Array<string>> {
+export async function getCustomListNames(): Promise<Array<string>> {
   const customLists: Array<string> | null = await useApi(
     "/custom_lists",
     "GET",
