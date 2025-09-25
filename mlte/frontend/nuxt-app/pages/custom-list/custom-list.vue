@@ -67,7 +67,11 @@ async function populateCustomListOptions() {
  * @param {string} Name of new Custom List to be selected
  */
 async function updateList(customListName: string) {
-  entryList.value = await getCustomList(customListName);
+  if (customListName === "") {
+    entryList.value = [];
+  } else {
+    entryList.value = await getCustomList(customListName);
+  }
 }
 
 // Reset selectedEntry, for example when an edit is completed.
