@@ -160,7 +160,7 @@ const formErrors = ref<Dictionary<boolean>>({
 const catalogOptions = ref<Array<SelectOption>>([]);
 const tagOptions = useTagOptions();
 
-updateQAData();
+await updateQAData();
 populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
