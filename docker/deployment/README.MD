@@ -38,10 +38,7 @@ Another option is to build the docker images from the code in the repo directly.
  1. Run `bash build.sh` from the `/docker` folder.
 
 ## Running the docker images
-To run the system, from inside the `/docker/deployment` folder:
- 1. Run `bash start.sh` . You can "CTRL+C" and it will continue running in the background.
+To run the system, ensuring it is built, from inside the `/docker/deployment` folder:
+ 1. Run `bash rebuild_and_restart.sh` . You can "CTRL+C" and it will continue running in the background.
     - To see the logs, run `bash logs.sh`
     - To stop it if needed, run `bash stop.sh`
-
-To rebuild and restart the system, from inside the `/docker/deployment` folder:
- 1. Run `bash rebuild_and_restart.sh`

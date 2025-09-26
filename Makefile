@@ -145,8 +145,7 @@ test:
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	bash demo/simple/test.sh demo/simple
-	bash demo/scenarios/test.sh demo/scenarios
+	cd demo && bash test.sh simple scenarios
 
 # -----------------------------------------------------------------------------
 # Shorthand actions and checks needed to update and review for pushing.

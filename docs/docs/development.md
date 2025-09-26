@@ -281,18 +281,11 @@ $ poetry publish --username __token__ --password <TOKEN>
 
 ## Docker Integration
 
-We package the `MLTE` backend as a set of Docker container images. To build the image from the source repository, run:
-
-```bash
-# From inside the docker/ folder
-bash build.sh
-```
-
-Run the containers with:
+We package the `MLTE` backend and frontend as a set of Docker container images. To build and run these from the source repository, run:
 
 ```bash
 # From inside the docker/deployment folder
-bash start.sh
+bash rebuild_and_restart.sh
 ```
 
 This exposes the backend on the host at `localhost:8080`, and the frontend at `localhost:8000`. By default, PostgreSQL database is used in a container, and the data is mapped to the local `./pgdata` folder.
