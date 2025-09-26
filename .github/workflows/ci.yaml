@@ -21,6 +21,8 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
         run: poetry install --with dev --all-extras
+      - name: Vet schemas
+        run: make check-schema
       - name: Sort imports with isort
         run: make check-isort
       - name: Format with black
@@ -33,10 +35,8 @@ jobs:
         run: make docs 
       - name: Execute unit tests
         run: make test
-      - name: Vet schemas
-        run: make check-schema
       - name: Install frontend dependencies
-        run: cd mlte/frontend/nuxt-app && npm install
+        run: make frontend-env
       - name: Lint frontend
         run: make check-lint-frontend
       - name: Typecheck frontend
