@@ -19,9 +19,10 @@ class Session:
     convenient access to the MLTE context for application developers.
     """
 
-    MLTE_CONTEXT_MODEL_VAR = "MLTE_CONTEXT_MODEL"
-    MLTE_CONTEXT_VERSION_VAR = "MLTE_CONTEXT_VERSION"
-    """Environment variables to get model and version from, if needed."""
+    ENV_CONTEXT_MODEL_VAR = "MLTE_CONTEXT_MODEL"
+    ENV_CONTEXT_VERSION_VAR = "MLTE_CONTEXT_VERSION"
+    ENV_STORE_URI_VAR = "MLTE_STORE_URI"
+    """Environment variables to get model, version and store_uri from, if needed."""
 
     def __init__(self):
         """Constructors, just resets all vars."""
@@ -32,15 +33,15 @@ class Session:
         self._context: Optional[Context] = None
         """The MLTE context for the session."""
 
-        self.stores = SessionStores()
+        self._stores: Optional[SessionStores] = None
         """All stores in this session."""
 
     @property
     def context(self) -> Context:
         if self._context is None:
             # If the context has not been manually set, get it from environment.
-            model_context = self._get_env_var(self.MLTE_CONTEXT_MODEL_VAR)
-            version_context = self._get_env_var(self.MLTE_CONTEXT_VERSION_VAR)
+            model_context = self._get_env_var(self.ENV_CONTEXT_MODEL_VAR)
+            version_context = self._get_env_var(self.ENV_CONTEXT_VERSION_VAR)
             if model_context and version_context:
                 self._context = Context(
                     model=model_context, version=version_context
@@ -52,9 +53,27 @@ class Session:
 
         return self._context
 
+    @property
+    def stores(self) -> SessionStores:
+        if self._stores is None:
+            # If the stores have not been manually set, get URI from environment.
+            stores_uri = self._get_env_var(self.ENV_STORE_URI_VAR)
+            if stores_uri:
+                self._stores = setup_stores(stores_uri)
+            else:
+                raise RuntimeError(
+                    "Must initialize store URI, either manually or through environment variables."
+                )
+
+        return self._stores
+
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
+
+    def _set_stores(self, stores: SessionStores) -> None:
+        """Set the session stores."""
+        self._stores = stores
 
     def _get_env_var(self, env_var: str) -> Optional[str]:
         """Get env var or return none if does not exist."""
@@ -100,7 +119,7 @@ def set_store(store_uri: str):
     Set the global MLTE context store URI.
     :param store_uri: The store URI string
     """
-    g_session.stores = setup_stores(store_uri)
+    g_session._set_stores(setup_stores(store_uri))
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
