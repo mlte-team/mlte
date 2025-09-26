@@ -12,6 +12,7 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.storage.local_object_size import LocalObjectSize
 from mlte.session.session import session, set_context
+from mlte.session.session_stores import SessionStores
 from mlte.store.artifact.store import ArtifactStore
 from mlte.tests.test_case import TestCase
 from mlte.tests.test_suite import TestSuite
@@ -54,6 +55,7 @@ def test_success_defaults(store_with_context: tuple[ArtifactStore, Context]):
     """Tests that validator can load default TestSuite and all Evidence from current session, and validate it."""
     store, ctx = store_with_context
     set_context(model_id=ctx.model, version_id=ctx.version)
+    session()._stores = SessionStores()
     session().stores.set_artifact_store(store)
 
     test_suite = TestSuite.from_model(

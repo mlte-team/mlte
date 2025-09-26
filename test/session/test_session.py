@@ -1,8 +1,4 @@
-"""
-test/session/test_session.py
-
-Unit tests for global session management.
-"""
+"""Unit tests for global session management."""
 
 import os
 
@@ -10,7 +6,6 @@ import pytest
 
 from mlte.session import session, set_context, set_store
 from mlte.session.session import Session, add_catalog_store, reset_session
-from mlte.session.session_stores import SessionStores
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
 
@@ -82,27 +77,22 @@ def test_eager_context_creation(
 def test_environment_vars():
     model = "model"
     version = "v0.0.1"
-    artifact_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
-    custom_list_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
 
-    os.environ[Session.MLTE_CONTEXT_MODEL_VAR] = model
-    os.environ[Session.MLTE_CONTEXT_VERSION_VAR] = version
-    os.environ[SessionStores.ENV_ARTIFACT_STORE_URI_VAR] = artifact_store_uri
-    os.environ[SessionStores.ENV_CUSTOM_LIST_STORE_URI_VAR] = (
-        custom_list_store_uri
-    )
+    os.environ[Session.ENV_CONTEXT_MODEL_VAR] = model
+    os.environ[Session.ENV_CONTEXT_VERSION_VAR] = version
+    os.environ[Session.ENV_STORE_URI_VAR] = store_uri
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
-    assert s.stores.artifact_store.uri.uri == artifact_store_uri
-    assert s.stores.custom_list_store.uri.uri == custom_list_store_uri
+    assert s.stores.artifact_store.uri.uri == store_uri
+    assert s.stores.custom_list_store.uri.uri == store_uri
 
-    del os.environ[Session.MLTE_CONTEXT_MODEL_VAR]
-    del os.environ[Session.MLTE_CONTEXT_VERSION_VAR]
-    del os.environ[SessionStores.ENV_ARTIFACT_STORE_URI_VAR]
-    del os.environ[SessionStores.ENV_CUSTOM_LIST_STORE_URI_VAR]
+    del os.environ[Session.ENV_CONTEXT_MODEL_VAR]
+    del os.environ[Session.ENV_CONTEXT_VERSION_VAR]
+    del os.environ[Session.ENV_STORE_URI_VAR]
 
 
 def test_no_context_setup():
