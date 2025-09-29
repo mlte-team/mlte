@@ -64,7 +64,12 @@ class TestSuite(Artifact):
     def run_measurements(
         self, input: dict[str, list[typing.Any]]
     ) -> list[Evidence]:
-        """Tries to execute all configured measurements with the provided arguments."""
+        """
+        Executes all configured measurements with the provided inputs.
+
+        :param input: a dictionary of inputs for each test case, keyed by test case id, each containing a list of inputs for that case.
+        :return: a list of Evidences generated as resuts for all the executed measurements, one per test case.
+        """
         evidences: list[Evidence] = []
         for case_id, args in input.items():
             if case_id not in self.test_cases:

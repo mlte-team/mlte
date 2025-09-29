@@ -13,7 +13,7 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # This script sets up the session context used for all steps of this demo, as well as
 # global constants about folders and model to use.
 
-store_path = Path.cwd() / "store"
+store_path = Path.cwd() / ".." / "store"
 
 set_context("OxfordFlower", "0.0.1")
 set_store(f"local://{store_path}")

@@ -1,10 +1,8 @@
 """Manages current session info about stores."""
 
-import os
 from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
-from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
@@ -12,7 +10,6 @@ from mlte.store.catalog.store import CatalogStore
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
-from mlte.store.user.factory import create_user_store
 from mlte.store.user.store import UserStore
 
 
@@ -20,15 +17,6 @@ class SessionStores:
     """
     Contains the store sessions currently being used.
     """
-
-    ENV_ARTIFACT_STORE_URI_VAR = "MLTE_ARTIFACT_STORE_URI"
-    """Environment variable to get the artifact store URI from, if needed."""
-
-    ENV_CUSTOM_LIST_STORE_URI_VAR = "MLTE_CUSTOM_LIST_STORE_URI"
-    """Environment variable to get the custom list store URI from, if needed."""
-
-    ENV_USER_STORE_URI_VAR = "MLTE_CUSTOM_LIST_STORE_URI"
-    """Environment variable to get the custom list store URI from, if needed."""
 
     DEFAULT_CATALOG_STORE_ID = "local"
     """Name of the default catalog store."""
@@ -75,55 +63,28 @@ class SessionStores:
     @property
     def artifact_store(self) -> ArtifactStore:
         """Get the session artifact store."""
-        if self._artifact_store is None:
-            # If the URI has not been manually set, get it from environment.
-            store_uri = self._get_env_var(self.ENV_ARTIFACT_STORE_URI_VAR)
-            if store_uri:
-                self._artifact_store = create_artifact_store(store_uri)
-            else:
-                raise RuntimeError(
-                    "Must initialize artifact store, either manually or through environment variables."
-                )
+        if not self._artifact_store:
+            raise RuntimeError("Store was not properly set up.")
         return self._artifact_store
 
     @property
     def custom_list_store(self) -> CustomListStore:
         """Get the session custom list store."""
-        if self._custom_list_store is None:
-            # If the store URI has not been manually set, get it from environment.
-            store_uri = self._get_env_var(self.ENV_CUSTOM_LIST_STORE_URI_VAR)
-            if store_uri:
-                self._custom_list_store = (
-                    InitialCustomLists.setup_custom_list_store(store_uri)
-                )
-            else:
-                raise RuntimeError(
-                    "Must initialize custom list store, either manually or through environment variables."
-                )
+        if not self._custom_list_store:
+            raise RuntimeError("Store was not properly set up.")
         return self._custom_list_store
 
     @property
     def user_store(self) -> UserStore:
         """Get session user store."""
-        if self._user_store is None:
-            # If the store URI has not been manually set, get it from environment.
-            store_uri = self._get_env_var(self.ENV_USER_STORE_URI_VAR)
-            if store_uri:
-                self._user_store = create_user_store(store_uri)
-            else:
-                raise RuntimeError(
-                    "Must initialize user store, either manually or through environment variables."
-                )
+        if not self._user_store:
+            raise RuntimeError("Store was not properly set up.")
         return self._user_store
 
     @property
     def catalog_stores(self) -> CatalogStoreGroup:
         """Get all catalog stores."""
         return self._catalog_stores
-
-    def _get_env_var(self, env_var: str) -> Optional[str]:
-        """Get env var or return none if does not exist."""
-        return os.environ.get(env_var, None)
 
 
 def setup_stores(
@@ -144,12 +105,12 @@ def setup_stores(
     artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
     stores.set_artifact_store(artifact_store)
 
-    # Initialize the backing user store instance. Assume same store as artifact one for now.
+    # Initialize the backing user store instance.
     if set_user_store:
         user_store = user_store_factory.create_user_store(stores_uri)
         stores.set_user_store(user_store)
 
-    # Initialize the backing custom list store instance. Assume same store as artifact one for now.
+    # Initialize the backing custom list store instance.
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
     stores.set_custom_list_store(custom_list_store)
 

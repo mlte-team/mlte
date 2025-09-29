@@ -3,7 +3,7 @@
 # Ensure everything stops if there is a failure in one of the commands.
 set -e
 
-DOCKER_FOLDER=../../docker/deployment
+DOCKER_FOLDER=../docker/deployment
 
 # Function to stop env.
 function cleanup() {
@@ -16,11 +16,11 @@ function cleanup() {
 trap cleanup SIGINT
 
 # Needed to copy sample card.
-source copy_nc.sh
+source setup_store.sh
 
 # Set env vars to not use a relational DB, but a file store, and point to the one here.
 export STORE_TYPE=fs
-export HOST_FS_STORE="../../demo/scenarios/store"
+export HOST_FS_STORE="../../demo/store"
 
 # We will use dockerized versions of frontend and backend. This will also build them if needed.
 (cd $DOCKER_FOLDER && source rebuild_and_restart.sh)

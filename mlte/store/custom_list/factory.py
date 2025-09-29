@@ -28,5 +28,5 @@ def create_custom_list_store(uri: str) -> CustomListStore:
     # return HttpCustomListStore(uri=parsed_uri)
     else:
         raise Exception(
-            f"Store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
+            f"Custom list store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
         )
