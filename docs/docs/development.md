@@ -28,37 +28,40 @@ $ pyenv local 3.9
 ### Requirements
 
  - `MLTE` uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
- - You also need to set up a virtual Python environment where `poetry` will work. While inside the root of the repository, execute this command:
-
-```bash
-$ python -m venv .venv
-```
 
 ### Dev Environment Setup
 
-Once poetry and the virtual env are setup, you can set up dev dependencies like this, from the root of the repository:
-
-```bash
-$ poetry install --with dev --all-extras
-```
-
-You can also run the following make command to install the same dependencies, plus the demo ones (see below):
+You will need to set up a virtual Python environment where `poetry` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
 $ make venv
+```
+
+If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
+
+```bash
+$ python -m venv .venv
+$ poetry install --with dev --all-extras
 ```
 
 Now you are ready to start working on `MLTE`!
 
 ### Demos
 
-There are several demos available in the `demo\` folder, as Jupyter notebooks. To run them, you need to install their dependencies first. This can be done from the root of the repository with:
+There are several demos available in the `demo\` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
 
 ```bash
 $ poetry install --with demo
 ```
 
-NOTE: The demo will only work on its entirety with python versions up to 3.12, since requires tensorflow, which is not currently supported in newer python versions.
+You can know go to the Jupyter notebooks in the subfolders inside teh `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
+
+If you want to run the frontend UI and backend in an environment that will allow you to see the results of the artifacts created by the demos, you can run the following script, which will run them inside a container and point them to the proper store:
+
+```bash
+$ cd demo
+$ bash run_environment.sh
+```
 
 ## Project Development Commands
 
