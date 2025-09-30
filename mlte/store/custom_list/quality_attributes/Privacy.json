@@ -1,0 +1,6 @@
+{
+    "name": "Privacy",
+    "description": " Capability of an ML component to produce outputs that cannot be mapped to personally-identified information (PII) in inputs.",
+    "parent": "Security and Privacy"
+}
+

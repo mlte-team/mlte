@@ -1,0 +1,6 @@
+{
+    "name": "Resource  Utilization",
+    "description": "Capability of an ML component to use no more than the specified amount of resources to perform its function.",
+    "parent": "Continued Operation"
+}
+

@@ -1,0 +1,6 @@
+{
+    "name": "Domain Adaptability",
+    "description": "Capability of an ML component trained on a source domain to be used in a different, but related domain.​",
+    "parent": "Maintenance and Evolution"
+}
+

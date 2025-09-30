@@ -1,0 +1,6 @@
+{
+    "name": "Functional Correctness",
+    "description": "Capability of an ML component to meet system-derived correctness or model performance requirements.​",
+    "parent": "Confidence"
+}
+

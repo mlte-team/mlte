@@ -1,0 +1,6 @@
+{
+    "name": "Analyzability",
+    "description": "Capability of an ML component to expose attributes that enable it to be effectively and efficiently assessed regarding its behavior or the impact of an intended change, to diagnose it for deficiencies or causes of failure, or to identify sub-components to be modified.​",
+    "parent": "Behavior Analysis"
+}
+

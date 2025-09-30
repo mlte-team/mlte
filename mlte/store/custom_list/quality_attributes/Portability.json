@@ -1,0 +1,6 @@
+{
+    "name": "Portability",
+    "description": "Capability of an ML component to be adapted for or transferred to different hardware, software, or compute platform, without any unanticipated side effects and within specified resource and time constraints.​",
+    "parent": "Maintenance and Evolution"
+}
+

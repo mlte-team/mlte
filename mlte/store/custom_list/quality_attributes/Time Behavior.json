@@ -1,0 +1,6 @@
+{
+    "name": "Time Behavior",
+    "description": "Capability of an ML component to produce outputs within required response time and throughput rates.​",
+    "parent": "Continued Operation"
+}
+

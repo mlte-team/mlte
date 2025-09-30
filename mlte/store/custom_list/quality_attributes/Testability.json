@@ -1,0 +1,6 @@
+{
+    "name": "Testability",
+    "description": "Capability of an ML component to support testing against expected behaviors by offering information relevant to test results or ensuring the visibility of failures.​",
+    "parent": "Behavior Analysis"
+}
+

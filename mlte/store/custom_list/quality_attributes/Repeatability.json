@@ -1,0 +1,6 @@
+{
+    "name": "Repeatability",
+    "description": "Capability of an ML component to produce equivalent results when run on equivalent inputs during inference time.​",
+    "parent": "Consistency"
+}
+

@@ -15,7 +15,7 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
 store_path = Path.cwd() / ".." / "store"
 
-set_context("OxfordFlower", "0.0.1")
+set_context("GardenBuddy", "0.0.1")
 set_store(f"local://{store_path}")
 
 # The path at which datasets are stored

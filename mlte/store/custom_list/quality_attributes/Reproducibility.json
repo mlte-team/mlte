@@ -1,0 +1,6 @@
+{
+    "name": "Reproducibility",
+    "description": "Capability of the training algorithm for the ML model to produce functionally-equivalent ML models when run on similar datasets during training time.​",
+    "parent": "Consistency"
+}
+

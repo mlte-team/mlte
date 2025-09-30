@@ -1,0 +1,6 @@
+{
+    "name": "Understandability",
+    "description": "Ease with which the code, implementation choices, and design choices of an ML component can be understood.​",
+    "parent": "Behavior Analysis"
+}
+

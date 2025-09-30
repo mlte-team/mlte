@@ -1,0 +1,6 @@
+{
+    "name": "Compliance",
+    "description": "Capability of an ML component to satisfy requirements, as required by rules, regulations, laws, standards, or security policies.​",
+    "parent": "Responsible AI"
+}
+

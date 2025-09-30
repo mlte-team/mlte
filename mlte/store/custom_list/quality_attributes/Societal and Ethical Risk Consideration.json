@@ -1,0 +1,6 @@
+{
+    "name": "Societal and Ethical Risk Consideration",
+    "description": "Capability of an ML component to mitigate the potential risk of its results to society.​",
+    "parent": "Responsible AI"
+}
+

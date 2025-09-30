@@ -1,0 +1,6 @@
+{
+    "name": "Retrainability",
+    "description": "Ability to generate a new version of the trained model using the same process on a new set of training data, either manually or automatically depending on system-derived requirements.​",
+    "parent": "Maintenance and Evolution"
+}
+

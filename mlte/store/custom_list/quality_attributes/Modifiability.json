@@ -1,0 +1,6 @@
+{
+    "name": "Modifiability",
+    "description": "Capability of an ML component to be changed without introducing defects, unintended side effects, or degrading existing component quality, and within specified resource and time constraints.​",
+    "parent": "Maintenance and Evolution"
+}
+

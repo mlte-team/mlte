@@ -1,0 +1,6 @@
+{
+    "name": "Reusability",
+    "description": " Capability of an ML component (or its sub-components) to be used in other ML-enabled systems with minimal change.​",
+    "parent": "Maintenance and Evolution"
+}
+

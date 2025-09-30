@@ -1,0 +1,6 @@
+{
+    "name": "Economic Risk Consideration",
+    "description": "Capability of an ML component to mitigate the potential risk of its results to financial status, efficient operation, commercial property, reputation, employment, educational status, or other resources.​",
+    "parent": "Responsible AI"
+}
+
