@@ -165,6 +165,8 @@ populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {
     tagOption.selected = true;
+  } else {
+    tagOption.selected = false;
   }
 });
 
