@@ -5,9 +5,7 @@
         <th scope="col" role="columnheader">Identifier</th>
         <th scope="col" role="columnheader">Catalog</th>
         <th scope="col" role="columnheader">Tags</th>
-        <th scope="col" role="columnheader">
-          Quality Attribute Category
-        </th>
+        <th scope="col" role="columnheader">Quality Attribute</th>
         <th scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
