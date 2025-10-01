@@ -79,8 +79,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -140,8 +140,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -223,8 +223,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -265,12 +265,12 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">
                   Measurement
                 </th>
-                <th data-sortable scope="col" role="columnheader">Type</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">Type</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -310,11 +310,11 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">
                   Test Suite ID
                 </th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>

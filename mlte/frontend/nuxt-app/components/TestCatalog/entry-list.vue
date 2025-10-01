@@ -2,13 +2,13 @@
   <table class="table usa-table usa-table--borderless">
     <thead>
       <tr>
-        <th data-sortable scope="col" role="columnheader">Identifier</th>
-        <th data-sortable scope="col" role="columnheader">Catalog</th>
-        <th data-sortable scope="col" role="columnheader">Tags</th>
-        <th data-sortable scope="col" role="columnheader">
+        <th scope="col" role="columnheader">Identifier</th>
+        <th scope="col" role="columnheader">Catalog</th>
+        <th scope="col" role="columnheader">Tags</th>
+        <th scope="col" role="columnheader">
           Quality Attribute Category
         </th>
-        <th data-sortable scope="col" role="columnheader">Actions</th>
+        <th scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
     <tr v-for="(entry, entryIndex) in modelValue" :key="entryIndex">
