@@ -157,15 +157,12 @@ def get_custom_list_parent(
     current_user: AuthorizedUser,
 ) -> Optional[CustomListName]:
     """
-    Get the name of parent custom list list.
-    :param custom_list_id: Name of custom list to read
+    Get the name of parent custom list of the given custom list.
+    :param custom_list_id: Name of custom list to get parent of
     :return: Name of parent custom list
     """
-    if custom_list_id in CustomListParentMappings.parent_mappings:
-        try:
-            return CustomListParentMappings.parent_mappings[
-                CustomListName(custom_list_id)
-            ]
-        except Exception as e:
-            raise_http_internal_error(e)
+    try:
+        return CustomListParentMappings.get_parent_list_name(CustomListName(custom_list_id))
+    except Exception as e:
+        raise_http_internal_error(e)
     return None
