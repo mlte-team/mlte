@@ -30,7 +30,7 @@
       :error="formErrors.parent"
       :disabled="parentOptions.length == 0"
     >
-      <template #label> Parent </template>
+      <template #label> Parent: {{ selectedCustomListParent }} </template>
       <template #error-message>Parent must be selected.</template>
     </UsaSelect>
 
@@ -67,6 +67,7 @@ const props = defineProps({
 });
 
 const selectedCustomList = ref<string>(props.initialCustomListName);
+const selectedCustomListParent = ref<string>("None");
 const parentOptions = ref<Array<SelectOption>>([]);
 
 const formErrors = ref<Dictionary<boolean>>({
@@ -86,11 +87,13 @@ async function updateParentOptions(customListId: string) {
 
   const parentListId = await getCustomListParent(customListId);
   if (parentListId) {
+    selectedCustomListParent.value = parentListId;
     const parentList = await getCustomList(parentListId);
     parentList.forEach((entry: CustomListEntry) => {
       parentOptions.value.push(new SelectOption(entry.name, entry.name));
     });
   } else {
+    selectedCustomListParent.value = "None";
     parentOptions.value = [];
   }
 }
