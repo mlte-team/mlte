@@ -68,9 +68,9 @@ class CustomListParentMappings:
         """Gets the name of the parent list of list_name"""
         if (
             list_name
-            and list_name in CustomListParentMappings.parent_mappings[list_name]
+            and list_name in CustomListParentMappings.parent_mappings
         ):
-            return CustomListParentMappings.CustomListParentMappings[list_name]
+            return CustomListParentMappings.parent_mappings[list_name]
         else:
             return None
 
