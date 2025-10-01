@@ -75,7 +75,7 @@ class CustomListParentMappings:
         list_name: CustomListName,
     ) -> Optional[CustomListName]:
         """Gets the name of the child list of list_name or None."""
-        if (list_name in CustomListParentMappings.parent_mappings.values()):
+        if list_name in CustomListParentMappings.parent_mappings.values():
             child_list_name = list(
                 CustomListParentMappings.parent_mappings.keys()
             )[

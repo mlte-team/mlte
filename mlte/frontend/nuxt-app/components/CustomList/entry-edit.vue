@@ -79,6 +79,11 @@ await updateParentOptions(props.initialCustomListName);
 
 // Update list of parent Custom List options
 async function updateParentOptions(customListId: string) {
+  if (customListId === "") {
+    parentOptions.value = [];
+    return;
+  }
+
   const parentListId = await getCustomListParent(customListId);
   if (parentListId) {
     const parentList = await getCustomList(parentListId);
