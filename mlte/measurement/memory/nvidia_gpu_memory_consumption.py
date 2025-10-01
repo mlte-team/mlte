@@ -51,12 +51,9 @@ from mlte.validation.validator import Validator
 
 
 class CommonStatistics(ExternalEvidence):
-    # TODO Is there a better default unit for "NONE"
-    # TODO There isn't a unit that is for none, but if I use None it pisses off
-    # flake.
-    DEFAULT_UNIT = Units.moles
+    DEFAULT_UNIT: Optional[Unit] = None
 
-    def __init__(self, avg: int, min: int, max: int, unit: Unit):
+    def __init__(self, avg: int, min: int, max: int, unit: Optional[Unit]):
         """
 
         :param avg: The average value
@@ -124,7 +121,7 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def max_consumption_less_than(
-        cls, threshold: int, unit: Unit = Units.moles
+        cls, threshold: int, unit: Optional[Unit] = None
     ) -> Validator:
         """
         Construct and invoke a validator for maximum memory consumption.
@@ -134,9 +131,8 @@ class CommonStatistics(ExternalEvidence):
 
         :return: The Validator that can be used to validate a Value.
         """
-        # TODO: Fix the rotten units.moles thing. I want to be able to do None
         # This allows us to get the unit from a subclass
-        if unit == Units.moles:
+        if unit is None:
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
@@ -154,7 +150,7 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def average_consumption_less_than(
-        cls, threshold: float, unit: Unit = Units.moles
+        cls, threshold: float, unit: Optional[Unit] = None
     ) -> Validator:
         """
         Construct and invoke a validator for average memory consumption.
@@ -166,7 +162,7 @@ class CommonStatistics(ExternalEvidence):
         """
 
         # This allows us to get the unit from a subclass
-        if unit == Units.moles:
+        if unit is None:
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
@@ -278,7 +274,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
                 # This is by design as the process went away
                 break
 
-        # Coerce to the quantity type with bytes then conver to target
+        # Coerce to the quantity type with bytes then convert to target
         avg_unit = Quantity(0, Units.bytes).to(unit)
         if count > 0:
             avg_unit = Quantity(total // count, Units.bytes).to(unit)
@@ -347,39 +343,3 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
     except AttributeError as e:
         print(f"Error: {e} Attribute not found in module 'pynvml'.")
         return -1
-
-
-"""
-
-Got this from some google/AI search
-
-import pynvml
-
-try:
-    # Initialize NVML
-    pynvml.nvmlInit()
-
-    # Get driver version
-    driver_version = pynvml.nvmlSystemGetDriverVersion()
-    print(f"Driver Version: {driver_version}")
-
-    # Get the number of NVIDIA devices
-    device_count = pynvml.nvmlDeviceGetCount()
-    print(f"Number of Devices: {device_count}")
-
-    # Iterate through each device to get details
-    for i in range(device_count):
-        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
-        device_name = pynvml.nvmlDeviceGetName(handle)
-        temperature = pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMP_GPU)
-        memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-
-        print(f"\n--- Device {i} ---")
-        print(f"Name: {device_name}")
-        print(f"Temperature: {temperature}°C")
-        print(f"Memory Total: {memory_info.total / (1024**3):.2f} GB")
-        print(f"Memory Used: {memory_info.used / (1024**3):.2f} GB")
-        print(f"Memory Free: {memory_info.free / (1024**3):.2f} GB")
-
-
-"""
