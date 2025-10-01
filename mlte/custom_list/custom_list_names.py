@@ -35,7 +35,6 @@ class CustomListNameDict(dict[CustomListName, CustomListName]):
         else:
             raise KeyError(f"CustomListName {key} or {value} is not valid.")
 
-
     def __getitem__(self, key) -> CustomListName:
         """Override of parent to ensure key is a valid CustomListName."""
         if key in CustomListName._value2member_map_:
@@ -63,13 +62,10 @@ class CustomListParentMappings:
 
     @staticmethod
     def get_parent_list_name(
-        list_name: Optional[CustomListName],
+        list_name: CustomListName,
     ) -> Optional[CustomListName]:
-        """Gets the name of the parent list of list_name"""
-        if (
-            list_name
-            and list_name in CustomListParentMappings.parent_mappings
-        ):
+        """Gets the name of the parent list of list_name or None."""
+        if list_name and list_name in CustomListParentMappings.parent_mappings:
             return CustomListParentMappings.parent_mappings[list_name]
         else:
             return None
@@ -78,7 +74,7 @@ class CustomListParentMappings:
     def get_child_list_name(
         list_name: Optional[CustomListName],
     ) -> Optional[CustomListName]:
-        """Gets the name of the child list of list_name."""
+        """Gets the name of the child list of list_name or None."""
         if (
             list_name
             and list_name in CustomListParentMappings.parent_mappings.values()
