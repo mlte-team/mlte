@@ -1,17 +1,17 @@
 <template>
-  <table class="table usa-table usa-table--borderless">
+  <table class="table usa-table usa-table--borderless sortable">
     <thead>
       <tr>
+        <th scope="col" role="columnheader">Parent</th>
         <th scope="col" role="columnheader">Name</th>
         <th scope="col" role="columnheader">Description</th>
-        <th scope="col" role="columnheader">Parent</th>
         <th scope="col" role="columnheader">Actions</th>
       </tr>
     </thead>
     <tr v-for="(entry, entryIndex) in modelValue" :key="entryIndex">
+      <td>{{ entry.parent }}</td>
       <td>{{ entry.name }}</td>
       <td>{{ entry.description }}</td>
-      <td>{{ entry.parent }}</td>
       <td>
         <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
           Edit

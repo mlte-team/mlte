@@ -59,13 +59,23 @@ async function pageSetup() {
 /**
  * Update the list of Custom List Entries being displayed.
  *
- * @param {string} Name of new Custom List to be selected
+ * @param {string} cusotmListName Name of new Custom List to be selected
  */
 async function updateList(customListName: string) {
   if (customListName === "") {
     entryList.value = [];
   } else {
     entryList.value = await getCustomList(customListName);
+    // Sort by entries by parent
+    entryList.value.sort((a, b) => {
+      if (a.parent < b.parent) {
+        return -1;
+      } else if (a.parent > b.parent) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 }
 
@@ -91,7 +101,7 @@ function editEntry(entry: CustomListEntry) {
 /**
  * Delete a Custom List entry,
  *
- * @param {string}
+ * @param {string} entryId ID of entry to delete
  */
 async function deleteEntry(entryId: string) {
   if (!confirm("Are you sure you want to delete the entry: " + entryId + "?")) {
@@ -116,7 +126,10 @@ function cancelEdit() {
 }
 
 /**
+ * Save a new or edited custom list entry.
  *
+ * @param {string} customListId Custom list to save to
+ * @param {CustomListEntry} entry Entry to save
  */
 async function saveEntry(customListId: string, entry: CustomListEntry) {
   let error = true;
