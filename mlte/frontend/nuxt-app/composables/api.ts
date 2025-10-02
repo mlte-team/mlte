@@ -639,7 +639,35 @@ export async function getCustomList(
     "/custom_list/" + customListId,
     "GET",
   );
-  return customList || [];
+  return (
+    customList?.sort((a, b) => {
+      // If parents are populated, sort by parent then name
+      if (a.parent && b.parent) {
+        if (a.parent.toLowerCase() < b.parent.toLowerCase()) {
+          return -1;
+        } else if (a.parent.toLowerCase() > b.parent.toLowerCase()) {
+          return 1;
+        } else {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+        // If parent not present, sort by name
+      } else {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    }) || []
+  );
 }
 
 /**
