@@ -68,12 +68,30 @@ async function updateList(customListName: string) {
     entryList.value = await getCustomList(customListName);
     // Sort by entries by parent
     entryList.value.sort((a, b) => {
-      if (a.parent < b.parent) {
-        return -1;
-      } else if (a.parent > b.parent) {
-        return 1;
+      // If there parents are populated, sort by parent then name
+      if (a.parent && b.parent) {
+        if (a.parent.toLowerCase() < b.parent.toLowerCase()) {
+          return -1;
+        } else if (a.parent.toLowerCase() > b.parent.toLowerCase()) {
+          return 1;
+        } else {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+        // If parent not present, sort by name
       } else {
-        return 0;
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        } else {
+          return 0;
+        }
       }
     });
   }
