@@ -317,7 +317,7 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
             device_count = pynvml.nvmlDeviceGetCount()
 
             if gpu_id > device_count - 1:
-                # TODO: What are we doing for logging? This seems like a configuration error.
+                # TODO: Switch to new logging/error handling system
                 print(
                     f"GPU monitor requested for {gpu_id} gpu but there are only {device_count} gpus available."
                 )
@@ -332,14 +332,20 @@ def _get_nvml_memory_usage_bytes(gpu_id: int) -> int:
             return int(memory_info.used)
 
         except pynvml.NVMLError as error:
-            # TODO: What are we doing for logging? I want to do a warning here
+            # TODO: Switch to new logging/error handling system
             print(error)
             return -1
 
     except ModuleNotFoundError:
-        # TODO: What are we doing for logging? I want to do a warning here
+        # TODO: Switch to new logging/error handling system
         print("Warning: pynvml not found.")
         return -1
     except AttributeError as e:
+        # TODO: Switch to new logging/error handling system
         print(f"Error: {e} Attribute not found in module 'pynvml'.")
+        return -1
+    except Exception as e:
+        # TODO: Switch to new logging/error handling system
+        # This is for things such as pynvml.NVMLError_LibraryNotFound
+        print(f"Other exception {e}")
         return -1

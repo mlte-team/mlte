@@ -59,7 +59,7 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
     return ["python", "-c", "; ".join(cmd)]
 
 
-def torch_cuda_check() -> bool:
+def has_torch_cuda() -> bool:
     """
     Checks to see if torch and cuda are available. We need both of these for this test.
     :return: True if we have access to torch and cuda.
@@ -77,6 +77,17 @@ def torch_cuda_check() -> bool:
     except AttributeError:
         # We had some other error so we can't run the test with cuda either.
         return False
+
+
+def has_pynvml():
+    """
+    Checks to see if pynvml is available without actually trying to import.
+    :return: Tru if available for import.
+    """
+    import importlib.util
+
+    spec = importlib.util.find_spec("pynvml")
+    return spec is not None
 
 
 # =================================================================================================
@@ -127,89 +138,105 @@ def test_nvidia_faking_gpu():
         assert ret_val == mem_info_mock.used
 
 
+@pytest.mark.skipif(
+    not has_torch_cuda(),
+    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+)
 def test_nvidia_get_memory_usage():
     """
     Use the low level API without mocking nvml to see that it can get a value
     :return: None
     """
-    if torch_cuda_check():
-        # If we don't have a gpu, we'll just get some value back and just should crash
-        _get_nvml_memory_usage_bytes(0)
-    else:
-        # Without torch/cuda we should get a -1 sentinel value.
-        assert _get_nvml_memory_usage_bytes(0) == -1
+    # If we don't have a gpu, we'll just get some value back and shouldn't just crash
+    _get_nvml_memory_usage_bytes(0)
 
 
+@pytest.mark.skipif(
+    has_pynvml(),
+    reason="NvidiaGPUMemoryConsumption has pynvml so can't test errors.",
+)
+def test_nvidia_get_memory_usage_no_pynvlm():
+    assert _get_nvml_memory_usage_bytes(0) == -1
+
+
+@pytest.mark.skipif(
+    not has_torch_cuda(),
+    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+)
 def test_memory_evaluate() -> None:
-    if torch_cuda_check():
-        start = time.time()
+    start = time.time()
 
-        # NOTE: This assumes that the testing environment has access to gpu0
-        m = NvidiaGPUMemoryConsumption("identifier")
+    # NOTE: This assumes that the testing environment has access to gpu0
+    m = NvidiaGPUMemoryConsumption("identifier")
 
-        # Capture memory consumption; blocks until process exit
-        delay = 2
-        stats = m.evaluate(get_cuda_load_command(delay))
+    # Capture memory consumption; blocks until process exit
+    delay = 2
+    stats: NvidiaGPUMemoryStatistics = typing.cast(
+        NvidiaGPUMemoryStatistics, m.evaluate(get_cuda_load_command(delay))
+    )
 
-        # TODO: Shouldn't we see consumption?
-        assert len(str(stats)) > 0
-        assert int(time.time() - start) >= delay
-
-    # TODO: Can we do anything meaningful w/o cuda? On my mac I fire up torch, but I
-    # think that is a test for a different module.
-
-    # Prining something is useless because people won't look at the logs for prints
-    # Do we add a warning and make it noisier?
-    # Basically, how do we ensure that eventually some tests with cude.
+    # NOTE: Because of multiple GPU users, we just need to read some >0 value.
+    assert stats.max.magnitude > 0
+    assert stats.max.avergae > 0
+    assert stats.max.magnitude >= 0
+    assert len(str(stats)) > 0
+    assert int(time.time() - start) >= delay
 
 
+@pytest.mark.skipif(
+    not has_torch_cuda(),
+    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+)
 def test_memory_evaluate_async() -> None:
-    if torch_cuda_check():
-        start = time.time()
+    start = time.time()
 
-        delay = 2
-        cmd = get_cuda_load_command(delay)
+    delay = 2
+    cmd = get_cuda_load_command(delay)
 
-        pid = ProcessMeasurement.start_process(cmd[0], cmd[1:])
-        m = NvidiaGPUMemoryConsumption("identifier")
+    pid = ProcessMeasurement.start_process(cmd[0], cmd[1:])
+    m = NvidiaGPUMemoryConsumption("identifier")
 
-        # Capture gpu memory consumption; blocks until process exit
-        m.evaluate_async(pid)
-        stats = m.wait_for_output()
+    # Capture gpu memory consumption; blocks until process exit
+    m.evaluate_async(pid)
+    stats = m.wait_for_output()
 
-        # TODO: Shouldn't we see consumption?
-        assert len(str(stats)) > 0
-        assert int(time.time() - start) >= delay
+    # NOTE: Because of multiple GPU users, we just need to read some >0 value.
+    assert len(str(stats)) > 0
+    assert int(time.time() - start) >= delay
 
 
+@pytest.mark.skipif(
+    not has_torch_cuda(),
+    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+)
 def test_memory_validate_success() -> None:
-    if torch_cuda_check():
-        m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryConsumption("identifier")
 
-        # Blocks until process exit
-        delay = 2
-        # TODO: Why specify units?
-        stats = m.evaluate(get_cuda_load_command(delay), unit=Units.mebibyte)
+    # Blocks until process exit
+    delay = 2
+    # TODO: Why specify units?
+    stats = m.evaluate(get_cuda_load_command(delay), unit=Units.mebibyte)
 
-        validator = Validator(
-            bool_exp=lambda _: True, success="yay", failure="oh"
-        )
-        vr = validator.validate(stats)
-        assert bool(vr)
+    validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
+    vr = validator.validate(stats)
+    assert bool(vr)
 
 
+@pytest.mark.skipif(
+    not has_torch_cuda(),
+    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+)
 def test_memory_validate_failure() -> None:
-    if torch_cuda_check():
-        m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryConsumption("identifier")
 
-        # Blocks until process exit
-        delay = 2
-        stats = m.evaluate(get_cuda_load_command(delay))
+    # Blocks until process exit
+    delay = 2
+    stats = m.evaluate(get_cuda_load_command(delay))
 
-        vr = Validator(
-            bool_exp=lambda _: False, success="yay", failure="oh"
-        ).validate(stats)
-        assert not bool(vr)
+    vr = Validator(
+        bool_exp=lambda _: False, success="yay", failure="oh"
+    ).validate(stats)
+    assert not bool(vr)
 
 
 # =================================================================================================
