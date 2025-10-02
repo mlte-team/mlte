@@ -24,14 +24,28 @@ To use the web UI (frontend/backend functionality), the `frontend` optional depe
 $ pip install "mlte[frontend,rdbs,gpu]"
 ```
 
-To build the MLTE package from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder):
+### Building `MLTE`
+If you want to build `MLTE` from its source code in this repository, see the <a href="https://mlte.readthedocs.io/en/latest/development/" target="_blank">development section</a> of the MLTE docs  for details on setting up a local environment to build and run MLTE from source. 
+
+To build the `MLTE` wheel from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder), run the following command:
 ```bash
 $ make build-in-docker
 ```
 
-### Running `MLTE`
+### Using `MLTE` as a Library
 
-The `MLTE` web-based user interface (UI) allows you to create/edit system artifacts and review existing models and test catalogs. To access the UI, first start the backend server with the following command:
+`MLTE` can be imported and used as a regular library to access most of its functionality by importing the ``mlte`` package. Before most operations can be done on `MLTE`, a context and store need to be set via ``set_context("model_name", "model_version")`` and ``set_store("store_uri")``, which can be imported as follows:
+
+```python
+from mlte.session import set_context, set_store
+```
+``set_context()`` indicates the model and version being used for the script, and can be any string. ``set_store()`` indicates the location of the store being used for artifacts and other entities, with four store type options described in the <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">documentation</a>. The MLTE context and store can alternatively be set by environment variables before starting the script (``MLTE_CONTEXT_MODEL``, ``MLTE_CONTEXT_VERSION``, and ``MLTE_STORE_URI``), and can later be overridden using the set methods above.
+
+For a simple example of using the `MLTE` library, see the simple demo Jupyter notebooks available <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">here</a>. 
+
+### Running `MLTE`'s Web UI
+
+The `MLTE` web-based user interface (UI) allows you to view stored artifacts, create/edit some of them, and review existing models and test catalogs. To access the UI, first start the backend server with the following command:
 
 ```bash
 $ mlte backend
@@ -56,18 +70,9 @@ After this, go to the hosted address (defaults to `http://localhost:8000`) to vi
 * Default user: admin
 * Default password: admin1234
 
-### Setting up a `MLTE` session
-
-Before most operations can be done on `MLTE`, a context and artifact store need to be set via ``set_context("model_name", "model_version")`` and ``set_store("store_uri")``, which can be imported as follows:
-
-```python
-from mlte.session import set_context, set_store
-```
-``set_context()`` indicates the model and version being used for the script, and can be any string. ``set_store()`` indicates the location of the artifact store being used, with four store type options described in the <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">documentation</a>. The MLTE context and artifact store can alternatively be set by environment variables before starting the script (``MLTE_CONTEXT_MODEL``, ``MLTE_CONTEXT_VERSION``, ``MLTE_ARTIFACT_STORE_URI``, and ``MLTE_CUSTOM_LIST_STORE_URI_VAR``), and can later be overridden using the set methods above.
-
 ## Next Steps
 
-The `MLTE` Python package is best used in conjunction with the <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">framework</a>. For more details on using the package, see our documentation page on <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a>.
+The `MLTE` Python package is best used in conjunction with the `MLTE` <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">process framework</a>. For more details on using the package, see our documentation page on <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a>.
 
 ### Citing This Work
 
