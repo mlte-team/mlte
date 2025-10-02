@@ -56,11 +56,11 @@ const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QASearchValue = ref("");
 const catalogLookup = ref<Dictionary<CatalogReply>>({});
-const entryList = ref<TestCatalogEntry[]>([]);
+const entryList = ref<Array<TestCatalogEntry>>([]);
 const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 makeCatalogLookup();
-populateFullEntryList();
+updateFullEntryList();
 
 // Make lookup of catalogs to know if entries are readonly
 async function makeCatalogLookup() {
@@ -71,7 +71,7 @@ async function makeCatalogLookup() {
 }
 
 // Get list of TestCatalogEntry from API and populate page with them.
-async function populateFullEntryList() {
+async function updateFullEntryList() {
   entryList.value = await searchCatalog({
     filter: { type: "all" },
   });
@@ -80,7 +80,7 @@ async function populateFullEntryList() {
 // Handle a search query.
 async function search() {
   if (tagSearchValue.value === "" && QASearchValue.value === "") {
-    populateFullEntryList();
+    updateFullEntryList();
   } else if (QASearchValue.value === "") {
     entryList.value = await searchCatalog({
       filter: { type: "tag", name: "tags", value: tagSearchValue.value },
@@ -154,12 +154,12 @@ async function deleteEntry(catalogId: string, entryId: string) {
 
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
-    populateFullEntryList();
+    updateFullEntryList();
   }
 }
 
 /**
- * Return to entry list view from the edit view
+ * Return to entry list view from the edit view,
  *
  * @param force Cancel the edit without confirmation
  */
@@ -194,7 +194,7 @@ async function saveEntry(entry: TestCatalogEntry) {
   }
 
   if (!error) {
-    populateFullEntryList();
+    updateFullEntryList();
     resetSelectedEntry();
     editFlag.value = false;
   }

@@ -123,7 +123,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
             raise RuntimeError("Custom list name can't be None")
         self.storage.ensure_resource_exists(entry_name, [list_name.value])
         entry = self._read_entry(entry_name, list_name)
-        self._delete_children(list_name, entry_name)
+        self._delete_children(entry_name, list_name)
 
         self.storage.delete_resource(entry_name, [list_name.value])
         return entry

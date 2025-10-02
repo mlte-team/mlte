@@ -134,7 +134,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)
-        self._delete_children(list_name, entry_name)
+        self._delete_children(entry_name, list_name)
         popped = self.storage.custom_lists[list_name][entry_name]
         del self.storage.custom_lists[list_name][entry_name]
         return popped

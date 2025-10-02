@@ -86,7 +86,7 @@ class CustomListEntryMapper(ResourceMapper):
             )
 
     def _delete_children(
-        self, list_name: Optional[CustomListName], entry_name: str
+        self, entry_name: str, list_name: CustomListName
     ) -> None:
         """Cascades delete to children of a parent."""
         child_list_name = CustomListParentMappings.get_child_list_name(
