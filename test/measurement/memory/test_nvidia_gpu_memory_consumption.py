@@ -177,8 +177,8 @@ def test_memory_evaluate() -> None:
 
     # NOTE: Because of multiple GPU users, we just need to read some >0 value.
     assert stats.max.magnitude > 0
-    assert stats.max.avergae > 0
-    assert stats.max.magnitude >= 0
+    assert stats.avg.magnitude > 0
+    assert stats.min.magnitude >= 0
     assert len(str(stats)) > 0
     assert int(time.time() - start) >= delay
 
