@@ -10,6 +10,9 @@ The following are specific built-in measurement classes provided by MLTE:
     - Returns custom evidence in the form of a MemoryStatistics object.
 - LocalObjectSize
     - Measure the size of a locally-stored object.
+- NvidiaGPUMemoryConsumption
+    - Measures the amount memory being used per-GPU during an experiment.
+    - Returns custom evidence in the form of an NvidiaGPUMemoryStatistics object.
 
 The following are more generic measurement classes that can be used directly, or extended:
 
