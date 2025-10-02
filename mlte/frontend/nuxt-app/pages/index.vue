@@ -266,9 +266,7 @@
             <thead>
               <tr>
                 <th scope="col" role="columnheader">ID</th>
-                <th scope="col" role="columnheader">
-                  Measurement
-                </th>
+                <th scope="col" role="columnheader">Measurement</th>
                 <th scope="col" role="columnheader">Type</th>
                 <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
@@ -311,9 +309,7 @@
             <thead>
               <tr>
                 <th scope="col" role="columnheader">ID</th>
-                <th scope="col" role="columnheader">
-                  Test Suite ID
-                </th>
+                <th scope="col" role="columnheader">Test Suite ID</th>
                 <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
