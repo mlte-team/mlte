@@ -38,6 +38,9 @@ frontend = [
   "python-multipart >=0.0.20",
   "python-jose >=3.3.0",
 ]
+gpu = [
+  "nvidia-ml-py >= 13.580.82",
+]
 
 [project.urls]
 repository = "https://github.com/mlte-team/mlte"
@@ -70,6 +73,7 @@ matplotlib = "^3.9.4"
 ipykernel = "^6.29.5"
 notebook = "^7.3.2"
 tensorflow = "^2.18.0"
+torch = "^2.8.0"
 
 [tool.poetry.group.dev]
 optional = true
