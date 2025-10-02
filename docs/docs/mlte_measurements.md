@@ -13,6 +13,7 @@ The following are specific built-in measurement classes provided by MLTE:
 - NvidiaGPUMemoryConsumption
     - Measures the amount memory being used per-GPU during an experiment.
     - Returns custom evidence in the form of an NvidiaGPUMemoryStatistics object.
+    - Requires a CUDA-capable NVIDIA GPU to be used, as well as the CUDA Toolkit (including the NVML library) to be installed. 
 
 The following are more generic measurement classes that can be used directly, or extended:
 

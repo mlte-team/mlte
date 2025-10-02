@@ -8,7 +8,7 @@ FROM python:3.12.10-slim-bookworm
 RUN apt-get update && apt-get install -y build-essential
 
 # Setup MLTE and dependencies.
-RUN pip install mlte[rdbs,frontend]
+RUN pip install mlte[rdbs,frontend,gpu]
 
 # Get the command from an arg.
 ARG MLTE_COMMAND

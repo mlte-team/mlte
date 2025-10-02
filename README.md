@@ -18,10 +18,10 @@ The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte
 $ pip install mlte
 ```
 
-To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; and to use relational database storage, the `rdbs` optional dependencies are needed. To install all optional dependencies:
+To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; to use relational database storage, the `rdbs` optional dependencies are needed; and to use the GPU measurements, the `gpu` optional dependencies are needed. To install all optional dependencies:
 
 ```bash
-$ pip install "mlte[frontend,rdbs]"
+$ pip install "mlte[frontend,rdbs,gpu]"
 ```
 
 To build the MLTE package from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder):

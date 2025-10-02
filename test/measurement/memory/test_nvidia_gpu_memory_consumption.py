@@ -66,7 +66,7 @@ def has_torch_cuda() -> bool:
     """
     # DESIGN NOTE: Arguably, we could use nvidia-smi alone to see if we have access to cuda, but
     # we don't have code to load the cuda device without torch. We could use a different package
-    # such as cupy, but that still requires something that probabaly isn't installed.
+    # such as cupy, but that still requires something that probably isn't installed.
 
     try:
         torch = importlib.import_module("torch")
@@ -82,7 +82,7 @@ def has_torch_cuda() -> bool:
 def has_pynvml():
     """
     Checks to see if pynvml is available without actually trying to import.
-    :return: Tru if available for import.
+    :return: True if available for import.
     """
     import importlib.util
 
