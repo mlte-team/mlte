@@ -83,14 +83,14 @@ async function search() {
     updateFullEntryList();
   } else if (QASearchValue.value === "") {
     entryList.value = await searchCatalog({
-      filter: { type: "tag", name: "tags", value: tagSearchValue.value },
+      filter: { type: "tag", name: "tags", tag: tagSearchValue.value },
     });
   } else if (tagSearchValue.value === "") {
     entryList.value = await searchCatalog({
       filter: {
         type: "property",
         name: "quality_attribute",
-        value: QASearchValue.value,
+        property: QASearchValue.value,
       },
     });
   } else {
@@ -101,12 +101,12 @@ async function search() {
           {
             type: "tag",
             name: "tags",
-            value: tagSearchValue.value,
+            tag: tagSearchValue.value,
           },
           {
             type: "property",
             name: "quality_attribute",
-            value: QASearchValue.value,
+            property: QASearchValue.value,
           },
         ],
       },
