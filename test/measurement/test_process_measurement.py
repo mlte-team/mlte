@@ -8,6 +8,7 @@ from pathlib import Path
 
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.string import String
+from mlte.measurement.process_group_measurement import ProcessGroupMeasurement
 from mlte.measurement.process_measurement import ProcessMeasurement
 from test.support.meta import path_to_support
 
@@ -77,3 +78,24 @@ def test_evaluate_async() -> None:
 
     assert type(result) is String and result.value == "test"
     assert m.evidence_metadata and m.evidence_metadata.test_case_id == "id1"
+
+
+def test_process_measurement_group():
+    """Tests that group measurement works."""
+
+    # Create measurement group
+    measurements = ProcessGroupMeasurement()
+
+    # Add measurements to group.
+    measurements.add(SampleProcessMeasurement("t1"))
+    measurements.add(SampleProcessMeasurement("t2"))
+
+    # Evaluate the measurements.
+    evidences = measurements.evaluate(
+        command=SPIN_COMMAND[0], arguments=SPIN_COMMAND[1:], first_arg="test"
+    )
+
+    assert type(evidences[0]) is String and evidences[0].value == "test"
+    assert type(evidences[1]) is String and evidences[1].value == "test"
+    assert evidences[0].metadata and evidences[0].metadata.test_case_id == "t1"
+    assert evidences[1].metadata and evidences[1].metadata.test_case_id == "t2"
