@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import threading
 import time
+import traceback
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
@@ -105,7 +106,7 @@ class ProcessMeasurement(Measurement, ABC):
         try:
             self.stored_value = super().evaluate(pid, *args, **kwargs)
         except Exception as e:
-            self.error = f"Could not evaluate process: {e}"
+            self.error = f"Could not evaluate process: {e} - trace: {traceback.format_exc()}"
 
     def wait_for_output(self, poll_interval: int = 1) -> Evidence:
         """
