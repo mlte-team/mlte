@@ -46,42 +46,51 @@
       </div>
     </div>
   </div>
-  <UsaTextarea
-    v-model="props.modelValue.deployment_platform"
-    style="height: 2.5rem"
-  >
-    <template #label>
-      Deployment Platform
-      <InfoIcon>
-        Describe the deployment platform for the model, e.g., local server,
-        <br />
-        cloud server, embedded platform.
-        <br />
-        <br />
-        <i>Example: Local server due to data classification issues.</i>
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
 
-  <UsaTextarea
-    v-model="props.modelValue.capability_deployment_mechanism"
-    style="height: 2.5rem"
-  >
-    <template #label>
-      Capability Deployment Mechanism
-      <InfoIcon>
-        Describe how the model capabilities will be made available, <br />
-        e.g., API, user facing, data feed.
-        <br />
-        <br />
-        <i
-          >Example: The model will expose an API so that it can be called
+  <div class="input-group">
+    <SubHeader :render-example="false">
+      Deployment?
+      <template #info>
+        TODO
+      </template>
+    </SubHeader>
+    <UsaTextarea
+      v-model="props.modelValue.deployment_platform"
+      style="height: 2.5rem"
+    >
+      <template #label>
+        Deployment Platform
+        <InfoIcon>
+          Describe the deployment platform for the model, e.g., local server,
           <br />
-          from the intel analyst UI.</i
-        >
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
+          cloud server, embedded platform.
+          <br />
+          <br />
+          <i>Example: Local server due to data classification issues.</i>
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
+    <UsaTextarea
+      v-model="props.modelValue.capability_deployment_mechanism"
+      style="height: 2.5rem"
+    >
+      <template #label>
+        Capability Deployment Mechanism
+        <InfoIcon>
+          Describe how the model capabilities will be made available, <br />
+          e.g., API, user facing, data feed.
+          <br />
+          <br />
+          <i
+            >Example: The model will expose an API so that it can be called
+            <br />
+            from the intel analyst UI.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+  </div>
 
   <div class="input-group" style="margin-top: 1em">
     <SubHeader>
