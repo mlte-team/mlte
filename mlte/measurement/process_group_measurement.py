@@ -23,7 +23,7 @@ class ProcessGroupMeasurement:
 
     def evaluate(
         self, command: str, arguments: list[str], *args, **kwargs
-    ) -> list[Evidence]:
+    ) -> dict[str, Evidence]:
         """Start an external process and run multiple process measurements on it."""
         # Start the external process to measure.
         pid = ProcessMeasurement.start_process(command, arguments)
@@ -31,14 +31,14 @@ class ProcessGroupMeasurement:
         # Do the measurements.
         return self.__call__(pid, *args, **kwargs)
 
-    def __call__(self, pid: int, *args, **kwargs) -> list[Evidence]:
+    def __call__(self, pid: int, *args, **kwargs) -> dict[str, Evidence]:
         """Execute each measurement asynchronously"""
         # Start up all measurement tools.
         for measurement in self.measurements:
             measurement.evaluate_async(pid, *args, **kwargs)
 
         # Wait for results. This could be threaded, but not sure of the benefits.
-        evidences: list[Evidence] = []
+        evidences: dict[str, Evidence] = {}
         for measurement in self.measurements:
             if not measurement.evidence_metadata:
                 raise RuntimeError(
@@ -47,6 +47,6 @@ class ProcessGroupMeasurement:
             evidence = measurement.wait_for_output().with_metadata(
                 measurement.evidence_metadata
             )
-            evidences.append(evidence)
+            evidences[measurement.evidence_metadata.test_case_id] = evidence
 
         return evidences

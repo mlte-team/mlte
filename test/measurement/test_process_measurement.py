@@ -95,7 +95,13 @@ def test_process_measurement_group():
         command=SPIN_COMMAND[0], arguments=SPIN_COMMAND[1:], first_arg="test"
     )
 
-    assert type(evidences[0]) is String and evidences[0].value == "test"
-    assert type(evidences[1]) is String and evidences[1].value == "test"
-    assert evidences[0].metadata and evidences[0].metadata.test_case_id == "t1"
-    assert evidences[1].metadata and evidences[1].metadata.test_case_id == "t2"
+    assert type(evidences["t1"]) is String and evidences["t1"].value == "test"
+    assert type(evidences["t2"]) is String and evidences["t2"].value == "test"
+    assert (
+        evidences["t1"].metadata
+        and evidences["t1"].metadata.test_case_id == "t1"
+    )
+    assert (
+        evidences["t2"].metadata
+        and evidences["t2"].metadata.test_case_id == "t2"
+    )
