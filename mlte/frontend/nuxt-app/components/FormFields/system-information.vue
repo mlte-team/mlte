@@ -1,7 +1,7 @@
 <template>
   <h2 class="section-header">System Information</h2>
 
-  <UsaTextInput v-model="props.modelValue.task">
+  <UsaTextarea v-model="props.modelValue.task" style="height: 2.5rem">
     <template #label>
       ML Task
       <InfoIcon>
@@ -12,7 +12,7 @@
         <i>Example: Match voice recordings spoken by the same person.</i>
       </InfoIcon>
     </template>
-  </UsaTextInput>
+  </UsaTextarea>
 
   <UsaSelect
     v-model="props.modelValue.problem_type"
@@ -43,7 +43,7 @@
     </SubHeader>
     <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
       <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
-      <UsaTextInput v-model="goal.description">
+      <UsaTextarea v-model="goal.description" style="height: 2.5rem">
         <template #label>
           Goal Description
           <InfoIcon>
@@ -56,7 +56,7 @@
             >
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
       <SubHeader :render-example="false" :render-info="false">
         Metrics
@@ -118,7 +118,7 @@
     <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
   </div>
 
-  <UsaTextarea v-model="props.modelValue.usage_context">
+  <UsaTextarea v-model="props.modelValue.usage_context" style="height: 2.5rem">
     <template #label>
       Usage Context for the Model
       <InfoIcon>
@@ -136,7 +136,7 @@
     </template>
   </UsaTextarea>
 
-  <UsaTextInput v-model="props.modelValue.risks.fp">
+  <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
     <template #label>
       False Positive Risk
       <InfoIcon>
@@ -151,9 +151,12 @@
         >
       </InfoIcon>
     </template>
-  </UsaTextInput>
+  </UsaTextarea>
 
-  <UsaTextInput v-model="props.modelValue.risks.fn" style="margin-bottom: 1em">
+  <UsaTextarea
+    v-model="props.modelValue.risks.fn"
+    style="height: 2.5rem; margin-bottom: 1em"
+  >
     <template #label>
       False Negative Risk
       <InfoIcon>
@@ -169,7 +172,7 @@
         >
       </InfoIcon>
     </template>
-  </UsaTextInput>
+  </UsaTextarea>
 
   <div class="input-group">
     <SubHeader :render-example="false">
@@ -183,7 +186,10 @@
       :key="riskIndex"
     >
       <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
-      <UsaTextInput v-model="props.modelValue.risks.other[riskIndex]">
+      <UsaTextarea
+        v-model="props.modelValue.risks.other[riskIndex]"
+        style="height: 2.5rem"
+      >
         <template #label>
           Risk
           <InfoIcon>
@@ -196,7 +202,7 @@
             </i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
       <div class="margin-button">
         <DeleteButton @click="deleteRisk(riskIndex)">
