@@ -13,7 +13,7 @@
     >
       <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
       <div>
-        <UsaTextInput v-model="dataItem.description">
+        <UsaTextarea v-model="dataItem.description" style="height: 2.5rem">
           <template #label>
             Dataset Description
             <InfoIcon>
@@ -27,7 +27,7 @@
               >
             </InfoIcon>
           </template>
-        </UsaTextInput>
+        </UsaTextarea>
 
         <UsaTextInput v-model="dataItem.source">
           <template #label>
@@ -62,7 +62,7 @@
         </template>
       </UsaSelect>
 
-      <UsaTextInput v-model="dataItem.access">
+      <UsaTextarea v-model="dataItem.access" style="height: 2.5rem">
         <template #label>
           Requirements and Constraints for Data Access
           <InfoIcon>
@@ -75,7 +75,7 @@
             >
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
       <div class="input-group" style="margin-top: 1em">
         <SubHeader>
@@ -93,7 +93,7 @@
             distribution in the dataset.
           </template>
         </SubHeader>
-        <UsaTextInput v-model="dataItem.labeling_method">
+        <UsaTextarea v-model="dataItem.labeling_method"  style="height: 2.5rem">
           <template #label>
             Labeling Method
             <InfoIcon>
@@ -104,7 +104,7 @@
               <i>Example: Hand labeled by single domain expert.</i>
             </InfoIcon>
           </template>
-        </UsaTextInput>
+        </UsaTextarea>
         <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="label.name">
@@ -246,7 +246,7 @@
         </AddButton>
       </div>
 
-      <UsaTextInput v-model="dataItem.rights">
+      <UsaTextarea v-model="dataItem.rights" style="height: 2.5rem">
         <template #label>
           Data Rights
           <InfoIcon>
@@ -262,9 +262,9 @@
             >
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
-      <UsaTextInput v-model="dataItem.policies">
+      <UsaTextarea v-model="dataItem.policies" style="height: 2.5rem">
         <template #label>
           Data Policies
           <InfoIcon>
@@ -281,7 +281,7 @@
             >
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
       <DeleteButton
         class="margin-button"

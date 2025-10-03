@@ -46,7 +46,10 @@
       </div>
     </div>
   </div>
-  <UsaTextarea v-model="props.modelValue.deployment_platform">
+  <UsaTextarea
+    v-model="props.modelValue.deployment_platform"
+    style="height: 2.5rem"
+  >
     <template #label>
       Deployment Platform
       <InfoIcon>
@@ -60,7 +63,10 @@
     </template>
   </UsaTextarea>
 
-  <UsaTextarea v-model="props.modelValue.capability_deployment_mechanism">
+  <UsaTextarea
+    v-model="props.modelValue.capability_deployment_mechanism"
+    style="height: 2.5rem"
+  >
     <template #label>
       Capability Deployment Mechanism
       <InfoIcon>
@@ -110,7 +116,7 @@
         </template>
       </UsaTextInput>
 
-      <UsaTextarea v-model="inputSpec.description">
+      <UsaTextarea v-model="inputSpec.description" style="height: 2.5rem">
         <template #label>
           Description
           <InfoIcon>
@@ -134,7 +140,7 @@
         </template>
       </UsaTextInput>
 
-      <UsaTextInput v-model="inputSpec.expected_values">
+      <UsaTextarea v-model="inputSpec.expected_values" style="height: 2.5rem">
         <template #label>
           Expected Values
           <InfoIcon>
@@ -144,7 +150,7 @@
             <i>Example: Non-empty audio file of type WAV, MP3 or MP4.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
       <DeleteButton class="margin-button" @click="deleteInputSpec(inputIndex)">
         Delete Input
       </DeleteButton>
@@ -188,7 +194,7 @@
         </template>
       </UsaTextInput>
 
-      <UsaTextarea v-model="outputSpec.description">
+      <UsaTextarea v-model="outputSpec.description" style="height: 2.5rem">
         <template #label>
           Description
           <InfoIcon>
@@ -216,12 +222,12 @@
         </template>
       </UsaTextInput>
 
-      <UsaTextInput v-model="outputSpec.expected_values">
+      <UsaTextarea v-model="outputSpec.expected_values" style="height: 2.5rem">
         <template #label>
           Expected Values
           <InfoIcon> Expected values for the output. </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
       <DeleteButton
         class="margin-button"
         @click="deleteOutputSpec(outputIndex)"

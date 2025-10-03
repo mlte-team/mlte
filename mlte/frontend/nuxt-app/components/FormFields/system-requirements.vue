@@ -57,7 +57,7 @@
         </InfoIcon>
       </FormFieldsQualityAttributes>
 
-      <UsaTextInput v-model="requirement.stimulus">
+      <UsaTextarea v-model="requirement.stimulus" style="height: 2.5rem">
         <template #label>
           <b>Stimulus:</b> What is the input to the model, the action, or the
           event that will enable testing of the quality attribute category, such
@@ -73,9 +73,9 @@
             <i>Example: Model receives an audio recording.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
-      <UsaTextInput v-model="requirement.source">
+      <UsaTextarea v-model="requirement.source" style="height: 2.5rem">
         <template #label>
           <b>Source of Stimulus:</b> Where is the stimulus coming from, such as
           a system component, system user, or data source?
@@ -89,9 +89,9 @@
             <i>Example: Intel analyst application.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
-      <UsaTextInput v-model="requirement.environment">
+      <UsaTextarea v-model="requirement.environment" style="height: 2.5rem">
         <template #label>
           <b>Environment:</b> What are the conditions under which the scenario
           occurs, such as normal operations, overload conditions, or under
@@ -105,9 +105,9 @@
             <i>Example: Normal operations.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
-      <UsaTextInput v-model="requirement.response">
+      <UsaTextarea v-model="requirement.response" style="height: 2.5rem">
         <template #label>
           <b>Response:</b> What occurs as a result of the stimulus, such as
           inference on the data, event processing, or data validation?
@@ -121,9 +121,9 @@
             <i>Example: Inference time.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
 
-      <UsaTextInput v-model="requirement.measure">
+      <UsaTextarea v-model="requirement.measure" style="height: 2.5rem">
         <template #label>
           <b>Response Measure: </b>What is the measure that will determine that
           the correct response has been achieved, such as a statistical
@@ -139,7 +139,7 @@
             <i>Example: At most 5 seconds.</i>
           </InfoIcon>
         </template>
-      </UsaTextInput>
+      </UsaTextarea>
       <DeleteButton
         class="margin-button"
         @click="deleteRequirement(requirementIndex)"
