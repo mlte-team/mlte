@@ -185,17 +185,21 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
             captures.append(size_in_kb)
             time.sleep(poll_interval)
 
-        # Calculate stats, use kilobytes as the psutil function returns values in that unit.
-        avg = int(sum(captures) / len(captures)) * Units.kilobyte
-        minimum = min(captures) * Units.kilobyte
-        maximum = max(captures) * Units.kilobyte
+        if len(captures) > 0:
+            # Calculate stats, use kilobytes as the psutil function returns values in that unit.
+            avg = int(sum(captures) / len(captures)) * Units.kilobyte
+            minimum = min(captures) * Units.kilobyte
+            maximum = max(captures) * Units.kilobyte
 
-        # Convert to provided unit if needed.
-        avg = avg.to(unit)
-        minimum = minimum.to(unit)
-        maximum = maximum.to(unit)
+            # Convert to provided unit if needed.
+            avg = avg.to(unit)
+            minimum = minimum.to(unit)
+            maximum = maximum.to(unit)
 
-        return MemoryStatistics(avg, minimum, maximum, unit=unit)
+            return MemoryStatistics(avg, minimum, maximum, unit=unit)
+        else:
+            # Probably should be a more explicit error.
+            return MemoryStatistics(0, 0, 0, unit=unit)
 
     # Overriden.
     @classmethod
