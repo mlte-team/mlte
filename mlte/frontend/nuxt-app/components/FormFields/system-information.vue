@@ -1,37 +1,44 @@
 <template>
   <h2 class="section-header">System Information</h2>
 
-  <UsaTextarea v-model="props.modelValue.task" style="height: 2.5rem">
-    <template #label>
-      ML Task
-      <InfoIcon>
-        Well-defined task that model is expected to perform, or problem that the
-        model is expected to solve.
-        <br />
-        <br />
-        <i>Example: Match voice recordings spoken by the same person.</i>
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
+  <div class="input-group">
+    <SubHeader :render-example="false">
+      TASK? TODO
+      <template #info>
+        TODO
+      </template>
+    </SubHeader>
+    <UsaTextarea v-model="props.modelValue.task" style="height: 2.5rem">
+      <template #label>
+        ML Task
+        <InfoIcon>
+          Well-defined task that model is expected to perform, or problem that the
+          model is expected to solve.
+          <br />
+          <br />
+          <i>Example: Match voice recordings spoken by the same person.</i>
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
 
-  <UsaSelect
-    v-model="props.modelValue.problem_type"
-    :options="problemTypeOptions"
-    style="margin-bottom: 1em"
-  >
-    <template #label>
-      ML Problem Type
-      <InfoIcon>
-        Type of ML problem that the model is intended to solve.
-        <br />
-        <br />
-        <i
-          >Example: Classification, Clustering, Detection, and others in
-          drop-down list.</i
-        >
-      </InfoIcon>
-    </template>
-  </UsaSelect>
+    <UsaSelect
+      v-model="props.modelValue.problem_type"
+      :options="problemTypeOptions"
+    >
+      <template #label>
+        ML Problem Type
+        <InfoIcon>
+          Type of ML problem that the model is intended to solve.
+          <br />
+          <br />
+          <i
+            >Example: Classification, Clustering, Detection, and others in
+            drop-down list.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaSelect>
+  </div>
 
   <div class="input-group">
     <SubHeader :render-example="false">
@@ -118,101 +125,109 @@
     <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
   </div>
 
-  <UsaTextarea v-model="props.modelValue.usage_context" style="height: 2.5rem">
-    <template #label>
-      Usage Context for the Model
-      <InfoIcon>
-        Who is intended to utilize the system/model; how the results of the
-        model are <br />
-        going to be used by end users or in the context of a larger system.
-        <br />
-        <br />
-        <i
-          >Example: Model results are consumed by a system component that shows
-          <br />
-          an intel analyst a list of matching voice recordings.</i
-        >
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
-
-  <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
-    <template #label>
-      False Positive Risk
-      <InfoIcon>
-        What is the risk of producing a false positive?
-        <br />
-        <br />
-        <i
-          >Example: Incorrect positive results will cause extra work for the
-          <br />
-          intel analyst that needs to analyze every recording flagged by the
-          model.</i
-        >
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
-
-  <UsaTextarea
-    v-model="props.modelValue.risks.fn"
-    style="height: 2.5rem; margin-bottom: 1em"
-  >
-    <template #label>
-      False Negative Risk
-      <InfoIcon>
-        What is the risk of producing a false negative?
-        <br />
-        <br />
-        <i
-          >Example: Incorrect negative results means that the model will
-          <br />
-          not flag suspicious recordings, which means that intel analysts
-          <br />
-          might miss information that is crucial to an investigation.</i
-        >
-      </InfoIcon>
-    </template>
-  </UsaTextarea>
-
   <div class="input-group">
     <SubHeader :render-example="false">
-      Other Risks of Producing Incorrect Results
-      <template #info>
-        What are other risks of producing incorrect results?
-      </template>
-    </SubHeader>
-    <div
-      v-for="(risk, riskIndex) in props.modelValue.risks.other"
-      :key="riskIndex"
-    >
-      <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
-      <UsaTextarea
-        v-model="props.modelValue.risks.other[riskIndex]"
-        style="height: 2.5rem"
-      >
-        <template #label>
-          Risk
-          <InfoIcon>
-            Short description for the risk.
-            <br />
-            <br />
-            <i>
-              Example: Model may not indicate proper results if data is out of
-              bounds.
-            </i>
-          </InfoIcon>
+        RISKS? but why is usage context here
+        <template #info>
+          TODO
         </template>
-      </UsaTextarea>
+      </SubHeader>
+    <UsaTextarea v-model="props.modelValue.usage_context" style="height: 2.5rem">
+      <template #label>
+        Usage Context for the Model
+        <InfoIcon>
+          Who is intended to utilize the system/model; how the results of the
+          model are <br />
+          going to be used by end users or in the context of a larger system.
+          <br />
+          <br />
+          <i
+            >Example: Model results are consumed by a system component that shows
+            <br />
+            an intel analyst a list of matching voice recordings.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
 
-      <div class="margin-button">
-        <DeleteButton @click="deleteRisk(riskIndex)">
-          Delete Risk
-        </DeleteButton>
+    <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
+      <template #label>
+        False Positive Risk
+        <InfoIcon>
+          What is the risk of producing a false positive?
+          <br />
+          <br />
+          <i
+            >Example: Incorrect positive results will cause extra work for the
+            <br />
+            intel analyst that needs to analyze every recording flagged by the
+            model.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
+    <UsaTextarea
+      v-model="props.modelValue.risks.fn"
+      style="height: 2.5rem; margin-bottom: 1em"
+    >
+      <template #label>
+        False Negative Risk
+        <InfoIcon>
+          What is the risk of producing a false negative?
+          <br />
+          <br />
+          <i
+            >Example: Incorrect negative results means that the model will
+            <br />
+            not flag suspicious recordings, which means that intel analysts
+            <br />
+            might miss information that is crucial to an investigation.</i
+          >
+        </InfoIcon>
+      </template>
+    </UsaTextarea>
+
+    <div class="input-group">
+      <SubHeader :render-example="false">
+        Other Risks of Producing Incorrect Results
+        <template #info>
+          What are other risks of producing incorrect results?
+        </template>
+      </SubHeader>
+      <div
+        v-for="(risk, riskIndex) in props.modelValue.risks.other"
+        :key="riskIndex"
+      >
+        <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
+        <UsaTextarea
+          v-model="props.modelValue.risks.other[riskIndex]"
+          style="height: 2.5rem"
+        >
+          <template #label>
+            Risk
+            <InfoIcon>
+              Short description for the risk.
+              <br />
+              <br />
+              <i>
+                Example: Model may not indicate proper results if data is out of
+                bounds.
+              </i>
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
+
+        <div class="margin-button">
+          <DeleteButton @click="deleteRisk(riskIndex)">
+            Delete Risk
+          </DeleteButton>
+        </div>
+        <hr />
       </div>
-      <hr />
-    </div>
 
-    <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+      <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+    </div>
   </div>
 </template>
 
