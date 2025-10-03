@@ -1,14 +1,16 @@
 """Handling multiple process measurements at the same time more easily."""
 
 from mlte.evidence.artifact import Evidence
-from mlte.measurement.measurement import Measurement
 from mlte.measurement.process_measurement import ProcessMeasurement
 
 
-class ProcessGroupMeasurement(Measurement):
+class ProcessGroupMeasurement:
     """
     Class that allows you to run multiple separte ProcessMeasurement classes
     on the same external process with an interface similar to regular Measurements.
+    TODO: Change this into an actual Measurement when TestCases can be associated with more
+    than one piece of evidence. Currently this can't be used as an automatically executed
+    measurement with TestSuite.run_measurements().
     """
 
     def __init__(self):
