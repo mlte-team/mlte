@@ -1,25 +1,37 @@
 <template>
   <h2 class="section-header">System Information</h2>
-  <UsaTextarea
-    v-model="props.modelValue.usage_context"
+
+  <UsaTextInput v-model="props.modelValue.task">
+    <template #label>
+      ML Task
+      <InfoIcon>
+        Well-defined task that model is expected to perform, or problem that the
+        model is expected to solve.
+        <br />
+        <br />
+        <i>Example: Match voice recordings spoken by the same person.</i>
+      </InfoIcon>
+    </template>
+  </UsaTextInput>
+
+  <UsaSelect
+    v-model="props.modelValue.problem_type"
+    :options="problemTypeOptions"
     style="margin-bottom: 1em"
   >
     <template #label>
-      Usage Context for the Model
+      ML Problem Type
       <InfoIcon>
-        Who is intended to utilize the system/model; how the results of the
-        model are <br />
-        going to be used by end users or in the context of a larger system.
+        Type of ML problem that the model is intended to solve.
         <br />
         <br />
         <i
-          >Example: Model results are consumed by a system component that shows
-          <br />
-          an intel analyst a list of matching voice recordings.</i
+          >Example: Classification, Clustering, Detection, and others in
+          drop-down list.</i
         >
       </InfoIcon>
     </template>
-  </UsaTextarea>
+  </UsaSelect>
 
   <div class="input-group">
     <SubHeader :render-example="false">
@@ -106,36 +118,23 @@
     <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
   </div>
 
-  <UsaSelect
-    v-model="props.modelValue.problem_type"
-    :options="problemTypeOptions"
-  >
+  <UsaTextarea v-model="props.modelValue.usage_context">
     <template #label>
-      ML Problem Type
+      Usage Context for the Model
       <InfoIcon>
-        Type of ML problem that the model is intended to solve.
+        Who is intended to utilize the system/model; how the results of the
+        model are <br />
+        going to be used by end users or in the context of a larger system.
         <br />
         <br />
         <i
-          >Example: Classification, Clustering, Detection, and others in
-          drop-down list.</i
+          >Example: Model results are consumed by a system component that shows
+          <br />
+          an intel analyst a list of matching voice recordings.</i
         >
       </InfoIcon>
     </template>
-  </UsaSelect>
-
-  <UsaTextInput v-model="props.modelValue.task">
-    <template #label>
-      ML Task
-      <InfoIcon>
-        Well-defined task that model is expected to perform, or problem that the
-        model is expected to solve.
-        <br />
-        <br />
-        <i>Example: Match voice recordings spoken by the same person.</i>
-      </InfoIcon>
-    </template>
-  </UsaTextInput>
+  </UsaTextarea>
 
   <UsaTextInput v-model="props.modelValue.risks.fp">
     <template #label>
