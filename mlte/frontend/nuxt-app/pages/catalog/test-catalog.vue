@@ -3,7 +3,7 @@
     <title>Test Catalog</title>
     <template #page-title>Test Catalog</template>
 
-    <div v-if="!editFlag">
+    <div v-if="!editFlag" >
       <UsaButton
         class="secondary-button sub-header-float-button"
         @click="addEntry"
