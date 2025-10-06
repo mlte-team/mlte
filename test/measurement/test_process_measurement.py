@@ -92,11 +92,11 @@ def test_process_measurement_group():
 
     # Evaluate the measurements.
     evidences = measurements.evaluate(
-        command=SPIN_COMMAND[0], arguments=SPIN_COMMAND[1:], first_arg="test"
+        command=SPIN_COMMAND, inputs={"t1": ["test"], "t2": ["test2"]}
     )
 
     assert type(evidences["t1"]) is String and evidences["t1"].value == "test"
-    assert type(evidences["t2"]) is String and evidences["t2"].value == "test"
+    assert type(evidences["t2"]) is String and evidences["t2"].value == "test2"
     assert (
         evidences["t1"].metadata
         and evidences["t1"].metadata.test_case_id == "t1"

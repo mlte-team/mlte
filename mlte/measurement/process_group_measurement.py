@@ -1,5 +1,7 @@
 """Handling multiple process measurements at the same time more easily."""
 
+from typing import Any
+
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.process_measurement import ProcessMeasurement
 
@@ -22,31 +24,32 @@ class ProcessGroupMeasurement:
         self.measurements.append(measurement)
 
     def evaluate(
-        self, command: str, arguments: list[str], *args, **kwargs
+        self, command: list[str], inputs: dict[str, list[Any]] = {}
     ) -> dict[str, Evidence]:
         """Start an external process and run multiple process measurements on it."""
         # Start the external process to measure.
-        pid = ProcessMeasurement.start_process(command, arguments)
+        pid = ProcessMeasurement.start_process(command[0], command[1:])
 
-        # Do the measurements.
-        return self.__call__(pid, *args, **kwargs)
-
-    def __call__(self, pid: int, *args, **kwargs) -> dict[str, Evidence]:
-        """Execute each measurement asynchronously"""
         # Start up all measurement tools.
-        for measurement in self.measurements:
-            measurement.evaluate_async(pid, *args, **kwargs)
-
-        # Wait for results. This could be threaded, but not sure of the benefits.
-        evidences: dict[str, Evidence] = {}
         for measurement in self.measurements:
             if not measurement.evidence_metadata:
                 raise RuntimeError(
                     "Can't evaluate measurement before setting its id"
                 )
-            evidence = measurement.wait_for_output().with_metadata(
-                measurement.evidence_metadata
+            curr_inputs = (
+                inputs[measurement.test_case_id]
+                if measurement.test_case_id in inputs
+                else []
             )
-            evidences[measurement.evidence_metadata.test_case_id] = evidence
+            measurement.evaluate_async(pid, *curr_inputs)
+
+        # Wait for results. This could be threaded, but not clear if the benefits make it worth it.
+        evidences: dict[str, Evidence] = {}
+        for measurement in self.measurements:
+            if measurement.evidence_metadata:
+                evidence = measurement.wait_for_output().with_metadata(
+                    measurement.evidence_metadata
+                )
+                evidences[measurement.evidence_metadata.test_case_id] = evidence
 
         return evidences
