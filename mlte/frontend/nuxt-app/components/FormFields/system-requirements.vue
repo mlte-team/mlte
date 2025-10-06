@@ -3,18 +3,25 @@
     <template #title> System Derived Requirements </template>
   </CollapsibleHeader>
   <div v-if="displaySection">
-    <p>
-      System-dependent requirements and constraints placed on the model under
-      development. The fields below correspond to parts of a quality attribute
-      scenario, which is a construct used to clearly define system requirements.
-      As parts of the scenario are filled in, the corresponding text for the
-      scenario will be generated for your validation. Click on the "Example"
-      button below for a list of examples.
-    </p>
-
     <div class="input-group">
-      <SubHeader :render-info="false">
+      <SubHeader>
         Requirements
+        <template #info>
+          <p>
+            These are the requirements and constraints derived from the
+            ML-enabled system that integrates the model under development. The
+            fields below correspond to parts of a quality attribute scenario,
+            which is a construct used to clearly define system requirements.
+            <br />
+            <br />
+            As the parts of the scenario are filled in, the corresponding text
+            for the scenario will be automatically generated. Edit the fields
+            such that the generated scenario corresponds to a coherent
+            paragraph; these fields simply ensure that all parts of the scenario
+            are considered and form a concrete, testable requirement. Click on
+            the "Example" button below for a list of examples.
+          </p>
+        </template>
         <template #example>
           <UsaTable
             :headers="systemModalHeaders"
