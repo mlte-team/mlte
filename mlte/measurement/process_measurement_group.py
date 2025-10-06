@@ -6,7 +6,7 @@ from mlte.evidence.artifact import Evidence
 from mlte.measurement.process_measurement import ProcessMeasurement
 
 
-class ProcessGroupMeasurement:
+class ProcessMeasurementGroup:
     """
     Class that allows you to run multiple separte ProcessMeasurement classes
     on the same external process with an interface similar to regular Measurements.

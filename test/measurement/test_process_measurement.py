@@ -8,8 +8,8 @@ from pathlib import Path
 
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.string import String
-from mlte.measurement.process_group_measurement import ProcessGroupMeasurement
 from mlte.measurement.process_measurement import ProcessMeasurement
+from mlte.measurement.process_measurement_group import ProcessMeasurementGroup
 from test.support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -84,7 +84,7 @@ def test_process_measurement_group():
     """Tests that group measurement works."""
 
     # Create measurement group
-    measurements = ProcessGroupMeasurement()
+    measurements = ProcessMeasurementGroup()
 
     # Add measurements to group.
     measurements.add(SampleProcessMeasurement("t1"))
