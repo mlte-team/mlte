@@ -37,8 +37,8 @@
             <template #label>
               Source
               <InfoIcon>
-                Where is the data coming from, e.g., Enterprise Data, Public Data
-                Source, <br />
+                Where is the data coming from, e.g., Enterprise Data, Public
+                Data Source, <br />
                 Synthetic Data?
                 <br />
                 <br />
@@ -97,7 +97,10 @@
               distribution in the dataset.
             </template>
           </SubHeader>
-          <UsaTextarea v-model="dataItem.labeling_method"  style="height: 2.5rem">
+          <UsaTextarea
+            v-model="dataItem.labeling_method"
+            style="height: 2.5rem"
+          >
             <template #label>
               Labeling Method
               <InfoIcon>
@@ -162,12 +165,14 @@
               />
             </template>
             <template #info>
-              Include relevant information that is known about the data; fill out
-              all sections below for each data field.
+              Include relevant information that is known about the data; fill
+              out all sections below for each data field.
             </template>
           </SubHeader>
           <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
-            <h3 class="no-margin-sub-header">Data Schema {{ fieldIndex + 1 }}</h3>
+            <h3 class="no-margin-sub-header">
+              Data Schema {{ fieldIndex + 1 }}
+            </h3>
             <div>
               <div class="inline-input-left">
                 <UsaTextInput v-model="field.name">

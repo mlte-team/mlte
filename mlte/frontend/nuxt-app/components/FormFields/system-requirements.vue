@@ -50,8 +50,8 @@
           be tested, such as accuracy, performance, robustness, fairness, or
           resource consumption?
           <InfoIcon>
-            Quality attribute category by which the model will be evaluated in the
-            context of the system <br />
+            Quality attribute category by which the model will be evaluated in
+            the context of the system <br />
             (e.g., Accuracy, Performance, Robustness, Fairness, Resource
             Consumption).
             <br />
@@ -63,8 +63,8 @@
         <UsaTextarea v-model="requirement.stimulus" style="height: 2.5rem">
           <template #label>
             <b>Stimulus:</b> What is the input to the model, the action, or the
-            event that will enable testing of the quality attribute category, such
-            as input data, system event, or user operation?
+            event that will enable testing of the quality attribute category,
+            such as input data, system event, or user operation?
             <InfoIcon>
               A condition arriving at the system/model (e.g., data,
               <br />
@@ -80,8 +80,8 @@
 
         <UsaTextarea v-model="requirement.source" style="height: 2.5rem">
           <template #label>
-            <b>Source of Stimulus:</b> Where is the stimulus coming from, such as
-            a system component, system user, or data source?
+            <b>Source of Stimulus:</b> Where is the stimulus coming from, such
+            as a system component, system user, or data source?
             <InfoIcon>
               Where the stimulus comes from (e.g., data source, <br />
               internal/external user, internal/external component or system,
@@ -128,8 +128,8 @@
 
         <UsaTextarea v-model="requirement.measure" style="height: 2.5rem">
           <template #label>
-            <b>Response Measure: </b>What is the measure that will determine that
-            the correct response has been achieved, such as a statistical
+            <b>Response Measure: </b>What is the measure that will determine
+            that the correct response has been achieved, such as a statistical
             property, latency, or execution time?
             <InfoIcon>
               Measures used to determine that the responses enumerated for

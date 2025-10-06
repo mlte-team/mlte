@@ -1,101 +1,9 @@
 <template>
-  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
-    <template #title> Model Information </template>
+  <CollapsibleHeader v-model="displayIO" @change="displayIO = $event">
+    <template #title> Model Inputs and Outputs </template>
   </CollapsibleHeader>
-  
-  <div v-if="displaySection">
-    <div class="input-group">
-      <SubHeader>
-        Development Compute Resources
-        <template #example>
-          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
-        </template>
-        <template #info>
-          Describe the amount and type of compute resources needed for training.
-        </template>
-      </SubHeader>
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.gpu"
-          >
-            <template #label> Graphics Processing Units (GPUs) </template>
-          </UsaTextInput>
-        </div>
 
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.cpu"
-          >
-            <template #label> Central Processing Units (CPUs) </template>
-          </UsaTextInput>
-        </div>
-      </div>
-
-      <div>
-        <div class="inline-input-left">
-          <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.memory"
-          >
-            <template #label> Memory </template>
-          </UsaTextInput>
-        </div>
-
-        <div class="inline-input-right">
-          <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.storage"
-          >
-            <template #label> Storage </template>
-          </UsaTextInput>
-        </div>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <SubHeader :render-example="false">
-        Deployment?
-        <template #info>
-          TODO
-        </template>
-      </SubHeader>
-      <UsaTextarea
-        v-model="props.modelValue.deployment_platform"
-        style="height: 2.5rem"
-      >
-        <template #label>
-          Deployment Platform
-          <InfoIcon>
-            Describe the deployment platform for the model, e.g., local server,
-            <br />
-            cloud server, embedded platform.
-            <br />
-            <br />
-            <i>Example: Local server due to data classification issues.</i>
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
-
-      <UsaTextarea
-        v-model="props.modelValue.capability_deployment_mechanism"
-        style="height: 2.5rem"
-      >
-        <template #label>
-          Capability Deployment Mechanism
-          <InfoIcon>
-            Describe how the model capabilities will be made available, <br />
-            e.g., API, user facing, data feed.
-            <br />
-            <br />
-            <i
-              >Example: The model will expose an API so that it can be called
-              <br />
-              from the intel analyst UI.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
-    </div>
-
+  <div v-if="displayIO">
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
         Input Specification
@@ -164,7 +72,10 @@
             </InfoIcon>
           </template>
         </UsaTextarea>
-        <DeleteButton class="margin-button" @click="deleteInputSpec(inputIndex)">
+        <DeleteButton
+          class="margin-button"
+          @click="deleteInputSpec(inputIndex)"
+        >
           Delete Input
         </DeleteButton>
         <hr />
@@ -191,7 +102,8 @@
         </template>
       </SubHeader>
       <div
-        v-for="(outputSpec, outputIndex) in props.modelValue.output_specification"
+        v-for="(outputSpec, outputIndex) in props.modelValue
+          .output_specification"
         :key="outputIndex"
       >
         <h3 class="no-margin-sub-header">Output {{ outputIndex + 1 }}</h3>
@@ -235,7 +147,10 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="outputSpec.expected_values" style="height: 2.5rem">
+        <UsaTextarea
+          v-model="outputSpec.expected_values"
+          style="height: 2.5rem"
+        >
           <template #label>
             Expected Values
             <InfoIcon> Expected values for the output. </InfoIcon>
@@ -253,6 +168,105 @@
         Add Additional Output
       </AddButton>
     </div>
+  </div>
+
+  <CollapsibleHeader
+    v-model="displayResources"
+    @change="displayResources = $event"
+  >
+    <template #title> Resources and Infrastructure </template>
+  </CollapsibleHeader>
+
+  <div v-if="displayResources">
+    <div class="input-group">
+      <SubHeader>
+        Development Compute Resources
+        <template #example>
+          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
+        </template>
+        <template #info>
+          Describe the amount and type of compute resources needed for training.
+        </template>
+      </SubHeader>
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput
+            v-model="props.modelValue.development_compute_resources.gpu"
+          >
+            <template #label> Graphics Processing Units (GPUs) </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput
+            v-model="props.modelValue.development_compute_resources.cpu"
+          >
+            <template #label> Central Processing Units (CPUs) </template>
+          </UsaTextInput>
+        </div>
+      </div>
+
+      <div>
+        <div class="inline-input-left">
+          <UsaTextInput
+            v-model="props.modelValue.development_compute_resources.memory"
+          >
+            <template #label> Memory </template>
+          </UsaTextInput>
+        </div>
+
+        <div class="inline-input-right">
+          <UsaTextInput
+            v-model="props.modelValue.development_compute_resources.storage"
+          >
+            <template #label> Storage </template>
+          </UsaTextInput>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <SubHeader :render-example="false">
+        Deployment
+        <template #info> Operational environment of the model. </template>
+      </SubHeader>
+      <UsaTextarea
+        v-model="props.modelValue.deployment_platform"
+        style="height: 2.5rem"
+      >
+        <template #label>
+          Deployment Platform
+          <InfoIcon>
+            Describe the deployment platform for the model, e.g., local server,
+            <br />
+            cloud server, embedded platform.
+            <br />
+            <br />
+            <i>Example: Local server due to data classification issues.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextarea>
+
+      <UsaTextarea
+        v-model="props.modelValue.capability_deployment_mechanism"
+        style="height: 2.5rem"
+      >
+        <template #label>
+          Capability Deployment Mechanism
+          <InfoIcon>
+            Describe how the model capabilities will be made available, <br />
+            e.g., API, user facing, data feed.
+            <br />
+            <br />
+            <i
+              >Example: The model will expose an API so that it can be called
+              <br />
+              from the intel analyst UI.</i
+            >
+          </InfoIcon>
+        </template>
+      </UsaTextarea>
+    </div>
 
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
@@ -261,7 +275,8 @@
           Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
         </template>
         <template #info>
-          Describe the amount and type of compute resources needed for inference.
+          Describe the amount and type of compute resources needed for
+          inference.
         </template>
       </SubHeader>
       <div>
@@ -329,7 +344,8 @@ defineExpose({
   parentAddOutputSpec,
 });
 
-const displaySection = ref<boolean>(true);
+const displayIO = ref<boolean>(true);
+const displayResources = ref<boolean>(true);
 const inputModalHeaders = ref([
   { id: "inputName", label: "Input Name", sortable: false },
   { id: "inputDescription", label: "Input Description", sortable: false },
