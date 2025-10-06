@@ -8,9 +8,8 @@ import typing
 from typing import Any, Dict
 
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceModel, EvidenceType, OpaqueValueModel
+from mlte.evidence.model import EvidenceType, OpaqueValueModel
 from mlte.model.base_model import BaseModel
 
 
@@ -45,18 +44,8 @@ class Opaque(Evidence):
         :param model: The model representation
         :return: The real value
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), "Broken Precondition."
-        body = typing.cast(EvidenceModel, model.body)
-
-        assert (
-            body.value.evidence_type == EvidenceType.OPAQUE
-        ), "Broken Precondition."
-        return Opaque(data=body.value.data).with_metadata(body.metadata)
+        body = cls._check_proper_types(model, EvidenceType.OPAQUE)
+        return Opaque(data=body.value.data).with_metadata(body.metadata)  # type: ignore
 
     # Overriden.
     @classmethod
