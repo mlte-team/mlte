@@ -6,17 +6,17 @@
   <div v-if="displaySection">
     <div class="input-group">
       <SubHeader :render-example="false">
-        TASK? TODO
+        General Information
         <template #info>
-          TODO
+          General information about the problem and usage context.
         </template>
       </SubHeader>
       <UsaTextarea v-model="props.modelValue.task" style="height: 2.5rem">
         <template #label>
           ML Task
           <InfoIcon>
-            Well-defined task that model is expected to perform, or problem that the
-            model is expected to solve.
+            Well-defined task that model is expected to perform, or problem that
+            the model is expected to solve.
             <br />
             <br />
             <i>Example: Match voice recordings spoken by the same person.</i>
@@ -41,6 +41,28 @@
           </InfoIcon>
         </template>
       </UsaSelect>
+
+      <UsaTextarea
+        v-model="props.modelValue.usage_context"
+        style="height: 2.5rem"
+      >
+        <template #label>
+          Usage Context for the Model
+          <InfoIcon>
+            Who is intended to utilize the system/model; how the results of the
+            model are <br />
+            going to be used by end users or in the context of a larger system.
+            <br />
+            <br />
+            <i
+              >Example: Model results are consumed by a system component that
+              shows
+              <br />
+              an intel analyst a list of matching voice recordings.</i
+            >
+          </InfoIcon>
+        </template>
+      </UsaTextarea>
     </div>
 
     <div class="input-group">
@@ -61,8 +83,8 @@
               <br />
               <br />
               <i
-                >Example: Identify voice recordings that belong to a given person
-                of interest.</i
+                >Example: Identify voice recordings that belong to a given
+                person of interest.</i
               >
             </InfoIcon>
           </template>
@@ -100,8 +122,8 @@
                   <br />
                   <br />
                   <i
-                    >Example: Human accuracy for matching voices is ~60% as stated
-                    in the paper<br />
+                    >Example: Human accuracy for matching voices is ~60% as
+                    stated in the paper<br />
                     by Smith et al.</i
                   ><br />
                 </InfoIcon>
@@ -130,28 +152,9 @@
 
     <div class="input-group">
       <SubHeader :render-example="false">
-          RISKS? but why is usage context here
-          <template #info>
-            TODO
-          </template>
-        </SubHeader>
-      <UsaTextarea v-model="props.modelValue.usage_context" style="height: 2.5rem">
-        <template #label>
-          Usage Context for the Model
-          <InfoIcon>
-            Who is intended to utilize the system/model; how the results of the
-            model are <br />
-            going to be used by end users or in the context of a larger system.
-            <br />
-            <br />
-            <i
-              >Example: Model results are consumed by a system component that shows
-              <br />
-              an intel analyst a list of matching voice recordings.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
+        Risks
+        <template #info> Risks to model performance. </template>
+      </SubHeader>
 
       <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
         <template #label>
@@ -214,8 +217,8 @@
                 <br />
                 <br />
                 <i>
-                  Example: Model may not indicate proper results if data is out of
-                  bounds.
+                  Example: Model may not indicate proper results if data is out
+                  of bounds.
                 </i>
               </InfoIcon>
             </template>
@@ -229,7 +232,9 @@
           <hr />
         </div>
 
-        <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+        <AddButton class="margin-button" @click="addRisk()">
+          Add Risk
+        </AddButton>
       </div>
     </div>
   </div>
