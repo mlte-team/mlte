@@ -157,9 +157,8 @@ class TagFilter(Filter):
     """The tag to check against."""
 
     def match(self, item: Filterable) -> bool:
-        return self.tag.lower() in [
-            tag.lower() for tag in item.get_tags(self.name)
-        ]
+        lower_tags = [tag.lower() for tag in item.get_tags(self.name)]
+        return any([self.tag.lower() in tag for tag in lower_tags])
 
 
 class PropertyFilter(Filter):
