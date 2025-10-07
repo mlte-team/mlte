@@ -15,6 +15,7 @@ from typing import Optional
 from mlte._private import job
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
+from mlte.measurement.model import MeasurementMetadata
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement
@@ -23,6 +24,9 @@ from mlte.measurement.measurement import Measurement
 
 class ProcessMeasurement(Measurement, ABC):
     """Base class to be extended to measure external processes."""
+
+    PROCESS_GROUP_KEY = "group"
+    """Key to store optional process groups used by this measurement."""
 
     @staticmethod
     def start_script(command: list[str]) -> int:
@@ -67,6 +71,24 @@ class ProcessMeasurement(Measurement, ABC):
 
         self.error: str = ""
         """Any error messages from running measurement."""
+
+    # Overriden.
+    def generate_metadata(self) -> MeasurementMetadata:
+        """Returns Measurement metadata with additional info."""
+        metadata = super().generate_metadata()
+
+        # Add specific group being used, if any.
+        if self.group:
+            metadata.additional_data[self.PROCESS_GROUP_KEY] = self.group
+
+        return metadata
+
+    # Overriden.
+    def additional_setup(self, model: MeasurementMetadata):
+        """Customized method to set up Optional group id from metadata."""
+        # Set up the group.
+        if self.PROCESS_GROUP_KEY in model.additional_data:
+            self.group = model.additional_data[self.PROCESS_GROUP_KEY]
 
     # Overriden.
     @abstractmethod
