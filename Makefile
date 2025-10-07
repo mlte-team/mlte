@@ -166,7 +166,7 @@ clean: frontend-env-clean
 
 # This is basically equivalent to what the CI server will do.
 .PHONY: ci
-ci: clean venv frontend-env check-qa test
+ci: clean venv frontend-env check-qa test demo-test
 
 # -----------------------------------------------------------------------------
 # Build commands to create a packaged wheel.
