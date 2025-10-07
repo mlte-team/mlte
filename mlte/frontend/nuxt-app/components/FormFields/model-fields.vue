@@ -182,10 +182,11 @@
       <SubHeader>
         Development Compute Resources
         <template #example>
-          GPUs = 2, CPUs = 1, Memory = 512 MB, Storage = 1 GB
+          GPUs = 2, CPUs = 1, Main Memory = 512 MB, Storage = 1 GB
         </template>
         <template #info>
-          Describe the amount and type of compute resources needed for training.
+          Describe the amount and type of compute resources needed for
+          development.
         </template>
       </SubHeader>
       <div>
@@ -211,7 +212,7 @@
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.memory"
           >
-            <template #label> Memory </template>
+            <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
 
@@ -266,13 +267,25 @@
           </InfoIcon>
         </template>
       </UsaTextarea>
+
+      <UsaTextInput v-model="props.modelValue.model_source">
+        <template #label>
+          Model Source
+          <InfoIcon>
+            The source of the model.
+            <br />
+            <br />
+            <i>Example: In house, hugging face, git repository.</i>
+          </InfoIcon>
+        </template>
+      </UsaTextInput>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
       <SubHeader>
         Production Compute Resources
         <template #example>
-          Example: GPUs = 2, CPUs = 2, Memory = 256 MB, Storage = 512 MB
+          Example: GPUs = 2, CPUs = 2, Main Memory = 256 MB, Storage = 512 MB
         </template>
         <template #info>
           Describe the amount and type of compute resources needed for
@@ -302,7 +315,7 @@
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.memory"
           >
-            <template #label> Memory </template>
+            <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
 

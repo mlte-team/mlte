@@ -57,6 +57,7 @@ class DBNegotiationCard(DBBase):
     )
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
+    model_prod_model_source: Mapped[Optional[str]]
 
     model_prod_inputs: Mapped[list[DBModelIODescriptor]] = relationship(
         cascade="all, delete-orphan",

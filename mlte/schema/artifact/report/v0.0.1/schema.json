@@ -394,6 +394,18 @@
           "default": null,
           "title": "Capability Deployment Mechanism"
         },
+        "model_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Source"
+        },
         "input_specification": {
           "default": [],
           "items": {
@@ -571,6 +583,7 @@
             },
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
+            "model_source": null,
             "input_specification": [],
             "output_specification": [],
             "production_compute_resources": {

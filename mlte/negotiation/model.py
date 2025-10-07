@@ -106,6 +106,9 @@ class ModelDescriptor(BaseModel):
     capability_deployment_mechanism: Optional[str] = None
     """A description of how the model capabilities will be made available."""
 
+    model_source: Optional[str] = None
+    """A description of where the model came from."""
+
     input_specification: list[ModelIODescriptor] = []
     """The model input specification."""
 

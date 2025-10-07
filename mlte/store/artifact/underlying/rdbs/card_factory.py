@@ -150,6 +150,7 @@ def create_card_model(
             negotiation_card_orm.model_dev_resources,
             negotiation_card_orm.model_prod_deployment_platform,
             negotiation_card_orm.model_prod_capability_deployment_mechanism,
+            negotiation_card_orm.model_prod_model_source,
             negotiation_card_orm.model_prod_inputs,
             negotiation_card_orm.model_prod_outputs,
             negotiation_card_orm.model_prod_resources,
@@ -308,6 +309,7 @@ def _build_model_descriptor(
     dev_resources: DBModelResourcesDescriptor,
     deployment_platform: Optional[str],
     capability_deployment_mechanism: Optional[str],
+    model_source: Optional[str],
     inputs: list[DBModelIODescriptor],
     outputs: list[DBModelIODescriptor],
     prod_resources: DBModelResourcesDescriptor,
@@ -317,6 +319,7 @@ def _build_model_descriptor(
         development_compute_resources=_build_resources(dev_resources),
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
+        model_source=model_source,
         input_specification=[
             ModelIODescriptor(
                 name=input_orm.name,

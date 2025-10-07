@@ -123,6 +123,7 @@ export class ModelDescriptor {
     public development_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
     public deployment_platform: string = "",
     public capability_deployment_mechanism: string = "",
+    public model_source: string = "",
     public input_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public output_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public production_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
