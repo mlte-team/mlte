@@ -153,89 +153,41 @@
     <div class="input-group">
       <SubHeader :render-example="false">
         Risks
-        <template #info> Risks to model performance. </template>
+        <template #info>
+          Risks to model performance such as false positive, false negative,
+          hallucination, or bias.
+        </template>
       </SubHeader>
 
-      <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
-        <template #label>
-          False Positive Risk
-          <InfoIcon>
-            What is the risk of producing a false positive?
-            <br />
-            <br />
-            <i
-              >Example: Incorrect positive results will cause extra work for the
-              <br />
-              intel analyst that needs to analyze every recording flagged by the
-              model.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
-
-      <UsaTextarea
-        v-model="props.modelValue.risks.fn"
-        style="height: 2.5rem; margin-bottom: 1em"
-      >
-        <template #label>
-          False Negative Risk
-          <InfoIcon>
-            What is the risk of producing a false negative?
-            <br />
-            <br />
-            <i
-              >Example: Incorrect negative results means that the model will
-              <br />
-              not flag suspicious recordings, which means that intel analysts
-              <br />
-              might miss information that is crucial to an investigation.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextarea>
-
-      <div class="input-group">
-        <SubHeader :render-example="false">
-          Other Risks of Producing Incorrect Results
-          <template #info>
-            What are other risks of producing incorrect results?
-          </template>
-        </SubHeader>
-        <div
-          v-for="(risk, riskIndex) in props.modelValue.risks.other"
-          :key="riskIndex"
+      <div v-for="(risk, riskIndex) in props.modelValue.risks" :key="riskIndex">
+        <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
+        <UsaTextarea
+          v-model="props.modelValue.risks[riskIndex]"
+          style="height: 2.5rem"
         >
-          <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
-          <UsaTextarea
-            v-model="props.modelValue.risks.other[riskIndex]"
-            style="height: 2.5rem"
-          >
-            <template #label>
-              Risk
-              <InfoIcon>
-                Short description for the risk.
-                <br />
-                <br />
-                <i>
-                  Example: Model may not indicate proper results if data is out
-                  of bounds.
-                </i>
-              </InfoIcon>
-            </template>
-          </UsaTextarea>
+          <template #label>
+            Risk
+            <InfoIcon>
+              Short description for the risk.
+              <br />
+              <br />
+              <i>
+                Example: Model may not indicate proper results if data is out
+                bounds.
+              </i>
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
 
-          <div class="margin-button">
-            <DeleteButton @click="deleteRisk(riskIndex)">
-              Delete Risk
-            </DeleteButton>
-          </div>
-          <hr />
+        <div class="margin-button">
+          <DeleteButton @click="deleteRisk(riskIndex)">
+            Delete Risk
+          </DeleteButton>
         </div>
-
-        <AddButton class="margin-button" @click="addRisk()">
-          Add Risk
-        </AddButton>
+        <hr />
       </div>
+
+      <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
     </div>
   </div>
 </template>
@@ -285,19 +237,19 @@ function deleteGoal(goalIndex: number) {
   }
 }
 
-// Add risk to Other Risk list.
+// Add risk to Risk list.
 function addRisk() {
-  props.modelValue.risks.other.push("");
+  props.modelValue.risks.push("");
 }
 
 /**
- * Delete risk from Other Risk list.
+ * Delete risk from Risk list.
  *
  * @param {number} riskIndex Index of risk to delete
  */
 function deleteRisk(riskIndex: number) {
   if (confirm("Are you sure you want to delete this risk?")) {
-    props.modelValue.risks.other.splice(riskIndex, 1);
+    props.modelValue.risks.splice(riskIndex, 1);
   }
 }
 

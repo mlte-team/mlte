@@ -54,24 +54,14 @@
       </div>
 
       <div>
-        <b>False Positive Risk: </b>
-        {{ reportBody.negotiation_card.system.risks.fp }}
-      </div>
-
-      <div>
-        <b>False Negative Risk: </b>
-        {{ reportBody.negotiation_card.system.risks.fn }}
-      </div>
-
-      <div>
-        <b>Other Risks of Producing Incorrect Results</b>
+        <b>Risks of Producing Incorrect Results</b>
         <ul>
-          <li v-if="reportBody.negotiation_card.system.risks.other.length == 0">
+          <li v-if="reportBody.negotiation_card.system.risks.length == 0">
             None
           </li>
           <li
-            v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
-              .other"
+            v-for="(risk, riskIndex) in reportBody.negotiation_card.system
+              .risks"
             v-else
             :key="riskIndex"
           >

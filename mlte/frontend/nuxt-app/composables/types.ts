@@ -100,14 +100,6 @@ export class GoalDescriptor {
   ) {}
 }
 
-export class RiskDescriptor {
-  constructor(
-    public fp: string = "",
-    public fn: string = "",
-    public other: Array<string> = [],
-  ) {}
-}
-
 export class ModelResourcesDescriptor {
   constructor(
     public cpu: string = "0",
@@ -176,7 +168,7 @@ export class SystemDescriptor {
     public problem_type: string = "classification",
     public task: string = "",
     public usage_context: string = "",
-    public risks: RiskDescriptor = new RiskDescriptor(),
+    public risks: Array<string> = [],
   ) {}
 }
 
