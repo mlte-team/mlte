@@ -58,10 +58,10 @@ class ProcessMeasurement(Measurement, ABC):
         :param test_case_id: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
         """
-        super().__init__(test_case_id)
-
         self.group: Optional[str] = group
         """An optional group id, if we want to group this measurement with others."""
+
+        super().__init__(test_case_id)
 
         self.thread: Optional[threading.Thread] = None
         """Thread that will be used to run the measurement process."""
@@ -78,7 +78,7 @@ class ProcessMeasurement(Measurement, ABC):
         metadata = super().generate_metadata()
 
         # Add specific group being used, if any.
-        if self.group is not None:
+        if self.group:
             metadata.additional_data[self.PROCESS_GROUP_KEY] = self.group
 
         return metadata
@@ -89,6 +89,11 @@ class ProcessMeasurement(Measurement, ABC):
         # Set up the group.
         if self.PROCESS_GROUP_KEY in model.additional_data:
             self.group = model.additional_data[self.PROCESS_GROUP_KEY]
+        else:
+            self.group = None
+
+        # Update metadata.
+        self.set_metadata()
 
     # Overriden.
     @abstractmethod
