@@ -9,7 +9,7 @@ from __future__ import annotations
 import threading
 import time
 import traceback
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Optional
 
 from mlte._private import job
@@ -22,7 +22,7 @@ from mlte.measurement.model import MeasurementMetadata
 # -----------------------------------------------------------------------------
 
 
-class ProcessMeasurement(Measurement, ABC):
+class ProcessMeasurement(Measurement):
     """Base class to be extended to measure external processes."""
 
     PROCESS_GROUP_KEY = "group"
