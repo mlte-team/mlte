@@ -10,9 +10,6 @@ class ProcessMeasurementGroup:
     """
     Class that allows you to run multiple separte ProcessMeasurement classes
     on the same external process with an interface similar to regular Measurements.
-    TODO: Change this into an actual Measurement when TestCases can be associated with more
-    than one piece of evidence. Currently this can't be used as an automatically executed
-    measurement with TestSuite.run_measurements().
     """
 
     def __init__(self):
@@ -53,3 +50,34 @@ class ProcessMeasurementGroup:
                 evidences[measurement.evidence_metadata.test_case_id] = evidence
 
         return evidences
+
+    @staticmethod
+    def evaluate_groups(
+        groups: dict[str, list[ProcessMeasurement]],
+        inputs: dict[str, list[Any]],
+    ) -> dict[str, Evidence]:
+        """
+        Given groups of measurements, run each group in a ProcessMeasurementGroup.
+
+        :param groups: A dict of groups keyed by group id, each group having a list of ProcessMeasurements to be run together.
+        :param inputs: A dict of inputs, per test case id.
+        :returns: A dict of evidences, by test case id.
+        """
+        all_evidences: dict[str, Evidence] = {}
+        for _, group in groups.items():
+            # Create a ProcessMeasurementGroup for group.
+            measurement_group = ProcessMeasurementGroup()
+            for measurement in group:
+                # Only consider measurements that have a case id properly set up.
+                if measurement.test_case_id:
+                    measurement_group.add(measurement)
+
+                    # We assume all test cases in the group have the same command.
+                    # TODO: see if we should improve this, or check for this.
+                    command = inputs[measurement.test_case_id]
+
+            # Execute command and run all measurements.
+            evidences = measurement_group.evaluate(command, inputs)
+            all_evidences.update(evidences)
+
+        return all_evidences
