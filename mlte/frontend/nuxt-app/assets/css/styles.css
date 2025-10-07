@@ -1,5 +1,6 @@
 .section-header {
     color: #d8ac16;
+    display: inline;
 }
 
 .no-margin-sub-header {
@@ -16,6 +17,7 @@
     padding-left: 1em;
     padding-right: 1em;
     padding-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 .inline-input-left {
