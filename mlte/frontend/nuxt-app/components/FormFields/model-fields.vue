@@ -251,7 +251,9 @@
           <InfoIcon>
             Describe the deployment platform for the model, e.g., local server,
             <br />
-            cloud server, embedded platform.
+            cloud server, embedded platform or detail dependencies or other
+            <br />
+            requirements for the model in an operational environment.
             <br />
             <br />
             <i>Example: Local server due to data classification issues.</i>
