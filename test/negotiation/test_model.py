@@ -24,7 +24,6 @@ from mlte.negotiation.model import (
     ModelResourcesDescriptor,
     NegotiationCardModel,
     ProblemType,
-    RiskDescriptor,
     SystemDescriptor,
 )
 from test.fixture.artifact import ArtifactModelFactory
@@ -72,7 +71,7 @@ def test_system_descriptor() -> None:
             problem_type=ProblemType.CLASSIFICATION,
             task="task",
             usage_context="usage_context",
-            risks=RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
+            risks=["fp", "fn", "other"],
         ),
         SystemDescriptor(),
     ]
@@ -134,19 +133,6 @@ def test_goal_descriptor() -> None:
     for object in objects:
         s = object.to_json()
         d = GoalDescriptor.from_json(s)
-        assert d == object
-
-
-def test_risk_descriptor() -> None:
-    """A risk descriptor model can be serialized and deserialized successfully."""
-    objects = [
-        RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
-        RiskDescriptor(),
-    ]
-
-    for object in objects:
-        s = object.to_json()
-        d = RiskDescriptor.from_json(s)
         assert d == object
 
 

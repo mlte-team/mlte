@@ -31,7 +31,6 @@ from mlte.negotiation.model import (
     ModelResourcesDescriptor,
     NegotiationCardModel,
     ProblemType,
-    RiskDescriptor,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -130,7 +129,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
             problem_type=ProblemType.CLASSIFICATION,
             task="task",
             usage_context="usage_context",
-            risks=RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
+            risks=["fp", "fn", "other"],
         ),
         data=[
             DataDescriptor(

@@ -582,45 +582,6 @@
       "title": "QASDescriptor",
       "type": "object"
     },
-    "RiskDescriptor": {
-      "description": "A description of system-level risks.",
-      "properties": {
-        "fp": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Fp"
-        },
-        "fn": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Fn"
-        },
-        "other": {
-          "default": [],
-          "items": {
-            "type": "string"
-          },
-          "title": "Other",
-          "type": "array"
-        }
-      },
-      "title": "RiskDescriptor",
-      "type": "object"
-    },
     "SystemDescriptor": {
       "description": "A description of the system context.",
       "properties": {
@@ -668,12 +629,12 @@
           "title": "Usage Context"
         },
         "risks": {
-          "$ref": "#/$defs/RiskDescriptor",
-          "default": {
-            "fp": null,
-            "fn": null,
-            "other": []
-          }
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
         }
       },
       "title": "SystemDescriptor",
@@ -695,11 +656,7 @@
         "problem_type": null,
         "task": null,
         "usage_context": null,
-        "risks": {
-          "fn": null,
-          "fp": null,
-          "other": []
-        }
+        "risks": []
       }
     },
     "data": {

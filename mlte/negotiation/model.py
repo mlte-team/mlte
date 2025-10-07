@@ -56,24 +56,6 @@ class GoalDescriptor(BaseModel):
 
 
 # -----------------------------------------------------------------------------
-# RiskDescriptor
-# -----------------------------------------------------------------------------
-
-
-class RiskDescriptor(BaseModel):
-    """A description of system-level risks."""
-
-    fp: Optional[str] = None
-    """A description of risks associated with false-positives."""
-
-    fn: Optional[str] = None
-    """A description of risks associated with false-negatives."""
-
-    other: list[str] = []
-    """A description of risks associated with other failures."""
-
-
-# -----------------------------------------------------------------------------
 # ModelDescriptor (and sub-models)
 # -----------------------------------------------------------------------------
 
@@ -238,7 +220,7 @@ class SystemDescriptor(BaseModel):
     usage_context: Optional[str] = None
     """A description of the usage context."""
 
-    risks: RiskDescriptor = RiskDescriptor()
+    risks: list[str] = []
     """A description of risks associated with system failures."""
 
 

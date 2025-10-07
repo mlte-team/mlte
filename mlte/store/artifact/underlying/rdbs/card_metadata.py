@@ -38,8 +38,6 @@ class DBNegotiationCard(DBBase):
     sys_problem_type: Mapped[Optional[DBProblemType]] = relationship()
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
-    sys_risks_fp: Mapped[Optional[str]]
-    sys_risks_fn: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
         cascade="all, delete-orphan"
     )

@@ -36,14 +36,12 @@
             "problem_type": "classification",
             "task": "Identify flowers in pictures taken at the garden",
             "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
-            "risks": {
-                "fp": "Poor user experience due to incorrectly identified flowers",
-                "fn": "Poor user experience due to inability to identify flowers",
-                "other": [
-                    "Wrong results due to unknown flowers",
-                    "Users do not like the results due to strange behavior."
-                ]
-            }
+            "risks": [
+                "Poor user experience due to incorrectly identified flowers",
+                "Poor user experience due to inability to identify flowers",
+                "Wrong results due to unknown flowers",
+                "Users do not like the results due to strange behavior."
+            ]
         },
         "data": [
             {
