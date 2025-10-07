@@ -45,13 +45,19 @@ class ProcessMeasurement(Measurement, ABC):
         """
         return job.spawn_job(command[0], command[1:])
 
-    def __init__(self, test_case_id: Optional[str] = None):
+    def __init__(
+        self, test_case_id: Optional[str] = None, group: Optional[str] = None
+    ):
         """
         Initialize a new ProcessMeasurement measurement.
 
         :param test_case_id: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         """
         super().__init__(test_case_id)
+
+        self.group: Optional[str] = group
+        """An optional group id, if we want to group this measurement with others."""
 
         self.thread: Optional[threading.Thread] = None
         """Thread that will be used to run the measurement process."""

@@ -157,11 +157,14 @@ class MemoryStatistics(ExternalEvidence):
 class LocalProcessMemoryConsumption(ProcessMeasurement):
     """Measure memory consumption for a local training process."""
 
-    def __init__(self, identifier: Optional[str] = None):
+    def __init__(
+        self, identifier: Optional[str] = None, group: Optional[str] = None
+    ):
         """
         Initialize a LocalProcessMemoryConsumption instance.
 
         :param identifier: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         """
         super().__init__(identifier)
 
