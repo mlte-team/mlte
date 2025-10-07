@@ -67,7 +67,7 @@
           </InfoIcon>
         </FormFieldsQualityAttributes>
 
-        <UsaTextarea v-model="requirement.stimulus" style="height: 2.5rem">
+        <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">
           <template #label>
             <b>Stimulus:</b> What is the input to the model, the action, or the
             event that will enable testing of the quality attribute category,
@@ -85,7 +85,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.source" style="height: 2.5rem">
+        <UsaTextarea v-model="requirement.source" style="height: 5.5rem">
           <template #label>
             <b>Source of Stimulus:</b> Where is the stimulus coming from, such
             as a system component, system user, or data source?
@@ -101,7 +101,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.environment" style="height: 2.5rem">
+        <UsaTextarea v-model="requirement.environment" style="height: 5.5rem">
           <template #label>
             <b>Environment:</b> What are the conditions under which the scenario
             occurs, such as normal operations, overload conditions, or under
@@ -117,7 +117,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.response" style="height: 2.5rem">
+        <UsaTextarea v-model="requirement.response" style="height: 5.5rem">
           <template #label>
             <b>Response:</b> What occurs as a result of the stimulus, such as
             inference on the data, event processing, or data validation?
@@ -133,7 +133,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.measure" style="height: 2.5rem">
+        <UsaTextarea v-model="requirement.measure" style="height: 5.5rem">
           <template #label>
             <b>Response Measure: </b>What is the measure that will determine
             that the correct response has been achieved, such as a statistical

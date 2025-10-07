@@ -37,7 +37,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="inputSpec.description" style="height: 2.5rem">
+        <UsaTextarea v-model="inputSpec.description" style="height: 5.5rem">
           <template #label>
             Description
             <InfoIcon>
@@ -61,7 +61,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="inputSpec.expected_values" style="height: 2.5rem">
+        <UsaTextarea v-model="inputSpec.expected_values" style="height: 5.5rem">
           <template #label>
             Expected Values
             <InfoIcon>
@@ -119,7 +119,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="outputSpec.description" style="height: 2.5rem">
+        <UsaTextarea v-model="outputSpec.description" style="height: 5.5rem">
           <template #label>
             Description
             <InfoIcon>
@@ -149,7 +149,7 @@
 
         <UsaTextarea
           v-model="outputSpec.expected_values"
-          style="height: 2.5rem"
+          style="height: 5.5rem"
         >
           <template #label>
             Expected Values
@@ -232,7 +232,7 @@
       </SubHeader>
       <UsaTextarea
         v-model="props.modelValue.deployment_platform"
-        style="height: 2.5rem"
+        style="height: 5.5rem"
       >
         <template #label>
           Deployment Platform
@@ -249,7 +249,7 @@
 
       <UsaTextarea
         v-model="props.modelValue.capability_deployment_mechanism"
-        style="height: 2.5rem"
+        style="height: 5.5rem"
       >
         <template #label>
           Capability Deployment Mechanism

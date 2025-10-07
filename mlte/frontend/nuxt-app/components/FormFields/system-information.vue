@@ -11,7 +11,7 @@
           General information about the problem and usage context.
         </template>
       </SubHeader>
-      <UsaTextarea v-model="props.modelValue.task" style="height: 2.5rem">
+      <UsaTextarea v-model="props.modelValue.task" style="height: 5.5rem">
         <template #label>
           ML Task
           <InfoIcon>
@@ -44,7 +44,7 @@
 
       <UsaTextarea
         v-model="props.modelValue.usage_context"
-        style="height: 2.5rem"
+        style="height: 5.5rem"
       >
         <template #label>
           Usage Context for the Model
@@ -75,7 +75,7 @@
       </SubHeader>
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
         <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
-        <UsaTextarea v-model="goal.description" style="height: 2.5rem">
+        <UsaTextarea v-model="goal.description" style="height: 5.5rem">
           <template #label>
             Goal Description
             <InfoIcon>
@@ -156,7 +156,7 @@
         <template #info> Risks to model performance. </template>
       </SubHeader>
 
-      <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 2.5rem">
+      <UsaTextarea v-model="props.modelValue.risks.fp" style="height: 5.5rem">
         <template #label>
           False Positive Risk
           <InfoIcon>
@@ -175,7 +175,7 @@
 
       <UsaTextarea
         v-model="props.modelValue.risks.fn"
-        style="height: 2.5rem; margin-bottom: 1em"
+        style="height: 5.5rem; margin-bottom: 1em"
       >
         <template #label>
           False Negative Risk
@@ -208,7 +208,7 @@
           <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>
           <UsaTextarea
             v-model="props.modelValue.risks.other[riskIndex]"
-            style="height: 2.5rem"
+            style="height: 5.5rem"
           >
             <template #label>
               Risk
