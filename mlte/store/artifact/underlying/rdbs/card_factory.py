@@ -82,6 +82,7 @@ def create_card_orm(
         model_prod_resources=model_prod_resources_orm,
         model_prod_deployment_platform=negotiation_card.model.deployment_platform,
         model_prod_capability_deployment_mechanism=negotiation_card.model.capability_deployment_mechanism,
+        model_prod_model_source=negotiation_card.model.model_source,
         model_prod_inputs=[],
         model_prod_outputs=[],
         data_descriptors=[],
