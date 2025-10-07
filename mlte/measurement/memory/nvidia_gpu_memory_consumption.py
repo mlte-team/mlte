@@ -234,7 +234,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         :param group: An optional group id, if we want to group this measurement with others.
         :param gpu_id: The id of the gpu
         """
-        super().__init__(identifier)
+        super().__init__(identifier, group)
         self.gpu_id = gpu_id
 
     # Overriden.

@@ -166,7 +166,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         :param identifier: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
         """
-        super().__init__(identifier)
+        super().__init__(identifier, group)
 
     # Overriden.
     def __call__(

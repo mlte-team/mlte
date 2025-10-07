@@ -78,7 +78,7 @@ class ProcessMeasurement(Measurement, ABC):
         metadata = super().generate_metadata()
 
         # Add specific group being used, if any.
-        if self.group:
+        if self.group is not None:
             metadata.additional_data[self.PROCESS_GROUP_KEY] = self.group
 
         return metadata
