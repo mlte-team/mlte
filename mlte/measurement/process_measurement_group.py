@@ -38,7 +38,9 @@ class ProcessMeasurementGroup:
                 if measurement.test_case_id in inputs
                 else []
             )
-            measurement.evaluate_async(pid, *curr_inputs)
+
+            # We ignore the first input, as it is the command we have already extracted.
+            measurement.evaluate_async(pid, *curr_inputs[1:])
 
         # Wait for results. This could be threaded, but not clear if the benefits make it worth it.
         evidences: dict[str, Evidence] = {}
@@ -74,7 +76,15 @@ class ProcessMeasurementGroup:
 
                     # We assume all test cases in the group have the same command.
                     # TODO: see if we should improve this, or check for this.
-                    command = inputs[measurement.test_case_id]
+                    if (
+                        measurement.test_case_id in inputs
+                        and len(inputs[measurement.test_case_id]) > 0
+                    ):
+                        command = inputs[measurement.test_case_id][0]
+                    else:
+                        raise RuntimeError(
+                            "One ore more measurements did not have an input command."
+                        )
 
             # Execute command and run all measurements.
             evidences = measurement_group.evaluate(command, inputs)
