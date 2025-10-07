@@ -168,9 +168,9 @@ def test_run_measurements():
     evidence = test_suite.run_measurements(input=inputs)
 
     assert len(evidence) == 3
-    assert type(evidence[0]) is Real and evidence[0].value > 0
-    assert type(evidence[1]) is Real and evidence[1].value == 4.0
-    assert type(evidence[2]) is Image and "Image" in str(evidence[2])
+    assert type(evidence["model size"]) is Real and evidence["model size"].value > 0
+    assert type(evidence["overall accuracy"]) is Real and evidence["overall accuracy"].value == 4.0
+    assert type(evidence["image attributions"]) is Image and "Image" in str(evidence["image attributions"])
 
 
 def test_run_measurements_invalid_id():
