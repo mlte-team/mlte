@@ -69,7 +69,10 @@ class ModelResourcesDescriptor(BaseModel):
     gpu: Optional[str] = None
     """A description of model GPU requirements."""
 
-    memory: Optional[str] = None
+    gpu_memory: Optional[str] = None
+    """A description of model GPU memory requirements."""
+
+    main_memory: Optional[str] = None
     """A description of model memory (RAM) requirements."""
 
     storage: Optional[str] = None

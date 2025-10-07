@@ -171,11 +171,13 @@
             "development_compute_resources": {
                 "cpu": "1",
                 "gpu": "0",
-                "memory": "2 GB",
+                "gpu_memory": "0",
+                "main_memory": "2 GB",
                 "storage": "100 GB"
             },
             "deployment_platform": "Model will be deployed on a small device loaned out to garden visitors.",
             "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
+            "model_source": "In house",
             "input_specification": [
                 {
                     "name": "flower-picture",
@@ -195,7 +197,8 @@
             "production_compute_resources": {
                 "cpu": "1",
                 "gpu": "0",
-                "memory": "512 MB",
+                "gpu_memory": "0",
+                "main_memory": "512 MB",
                 "storage": "150 MB"
             }
         },

@@ -182,7 +182,8 @@
       <SubHeader>
         Development Compute Resources
         <template #example>
-          GPUs = 2, CPUs = 1, Main Memory = 512 MB, Storage = 1 GB
+          GPUs = 2, GPU Memory = 1 GB, CPUs = 1, Main Memory = 512 MB, Storage =
+          1 GB
         </template>
         <template #info>
           Describe the amount and type of compute resources needed for
@@ -200,9 +201,9 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.cpu"
+            v-model="props.modelValue.development_compute_resources.gpu_memory"
           >
-            <template #label> Central Processing Units (CPUs) </template>
+            <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
       </div>
@@ -210,13 +211,23 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="props.modelValue.development_compute_resources.memory"
+            v-model="props.modelValue.development_compute_resources.cpu"
           >
-            <template #label> Main Memory </template>
+            <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
+          <UsaTextInput
+            v-model="props.modelValue.development_compute_resources.main_memory"
+          >
+            <template #label> Main Memory </template>
+          </UsaTextInput>
+        </div>
+      </div>
+
+      <div>
+        <div class="inline-input-left">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.storage"
           >
@@ -303,9 +314,9 @@
 
         <div class="inline-input-right">
           <UsaTextInput
-            v-model="props.modelValue.production_compute_resources.cpu"
+            v-model="props.modelValue.production_compute_resources.gpu_memory"
           >
-            <template #label> Central Processing Units (CPUs) </template>
+            <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
       </div>
@@ -313,13 +324,23 @@
       <div>
         <div class="inline-input-left">
           <UsaTextInput
-            v-model="props.modelValue.production_compute_resources.memory"
+            v-model="props.modelValue.production_compute_resources.cpu"
           >
-            <template #label> Main Memory </template>
+            <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
 
         <div class="inline-input-right">
+          <UsaTextInput
+            v-model="props.modelValue.production_compute_resources.main_memory"
+          >
+            <template #label> Main Memory </template>
+          </UsaTextInput>
+        </div>
+      </div>
+
+      <div>
+        <div class="inline-input-left">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.storage"
           >

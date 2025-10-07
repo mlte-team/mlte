@@ -104,7 +104,8 @@ export class ModelResourcesDescriptor {
   constructor(
     public cpu: string = "0",
     public gpu: string = "0",
-    public memory: string = "0",
+    public gpu_memory: string = "0",
+    public main_memory: string = "0",
     public storage: string = "0",
   ) {}
 }

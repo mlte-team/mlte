@@ -307,7 +307,8 @@
           "default": {
             "cpu": null,
             "gpu": null,
-            "memory": null,
+            "gpu_memory": null,
+            "main_memory": null,
             "storage": null
           }
         },
@@ -368,7 +369,8 @@
           "default": {
             "cpu": null,
             "gpu": null,
-            "memory": null,
+            "gpu_memory": null,
+            "main_memory": null,
             "storage": null
           }
         }
@@ -458,7 +460,7 @@
           "default": null,
           "title": "Gpu"
         },
-        "memory": {
+        "gpu_memory": {
           "anyOf": [
             {
               "type": "string"
@@ -468,7 +470,19 @@
             }
           ],
           "default": null,
-          "title": "Memory"
+          "title": "Gpu Memory"
+        },
+        "main_memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Memory"
         },
         "storage": {
           "anyOf": [
@@ -685,7 +699,8 @@
         "development_compute_resources": {
           "cpu": null,
           "gpu": null,
-          "memory": null,
+          "gpu_memory": null,
+          "main_memory": null,
           "storage": null
         },
         "deployment_platform": null,
@@ -696,7 +711,8 @@
         "production_compute_resources": {
           "cpu": null,
           "gpu": null,
-          "memory": null,
+          "gpu_memory": null,
+          "main_memory": null,
           "storage": null
         }
       }

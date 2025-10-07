@@ -176,6 +176,13 @@
             }}
           </li>
           <li>
+            <b>Graphics Processing Unit (GPU) Memory: </b
+            >{{
+              reportBody.negotiation_card.model.development_compute_resources
+                .gpu_memory
+            }}
+          </li>
+          <li>
             <b>Central Processing Units (CPUs): </b
             >{{
               reportBody.negotiation_card.model.development_compute_resources
@@ -183,10 +190,10 @@
             }}
           </li>
           <li>
-            <b>Memory: </b
+            <b>Main Memory: </b
             >{{
               reportBody.negotiation_card.model.development_compute_resources
-                .memory
+                .main_memory
             }}
           </li>
           <li>
@@ -257,16 +264,23 @@
             }}
           </li>
           <li>
+            <b>Graphics Processing Unit (GPU) Memory: </b
+            >{{
+              reportBody.negotiation_card.model.production_compute_resources
+                .gpu_memory
+            }}
+          </li>
+          <li>
             <b>Central Processing Units (CPUs): </b
             >{{
               reportBody.negotiation_card.model.production_compute_resources.cpu
             }}
           </li>
           <li>
-            <b>Memory: </b
+            <b>Main Memory: </b
             >{{
               reportBody.negotiation_card.model.production_compute_resources
-                .memory
+                .main_memory
             }}
           </li>
           <li>

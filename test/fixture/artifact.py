@@ -163,7 +163,8 @@ def _make_negotiation_card() -> NegotiationCardModel:
             development_compute_resources=ModelResourcesDescriptor(
                 cpu="1",
                 gpu="2",
-                memory="600",
+                gpu_memory="5",
+                main_memory="600",
                 storage="50",
             ),
             deployment_platform="local server",
@@ -188,7 +189,8 @@ def _make_negotiation_card() -> NegotiationCardModel:
             production_compute_resources=ModelResourcesDescriptor(
                 cpu="1",
                 gpu="1",
-                memory="600",
+                gpu_memory="10",
+                main_memory="600",
                 storage="50",
             ),
         ),

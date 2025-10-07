@@ -258,14 +258,15 @@ class DBModelResourcesDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     cpu: Mapped[Optional[str]]
     gpu: Mapped[Optional[str]]
-    memory: Mapped[Optional[str]]
+    gpu_memory: Mapped[Optional[str]]
+    main_memory: Mapped[Optional[str]]
     storage: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
-        return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, memory={self.memory!r}, storage={self.storage!r})"
+        return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, gpu_memory={self.gpu_memory!r},  main_memory={self.main_memory!r}, storage={self.storage!r})"
 
 
 class DBQAS(DBBase):

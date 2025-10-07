@@ -57,7 +57,8 @@ def create_card_orm(
         model_dev_resources_orm = DBModelResourcesDescriptor(
             cpu=negotiation_card.model.development_compute_resources.cpu,
             gpu=negotiation_card.model.development_compute_resources.gpu,
-            memory=negotiation_card.model.development_compute_resources.memory,
+            gpu_memory=negotiation_card.model.development_compute_resources.gpu_memory,
+            main_memory=negotiation_card.model.development_compute_resources.main_memory,
             storage=negotiation_card.model.development_compute_resources.storage,
         )
     else:
@@ -66,7 +67,8 @@ def create_card_orm(
     model_prod_resources_orm = DBModelResourcesDescriptor(
         cpu=negotiation_card.model.production_compute_resources.cpu,
         gpu=negotiation_card.model.production_compute_resources.gpu,
-        memory=negotiation_card.model.production_compute_resources.memory,
+        gpu_memory=negotiation_card.model.production_compute_resources.gpu_memory,
+        main_memory=negotiation_card.model.production_compute_resources.main_memory,
         storage=negotiation_card.model.production_compute_resources.storage,
     )
 
@@ -350,6 +352,7 @@ def _build_resources(
     return ModelResourcesDescriptor(
         cpu=resources.cpu if resources else None,
         gpu=resources.gpu if resources else None,
-        memory=resources.memory if resources else None,
+        gpu_memory=resources.gpu_memory if resources else None,
+        main_memory=resources.main_memory if resources else None,
         storage=resources.storage if resources else None,
     )

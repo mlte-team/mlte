@@ -292,7 +292,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.gpu;
           form.value.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.development_compute_resources.memory =
+          form.value.model.development_compute_resources.main_memory =
             document.computing_resources.memory;
           form.value.model.development_compute_resources.storage =
             document.computing_resources.storage;
@@ -374,7 +374,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.gpu;
           form.value.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.production_compute_resources.memory =
+          form.value.model.production_compute_resources.main_memory =
             document.computing_resources.memory;
           form.value.model.production_compute_resources.storage =
             document.computing_resources.storage;
