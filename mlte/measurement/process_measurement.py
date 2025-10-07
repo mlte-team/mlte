@@ -10,7 +10,7 @@ import threading
 import time
 import traceback
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Optional
 
 from mlte._private import job
 from mlte.evidence.artifact import Evidence
@@ -25,26 +25,25 @@ class ProcessMeasurement(Measurement, ABC):
     """Base class to be extended to measure external processes."""
 
     @staticmethod
-    def start_script(script: str, arguments: List[str]) -> int:
+    def start_script(command: list[str]) -> int:
         """
         Initialize an external Python process running training or similar script.
 
-        :param script: The full path to a Python script with the training or equivalent process to run.
-        :param arguments: A list of string arguments for the process.
+        :param command: A list with the full path to a Python script with the training or
+                        equivalent process to run, and a list of string arguments for the process.
         :return: the id of the process that was created.
         """
-        return job.spawn_python_job(script, arguments)
+        return job.spawn_python_job(command[0], command[1:])
 
     @staticmethod
-    def start_process(process: str, arguments: List[str]) -> int:
+    def start_process(command: list[str]) -> int:
         """
         Initialize an external process running training or similar.
 
-        :param process: The full path to a process to run.
-        :param arguments: A list of string arguments for the process.
+        :param command: A list the full path to a process to run and string arguments for the process.
         :return: the id of the process that was created.
         """
-        return job.spawn_job(process, arguments)
+        return job.spawn_job(command[0], command[1:])
 
     def __init__(self, test_case_id: Optional[str] = None):
         """
@@ -78,7 +77,7 @@ class ProcessMeasurement(Measurement, ABC):
                 f"Command list must as least have one item: {command}"
             )
 
-        pid = ProcessMeasurement.start_process(command[0], command[1:])
+        pid = ProcessMeasurement.start_process(command)
         self.evaluate_async(pid, *args, **kwargs)
         evidence = self.wait_for_output()
         return evidence
@@ -90,7 +89,6 @@ class ProcessMeasurement(Measurement, ABC):
 
         :param pid: The process identifier
         """
-
         # Evaluate the measurement
         self.error = ""
         self.stored_value = None

@@ -28,7 +28,7 @@ class ProcessMeasurementGroup:
     ) -> dict[str, Evidence]:
         """Start an external process and run multiple process measurements on it."""
         # Start the external process to measure.
-        pid = ProcessMeasurement.start_process(command[0], command[1:])
+        pid = ProcessMeasurement.start_process(command)
 
         # Start up all measurement tools.
         for measurement in self.measurements:
