@@ -15,7 +15,7 @@
         <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
       </div>
 
-      <div class="inline-input-right">
+      <div class="inline-input-right" style="margin-bottom: 1em">
         <label class="usa-label" style="margin-top: 0px">
           Search by Quality Attribute
         </label>
@@ -24,6 +24,12 @@
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
           <img src="/assets/uswds/img/usa-icons/search.svg" class="usa-icon" />
+        </UsaButton>
+      </div>
+
+      <div>
+        <UsaButton class="secondary-button" @click="clearSearch()">
+          Clear Search
         </UsaButton>
       </div>
 
@@ -117,6 +123,13 @@ async function search() {
 // Reset selectedEntry, for example when an edit is completed.
 function resetSelectedEntry() {
   selectedEntry.value = new TestCatalogEntry();
+}
+
+// Clear search fields
+async function clearSearch() {
+  tagSearchValue.value = "";
+  QASearchValue.value = "";
+  await search();
 }
 
 // Switch to the edit entry view with newEntryFlag enabled.
