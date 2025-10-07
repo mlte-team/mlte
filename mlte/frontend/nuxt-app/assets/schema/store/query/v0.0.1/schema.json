@@ -155,13 +155,13 @@
           "title": "Name",
           "type": "string"
         },
-        "value": {
-          "title": "Value"
+        "property": {
+          "title": "Property"
         }
       },
       "required": [
         "name",
-        "value"
+        "property"
       ],
       "title": "PropertyFilter",
       "type": "object"
@@ -179,13 +179,14 @@
           "title": "Name",
           "type": "string"
         },
-        "value": {
-          "title": "Value"
+        "tag": {
+          "title": "Tag",
+          "type": "string"
         }
       },
       "required": [
         "name",
-        "value"
+        "tag"
       ],
       "title": "TagFilter",
       "type": "object"
@@ -200,7 +201,8 @@
           "type": "string"
         },
         "item_type": {
-          "title": "Item Type"
+          "title": "Item Type",
+          "type": "string"
         }
       },
       "required": [

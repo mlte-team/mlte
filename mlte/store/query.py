@@ -70,7 +70,7 @@ class Filterable(BaseModel):
             )
 
     def get_tags(self, property_name: str) -> List[Any]:
-        """Returns the given tags."""
+        """Returns the given tags. Tags are a property of type list."""
         value = self.get_property(property_name)
         if type(value) is not list:
             raise RuntimeError(
@@ -125,7 +125,7 @@ class IdentifierFilter(Filter):
     """An identifier for the filter type."""
 
     id: str
-    """The identifier to match."""
+    """The identifier to check against."""
 
     def match(self, item: Filterable) -> bool:
         return bool(item.get_identifier() == self.id)
@@ -137,8 +137,8 @@ class TypeFilter(Filter):
     type: Literal[FilterType.TYPE] = FilterType.TYPE
     """An identifier for the filter type."""
 
-    item_type: Any
-    """The type to match."""
+    item_type: str
+    """The type to check against."""
 
     def match(self, item: Filterable) -> bool:
         return bool(item.get_type() == self.item_type)
@@ -153,11 +153,12 @@ class TagFilter(Filter):
     name: str
     """The name of the property with the tags."""
 
-    value: Any
-    """The property to match."""
+    tag: str
+    """The tag to check against."""
 
     def match(self, item: Filterable) -> bool:
-        return self.value in item.get_tags(self.name)
+        lower_tags = [tag.lower() for tag in item.get_tags(self.name)]
+        return any([self.tag.lower() in tag for tag in lower_tags])
 
 
 class PropertyFilter(Filter):
@@ -169,11 +170,13 @@ class PropertyFilter(Filter):
     name: str
     """The name of the property."""
 
-    value: Any
-    """The property to match."""
+    property: Any
+    """The property check against."""
 
     def match(self, item: Filterable) -> bool:
-        return bool(self.value in item.get_property(self.name))
+        return bool(
+            self.property.lower() in item.get_property(self.name).lower()
+        )
 
 
 class AndFilter(CompositeFilter):
