@@ -203,6 +203,7 @@ def _build_data_descriptor_orm(
     )
     data_orm = DBDataDescriptor(
         description=data_descriptor.description,
+        purpose=data_descriptor.purpose,
         source=data_descriptor.source,
         access=data_descriptor.access,
         labeling_method=data_descriptor.labeling_method,
@@ -276,6 +277,7 @@ def _build_data_descriptors(
     return [
         DataDescriptor(
             description=data_descriptor.description,
+            purpose=data_descriptor.purpose,
             source=data_descriptor.source,
             classification=DataClassification(
                 data_descriptor.classification.name

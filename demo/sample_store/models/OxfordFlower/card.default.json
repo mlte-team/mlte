@@ -46,6 +46,7 @@
         "data": [
             {
                 "description": "Oxford Flower Dataset.",
+                "purpose": "Training",
                 "source": "https://archive.ics.uci.edu/dataset/53/iris",
                 "classification": "unclassified",
                 "access": "None",

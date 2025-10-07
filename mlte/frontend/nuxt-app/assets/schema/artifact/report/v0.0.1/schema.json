@@ -42,6 +42,18 @@
           "default": null,
           "title": "Description"
         },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
         "source": {
           "anyOf": [
             {

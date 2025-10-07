@@ -181,6 +181,9 @@ class DataDescriptor(BaseModel):
     description: Optional[str] = None
     """A description of the dataset."""
 
+    purpose: Optional[str] = None
+    """A description of the purpose of the dataset."""
+
     source: Optional[str] = None
     """A description of the data source."""
 

@@ -134,6 +134,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
         data=[
             DataDescriptor(
                 description="description",
+                purpose="purpose",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
                 labeling_method="by hand",

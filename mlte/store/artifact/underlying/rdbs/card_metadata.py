@@ -162,6 +162,7 @@ class DBDataDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     description: Mapped[Optional[str]]
+    purpose: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
     access: Mapped[Optional[str]]
     labeling_method: Mapped[Optional[str]]

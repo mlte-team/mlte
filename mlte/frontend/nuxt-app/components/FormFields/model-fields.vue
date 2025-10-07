@@ -249,11 +249,9 @@
         <template #label>
           Deployment Platform
           <InfoIcon>
-            Describe the deployment platform for the model, e.g., local server,
+            Describe the deployment platform for the model and any software
             <br />
-            cloud server, embedded platform or detail dependencies or other
-            <br />
-            requirements for the model in an operational environment.
+            dependencies.
             <br />
             <br />
             <i>Example: Local server due to data classification issues.</i>

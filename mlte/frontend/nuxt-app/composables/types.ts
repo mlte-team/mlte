@@ -153,6 +153,7 @@ export class FieldDescriptor {
 export class DataDescriptor {
   constructor(
     public description: string = "",
+    public purpose: string = "",
     public source: string = "",
     public classification: string = "unclassified",
     public access: string = "",

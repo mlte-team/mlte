@@ -180,6 +180,7 @@ def test_data_descriptor() -> None:
     objects = [
         DataDescriptor(
             description="description",
+            purpose="purpose",
             classification=DataClassification.UNCLASSIFIED,
             access="access",
             labeling_method="by hand",

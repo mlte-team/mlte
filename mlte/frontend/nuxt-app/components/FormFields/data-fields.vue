@@ -8,7 +8,8 @@
       <SubHeader :render-example="false">
         Data
         <template #info>
-          Details of the data that will influence model development efforts.
+          Details of the data that will be used at any point during the
+          development of the model.
         </template>
       </SubHeader>
       <div
@@ -29,6 +30,18 @@
                   >Example: Voice recordings from phone calls made to numbers in
                   the 412 area code.</i
                 >
+              </InfoIcon>
+            </template>
+          </UsaTextarea>
+
+          <UsaTextarea v-model="dataItem.purpose" style="height: 2.5rem">
+            <template #label>
+              Dataset Purpose
+              <InfoIcon>
+                Purpose of the dataset in relation to the model.
+                <br />
+                <br />
+                <i>Example: Training, fine tuning, etc.</i>
               </InfoIcon>
             </template>
           </UsaTextarea>
@@ -94,7 +107,8 @@
             </template>
             <template #info>
               If data is labeled, include information about labels and their
-              distribution in the dataset.
+              distribution in the dataset. This may not be applicable in all
+              cases.
             </template>
           </SubHeader>
           <UsaTextarea
@@ -166,7 +180,8 @@
             </template>
             <template #info>
               Include relevant information that is known about the data; fill
-              out all sections below for each data field.
+              out all sections below for each data field. This may not be
+              applicable in all cases.
             </template>
           </SubHeader>
           <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
