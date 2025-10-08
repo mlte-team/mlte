@@ -119,7 +119,7 @@ def test_result_save_load(
 def test_max_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.max_consumption_less_than(3)
+    validator = MemoryStatistics.max_utilization_less_than(3)
 
     res = validator.validate(
         MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
@@ -140,7 +140,7 @@ def test_max_consumption_less_than() -> None:
 def test_max_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.max_consumption_less_than(3000, Units.bytes)
+    validator = MemoryStatistics.max_utilization_less_than(3000, Units.bytes)
 
     res = validator.validate(
         MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
@@ -160,13 +160,13 @@ def test_max_consumption_less_than_in_bytes() -> None:
 
 def test_max_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = MemoryStatistics.max_consumption_less_than(3000, Units.fakeunit)
+        _ = MemoryStatistics.max_utilization_less_than(3000, Units.fakeunit)
 
 
 def test_avg_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.average_consumption_less_than(3)
+    validator = MemoryStatistics.average_utilization_less_than(3)
 
     res = validator.validate(
         MemoryStatistics(avg=2, max=2, min=1).with_metadata(m)
@@ -187,7 +187,7 @@ def test_avg_consumption_less_than() -> None:
 def test_avg_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = MemoryStatistics.average_consumption_less_than(
+    validator = MemoryStatistics.average_utilization_less_than(
         3000, Units.bytes
     )
 
@@ -209,4 +209,4 @@ def test_avg_consumption_less_than_in_bytes() -> None:
 
 def test_average_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = MemoryStatistics.average_consumption_less_than(3000, Units.fakeunit)
+        _ = MemoryStatistics.average_utilization_less_than(3000, Units.fakeunit)

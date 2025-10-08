@@ -8,36 +8,29 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Any, Callable, Optional
+from typing import Optional
 
 import psutil
 
-from mlte.evidence.external import ExternalEvidence
+from mlte.measurement.common import CommonStatistics
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import (
-    Quantity,
-    Unit,
-    Units,
-    str_to_unit,
-    unit_to_str,
-)
-from mlte.validation.validator import Validator
+from mlte.measurement.units import Unit, Units
 
 # -----------------------------------------------------------------------------
 # Memory Statistics
 # -----------------------------------------------------------------------------
 
 
-class MemoryStatistics(ExternalEvidence):
+class MemoryStatistics(CommonStatistics):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
     consumption statistics for a running process.
     """
 
-    def __init__(
-        self, avg: int, min: int, max: int, unit: Unit = Units.kilobyte
-    ):
+    DEFAULT_UNIT = Units.kilobyte
+
+    def __init__(self, avg: int, min: int, max: int, unit: Unit = DEFAULT_UNIT):
         """
         Initialize a MemoryStatistics instance.
 
@@ -46,107 +39,7 @@ class MemoryStatistics(ExternalEvidence):
         :param max: The maximum memory consumption
         :param unit: the unit the values comes in, as a value from Units; defaults to Units.kilobyte
         """
-        super().__init__()
-
-        self.avg = Quantity(avg, unit)
-        """The average memory consumption."""
-
-        self.min = Quantity(min, unit)
-        """The minimum memory consumption."""
-
-        self.max = Quantity(max, unit)
-        """The maximum memory consumption."""
-
-        self.unit = unit
-        """The unit being used for all values."""
-
-    def serialize(self) -> dict[str, Any]:
-        """
-        Serialize an MemoryStatistics to a JSON object.
-
-        :return: The JSON object
-        """
-        return {
-            "avg": self.avg.magnitude,
-            "min": self.min.magnitude,
-            "max": self.max.magnitude,
-            "unit": unit_to_str(self.unit),
-        }
-
-    @staticmethod
-    def deserialize(data: dict[str, Any]) -> MemoryStatistics:
-        """
-        Deserialize an MemoryStatistics from a JSON object.
-
-        :param data: The JSON object
-
-        :return: The deserialized instance
-        """
-        unit = str_to_unit(data["unit"])
-        return MemoryStatistics(
-            avg=data["avg"],
-            min=data["min"],
-            max=data["max"],
-            unit=unit if unit else Units.kilobyte,
-        )
-
-    def __str__(self) -> str:
-        """Return a string representation of MemoryStatistics."""
-        s = ""
-        s += f"Average: {self.avg}\n"
-        s += f"Minimum: {self.min}\n"
-        s += f"Maximum: {self.max}"
-        return s
-
-    @classmethod
-    def max_consumption_less_than(
-        cls, threshold: int, unit: Unit = Units.kilobyte
-    ) -> Validator:
-        """
-        Construct and invoke a validator for maximum memory consumption.
-
-        :param threshold: The threshold value for maximum consumption
-        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
-
-        :return: The Validator that can be used to validate a Value.
-        """
-        threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[MemoryStatistics], bool] = (
-            lambda stats: stats.max < threshold_w_unit
-        )
-        validator: Validator = Validator.build_validator(
-            bool_exp=bool_exp,
-            thresholds=[threshold_w_unit],
-            success=f"Maximum consumption below threshold {threshold_w_unit}",
-            failure=f"Maximum consumption exceeds threshold {threshold_w_unit}",
-            input_types=[MemoryStatistics],
-        )
-        return validator
-
-    @classmethod
-    def average_consumption_less_than(
-        cls, threshold: float, unit: Unit = Units.kilobyte
-    ) -> Validator:
-        """
-        Construct and invoke a validator for average memory consumption.
-
-        :param threshold: The threshold value for average consumption, in KB
-        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
-
-        :return: The Validator that can be used to validate a Value.
-        """
-        threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[MemoryStatistics], bool] = (
-            lambda stats: stats.avg < threshold_w_unit
-        )
-        validator: Validator = Validator.build_validator(
-            bool_exp=bool_exp,
-            thresholds=[threshold_w_unit],
-            success=f"Average consumption below threshold {threshold_w_unit}",
-            failure=f"Average consumption exceeds threshold {threshold_w_unit}",
-            input_types=[MemoryStatistics],
-        )
-        return validator
+        super().__init__(avg, min, max, unit)
 
 
 # -----------------------------------------------------------------------------

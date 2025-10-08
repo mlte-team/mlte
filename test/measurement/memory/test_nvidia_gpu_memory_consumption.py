@@ -285,7 +285,7 @@ def test_max_consumption_less_than() -> None:
     # Default units should work across the two classes.
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(3)
+    validator = NvidiaGPUMemoryStatistics.max_utilization_less_than(3)
 
     # Less than case
     res = validator.validate(
@@ -310,7 +310,7 @@ def test_max_consumption_less_than_in_bytes() -> None:
     # The units shouldn't matter
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+    validator = NvidiaGPUMemoryStatistics.max_utilization_less_than(
         3, unit=Units.bytes
     )
 
@@ -341,7 +341,7 @@ def test_max_consumption_less_than_in_bytes() -> None:
 
 def test_max_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+        _ = NvidiaGPUMemoryStatistics.max_utilization_less_than(
             3000, Units.fakeunit
         )
 
@@ -349,7 +349,7 @@ def test_max_consumption_less_than_invalid_unit() -> None:
 def test_avg_consumption_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(3)
+    validator = NvidiaGPUMemoryStatistics.average_utilization_less_than(3)
 
     # Less than case
     res = validator.validate(
@@ -373,7 +373,7 @@ def test_avg_consumption_less_than() -> None:
 def test_avg_consumption_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+    validator = NvidiaGPUMemoryStatistics.average_utilization_less_than(
         3000, Units.bytes
     )
 
@@ -404,6 +404,6 @@ def test_avg_consumption_less_than_in_bytes() -> None:
 
 def test_average_consumption_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+        _ = NvidiaGPUMemoryStatistics.average_utilization_less_than(
             3000, Units.fakeunit
         )
