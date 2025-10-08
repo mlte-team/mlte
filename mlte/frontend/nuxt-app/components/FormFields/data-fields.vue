@@ -59,7 +59,7 @@
                   Purpose of the dataset in relation to the model.
                   <br />
                   <br />
-                  <i>Example: Training, fine tuning, etc.</i>
+                  <i>Example: Training, fine-tuning, etc.</i>
                 </InfoIcon>
               </template>
             </UsaTextarea>

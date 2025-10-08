@@ -193,7 +193,7 @@
         </template>
         <template #info>
           Describe the amount and type of compute resources needed for
-          development.
+          development such as training, fine-tuning, or onboarding.
         </template>
       </SubHeader>
       <div>
