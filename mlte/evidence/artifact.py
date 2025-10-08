@@ -15,7 +15,7 @@ from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.evidence.model import EvidenceModel
+from mlte.evidence.model import EvidenceModel, EvidenceType
 from mlte.model.base_model import BaseModel
 from mlte.store.artifact.store import ArtifactStore
 
@@ -104,6 +104,27 @@ class Evidence(Artifact, ABC):
         is delegated to subclasses that implement concrete types
         """
         raise NotImplementedError("Evidence.from_model()")
+
+    @staticmethod
+    def _check_proper_types(
+        model: BaseModel, evidence_type: EvidenceType
+    ) -> EvidenceModel:
+        """
+        Checks if internal types are the ones expected. Raises exception if expected conditions are not met.
+        Returns the type-casted body as an EvidenceModel.
+        """
+        assert isinstance(
+            model, ArtifactModel
+        ), "Can't create object from non-ArtifactModel model."
+        assert (
+            model.header.type == ArtifactType.EVIDENCE
+        ), f"Incorrect header type: {model.header.type}, expected {ArtifactType.EVIDENCE}."
+        body = typing.cast(EvidenceModel, model.body)
+        assert (
+            body.value.evidence_type == evidence_type
+        ), f"Incorrect evidence type: {body.value.evidence_type}, expected {evidence_type}."
+
+        return body
 
     # -------------------------------------------------------------------------
     # Class loading methods.

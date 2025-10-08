@@ -8,9 +8,8 @@ import typing
 from typing import Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceModel, EvidenceType, IntegerValueModel
+from mlte.evidence.model import EvidenceType, IntegerValueModel
 from mlte.measurement.units import (
     Quantity,
     Unit,
@@ -66,20 +65,10 @@ class Integer(Evidence):
         :param model: The model representation
         :return: The integer value
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), "Broken Precondition."
-        body = typing.cast(EvidenceModel, model.body)
-
-        assert (
-            body.value.evidence_type == EvidenceType.INTEGER
-        ), "Broken Precondition."
+        body = cls._check_proper_types(model, EvidenceType.INTEGER)
         return Integer(
-            value=body.value.integer,
-            unit=str_to_unit(body.value.unit),
+            value=body.value.integer,  # type: ignore
+            unit=str_to_unit(body.value.unit),  # type: ignore
         ).with_metadata(body.metadata)
 
     def __eq__(self, other: object) -> bool:
