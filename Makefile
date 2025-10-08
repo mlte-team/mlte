@@ -85,9 +85,14 @@ typecheck:
 	poetry run mypy test/
 	poetry run mypy tools/
 
+# Clean demo notebooks of temporary outputs.
+.PHONY: clean-demo
+clean-demo:
+	cd demo && bash clean_all_nbs.sh
+
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck docs
+qa-python: schema isort format lint typecheck clean-demo docs
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
