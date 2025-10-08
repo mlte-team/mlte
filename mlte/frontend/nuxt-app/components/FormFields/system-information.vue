@@ -73,6 +73,9 @@
           the system.
         </template>
       </SubHeader>
+
+      <hr />
+
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
         <h3 class="no-margin-sub-header">Goal {{ goalIndex + 1 }}</h3>
         <UsaTextarea v-model="goal.description" style="height: 5.5rem">
@@ -158,6 +161,8 @@
           hallucinations, or bias.
         </template>
       </SubHeader>
+
+      <hr />
 
       <div v-for="(risk, riskIndex) in props.modelValue.risks" :key="riskIndex">
         <h3 class="no-margin-sub-header">Risk {{ riskIndex + 1 }}</h3>

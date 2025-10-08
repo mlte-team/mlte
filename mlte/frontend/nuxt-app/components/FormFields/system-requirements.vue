@@ -31,6 +31,9 @@
           />
         </template>
       </SubHeader>
+
+      <hr />
+
       <div
         v-for="(requirement, requirementIndex) in props.modelValue"
         :key="requirementIndex"

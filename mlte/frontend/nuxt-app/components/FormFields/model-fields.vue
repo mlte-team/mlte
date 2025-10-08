@@ -20,6 +20,9 @@
           inference.
         </template>
       </SubHeader>
+
+      <hr />
+
       <div
         v-for="(inputSpec, inputIndex) in props.modelValue.input_specification"
         :key="inputIndex"
@@ -101,6 +104,9 @@
           ingest model results.
         </template>
       </SubHeader>
+
+      <hr />
+
       <div
         v-for="(outputSpec, outputIndex) in props.modelValue
           .output_specification"
