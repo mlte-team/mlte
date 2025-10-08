@@ -45,8 +45,8 @@
                   <br />
                   <br />
                   <i
-                    >Example: Voice recordings from phone calls made to numbers in
-                    the 412 area code.</i
+                    >Example: Voice recordings from phone calls made to numbers
+                    in the 412 area code.</i
                   >
                 </InfoIcon>
               </template>
@@ -116,11 +116,13 @@
             <template #label>
               Data Rights
               <InfoIcon>
-                Are there particular ways in which the data can or cannot be used?
+                Are there particular ways in which the data can or cannot be
+                used?
                 <br />
                 <br />
                 <i
-                  >Example: Given that data is classified it should be treated as
+                  >Example: Given that data is classified it should be treated
+                  as
                   <br />
                   such, e.g., not uploaded to any public servers or stored on
                   <br />
@@ -140,9 +142,11 @@
                 <br />
                 <br />
                 <i
-                  >Example: Although the audio recordings are not associated to a
+                  >Example: Although the audio recordings are not associated to
+                  a
                   <br />
-                  person, post-analysis may associate them to a person and <br />
+                  person, post-analysis may associate them to a person and
+                  <br />
                   therefore become PII.</i
                 >
               </InfoIcon>
@@ -242,7 +246,10 @@
                 applicable in all cases.
               </template>
             </SubHeader>
-            <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
+            <div
+              v-for="(field, fieldIndex) in dataItem.fields"
+              :key="fieldIndex"
+            >
               <h3 class="no-margin-sub-header">
                 Data Schema {{ fieldIndex + 1 }}
               </h3>
@@ -284,7 +291,8 @@
                     <template #label>
                       Expected Values
                       <InfoIcon>
-                        Expected values for field, e.g., any, range, enumeration.
+                        Expected values for field, e.g., any, range,
+                        enumeration.
                       </InfoIcon>
                     </template>
                   </UsaTextInput>
@@ -297,7 +305,8 @@
                     <template #label>
                       Handling Missing Values
                       <InfoIcon>
-                        How to interpret missing values, e.g., null, empty string.
+                        How to interpret missing values, e.g., null, empty
+                        string.
                       </InfoIcon>
                     </template>
                   </UsaTextInput>
