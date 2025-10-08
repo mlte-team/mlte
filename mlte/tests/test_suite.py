@@ -70,7 +70,7 @@ class TestSuite(Artifact):
         Executes all configured measurements with the provided inputs.
 
         :param input: a dictionary of inputs for each test case, keyed by test case id, each containing a list of inputs for that case.
-        :return: a dict of Evidences, keyd by test case id, generated as resuts for all the executed measurements, one per test case.
+        :return: a dict of Evidences, keyed by test case id, generated as resuts for all the executed measurements, one per test case.
         """
         # Check for invalid input ids.
         for case_id, args in input.items():
