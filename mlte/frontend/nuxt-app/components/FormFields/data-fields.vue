@@ -18,7 +18,7 @@
       >
         <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
         <div>
-          <UsaTextarea v-model="dataItem.description" style="height: 2.5rem">
+          <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">
             <template #label>
               Dataset Description
               <InfoIcon>
@@ -34,7 +34,7 @@
             </template>
           </UsaTextarea>
 
-          <UsaTextarea v-model="dataItem.purpose" style="height: 2.5rem">
+          <UsaTextarea v-model="dataItem.purpose" style="height: 5.5rem">
             <template #label>
               Dataset Purpose
               <InfoIcon>
@@ -79,7 +79,7 @@
           </template>
         </UsaSelect>
 
-        <UsaTextarea v-model="dataItem.access" style="height: 2.5rem">
+        <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
           <template #label>
             Requirements and Constraints for Data Access
             <InfoIcon>
@@ -113,7 +113,7 @@
           </SubHeader>
           <UsaTextarea
             v-model="dataItem.labeling_method"
-            style="height: 2.5rem"
+            style="height: 5.5rem"
           >
             <template #label>
               Labeling Method
@@ -270,7 +270,7 @@
           </AddButton>
         </div>
 
-        <UsaTextarea v-model="dataItem.rights" style="height: 2.5rem">
+        <UsaTextarea v-model="dataItem.rights" style="height: 5.5rem">
           <template #label>
             Data Rights
             <InfoIcon>
@@ -288,7 +288,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="dataItem.policies" style="height: 2.5rem">
+        <UsaTextarea v-model="dataItem.policies" style="height: 5.5rem">
           <template #label>
             Data Policies
             <InfoIcon>
