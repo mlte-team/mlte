@@ -154,8 +154,8 @@
       <SubHeader :render-example="false">
         Risks
         <template #info>
-          Risks to model performance such as false positive, false negative,
-          hallucination, or bias.
+          Risks to model performance such as false positives, false negatives,
+          hallucinations, or bias.
         </template>
       </SubHeader>
 

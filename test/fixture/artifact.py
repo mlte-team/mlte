@@ -170,7 +170,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
             ),
             deployment_platform="local server",
             capability_deployment_mechanism="API",
-            model_source="In house",
+            model_source="In-house",
             input_specification=[
                 ModelIODescriptor(
                     name="i1",

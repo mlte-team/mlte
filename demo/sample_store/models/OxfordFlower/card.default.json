@@ -178,7 +178,7 @@
             },
             "deployment_platform": "Model will be deployed on a small device loaned out to garden visitors.",
             "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
-            "model_source": "In house",
+            "model_source": "In-house",
             "input_specification": [
                 {
                     "name": "flower-picture",

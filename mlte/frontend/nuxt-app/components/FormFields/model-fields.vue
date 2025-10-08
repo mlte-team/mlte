@@ -286,7 +286,10 @@
             The source of the model.
             <br />
             <br />
-            <i>Example: In house, hugging face, git repository.</i>
+            <i
+              >Example: In-house, Hugging Face, specific URL of git
+              repository.</i
+            >
           </InfoIcon>
         </template>
       </UsaTextInput>
