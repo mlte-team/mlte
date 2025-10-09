@@ -272,7 +272,7 @@ or
 $ make bump-major
 ```
 
-depending on whether you want to upadte the `patch`,`minor` or `major` version as appropriate for the release. NOTE: bumpversion will change all instances of the current version's text to the new version's text in the files it has been configured to do so, so if you have other text in these files which happens to match the current version's, it will be incorrectly changed. Manually inspect changes after running this tool, and discard any incorrect ones.
+depending on whether you want to update the `patch`,`minor` or `major` version as appropriate for the release. NOTE: bumpversion will change all instances of the current version's text to the new version's text in the files it has been configured to do so, so if you have other text in these files which happens to match the current version's, it will be incorrectly changed. Manually inspect changes after running this tool, and discard any incorrect ones.
 
 ### Publishing
 
