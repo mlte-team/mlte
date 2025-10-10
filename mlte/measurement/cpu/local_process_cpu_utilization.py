@@ -25,7 +25,7 @@ class CPUStatistics(CommonStatistics):
     """
     The CPUStatistics class encapsulates data
     and functionality for tracking and updating
-    CPU consumption statistics for a running process.
+    CPU utilization statistics for a running process.
     """
 
     DEFAULT_UNIT = Units.percent

@@ -86,9 +86,9 @@ class CommonStatistics(ExternalEvidence):
         cls, threshold: float, unit: Optional[Unit] = None
     ) -> Validator:
         """
-        Construct and invoke a validator for maximum memory consumption.
+        Construct and invoke a validator for maximum memory utilization.
 
-        :param threshold: The threshold value for maximum consumption
+        :param threshold: The threshold value for maximum utilization
         :param unit: the unit the threshold comes in, as a value from Units; defaults to DEFAULT_UNIT
 
         :return: The Validator that can be used to validate a Value.
@@ -115,9 +115,9 @@ class CommonStatistics(ExternalEvidence):
         cls, threshold: float, unit: Optional[Unit] = None
     ) -> Validator:
         """
-        Construct and invoke a validator for average memory consumption.
+        Construct and invoke a validator for average memory utilization.
 
-        :param threshold: The threshold value for average consumption, in KB
+        :param threshold: The threshold value for average utilization, in KB
         :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
 
         :return: The Validator that can be used to validate a Value.

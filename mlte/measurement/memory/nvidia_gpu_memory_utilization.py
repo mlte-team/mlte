@@ -1,7 +1,7 @@
 """
-mlte/measurement/memory/nvidia_gpu_memory_consumption.py
+mlte/measurement/memory/nvidia_gpu_memory_utilization.py
 
-Memory consumption measurement for gpu processes.
+Memory utilization measurement for gpu processes.
 
 It relies on the pynvml package for status. We dynamically import it, so that we can can return useful
 results when it isn't available.
@@ -51,7 +51,7 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
     """
     The NvidiaGPUMemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
-    consumption statistics for an NVIDIA GPU.
+    utilization statistics for an NVIDIA GPU.
     """
 
     def __init__(
@@ -60,9 +60,9 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
         """
         Initialize a NvidiaGPUMemoryStatistics instance.
 
-        :param avg: The average memory consumption
-        :param min: The minimum memory consumption
-        :param max: The maximum memory consumption
+        :param avg: The average memory utilization
+        :param min: The minimum memory utilization
+        :param max: The maximum memory utilization
         :param unit: the unit the values comes in, as a value from Units; defaults to DEFAULT_UNIT
         """
         super().__init__(avg, min, max, unit)
@@ -76,12 +76,12 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # -----------------------------------------------------------------------------
 
 
-class NvidiaGPUMemoryConsumption(ProcessMeasurement):
-    """Measure memory consumption for a specific gpu."""
+class NvidiaGPUMemoryUtilization(ProcessMeasurement):
+    """Measure memory utilizatio for a specific gpu."""
 
     def __init__(self, identifier: Optional[str] = None, gpu_id: int = 0):
         """
-        Initialize a LocalProcessMemoryConsumption instance.
+        Initialize a LocalProcessMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         :param gpu_id: The id of the gpu
@@ -109,9 +109,9 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         total = 0
         count = 0
 
-        # Keep collecting stats untl the controlling process goes away.
-        # It might actualy take the controlling process a while to start up the memory consumption
-        # so just collect the entire time whether we have consumption or not.
+        # Keep collecting stats until the controlling process goes away.
+        # It might actually take the controlling process a while to start up the memory utilization
+        # so just collect the entire time whether we have utilization or not.
         while True:
             try:
                 # This is just so that we check to see if our task is running

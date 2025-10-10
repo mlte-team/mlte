@@ -1,7 +1,7 @@
 """
-mlte/measurement/memory/local_process_memory_consumption.py
+mlte/measurement/memory/local_process_memory_utilization.py
 
-Memory consumption measurement for local training processes.
+Memory utilization measurement for local training processes.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ class MemoryStatistics(CommonStatistics):
     """
     The MemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
-    consumption statistics for a running process.
+    utilization statistics for a running process.
     """
 
     DEFAULT_UNIT = Units.kilobyte
@@ -34,25 +34,25 @@ class MemoryStatistics(CommonStatistics):
         """
         Initialize a MemoryStatistics instance.
 
-        :param avg: The average memory consumption
-        :param min: The minimum memory consumption
-        :param max: The maximum memory consumption
+        :param avg: The average memory utilization
+        :param min: The minimum memory utilization
+        :param max: The maximum memory utilization
         :param unit: the unit the values comes in, as a value from Units; defaults to Units.kilobyte
         """
         super().__init__(avg, min, max, unit)
 
 
 # -----------------------------------------------------------------------------
-# LocalProcessMemoryConsumption
+# LocalProcessMemoryUtilization
 # -----------------------------------------------------------------------------
 
 
-class LocalProcessMemoryConsumption(ProcessMeasurement):
-    """Measure memory consumption for a local training process."""
+class LocalProcessMemoryUtilization(ProcessMeasurement):
+    """Measure memory utilization for a local training process."""
 
     def __init__(self, identifier: Optional[str] = None):
         """
-        Initialize a LocalProcessMemoryConsumption instance.
+        Initialize a LocalProcessMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         """
@@ -63,7 +63,7 @@ class LocalProcessMemoryConsumption(ProcessMeasurement):
         self, pid: int, unit: Unit = Units.kilobyte, poll_interval: int = 1
     ) -> MemoryStatistics:
         """
-        Monitor memory consumption of process at `pid` until exit.
+        Monitor memory utilization of process at `pid` until exit.
 
         :param pid: The process identifier
         :param poll_interval: The poll interval, in seconds

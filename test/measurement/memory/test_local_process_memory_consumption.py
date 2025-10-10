@@ -1,7 +1,7 @@
 """
-test/measurement/memory/test_local_process_memory_consumption.py
+test/measurement/memory/test_local_process_memory_utilization.py
 
-Unit test for LocalProcessMemoryConsumption measurement.
+Unit test for LocalProcessMemoryUtilization measurement.
 """
 
 import os
@@ -14,7 +14,7 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.measurement.memory import (
-    LocalProcessMemoryConsumption,
+    LocalProcessMemoryUtilization,
     MemoryStatistics,
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
@@ -36,21 +36,21 @@ SPIN_COMMAND = [
 
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = LocalProcessMemoryConsumption("id")
+    m = LocalProcessMemoryUtilization("id")
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
-        == "mlte.measurement.memory.local_process_memory_consumption.LocalProcessMemoryConsumption"
+        == "mlte.measurement.memory.local_process_memory_utilization.LocalProcessMemoryUtilization"
     )
 
 
 def test_memory_evaluate() -> None:
     start = time.time()
 
-    m = LocalProcessMemoryConsumption("identifier")
+    m = LocalProcessMemoryUtilization("identifier")
 
-    # Capture memory consumption; blocks until process exit
+    # Capture memory utilization; blocks until process exit
     stats = m.evaluate(SPIN_COMMAND)
 
     assert len(str(stats)) > 0
@@ -61,9 +61,9 @@ def test_memory_evaluate_async() -> None:
     start = time.time()
 
     pid = ProcessMeasurement.start_process(SPIN_COMMAND[0], SPIN_COMMAND[1:])
-    m = LocalProcessMemoryConsumption("identifier")
+    m = LocalProcessMemoryUtilization("identifier")
 
-    # Capture memory consumption; blocks until process exit
+    # Capture memory utilization; blocks until process exit
     m.evaluate_async(pid)
     stats = m.wait_for_output()
 
@@ -72,7 +72,7 @@ def test_memory_evaluate_async() -> None:
 
 
 def test_memory_validate_success() -> None:
-    m = LocalProcessMemoryConsumption("identifier")
+    m = LocalProcessMemoryUtilization("identifier")
 
     # Blocks until process exit
     stats = m.evaluate(SPIN_COMMAND, unit=Units.megabyte)
@@ -84,7 +84,7 @@ def test_memory_validate_success() -> None:
 
 def test_memory_validate_failure() -> None:
 
-    m = LocalProcessMemoryConsumption("identifier")
+    m = LocalProcessMemoryUtilization("identifier")
 
     # Blocks until process exit
     stats = m.evaluate(SPIN_COMMAND)
@@ -116,7 +116,7 @@ def test_result_save_load(
     assert r.max == stats.max
 
 
-def test_max_consumption_less_than() -> None:
+def test_max_utilization_less_than() -> None:
     m = get_sample_evidence_metadata()
 
     validator = MemoryStatistics.max_utilization_less_than(3)
@@ -137,7 +137,7 @@ def test_max_consumption_less_than() -> None:
     assert not bool(res)
 
 
-def test_max_consumption_less_than_in_bytes() -> None:
+def test_max_utilization_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
     validator = MemoryStatistics.max_utilization_less_than(3000, Units.bytes)
@@ -158,12 +158,12 @@ def test_max_consumption_less_than_in_bytes() -> None:
     assert not bool(res)
 
 
-def test_max_consumption_less_than_invalid_unit() -> None:
+def test_max_utilization_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
         _ = MemoryStatistics.max_utilization_less_than(3000, Units.fakeunit)
 
 
-def test_avg_consumption_less_than() -> None:
+def test_avg_utilization_less_than() -> None:
     m = get_sample_evidence_metadata()
 
     validator = MemoryStatistics.average_utilization_less_than(3)
@@ -184,7 +184,7 @@ def test_avg_consumption_less_than() -> None:
     assert not bool(res)
 
 
-def test_avg_consumption_less_than_in_bytes() -> None:
+def test_avg_utilization_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
     validator = MemoryStatistics.average_utilization_less_than(
@@ -207,6 +207,6 @@ def test_avg_consumption_less_than_in_bytes() -> None:
     assert not bool(res)
 
 
-def test_average_consumption_less_than_invalid_unit() -> None:
+def test_average_utilization_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
         _ = MemoryStatistics.average_utilization_less_than(3000, Units.fakeunit)
