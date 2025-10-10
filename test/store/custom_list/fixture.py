@@ -39,6 +39,7 @@ def custom_list_stores() -> Generator[str, None, None]:
     for store_fixture_name in [
         StoreType.LOCAL_FILESYSTEM.value,
         StoreType.LOCAL_MEMORY.value,
+        StoreType.RELATIONAL_DB.value,
     ]:
         yield store_fixture_name
 

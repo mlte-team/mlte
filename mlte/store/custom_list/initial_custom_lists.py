@@ -37,8 +37,7 @@ class InitialCustomLists:
         # TODO: Remove this check once RDBS and HTTP are implemented.
         parsed_uri = StoreURI.from_string(stores_uri)
         if (
-            parsed_uri.type == StoreType.RELATIONAL_DB
-            or parsed_uri.type == StoreType.REMOTE_HTTP
+            parsed_uri.type == StoreType.REMOTE_HTTP
         ):
             # Creates a  file system URI using the default stores folder.
             parsed_uri = StoreURI.create_default_fs_uri()
