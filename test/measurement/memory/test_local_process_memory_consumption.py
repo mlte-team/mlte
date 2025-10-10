@@ -1,8 +1,4 @@
-"""
-test/measurement/memory/test_local_process_memory_utilization.py
-
-Unit test for LocalProcessMemoryUtilization measurement.
-"""
+"""Unit test for LocalProcessMemoryUtilization measurement."""
 
 import os
 import time
@@ -60,7 +56,7 @@ def test_memory_evaluate() -> None:
 def test_memory_evaluate_async() -> None:
     start = time.time()
 
-    pid = ProcessMeasurement.start_process(SPIN_COMMAND[0], SPIN_COMMAND[1:])
+    pid = ProcessMeasurement.start_process(SPIN_COMMAND)
     m = LocalProcessMemoryUtilization("identifier")
 
     # Capture memory utilization; blocks until process exit

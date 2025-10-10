@@ -56,13 +56,16 @@ class CPUStatistics(CommonStatistics):
 class LocalProcessCPUUtilization(ProcessMeasurement):
     """Measures CPU utilization for a local process."""
 
-    def __init__(self, identifier: Optional[str] = None):
+    def __init__(
+        self, identifier: Optional[str] = None, group: Optional[str] = None
+    ):
         """
         Initialize a new LocalProcessCPUUtilization measurement.
 
         :param identifier: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         """
-        super().__init__(identifier)
+        super().__init__(identifier, group)
         if is_windows():
             raise RuntimeError(
                 f"Measurement for {self.evidence_metadata.test_case_id if self.evidence_metadata else 'this'} is not supported on Windows."

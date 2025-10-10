@@ -79,14 +79,20 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 class NvidiaGPUMemoryUtilization(ProcessMeasurement):
     """Measure memory utilizatio for a specific gpu."""
 
-    def __init__(self, identifier: Optional[str] = None, gpu_id: int = 0):
+    def __init__(
+        self,
+        identifier: Optional[str] = None,
+        group: Optional[str] = None,
+        gpu_id: int = 0,
+    ):
         """
         Initialize a LocalProcessMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         :param gpu_id: The id of the gpu
         """
-        super().__init__(identifier)
+        super().__init__(identifier, group)
         self.gpu_id = gpu_id
 
     # Overriden.

@@ -11,6 +11,8 @@ from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.artifact import Evidence
+from mlte.measurement.process_measurement import ProcessMeasurement
+from mlte.measurement.process_measurement_group import ProcessMeasurementGroup
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
@@ -63,21 +65,45 @@ class TestSuite(Artifact):
 
     def run_measurements(
         self, input: dict[str, list[typing.Any]]
-    ) -> list[Evidence]:
+    ) -> dict[str, Evidence]:
         """
         Executes all configured measurements with the provided inputs.
 
         :param input: a dictionary of inputs for each test case, keyed by test case id, each containing a list of inputs for that case.
-        :return: a list of Evidences generated as resuts for all the executed measurements, one per test case.
+        :return: a dict of Evidences, keyed by test case id, generated as resuts for all the executed measurements, one per test case.
         """
-        evidences: list[Evidence] = []
+        # Check for invalid input ids.
         for case_id, args in input.items():
             if case_id not in self.test_cases:
                 raise RuntimeError(
-                    f"Test Case id {case_id} received in args does not exist in this suite."
+                    f"Test Case id {case_id} received in input does not exist in this suite."
                 )
-            evidence = self.test_cases[case_id].measure(*args)
-            evidences.append(evidence)
+
+        # Go over all cases.
+        evidences: dict[str, Evidence] = {}
+        groups: dict[str, list[ProcessMeasurement]] = {}
+        for case_id, case in self.test_cases.items():
+            # Only run cases for which we have an input definition.
+            if case_id in input:
+                args = input[case_id]
+                if (
+                    case.measurement
+                    and isinstance(case.measurement, ProcessMeasurement)
+                    and case.measurement.group
+                ):
+                    # If there is a group, store the case there to run those per group later.
+                    if case.measurement.group not in groups:
+                        groups[case.measurement.group] = []
+                    groups[case.measurement.group].append(case.measurement)
+                else:
+                    # If case has no group, just run it directly.
+                    evidence = case.measure(*args)
+                    evidences[case_id] = evidence
+
+        # Run measurements groups.
+        group_evidences = ProcessMeasurementGroup.evaluate_groups(groups, input)
+        evidences.update(group_evidences)
+
         return evidences
 
     # -------------------------------------------------------------------------

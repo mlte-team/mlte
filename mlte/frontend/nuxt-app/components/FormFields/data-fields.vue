@@ -1,299 +1,309 @@
 <template>
-  <h2 class="section-header">Data</h2>
-  <div class="input-group">
-    <SubHeader :render-example="false">
-      Data
-      <template #info>
-        Details of the data that will influence model development efforts.
-      </template>
-    </SubHeader>
-    <div
-      v-for="(dataItem, dataItemIndex) in props.modelValue"
-      :key="dataItemIndex"
-    >
-      <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
-      <div>
-        <UsaTextInput v-model="dataItem.description">
-          <template #label>
-            Dataset Description
-            <InfoIcon>
-              Short description of the data set that will be used for model
-              development.
-              <br />
-              <br />
-              <i
-                >Example: Voice recordings from phone calls made to numbers in
-                the 412 area code.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
+  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+    <template #title> Data </template>
+  </CollapsibleHeader>
 
-        <UsaTextInput v-model="dataItem.source">
-          <template #label>
-            Source
-            <InfoIcon>
-              Where is the data coming from, e.g., Enterprise Data, Public Data
-              Source, <br />
-              Synthetic Data?
-              <br />
-              <br />
-              <i
-                >Example: Company log data collected between 2023/01/01 and
-                2023/12/31.</i
-              >
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-      </div>
-
-      <UsaSelect
-        v-model="dataItem.classification"
-        :options="classificationOptions"
+  <div v-if="displaySection">
+    <div class="input-group">
+      <SubHeader :render-example="false">
+        Data
+        <template #info>
+          Details of the data that will influence model development efforts.
+        </template>
+      </SubHeader>
+      <div
+        v-for="(dataItem, dataItemIndex) in props.modelValue"
+        :key="dataItemIndex"
       >
-        <template #label>
-          Data Classification
-          <InfoIcon>
-            What is the classification of the data?
-            <br />
-            <br />
-            <i>Example: Classified, Unclassified, PHI, etc.</i>
-          </InfoIcon>
-        </template>
-      </UsaSelect>
+        <h3 class="no-margin-sub-header">Dataset {{ dataItemIndex + 1 }}</h3>
+        <div>
+          <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">
+            <template #label>
+              Dataset Description
+              <InfoIcon>
+                Short description of the data set that will be used for model
+                development.
+                <br />
+                <br />
+                <i
+                  >Example: Voice recordings from phone calls made to numbers in
+                  the 412 area code.</i
+                >
+              </InfoIcon>
+            </template>
+          </UsaTextarea>
 
-      <UsaTextInput v-model="dataItem.access">
-        <template #label>
-          Requirements and Constraints for Data Access
-          <InfoIcon>
-            How will the data be accessed? What accounts are needed?
-            <br />
-            <br />
-            <i
-              >Example: Data is stored on the "blue" server that requires an
-              account on the "solid" network.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-
-      <div class="input-group" style="margin-top: 1em">
-        <SubHeader>
-          Labels and Distribution
-          <template #example>
-            <UsaTable
-              :headers="labelModalHeaders"
-              :rows="labelModalRows"
-              borderless
-              class="table"
-            />
-          </template>
-          <template #info>
-            If data is labeled, include information about labels and their
-            distribution in the dataset.
-          </template>
-        </SubHeader>
-        <UsaTextInput v-model="dataItem.labeling_method">
-          <template #label>
-            Labeling Method
-            <InfoIcon>
-              How data was labeled, e.g., hand labeled by expert, <br />
-              labeled by automated process.
-              <br />
-              <br />
-              <i>Example: Hand labeled by single domain expert.</i>
-            </InfoIcon>
-          </template>
-        </UsaTextInput>
-        <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
-          <div class="inline-input-left">
-            <UsaTextInput v-model="label.name">
-              <template #label>
-                Label Name
-                <InfoIcon> Label in data set. </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
-
-          <div class="inline-input-left">
-            <UsaTextInput v-model="label.description">
-              <template #label>
-                Label Description
-                <InfoIcon> Short description of label. </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
-
-          <div class="inline-input-right">
-            <UsaTextInput v-model="label.percentage" type="number">
-              <template #label>
-                Percentage
-                <InfoIcon>
-                  Percentage of data elements with that label.
-                </InfoIcon>
-              </template>
-            </UsaTextInput>
-          </div>
-          <div class="inline-button">
-            <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
-              Delete Label
-            </DeleteButton>
-          </div>
+          <UsaTextInput v-model="dataItem.source">
+            <template #label>
+              Source
+              <InfoIcon>
+                Where is the data coming from, e.g., Enterprise Data, Public
+                Data Source, <br />
+                Synthetic Data?
+                <br />
+                <br />
+                <i
+                  >Example: Company log data collected between 2023/01/01 and
+                  2023/12/31.</i
+                >
+              </InfoIcon>
+            </template>
+          </UsaTextInput>
         </div>
 
-        <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
-          Add Additional Label
-        </AddButton>
-      </div>
-
-      <div class="input-group" style="margin-top: 1em">
-        <SubHeader>
-          Data Schema
-          <template #example>
-            <UsaTable
-              :headers="dataModalHeaders"
-              :rows="dataModalRows"
-              borderless
-              class="table"
-            />
+        <UsaSelect
+          v-model="dataItem.classification"
+          :options="classificationOptions"
+        >
+          <template #label>
+            Data Classification
+            <InfoIcon>
+              What is the classification of the data?
+              <br />
+              <br />
+              <i>Example: Classified, Unclassified, PHI, etc.</i>
+            </InfoIcon>
           </template>
-          <template #info>
-            Include relevant information that is known about the data; fill out
-            all sections below for each data field.
+        </UsaSelect>
+
+        <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
+          <template #label>
+            Requirements and Constraints for Data Access
+            <InfoIcon>
+              How will the data be accessed? What accounts are needed?
+              <br />
+              <br />
+              <i
+                >Example: Data is stored on the "blue" server that requires an
+                account on the "solid" network.</i
+              >
+            </InfoIcon>
           </template>
-        </SubHeader>
-        <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
-          <h3 class="no-margin-sub-header">Data Schema {{ fieldIndex + 1 }}</h3>
-          <div>
-            <div class="inline-input-left">
-              <UsaTextInput v-model="field.name">
-                <template #label>
-                  Field Name
-                  <InfoIcon> Field name. </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
+        </UsaTextarea>
 
-            <div class="inline-input-right">
-              <UsaTextInput v-model="field.description">
-                <template #label>
-                  Field Description
-                  <InfoIcon> Short field description. </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-          </div>
-
-          <div>
-            <div class="inline-input-left">
-              <UsaTextInput v-model="field.type">
-                <template #label>
-                  Field Type
-                  <InfoIcon>
-                    Field type, e.g., number, string, Boolean, data, image,
-                    audio.
-                  </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-
-            <div class="inline-input-right">
-              <UsaTextInput v-model="field.expected_values">
-                <template #label>
-                  Expected Values
-                  <InfoIcon>
-                    Expected values for field, e.g., any, range, enumeration.
-                  </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-          </div>
-
-          <div>
-            <div class="inline-input-left">
-              <UsaTextInput v-model="field.missing_values">
-                <template #label>
-                  Handling Missing Values
-                  <InfoIcon>
-                    How to interpret missing values, e.g., null, empty string.
-                  </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-
-            <div class="inline-input-right">
-              <UsaTextInput v-model="field.special_values">
-                <template #label>
-                  Handling Special Values
-                  <InfoIcon>
-                    How to interpret special values, e.g., 999, N/A.
-                  </InfoIcon>
-                </template>
-              </UsaTextInput>
-            </div>
-          </div>
-          <DeleteButton
-            class="margin-button"
-            @click="deleteField(dataItemIndex, fieldIndex)"
+        <div class="input-group" style="margin-top: 1em">
+          <SubHeader>
+            Labels and Distribution
+            <template #example>
+              <UsaTable
+                :headers="labelModalHeaders"
+                :rows="labelModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+            <template #info>
+              If data is labeled, include information about labels and their
+              distribution in the dataset.
+            </template>
+          </SubHeader>
+          <UsaTextarea
+            v-model="dataItem.labeling_method"
+            style="height: 5.5rem"
           >
-            Delete Field
-          </DeleteButton>
-          <hr />
+            <template #label>
+              Labeling Method
+              <InfoIcon>
+                How data was labeled, e.g., hand labeled by expert, <br />
+                labeled by automated process.
+                <br />
+                <br />
+                <i>Example: Hand labeled by single domain expert.</i>
+              </InfoIcon>
+            </template>
+          </UsaTextarea>
+          <div v-for="(label, labelIndex) in dataItem.labels" :key="labelIndex">
+            <div class="inline-input-left">
+              <UsaTextInput v-model="label.name">
+                <template #label>
+                  Label Name
+                  <InfoIcon> Label in data set. </InfoIcon>
+                </template>
+              </UsaTextInput>
+            </div>
+
+            <div class="inline-input-left">
+              <UsaTextInput v-model="label.description">
+                <template #label>
+                  Label Description
+                  <InfoIcon> Short description of label. </InfoIcon>
+                </template>
+              </UsaTextInput>
+            </div>
+
+            <div class="inline-input-right">
+              <UsaTextInput v-model="label.percentage" type="number">
+                <template #label>
+                  Percentage
+                  <InfoIcon>
+                    Percentage of data elements with that label.
+                  </InfoIcon>
+                </template>
+              </UsaTextInput>
+            </div>
+            <div class="inline-button">
+              <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
+                Delete Label
+              </DeleteButton>
+            </div>
+          </div>
+
+          <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
+            Add Additional Label
+          </AddButton>
         </div>
 
-        <AddButton class="margin-button" @click="addField(dataItemIndex)">
-          Add Additional Field
-        </AddButton>
+        <div class="input-group" style="margin-top: 1em">
+          <SubHeader>
+            Data Schema
+            <template #example>
+              <UsaTable
+                :headers="dataModalHeaders"
+                :rows="dataModalRows"
+                borderless
+                class="table"
+              />
+            </template>
+            <template #info>
+              Include relevant information that is known about the data; fill
+              out all sections below for each data field.
+            </template>
+          </SubHeader>
+          <div v-for="(field, fieldIndex) in dataItem.fields" :key="fieldIndex">
+            <h3 class="no-margin-sub-header">
+              Data Schema {{ fieldIndex + 1 }}
+            </h3>
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.name">
+                  <template #label>
+                    Field Name
+                    <InfoIcon> Field name. </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.description">
+                  <template #label>
+                    Field Description
+                    <InfoIcon> Short field description. </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.type">
+                  <template #label>
+                    Field Type
+                    <InfoIcon>
+                      Field type, e.g., number, string, Boolean, data, image,
+                      audio.
+                    </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.expected_values">
+                  <template #label>
+                    Expected Values
+                    <InfoIcon>
+                      Expected values for field, e.g., any, range, enumeration.
+                    </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+
+            <div>
+              <div class="inline-input-left">
+                <UsaTextInput v-model="field.missing_values">
+                  <template #label>
+                    Handling Missing Values
+                    <InfoIcon>
+                      How to interpret missing values, e.g., null, empty string.
+                    </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+
+              <div class="inline-input-right">
+                <UsaTextInput v-model="field.special_values">
+                  <template #label>
+                    Handling Special Values
+                    <InfoIcon>
+                      How to interpret special values, e.g., 999, N/A.
+                    </InfoIcon>
+                  </template>
+                </UsaTextInput>
+              </div>
+            </div>
+            <DeleteButton
+              class="margin-button"
+              @click="deleteField(dataItemIndex, fieldIndex)"
+            >
+              Delete Field
+            </DeleteButton>
+            <hr />
+          </div>
+
+          <AddButton class="margin-button" @click="addField(dataItemIndex)">
+            Add Additional Field
+          </AddButton>
+        </div>
+
+        <UsaTextarea v-model="dataItem.rights" style="height: 5.5rem">
+          <template #label>
+            Data Rights
+            <InfoIcon>
+              Are there particular ways in which the data can or cannot be used?
+              <br />
+              <br />
+              <i
+                >Example: Given that data is classified it should be treated as
+                <br />
+                such, e.g., not uploaded to any public servers or stored on
+                <br />
+                any non-authorized equipment.</i
+              >
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
+
+        <UsaTextarea v-model="dataItem.policies" style="height: 5.5rem">
+          <template #label>
+            Data Policies
+            <InfoIcon>
+              Are there policies that govern the data and its use, such as
+              <br />
+              Personally Identifiable Information [PII]?
+              <br />
+              <br />
+              <i
+                >Example: Although the audio recordings are not associated to a
+                <br />
+                person, post-analysis may associate them to a person and <br />
+                therefore become PII.</i
+              >
+            </InfoIcon>
+          </template>
+        </UsaTextarea>
+
+        <DeleteButton
+          class="margin-button"
+          @click="deleteDataItem(dataItemIndex)"
+        >
+          Delete Dataset
+        </DeleteButton>
+        <hr />
       </div>
-
-      <UsaTextInput v-model="dataItem.rights">
-        <template #label>
-          Data Rights
-          <InfoIcon>
-            Are there particular ways in which the data can or cannot be used?
-            <br />
-            <br />
-            <i
-              >Example: Given that data is classified it should be treated as
-              <br />
-              such, e.g., not uploaded to any public servers or stored on
-              <br />
-              any non-authorized equipment.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-
-      <UsaTextInput v-model="dataItem.policies">
-        <template #label>
-          Data Policies
-          <InfoIcon>
-            Are there policies that govern the data and its use, such as
-            <br />
-            Personally Identifiable Information [PII]?
-            <br />
-            <br />
-            <i
-              >Example: Although the audio recordings are not associated to a
-              <br />
-              person, post-analysis may associate them to a person and <br />
-              therefore become PII.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaTextInput>
-
-      <DeleteButton
-        class="margin-button"
-        @click="deleteDataItem(dataItemIndex)"
-      >
-        Delete Dataset
-      </DeleteButton>
-      <hr />
+      <AddButton class="margin-button" @click="addDataItem()">
+        Add Dataset
+      </AddButton>
     </div>
-    <AddButton class="margin-button" @click="addDataItem()">
-      Add Dataset
-    </AddButton>
   </div>
 </template>
 
@@ -327,6 +337,7 @@ defineExpose({
   parentAddField,
 });
 
+const displaySection = ref<boolean>(true);
 const classificationOptions = useClassificationOptions();
 
 const labelModalHeaders = ref([

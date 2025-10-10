@@ -8,9 +8,8 @@ import typing
 from typing import Callable
 
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceModel, EvidenceType, StringValueModel
+from mlte.evidence.model import EvidenceType, StringValueModel
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -48,18 +47,8 @@ class String(Evidence):
         :param model: The model representation
         :return: The string value
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), "Broken Precondition."
-        body = typing.cast(EvidenceModel, model.body)
-
-        assert (
-            body.value.evidence_type == EvidenceType.STRING
-        ), "Broken Precondition."
-        return String(value=body.value.string).with_metadata(body.metadata)
+        body = cls._check_proper_types(model, EvidenceType.STRING)
+        return String(value=body.value.string).with_metadata(body.metadata)  # type: ignore
 
     @classmethod
     def contains(cls, substring: str) -> Validator:

@@ -52,19 +52,19 @@ def test_qa_ca_match() -> None:
     entry.tags = ["type1", "type2"]
     entry.quality_attribute = "qa1"
 
-    filter1 = TagFilter(name="tags", value="type1")
+    filter1 = TagFilter(name="tags", tag="type1")
     assert filter1.match(entry)
 
-    filter1 = TagFilter(name="tags", value="type2")
+    filter1 = TagFilter(name="tags", tag="type2")
     assert filter1.match(entry)
 
-    filter1 = TagFilter(name="tags", value="type3")
+    filter1 = TagFilter(name="tags", tag="type3")
     assert not filter1.match(entry)
 
-    filter3 = QAPropertyFilter(value="qa1")
+    filter3 = QAPropertyFilter(property="qa1")
     assert filter3.match(entry)
 
-    filter3 = QAPropertyFilter(value="cat3")
+    filter3 = QAPropertyFilter(property="cat3")
     assert not filter3.match(entry)
 
 
@@ -80,7 +80,7 @@ def test_and_match() -> None:
     filter = AndFilter(
         filters=[
             IdentifierFilter(id="id0"),
-            TagFilter(name="tags", value="t2"),
+            TagFilter(name="tags", tag="t2"),
         ],
     )
 
