@@ -174,6 +174,25 @@ clean: frontend-env-clean
 ci: clean venv frontend-env check-qa test demo-test
 
 # -----------------------------------------------------------------------------
+# Build commands to update versions.
+# -----------------------------------------------------------------------------
+
+.PHONY: bump-patch
+bump-patch:
+	poetry run bumpversion patch --allow-dirty
+	$(MAKE) frontend-env
+
+.PHONY: bump-minor
+bump-minor:
+	poetry run bumpversion minor --allow-dirty
+	$(MAKE) frontend-env
+
+.PHONY: bump-major
+bump-major:
+	poetry run bumpversion major --allow-dirty
+	$(MAKE) frontend-env
+
+# -----------------------------------------------------------------------------
 # Build commands to create a packaged wheel.
 # -----------------------------------------------------------------------------
 
