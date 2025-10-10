@@ -1,8 +1,4 @@
-"""
-mlte/store/user/underlying/rdbs/metadata.py
-
-Definition of the metadata (DB schema) for the user store.
-"""
+"""Definition of the metadata (DB schema) for the user store."""
 
 from __future__ import annotations
 
