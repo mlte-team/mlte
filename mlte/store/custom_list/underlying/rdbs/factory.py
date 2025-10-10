@@ -1,21 +1,27 @@
 """Conversions betwewen schema and internal models."""
 
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.custom_list.underlying.rdbs.metadata import DBCustomListEntry
 
 
 def create_custom_list_entry_orm(
     entry: CustomListEntryModel,
+    list_name: CustomListName,
 ) -> DBCustomListEntry:
     """Creats the DB object from the corresponding internal model."""
     entry_orm = DBCustomListEntry(
+        list_name=list_name,
         name=entry.name,
         description=entry.description,
         parent=entry.parent,
     )
     return entry_orm
 
-def create_custom_list_entry_model(entry_orm: DBCustomListEntry) -> CustomListEntryModel:
+
+def create_custom_list_entry_model(
+    entry_orm: DBCustomListEntry,
+) -> CustomListEntryModel:
     """Creats the internal model object from the corresponding DB object."""
     entry = CustomListEntryModel(
         name=entry_orm.name,
