@@ -77,18 +77,10 @@
 
       <div class="info-box-row">
         <div class="info-box-third rounded-border">
-          FP Risk: <br />
-          {{ reportBody.negotiation_card.system.risks.fp }}
-        </div>
-        <div class="info-box-third rounded-border">
-          FN Risk: <br />
-          {{ reportBody.negotiation_card.system.risks.fn }}
-        </div>
-        <div class="info-box-third rounded-border">
-          Other Risks: <br /><br />
+          Risks: <br /><br />
           <div
-            v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
-              .other"
+            v-for="(risk, riskIndex) in reportBody.negotiation_card.system
+              .risks"
             :key="riskIndex"
           >
             <div class="info-box-row insection-margin">

@@ -100,19 +100,12 @@ export class GoalDescriptor {
   ) {}
 }
 
-export class RiskDescriptor {
-  constructor(
-    public fp: string = "",
-    public fn: string = "",
-    public other: Array<string> = [],
-  ) {}
-}
-
 export class ModelResourcesDescriptor {
   constructor(
     public cpu: string = "0",
     public gpu: string = "0",
-    public memory: string = "0",
+    public gpu_memory: string = "0",
+    public main_memory: string = "0",
     public storage: string = "0",
   ) {}
 }
@@ -131,6 +124,7 @@ export class ModelDescriptor {
     public development_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
     public deployment_platform: string = "",
     public capability_deployment_mechanism: string = "",
+    public model_source: string = "",
     public input_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public output_specification: Array<ModelIODescriptor> = [new ModelIODescriptor()], // eslint-disable-line
     public production_compute_resources: ModelResourcesDescriptor = new ModelResourcesDescriptor(),
@@ -159,6 +153,7 @@ export class FieldDescriptor {
 export class DataDescriptor {
   constructor(
     public description: string = "",
+    public purpose: string = "",
     public source: string = "",
     public classification: string = "unclassified",
     public access: string = "",
@@ -176,7 +171,7 @@ export class SystemDescriptor {
     public problem_type: string = "classification",
     public task: string = "",
     public usage_context: string = "",
-    public risks: RiskDescriptor = new RiskDescriptor(),
+    public risks: Array<string> = [],
   ) {}
 }
 
