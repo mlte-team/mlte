@@ -80,7 +80,7 @@ class CustomListEntryMapper(ResourceMapper):
                 raise errors.ErrorNotFound(
                     f"Parent {parent} does not exist in list {CustomListParentMappings.parent_mappings[list_name]}"
                 )
-        elif parent != "":
+        elif parent != None:
             raise errors.InternalError(
                 "Parent specified for item in list with no parent list."
             )

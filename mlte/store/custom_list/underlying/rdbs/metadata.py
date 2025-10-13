@@ -16,10 +16,10 @@ class DBCustomListEntry(DBBase):
     __tablename__ = "custom_list_entry"
 
     list_name: Mapped[CustomListName]
-    name: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(primary_key=True)
     description: Mapped[str]
 
-    parent: Mapped[str] = mapped_column(ForeignKey("custom_list_entry.name"))
+    parent: Mapped[str] = mapped_column(ForeignKey("custom_list_entry.name"), nullable=True)
 
     def __repr__(self) -> str:
         return f"CustomListEntry(name={self.name!r}, description={self.description!r}, parent={self.parent!r})"
