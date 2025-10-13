@@ -16,7 +16,7 @@ from mlte.user.model import ResourceType
 from test.store.custom_list.custom_list_store_creators import (
     create_fs_store,
     create_memory_store,
-    create_rdbs_store
+    create_rdbs_store,
 )
 
 CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"

@@ -23,7 +23,6 @@ from mlte.store.custom_list.underlying.rdbs.factory import (
 from mlte.store.custom_list.underlying.rdbs.metadata import DBBase
 from mlte.store.custom_list.underlying.rdbs.reader import DBReader
 
-
 # -----------------------------------------------------------------------------
 # RDBCustomListStore
 # -----------------------------------------------------------------------------
@@ -126,7 +125,9 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             _, entry_orm = DBReader.get_entry(updated_entry.name, session)
 
             # Update existing entry
-            entry_orm = create_custom_list_entry_orm(updated_entry, entry_orm.list_name, entry_orm)
+            entry_orm = create_custom_list_entry_orm(
+                updated_entry, entry_orm.list_name, entry_orm
+            )
             session.commit()
 
             stored_entry, _ = DBReader.get_entry(updated_entry.name, session)

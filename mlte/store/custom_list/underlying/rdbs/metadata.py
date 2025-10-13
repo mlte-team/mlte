@@ -19,7 +19,9 @@ class DBCustomListEntry(DBBase):
     name: Mapped[str] = mapped_column(primary_key=True)
     description: Mapped[str]
 
-    parent: Mapped[str] = mapped_column(ForeignKey("custom_list_entry.name"), nullable=True)
+    parent: Mapped[str] = mapped_column(
+        ForeignKey("custom_list_entry.name"), nullable=True
+    )
 
     def __repr__(self) -> str:
         return f"CustomListEntry(name={self.name!r}, description={self.description!r}, parent={self.parent!r})"

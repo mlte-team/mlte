@@ -1,6 +1,7 @@
 """Conversions betwewen schema and internal models."""
 
 from typing import Optional
+
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.custom_list.underlying.rdbs.metadata import DBCustomListEntry
