@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Optional
+from typing import List, Optional
 
 from sqlalchemy.orm import DeclarativeBase, Session
 
@@ -107,14 +107,12 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             entry, _ = DBReader.get_entry(entry_name, session)
             return entry
 
-    def list(
-        self, list_name: Optional[CustomListName] = None
-    ) -> CustomListEntryModel:
+    def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         if list_name is None:
             raise RuntimeError("Custom list name can't be None")
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_list(list_name, session)
-            return entries
+            return [entry.name for entry in entries]
 
     def edit(
         self,

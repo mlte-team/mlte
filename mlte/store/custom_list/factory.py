@@ -21,10 +21,10 @@ def create_custom_list_store(uri: str) -> CustomListStore:
     elif parsed_uri.type == StoreType.RELATIONAL_DB:
         # Import is here to avoid importing SQL libraries if they have not been installed.
         from mlte.store.custom_list.underlying.rdbs.store import (
-            RelationalDBCustomListStore,
+            RDBCustomListStore,
         )
 
-        return RelationalDBCustomListStore(parsed_uri)
+        return RDBCustomListStore(parsed_uri)
     elif parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemCustomListStore(parsed_uri)
     #   elif parsed_uri.type == StoreType.REMOTE_HTTP:

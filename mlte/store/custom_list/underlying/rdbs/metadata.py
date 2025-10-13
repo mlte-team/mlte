@@ -19,7 +19,7 @@ class DBCustomListEntry(DBBase):
     name: Mapped[str] = mapped_column(primary_key=True)
     description: Mapped[str]
 
-    parent: Mapped[str] = mapped_column(
+    parent: Mapped[str | None] = mapped_column(
         ForeignKey("custom_list_entry.name"), nullable=True
     )
 

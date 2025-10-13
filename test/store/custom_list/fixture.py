@@ -79,7 +79,7 @@ def get_test_list(
 def get_test_entry(
     name: str = DEFAULT_ENTRY_NAME,
     description: str = DEFAULT_ENTRY_DESCRIPTION,
-    parent: str = DEFAULT_PARENT,
+    parent: Optional[str] = DEFAULT_PARENT,
 ) -> CustomListEntryModel:
     """Helper to get a list entry structure."""
     return CustomListEntryModel(

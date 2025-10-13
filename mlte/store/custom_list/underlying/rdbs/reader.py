@@ -3,10 +3,10 @@
 from typing import List, Tuple
 
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
 from mlte.custom_list.model import CustomListEntryModel
-from mlte.session.session import Session
 from mlte.store.custom_list.underlying.rdbs.factory import (
     create_custom_list_entry_model,
 )

@@ -69,7 +69,7 @@ class CustomListEntryMapper(ResourceMapper):
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def _ensure_parent_exists(
-        self, parent: str, list_name: Optional[CustomListName]
+        self, parent: Optional[str], list_name: Optional[CustomListName]
     ) -> None:
         if list_name in CustomListParentMappings.parent_mappings.keys():
             if parent not in self.list(
