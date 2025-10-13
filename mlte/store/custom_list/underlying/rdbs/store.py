@@ -1,5 +1,7 @@
 """Implementation of relation database system custom list store."""
 
+from __future__ import annotations
+
 import typing
 from typing import Optional
 
@@ -20,6 +22,7 @@ from mlte.store.custom_list.underlying.rdbs.factory import (
 )
 from mlte.store.custom_list.underlying.rdbs.metadata import DBBase
 from mlte.store.custom_list.underlying.rdbs.reader import DBReader
+
 
 # -----------------------------------------------------------------------------
 # RDBCustomListStore
@@ -42,7 +45,7 @@ class RDBCustomListStore(CustomListStore):
         Return a session handle fo the store session.
         :return: The session handle
         """
-        return RDBCustomListStore(storage=self.storage)
+        return RDBCustomListStoreSession(storage=self.storage)
 
 
 # -----------------------------------------------------------------------------
@@ -57,7 +60,7 @@ class RDBCustomListStoreSession(CustomListStoreSession):
         self.storage = storage
         """"RDB storage."""
 
-        self.entry_mapper = RDBCustomListEntryMapper(CustomListEntryMapper)
+        self.custom_list_entry_mapper = RDBCustomListEntryMapper(storage)
         """The mapper to entry CRUD"""
 
     def close(self) -> None:
@@ -93,8 +96,8 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
                 )
             except errors.ErrorNotFound:
                 # If entry was not found, it means we can create it.
-                entry_obj = create_custom_list_entry_orm(new_entry, list_name)
-                session.add(entry_obj)
+                entry_orm = create_custom_list_entry_orm(new_entry, list_name)
+                session.add(entry_orm)
                 session.commit()
                 return new_entry
 
@@ -116,25 +119,24 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
 
     def edit(
         self,
-        entry: CustomListEntryModel,
+        updated_entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         with Session(self.storage.engine) as session:
-            _, entry_obj = DBReader.get_entry(entry.name, session)
+            _, entry_orm = DBReader.get_entry(updated_entry.name, session)
 
             # Update existing entry
-            entry_obj = create_custom_list_entry_orm(entry, entry_obj.list_name)
-            session.add(entry_obj)
+            entry_orm = create_custom_list_entry_orm(updated_entry, entry_orm.list_name)
             session.commit()
 
-            stored_entry, _ = DBReader.get_entry(entry.name, session)
+            stored_entry, _ = DBReader.get_entry(updated_entry.name, session)
             return stored_entry
 
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         with Session(self.storage.engine) as session:
-            entry, entry_obj = DBReader.get_entry(entry_name, session)
-            session.delete(entry_obj)
+            entry, entry_orm = DBReader.get_entry(entry_name, session)
+            session.delete(entry_orm)
             session.commit()
             return entry

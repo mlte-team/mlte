@@ -135,11 +135,11 @@ class RDBUserMapper(UserMapper):
         self, user: Union[UserWithPassword, BasicUser], context: Any = None
     ) -> User:
         with Session(self.storage.engine) as session:
-            curr_user, user_obj = DBReader.get_user(user.username, session)
+            curr_user, user_orm = DBReader.get_user(user.username, session)
             updated_user = update_user_data(curr_user, user)
 
             # Update existing user.
-            user_obj = self._build_user(updated_user, session, user_obj)
+            user_orm = self._build_user(updated_user, session, user_orm)
             session.commit()
 
             stored_user, _ = DBReader.get_user(user.username, session)
@@ -153,15 +153,15 @@ class RDBUserMapper(UserMapper):
     def list(self, context: Any = None) -> List[str]:
         users: List[str] = []
         with Session(self.storage.engine) as session:
-            user_objs = session.scalars(select(DBUser))
-            for user_obj in user_objs:
-                users.append(user_obj.username)
+            user_orms = session.scalars(select(DBUser))
+            for user_orm in user_orms:
+                users.append(user_orm.username)
         return users
 
     def delete(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
-            user, user_obj = DBReader.get_user(username, session)
-            session.delete(user_obj)
+            user, user_orm = DBReader.get_user(username, session)
+            session.delete(user_orm)
             session.commit()
             return user
 
@@ -206,17 +206,17 @@ class RDBGroupMapper(GroupMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                group_obj = self._build_group(new_group, session)
-                session.add(group_obj)
+                group_orm = self._build_group(new_group, session)
+                session.add(group_orm)
                 session.commit()
                 return new_group
 
     def edit(self, updated_group: Group, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
-            _, group_obj = DBReader.get_group(updated_group.name, session)
+            _, group_orm = DBReader.get_group(updated_group.name, session)
 
             # Update existing group.
-            group_obj = self._build_group(updated_group, session, group_obj)
+            group_orm = self._build_group(updated_group, session, group_orm)
             session.commit()
 
             return updated_group
@@ -245,22 +245,22 @@ class RDBGroupMapper(GroupMapper):
         self,
         group: Group,
         session: Session,
-        group_obj: Optional[DBGroup] = None,
+        group_orm: Optional[DBGroup] = None,
     ) -> DBGroup:
         """Creates a DB group object from a model."""
-        if group_obj is None:
-            group_obj = DBGroup()
+        if group_orm is None:
+            group_orm = DBGroup()
 
-        all_permissions, all_permission_objs = DBReader.get_permissions(session)
+        all_permissions, all_permission_orms = DBReader.get_permissions(session)
 
-        group_obj.name = group.name
-        group_obj.permissions = [
-            all_permission_objs[i]
+        group_orm.name = group.name
+        group_orm.permissions = [
+            all_permission_orms[i]
             for i, permission in enumerate(all_permissions)
             if permission in group.permissions
         ]
 
-        return group_obj
+        return group_orm
 
 
 # -----------------------------------------------------------------------------

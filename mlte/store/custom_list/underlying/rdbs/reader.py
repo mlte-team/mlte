@@ -21,22 +21,22 @@ class DBReader:
         name: str, session: Session
     ) -> Tuple[CustomListEntryModel, DBCustomListEntry]:
         """Reads the custom list entry with the given name using the provided session, and returns a CustomListEntryModel and DBCustomListEntry."""
-        entry_obj = session.scalar(
+        entry_orm = session.scalar(
             select(DBCustomListEntry).where(DBCustomListEntry.name == name)
         )
 
-        if entry_obj is None:
+        if entry_orm is None:
             raise errors.ErrorNotFound(
                 f"Custom List Entry with name {name} was not found in custom list store."
             )
         else:
             return (
                 CustomListEntryModel(
-                    name=entry_obj.name,
-                    description=entry_obj.description,
-                    parent=entry_obj.parent,
+                    name=entry_orm.name,
+                    description=entry_orm.description,
+                    parent=entry_orm.parent,
                 ),
-                entry_obj,
+                entry_orm,
             )
 
     @staticmethod
@@ -44,7 +44,7 @@ class DBReader:
         list_name: str, session: Session
     ) -> Tuple[List[CustomListEntryModel], List[DBCustomListEntry]]:
         """Reads all entries in specified list in the DB, returns list of CustomListEntryModel and DBCustomLIstEntry objects."""
-        list_obj = list(
+        list_orm = list(
             session.scalars(
                 select(DBCustomListEntry).where(
                     DBCustomListEntry.list_name == list_name
@@ -52,12 +52,8 @@ class DBReader:
             )
         )
         entries: List[CustomListEntryModel] = []
-        for entry_obj in list_obj:
-            entry = create_custom_list_entry_model(
-                name=entry_obj.name,
-                description=entry_obj.description,
-                parent=entry_obj.parent,
-            )
+        for entry_orm in list_orm:
+            entry = create_custom_list_entry_model(entry_orm)
             entries.append(entry)
 
-        return entries, list_obj
+        return entries, list_orm
