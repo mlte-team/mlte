@@ -125,8 +125,8 @@ class RDBUserMapper(UserMapper):
                 # If it was not found, it means we can create it.
                 # Hash password and create a user with hashed passwords to be stored.
                 hashed_user = user.to_hashed_user()
-                user_obj = self._build_user(hashed_user, session)
-                session.add(user_obj)
+                user_orm = self._build_user(hashed_user, session)
+                session.add(user_orm)
                 session.commit()
                 stored_user, _ = DBReader.get_user(user.username, session)
                 return stored_user
@@ -166,23 +166,23 @@ class RDBUserMapper(UserMapper):
             return user
 
     def _build_user(
-        self, user: User, session: Session, user_obj: Optional[DBUser] = None
+        self, user: User, session: Session, user_orm: Optional[DBUser] = None
     ) -> DBUser:
         """Creates a DB user object from a model."""
-        if user_obj is None:
-            user_obj = DBUser()
+        if user_orm is None:
+            user_orm = DBUser()
 
-        user_obj.username = user.username
-        user_obj.email = user.email
-        user_obj.full_name = user.full_name
-        user_obj.disabled = user.disabled
-        user_obj.hashed_password = user.hashed_password
-        user_obj.role_type = DBReader.get_role_type(user.role, session)
-        user_obj.groups = [
+        user_orm.username = user.username
+        user_orm.email = user.email
+        user_orm.full_name = user.full_name
+        user_orm.disabled = user.disabled
+        user_orm.hashed_password = user.hashed_password
+        user_orm.role_type = DBReader.get_role_type(user.role, session)
+        user_orm.groups = [
             DBReader.get_group(group_model.name, session)[1]
             for group_model in user.groups
         ]
-        return user_obj
+        return user_orm
 
 
 # -----------------------------------------------------------------------------
@@ -229,15 +229,15 @@ class RDBGroupMapper(GroupMapper):
     def list(self, context: Any = None) -> List[str]:
         groups: List[str] = []
         with Session(self.storage.engine) as session:
-            group_objs = session.scalars(select(DBGroup))
-            for group_obj in group_objs:
-                groups.append(group_obj.name)
+            group_orms = session.scalars(select(DBGroup))
+            for group_orm in group_orms:
+                groups.append(group_orm.name)
         return groups
 
     def delete(self, group_name: str, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
-            group, group_obj = DBReader.get_group(group_name, session)
-            session.delete(group_obj)
+            group, group_orm = DBReader.get_group(group_name, session)
+            session.delete(group_orm)
             session.commit()
             return group
 
@@ -286,14 +286,14 @@ class RDBPermissionMapper(PermissionMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                permission_obj = DBPermission(
+                permission_orm = DBPermission(
                     resource_type=new_permission.resource_type,
                     resource_id=new_permission.resource_id,
                     method_type=DBReader.get_method_type(
                         new_permission.method, session
                     ),
                 )
-                session.add(permission_obj)
+                session.add(permission_orm)
                 session.commit()
                 return new_permission
 
@@ -311,9 +311,9 @@ class RDBPermissionMapper(PermissionMapper):
 
     def delete(self, permission: str, context: Any = None) -> Permission:
         with Session(self.storage.engine) as session:
-            perm, permission_obj = DBReader.get_permission(
+            perm, permission_orm = DBReader.get_permission(
                 Permission.from_str(permission), session
             )
-            session.delete(permission_obj)
+            session.delete(permission_orm)
             session.commit()
             return perm
