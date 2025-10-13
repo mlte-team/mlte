@@ -1,5 +1,7 @@
 """Definition of the metadata (DB schema) for the custom list store."""
 
+from typing import Optional
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -19,7 +21,7 @@ class DBCustomListEntry(DBBase):
     name: Mapped[str] = mapped_column(primary_key=True)
     description: Mapped[str]
 
-    parent: Mapped[str | None] = mapped_column(
+    parent: Mapped[Optional[str]] = mapped_column(
         ForeignKey("custom_list_entry.name"), nullable=True
     )
 
