@@ -126,7 +126,7 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             _, entry_orm = DBReader.get_entry(updated_entry.name, session)
 
             # Update existing entry
-            entry_orm = create_custom_list_entry_orm(updated_entry, entry_orm.list_name)
+            entry_orm = create_custom_list_entry_orm(updated_entry, entry_orm.list_name, entry_orm)
             session.commit()
 
             stored_entry, _ = DBReader.get_entry(updated_entry.name, session)
