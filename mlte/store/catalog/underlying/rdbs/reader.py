@@ -67,7 +67,7 @@ class DBReader:
         session: Session,
         entry_orm: Optional[DBCatalogEntry] = None,
     ) -> DBCatalogEntry:
-        """Creates a DB catalog entry object from a model."""
+        """Creates or updates a DB catalog entry object from a model."""
         if entry_orm is None:
             entry_orm = DBCatalogEntry()
             entry_header_orm = DBCatalogEntryHeader()

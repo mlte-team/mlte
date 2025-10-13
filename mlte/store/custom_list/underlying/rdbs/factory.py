@@ -12,7 +12,7 @@ def create_custom_list_entry_orm(
     list_name: CustomListName,
     entry_orm: Optional[DBCustomListEntry] = None,
 ) -> DBCustomListEntry:
-    """Creates the DB object from the corresponding internal model."""
+    """Creates or updates the DB object from the corresponding internal model."""
     if entry_orm is None:
         entry_orm = DBCustomListEntry()
 
@@ -27,7 +27,7 @@ def create_custom_list_entry_orm(
 def create_custom_list_entry_model(
     entry_orm: DBCustomListEntry,
 ) -> CustomListEntryModel:
-    """Creates the internal model object from the corresponding DB object."""
+    """Creates or updates the internal model object from the corresponding DB object."""
     entry = CustomListEntryModel(
         name=entry_orm.name,
         description=entry_orm.description,

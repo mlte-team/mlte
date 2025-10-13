@@ -168,7 +168,7 @@ class RDBUserMapper(UserMapper):
     def _build_user(
         self, user: User, session: Session, user_orm: Optional[DBUser] = None
     ) -> DBUser:
-        """Creates a DB user object from a model."""
+        """Creates or updeates a DB user object from a model."""
         if user_orm is None:
             user_orm = DBUser()
 
@@ -247,7 +247,7 @@ class RDBGroupMapper(GroupMapper):
         session: Session,
         group_orm: Optional[DBGroup] = None,
     ) -> DBGroup:
-        """Creates a DB group object from a model."""
+        """Creates or updates a DB group object from a model."""
         if group_orm is None:
             group_orm = DBGroup()
 
