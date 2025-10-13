@@ -16,6 +16,7 @@ from mlte.user.model import ResourceType
 from test.store.custom_list.custom_list_store_creators import (
     create_fs_store,
     create_memory_store,
+    create_rdbs_store
 )
 
 CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
@@ -24,7 +25,7 @@ CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_ENTRY_NAME = "test_entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
-DEFAULT_PARENT = ""
+DEFAULT_PARENT = None
 
 
 def custom_list_stores() -> Generator[str, None, None]:
@@ -53,14 +54,13 @@ def create_test_store(
             return create_memory_store()
         if store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
             return create_fs_store(tmpdir_factory.mktemp("data"))
+        elif store_fixture_name == StoreType.RELATIONAL_DB.value:
+            return create_rdbs_store()
         else:
             raise RuntimeError(
                 f"Invalid store type received: {store_fixture_name}"
             )
 
-        # elif store_fixture_name == StoreType.RELATIONAL_DB.value:
-        #     return create_rdbs_store()
-        #     pass
         # elif store_fixture_name == StoreType.REMOTE_HTTP.value:
         #     return create_api_and_http_store(catalog_id)
         #     pass
