@@ -1,0 +1,148 @@
+{
+    "header": {
+        "identifier": "default.card",
+        "type": "negotiation_card",
+        "timestamp": 1760390237,
+        "creator": "admin",
+        "level": "model"
+    },
+    "body": {
+        "artifact_type": "negotiation_card",
+        "system": {
+            "goals": [
+                {
+                    "description": "Climb to top of hill currently located in front of car.",
+                    "metrics": [
+                        {
+                            "description": "Position provided as input to model",
+                            "baseline": ""
+                        }
+                    ]
+                }
+            ],
+            "problem_type": "other",
+            "task": "Autonomous control",
+            "usage_context": "An autonomous vehicle with an underpowered engine operating in a hilly environment, with control provided by a reinforcement learning model. The vehicle is constrained by an mission configuration that is prior to each use use, which defines the area of operation and regulations that the vehicle must comply with. ",
+            "risks": {
+                "fp": "",
+                "fn": "",
+                "other": [
+                    "Collision with pedestrian",
+                    "Exceeding regulatory operational constraints"
+                ]
+            }
+        },
+        "data": [
+            {
+                "description": "dataset is provided by a physics simulation egine",
+                "source": "AI gymnasium (https://gymnasium.farama.org/ - loaded with import gymnasium as gym)",
+                "classification": "unclassified",
+                "access": "must be able to access/install packages",
+                "labeling_method": "",
+                "labels": [
+                    {
+                        "name": "",
+                        "description": "",
+                        "percentage": 0.0
+                    }
+                ],
+                "fields": [
+                    {
+                        "name": "position",
+                        "description": "Position of vehicle",
+                        "type": "float",
+                        "expected_values": "-1.2 to 0.6",
+                        "missing_values": "",
+                        "special_values": ""
+                    },
+                    {
+                        "name": "velocity",
+                        "description": "Velocity of vehicle",
+                        "type": "",
+                        "expected_values": "-1 to 1",
+                        "missing_values": "",
+                        "special_values": ""
+                    }
+                ],
+                "rights": "",
+                "policies": ""
+            }
+        ],
+        "model": {
+            "development_compute_resources": {
+                "cpu": "1",
+                "gpu": "0",
+                "memory": "0",
+                "storage": "0"
+            },
+            "deployment_platform": "embedded automotive processor",
+            "capability_deployment_mechanism": "Loaded onto  using standard software update and configuration methods",
+            "input_specification": [
+                {
+                    "name": "position",
+                    "description": "",
+                    "type": "float",
+                    "expected_values": "-1.2 to 0.6"
+                },
+                {
+                    "name": "velocity",
+                    "description": "Velocity of vehicle",
+                    "type": "-1 to 1",
+                    "expected_values": ""
+                }
+            ],
+            "output_specification": [
+                {
+                    "name": "command",
+                    "description": "There are 3 discrete deterministic actions:\n\n0: Accelerate to the left\n1: Don\u2019t accelerate\n2: Accelerate to the right",
+                    "type": "sparse categorically encoded classification",
+                    "expected_values": "0,1,2"
+                }
+            ],
+            "production_compute_resources": {
+                "cpu": "1",
+                "gpu": "0",
+                "memory": "2MB",
+                "storage": "0"
+            }
+        },
+        "system_requirements": [
+            {
+                "identifier": "default.card-qas_001",
+                "quality": "Accuracy",
+                "stimulus": "After initialization, the",
+                "source": "user activates the gradient climber system",
+                "environment": "normal operation with the vehicle stationary and located at the bottom of a hill",
+                "response": "The model outputs manipulate the vehicle state to",
+                "measure": "produces a position=0.6 at some time $t$<250"
+            },
+            {
+                "identifier": "default.card-qas_002",
+                "quality": "Accuracy",
+                "stimulus": "Model receives valid input values from ",
+                "source": " sensors",
+                "environment": "normal operation with the gradient climber system active",
+                "response": "The model output is correct",
+                "measure": "and improves the expected reward 99.9% of the time"
+            },
+            {
+                "identifier": "default.card-qas_003",
+                "quality": "Model Impartial to Photo Location",
+                "stimulus": "Regardless of input values ",
+                "source": "sensors",
+                "environment": "normal operation with the gradient climber system active",
+                "response": "The model will not produce output values that cause the vehicle to exit the area of operation specified in the set operational configuration.",
+                "measure": "The position is compared to the operational parameters, and verified that -1.2<position<0.6"
+            },
+            {
+                "identifier": "default.card-qas_004",
+                "quality": "Detect Shifts in Output (Confidence) Distribution",
+                "stimulus": "Regardless of input values ",
+                "source": "sensors",
+                "environment": "normal operation with the gradient climber system active",
+                "response": "The model will not produce output values that cause the velocity to exceed the legal speed limit set in the operational configuration. ",
+                "measure": "This is measured by making sure that $|vehicle_velocity|<0.05$ at all times."
+            }
+        ]
+    }
+}
