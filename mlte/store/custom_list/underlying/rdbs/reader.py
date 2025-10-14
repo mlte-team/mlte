@@ -1,7 +1,5 @@
 """DB utils for getting custom list data from the DB."""
 
-from typing import List, Tuple
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -19,7 +17,7 @@ class DBReader:
     @staticmethod
     def get_entry(
         name: str, session: Session
-    ) -> Tuple[CustomListEntryModel, DBCustomListEntry]:
+    ) -> tuple[CustomListEntryModel, DBCustomListEntry]:
         """Reads the custom list entry with the given name using the provided session, and returns a CustomListEntryModel and DBCustomListEntry."""
         entry_orm = session.scalar(
             select(DBCustomListEntry).where(DBCustomListEntry.name == name)
@@ -38,7 +36,7 @@ class DBReader:
     @staticmethod
     def get_list(
         list_name: str, session: Session
-    ) -> Tuple[List[CustomListEntryModel], List[DBCustomListEntry]]:
+    ) -> tuple[list[CustomListEntryModel], list[DBCustomListEntry]]:
         """Reads all entries in specified list in the DB, returns list of CustomListEntryModel and DBCustomLIstEntry objects."""
         list_orm = list(
             session.scalars(
@@ -47,7 +45,7 @@ class DBReader:
                 )
             )
         )
-        entries: List[CustomListEntryModel] = []
+        entries: list[CustomListEntryModel] = []
         for entry_orm in list_orm:
             entry = create_custom_list_entry_model(entry_orm)
             entries.append(entry)
