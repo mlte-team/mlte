@@ -31,11 +31,7 @@ class DBReader:
             )
         else:
             return (
-                CustomListEntryModel(
-                    name=entry_orm.name,
-                    description=entry_orm.description,
-                    parent=entry_orm.parent,
-                ),
+                create_custom_list_entry_model(entry_orm),
                 entry_orm,
             )
 
