@@ -506,7 +506,7 @@ export async function saveCard(
       "POST",
       { body: { artifact, force: forceSave, parents: false } },
     );
-    if (response && response.artifact.header.type == "card") {
+    if (response) {
       successfulSubmission("Negotiation card", identifier, "saved");
       return response.artifact;
     }
