@@ -5,7 +5,7 @@ Superclass for all measurements.
 from __future__ import annotations
 
 import typing
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Optional
 
 import mlte._private.meta as meta
@@ -16,7 +16,7 @@ from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.model import MeasurementMetadata
 
 
-class Measurement(ABC):
+class Measurement:
     """
     The superclass for all model measurements.
     """

@@ -54,24 +54,14 @@
       </div>
 
       <div>
-        <b>False Positive Risk: </b>
-        {{ reportBody.negotiation_card.system.risks.fp }}
-      </div>
-
-      <div>
-        <b>False Negative Risk: </b>
-        {{ reportBody.negotiation_card.system.risks.fn }}
-      </div>
-
-      <div>
-        <b>Other Risks of Producing Incorrect Results</b>
+        <b>Risks of Producing Incorrect Results</b>
         <ul>
-          <li v-if="reportBody.negotiation_card.system.risks.other.length == 0">
+          <li v-if="reportBody.negotiation_card.system.risks.length == 0">
             None
           </li>
           <li
-            v-for="(risk, riskIndex) in reportBody.negotiation_card.system.risks
-              .other"
+            v-for="(risk, riskIndex) in reportBody.negotiation_card.system
+              .risks"
             v-else
             :key="riskIndex"
           >
@@ -186,6 +176,13 @@
             }}
           </li>
           <li>
+            <b>Graphics Processing Unit (GPU) Memory: </b
+            >{{
+              reportBody.negotiation_card.model.development_compute_resources
+                .gpu_memory
+            }}
+          </li>
+          <li>
             <b>Central Processing Units (CPUs): </b
             >{{
               reportBody.negotiation_card.model.development_compute_resources
@@ -193,10 +190,10 @@
             }}
           </li>
           <li>
-            <b>Memory: </b
+            <b>Main Memory: </b
             >{{
               reportBody.negotiation_card.model.development_compute_resources
-                .memory
+                .main_memory
             }}
           </li>
           <li>
@@ -267,16 +264,23 @@
             }}
           </li>
           <li>
+            <b>Graphics Processing Unit (GPU) Memory: </b
+            >{{
+              reportBody.negotiation_card.model.production_compute_resources
+                .gpu_memory
+            }}
+          </li>
+          <li>
             <b>Central Processing Units (CPUs): </b
             >{{
               reportBody.negotiation_card.model.production_compute_resources.cpu
             }}
           </li>
           <li>
-            <b>Memory: </b
+            <b>Main Memory: </b
             >{{
               reportBody.negotiation_card.model.production_compute_resources
-                .memory
+                .main_memory
             }}
           </li>
           <li>

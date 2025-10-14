@@ -218,19 +218,9 @@ function descriptorUpload(event: Event, descriptorName: string) {
             .split(" ")
             .join("_");
           form.value.system.usage_context = document.usage_context;
-          form.value.system.risks.fp = document.risks.risk_fp;
-          form.value.system.risks.fn = document.risks.risk_fn;
-          let lastRiskIndex = form.value.system.risks.other.length - 1;
-          if (
-            lastRiskIndex < 0 ||
-            form.value.system.risks.other[lastRiskIndex] == ""
-          ) {
-            // @ts-expect-error: TS18047 Reference to child component not expected functionality and has no type
-            systemInformationRef.value.parentAddRisk();
-            lastRiskIndex += 1;
-            form.value.system.risks.other[lastRiskIndex] =
-              document.risks.risk_other;
-          }
+          form.value.system.risks.push(document.risks.risk_fp);
+          form.value.system.risks.push(document.risks.risk_fn);
+          form.value.system.risks.push(document.risks.risk_other);
         } else if (descriptorName === "Raw Data") {
           let lastDataIndex = form.value.data.length - 1;
           if (
@@ -309,7 +299,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.gpu;
           form.value.model.development_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.development_compute_resources.memory =
+          form.value.model.development_compute_resources.main_memory =
             document.computing_resources.memory;
           form.value.model.development_compute_resources.storage =
             document.computing_resources.storage;
@@ -391,7 +381,7 @@ function descriptorUpload(event: Event, descriptorName: string) {
             document.computing_resources.gpu;
           form.value.model.production_compute_resources.cpu =
             document.computing_resources.cpu;
-          form.value.model.production_compute_resources.memory =
+          form.value.model.production_compute_resources.main_memory =
             document.computing_resources.memory;
           form.value.model.production_compute_resources.storage =
             document.computing_resources.storage;

@@ -95,7 +95,7 @@ def has_pynvml():
 # =================================================================================================
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = NvidiaGPUMemoryConsumption("id", 1)
+    m = NvidiaGPUMemoryConsumption("id", gpu_id=1)
 
     assert (
         m.evidence_metadata
@@ -193,7 +193,7 @@ def test_memory_evaluate_async() -> None:
     delay = 2
     cmd = get_cuda_load_command(delay)
 
-    pid = ProcessMeasurement.start_process(cmd[0], cmd[1:])
+    pid = ProcessMeasurement.start_process(cmd)
     m = NvidiaGPUMemoryConsumption("identifier")
 
     # Capture gpu memory consumption; blocks until process exit

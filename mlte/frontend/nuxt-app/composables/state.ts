@@ -24,15 +24,18 @@ export const useClassificationOptions = () =>
 // TODO: Pull these from the schema or a custom list
 export const useProblemTypeOptions = () =>
   useState<Array<SelectOption>>("problemTypeOptions", () => [
+    { value: "alert", text: "Alert" },
+    { value: "benchmarking", text: "Benchmarking" },
     { value: "classification", text: "Classification" },
     { value: "clustering", text: "Clustering" },
-    { value: "detection", text: "Detection" },
-    { value: "trend", text: "Trend" },
-    { value: "alert", text: "Alert" },
-    { value: "forecasting", text: "Forecasting" },
     { value: "content_generation", text: "Content Generation" },
-    { value: "benchmarking", text: "Benchmarking" },
+    { value: "detection", text: "Detection" },
+    { value: "forecasting", text: "Forecasting" },
     { value: "goals", text: "Goals" },
+    { value: "sentiment_analysis", text: "Sentiment Analysis" },
+    { value: "summarization", text: "Summarization" },
+    { value: "translation", text: "Translation" },
+    { value: "trend", text: "Trend" },
     { value: "other", text: "Other" },
   ]);
 
@@ -60,12 +63,20 @@ export const useTagOptions = () =>
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
 
+/**
+ * Export the state variable customListOptions to be globally available.
+ *
+ * customListOptions: List of SelectOptions to be used when making a <Select> for Custom List Names.
+ *
+ * @returns {Array<SelectOption>} customListOptions Ref to global customListOptions
+ */
 export const useCustomListOptions = async () => {
   const customListOptions = useState<Array<SelectOption>>(
     "customListOptions",
     () => [],
   );
 
+  // Populate customListOptions with data from the API
   const fetchData = async () => {
     const apiData = await getCustomListNames();
 
@@ -77,6 +88,7 @@ export const useCustomListOptions = async () => {
     }
   };
 
+  // On setup, populate the data if it is not present
   if (customListOptions.value.length === 0) {
     await fetchData();
   }
@@ -86,6 +98,7 @@ export const useCustomListOptions = async () => {
   };
 };
 
+// Function to update both QAC and QA with API
 export async function updateQAData() {
   const { fetchQACData } = await useQACategoryOptions();
   await fetchQACData();
@@ -93,6 +106,14 @@ export async function updateQAData() {
   await fetchQAData();
 }
 
+/**
+ * Export the state variable QACategoryOptions to be globally available.
+ *
+ * QACategoryOptions: List of QAOptions to be used when making a <Select> for QA Categories.
+ *
+ * @returns {ref<Array<QAOption>>} QACategoryOptions Ref to global QACategoryOptions
+ * @returns {function} fetchQACData Hook to update QACategoryOptions list with API
+ */
 export const useQACategoryOptions = async () => {
   const QACategoryOptions = useState<Array<QAOption>>(
     "QACategoryOptions",
@@ -112,6 +133,7 @@ export const useQACategoryOptions = async () => {
     }
   };
 
+  // On setup, populate the data if it is not present
   if (QACategoryOptions.value.length === 0) {
     await fetchQACData();
   }
@@ -122,6 +144,14 @@ export const useQACategoryOptions = async () => {
   };
 };
 
+/**
+ * Export the state variable qualityAttributeOptions to be globally available.
+ *
+ * qualityAttributeOptions: List of QAOptions to be used when making a <Select> for quality attributes.
+ *
+ * @returns {ref<Array<QAOption>>} qualityAttributeOptions Ref to global qualityAttributeOptions
+ * @returns {function} fetchQACData Hook to update qualityAttributeOptions list with API
+ */
 export const useQualityAttributeOptions = async () => {
   const qualityAttributeOptions = useState<Array<QAOption>>(
     "qualityAttributeOptions",
@@ -140,6 +170,7 @@ export const useQualityAttributeOptions = async () => {
     }
   };
 
+  // On setup, populate the data if it is not present
   if (qualityAttributeOptions.value.length === 0) {
     await fetchQAData();
   }
