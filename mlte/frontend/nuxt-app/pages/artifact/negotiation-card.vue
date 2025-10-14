@@ -160,6 +160,13 @@ async function submit() {
         useRoute().query.version +
         "&artifactId=card." +
         identifier;
+    } else {
+      response.body.system_requirements.forEach(
+        (requirement: QASDescriptor, index: number) => {
+          form.value.system_requirements[index].identifier =
+            requirement.identifier;
+        },
+      );
     }
   }
 }
