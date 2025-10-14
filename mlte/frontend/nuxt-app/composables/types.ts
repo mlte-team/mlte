@@ -60,8 +60,12 @@ export interface Version {
   identifier: string;
 }
 
+export interface WriteArtifactResponse<T = ArtifactModel> {
+  artifact: T;
+}
+
 export interface ArtifactModel<
-  TBody =
+  T =
     | NegotiationCardModel
     | EvidenceModel
     | TestSuiteModel
@@ -69,7 +73,7 @@ export interface ArtifactModel<
     | ReportModel,
 > {
   header: ArtifactHeader;
-  body: TBody;
+  body: T;
 }
 
 export class ArtifactHeader {

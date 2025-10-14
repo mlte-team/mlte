@@ -486,7 +486,7 @@ export async function saveCard(
   identifier: string,
   forceSave: boolean,
   card: NegotiationCardModel,
-): Promise<NegotiationCardModel | null> {
+): Promise<ArtifactModel<NegotiationCardModel> | null> {
   // Construct the object to be submitted to the backend
   const artifact = {
     header: {
@@ -499,14 +499,16 @@ export async function saveCard(
   };
 
   if (isValidNegotiation(artifact)) {
-    const response: NegotiationCardModel | null = await useApi(
+    const response: WriteArtifactResponse<
+      ArtifactModel<NegotiationCardModel>
+    > | null = await useApi(
       "/model/" + model + "/version/" + version + "/artifact",
       "POST",
       { body: { artifact, force: forceSave, parents: false } },
     );
-    if (response) {
+    if (response && response.artifact.header.type == "card") {
       successfulSubmission("Negotiation card", identifier, "saved");
-      return response;
+      return response.artifact;
     }
   } else {
     invalidArtifactAlert("Negotiation card", identifier, "saved");
