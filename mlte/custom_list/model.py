@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.model import BaseModel
@@ -14,7 +14,7 @@ class CustomListModel(BaseModel):
     name: CustomListName
     """An name to uniquely identify the list."""
 
-    entries: List[CustomListEntryModel] = []
+    entries: list[CustomListEntryModel] = []
     """A list of entries in the list."""
 
 
