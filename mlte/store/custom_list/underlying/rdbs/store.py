@@ -17,9 +17,6 @@ from mlte.store.custom_list.store_session import (
     CustomListEntryMapper,
     CustomListStoreSession,
 )
-from mlte.store.custom_list.underlying.rdbs.factory import (
-    create_custom_list_entry_orm,
-)
 from mlte.store.custom_list.underlying.rdbs.metadata import DBBase
 from mlte.store.custom_list.underlying.rdbs.reader import DBReader
 
@@ -95,16 +92,10 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
                 )
             except errors.ErrorNotFound:
                 # If entry was not found, it means we can create it.
-                parent_orm = None
-                if new_entry.parent:
-                    _, parent_orm = DBReader.get_entry(
-                        new_entry.parent, session
-                    )
-
-                entry_orm = create_custom_list_entry_orm(
+                entry_orm = DBReader.create_custom_list_entry_orm(
                     new_entry,
                     list_name,
-                    parent_id=parent_orm.id if parent_orm else None,
+                    session,
                 )
                 session.add(entry_orm)
                 session.commit()
@@ -132,19 +123,15 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
         self._ensure_parent_exists(updated_entry.parent, list_name)
 
         with Session(self.storage.engine) as session:
-            _, entry_orm = DBReader.get_entry(
-                updated_entry.name, session
-            )
+            _, entry_orm = DBReader.get_entry(updated_entry.name, session)
 
             # Update existing entry
-            entry_orm = create_custom_list_entry_orm(
-                updated_entry, entry_orm.list_name, entry_orm
+            entry_orm = DBReader.create_custom_list_entry_orm(
+                updated_entry, entry_orm.list_name, session, entry_orm
             )
             session.commit()
 
-            stored_entry, _ = DBReader.get_entry(
-                updated_entry.name, session
-            )
+            stored_entry, _ = DBReader.get_entry(updated_entry.name, session)
             return stored_entry
 
     def delete(

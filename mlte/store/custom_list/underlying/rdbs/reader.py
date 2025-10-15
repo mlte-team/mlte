@@ -1,13 +1,13 @@
 """DB utils for getting custom list data from the DB."""
 
+from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import mlte.store.error as errors
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
-from mlte.store.custom_list.underlying.rdbs.factory import (
-    create_custom_list_entry_model,
-)
 from mlte.store.custom_list.underlying.rdbs.metadata import DBCustomListEntry
 
 
@@ -29,9 +29,7 @@ class DBReader:
             )
         else:
             return (
-                create_custom_list_entry_model(
-                    entry_orm
-                ),
+                DBReader.create_custom_list_entry_model(entry_orm),
                 entry_orm,
             )
 
@@ -49,15 +47,37 @@ class DBReader:
         )
         entries: list[CustomListEntryModel] = []
         for entry_orm in list_orm:
-            parent_orm = None
-            if entry_orm.parent:
-                _, parent_orm = DBReader._get_entry_by_id(
-                    entry_orm.parent, session
-                )
-
-            entry = create_custom_list_entry_model(
-                entry_orm, parent_orm.name if parent_orm else None
-            )
+            entry = DBReader.create_custom_list_entry_model(entry_orm)
             entries.append(entry)
 
         return entries, list_orm
+
+    @staticmethod
+    def create_custom_list_entry_orm(
+        entry: CustomListEntryModel,
+        list_name: CustomListName,
+        session: Session,
+        entry_orm: Optional[DBCustomListEntry] = None,
+    ) -> DBCustomListEntry:
+        """Creates or updates the DB object from the corresponding internal model."""
+        if entry_orm is None:
+            entry_orm = DBCustomListEntry()
+        if entry.parent:
+            _, entry_orm.parent = DBReader.get_entry(entry.parent, session)
+
+        entry_orm.list_name = list_name
+        entry_orm.name = entry.name
+        entry_orm.description = entry.description
+
+        return entry_orm
+
+    @staticmethod
+    def create_custom_list_entry_model(
+        entry_orm: DBCustomListEntry,
+    ) -> CustomListEntryModel:
+        """Creates the internal model object from the corresponding DB object."""
+        return CustomListEntryModel(
+            name=entry_orm.name,
+            description=entry_orm.description,
+            parent=entry_orm.parent.name if entry_orm.parent else None,
+        )

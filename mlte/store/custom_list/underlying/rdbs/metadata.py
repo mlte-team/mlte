@@ -27,8 +27,10 @@ class DBCustomListEntry(DBBase):
     parent_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("custom_list_entry.id"), nullable=True
     )
-    parent: Mapped[Optional[DBCustomListEntry]] = relationship()
-    children: Mapped[list[DBCustomListEntry]] = relationship(back_populates="parent", cascade="all, delete-orphan")
+    parent: Mapped[Optional[DBCustomListEntry]] = relationship(remote_side=[id])
+    children: Mapped[list[DBCustomListEntry]] = relationship(
+        back_populates="parent", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
-        return f"CustomListEntry(id={self.id!r}, list_name={self.list_name!r}, name={self.name!r}, description={self.description!r}), parent={self.parent!r}"
+        return f"CustomListEntry(id={self.id!r}, list_name={self.list_name!r}, name={self.name!r}, description={self.description!r}), parent={self.parent}"
