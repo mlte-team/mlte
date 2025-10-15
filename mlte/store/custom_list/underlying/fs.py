@@ -82,16 +82,16 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def create(
         self,
-        entry: CustomListEntryModel,
+        new_entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self._ensure_parent_exists(entry.parent, list_name)
+        self._ensure_parent_exists(new_entry.parent, list_name)
 
         self.storage.ensure_resource_does_not_exist(
-            entry.name, [list_name.value]
+            new_entry.name, [list_name.value]
         )
-        return self._write_entry(entry, list_name)
+        return self._write_entry(new_entry, list_name)
 
     def read(
         self, entry_name: str, list_name: Optional[CustomListName] = None
@@ -107,14 +107,14 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def edit(
         self,
-        entry: CustomListEntryModel,
+        updated_entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
-        self._ensure_parent_exists(entry.parent, list_name)
-        self.storage.ensure_resource_exists(entry.name, [list_name.value])
+        self._ensure_parent_exists(updated_entry.parent, list_name)
+        self.storage.ensure_resource_exists(updated_entry.name, [list_name.value])
 
-        return self._write_entry(entry, list_name)
+        return self._write_entry(updated_entry, list_name)
 
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
