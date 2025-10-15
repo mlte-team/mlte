@@ -97,7 +97,6 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(new_entry.parent, list_name)
-
         if new_entry.name in self.storage.custom_lists[list_name]:
             raise errors.ErrorAlreadyExists(
                 f"Custom list Entry {new_entry.name}"
@@ -110,13 +109,11 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)
-
         entry = self.storage.custom_lists[list_name][entry_name]
         return entry
 
     def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         list_name = self._check_valid_custom_list(list_name)
-
         return [
             entry_name
             for entry_name in self.storage.custom_lists[list_name].keys()
@@ -130,7 +127,6 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(updated_entry.parent, list_name)
         self._check_entry_in_list(updated_entry.name, list_name)
-
         self.storage.custom_lists[list_name][updated_entry.name] = updated_entry
         return updated_entry
 
