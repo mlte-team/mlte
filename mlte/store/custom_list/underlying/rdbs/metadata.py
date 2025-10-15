@@ -17,13 +17,14 @@ class DBBase(DeclarativeBase):
 class DBCustomListEntry(DBBase):
     __tablename__ = "custom_list_entry"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     list_name: Mapped[CustomListName]
-    name: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str]
     description: Mapped[str]
 
-    parent: Mapped[Optional[str]] = mapped_column(
-        ForeignKey("custom_list_entry.name"), nullable=True
+    parent: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("custom_list_entry.id"), nullable=True
     )
 
     def __repr__(self) -> str:
-        return f"CustomListEntry(name={self.name!r}, description={self.description!r}, parent={self.parent!r})"
+        return f"CustomListEntry(id={self.id!r}, list_name={self.list_name!r}, name={self.name!r}, description={self.description!r}), parent={self.parent!r}"

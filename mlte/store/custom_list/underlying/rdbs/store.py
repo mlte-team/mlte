@@ -84,18 +84,22 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
         new_entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
-        if list_name is None:
-            raise RuntimeError("Custom list name can't be empty")
+        list_name = self._check_valid_custom_list(list_name)
+        self._ensure_parent_exists(new_entry.parent, list_name)
 
         with Session(self.storage.engine) as session:
             try:
-                _, _ = DBReader.get_entry(new_entry.name, session)
+                _, _ = DBReader.get_entry_by_name(new_entry.name, session)
                 raise errors.ErrorAlreadyExists(
                     f"Custom list entry with name {new_entry.name} already exists."
                 )
             except errors.ErrorNotFound:
                 # If entry was not found, it means we can create it.
-                entry_orm = create_custom_list_entry_orm(new_entry, list_name)
+                parent_orm = None
+                if new_entry.parent:
+                    _, parent_orm = DBReader.get_entry_by_name(new_entry.parent, session)
+
+                entry_orm = create_custom_list_entry_orm(new_entry, list_name, parent_id=parent_orm.id if parent_orm else None)
                 session.add(entry_orm)
                 session.commit()
                 return new_entry
@@ -104,12 +108,11 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         with Session(self.storage.engine) as session:
-            entry, _ = DBReader.get_entry(entry_name, session)
+            entry, _ = DBReader.get_entry_by_name(entry_name, session)
             return entry
 
     def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
-        if list_name is None:
-            raise RuntimeError("Custom list name can't be empty")
+        list_name = self._check_valid_custom_list(list_name)
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_list(list_name, session)
             return [entry.name for entry in entries]
@@ -119,8 +122,11 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
         updated_entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        list_name = self._check_valid_custom_list(list_name)
+        self._ensure_parent_exists(updated_entry.parent, list_name)
+
         with Session(self.storage.engine) as session:
-            _, entry_orm = DBReader.get_entry(updated_entry.name, session)
+            _, entry_orm = DBReader.get_entry_by_name(updated_entry.name, session)
 
             # Update existing entry
             entry_orm = create_custom_list_entry_orm(
@@ -128,14 +134,14 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             )
             session.commit()
 
-            stored_entry, _ = DBReader.get_entry(updated_entry.name, session)
+            stored_entry, _ = DBReader.get_entry_by_name(updated_entry.name, session)
             return stored_entry
 
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
         with Session(self.storage.engine) as session:
-            entry, entry_orm = DBReader.get_entry(entry_name, session)
+            entry, entry_orm = DBReader.get_entry_by_name(entry_name, session)
             session.delete(entry_orm)
             session.commit()
             return entry
