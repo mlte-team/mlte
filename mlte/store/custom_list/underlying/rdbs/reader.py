@@ -15,7 +15,7 @@ class DBReader:
     """Class encapsulating functions to read custom list related data from the DB."""
 
     @staticmethod
-    def get_entry_by_name(
+    def get_entry(
         name: str, session: Session
     ) -> tuple[CustomListEntryModel, DBCustomListEntry]:
         """Reads the custom list entry with the given name using the provided session and returns a CustomListEntryModel and DBCustomListEntry."""
@@ -28,42 +28,9 @@ class DBReader:
                 f"Custom List Entry with name {name} was not found in custom list store."
             )
         else:
-            parent_orm = None
-            if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(
-                    entry_orm.parent, session
-                )
-
             return (
                 create_custom_list_entry_model(
-                    entry_orm, parent_orm.name if parent_orm else None
-                ),
-                entry_orm,
-            )
-
-    @staticmethod
-    def get_entry_by_id(
-        id: int, session: Session
-    ) -> tuple[CustomListEntryModel, DBCustomListEntry]:
-        """Reads the custom list entry with the given id using the provided session and returns a CustomListEntryModel and DBCustomListEntry."""
-        entry_orm = session.scalar(
-            select(DBCustomListEntry).where(DBCustomListEntry.id == id)
-        )
-
-        if entry_orm is None:
-            raise errors.ErrorNotFound(
-                f"Custom List Entry with id {id} was not found in custom list store."
-            )
-        else:
-            parent_orm = None
-            if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(
-                    entry_orm.parent, session
-                )
-
-            return (
-                create_custom_list_entry_model(
-                    entry_orm, parent_orm.name if parent_orm else None
+                    entry_orm
                 ),
                 entry_orm,
             )
@@ -84,7 +51,7 @@ class DBReader:
         for entry_orm in list_orm:
             parent_orm = None
             if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(
+                _, parent_orm = DBReader._get_entry_by_id(
                     entry_orm.parent, session
                 )
 

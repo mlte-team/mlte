@@ -27,11 +27,10 @@ def create_custom_list_entry_orm(
 
 def create_custom_list_entry_model(
     entry_orm: DBCustomListEntry,
-    parent_name: Optional[str] = None,
 ) -> CustomListEntryModel:
     """Creates the internal model object from the corresponding DB object."""
     return CustomListEntryModel(
         name=entry_orm.name,
         description=entry_orm.description,
-        parent=parent_name,
+        parent=entry_orm.parent,
     )
