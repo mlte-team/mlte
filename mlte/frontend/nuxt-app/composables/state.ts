@@ -24,15 +24,18 @@ export const useClassificationOptions = () =>
 // TODO: Pull these from the schema or a custom list
 export const useProblemTypeOptions = () =>
   useState<Array<SelectOption>>("problemTypeOptions", () => [
+    { value: "alert", text: "Alert" },
+    { value: "benchmarking", text: "Benchmarking" },
     { value: "classification", text: "Classification" },
     { value: "clustering", text: "Clustering" },
-    { value: "detection", text: "Detection" },
-    { value: "trend", text: "Trend" },
-    { value: "alert", text: "Alert" },
-    { value: "forecasting", text: "Forecasting" },
     { value: "content_generation", text: "Content Generation" },
-    { value: "benchmarking", text: "Benchmarking" },
+    { value: "detection", text: "Detection" },
+    { value: "forecasting", text: "Forecasting" },
     { value: "goals", text: "Goals" },
+    { value: "sentiment_analysis", text: "Sentiment Analysis" },
+    { value: "summarization", text: "Summarization" },
+    { value: "translation", text: "Translation" },
+    { value: "trend", text: "Trend" },
     { value: "other", text: "Other" },
   ]);
 
