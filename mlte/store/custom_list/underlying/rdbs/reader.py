@@ -30,13 +30,17 @@ class DBReader:
         else:
             parent_orm = None
             if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(entry_orm.parent, session)
+                _, parent_orm = DBReader.get_entry_by_id(
+                    entry_orm.parent, session
+                )
 
             return (
-                create_custom_list_entry_model(entry_orm, parent_orm.name if parent_orm else None),
+                create_custom_list_entry_model(
+                    entry_orm, parent_orm.name if parent_orm else None
+                ),
                 entry_orm,
             )
-    
+
     @staticmethod
     def get_entry_by_id(
         id: int, session: Session
@@ -53,10 +57,14 @@ class DBReader:
         else:
             parent_orm = None
             if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(entry_orm.parent, session)
+                _, parent_orm = DBReader.get_entry_by_id(
+                    entry_orm.parent, session
+                )
 
             return (
-                create_custom_list_entry_model(entry_orm, parent_orm.name if parent_orm else None),
+                create_custom_list_entry_model(
+                    entry_orm, parent_orm.name if parent_orm else None
+                ),
                 entry_orm,
             )
 
@@ -76,9 +84,13 @@ class DBReader:
         for entry_orm in list_orm:
             parent_orm = None
             if entry_orm.parent:
-                _, parent_orm = DBReader.get_entry_by_id(entry_orm.parent, session)
+                _, parent_orm = DBReader.get_entry_by_id(
+                    entry_orm.parent, session
+                )
 
-            entry = create_custom_list_entry_model(entry_orm, parent_orm.name if parent_orm else None)
+            entry = create_custom_list_entry_model(
+                entry_orm, parent_orm.name if parent_orm else None
+            )
             entries.append(entry)
 
         return entries, list_orm

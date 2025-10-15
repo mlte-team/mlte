@@ -72,12 +72,15 @@ class CustomListEntryMapper(ResourceMapper):
         self, list_name: Optional[CustomListName]
     ) -> CustomListName:
         """Checks if the custom lists exists within the store."""
-        if list_name is None or list_name not in CustomListName._value2member_map_.keys():
+        if (
+            list_name is None
+            or list_name not in CustomListName._value2member_map_.keys()
+        ):
             raise errors.ErrorNotFound(
                 f"CustomListName, {list_name}, does not exist or is None."
             )
         else:
-            return list_name    
+            return list_name
 
     def _ensure_parent_exists(
         self, parent: Optional[str], list_name: Optional[CustomListName]

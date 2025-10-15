@@ -99,7 +99,9 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         self._ensure_parent_exists(new_entry.parent, list_name)
 
         if new_entry.name in self.storage.custom_lists[list_name]:
-            raise errors.ErrorAlreadyExists(f"Custom list Entry {new_entry.name}")
+            raise errors.ErrorAlreadyExists(
+                f"Custom list Entry {new_entry.name}"
+            )
         self.storage.custom_lists[list_name][new_entry.name] = new_entry
         return new_entry
 

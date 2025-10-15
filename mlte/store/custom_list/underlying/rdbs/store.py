@@ -97,9 +97,15 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
                 # If entry was not found, it means we can create it.
                 parent_orm = None
                 if new_entry.parent:
-                    _, parent_orm = DBReader.get_entry_by_name(new_entry.parent, session)
+                    _, parent_orm = DBReader.get_entry_by_name(
+                        new_entry.parent, session
+                    )
 
-                entry_orm = create_custom_list_entry_orm(new_entry, list_name, parent_id=parent_orm.id if parent_orm else None)
+                entry_orm = create_custom_list_entry_orm(
+                    new_entry,
+                    list_name,
+                    parent_id=parent_orm.id if parent_orm else None,
+                )
                 session.add(entry_orm)
                 session.commit()
                 return new_entry
@@ -126,7 +132,9 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
         self._ensure_parent_exists(updated_entry.parent, list_name)
 
         with Session(self.storage.engine) as session:
-            _, entry_orm = DBReader.get_entry_by_name(updated_entry.name, session)
+            _, entry_orm = DBReader.get_entry_by_name(
+                updated_entry.name, session
+            )
 
             # Update existing entry
             entry_orm = create_custom_list_entry_orm(
@@ -134,7 +142,9 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             )
             session.commit()
 
-            stored_entry, _ = DBReader.get_entry_by_name(updated_entry.name, session)
+            stored_entry, _ = DBReader.get_entry_by_name(
+                updated_entry.name, session
+            )
             return stored_entry
 
     def delete(
