@@ -139,17 +139,6 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         del self.storage.custom_lists[list_name][entry_name]
         return popped
 
-    def _check_valid_custom_list(
-        self, list_name: Optional[CustomListName]
-    ) -> CustomListName:
-        """Checks if the custom lists exists within the store."""
-        if list_name is None or list_name not in self.storage.custom_lists:
-            raise errors.ErrorNotFound(
-                f"CustomListName, {list_name}, does not exist or is None."
-            )
-        else:
-            return list_name
-
     def _check_entry_in_list(self, entry_name: str, list_name: CustomListName):
         if entry_name not in self.storage.custom_lists[list_name]:
             raise errors.ErrorNotFound(f"Custom list Entry {entry_name}")
