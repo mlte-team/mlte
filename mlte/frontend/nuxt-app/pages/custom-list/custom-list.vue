@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout name="base-layout" @nav="handleNav">
     <title>Custom Lists</title>
     <template #page-title>Custom Lists</template>
 
@@ -104,6 +104,13 @@ async function deleteEntry(entryId: string) {
   );
   if (response) {
     updateList(selectedCustomList.value);
+  }
+}
+
+// Handle navigation on sidebar, if editing it exits edit view
+async function handleNav() {
+  if (editFlag.value) {
+    await cancelEdit();
   }
 }
 

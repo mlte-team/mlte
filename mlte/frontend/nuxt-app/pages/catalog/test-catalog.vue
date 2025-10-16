@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout name="base-layout" @nav="handleNav">
     <title>Test Catalog</title>
     <template #page-title>Test Catalog</template>
 
@@ -168,6 +168,13 @@ async function deleteEntry(catalogId: string, entryId: string) {
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
     await updateFullEntryList();
+  }
+}
+
+// Handle navigation on sidebar, if editing it exits edit view
+async function handleNav() {
+  if (editFlag.value) {
+    await cancelEdit();
   }
 }
 
