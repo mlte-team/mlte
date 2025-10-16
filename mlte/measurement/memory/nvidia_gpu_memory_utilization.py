@@ -1,7 +1,7 @@
 """
-mlte/measurement/memory/nvidia_gpu_memory_consumption.py
+mlte/measurement/memory/nvidia_gpu_memory_utilization.py
 
-Memory consumption measurement for gpu processes.
+Memory utilization measurement for gpu processes.
 
 It relies on the pynvml package for status. We dynamically import it, so that we can can return useful
 results when it isn't available.
@@ -27,157 +27,13 @@ from __future__ import annotations
 import sys
 import time
 from importlib import import_module
-from typing import Any, Callable, Optional
+from typing import Optional
 
 import psutil
 
-from mlte.evidence.external import ExternalEvidence
+from mlte.measurement.common import CommonStatistics
 from mlte.measurement.process_measurement import ProcessMeasurement
-from mlte.measurement.units import (
-    Quantity,
-    Unit,
-    Units,
-    str_to_unit,
-    unit_to_str,
-)
-from mlte.validation.validator import Validator
-
-# -----------------------------------------------------------------------------
-#   ___
-#  / __|___ _ __  _ __  ___ _ _
-# | (__/ _ \ '  \| '  \/ _ \ ' \
-#  \___\___/_|_|_|_|_|_\___/_||_|
-# -----------------------------------------------------------------------------
-
-
-class CommonStatistics(ExternalEvidence):
-    DEFAULT_UNIT: Optional[Unit] = None
-
-    def __init__(self, avg: int, min: int, max: int, unit: Optional[Unit]):
-        """
-
-        :param avg: The average value
-        :param min: The minimum value
-        :param max: The maximum value
-        :param unit: the unit the values comes in, as a value from Units
-        """
-        super().__init__()
-
-        self.avg = Quantity(avg, unit)
-        """The average value."""
-
-        self.min = Quantity(min, unit)
-        """The minimum values."""
-
-        self.max = Quantity(max, unit)
-        """The maximum value."""
-
-        self.unit = unit
-        """The unit being used for all values."""
-
-    def serialize(self) -> dict[str, Any]:
-        """
-        Serialize to a JSON object.
-
-        :return: The JSON object
-        """
-        return {
-            "avg": self.avg.magnitude,
-            "min": self.min.magnitude,
-            "max": self.max.magnitude,
-            "unit": unit_to_str(self.unit),
-        }
-
-    @classmethod
-    def deserialize(cls, data: dict[str, Any]) -> Any:
-        """
-        Deserialize from a JSON object.
-
-        :param data: The JSON object
-
-        :return: The deserialized instance
-        """
-        unit = str_to_unit(data["unit"])
-        return cls(
-            avg=data["avg"],
-            min=data["min"],
-            max=data["max"],
-            unit=unit if unit else cls.DEFAULT_UNIT,
-        )
-
-    def __str__(self) -> str:
-        """Return a string representation."""
-        return (
-            f"Average: {self.avg}\n"
-            + f"Minimum: {self.min}\n"
-            + f"Maximum: {self.max}"
-        )
-
-    def __repr__(self) -> str:
-        """Return a string representation for debugging."""
-        return (
-            f"avg={self.avg}, min={self.min}, max={self.max}, unit={self.unit}"
-        )
-
-    @classmethod
-    def max_consumption_less_than(
-        cls, threshold: int, unit: Optional[Unit] = None
-    ) -> Validator:
-        """
-        Construct and invoke a validator for maximum memory consumption.
-
-        :param threshold: The threshold value for maximum consumption
-        :param unit: the unit the threshold comes in, as a value from Units; defaults to DEFAULT_UNIT
-
-        :return: The Validator that can be used to validate a Value.
-        """
-        # This allows us to get the unit from a subclass
-        if unit is None:
-            unit = cls.DEFAULT_UNIT
-
-        threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Any], bool] = (
-            lambda stats: stats.max < threshold_w_unit
-        )
-        validator: Validator = Validator.build_validator(
-            bool_exp=bool_exp,
-            thresholds=[threshold_w_unit],
-            success=f"Maximum consumption below threshold {threshold_w_unit}",
-            failure=f"Maximum consumption exceeds threshold {threshold_w_unit}",
-            input_types=[cls],
-        )
-        return validator
-
-    @classmethod
-    def average_consumption_less_than(
-        cls, threshold: float, unit: Optional[Unit] = None
-    ) -> Validator:
-        """
-        Construct and invoke a validator for average memory consumption.
-
-        :param threshold: The threshold value for average consumption, in KB
-        :param unit: the unit the threshold comes in, as a value from Units; defaults to Units.kilobyte
-
-        :return: The Validator that can be used to validate a Value.
-        """
-
-        # This allows us to get the unit from a subclass
-        if unit is None:
-            unit = cls.DEFAULT_UNIT
-
-        threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Any], bool] = (
-            lambda stats: stats.avg < threshold_w_unit
-        )
-        validator: Validator = Validator.build_validator(
-            bool_exp=bool_exp,
-            thresholds=[threshold_w_unit],
-            success=f"Average consumption below threshold {threshold_w_unit}",
-            failure=f"Average consumption exceeds threshold {threshold_w_unit}",
-            input_types=[cls],
-        )
-        return validator
-
+from mlte.measurement.units import Quantity, Unit, Units
 
 # -----------------------------------------------------------------------------
 #  ___ _        _   _    _   _
@@ -195,16 +51,18 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
     """
     The NvidiaGPUMemoryStatistics class encapsulates data
     and functionality for tracking and updating memory
-    consumption statistics for an NVIDIA GPU.
+    utilization statistics for an NVIDIA GPU.
     """
 
-    def __init__(self, avg: int, min: int, max: int, unit: Unit = DEFAULT_UNIT):
+    def __init__(
+        self, avg: float, min: float, max: float, unit: Unit = DEFAULT_UNIT
+    ):
         """
         Initialize a NvidiaGPUMemoryStatistics instance.
 
-        :param avg: The average memory consumption
-        :param min: The minimum memory consumption
-        :param max: The maximum memory consumption
+        :param avg: The average memory utilization
+        :param min: The minimum memory utilization
+        :param max: The maximum memory utilization
         :param unit: the unit the values comes in, as a value from Units; defaults to DEFAULT_UNIT
         """
         super().__init__(avg, min, max, unit)
@@ -218,8 +76,8 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # -----------------------------------------------------------------------------
 
 
-class NvidiaGPUMemoryConsumption(ProcessMeasurement):
-    """Measure memory consumption for a specific gpu."""
+class NvidiaGPUMemoryUtilization(ProcessMeasurement):
+    """Measure memory utilizatio for a specific gpu."""
 
     def __init__(
         self,
@@ -228,7 +86,7 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         gpu_id: int = 0,
     ):
         """
-        Initialize a LocalProcessMemoryConsumption instance.
+        Initialize a LocalProcessMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
@@ -257,9 +115,9 @@ class NvidiaGPUMemoryConsumption(ProcessMeasurement):
         total = 0
         count = 0
 
-        # Keep collecting stats untl the controlling process goes away.
-        # It might actualy take the controlling process a while to start up the memory consumption
-        # so just collect the entire time whether we have consumption or not.
+        # Keep collecting stats until the controlling process goes away.
+        # It might actually take the controlling process a while to start up the memory utilization
+        # so just collect the entire time whether we have utilization or not.
         while True:
             try:
                 # This is just so that we check to see if our task is running

@@ -1,7 +1,7 @@
 """
-test/measurement/memory/test_local_process_memory_consumption.py
+test/measurement/memory/test_local_process_memory_utilization.py
 
-Unit test for LocalProcessMemoryConsumption measurement.
+Unit test for LocalProcessMemoryUtilization measurement.
 """
 
 import importlib
@@ -16,10 +16,10 @@ import pytest
 
 from mlte.context.context import Context
 from mlte.measurement.memory import (
-    NvidiaGPUMemoryConsumption,
     NvidiaGPUMemoryStatistics,
+    NvidiaGPUMemoryUtilization,
 )
-from mlte.measurement.memory.nvidia_gpu_memory_consumption import (
+from mlte.measurement.memory.nvidia_gpu_memory_utilization import (
     _get_nvml_memory_usage_bytes,
 )
 from mlte.measurement.process_measurement import ProcessMeasurement
@@ -91,16 +91,16 @@ def has_pynvml():
 
 
 # =================================================================================================
-# NvidiaGPUMemoryConsumption
+# NvidiaGPUMemoryUtilization
 # =================================================================================================
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = NvidiaGPUMemoryConsumption("id", gpu_id=1)
+    m = NvidiaGPUMemoryUtilization("id", gpu_id=1)
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
-        == "mlte.measurement.memory.nvidia_gpu_memory_consumption.NvidiaGPUMemoryConsumption"
+        == "mlte.measurement.memory.nvidia_gpu_memory_utilization.NvidiaGPUMemoryUtilization"
     )
     assert m.gpu_id == 1
 
@@ -118,7 +118,7 @@ def test_nvidia_faking_gpu():
     # We have to patch the path to where it was actually included to make sure we get the right
     # instance mocked
     with patch(
-        "mlte.measurement.memory.nvidia_gpu_memory_consumption.import_module"
+        "mlte.measurement.memory.nvidia_gpu_memory_utilization.import_module"
     ) as mock_import_module:
         # Configure the mock to return a specific mock object
         mem_info_mock = MemInfoMock(
@@ -140,7 +140,7 @@ def test_nvidia_faking_gpu():
 
 @pytest.mark.skipif(
     not has_torch_cuda(),
-    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+    reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_nvidia_get_memory_usage():
     """
@@ -153,7 +153,7 @@ def test_nvidia_get_memory_usage():
 
 @pytest.mark.skipif(
     has_pynvml(),
-    reason="NvidiaGPUMemoryConsumption has pynvml so can't test errors.",
+    reason="NvidiaGPUMemoryUtilization has pynvml so can't test errors.",
 )
 def test_nvidia_get_memory_usage_no_pynvlm():
     assert _get_nvml_memory_usage_bytes(0) == -1
@@ -161,15 +161,15 @@ def test_nvidia_get_memory_usage_no_pynvlm():
 
 @pytest.mark.skipif(
     not has_torch_cuda(),
-    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+    reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_memory_evaluate() -> None:
     start = time.time()
 
     # NOTE: This assumes that the testing environment has access to gpu0
-    m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryUtilization("identifier")
 
-    # Capture memory consumption; blocks until process exit
+    # Capture memory utilization; blocks until process exit
     delay = 2
     stats: NvidiaGPUMemoryStatistics = typing.cast(
         NvidiaGPUMemoryStatistics, m.evaluate(get_cuda_load_command(delay))
@@ -185,7 +185,7 @@ def test_memory_evaluate() -> None:
 
 @pytest.mark.skipif(
     not has_torch_cuda(),
-    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+    reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_memory_evaluate_async() -> None:
     start = time.time()
@@ -194,9 +194,9 @@ def test_memory_evaluate_async() -> None:
     cmd = get_cuda_load_command(delay)
 
     pid = ProcessMeasurement.start_process(cmd)
-    m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryUtilization("identifier")
 
-    # Capture gpu memory consumption; blocks until process exit
+    # Capture gpu memory utilization; blocks until process exit
     m.evaluate_async(pid)
     stats = m.wait_for_output()
 
@@ -207,10 +207,10 @@ def test_memory_evaluate_async() -> None:
 
 @pytest.mark.skipif(
     not has_torch_cuda(),
-    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+    reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_memory_validate_success() -> None:
-    m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryUtilization("identifier")
 
     # Blocks until process exit
     delay = 2
@@ -224,10 +224,10 @@ def test_memory_validate_success() -> None:
 
 @pytest.mark.skipif(
     not has_torch_cuda(),
-    reason="NvidiaGPUMemoryConsumption requires cuda to test.",
+    reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_memory_validate_failure() -> None:
-    m = NvidiaGPUMemoryConsumption("identifier")
+    m = NvidiaGPUMemoryUtilization("identifier")
 
     # Blocks until process exit
     delay = 2
@@ -281,11 +281,11 @@ def test_result_save_load(
     assert r.max == stats.max
 
 
-def test_max_consumption_less_than() -> None:
+def test_max_utilization_less_than() -> None:
     # Default units should work across the two classes.
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(3)
+    validator = NvidiaGPUMemoryStatistics.max_utilization_less_than(3)
 
     # Less than case
     res = validator.validate(
@@ -306,11 +306,11 @@ def test_max_consumption_less_than() -> None:
     assert not bool(res)
 
 
-def test_max_consumption_less_than_in_bytes() -> None:
+def test_max_utilization_less_than_in_bytes() -> None:
     # The units shouldn't matter
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+    validator = NvidiaGPUMemoryStatistics.max_utilization_less_than(
         3, unit=Units.bytes
     )
 
@@ -339,17 +339,17 @@ def test_max_consumption_less_than_in_bytes() -> None:
     assert not bool(res)
 
 
-def test_max_consumption_less_than_invalid_unit() -> None:
+def test_max_utilization_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.max_consumption_less_than(
+        _ = NvidiaGPUMemoryStatistics.max_utilization_less_than(
             3000, Units.fakeunit
         )
 
 
-def test_avg_consumption_less_than() -> None:
+def test_avg_utilization_less_than() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(3)
+    validator = NvidiaGPUMemoryStatistics.average_utilization_less_than(3)
 
     # Less than case
     res = validator.validate(
@@ -370,10 +370,10 @@ def test_avg_consumption_less_than() -> None:
     assert not bool(res)
 
 
-def test_avg_consumption_less_than_in_bytes() -> None:
+def test_avg_utilization_less_than_in_bytes() -> None:
     m = get_sample_evidence_metadata()
 
-    validator = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+    validator = NvidiaGPUMemoryStatistics.average_utilization_less_than(
         3000, Units.bytes
     )
 
@@ -402,8 +402,8 @@ def test_avg_consumption_less_than_in_bytes() -> None:
     assert not bool(res)
 
 
-def test_average_consumption_less_than_invalid_unit() -> None:
+def test_average_utilization_less_than_invalid_unit() -> None:
     with pytest.raises(pint.UndefinedUnitError):
-        _ = NvidiaGPUMemoryStatistics.average_consumption_less_than(
+        _ = NvidiaGPUMemoryStatistics.average_utilization_less_than(
             3000, Units.fakeunit
         )
