@@ -36,40 +36,54 @@ class CustomListEntryMapper(ResourceMapper):
 
     def create(
         self,
-        new_custom_list_entry: CustomListEntryModel,
-        custom_list_name: Optional[CustomListName] = None,
-    ) -> CustomListEntryModel:
-        raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(
-        self,
-        updated_custom_list_entry: CustomListEntryModel,
-        custom_list_name: Optional[CustomListName] = None,
+        new_entry: CustomListEntryModel,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def read(
         self,
-        custom_list_entry_name: str,
-        custom_list_name: Optional[CustomListName] = None,
+        entry_name: str,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def list(
         self,
-        custom_list_name: Optional[CustomListName] = None,
+        list_name: Optional[CustomListName] = None,
     ) -> List[str]:
+        raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
+
+    def edit(
+        self,
+        updated_entry: CustomListEntryModel,
+        list_name: Optional[CustomListName] = None,
+    ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(
         self,
-        custom_list_entry_name: str,
-        custom_list_name: Optional[CustomListName] = None,
+        entry_name: str,
+        list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
+    def _check_valid_custom_list(
+        self, list_name: Optional[CustomListName]
+    ) -> CustomListName:
+        """Checks if the custom lists exists within the store."""
+        if (
+            list_name is None
+            or list_name not in CustomListName._value2member_map_.keys()
+        ):
+            raise errors.ErrorNotFound(
+                f"CustomListName, {list_name}, does not exist or is None."
+            )
+        else:
+            return list_name
+
     def _ensure_parent_exists(
-        self, parent: str, list_name: Optional[CustomListName]
+        self, parent: Optional[str], list_name: Optional[CustomListName]
     ) -> None:
         if list_name in CustomListParentMappings.parent_mappings.keys():
             if parent not in self.list(
@@ -80,7 +94,7 @@ class CustomListEntryMapper(ResourceMapper):
                 raise errors.ErrorNotFound(
                     f"Parent {parent} does not exist in list {CustomListParentMappings.parent_mappings[list_name]}"
                 )
-        elif parent != "":
+        elif parent is not None:
             raise errors.InternalError(
                 "Parent specified for item in list with no parent list."
             )

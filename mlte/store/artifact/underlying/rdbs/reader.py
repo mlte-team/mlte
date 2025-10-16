@@ -1,6 +1,4 @@
-"""
-DB utils for getting artifact related data from the DB.
-"""
+"""DB utils for getting artifact related data from the DB."""
 
 from __future__ import annotations
 
