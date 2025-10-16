@@ -67,18 +67,17 @@
       </InfoIcon>
     </FormFieldsQualityAttributes>
 
-    <UsaTextarea
+    <label class="usa-label">
+      Code
+      <InfoIcon> Code for the test example. </InfoIcon>
+      <CopyIcon @click="copyCode()" />
+    </label>
+    <Codemirror
       v-model="modelValue.code"
       :disabled="props.readOnly"
-      style="resize: both; width: 30rem; max-width: 100%"
-    >
-      <template #label>
-        Code
-        <InfoIcon> Code for the test example. </InfoIcon>
-        <CopyIcon @click="copyCode()" />
-      </template>
-      <template #error-message>Not defined</template>
-    </UsaTextarea>
+      :style="{ height: '25ch' }"
+      :extensions="extensions"
+    />
 
     <UsaTextarea
       v-model="modelValue.description"
@@ -132,6 +131,9 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue";
+import { Codemirror } from "vue-codemirror";
+import { python } from "@codemirror/lang-python";
+const extensions = [python()];
 
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
