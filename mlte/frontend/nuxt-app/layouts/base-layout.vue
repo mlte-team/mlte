@@ -76,6 +76,7 @@
                           :class="{
                             'usa-current': route.name === 'admin-manage-groups',
                           }"
+                          @click="$emit('nav')"
                         >
                           Manage Groups
                         </NuxtLink>
