@@ -108,10 +108,11 @@ async function deleteEntry(entryId: string) {
 }
 
 // Return to entry list view from the edit view.
-function cancelEdit() {
+async function cancelEdit() {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
     editFlag.value = false;
     resetSelectedEntry();
+    await updateList(selectedCustomList.value);
   }
 }
 

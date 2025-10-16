@@ -167,7 +167,7 @@ async function deleteEntry(catalogId: string, entryId: string) {
 
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
-    updateFullEntryList();
+    await updateFullEntryList();
   }
 }
 
@@ -176,13 +176,14 @@ async function deleteEntry(catalogId: string, entryId: string) {
  *
  * @param force Cancel the edit without confirmation
  */
-function cancelEdit(force: boolean = false) {
+async function cancelEdit(force: boolean = false) {
   if (
     force ||
     confirm("Are you sure you want to cancel? All changes will be lost.")
   ) {
     editFlag.value = false;
     resetSelectedEntry();
+    await updateFullEntryList();
   }
 }
 
