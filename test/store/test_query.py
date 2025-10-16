@@ -43,13 +43,13 @@ def test_type() -> None:
 
 def test_tags() -> None:
     """The tag filter can be serialized and deserialized."""
-    f = TagFilter(name="test", value="v1")
+    f = TagFilter(name="test", tag="v1")
     assert TagFilter(**f.to_json()) == f
 
 
 def test_property() -> None:
     """The filter can be serialized and deserialized."""
-    f = PropertyFilter(name="test", value="v1")
+    f = PropertyFilter(name="test", property="v1")
     assert PropertyFilter(**f.to_json()) == f
 
 

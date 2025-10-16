@@ -31,7 +31,6 @@ from mlte.negotiation.model import (
     ModelResourcesDescriptor,
     NegotiationCardModel,
     ProblemType,
-    RiskDescriptor,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -130,11 +129,12 @@ def _make_negotiation_card() -> NegotiationCardModel:
             problem_type=ProblemType.CLASSIFICATION,
             task="task",
             usage_context="usage_context",
-            risks=RiskDescriptor(fp="fp", fn="fn", other=["other1", "other2"]),
+            risks=["fp", "fn", "other"],
         ),
         data=[
             DataDescriptor(
                 description="description",
+                purpose="purpose",
                 classification=DataClassification.UNCLASSIFIED,
                 access="access",
                 labeling_method="by hand",
@@ -164,11 +164,13 @@ def _make_negotiation_card() -> NegotiationCardModel:
             development_compute_resources=ModelResourcesDescriptor(
                 cpu="1",
                 gpu="2",
-                memory="600",
+                gpu_memory="5",
+                main_memory="600",
                 storage="50",
             ),
             deployment_platform="local server",
             capability_deployment_mechanism="API",
+            model_source="In-house",
             input_specification=[
                 ModelIODescriptor(
                     name="i1",
@@ -188,7 +190,8 @@ def _make_negotiation_card() -> NegotiationCardModel:
             production_compute_resources=ModelResourcesDescriptor(
                 cpu="1",
                 gpu="1",
-                memory="600",
+                gpu_memory="10",
+                main_memory="600",
                 storage="50",
             ),
         ),

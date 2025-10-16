@@ -17,7 +17,6 @@ from typing import Any
 
 import mlte._private.meta as meta
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.model import EvidenceType, OpaqueValueModel
 from mlte.model.base_model import BaseModel
@@ -74,15 +73,5 @@ class ExternalEvidence(Evidence, ABC):
         :param model: The artifact model
         :return: The deserialized artifact
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.body.artifact_type == ArtifactType.EVIDENCE
-        ), "Broken precondition."
-        assert (
-            model.body.value.evidence_type == EvidenceType.OPAQUE
-        ), "Broken precondition."
-        return cls.deserialize(model.body.value.data).with_metadata(
-            model.body.metadata
-        )
+        body = cls._check_proper_types(model, EvidenceType.OPAQUE)
+        return cls.deserialize(body.value.data).with_metadata(body.metadata)  # type: ignore

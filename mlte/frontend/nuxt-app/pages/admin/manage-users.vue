@@ -37,7 +37,7 @@ const selectedUser = ref<User>(new User());
 updateUserList();
 resetSelectedUser();
 
-// Get list of Users form API and populate page with them.
+// Get list of Users from API and populate page with them.
 async function updateUserList() {
   const users: Array<User> | null = await getUsersDetails();
   if (users) {
@@ -86,7 +86,7 @@ async function pageDeleteUser(username: string) {
 
 // Intended to return to user list view when Manage Users in sidebar is clicked and edit view is enabled
 // TODO : Fix this, currently doesn't work. Base layout doesn't seem to emit the event this listens for.
-// TODO : Mirror this fixed functionality in Manage Groups
+// TODO : Mirror this fixed functionality in Manage Groups, maybe test catalog and custom list too?
 function manageUserClick() {
   if (editFlag.value) {
     cancelEdit();

@@ -5,11 +5,15 @@ The following are specific built-in measurement classes provided by MLTE:
 - LocalProcessCPUUtilization
     - CPU utilization measurement for local training processes.
     - Returns custom evidence in the form of a CPUStatistics object.
-- LocalProcessMemoryConsumption
-    - Memory consumption measurement for local training processes.
+- LocalProcessMemoryUtilization
+    - Memory Utilization measurement for local training processes.
     - Returns custom evidence in the form of a MemoryStatistics object.
 - LocalObjectSize
     - Measure the size of a locally-stored object.
+- NvidiaGPUMemoryUtilization
+    - Measures the amount memory being used per-GPU during an experiment.
+    - Returns custom evidence in the form of an NvidiaGPUMemoryStatistics object.
+    - Requires a CUDA-capable NVIDIA GPU to be used, as well as the CUDA Toolkit (including the NVML library) to be installed. 
 
 The following are more generic measurement classes that can be used directly, or extended:
 

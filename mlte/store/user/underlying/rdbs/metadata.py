@@ -1,8 +1,4 @@
-"""
-mlte/store/user/underlying/rdbs/metadata.py
-
-Definition of the metadata (DB schema) for the user store.
-"""
+"""Definition of the metadata (DB schema) for the user store."""
 
 from __future__ import annotations
 
@@ -99,6 +95,7 @@ class DBPermission(DBBase):
     resource_type: Mapped[str]
     resource_id: Mapped[Optional[str]]
 
+    # TODO get ID?
     method_type_id: Mapped[int] = mapped_column(ForeignKey("method_type.id"))
     method_type: Mapped[DBMethodType] = relationship()
 

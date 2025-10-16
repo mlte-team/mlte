@@ -18,7 +18,6 @@ from mlte.negotiation.model import (
     ModelResourcesDescriptor,
     NegotiationCardModel,
     ProblemType,
-    RiskDescriptor,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -58,7 +57,8 @@ def create_card_orm(
         model_dev_resources_orm = DBModelResourcesDescriptor(
             cpu=negotiation_card.model.development_compute_resources.cpu,
             gpu=negotiation_card.model.development_compute_resources.gpu,
-            memory=negotiation_card.model.development_compute_resources.memory,
+            gpu_memory=negotiation_card.model.development_compute_resources.gpu_memory,
+            main_memory=negotiation_card.model.development_compute_resources.main_memory,
             storage=negotiation_card.model.development_compute_resources.storage,
         )
     else:
@@ -67,7 +67,8 @@ def create_card_orm(
     model_prod_resources_orm = DBModelResourcesDescriptor(
         cpu=negotiation_card.model.production_compute_resources.cpu,
         gpu=negotiation_card.model.production_compute_resources.gpu,
-        memory=negotiation_card.model.production_compute_resources.memory,
+        gpu_memory=negotiation_card.model.production_compute_resources.gpu_memory,
+        main_memory=negotiation_card.model.production_compute_resources.main_memory,
         storage=negotiation_card.model.production_compute_resources.storage,
     )
 
@@ -78,13 +79,12 @@ def create_card_orm(
         sys_problem_type=problem_type_orm,
         sys_task=negotiation_card.system.task,
         sys_usage_context=negotiation_card.system.usage_context,
-        sys_risks_fp=negotiation_card.system.risks.fp,
-        sys_risks_fn=negotiation_card.system.risks.fn,
         sys_risks=[],
         model_dev_resources=model_dev_resources_orm,
         model_prod_resources=model_prod_resources_orm,
         model_prod_deployment_platform=negotiation_card.model.deployment_platform,
         model_prod_capability_deployment_mechanism=negotiation_card.model.capability_deployment_mechanism,
+        model_prod_model_source=negotiation_card.model.model_source,
         model_prod_inputs=[],
         model_prod_outputs=[],
         data_descriptors=[],
@@ -92,7 +92,7 @@ def create_card_orm(
     )
 
     # Create list of risks.
-    for risk in negotiation_card.system.risks.other:
+    for risk in negotiation_card.system.risks:
         risk_orm = DBGeneralRisk(description=risk)
         negotiation_card_orm.sys_risks.append(risk_orm)
 
@@ -140,13 +140,7 @@ def create_card_model(
         system=SystemDescriptor(
             task=negotiation_card_orm.sys_task,
             usage_context=negotiation_card_orm.sys_usage_context,
-            risks=RiskDescriptor(
-                fp=negotiation_card_orm.sys_risks_fp,
-                fn=negotiation_card_orm.sys_risks_fn,
-                other=[
-                    risk.description for risk in negotiation_card_orm.sys_risks
-                ],
-            ),
+            risks=[risk.description for risk in negotiation_card_orm.sys_risks],
             problem_type=(
                 ProblemType(negotiation_card_orm.sys_problem_type.name)
                 if negotiation_card_orm.sys_problem_type is not None
@@ -159,6 +153,7 @@ def create_card_model(
             negotiation_card_orm.model_dev_resources,
             negotiation_card_orm.model_prod_deployment_platform,
             negotiation_card_orm.model_prod_capability_deployment_mechanism,
+            negotiation_card_orm.model_prod_model_source,
             negotiation_card_orm.model_prod_inputs,
             negotiation_card_orm.model_prod_outputs,
             negotiation_card_orm.model_prod_resources,
@@ -208,6 +203,7 @@ def _build_data_descriptor_orm(
     )
     data_orm = DBDataDescriptor(
         description=data_descriptor.description,
+        purpose=data_descriptor.purpose,
         source=data_descriptor.source,
         access=data_descriptor.access,
         labeling_method=data_descriptor.labeling_method,
@@ -281,6 +277,7 @@ def _build_data_descriptors(
     return [
         DataDescriptor(
             description=data_descriptor.description,
+            purpose=data_descriptor.purpose,
             source=data_descriptor.source,
             classification=DataClassification(
                 data_descriptor.classification.name
@@ -317,6 +314,7 @@ def _build_model_descriptor(
     dev_resources: DBModelResourcesDescriptor,
     deployment_platform: Optional[str],
     capability_deployment_mechanism: Optional[str],
+    model_source: Optional[str],
     inputs: list[DBModelIODescriptor],
     outputs: list[DBModelIODescriptor],
     prod_resources: DBModelResourcesDescriptor,
@@ -326,6 +324,7 @@ def _build_model_descriptor(
         development_compute_resources=_build_resources(dev_resources),
         deployment_platform=deployment_platform,
         capability_deployment_mechanism=capability_deployment_mechanism,
+        model_source=model_source,
         input_specification=[
             ModelIODescriptor(
                 name=input_orm.name,
@@ -355,6 +354,7 @@ def _build_resources(
     return ModelResourcesDescriptor(
         cpu=resources.cpu if resources else None,
         gpu=resources.gpu if resources else None,
-        memory=resources.memory if resources else None,
+        gpu_memory=resources.gpu_memory if resources else None,
+        main_memory=resources.main_memory if resources else None,
         storage=resources.storage if resources else None,
     )

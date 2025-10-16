@@ -56,24 +56,6 @@ class GoalDescriptor(BaseModel):
 
 
 # -----------------------------------------------------------------------------
-# RiskDescriptor
-# -----------------------------------------------------------------------------
-
-
-class RiskDescriptor(BaseModel):
-    """A description of system-level risks."""
-
-    fp: Optional[str] = None
-    """A description of risks associated with false-positives."""
-
-    fn: Optional[str] = None
-    """A description of risks associated with false-negatives."""
-
-    other: list[str] = []
-    """A description of risks associated with other failures."""
-
-
-# -----------------------------------------------------------------------------
 # ModelDescriptor (and sub-models)
 # -----------------------------------------------------------------------------
 
@@ -87,7 +69,10 @@ class ModelResourcesDescriptor(BaseModel):
     gpu: Optional[str] = None
     """A description of model GPU requirements."""
 
-    memory: Optional[str] = None
+    gpu_memory: Optional[str] = None
+    """A description of model GPU memory requirements."""
+
+    main_memory: Optional[str] = None
     """A description of model memory (RAM) requirements."""
 
     storage: Optional[str] = None
@@ -123,6 +108,9 @@ class ModelDescriptor(BaseModel):
 
     capability_deployment_mechanism: Optional[str] = None
     """A description of how the model capabilities will be made available."""
+
+    model_source: Optional[str] = None
+    """A description of where the model came from."""
 
     input_specification: list[ModelIODescriptor] = []
     """The model input specification."""
@@ -193,6 +181,9 @@ class DataDescriptor(BaseModel):
     description: Optional[str] = None
     """A description of the dataset."""
 
+    purpose: Optional[str] = None
+    """A description of the purpose of the dataset."""
+
     source: Optional[str] = None
     """A description of the data source."""
 
@@ -238,7 +229,7 @@ class SystemDescriptor(BaseModel):
     usage_context: Optional[str] = None
     """A description of the usage context."""
 
-    risks: RiskDescriptor = RiskDescriptor()
+    risks: list[str] = []
     """A description of risks associated with system failures."""
 
 

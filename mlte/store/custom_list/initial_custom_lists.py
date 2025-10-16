@@ -33,20 +33,17 @@ class InitialCustomLists:
         :param stores_uri: The URI of the store being used (i.e., base folder, base DB, etc).
         :return: A custom list store populated with the initial entries.
         """
-        # Workaround to force FS if DB or HTTP is requested, as they are not supported yet.
-        # TODO: Remove this check once RDBS and HTTP are implemented.
+        # Workaround to force FS if HTTP is requested, as it is not supported yet.
+        # TODO: Remove this check HTTP is implemented.
         parsed_uri = StoreURI.from_string(stores_uri)
-        if (
-            parsed_uri.type == StoreType.RELATIONAL_DB
-            or parsed_uri.type == StoreType.REMOTE_HTTP
-        ):
+        if parsed_uri.type == StoreType.REMOTE_HTTP:
             # Creates a  file system URI using the default stores folder.
             parsed_uri = StoreURI.create_default_fs_uri()
             os.makedirs(f"{parsed_uri.path}", exist_ok=True)
 
         # Create the initial custom lists.
         print(f"Creating initial custom lists at URI: {stores_uri}")
-        # TODO : After section above is removed with implementation of RDBS and HTTP, make this var stores_uri
+        # TODO : After section above is removed with implementation of HTTP, make this var stores_uri
         custom_list_store = create_custom_list_store(parsed_uri.uri)
 
         with ManagedCustomListSession(custom_list_store.session()) as session:
