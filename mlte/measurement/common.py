@@ -1,5 +1,6 @@
-#! /usr/bin/env python3
-
+"""
+Base class for unist specific measurements that track minimin, maximum and average.
+"""
 
 from __future__ import annotations
 
