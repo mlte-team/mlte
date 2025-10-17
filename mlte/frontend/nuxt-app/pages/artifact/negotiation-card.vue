@@ -137,7 +137,9 @@ if (queryArtifactId !== undefined) {
 // Handle submission of form.
 async function submit() {
   const identifier = (queryArtifactId as string) || userInputArtifactId.value;
+  resetFormErrors(formErrors.value);
   if (identifier === "") {
+    formErrors.value.identifier = true;
     inputErrorAlert();
     return;
   }

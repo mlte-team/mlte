@@ -40,6 +40,7 @@
                       :class="{
                         'usa-current': route.name === 'catalog-test-catalog',
                       }"
+                      @click="$emit('nav')"
                     >
                       Test Catalog
                     </NuxtLink>
@@ -50,6 +51,7 @@
                       :class="{
                         'usa-current': route.name === 'custom-list-custom-list',
                       }"
+                      @click="$emit('nav')"
                     >
                       Custom Lists
                     </NuxtLink>
@@ -63,6 +65,7 @@
                           :class="{
                             'usa-current': route.name === 'admin-manage-users',
                           }"
+                          @click="$emit('nav')"
                         >
                           Manage Users
                         </NuxtLink>
@@ -73,6 +76,7 @@
                           :class="{
                             'usa-current': route.name === 'admin-manage-groups',
                           }"
+                          @click="$emit('nav')"
                         >
                           Manage Groups
                         </NuxtLink>
@@ -162,6 +166,8 @@
 
 <script setup lang="ts">
 import { confirmLogout } from "~/composables/auth";
+
+const emits = defineEmits(["nav"]);
 
 const config = useRuntimeConfig();
 const route = useRoute();
