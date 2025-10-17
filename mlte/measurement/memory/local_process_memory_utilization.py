@@ -50,13 +50,16 @@ class MemoryStatistics(CommonStatistics):
 class LocalProcessMemoryUtilization(ProcessMeasurement):
     """Measure memory utilization for a local training process."""
 
-    def __init__(self, identifier: Optional[str] = None):
+    def __init__(
+        self, identifier: Optional[str] = None, group: Optional[str] = None
+    ):
         """
         Initialize a LocalProcessMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         """
-        super().__init__(identifier)
+        super().__init__(identifier, group)
 
     # Overriden.
     def __call__(

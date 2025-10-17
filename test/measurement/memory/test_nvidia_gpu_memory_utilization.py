@@ -1,8 +1,4 @@
-"""
-test/measurement/memory/test_local_process_memory_utilization.py
-
-Unit test for LocalProcessMemoryUtilization measurement.
-"""
+"""Unit test for LocalProcessMemoryUtilization measurement."""
 
 import importlib
 import time
@@ -96,6 +92,18 @@ def has_pynvml():
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
     m = NvidiaGPUMemoryUtilization("id", gpu_id=1)
+
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.memory.nvidia_gpu_memory_utilization.NvidiaGPUMemoryUtilization"
+    )
+    assert m.gpu_id == 1
+
+
+def test_constructor_type_group():
+    """ "Checks that the constructor sets up type properly, with group."""
+    m = NvidiaGPUMemoryUtilization("id", gpu_id=1, group="group1")
 
     assert (
         m.evidence_metadata
