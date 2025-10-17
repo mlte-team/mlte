@@ -75,7 +75,7 @@
     <Codemirror
       v-model="modelValue.code"
       :disabled="props.readOnly"
-      :style="{ height: '25ch' }"
+      :style="{ height: '35ch' }"
       :extensions="extensions"
     />
 
