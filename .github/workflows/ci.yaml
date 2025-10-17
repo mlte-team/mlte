@@ -35,6 +35,8 @@ jobs:
         run: make docs 
       - name: Execute unit tests
         run: make test
+      - name: Execute demo tests
+        run: make demo-test        
       - name: Install frontend dependencies
         run: make frontend-env
       - name: Lint frontend
