@@ -41,6 +41,17 @@ def test_constructor_type():
     )
 
 
+def test_constructor_type_group():
+    """ "Checks that the constructor sets up type properly, when using a group."""
+    m = LocalProcessMemoryUtilization("id", group="group1")
+
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.memory.local_process_memory_utilization.LocalProcessMemoryUtilization"
+    )
+
+
 def test_memory_evaluate() -> None:
     start = time.time()
 
