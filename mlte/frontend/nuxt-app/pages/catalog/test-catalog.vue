@@ -174,7 +174,11 @@ async function deleteEntry(catalogId: string, entryId: string) {
 // Handle navigation on sidebar, if editing it exits edit view
 async function handleNav() {
   if (editFlag.value) {
-    await cancelEdit();
+    await cancelEdit(
+      catalogLookup.value[selectedEntry.value.header.catalog_id]
+        ? catalogLookup.value[selectedEntry.value.header.catalog_id].read_only
+        : false,
+    );
   }
 }
 
