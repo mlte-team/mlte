@@ -65,16 +65,16 @@ exclude = [
 optional = true
 
 [tool.poetry.group.demo.dependencies]
-numpy = "^2.0.2"
-pandas = "^2.2.2"
-pandas-stubs = "^2.2.1.240316"
-scikit-learn = "^1.6.1"
-matplotlib = "^3.9.4"
-ipykernel = "^6.29.5"
-notebook = "^7.3.2"
-tensorflow = "^2.18.0"
-pickleshare = "^0.7.5"
-torch = "^2.8.0"
+numpy = "2.0.2"
+pandas = "2.2.2"
+pandas-stubs = "2.2.1.240316"
+scikit-learn = "1.6.1"
+matplotlib = "3.9.4"
+ipykernel = "6.29.5"
+notebook = "7.3.2"
+tensorflow = "2.18.0"
+pickleshare = "0.7.5"
+torch = "2.8.0"
 
 [tool.poetry.group.dev]
 optional = true

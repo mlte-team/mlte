@@ -6417,4 +6417,4 @@ rdbs = ["SQLAlchemy", "SQLAlchemy-Utils", "psycopg2-binary"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "8cd147e24015dff400f7dbab645d2d312fce7b064ce163775821024c2b8f584d"
+content-hash = "44f3e76e6d25f8a5ae694add32e54489a75fd36f15baf963bc016222ca14bc86"
