@@ -54,13 +54,19 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 $ poetry install --with demo
 ```
 
-You can know go to the Jupyter notebooks in the subfolders inside teh `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
+You can go to the Jupyter notebooks in the subfolders inside the `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
 
 If you want to run the frontend UI and backend in an environment that will allow you to see the results of the artifacts created by the demos, you can run the following script, which will run them inside a container and point them to the proper store:
 
 ```bash
 $ cd demo
 $ bash run_environment.sh
+```
+
+When demo notebooks have been created and need to be added to the test catalog, they can be converted to a script using `nbconvert`. This tool is available is available if the demo dependencies are installed.
+
+```bash
+$ jupyter nbconvert --to script demo/simple/1_negotiation.ipynb
 ```
 
 ## Project Development Commands
