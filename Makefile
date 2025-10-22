@@ -156,9 +156,9 @@ demo-test:
 # Shorthand actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 
-# All quality assurance, as well as schema generation
+# All quality assurance, as well as schema generation and sample catalog generation
 .PHONY: qa
-qa: qa-python qa-frontend
+qa: qa-python qa-frontend build-sample-catalog
 
 # Check all QA tasks
 .PHONY: check-qa
@@ -210,4 +210,8 @@ build-in-docker:
 
 .PHONY build-sample-catalog
 build-sample-catalog:
-	cd demo && bash build_catalog_entries.sh
+	cd demo && bash catalog_entries.sh build
+
+.PHONY check-sample-catalog
+check-sample-catalog:
+	cd demo && bash catalog_entries.sh check
