@@ -39,8 +39,6 @@ if __name__ == "__main__":
     if os.path.exists(demo_json_path):
         with open(demo_json_path, "r") as json_file:
             json_data = json.load(json_file)
-
-        json_data["header"]["updated"] = timestamp
     else:
         new_header = CatalogEntryHeader(
             identifier=demo_name,
@@ -68,8 +66,10 @@ if __name__ == "__main__":
             sys.exit(0)
 
     elif mode == "build":
-        json_data["code"] = script_str
+        if json_data["code"] != script_str:
+            json_data["header"]["updated"] = timestamp
+            json_data["code"] = script_str
 
-        with open(demo_json_path, "w") as json_file:
-            json.dump(json_data, json_file, indent=4)
+            with open(demo_json_path, "w") as json_file:
+                json.dump(json_data, json_file, indent=4)
         

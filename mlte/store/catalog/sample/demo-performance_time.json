@@ -1,0 +1,16 @@
+{
+    "header": {
+        "identifier": "performance_time",
+        "creator": "admin",
+        "created": 1761163045,
+        "updater": null,
+        "updated": 1761163045,
+        "catalog_id": "sample"
+    },
+    "tags": [],
+    "quality_attribute": "",
+    "code": "# ## 2i. Evidence - Performance Time QAS Measurements\n# \n# Measure time required to run model and execute inferences.\n\n# ### Initialize MLTE Context\n# \n# MLTE contains a global context that manages the currently active _session_. Initializing the context tells MLTE how to store all of the artifacts that it produces. This import will also set up global constants related to folders and model to use.\n\n# Sets up context for the model being used, sets up constants related to folders and model data to be used.\nfrom demo.scenarios.session import *\n\n\n# ### Helper Functions\n# \n# Set up functions to time the model run.\n\nimport time\nfrom demo.scenarios import model_predict\nfrom mlte.measurement.units import Units\n\n\ndef time_model():\n    \\\"\\\"\\\"Returns total time, and average time per inference.\\\"\\\"\\\"\n    start = time.time()\n    avg_time, _, _ = model_predict.run_model(\n        SAMPLE_DATASET_DIR, MODEL_FILE_PATH\n    )\n    end = time.time()\n    total = end - start\n    return total, Units.second\n\n\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.evidence.types.real import Real\n\n# Evaluate, identifier has to be the same one defined in the Spec.\nmeasurement = ExternalMeasurement(\\\"predicting cpu time\\\", Real, time_model)\nresult = measurement.evaluate()\n\n# Inspect value\nprint(result)\n\n# Save to artifact store\nresult.save(force=True)\n",
+    "description": "",
+    "inputs": "",
+    "output": ""
+}
