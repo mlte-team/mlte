@@ -92,11 +92,11 @@ clean-demo:
 
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck clean-demo docs
+qa-python: schema isort format lint typecheck clean-demo docs build-sample-catalog
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
-check-qa-python: check-schema check-isort check-format lint typecheck docs
+check-qa-python: check-schema check-isort check-format lint typecheck docs check-sample-catalog
 
 # -----------------------------------------------------------------------------
 # Frontend QA
@@ -158,7 +158,7 @@ demo-test:
 
 # All quality assurance, as well as schema generation and sample catalog generation
 .PHONY: qa
-qa: qa-python qa-frontend build-sample-catalog
+qa: qa-python qa-frontend
 
 # Check all QA tasks
 .PHONY: check-qa
