@@ -203,3 +203,11 @@ build-local:
 .PHONY: build-in-docker
 build-in-docker:
 	bash build_in_docker.sh
+
+# -----------------------------------------------------------------------------
+# Commands to generate test catalog entries
+# -----------------------------------------------------------------------------
+
+.PHONY build-sample-catalog
+build-sample-catalog:
+	cd demo && bash build_catalog_entries.sh

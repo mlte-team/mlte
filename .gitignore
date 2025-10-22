@@ -50,3 +50,6 @@ docs/site
 pgdata/
 *.whl
 default_store/
+
+# Demo notebook to script conversions
+demo/conversions
