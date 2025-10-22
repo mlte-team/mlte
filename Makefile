@@ -208,10 +208,10 @@ build-in-docker:
 # Commands to generate test catalog entries
 # -----------------------------------------------------------------------------
 
-.PHONY build-sample-catalog
+.PHONY: build-sample-catalog
 build-sample-catalog:
 	cd demo && bash catalog_entries.sh build
 
-.PHONY check-sample-catalog
+.PHONY: check-sample-catalog
 check-sample-catalog:
 	cd demo && bash catalog_entries.sh check

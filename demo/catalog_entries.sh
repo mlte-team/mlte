@@ -18,9 +18,9 @@ done
 for file in ./conversions/scenarios/*.py
 do
     if [[ "$1" == "build" ]]; then
-        python build_entries.py build $file
+        python catalog_entries.py build $file
     elif [[ "$1" == "check" ]]; then
-        python build_entries.py check $file
+        python catalog_entries.py check $file
         if [[ $? == 1 ]]; then
             exit $?
         fi

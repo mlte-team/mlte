@@ -6,12 +6,12 @@ import os
 import sys
 import time
 
-from mlte.catalog.model import CatalogEntryHeader, CatalogEntry
+from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         raise Exception("Mode and file path CLI argument not provided.")
-    
+
     mode = sys.argv[1]
     file_path = sys.argv[2]
     script = open(file_path, "r").readlines()
@@ -23,15 +23,15 @@ if __name__ == "__main__":
     index = 0
     while index < len(script):
         if script[index] == "# In[ ]:\n":
-            del script[index:index+3]
+            del script[index : index + 3]
         else:
             index += 1
 
     # Make the list into a raw string that can be inserted into the json
     script_str = "".join(script)
     script_str = script_str.replace("'", '"')
-    script_str = script_str.replace(r'"', r'\"')
-    
+    script_str = script_str.replace(r'"', r"\"")
+
     demo_name = file_path.split("evidence_")[-1][:-3]
     demo_json_path = f"../mlte/store/catalog/sample/demo-{demo_name}.json"
     timestamp = int(time.time())
@@ -72,4 +72,3 @@ if __name__ == "__main__":
 
             with open(demo_json_path, "w") as json_file:
                 json.dump(json_data, json_file, indent=4)
-        
