@@ -3,22 +3,81 @@
 
 import json
 import os
+from pathlib import Path
+import subprocess
 import sys
+import tempfile
 import time
+
+import nbformat
 
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 
+def compare_entries(entry1: CatalogEntry, entry2: CatalogEntry) -> bool:
+    if (entry1.header.creator == entry2.header.creator and
+        entry1.header.updater == entry2.header.updater and
+        entry1.header.catalog_id == entry2.header.catalog_id and
+        entry1.tags == entry2.tags and
+        entry1.quality_attribute == entry2.quality_attribute and
+        entry1.code == entry2.code and
+        entry1.description == entry2.description and
+        entry1.inputs == entry2.inputs and
+        entry1.output == entry2.output
+    ):
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        raise Exception("Mode and file path CLI argument not provided.")
+        print("Required parameters: mode, notebook path.")
+        sys.exit(1)
 
-    mode = sys.argv[1]
-    file_path = sys.argv[2]
-    script = open(file_path, "r").readlines()
+    MODE = sys.argv[1]
+    NOTEBOOK_PATH = Path(sys.argv[2])
+    SCRIPT_PATH = Path(f"./conversions/{Path(sys.argv[2]).parent}/{NOTEBOOK_PATH.stem}.py")
 
+    timestamp = int(time.time())
+    notebook_data = nbformat.read(NOTEBOOK_PATH, nbformat.NO_CONVERT)
+    try:
+        notebook_entry_json = json.loads(notebook_data.cells[1].source)
+    except:
+        print(f"Misformatted entry data in {NOTEBOOK_PATH}.")
+        sys.exit(1)
+    # Take the JSON entry data out of the notebook so that it doesn't end up in the code for the catalog entry
+    notebook_data.cells.pop(1)
+
+    for key in ["identifier", "tags", "quality_attribute", "description", "inputs", "output"]:
+        if key not in notebook_entry_json:
+            print(f"Key, {key} was not provided in the entry data in, {NOTEBOOK_PATH}")
+            sys.exit(1)
+
+    new_header = CatalogEntryHeader(
+        identifier=notebook_entry_json["identifier"],
+        creator="admin",
+        created=timestamp,
+        updater=None,
+        updated=timestamp,
+        catalog_id="sample"
+    )
+    new_entry = CatalogEntry(
+        header=new_header,
+        tags=notebook_entry_json["tags"],
+        quality_attribute=notebook_entry_json["quality_attribute"],
+        code="",
+        description=notebook_entry_json["description"],
+        inputs=notebook_entry_json["inputs"],
+        output=notebook_entry_json["output"]
+    )
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".ipynb") as temp_notebook_file:
+        nbformat.write(notebook_data, temp_notebook_file.name)
+        subprocess.run(["jupyter", "nbconvert", "--to", "script", "--output-dir", SCRIPT_PATH.parent, "--output", SCRIPT_PATH.stem, temp_notebook_file.name])
+
+    script = open(SCRIPT_PATH, "r").readlines()
     # Remove "#!/usr/bin/env python", # coding: utf-8\n" at the start and extra new line at the end
     script = script[3:-1]
-
     # Remove all the execution lines and extra new lines along with them
     index = 0
     while index < len(script):
@@ -31,44 +90,23 @@ if __name__ == "__main__":
     script_str = "".join(script)
     script_str = script_str.replace("'", '"')
     script_str = script_str.replace(r'"', r"\"")
+    new_entry.code = script_str
 
-    demo_name = file_path.split("evidence_")[-1][:-3]
-    demo_json_path = f"../mlte/store/catalog/sample/demo-{demo_name}.json"
     timestamp = int(time.time())
+    entry_file_name = SCRIPT_PATH.name.split("evidence_")[-1][:-3]
+    entry_path = Path(f"../mlte/store/catalog/sample/demo-{entry_file_name}.json")
+    if os.path.exists(entry_path):
+        with open(entry_path, "r") as entry_file:
+            current_entry = CatalogEntry.from_json(json.load(entry_file))
 
-    if os.path.exists(demo_json_path):
-        with open(demo_json_path, "r") as json_file:
-            json_data = json.load(json_file)
-    else:
-        new_header = CatalogEntryHeader(
-            identifier=demo_name,
-            creator="admin",
-            created=timestamp,
-            updated=timestamp,
-            catalog_id="sample",
-        )
-        new_entry = CatalogEntry(
-            header=new_header,
-            tags=[],
-            quality_attribute="",
-            code="",
-            description="",
-            inputs="",
-            output="",
-        )
-        json_data = new_entry.to_json()
-
-    if mode == "check":
-        if json_data["code"] != script_str:
-            print(f"Sample Catalog Entry: {demo_name}, was not updated.")
+    if MODE == "check":
+        if not compare_entries(new_entry, current_entry):
+            print(f"Sample Catalog Entry: {entry_file_name}, was not updated.")
             sys.exit(1)
         else:
             sys.exit(0)
 
-    elif mode == "build":
-        if json_data["code"] != script_str:
-            json_data["header"]["updated"] = timestamp
-            json_data["code"] = script_str
-
-            with open(demo_json_path, "w") as json_file:
-                json.dump(json_data, json_file, indent=4)
+    elif MODE == "build":
+        if not compare_entries(new_entry, current_entry):
+            with open(entry_path, "w") as entry_file:
+                json.dump(new_entry.to_json(), entry_file, indent=4)
