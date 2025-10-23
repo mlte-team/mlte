@@ -5,7 +5,6 @@ set -e
 
 # Remove everything from temp stores to avoid outdated data.
 rm -rf ./store
-mkdir -p ./store
 
 # Set up base artifacts, like starting card.
 (source setup_store.sh)
