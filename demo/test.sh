@@ -7,7 +7,7 @@ set -e
 rm -rf ./store
 
 # Set up base artifacts, like starting card.
-(source setup_store.sh)
+cp -r ./sample_store ./store
 
 # Ensure proper order of notebooks.
 LC_COLLATE=C
