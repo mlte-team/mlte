@@ -3,15 +3,16 @@
 
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import time
+from pathlib import Path
 
 import nbformat
 
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
+
 
 def compare_entries(entry1: CatalogEntry, entry2: CatalogEntry) -> bool:
     if (entry1.header.creator == entry2.header.creator and
