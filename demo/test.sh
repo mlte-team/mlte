@@ -9,6 +9,9 @@ rm -rf ./store
 # Set up base artifacts, like starting card.
 (source setup_store.sh)
 
+# Ensure proper order of notebooks.
+LC_COLLATE=C
+
 # Run all notebooks for the current demos.
 DEMOS="$@"
 for demo in ${DEMOS[@]}
