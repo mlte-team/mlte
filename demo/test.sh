@@ -12,9 +12,6 @@ cp -r ./sample_store ./store
 # Ensure proper order of notebooks.
 LC_COLLATE=C
 
-# Ensure proper order of notebooks.
-LC_COLLATE=C
-
 # Run all notebooks for the current demos.
 DEMOS="$@"
 for demo in ${DEMOS[@]}
