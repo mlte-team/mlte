@@ -167,7 +167,7 @@ check-qa: check-qa-python check-qa-frontend
 # Clean cache files
 .PHONY: clean
 clean: frontend-env-clean
-	rm -r -f .mypy_cache .pytest_cache
+	rm -r -f .mypy_cache .pytest_cache default_store/
 
 # This is basically equivalent to what the CI server will do.
 .PHONY: ci
