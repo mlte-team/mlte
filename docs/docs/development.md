@@ -63,10 +63,10 @@ $ cd demo
 $ bash run_environment.sh
 ```
 
-When demo notebooks have been created and need to be added to the test catalog, they can be converted to a script using `nbconvert`. This tool is available is available if the demo dependencies are installed.
+When demo notebooks have been created and need to be added to the test catalog, updated with the following command. This requires the demo dependencies to be installed.
 
 ```bash
-$ jupyter nbconvert --to script demo/simple/2_test_suite.ipynb
+$ make build-sample-catalog
 ```
 
 ## Project Development Commands
