@@ -5,10 +5,12 @@ set -e
 
 # Remove everything from temp stores to avoid outdated data.
 rm -rf ./store
-mkdir -p ./store
 
 # Set up base artifacts, like starting card.
-(source setup_store.sh)
+cp -r ./sample_store ./store
+
+# Ensure proper order of notebooks.
+LC_COLLATE=C
 
 # Run all notebooks for the current demos.
 DEMOS="$@"

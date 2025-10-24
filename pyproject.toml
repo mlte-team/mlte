@@ -16,7 +16,7 @@ dependencies = [
   "dill >=0.3.9",
   "psutil >=6.1.1",
   "StrEnum >=0.4.15",
-  "json-fix >=1.0.0",
+  "json-fix >=1.0.2",
   "astunparse >=1.6.3",
   "requests >=2.32.3",
   "httpx >=0.28.1",
@@ -30,7 +30,7 @@ dependencies = [
 rdbs = [
   "SQLAlchemy >=2.0.37",
   "SQLAlchemy-Utils >=0.41.2",
-  "psycopg2-binary >=2.9.10",
+  "psycopg2-binary >=2.9.11",
 ]
 frontend = [
   "uvicorn >=0.34.0",
