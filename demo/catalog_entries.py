@@ -119,24 +119,25 @@ def main():
             index += 1
 
     # Make the list into a raw string that can be inserted into the json
-    script_str = "".join(script)
+    script_str: str = "".join(script)
     script_str = script_str.replace("'", '"')
     script_str = script_str.replace(r'"', r"\"")
     new_entry.code = script_str
 
+    current_entry: CatalogEntry | None = None
     if os.path.exists(entry_path):
         with open(entry_path, "r") as entry_file:
             current_entry = CatalogEntry.from_json(json.load(entry_file))
 
     if mode == "check":
-        if not compare_entries(new_entry, current_entry):
+        if not current_entry or not compare_entries(new_entry, current_entry):
             print(f"Sample Catalog Entry: {entry_file_name}, is not updated.")
             sys.exit(1)
         else:
             sys.exit(0)
 
     elif mode == "build":
-        if not compare_entries(new_entry, current_entry):
+        if not current_entry or not compare_entries(new_entry, current_entry):
             with open(entry_path, "w") as entry_file:
                 json.dump(new_entry.to_json(), entry_file, indent=4)
 
