@@ -5,6 +5,7 @@ Build mode: Take demo notebook script conversions and put them into the sample c
 Check mode: Checks that all sample test catalog entries are updated
 """
 
+import copy
 import json
 import os
 import re
@@ -15,6 +16,7 @@ import time
 from pathlib import Path
 
 import nbformat
+from nbformat import NotebookNode
 
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 
@@ -26,9 +28,9 @@ def main():
 
     mode = sys.argv[1]
     if mode not in ["build", "check"]:
-        print("Invalid mode. Valid modes are \"build\" and \"check\"")
+        print('Invalid mode. Valid modes are "build" and "check"')
         sys.exit(1)
-    
+
     notebook_path = Path(sys.argv[2])
     timestamp = int(time.time())
     script_path = Path(
@@ -38,9 +40,43 @@ def main():
     entry_path = Path(
         f"../mlte/store/catalog/sample/demo-{entry_file_name}.json"
     )
+    
+    notebook_data, notebook_entry_json = read_notebook(notebook_path)
+    code_str = create_code_str(notebook_data, script_path)
+    new_entry = create_entry(notebook_entry_json, timestamp, code_str)
+    current_entry: CatalogEntry | None = None
+    if os.path.exists(entry_path):
+        with open(entry_path, "r") as entry_file:
+            current_entry = CatalogEntry.from_json(json.load(entry_file))
 
-    notebook_data = nbformat.read(notebook_path, nbformat.NO_CONVERT)
+    if mode == "check":
+        if not current_entry or not compare_entries(new_entry, current_entry):
+            print(f"Sample Catalog Entry: {entry_file_name}, is not updated.")
+            sys.exit(1)
+        else:
+            sys.exit(0)
+
+    elif mode == "build":
+        if not current_entry or not compare_entries(new_entry, current_entry):
+            with open(entry_path, "w") as entry_file:
+                json.dump(new_entry.to_json(), entry_file, indent=4)
+
+
+def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
+    """
+    Read a demo notebook and return the code and the entry data
+
+    :param notebook_path: Path to notebook to be read
+
+    :returns:
+        notebook_data: Demo notebook as a NotebookNode
+        notebook_entry_json: Data used to create the test catalog entry stored in the notebook
+    """
+    notebook_data: NotebookNode = nbformat.read(
+        notebook_path, nbformat.NO_CONVERT
+    )
     try:
+        # JSON entry data will be in the second cell of the notebook
         notebook_entry_data = notebook_data.cells[1].source
         # Remove the trailing comma, so that it can be parsed
         notebook_entry_data = re.sub(r",\s(})", "\n}", notebook_entry_data)
@@ -52,8 +88,6 @@ def main():
             f"Ensure that the second cell in the notebook contains JSON data for the sample test catalog."
         )
         sys.exit(1)
-    # Take the JSON entry data out of the notebook so that it doesn't end up in the code for the catalog entry
-    notebook_data.cells.pop(1)
 
     for key in [
         "identifier",
@@ -69,7 +103,12 @@ def main():
             )
             sys.exit(1)
 
-    new_header = CatalogEntryHeader(
+    return notebook_data, notebook_entry_json
+
+
+def create_entry(notebook_entry_json: dict, timestamp: int, code_str: str) -> CatalogEntry:
+    """Create CatalogEntry from notebook entry json, timestamp, and code string."""
+    header = CatalogEntryHeader(
         identifier=notebook_entry_json["identifier"],
         creator="admin",
         created=timestamp,
@@ -77,20 +116,37 @@ def main():
         updated=timestamp,
         catalog_id="sample",
     )
-    new_entry = CatalogEntry(
-        header=new_header,
+    entry = CatalogEntry(
+        header=header,
         tags=notebook_entry_json["tags"],
         quality_attribute=notebook_entry_json["quality_attribute"],
-        code="",
+        code=code_str,
         description=notebook_entry_json["description"],
         inputs=notebook_entry_json["inputs"],
         output=notebook_entry_json["output"],
     )
+    return entry
+
+def create_code_str(notebook_data: NotebookNode, script_path: Path) -> str:
+    """
+        Write notebook to temp file, convert temp notebook to script with nbconvert,
+        read the script file, cleanup code string to take out notebook leftovers and
+        to make it a valid JSON string. 
+
+        :param notebook_data: Demo notebook as a NotebookNode
+
+        :return: notebook_data code as a JSON valid string, without the entry data
+    """
+    # Create a copy to not mutate the original object
+    local_notebook_data: NotebookNode = copy.deepcopy(notebook_data)
+    # Take the JSON entry data out of the notebook data so that it doesn't end up in the code string
+    local_notebook_data.cells.pop(1)
 
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".ipynb"
     ) as temp_notebook_file:
-        nbformat.write(notebook_data, temp_notebook_file.name)
+        notebook_data.cells.pop(1)
+        nbformat.write(local_notebook_data, temp_notebook_file.name)
         subprocess.run(
             [
                 "jupyter",
@@ -122,28 +178,11 @@ def main():
     script_str: str = "".join(script)
     script_str = script_str.replace("'", '"')
     script_str = script_str.replace(r'"', r"\"")
-    new_entry.code = script_str
-
-    current_entry: CatalogEntry | None = None
-    if os.path.exists(entry_path):
-        with open(entry_path, "r") as entry_file:
-            current_entry = CatalogEntry.from_json(json.load(entry_file))
-
-    if mode == "check":
-        if not current_entry or not compare_entries(new_entry, current_entry):
-            print(f"Sample Catalog Entry: {entry_file_name}, is not updated.")
-            sys.exit(1)
-        else:
-            sys.exit(0)
-
-    elif mode == "build":
-        if not current_entry or not compare_entries(new_entry, current_entry):
-            with open(entry_path, "w") as entry_file:
-                json.dump(new_entry.to_json(), entry_file, indent=4)
+    return script_str
 
 
-"""Compare two Catalog entries to see if they are identical, ignoring timestamps."""
 def compare_entries(entry1: CatalogEntry, entry2: CatalogEntry) -> bool:
+    """Compare two Catalog entries to see if they are identical, ignoring timestamps."""
     if (
         entry1.header.identifier == entry2.header.identifier
         and entry1.header.creator == entry2.header.creator
