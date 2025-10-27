@@ -1,10 +1,10 @@
 {
     "header": {
-        "identifier": "demo-resilience",
+        "identifier": "scenarios-resilience",
         "creator": "admin",
-        "created": 1761249906,
+        "created": 1761590789,
         "updater": null,
-        "updated": 1761249906,
+        "updated": 1761590789,
         "catalog_id": "sample"
     },
     "tags": [

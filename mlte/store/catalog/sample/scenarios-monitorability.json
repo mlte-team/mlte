@@ -1,10 +1,10 @@
 {
     "header": {
-        "identifier": "demo-monitorability",
+        "identifier": "scenarios-monitorability",
         "creator": "admin",
-        "created": 1761246780,
+        "created": 1761590793,
         "updater": null,
-        "updated": 1761246780,
+        "updated": 1761590793,
         "catalog_id": "sample"
     },
     "tags": [

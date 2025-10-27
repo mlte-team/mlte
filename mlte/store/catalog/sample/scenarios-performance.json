@@ -1,10 +1,10 @@
 {
     "header": {
-        "identifier": "performance",
+        "identifier": "scenarios-performance",
         "creator": "admin",
-        "created": 1761246758,
+        "created": 1761590772,
         "updater": null,
-        "updated": 1761246758,
+        "updated": 1761590772,
         "catalog_id": "sample"
     },
     "tags": [],

@@ -1,10 +1,10 @@
 {
     "header": {
-        "identifier": "demo-interoperability",
+        "identifier": "scenarios-interoperability",
         "creator": "admin",
-        "created": 1761246771,
+        "created": 1761590785,
         "updater": null,
-        "updated": 1761246771,
+        "updated": 1761590785,
         "catalog_id": "sample"
     },
     "tags": [

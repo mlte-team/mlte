@@ -1,10 +1,10 @@
 {
     "header": {
-        "identifier": "demo-interpretability",
+        "identifier": "scenarios-interpretability",
         "creator": "admin",
-        "created": 1761246763,
+        "created": 1761590776,
         "updater": null,
-        "updated": 1761246763,
+        "updated": 1761590776,
         "catalog_id": "sample"
     },
     "tags": [

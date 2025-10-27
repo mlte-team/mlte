@@ -31,19 +31,19 @@ def main():
         print('Invalid mode. Valid modes are "build" and "check"')
         sys.exit(1)
 
-    notebook_path = Path(sys.argv[2])
     timestamp = int(time.time())
-    script_path = Path(
-        f"/tmp/mlte/{Path(sys.argv[2]).parent}/{notebook_path.stem}.py"
-    )
-    entry_file_name = script_path.name.split("evidence_")[-1][:-3]
-    entry_path = Path(
-        f"../mlte/store/catalog/sample/demo-{entry_file_name}.json"
-    )
-    
+    notebook_path = Path(sys.argv[2])
+    demo_name = notebook_path.parent
+    tmp_script_path = Path(f"/tmp/mlte/{demo_name}/{notebook_path.stem}.py")
+    entry_qac = tmp_script_path.name.split("evidence_")[-1][:-3]
+    entry_identifier = f"{demo_name}-{entry_qac}"
+    entry_path = Path(f"../mlte/store/catalog/sample/{entry_identifier}.json")
+
     notebook_data, notebook_entry_json = read_notebook(notebook_path)
-    code_str = create_code_str(notebook_data, script_path)
-    new_entry = create_entry(notebook_entry_json, timestamp, code_str)
+    code_str = create_code_str(notebook_data, tmp_script_path)
+    new_entry = create_entry(
+        notebook_entry_json, entry_identifier, timestamp, code_str
+    )
     current_entry: CatalogEntry | None = None
     if os.path.exists(entry_path):
         with open(entry_path, "r") as entry_file:
@@ -51,7 +51,9 @@ def main():
 
     if mode == "check":
         if not current_entry or not compare_entries(new_entry, current_entry):
-            print(f"Sample Catalog Entry: {entry_file_name}, is not updated.")
+            print(
+                f"Sample Catalog Entry: {entry_qac}, in demo {demo_name} is not updated."
+            )
             sys.exit(1)
         else:
             sys.exit(0)
@@ -90,7 +92,6 @@ def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
         sys.exit(1)
 
     for key in [
-        "identifier",
         "tags",
         "quality_attribute",
         "description",
@@ -106,10 +107,15 @@ def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
     return notebook_data, notebook_entry_json
 
 
-def create_entry(notebook_entry_json: dict, timestamp: int, code_str: str) -> CatalogEntry:
+def create_entry(
+    notebook_entry_json: dict,
+    entry_identifier: str,
+    timestamp: int,
+    code_str: str,
+) -> CatalogEntry:
     """Create CatalogEntry from notebook entry json, timestamp, and code string."""
     header = CatalogEntryHeader(
-        identifier=notebook_entry_json["identifier"],
+        identifier=entry_identifier,
         creator="admin",
         created=timestamp,
         updater=None,
@@ -127,15 +133,16 @@ def create_entry(notebook_entry_json: dict, timestamp: int, code_str: str) -> Ca
     )
     return entry
 
+
 def create_code_str(notebook_data: NotebookNode, script_path: Path) -> str:
     """
-        Write notebook to temp file, convert temp notebook to script with nbconvert,
-        read the script file, cleanup code string to take out notebook leftovers and
-        to make it a valid JSON string. 
+    Write notebook to temp file, convert temp notebook to script with nbconvert,
+    read the script file, cleanup code string to take out notebook leftovers and
+    to make it a valid JSON string.
 
-        :param notebook_data: Demo notebook as a NotebookNode
+    :param notebook_data: Demo notebook as a NotebookNode
 
-        :return: notebook_data code as a JSON valid string, without the entry data
+    :return: notebook_data code as a JSON valid string, without the entry data
     """
     # Create a copy to not mutate the original object
     local_notebook_data: NotebookNode = copy.deepcopy(notebook_data)
