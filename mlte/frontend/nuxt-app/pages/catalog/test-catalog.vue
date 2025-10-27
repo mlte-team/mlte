@@ -15,7 +15,7 @@
         <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
       </div>
 
-      <div class="inline-input-right">
+      <div class="inline-input-right" style="margin-bottom: 1em">
         <label class="usa-label" style="margin-top: 0px">
           Search by Quality Attribute
         </label>
@@ -24,6 +24,12 @@
       <div class="inline-button">
         <UsaButton class="usa-button--unstyled" @click="search()">
           <img src="/assets/uswds/img/usa-icons/search.svg" class="usa-icon" />
+        </UsaButton>
+      </div>
+
+      <div>
+        <UsaButton class="secondary-button" @click="clearSearch()">
+          Clear Search
         </UsaButton>
       </div>
 
@@ -56,11 +62,11 @@ const newEntryFlag = ref(false);
 const tagSearchValue = ref("");
 const QASearchValue = ref("");
 const catalogLookup = ref<Dictionary<CatalogReply>>({});
-const entryList = ref<TestCatalogEntry[]>([]);
+const entryList = ref<Array<TestCatalogEntry>>([]);
 const selectedEntry = ref<TestCatalogEntry>(new TestCatalogEntry());
 
 makeCatalogLookup();
-populateFullEntryList();
+updateFullEntryList();
 
 // Make lookup of catalogs to know if entries are readonly
 async function makeCatalogLookup() {
@@ -71,7 +77,7 @@ async function makeCatalogLookup() {
 }
 
 // Get list of TestCatalogEntry from API and populate page with them.
-async function populateFullEntryList() {
+async function updateFullEntryList() {
   entryList.value = await searchCatalog({
     filter: { type: "all" },
   });
@@ -80,17 +86,17 @@ async function populateFullEntryList() {
 // Handle a search query.
 async function search() {
   if (tagSearchValue.value === "" && QASearchValue.value === "") {
-    populateFullEntryList();
+    updateFullEntryList();
   } else if (QASearchValue.value === "") {
     entryList.value = await searchCatalog({
-      filter: { type: "tag", name: "tags", value: tagSearchValue.value },
+      filter: { type: "tag", name: "tags", tag: tagSearchValue.value },
     });
   } else if (tagSearchValue.value === "") {
     entryList.value = await searchCatalog({
       filter: {
         type: "property",
         name: "quality_attribute",
-        value: QASearchValue.value,
+        property: QASearchValue.value,
       },
     });
   } else {
@@ -101,12 +107,12 @@ async function search() {
           {
             type: "tag",
             name: "tags",
-            value: tagSearchValue.value,
+            tag: tagSearchValue.value,
           },
           {
             type: "property",
             name: "quality_attribute",
-            value: QASearchValue.value,
+            property: QASearchValue.value,
           },
         ],
       },
@@ -117,6 +123,13 @@ async function search() {
 // Reset selectedEntry, for example when an edit is completed.
 function resetSelectedEntry() {
   selectedEntry.value = new TestCatalogEntry();
+}
+
+// Clear search fields
+async function clearSearch() {
+  tagSearchValue.value = "";
+  QASearchValue.value = "";
+  await search();
 }
 
 // Switch to the edit entry view with newEntryFlag enabled.
@@ -154,12 +167,12 @@ async function deleteEntry(catalogId: string, entryId: string) {
 
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
-    populateFullEntryList();
+    updateFullEntryList();
   }
 }
 
 /**
- * Return to entry list view from the edit view
+ * Return to entry list view from the edit view,
  *
  * @param force Cancel the edit without confirmation
  */
@@ -194,7 +207,7 @@ async function saveEntry(entry: TestCatalogEntry) {
   }
 
   if (!error) {
-    populateFullEntryList();
+    updateFullEntryList();
     resetSelectedEntry();
     editFlag.value = false;
   }

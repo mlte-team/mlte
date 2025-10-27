@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "mlte"
-version = "2.2.0"
+version = "2.3.0"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
@@ -37,6 +37,9 @@ frontend = [
   "fastapi >=0.115.6",
   "python-multipart >=0.0.20",
   "python-jose >=3.3.0",
+]
+gpu = [
+  "nvidia-ml-py >= 13.580.82",
 ]
 
 [project.urls]
@@ -71,6 +74,7 @@ ipykernel = "^6.29.5"
 notebook = "^7.3.2"
 tensorflow = "^2.18.0"
 pickleshare = "^0.7.5"
+torch = "^2.8.0"
 
 [tool.poetry.group.dev]
 optional = true

@@ -1,8 +1,4 @@
-"""
-mlte/store/user/underlying/rdbs/store.py
-
-Implementation of relational database system user store.
-"""
+"""Implementation of relational database system user store."""
 
 from __future__ import annotations
 
@@ -129,8 +125,8 @@ class RDBUserMapper(UserMapper):
                 # If it was not found, it means we can create it.
                 # Hash password and create a user with hashed passwords to be stored.
                 hashed_user = user.to_hashed_user()
-                user_obj = self._build_user(hashed_user, session)
-                session.add(user_obj)
+                user_orm = self._build_user(hashed_user, session)
+                session.add(user_orm)
                 session.commit()
                 stored_user, _ = DBReader.get_user(user.username, session)
                 return stored_user
@@ -139,11 +135,11 @@ class RDBUserMapper(UserMapper):
         self, user: Union[UserWithPassword, BasicUser], context: Any = None
     ) -> User:
         with Session(self.storage.engine) as session:
-            curr_user, user_obj = DBReader.get_user(user.username, session)
+            curr_user, user_orm = DBReader.get_user(user.username, session)
             updated_user = update_user_data(curr_user, user)
 
             # Update existing user.
-            user_obj = self._build_user(updated_user, session, user_obj)
+            user_orm = self._build_user(updated_user, session, user_orm)
             session.commit()
 
             stored_user, _ = DBReader.get_user(user.username, session)
@@ -157,36 +153,36 @@ class RDBUserMapper(UserMapper):
     def list(self, context: Any = None) -> List[str]:
         users: List[str] = []
         with Session(self.storage.engine) as session:
-            user_objs = session.scalars(select(DBUser))
-            for user_obj in user_objs:
-                users.append(user_obj.username)
+            user_orms = session.scalars(select(DBUser))
+            for user_orm in user_orms:
+                users.append(user_orm.username)
         return users
 
     def delete(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
-            user, user_obj = DBReader.get_user(username, session)
-            session.delete(user_obj)
+            user, user_orm = DBReader.get_user(username, session)
+            session.delete(user_orm)
             session.commit()
             return user
 
     def _build_user(
-        self, user: User, session: Session, user_obj: Optional[DBUser] = None
+        self, user: User, session: Session, user_orm: Optional[DBUser] = None
     ) -> DBUser:
-        """Creates a DB user object from a model."""
-        if user_obj is None:
-            user_obj = DBUser()
+        """Creates or updeates a DB user object from a model."""
+        if user_orm is None:
+            user_orm = DBUser()
 
-        user_obj.username = user.username
-        user_obj.email = user.email
-        user_obj.full_name = user.full_name
-        user_obj.disabled = user.disabled
-        user_obj.hashed_password = user.hashed_password
-        user_obj.role_type = DBReader.get_role_type(user.role, session)
-        user_obj.groups = [
+        user_orm.username = user.username
+        user_orm.email = user.email
+        user_orm.full_name = user.full_name
+        user_orm.disabled = user.disabled
+        user_orm.hashed_password = user.hashed_password
+        user_orm.role_type = DBReader.get_role_type(user.role, session)
+        user_orm.groups = [
             DBReader.get_group(group_model.name, session)[1]
             for group_model in user.groups
         ]
-        return user_obj
+        return user_orm
 
 
 # -----------------------------------------------------------------------------
@@ -210,17 +206,17 @@ class RDBGroupMapper(GroupMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                group_obj = self._build_group(new_group, session)
-                session.add(group_obj)
+                group_orm = self._build_group(new_group, session)
+                session.add(group_orm)
                 session.commit()
                 return new_group
 
     def edit(self, updated_group: Group, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
-            _, group_obj = DBReader.get_group(updated_group.name, session)
+            _, group_orm = DBReader.get_group(updated_group.name, session)
 
             # Update existing group.
-            group_obj = self._build_group(updated_group, session, group_obj)
+            group_orm = self._build_group(updated_group, session, group_orm)
             session.commit()
 
             return updated_group
@@ -233,15 +229,15 @@ class RDBGroupMapper(GroupMapper):
     def list(self, context: Any = None) -> List[str]:
         groups: List[str] = []
         with Session(self.storage.engine) as session:
-            group_objs = session.scalars(select(DBGroup))
-            for group_obj in group_objs:
-                groups.append(group_obj.name)
+            group_orms = session.scalars(select(DBGroup))
+            for group_orm in group_orms:
+                groups.append(group_orm.name)
         return groups
 
     def delete(self, group_name: str, context: Any = None) -> Group:
         with Session(self.storage.engine) as session:
-            group, group_obj = DBReader.get_group(group_name, session)
-            session.delete(group_obj)
+            group, group_orm = DBReader.get_group(group_name, session)
+            session.delete(group_orm)
             session.commit()
             return group
 
@@ -249,22 +245,22 @@ class RDBGroupMapper(GroupMapper):
         self,
         group: Group,
         session: Session,
-        group_obj: Optional[DBGroup] = None,
+        group_orm: Optional[DBGroup] = None,
     ) -> DBGroup:
-        """Creates a DB group object from a model."""
-        if group_obj is None:
-            group_obj = DBGroup()
+        """Creates or updates a DB group object from a model."""
+        if group_orm is None:
+            group_orm = DBGroup()
 
-        all_permissions, all_permission_objs = DBReader.get_permissions(session)
+        all_permissions, all_permission_orms = DBReader.get_permissions(session)
 
-        group_obj.name = group.name
-        group_obj.permissions = [
-            all_permission_objs[i]
+        group_orm.name = group.name
+        group_orm.permissions = [
+            all_permission_orms[i]
             for i, permission in enumerate(all_permissions)
             if permission in group.permissions
         ]
 
-        return group_obj
+        return group_orm
 
 
 # -----------------------------------------------------------------------------
@@ -290,14 +286,14 @@ class RDBPermissionMapper(PermissionMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                permission_obj = DBPermission(
+                permission_orm = DBPermission(
                     resource_type=new_permission.resource_type,
                     resource_id=new_permission.resource_id,
                     method_type=DBReader.get_method_type(
                         new_permission.method, session
                     ),
                 )
-                session.add(permission_obj)
+                session.add(permission_orm)
                 session.commit()
                 return new_permission
 
@@ -315,9 +311,9 @@ class RDBPermissionMapper(PermissionMapper):
 
     def delete(self, permission: str, context: Any = None) -> Permission:
         with Session(self.storage.engine) as session:
-            perm, permission_obj = DBReader.get_permission(
+            perm, permission_orm = DBReader.get_permission(
                 Permission.from_str(permission), session
             )
-            session.delete(permission_obj)
+            session.delete(permission_orm)
             session.commit()
             return perm

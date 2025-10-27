@@ -12,6 +12,20 @@
       <template #error-message>Not defined</template>
     </UsaSelect>
 
+    <div v-if="qaCategory === 'Other'">
+      <div class="inline-input-left" style="width: 30rem">
+        <UsaTextInput v-model="newQACategory">
+          <template #label> New Quality Attribute Category </template>
+        </UsaTextInput>
+      </div>
+
+      <div class="inline-button">
+        <UsaButton class="secondary-button" @click="submitCategory"
+          >Save</UsaButton
+        >
+      </div>
+    </div>
+
     <UsaSelect
       v-model="qualityAttribute"
       :options="selectedQAOptions"
@@ -27,6 +41,18 @@
       </template>
       <template #error-message>Not defined</template>
     </UsaSelect>
+
+    <div v-if="qualityAttribute === 'Other'">
+      <div class="inline-input-left" style="width: 30rem">
+        <UsaTextInput v-model="newQualityAttribute">
+          <template #label> New Quality Attribute </template>
+        </UsaTextInput>
+      </div>
+
+      <div class="inline-button">
+        <UsaButton class="secondary-button" @click="submitQA"> Save </UsaButton>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -44,29 +70,19 @@ const props = defineProps({
 });
 
 const qaCategory = ref("");
+const newQACategory = ref("");
 const qualityAttribute = ref(props.initialQualityAttribute);
+const newQualityAttribute = ref("");
 
-const QACategoryOptions = ref<Array<QAOption>>([]);
-const QACategoryAPIData = ref<Array<CustomListEntry>>([]);
-QACategoryAPIData.value = await getCustomList("qa_categories");
-
-if (QACategoryAPIData.value) {
-  populateList(QACategoryOptions.value, QACategoryAPIData.value);
-}
-
+const { QACategoryOptions, fetchQACData } = await useQACategoryOptions();
+const { qualityAttributeOptions: AllQAOptions, fetchQAData } =
+  await useQualityAttributeOptions();
 const selectedQAOptions = ref<Array<QAOption>>([]);
-const AllQAOptions = ref<Array<QAOption>>([]);
-const QAapiOptions = ref<Array<CustomListEntry>>([]);
-QAapiOptions.value = await getCustomList("quality_attributes");
-
-if (QAapiOptions.value) {
-  populateList(AllQAOptions.value, QAapiOptions.value);
-}
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
-  QAapiOptions.value?.forEach((attribute: CustomListEntry) => {
-    if (attribute.name === props.initialQualityAttribute) {
+  AllQAOptions.value.forEach((attribute: QAOption) => {
+    if (attribute.text === props.initialQualityAttribute) {
       qaCategory.value = attribute.parent;
       categoryChange(qaCategory.value, props.initialQualityAttribute);
     }
@@ -87,6 +103,10 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
     }
   });
 
+  if (newCategory != "Other") {
+    selectedQAOptions.value.push(new QAOption("Other", "Other", "", ""));
+  }
+
   if (initialAttrbute === undefined) {
     emit("updateAttribute", "");
   } else {
@@ -94,20 +114,32 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
   }
 }
 
-/**
- * Populate initialList with appendList as QAOption's
- *
- * @param {Array<QAOption>} initialList List of QAOption to be added to, generally empty
- * @param {Array<CustomListEntry>} appendList List of CustomListEntry to add to initialList
- */
-function populateList(
-  initialList: Array<QAOption>,
-  appendList: Array<CustomListEntry>,
-) {
-  appendList.forEach((entry: CustomListEntry) => {
-    initialList.push(
-      new QAOption(entry.name, entry.name, entry.description, entry.parent),
-    );
-  });
+// Submit new QA Category to API
+async function submitCategory() {
+  const response = await createCustomListEntry(
+    "qa_categories",
+    new CustomListEntry(newQACategory.value, "", ""),
+  );
+  if (response) {
+    await fetchQACData();
+    qaCategory.value = newQACategory.value;
+    categoryChange(newQACategory.value);
+    newQACategory.value = "";
+  }
+}
+
+// Submit new QA to API
+async function submitQA() {
+  const response = await createCustomListEntry(
+    "quality_attributes",
+    new CustomListEntry(newQualityAttribute.value, "", qaCategory.value),
+  );
+  if (response) {
+    await fetchQAData();
+    categoryChange(qaCategory.value, qualityAttribute.value);
+    qualityAttribute.value = newQualityAttribute.value;
+    emit("updateAttribute", qualityAttribute.value);
+    newQualityAttribute.value = "";
+  }
 }
 </script>

@@ -8,9 +8,8 @@ import typing
 from typing import Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceModel, EvidenceType, RealValueModel
+from mlte.evidence.model import EvidenceType, RealValueModel
 from mlte.measurement.units import (
     Quantity,
     Unit,
@@ -67,20 +66,10 @@ class Real(Evidence):
         :param model: The model representation
         :return: The real value
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), "Broken Precondition."
-        body = typing.cast(EvidenceModel, model.body)
-
-        assert (
-            body.value.evidence_type == EvidenceType.REAL
-        ), "Broken Precondition."
+        body = cls._check_proper_types(model, EvidenceType.REAL)
         return Real(
-            value=body.value.real,
-            unit=str_to_unit(body.value.unit),
+            value=body.value.real,  # type: ignore
+            unit=str_to_unit(body.value.unit),  # type: ignore
         ).with_metadata(body.metadata)
 
     def __str__(self) -> str:

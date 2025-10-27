@@ -39,13 +39,12 @@
       </ModalWrapper>
 
       <div style="overflow-x: scroll">
-        <table class="table usa-table usa-table--borderless sortable">
+        <table class="table usa-table usa-table--borderless">
           <thead>
-            <tr data-sort-method="none">
+            <tr>
               <th
                 v-for="(header, index) in tableHeaders"
                 :key="index"
-                data-sortable
                 scope="col"
                 role="columnheader"
               >

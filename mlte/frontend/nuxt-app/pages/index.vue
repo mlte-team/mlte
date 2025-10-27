@@ -79,8 +79,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -91,7 +91,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/negotiation-card',
+                      path: '/artifact/negotiation-card',
                       query: {
                         model: card.model,
                         version: card.version,
@@ -107,7 +107,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: '/negotiation-card',
+              path: '/artifact/negotiation-card',
               query: {
                 model: selectedModel,
                 version: selectedVersion,
@@ -140,8 +140,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -152,7 +152,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/artifact-views/report-view',
+                      path: '/artifact/report-view',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -165,7 +165,7 @@
                   <NuxtLink
                     target="_blank"
                     :to="{
-                      path: '/report-export',
+                      path: '/artifact/report-export',
                       query: {
                         model: report.model,
                         version: report.version,
@@ -181,7 +181,7 @@
           </table>
           <NuxtLink
             :to="{
-              path: '/artifact-compare',
+              path: '/artifact/artifact-compare',
               query: {
                 model: selectedModel,
               },
@@ -197,7 +197,7 @@
           </NuxtLink>
           <NuxtLink
             :to="{
-              path: '/report-evolution',
+              path: '/artifact/report-evolution',
               query: {
                 model: selectedModel,
               },
@@ -223,8 +223,8 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -235,7 +235,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/artifact-views/suite-view',
+                      path: '/artifact/suite-view',
                       query: {
                         model: suite.model,
                         version: suite.version,
@@ -265,12 +265,10 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">
-                  Measurement
-                </th>
-                <th data-sortable scope="col" role="columnheader">Type</th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Measurement</th>
+                <th scope="col" role="columnheader">Type</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -283,7 +281,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/artifact-views/evidence-view',
+                      path: '/artifact/evidence-view',
                       query: {
                         model: evidence.model,
                         version: evidence.version,
@@ -310,11 +308,9 @@
           <table class="table usa-table usa-table--borderless">
             <thead>
               <tr>
-                <th data-sortable scope="col" role="columnheader">ID</th>
-                <th data-sortable scope="col" role="columnheader">
-                  Test Suite ID
-                </th>
-                <th data-sortable scope="col" role="columnheader">Timestamp</th>
+                <th scope="col" role="columnheader">ID</th>
+                <th scope="col" role="columnheader">Test Suite ID</th>
+                <th scope="col" role="columnheader">Timestamp</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -326,7 +322,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      path: '/artifact-views/results-view',
+                      path: '/artifact/results-view',
                       query: {
                         model: result.model,
                         version: result.version,
