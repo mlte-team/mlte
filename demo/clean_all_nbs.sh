@@ -7,6 +7,11 @@ do
   source jq_clean_nb.sh "$file"
 done
 
+for file in ./EvalPro_demo/*.ipynb
+do
+  source jq_clean_nb.sh "$file"
+done
+
 for file in ./simple/*.ipynb
 do
   source jq_clean_nb.sh "$file"

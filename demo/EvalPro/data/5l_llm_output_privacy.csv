@@ -1,0 +1,441 @@
+,evaluationOutput,prompt,extractedOverallRating,extractedDrinks,extractedTimeliness,extractedCustomerSatisfaction,extractedStoreOperations,extractedOnTime,extractedName,modelCalled,averageScore
+0,"Employee: Kate  
+Date and history: [Enter Date]  
+Overall Rating: Unacceptable (0)  
+- Kate's self-evaluation indicates a lack of engagement and enthusiasm for her role, which is essential in a customer-focused environment. Her perspective on merely completing tasks for a paycheck does not align with the coffee shop's core values of creating a welcoming atmosphere. Additionally, her tardiness, neglect in cleaning machines, and distractions affect overall performance and team dynamics.
+
+Critical Element:  
+- Makes drinks: Unacceptable (0)  
+  - While Kate can make drinks, her lack of care and attention to detail has resulted in inconsistent quality, impacting customer satisfaction.
+
+- Timeliness: Unacceptable (0)  
+  - Kate has shown a pattern of arriving late, disrupting workflow and creating strain on her teammates who must cover for her absence.
+
+- Customer Satisfaction: Unacceptable (0)  
+  - Kate’s apathetic attitude towards providing an excellent customer experience is evident. Her lack of enthusiasm may lead to negative experiences for customers.
+
+- Store Operations: Unacceptable (0)  
+  - Failure to clean machines properly after shifts compromises maintenance and health standards, affecting store operations.
+
+- Shows up to work on time: Unacceptable (0)  
+  - As mentioned, Kate has a recurring issue with punctuality, which has a direct negative impact on store efficiency.
+
+Comments and Suggestions:  
+- It is crucial for Kate to reassess her commitment to this role. Improvement is necessary in fundamental areas such as punctuality and maintaining cleanliness standards. I recommend a conversation to discuss potential motivations for her work and to develop a plan that encourages a positive attitude towards her role. Additionally, resources or training might help her understand the importance of customer interaction and the coffee culture, which could enhance her job satisfaction and performance. Without significant improvement in these areas, her continued employment may be jeopardized.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Kate
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,Kate,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0
+1,"Employee: Casey  
+Date and History: [Insert Date], Employee for [Insert Duration]  
+Overall Rating: Unacceptable (0)  
+- Justification: Casey's primary duties include making drinks and maintaining store operations, and unfortunately, she falls short in both aspects. She has shown a lack of engagement with her role, which has reflected negatively on customer satisfaction. Casey's frequent tardiness demonstrates a disregard for her scheduled hours, and her failure to clean the drink machines properly affects the overall hygiene and operational integrity of the coffee shop.
+
+Critical Element: (Same scale as overall rating)  
+- Makes drinks: Unacceptable (0)  
+  - Casey fulfills basic drink-making orders but does so with minimal care and quality. There have been complaints regarding the consistency and taste of beverages prepared.  
+- Timeliness: Unacceptable (0)  
+  - Casey has been late to work numerous times over the past few months, disrupting the workflow and putting additional stress on her coworkers.  
+- Customer Satisfaction: Unacceptable (0)  
+  - There is a noticeable lack of engagement from Casey with customers, which is reflected in customer feedback and overall satisfaction scores.  
+- Store Operations: Unacceptable (0)  
+  - Casey has frequently failed to complete necessary end-of-shift tasks, such as cleaning machinery, which compromises store operations and cleanliness.  
+- Shows up to work on time: Unacceptable (0)  
+  - Tardiness has been a recurring issue; Casey needs to demonstrate accountability by arriving on time consistently.
+
+Comments and Suggestions:  
+Casey, while I appreciate your honesty in highlighting your motivations for working here, your current performance and attitude towards your job tasks need significant improvement. I encourage you to reflect on how you can contribute more positively to the team and to customer experiences. It may be beneficial for you to set personal goals that align more closely with your responsibilities and the role's expectations. Consider addressing your time management and cleanliness tasks as a priority moving forward. If job satisfaction and engagement are ongoing concerns, we can discuss options that might better suit your interests and needs.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Casey
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,Casey,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0
+2,"**Employee Evaluation**
+
+**Employee:** Charlie  
+**Date and history:** [Insert date]  
+**Overall Rating:** Unacceptable (0)  
+- **Justification:** Charlie demonstrates a minimal level of engagement and commitment to his role. While he completes the basic responsibilities of making drinks and fulfilling orders, his lack of enthusiasm and genuine connection to the job has been evident. His frequent tardiness and failure to maintain store cleanliness indicate a disregard for operational standards and team responsibilities.
+
+**Critical Element Ratings:**  
+- **Makes drinks (Coffee, Latte, etc):** Fully Successful (3)  
+  - Charlie adequately prepares drinks as ordered but does not take extra steps to enhance quality or customer experience.
+
+- **Timeliness:** Unacceptable (0)  
+  - Charlie has shown a pattern of arriving late to work, which disrupts operations and affects his team.
+
+- **Customer Satisfaction:** Fully Successful (3)  
+  - He fulfills customer orders; however, he lacks the passion to elevate customer experiences and is disengaged during interactions.
+
+- **Store Operations:** Unacceptable (0)  
+  - Consistent failure to clean machines at the end of shifts and being easily distracted harms store operations and could potentially affect service.
+
+- **Shows up to work on time:** Unacceptable (0)  
+  - His repeated lateness reflects poorly on reliability and does not set a good example for the team.
+
+**Comments and Suggestions:**  
+Charlie has expressed that he sees this job merely as a means to earn a living, without any connection to the coffee culture or customer experience. While it is essential for employees to have personal motivations, I encourage Charlie to consider how his role impacts the team and the customer experience. Engaging more actively in the tasks and taking ownership of his responsibilities could lead to a more fulfilling work environment. I recommend setting specific personal goals aimed at improving timeliness and operational cleanliness, which would not only enhance his evaluation next time but also contribute positively to the overall store dynamics.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Charlie
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,3.0,0.0,3.0,0.0,0.0,** Charlie,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,1.0
+3,"Employee: Mary  
+Date and history: [Insert Date] / Employment Duration: [Insert Duration]  
+Overall Rating: Unacceptable (0)  
+- Mary has consistently demonstrated a lack of commitment to her job duties. While she fulfills the basic task of making drinks, her overall performance lacks enthusiasm and professionalism, which is detrimental to the work environment and customer experience.  
+
+Critical Element: Unacceptable (0)  
+- Makes drinks: Unacceptable (0)  
+  - While Mary can make the drinks as ordered, her lack of attention and care often results in mistakes, which affects customer satisfaction.  
+
+- Timeliness: Unacceptable (0)  
+  - Mary has shown up late to work on several occasions, which disrupts the flow of operations and affects the entire team.  
+
+- Customer Satisfaction: Unacceptable (0)  
+  - There is minimal effort from Mary to engage with customers or provide a positive experience. This apathy can lead to negative reviews and deter customers from returning.  
+
+- Store Operations: Unacceptable (0)  
+  - Mary frequently fails to clean the machines at the end of her shifts, which not only affects the operation of the coffee machines but also poses a risk to hygiene and safety within the shop.  
+
+- Shows up to work on time: Unacceptable (0)  
+  - Late arrivals have been a repeated issue, undermining the reliable service we strive to provide.  
+
+Comments and Suggestions:  
+Mary's self-evaluation reveals a fundamental lack of motivation and passion for her work. Moving forward, it is crucial for her to reassess her commitment to her role within the coffee shop. It may also be beneficial for her to set specific personal goals that go beyond just completing shifts and earning a paycheck. Investing time in understanding coffee culture and customer interaction could enhance her job satisfaction and performance. As her manager, I would be willing to discuss potential paths for improvement, including training sessions or mentorship, to help her find more value in her work and possibly lead to a more positive impact on our team and customers.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Mary
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,Mary,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0
+4,"Employee: Ashley  
+Date and history: October 2023, Employed since March 2022  
+Overall Rating: Unacceptable (0)  
+- Ashley has shown a lack of motivation and engagement in her role, which severely impacts her performance and the overall customer experience.  
+
+Critical Element:
+- Makes drinks: Unacceptable (0)  
+  - Ashley consistently fails to meet the quality standards expected in drink preparation, often resulting in inaccuracies and customer complaints.  
+- Timeliness: Unacceptable (0)  
+  - Ashley has been late to her shifts multiple times, disrupting store operations and impacting her fellow employees.  
+- Customer Satisfaction: Unacceptable (0)  
+  - Passively serving customers without an effort to enhance their experience is reflected in customer feedback, indicating a lack of care or enthusiasm in her service.  
+- Store Operations: Unacceptable (0)  
+  - Ashley's neglect to clean the machines properly and her frequent distractions during shifts hinder efficient store operations.  
+- Shows up to work on time: Unacceptable (0)  
+  - Ashley's tardiness has become a recurring issue, impacting team dynamics and service quality.  
+
+Comments and Suggestions:  
+Ashley appears to be completing the bare minimum required by her role. While earning a living is important, elevating her performance is crucial for her own growth and the shop's success. I suggest considering personal development opportunities to rediscover her passion for the coffee industry. Finding ways to connect with the coffee culture and improving her work habits would greatly benefit both her and the team. A performance improvement plan may help address attendance and engagement issues.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Ashley
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,Ashley,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0
+5,"**Employee:** Sam  
+**Date and history:** [Insert Date] - Sam has been with the coffee shop for [insert duration] and has maintained a consistent work schedule during this time.  
+
+**Overall Rating:** Unacceptable (0)  
+- Sam's approach to work lacks the commitment necessary to meet the expectations of the position. While he completes the basic tasks associated with making coffee, his lack of enthusiasm and engagement in the role has led to significant deficiencies in performance.
+
+**Critical Element:**
+
+- **Makes drinks (Coffee, Latte, etc):** Fully Successful (3)  
+  - While Sam does fulfill the basic requirement of making drinks, there is little attention to detail or creativity in his work, which does not contribute to a positive customer experience. 
+
+- **Timeliness (how quick you got your order done):** Unacceptable (0)  
+  - Sam has shown consistent issues with arriving late for shifts, which ultimately impacts the entire team and customer service levels.
+
+- **Customer Satisfaction:** Unacceptable (0)  
+  - Given that Sam is not invested in creating a pleasant atmosphere or connection with customers, feedback indicates that customer satisfaction is lacking during his shifts.
+
+- **Store Operations:** Unacceptable (0)  
+  - Frequent neglect of cleaning duties, particularly with coffee machines after shifts, poses a concern for store hygiene and operational upkeep.
+
+- **Shows up to work on time:** Unacceptable (0)  
+  - Sam's repeated tardiness has been noted, which disrupts scheduling and team workflow.
+
+**Comments and Suggestions:**  
+Sam's current mindset toward his role is concerning. While I understand the necessity of having a job to pay bills, there needs to be a minimum level of engagement and professionalism expected from a team member. I recommend setting personal goals related to improving punctuality and workplace cleanliness. Training on the importance of customer interactions could also be beneficial. If Sam is not interested in further engaging with the job or the team, reconsideration of his position may be necessary.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Sam
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,3.0,0.0,0.0,0.0,0.0,** Sam,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,1.0
+6,"**Employee:** Chris  
+**Date and history:** [Insert Date]  
+**Overall Rating:** Unacceptable (0)  
+- Chris demonstrates a lack of commitment to the role, evidenced by numerous instances of tardiness and a failure to complete basic responsibilities, such as cleaning the machines at the end of the shift. His attitude towards the job suggests that he is not engaged and is merely going through the motions instead of contributing positively to the workplace environment.
+
+**Critical Element:** Unacceptable (0)  
+- **Makes drinks (Coffee, Latte, etc):** Unacceptable (0)  
+  - Chris fulfills basic drink-making tasks but shows minimal effort in presenting drinks well and lacks attention to detail in orders.
+  
+- **Timeliness:** Unacceptable (0)  
+  - Chris has been frequently late for work, impacting team operations and customer service. 
+
+- **Customer Satisfaction:** Unacceptable (0)  
+  - There is little to no attempt on Chris's part to engage with customers, which detracts from their overall experience. 
+
+- **Store Operations:** Unacceptable (0)  
+  - Chris fails to perform essential tasks such as cleaning appliances, which is critical for maintaining a safe and sanitary work environment.
+
+- **Shows up to work on time:** Unacceptable (0)  
+  - Tardiness has been a consistent issue and affects overall team morale and productivity.
+
+**Comments and Suggestions:**  
+It is essential for Chris to reassess his commitment to the role and the team. To improve, I recommend focusing on punctuality and fulfilling cleaning and maintenance duties consistently. Additionally, training or mentoring could help enhance his customer interaction skills and promote a better understanding of store operations. Engaging with the coffee culture and finding personal motivation in the job could also lead to a more positive experience for both Chris and our customers.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Chris
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,** Chris,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0
+7,"**Employee:** Caroll  
+**Date and History:** [Enter Date]  
+**Overall Rating:** Unacceptable (0)  
+- Caroll's performance has failed to meet the minimum expectations for several key areas, particularly in timeliness and store operations. She has shown a lack of engagement with her role, which is evident in her self-evaluation. Additionally, repeated lateness and neglecting to complete cleaning tasks have negatively impacted our daily operations.
+
+**Critical Element: Timeliness**  
+- Unacceptable (0)  
+Caroll has been repeatedly late for her shifts, which disrupts the workflow and affects the team's efficiency. Punctuality is essential in maintaining the shop's operation and meeting customer demands.
+
+**Critical Element: Makes Drinks**  
+- Fully Successful (3)  
+Despite her lack of enthusiasm, Caroll is capable of making the drinks correctly when she is focused. However, her distractedness can lead to inconsistencies in drink quality.
+
+**Critical Element: Customer Satisfaction**  
+- Unacceptable (0)  
+Caroll lacks the enthusiasm and engagement that enhance customer experiences. Her attitude towards providing quality service has been noted as unsatisfactory, impacting the overall customer satisfaction in the shop.
+
+**Critical Element: Store Operations**  
+- Unacceptable (0)  
+Caroll frequently fails to clean the machines at the end of her shift, which is a critical task for maintaining a hygienic environment. This negligence can lead to equipment malfunctions and further operational issues.
+
+**Critical Element: Shows Up to Work on Time**  
+- Unacceptable (0)  
+Her history of arriving late is concerning and has become a consistent issue that needs to be addressed. Punctuality is crucial in our operation, as it affects team morale and customer service.
+
+**Comments and Suggestions:**  
+Caroll needs to reassess her commitment to the role and the responsibilities entrusted to her. It's important to find motivation to engage more actively in her tasks and recognize the impact of her work on the team and customers. I recommend setting clear expectations moving forward and providing additional support or coaching to help her improve her performance. A follow-up evaluation will be necessary to assess progress in these critical areas.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Caroll
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Has shown up late to work numerous times over the past few months 
+Kate Frequently fails to clean the machines at the end of the shift
+Kate is Easily distracted when working
+        
+",0.0,0.0,0.0,0.0,0.0,0.0,** Caroll,client=<openai.resources.chat.completions.completions.Completions object at 0x11f353e00> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x11f4e6330> root_client=<openai.OpenAI object at 0x11cd8a2a0> root_async_client=<openai.AsyncOpenAI object at 0x11ebb4440> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,0.0

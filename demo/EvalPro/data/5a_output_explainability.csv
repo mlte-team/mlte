@@ -1,0 +1,315 @@
+,prompt,response,model,employeeSelfEval,goalsAndObjectives,managerComments
+0,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 3.0 based on the following inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Kate has shown up late to work numerous times over the past few months 
+Kate frequently fails to clean the machines at the end of the shift
+Kate is easily distracted when working
+
+Can you explain how you arrived at that rating?
+        
+","The overall rating of 3.0 seems to be a consolidated evaluation combining inputs from the employee's self-evaluation and the manager's comments. Here's a breakdown of how each factor might contribute to this rating:
+
+1. **Goals/Objectives**: The basic goals of ""Make coffee"" and ""Earn a living"" outline a fundamental level of job performance—the core tasks are being met but without ambition or enthusiasm. This sets the stage for a middle-of-the-road rating since the employee is fulfilling basic job requirements.
+
+2. **Employee Self-Evaluation**: The employee states they perform their job duties by making drinks and collecting a paycheck, emphasizing a lack of passion or interest in exceeding expectations. There's an indication of reliable, base-level performance—fulfilling duties without extra initiative—which aligns with an average rating.
+
+3. **Manager Comments**: The manager highlights some performance concerns, such as tardiness, failure to complete cleaning tasks, and distraction. These aspects point to reliability and consistency issues, bringing down the potential rating. However, the absence of critical failures or very negative incidents keeps the rating in an average range rather than below average.
+
+4. **Contextual Considerations**: To rate an employee a 3.0, typically, they would be meeting basic expectations but with room for improvement in several areas. The term ""average"" aligns with someone who does what is minimally required but does not excel or demonstrate strong initiative. The lack of engagement and failure to tidy up post-shift contribute negatively, while still maintaining the basic tasks.
+
+Given these factors, an overall rating of 3.0 reflects an acknowledgement of task completion but also highlights the need for improvement in punctuality, cleanliness, and engagement to enhance performance and potentially improve the rating in future evaluations.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. ","Make coffee
+Earn a living","Kate has shown up late to work numerous times over the past few months 
+Kate frequently fails to clean the machines at the end of the shift
+Kate is easily distracted when working"
+1,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 3.0 based on the following inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+As I reflect on my time working as a barista, I have to be honest about what I'm really here for - I need this job to pay my bills and I make coffee because that's what I'm paid to do. I show up, I make the drinks people order, and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts without any major problems so I can keep earning a steady income. I do the basic requirements of the job because I need the money, but I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. I understand this might not be the level of engagement management is looking for, I try to do what's asked of me to maintain my employment and financial stability.
+
+Manager comments
+
+Casey has shown up late to work a few times over the past few months - always apologetic
+Casey doesn’t always clean the machines at the end of the shift
+Casey is someone everyone enjoys being around
+Casey makes okay coffee but is easily distracted when working, which has led to longer wait times for customers
+It’s tough to count on Casey - I always have to ensure there is a ‘responsible adult’ on shift with them
+
+Can you explain how you arrived at that rating?
+        
+","Certainly! The overall rating of 3.0 was derived from evaluating both the employee's self-assessment and the manager's comments, considering the typical rating scale where 3.0 is often seen as ""meets expectations"" or ""satisfactory.""
+
+1. **Job Performance and Responsibilities:**
+   - **Employee Self-Evaluation:** The employee acknowledges performing the basic requirements of the job to maintain employment and financial stability. They admit not going above and beyond, suggesting they are meeting minimum job expectations.
+   - **Manager Comments:** Casey's coffee-making skills are deemed ""okay,"" and their performance is somewhat inconsistent due to distractions. These observations align with meeting basic job expectations but not exceeding them.
+
+2. **Attendance and Punctuality:**
+   - The employee has shown up late occasionally, which is noted negatively in the manager's comments. However, their apologetic nature is a mitigating factor, indicating awareness and a desire to improve.
+
+3. **Reliability and Dependability:**
+   - The manager comments on the difficulty of relying on Casey without another ""responsible adult,"" which flags issues with consistency and dependability. This impacts the rating negatively.
+
+4. **Overall Contribution and Engagement:**
+   - The lack of passion or enthusiasm in engaging with the coffee culture or customer interactions is acknowledged by the employee. Combined with manager feedback on distractions, this impacts their ability to contribute positively to the team environment and customer experience consistently.
+
+5. **Interpersonal Relations:**
+   - Casey is described as someone whom everyone enjoys being around, highlighting positive interpersonal skills and a contributing factor to team morale, which positively influences the rating.
+
+Given these aspects, the rating of 3.0—""satisfactory""—reflects that Casey meets the minimum expectations of the role but has several areas to improve, such as punctuality, reliability, and engagement. The positive interpersonal relationship with colleagues helps balance some of the negatives, maintaining the rating at an average level rather than below expectations.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"As I reflect on my time working as a barista, I have to be honest about what I'm really here for - I need this job to pay my bills and I make coffee because that's what I'm paid to do. I show up, I make the drinks people order, and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts without any major problems so I can keep earning a steady income. I do the basic requirements of the job because I need the money, but I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. I understand this might not be the level of engagement management is looking for, I try to do what's asked of me to maintain my employment and financial stability.","Make coffee
+Earn a living","Casey has shown up late to work a few times over the past few months - always apologetic
+Casey doesn’t always clean the machines at the end of the shift
+Casey is someone everyone enjoys being around
+Casey makes okay coffee but is easily distracted when working, which has led to longer wait times for customers
+It’s tough to count on Casey - I always have to ensure there is a ‘responsible adult’ on shift with them"
+2,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 4.0 based on the following inputs:
+
+Goals/objectives
+Improve cleanliness of work environment
+Learn product offerings and coffee attributes
+Complete training on the POS system
+
+Employee self evaluation
+
+Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices.
+I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time.
+
+Manager comments
+
+Seems more focused on customers than on running equipment
+Store sometimes not clean
+Great customer satisfaction scores
+- Shows up on time
+
+Can you explain how you arrived at that rating?
+        
+","Based on the inputs provided, the overall rating of 4.0 was likely determined by evaluating several key areas of performance, balancing strengths and areas for improvement:
+
+1. **Customer Service and Interaction:**
+   - The employee has shown significant dedication to building strong connections with customers, which is emphasized by both personal efforts to learn customer names and consistently receiving compliments.
+   - The manager acknowledges great customer satisfaction scores, which suggests the employee’s efforts in personalized service and slower, more intentional interactions are paying off positively.
+
+2. **Goals and Objectives:**
+   - The employee acknowledges their focus on learning product offerings and observing the espresso machine operation. This aligns with a goal to improve knowledge of coffee attributes, even if hands-on training hasn’t fully been achieved yet.
+   - Their efforts toward improving training in the POS system aren’t mentioned directly, so it may not have been a focal point in this evaluation timeframe.
+
+3. **Store Cleanliness:**
+   - The manager noted that the store cleanliness sometimes falls short. This is an area for further development, as it is one of the goals to improve the cleanliness of the work environment.
+   - The employee might be more focused on customer interaction than operational tasks like maintaining a clean environment.
+
+4. **General Work Habits:**
+   - Punctuality is appreciated by the manager, as they highlight that the employee shows up on time, indicating reliability.
+   
+5. **Overall Contribution:**
+   - The employee emphasizes a positive, thoughtful energy and commitment to enhancing the customer experience, which aligns with the feedback about customer satisfaction.
+
+Given that the positive feedback notably outshines the areas needing growth (store cleanliness), the rating of 4.0 reflects strong customer service skills and reliability, while acknowledging there’s room for improvement in maintaining operational cleanliness. This rating could be a motivation to balance customer focus with the upkeep of the work environment, aiming for a more comprehensive performance on the floor.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices.
+I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time.","Improve cleanliness of work environment
+Learn product offerings and coffee attributes
+Complete training on the POS system","Seems more focused on customers than on running equipment
+Store sometimes not clean
+Great customer satisfaction scores
+- Shows up on time"
+3,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 5.0 based on the following inputs:
+
+Goals/objectives
+I want to improve my average customer satisfaction rating for my drinks 
+I want to improve my average time that it takes to make a drink
+
+Employee self evaluation
+
+I have received positive feedback from customers about my overall friendliness, quality of drinks and time it takes me to make any drink from the menu. Customers will frequently come in asking me to make their drink for them.
+
+Manager comments
+
+Collin has the highest rating in customer satisfaction and timeliness in the district. 
+Collin is always on time, and is even willing to come in early if required. 
+Collin goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers
+
+Can you explain how you arrived at that rating?
+        
+","Certainly! The overall rating of 5.0 reflects an exemplary performance based on various factors assessed in the evaluation process. Here's a breakdown of how the rating was determined:
+
+1. **Goals/Objectives**: The employee, Collin, has demonstrated a clear focus on improving customer satisfaction and the efficiency of service, both critical objectives in the coffee shop industry. By setting these goals, Collin shows a commitment to personal and professional growth.
+
+2. **Employee Self-Evaluation**: Collin's self-assessment highlights important strengths such as friendliness, quality of drinks, and speed, which are key components of customer satisfaction. The fact that customers frequently request Collin by name to prepare their drinks is a strong testament to his positive impact on the customer experience.
+
+3. **Manager Comments**: The manager provides high praise for Collin, noting that he has the highest customer satisfaction and timeliness ratings in the district. This recognition from the manager underscores Collin's outstanding performance. Additionally, the manager's comments on Collin's punctuality and willingness to take on extra responsibilities, like addressing store cleanliness, show dedication and a proactive attitude toward maintaining store standards.
+
+Combined, these aspects portray an employee who not only meets but exceeds expectations consistently. Collin's achievements in customer satisfaction, operational efficiency, and overall workplace contribution merit the top rating of 5.0, indicating a role model employee in the coffee shop.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"I have received positive feedback from customers about my overall friendliness, quality of drinks and time it takes me to make any drink from the menu. Customers will frequently come in asking me to make their drink for them.","I want to improve my average customer satisfaction rating for my drinks 
+I want to improve my average time that it takes to make a drink","Collin has the highest rating in customer satisfaction and timeliness in the district. 
+Collin is always on time, and is even willing to come in early if required. 
+Collin goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers"
+4,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 4.0 based on the following inputs:
+
+Goals/objectives
+oals/objectives: - Improve cleanliness of work environment - Learn product offerings and coffee attributes - Complete training on the POS system
+
+Employee self evaluation
+
+Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices. I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time
+
+Manager comments
+
+Seems more focused on customers than on running equipment - Store sometimes not clean - Great customer satisfaction scores - Shows up on time
+
+Can you explain how you arrived at that rating?
+        
+","Based on the information provided, the overall rating of 4.0 was likely arrived at by considering the various aspects of performance outlined in both the employee's self-evaluation and the manager's comments. Here's a breakdown of how each component may have contributed to the rating:
+
+1. **Goals/Objectives**: 
+   - The employee set clear goals, such as improving cleanliness, learning product offerings, and training on the POS system. These are important objectives, but there seems to be a mixed performance, particularly regarding the cleanliness of the work environment.
+
+2. **Employee Self-Evaluation**:
+   - The employee demonstrated significant progress in customer relations, which is a key area in a customer-centric business like a coffee shop. Building rapport with customers, remembering names, and creating personalized experiences are strengths. These efforts likely contributed positively to the rating.
+   - The employee expressed a desire to expand skills (e.g., interest in espresso training), indicating a willingness to learn and grow, which is a positive indicator.
+
+3. **Manager Comments**:
+   - The manager noted a strong focus on customer interaction and satisfaction, reflected in great customer satisfaction scores, which is critically important in this industry.
+   - Punctuality is another positive factor, contributing to reliability.
+   - However, the manager pointed out that the store is sometimes not clean, highlighting an area of improvement regarding the employee's goal to improve cleanliness. This could be a factor preventing a higher rating.
+
+4. **Overall Performance**:
+   - The rating takes into account both strengths and areas needing improvement. While the employee excels in customer service and shows potential for learning, the need to maintain a clean work environment and possibly ensure more balanced attention to equipment handling seems to have kept the rating from being higher.
+
+In summary, a rating of 4.0 reflects a generally strong performance, with clear strengths in customer relations and punctuality, alongside specific areas for growth such as cleanliness and balancing skills between customer interaction and equipment handling.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices. I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time",oals/objectives: - Improve cleanliness of work environment - Learn product offerings and coffee attributes - Complete training on the POS system,Seems more focused on customers than on running equipment - Store sometimes not clean - Great customer satisfaction scores - Shows up on time
+5,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 4.0 based on the following inputs:
+
+Goals/objectives
+Make coffee
+    Earn a living
+
+Employee self evaluation
+
+During this review period, I’ve focused on what I do best—crafting exceptional, high-quality coffee that consistently delights our customers. I take pride in the precision and creativity I bring to every drink, and I’m proud that my coffee has even received recognition beyond the store. While I’m less enthusiastic about managing store operations, cleaning, or equipment maintenance, I recognize these tasks are part of the role and I strive to contribute when needed. My passion lies in being behind the bar, creating standout beverages that keep customers coming back.
+
+Manager comments
+
+Goals for Future Development:
+Keep encouraging Beth to clean the equipment after use. 
+
+Overall Comments:
+1-    Beth makes amazing coffee 
+2-    Beth should be encouraged to continue developing new beverages for the store
+3-    Beth should be paired with someone who will open/close the store and wants to keep equipment clean and functional. 
+
+Can you explain how you arrived at that rating?
+        
+","Certainly! The overall rating of 4.0 was determined based on multiple factors highlighted in the inputs, focusing on strengths, areas for improvement, and alignment with goals and objectives. Here's an explanation of how the rating was derived:
+
+**Strengths:**
+
+1. **Exceptional Coffee Crafting:** Beth consistently creates high-quality coffee that delights customers, which is a primary goal of the coffee shop. This is a significant strength and aligns perfectly with the shop's objective of making coffee and retaining customers.
+
+2. **Recognition and Popularity:** Beth's coffee has received recognition beyond the store, suggesting her work positively influences the coffee shop's reputation and customer satisfaction.
+
+3. **Creativity and Innovation:** Beth possesses the creativity needed for developing new and standout beverages, a quality that is highly beneficial for the coffee shop's growth and fresh offerings.
+
+**Areas for Improvement:**
+
+1. **Operational Tasks:** Beth is less enthusiastic about operational tasks, such as cleaning and equipment maintenance, which are crucial for the smooth functioning of the store. While she recognizes the importance of these tasks and contributes when needed, this area presents an opportunity for further development.
+
+**Manager's Recommendations and Observations:**
+
+1. **Future Development:** The manager suggests encouraging Beth to maintain cleanliness after using equipment, which indicates this is an area for growth. Pairing her with someone who handles store operations can help balance this.
+
+2. **Focus on Strengths:** The manager highly values Beth's coffee-making skills and recommends encouraging her to develop new beverages, supporting her inclination towards crafting exceptional drinks.
+
+Based on these inputs, the rating of 4.0 reflects Beth’s strong performance in her key responsibilities—making coffee and contributing to customer satisfaction. However, the rating accounts for the noted areas where she can improve operational engagement, which slightly moderates the overall score. Balancing excellent coffee-making with more consistent contributions to operational tasks like cleaning would likely result in higher ratings in the future.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"During this review period, I’ve focused on what I do best—crafting exceptional, high-quality coffee that consistently delights our customers. I take pride in the precision and creativity I bring to every drink, and I’m proud that my coffee has even received recognition beyond the store. While I’m less enthusiastic about managing store operations, cleaning, or equipment maintenance, I recognize these tasks are part of the role and I strive to contribute when needed. My passion lies in being behind the bar, creating standout beverages that keep customers coming back.","Make coffee
+    Earn a living","Goals for Future Development:
+Keep encouraging Beth to clean the equipment after use. 
+
+Overall Comments:
+1-    Beth makes amazing coffee 
+2-    Beth should be encouraged to continue developing new beverages for the store
+3-    Beth should be paired with someone who will open/close the store and wants to keep equipment clean and functional. "
+6,"System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Assistant, you provided an overal rating of 3.0 based on the following inputs:
+
+Goals/objectives
+Make coffee
+    Earn a living
+
+Employee self evaluation
+
+Over the past review period, I’ve really enjoyed taking on responsibilities that support the overall operation of the store, such as managing shifts, maintaining cleanliness, and troubleshooting or repairing equipment—areas where I feel confident and proactive. I take pride in creating a smooth, well-organized environment for both customers and coworkers. However, I recognize that my coffee-making skills are an area for improvement. While I’m enthusiastic about learning, I sometimes feel less confident behind the bar during high-volume periods. I’m committed to dedicating time to practice and seeking feedback so I can become more consistent and efficient in drink preparation.
+
+Manager comments
+
+Strengths:
+Annabeth always shows up to the coffee shop on time and ready to start their shift.  They are happy to work the critical, difficult to fill morning weekend hours, and have been working on learning the store opening and closing procedures. They always make sure the equipment is in clean and functioning order for the next shift.
+
+Areas for Improvement:
+Annabeth doesn’t know the menu very well, and without the recipe quick guides cannot make the correct coffee beverage. 
+
+Goals for Future Development:
+A should learn the different types of coffees available on the menu, and roughly how to prepare them.
+
+Overall Comments:
+1-    Stores should make sure the quick guides are up-to-date with the current menu selections as well as common off menu selections
+2-    Annabeth should continue to be encouraged to work at the store, and be given additional training for opening and closing the store
+3-    Annabeth should be in situations where their strengths of making sure equipment is clean and functional are utilized
+4-    Annabeth should be paired with a barista who knows the menu well and can make beverage selections outside of what is printed in the quick guides
+
+Can you explain how you arrived at that rating?
+        
+","Certainly! The overall rating of 3.0 was determined by evaluating both strengths and areas for improvement for Annabeth, as well as their commitment to personal development and meeting the shop's goals.
+
+**Strengths:**
+- Annabeth is punctual and willing to take on shifts that are difficult to fill, demonstrating reliability and commitment to the team's needs.
+- They exhibit initiative in learning store procedures and have a focus on maintaining cleanliness and functionality of equipment, creating a positive working environment.
+- They display a proactive attitude towards supporting operations and are confident in non-coffee-related responsibilities.
+
+**Areas for Improvement:**
+- Annabeth lacks confidence and consistency in coffee-making skills during high-volume periods, which is vital for a coffee shop role.
+- They do not have a strong grasp of the menu and rely heavily on recipe quick guides, which impacts their ability to independently execute menu items efficiently.
+
+**Dedication to Improvement:**
+- Annabeth is enthusiastic about learning and willing to allocate time for practice and feedback, showing a commitment to becoming more efficient in drink preparation.
+- The manager's goals for Annabeth underscore a focus on improving their coffee-making skills and knowledge of the menu, providing them with a clear developmental pathway.
+
+**Manager Comments:**
+- The manager's suggestions include pairing Annabeth with experienced baristas and reinforcing training related to opening and closing procedures to build confidence and capability.
+- Updating quick guides and aligning them with current and common menu selections may support Annabeth's development.
+
+Given this information, the rating of 3.0 reflects a middle ground, acknowledging Annabeth's strong contributions to operational stability and their proactive approach, while also taking into account the significant need for growth in coffee-making proficiency and menu familiarity. The rating identifies a baseline of reliable performance with potential for improvement, contingent on support and training provided by the team.",client=<openai.resources.chat.completions.completions.Completions object at 0x13019e9f0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x13026d310> root_client=<openai.OpenAI object at 0x124505f40> root_async_client=<openai.AsyncOpenAI object at 0x127783830> model_name='gpt-4o' temperature=1.0 model_kwargs={} openai_api_key=SecretStr('**********') max_tokens=2048,"Over the past review period, I’ve really enjoyed taking on responsibilities that support the overall operation of the store, such as managing shifts, maintaining cleanliness, and troubleshooting or repairing equipment—areas where I feel confident and proactive. I take pride in creating a smooth, well-organized environment for both customers and coworkers. However, I recognize that my coffee-making skills are an area for improvement. While I’m enthusiastic about learning, I sometimes feel less confident behind the bar during high-volume periods. I’m committed to dedicating time to practice and seeking feedback so I can become more consistent and efficient in drink preparation.","Make coffee
+    Earn a living","Strengths:
+Annabeth always shows up to the coffee shop on time and ready to start their shift.  They are happy to work the critical, difficult to fill morning weekend hours, and have been working on learning the store opening and closing procedures. They always make sure the equipment is in clean and functioning order for the next shift.
+
+Areas for Improvement:
+Annabeth doesn’t know the menu very well, and without the recipe quick guides cannot make the correct coffee beverage. 
+
+Goals for Future Development:
+A should learn the different types of coffees available on the menu, and roughly how to prepare them.
+
+Overall Comments:
+1-    Stores should make sure the quick guides are up-to-date with the current menu selections as well as common off menu selections
+2-    Annabeth should continue to be encouraged to work at the store, and be given additional training for opening and closing the store
+3-    Annabeth should be in situations where their strengths of making sure equipment is clean and functional are utilized
+4-    Annabeth should be paired with a barista who knows the menu well and can make beverage selections outside of what is printed in the quick guides"
