@@ -21,7 +21,7 @@ do
         # Get the file name without the demo path prepended
         NAME=${notebook_file##*$demo/}
         # Check if the first character of the path is a 2, and the second is a lowercase letter
-        #   This is the naming format for QAC demos that will be enforced so we can identify them here
+        #   This is the naming format for QA demos that will be enforced so we can identify them here
         if [[ "${NAME:0:1}" == "2" && "${NAME:1:1}" == [a-z] ]]; then
             if [[ $MODE == "build" ]]; then
                 python catalog_entries.py build $notebook_file

@@ -14,11 +14,14 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+from typing import Any
 
 import nbformat
 from nbformat import NotebookNode
 
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
+
+SAMPLE_CATALOG_PATH = "../mlte/store/catalog/sample"
 
 
 def main():
@@ -34,13 +37,12 @@ def main():
     timestamp = int(time.time())
     notebook_path = Path(sys.argv[2])
     demo_name = notebook_path.parent
-    tmp_script_path = Path(f"/tmp/mlte/{demo_name}/{notebook_path.stem}.py")
-    entry_qac = tmp_script_path.name.split("evidence_")[-1][:-3]
-    entry_identifier = f"{demo_name}-{entry_qac}"
-    entry_path = Path(f"../mlte/store/catalog/sample/{entry_identifier}.json")
+    entry_qa = notebook_path.name.split("evidence_")[-1][:-6]
+    entry_identifier = f"{demo_name}-{entry_qa}"
+    entry_path = Path(f"{SAMPLE_CATALOG_PATH}/{entry_identifier}.json")
 
     notebook_data, notebook_entry_json = read_notebook(notebook_path)
-    code_str = create_code_str(notebook_data, tmp_script_path)
+    code_str = create_code_str(notebook_data)
     new_entry = create_entry(
         notebook_entry_json, entry_identifier, timestamp, code_str
     )
@@ -52,7 +54,7 @@ def main():
     if mode == "check":
         if not current_entry or not compare_entries(new_entry, current_entry):
             print(
-                f"Sample Catalog Entry: {entry_qac}, in demo {demo_name} is not updated."
+                f"Sample Catalog Entry: {entry_qa}, in demo {demo_name} is not updated."
             )
             sys.exit(1)
         else:
@@ -108,7 +110,7 @@ def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
 
 
 def create_entry(
-    notebook_entry_json: dict,
+    notebook_entry_json: dict[str, Any],
     entry_identifier: str,
     timestamp: int,
     code_str: str,
@@ -134,7 +136,7 @@ def create_entry(
     return entry
 
 
-def create_code_str(notebook_data: NotebookNode, script_path: Path) -> str:
+def create_code_str(notebook_data: NotebookNode) -> str:
     """
     Write notebook to temp file, convert temp notebook to script with nbconvert,
     read the script file, cleanup code string to take out notebook leftovers and
@@ -150,8 +152,11 @@ def create_code_str(notebook_data: NotebookNode, script_path: Path) -> str:
     local_notebook_data.cells.pop(1)
 
     with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".ipynb"
-    ) as temp_notebook_file:
+        mode="r", suffix=".ipynb"
+    ) as temp_notebook_file, tempfile.NamedTemporaryFile(
+        mode="r", suffix=".py"
+    ) as script_file:
+        script_path = Path(script_file.name)
         notebook_data.cells.pop(1)
         nbformat.write(local_notebook_data, temp_notebook_file.name)
         subprocess.run(
@@ -169,8 +174,8 @@ def create_code_str(notebook_data: NotebookNode, script_path: Path) -> str:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+        script = script_file.readlines()
 
-    script = open(script_path, "r").readlines()
     # Remove "#!/usr/bin/env python", # coding: utf-8\n" at the start and extra new line at the end
     script = script[3:-1]
     # Remove all the execution lines and extra new lines along with them
