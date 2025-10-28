@@ -1,6 +1,5 @@
 {
     "name": "Security and Privacy",
-    "description": "QAs related to protection and handling of sensitive information.",
-    "parent": ""
+    "description": "QAs related to protection and handling of sensitive information.",
+    "parent": null
 }
-
