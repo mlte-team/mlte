@@ -1,13 +1,13 @@
 {
     "header": {
-        "identifier": "default.card",
-        "type": "negotiation_card",
+        "identifier": "card.default",
+        "type": "card",
         "timestamp": 1760390237,
         "creator": "admin",
         "level": "model"
     },
     "body": {
-        "artifact_type": "negotiation_card",
+        "artifact_type": "card",
         "system": {
             "goals": [
                 {
@@ -127,7 +127,7 @@
             },
             {
                 "identifier": "default.card-qas_003",
-                "quality": "Model Impartial to Photo Location",
+                "quality": "Compliance, position",
                 "stimulus": "Regardless of input values ",
                 "source": "sensors",
                 "environment": "normal operation with the gradient climber system active",
@@ -136,12 +136,39 @@
             },
             {
                 "identifier": "default.card-qas_004",
-                "quality": "Detect Shifts in Output (Confidence) Distribution",
+                "quality": "Compliance, velocity",
                 "stimulus": "Regardless of input values ",
                 "source": "sensors",
                 "environment": "normal operation with the gradient climber system active",
                 "response": "The model will not produce output values that cause the velocity to exceed the legal speed limit set in the operational configuration. ",
                 "measure": "This is measured by making sure that $|vehicle_velocity|<0.05$ at all times."
+            },
+            {
+                "identifier": "default.card-qas_005",
+                "quality": "Interpretability",
+                "stimulus": "When a model generates",
+                "source": "outputs",
+                "environment": "during operations",
+                "response": "those outputs are always in the set of allowed outputs as documented.",
+                "measure": "All observed outputs from model are from the documented output set"
+            },
+            {
+                "identifier": "default.card-qas_006",
+                "quality": "Deployability",
+                "stimulus": "When a new version of a model is deployed onto",
+                "source": "a new device",
+                "environment": "during maintenance",
+                "response": "the model will operate correctly and produce outputs within 16ms.",
+                "measure": "Ensure that the model begins operating within 16ms of deployment"
+            },
+            {
+                "identifier": "default.card-qas_007",
+                "quality": "Portability",
+                "stimulus": "Capability of an ML component to be adapted for or transferred to",
+                "source": "a different harderware, software or operational environment",
+                "environment": "",
+                "response": "without any unanticipated side effects and within specified resource and time constraints",
+                "measure": "Model can be serialized in a way that can be moved across platforms"
             }
         ]
     }
