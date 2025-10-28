@@ -15,8 +15,8 @@ function cleanup() {
 # Set up cleanup function to be called if Ctrl+C is used.
 trap cleanup SIGINT
 
-# Needed to copy sample card.
-source setup_store.sh
+# Needed to copy sample cards.
+cp -r ./sample_store ./store
 
 # Set env vars to not use a relational DB, but a file store, and point to the one here.
 export STORE_TYPE=fs
