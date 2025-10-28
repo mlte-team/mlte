@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout name="base-layout" @nav="handleNav">
     <title>Manage Groups</title>
     <template #page-title>Manage Groups</template>
     <div v-if="!editFlag">
@@ -73,6 +73,13 @@ async function pageDeleteGroup(groupName: string) {
   const response = await deleteGroup(groupName);
   if (response) {
     updateGroupList();
+  }
+}
+
+// Handle navigation on sidebar, if editing it exits edit view
+function handleNav() {
+  if (editFlag.value) {
+    cancelEdit();
   }
 }
 

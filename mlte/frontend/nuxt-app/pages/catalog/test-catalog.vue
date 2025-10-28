@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout">
+  <NuxtLayout name="base-layout" @nav="handleNav">
     <title>Test Catalog</title>
     <template #page-title>Test Catalog</template>
 
@@ -167,7 +167,18 @@ async function deleteEntry(catalogId: string, entryId: string) {
 
   const response = await deleteCatalogEntry(catalogId, entryId);
   if (response) {
-    updateFullEntryList();
+    await updateFullEntryList();
+  }
+}
+
+// Handle navigation on sidebar, if editing it exits edit view
+async function handleNav() {
+  if (editFlag.value) {
+    await cancelEdit(
+      catalogLookup.value[selectedEntry.value.header.catalog_id]
+        ? catalogLookup.value[selectedEntry.value.header.catalog_id].read_only
+        : false,
+    );
   }
 }
 
@@ -176,13 +187,14 @@ async function deleteEntry(catalogId: string, entryId: string) {
  *
  * @param force Cancel the edit without confirmation
  */
-function cancelEdit(force: boolean = false) {
+async function cancelEdit(force: boolean = false) {
   if (
     force ||
     confirm("Are you sure you want to cancel? All changes will be lost.")
   ) {
     editFlag.value = false;
     resetSelectedEntry();
+    await updateFullEntryList();
   }
 }
 
