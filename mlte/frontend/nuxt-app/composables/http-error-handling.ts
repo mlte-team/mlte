@@ -6,7 +6,7 @@ export function requestErrorAlert() {
 
 export function handleHttpError(
   errorCode: number,
-  errorMessage: string | null,
+  errorMessage: string | null = null,
 ) {
   if (errorCode === 400) {
     http400(errorMessage);
