@@ -42,6 +42,18 @@
           "default": null,
           "title": "Description"
         },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
         "source": {
           "anyOf": [
             {
@@ -366,7 +378,8 @@
           "default": {
             "cpu": null,
             "gpu": null,
-            "memory": null,
+            "gpu_memory": null,
+            "main_memory": null,
             "storage": null
           }
         },
@@ -394,6 +407,18 @@
           "default": null,
           "title": "Capability Deployment Mechanism"
         },
+        "model_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Source"
+        },
         "input_specification": {
           "default": [],
           "items": {
@@ -415,7 +440,8 @@
           "default": {
             "cpu": null,
             "gpu": null,
-            "memory": null,
+            "gpu_memory": null,
+            "main_memory": null,
             "storage": null
           }
         }
@@ -505,7 +531,7 @@
           "default": null,
           "title": "Gpu"
         },
-        "memory": {
+        "gpu_memory": {
           "anyOf": [
             {
               "type": "string"
@@ -515,7 +541,19 @@
             }
           ],
           "default": null,
-          "title": "Memory"
+          "title": "Gpu Memory"
+        },
+        "main_memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Memory"
         },
         "storage": {
           "anyOf": [
@@ -549,11 +587,7 @@
             "problem_type": null,
             "task": null,
             "usage_context": null,
-            "risks": {
-              "fn": null,
-              "fp": null,
-              "other": []
-            }
+            "risks": []
           }
         },
         "data": {
@@ -570,17 +604,20 @@
             "development_compute_resources": {
               "cpu": null,
               "gpu": null,
-              "memory": null,
+              "gpu_memory": null,
+              "main_memory": null,
               "storage": null
             },
             "deployment_platform": null,
             "capability_deployment_mechanism": null,
+            "model_source": null,
             "input_specification": [],
             "output_specification": [],
             "production_compute_resources": {
               "cpu": null,
               "gpu": null,
-              "memory": null,
+              "gpu_memory": null,
+              "main_memory": null,
               "storage": null
             }
           }
@@ -735,45 +772,6 @@
       "title": "ResultModel",
       "type": "object"
     },
-    "RiskDescriptor": {
-      "description": "A description of system-level risks.",
-      "properties": {
-        "fp": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Fp"
-        },
-        "fn": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Fn"
-        },
-        "other": {
-          "default": [],
-          "items": {
-            "type": "string"
-          },
-          "title": "Other",
-          "type": "array"
-        }
-      },
-      "title": "RiskDescriptor",
-      "type": "object"
-    },
     "SystemDescriptor": {
       "description": "A description of the system context.",
       "properties": {
@@ -821,12 +819,12 @@
           "title": "Usage Context"
         },
         "risks": {
-          "$ref": "#/$defs/RiskDescriptor",
-          "default": {
-            "fp": null,
-            "fn": null,
-            "other": []
-          }
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
         }
       },
       "title": "SystemDescriptor",

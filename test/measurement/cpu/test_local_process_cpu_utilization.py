@@ -41,6 +41,17 @@ def test_constructor_type():
     )
 
 
+def test_constructor_type_group():
+    """ "Checks that the constructor sets up type properly, when using a group."""
+    m = LocalProcessCPUUtilization("id", group="group1")
+
+    assert (
+        m.evidence_metadata
+        and m.evidence_metadata.measurement.measurement_class
+        == "mlte.measurement.cpu.local_process_cpu_utilization.LocalProcessCPUUtilization"
+    )
+
+
 @pytest.mark.skipif(
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )

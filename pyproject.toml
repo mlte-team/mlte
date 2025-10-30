@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "mlte"
-version = "2.2.0"
+version = "2.3.0"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{name = "MLTE Engineers"}]
 readme = "README.md"
@@ -16,7 +16,7 @@ dependencies = [
   "dill >=0.3.9",
   "psutil >=6.1.1",
   "StrEnum >=0.4.15",
-  "json-fix >=1.0.0",
+  "json-fix >=1.0.2",
   "astunparse >=1.6.3",
   "requests >=2.32.3",
   "httpx >=0.28.1",
@@ -30,13 +30,16 @@ dependencies = [
 rdbs = [
   "SQLAlchemy >=2.0.37",
   "SQLAlchemy-Utils >=0.41.2",
-  "psycopg2-binary >=2.9.10",
+  "psycopg2-binary >=2.9.11",
 ]
 frontend = [
   "uvicorn >=0.34.0",
   "fastapi >=0.115.6",
   "python-multipart >=0.0.20",
   "python-jose >=3.3.0",
+]
+gpu = [
+  "nvidia-ml-py >= 13.580.82",
 ]
 
 [project.urls]
@@ -62,15 +65,16 @@ exclude = [
 optional = true
 
 [tool.poetry.group.demo.dependencies]
-numpy = "^2.0.2"
-pandas = "^2.2.2"
-pandas-stubs = "^2.2.1.240316"
-scikit-learn = "^1.6.1"
-matplotlib = "^3.9.4"
-ipykernel = "^6.29.5"
-notebook = "^7.3.2"
-tensorflow = "^2.18.0"
-pickleshare = "^0.7.5"
+numpy = "2.0.2"
+pandas = "2.2.2"
+pandas-stubs = "2.2.1.240316"
+scikit-learn = "1.6.1"
+matplotlib = "3.9.4"
+ipykernel = "6.29.5"
+notebook = "7.3.2"
+tensorflow = "2.18.0"
+pickleshare = "0.7.5"
+torch = "2.8.0"
 gymnasium = "1.1.1"
 
 [tool.poetry.group.dev]

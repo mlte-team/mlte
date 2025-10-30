@@ -18,6 +18,7 @@ from mlte.store.user.factory import create_user_store
 from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
+from test.store.defaults import IN_MEMORY_SQLITE_DB
 
 _STORE_FIXTURE_NAMES = ["memory_store", "rdbs_store", "fs_store"]
 
@@ -47,7 +48,7 @@ def memory_store() -> InMemoryUserStore:
 
 def create_rdbs_store() -> RelationalDBUserStore:
     return RelationalDBUserStore(
-        uri=StoreURI.from_string("sqlite+pysqlite:///:memory:"),
+        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )

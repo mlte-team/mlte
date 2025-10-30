@@ -90,8 +90,8 @@ class RDBEntryMapper(CatalogEntryMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
-                entry_obj = DBReader._build_entry_obj(entry, session)
-                session.add(entry_obj)
+                entry_orm = DBReader._build_entry_orm(entry, session)
+                session.add(entry_orm)
                 session.commit()
 
                 stored_entry, _ = DBReader.get_entry(
@@ -101,10 +101,10 @@ class RDBEntryMapper(CatalogEntryMapper):
 
     def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
-            _, entry_obj = DBReader.get_entry(entry.header.identifier, session)
+            _, entry_orm = DBReader.get_entry(entry.header.identifier, session)
 
             # Update existing user.
-            entry_obj = DBReader._build_entry_obj(entry, session, entry_obj)
+            entry_orm = DBReader._build_entry_orm(entry, session, entry_orm)
             session.commit()
 
             stored_entry, _ = DBReader.get_entry(
@@ -124,7 +124,7 @@ class RDBEntryMapper(CatalogEntryMapper):
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:
         with Session(self.storage.engine) as session:
-            catalog_entry, entry_obj = DBReader.get_entry(entry_id, session)
-            session.delete(entry_obj)
+            catalog_entry, entry_orm = DBReader.get_entry(entry_id, session)
+            session.delete(entry_orm)
             session.commit()
             return catalog_entry

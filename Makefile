@@ -85,13 +85,18 @@ typecheck:
 	poetry run mypy test/
 	poetry run mypy tools/
 
+# Clean demo notebooks of temporary outputs.
+.PHONY: clean-demo
+clean-demo:
+	cd demo && bash clean_all_nbs.sh
+
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck docs
+qa-python: schema isort format lint typecheck clean-demo docs build-sample-catalog
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
-check-qa-python: check-schema check-isort check-format lint typecheck docs
+check-qa-python: check-schema check-isort check-format lint typecheck docs check-sample-catalog
 
 # -----------------------------------------------------------------------------
 # Frontend QA
@@ -151,7 +156,7 @@ demo-test:
 # Shorthand actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 
-# All quality assurance, as well as schema generation
+# All quality assurance, as well as schema generation and sample catalog generation
 .PHONY: qa
 qa: qa-python qa-frontend
 
@@ -162,11 +167,30 @@ check-qa: check-qa-python check-qa-frontend
 # Clean cache files
 .PHONY: clean
 clean: frontend-env-clean
-	rm -r -f .mypy_cache .pytest_cache
+	rm -r -f .mypy_cache .pytest_cache default_store/
 
 # This is basically equivalent to what the CI server will do.
 .PHONY: ci
-ci: clean venv frontend-env check-qa test
+ci: clean venv frontend-env check-qa test demo-test
+
+# -----------------------------------------------------------------------------
+# Build commands to update versions.
+# -----------------------------------------------------------------------------
+
+.PHONY: bump-patch
+bump-patch:
+	poetry run bumpversion patch --allow-dirty
+	$(MAKE) frontend-env
+
+.PHONY: bump-minor
+bump-minor:
+	poetry run bumpversion minor --allow-dirty
+	$(MAKE) frontend-env
+
+.PHONY: bump-major
+bump-major:
+	poetry run bumpversion major --allow-dirty
+	$(MAKE) frontend-env
 
 # -----------------------------------------------------------------------------
 # Build commands to create a packaged wheel.
@@ -179,3 +203,15 @@ build-local:
 .PHONY: build-in-docker
 build-in-docker:
 	bash build_in_docker.sh
+
+# -----------------------------------------------------------------------------
+# Commands to generate test catalog entries
+# -----------------------------------------------------------------------------
+
+.PHONY: build-sample-catalog
+build-sample-catalog:
+	cd demo && bash catalog_entries.sh build scenarios
+
+.PHONY: check-sample-catalog
+check-sample-catalog:
+	cd demo && bash catalog_entries.sh check scenarios

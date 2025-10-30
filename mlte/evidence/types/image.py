@@ -10,9 +10,8 @@ from pathlib import Path
 from typing import Union
 
 from mlte.artifact.model import ArtifactModel
-from mlte.artifact.type import ArtifactType
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceModel, EvidenceType, ImageValueModel
+from mlte.evidence.model import EvidenceType, ImageValueModel
 from mlte.model.base_model import BaseModel
 from mlte.validation.validator import Validator
 
@@ -64,19 +63,9 @@ class Image(Evidence):
         :param model: The model representation
         :return: The real value
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), "Broken Precondition."
-        body = typing.cast(EvidenceModel, model.body)
-
-        assert (
-            body.value.evidence_type == EvidenceType.IMAGE
-        ), "Broken Precondition."
+        body = cls._check_proper_types(model, EvidenceType.IMAGE)
         return Image(
-            image=base64.decodebytes(body.value.data.encode("utf-8"))
+            image=base64.decodebytes(body.value.data.encode("utf-8"))  # type: ignore
         ).with_metadata(body.metadata)
 
     @classmethod

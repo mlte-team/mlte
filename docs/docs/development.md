@@ -54,13 +54,19 @@ There are several demos available in the `demo\` folder, as Jupyter notebooks. T
 $ poetry install --with demo
 ```
 
-You can know go to the Jupyter notebooks in the subfolders inside teh `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
+You can go to the Jupyter notebooks in the subfolders inside the `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
 
 If you want to run the frontend UI and backend in an environment that will allow you to see the results of the artifacts created by the demos, you can run the following script, which will run them inside a container and point them to the proper store:
 
 ```bash
 $ cd demo
 $ bash run_environment.sh
+```
+
+When demo notebooks have been created and need to be added to the test catalog, updated with the following command. This requires the demo dependencies to be installed.
+
+```bash
+$ make build-sample-catalog
 ```
 
 ## Project Development Commands
@@ -257,10 +263,22 @@ We follow semantic versioning when versioning the `MLTE` package. We use <a href
 Bumping the version for a new release can be accomplished with:
 
 ```bash
-$ bumpversion patch
+$ make bump-patch
 ```
 
-where `patch` may be replaced with `minor` or `major` as appropriate for the release. Be sure to have no other pending changes or this may fail. Also, bupmversion will change all instances of the current version to the new one in the files it has been configured to do so, so if you have other text in these files which happens to match the current version, it will be incorrectly changed. Manually inspect changes after running this tool, and discard any incorrect ones.
+or
+
+```bash
+$ make bump-minor
+```
+
+or
+
+```bash
+$ make bump-major
+```
+
+depending on whether you want to update the `patch`,`minor` or `major` version as appropriate for the release. NOTE: bumpversion will change all instances of the current version's text to the new version's text in the files it has been configured to do so, so if you have other text in these files which happens to match the current version's, it will be incorrectly changed. Manually inspect changes after running this tool, and discard any incorrect ones.
 
 ### Publishing
 

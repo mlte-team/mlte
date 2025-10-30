@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="base-layout" @manage-users="manageUserClick">
+  <NuxtLayout name="base-layout" @nav="handleNav">
     <title>Manage Users</title>
     <template #page-title>Manage Users</template>
     <div v-if="!editFlag">
@@ -37,7 +37,7 @@ const selectedUser = ref<User>(new User());
 updateUserList();
 resetSelectedUser();
 
-// Get list of Users form API and populate page with them.
+// Get list of Users from API and populate page with them.
 async function updateUserList() {
   const users: Array<User> | null = await getUsersDetails();
   if (users) {
@@ -84,10 +84,8 @@ async function pageDeleteUser(username: string) {
   }
 }
 
-// Intended to return to user list view when Manage Users in sidebar is clicked and edit view is enabled
-// TODO : Fix this, currently doesn't work. Base layout doesn't seem to emit the event this listens for.
-// TODO : Mirror this fixed functionality in Manage Groups
-function manageUserClick() {
+// Return to user list view when Manage Users in sidebar is clicked and edit view is enabled
+function handleNav() {
   if (editFlag.value) {
     cancelEdit();
   }

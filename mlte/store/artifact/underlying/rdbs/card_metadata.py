@@ -38,8 +38,6 @@ class DBNegotiationCard(DBBase):
     sys_problem_type: Mapped[Optional[DBProblemType]] = relationship()
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
-    sys_risks_fp: Mapped[Optional[str]]
-    sys_risks_fn: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
         cascade="all, delete-orphan"
     )
@@ -59,6 +57,7 @@ class DBNegotiationCard(DBBase):
     )
     model_prod_deployment_platform: Mapped[Optional[str]]
     model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
+    model_prod_model_source: Mapped[Optional[str]]
 
     model_prod_inputs: Mapped[list[DBModelIODescriptor]] = relationship(
         cascade="all, delete-orphan",
@@ -163,6 +162,7 @@ class DBDataDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     description: Mapped[Optional[str]]
+    purpose: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
     access: Mapped[Optional[str]]
     labeling_method: Mapped[Optional[str]]
@@ -259,14 +259,15 @@ class DBModelResourcesDescriptor(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     cpu: Mapped[Optional[str]]
     gpu: Mapped[Optional[str]]
-    memory: Mapped[Optional[str]]
+    gpu_memory: Mapped[Optional[str]]
+    main_memory: Mapped[Optional[str]]
     storage: Mapped[Optional[str]]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
     def __repr__(self) -> str:
-        return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, memory={self.memory!r}, storage={self.storage!r})"
+        return f"ModelResourcesDescriptor(id={self.id!r}, cpu={self.cpu!r}, gpu={self.gpu!r}, gpu_memory={self.gpu_memory!r},  main_memory={self.main_memory!r}, storage={self.storage!r})"
 
 
 class DBQAS(DBBase):

@@ -8,49 +8,59 @@ from __future__ import annotations
 
 import threading
 import time
-from abc import ABC, abstractmethod
-from typing import List, Optional
+import traceback
+from abc import abstractmethod
+from typing import Optional
 
 from mlte._private import job
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
+from mlte.measurement.model import MeasurementMetadata
 
 # -----------------------------------------------------------------------------
 # ProcessMeasurement
 # -----------------------------------------------------------------------------
 
 
-class ProcessMeasurement(Measurement, ABC):
+class ProcessMeasurement(Measurement):
     """Base class to be extended to measure external processes."""
 
+    PROCESS_GROUP_KEY = "group"
+    """Key to store optional process groups used by this measurement."""
+
     @staticmethod
-    def start_script(script: str, arguments: List[str]) -> int:
+    def start_script(command: list[str]) -> int:
         """
         Initialize an external Python process running training or similar script.
 
-        :param script: The full path to a Python script with the training or equivalent process to run.
-        :param arguments: A list of string arguments for the process.
+        :param command: A list with the full path to a Python script with the training or
+                        equivalent process to run, and a list of string arguments for the process.
         :return: the id of the process that was created.
         """
-        return job.spawn_python_job(script, arguments)
+        return job.spawn_python_job(command[0], command[1:])
 
     @staticmethod
-    def start_process(process: str, arguments: List[str]) -> int:
+    def start_process(command: list[str]) -> int:
         """
         Initialize an external process running training or similar.
 
-        :param process: The full path to a process to run.
-        :param arguments: A list of string arguments for the process.
+        :param command: A list the full path to a process to run and string arguments for the process.
         :return: the id of the process that was created.
         """
-        return job.spawn_job(process, arguments)
+        return job.spawn_job(command[0], command[1:])
 
-    def __init__(self, test_case_id: Optional[str] = None):
+    def __init__(
+        self, test_case_id: Optional[str] = None, group: Optional[str] = None
+    ):
         """
         Initialize a new ProcessMeasurement measurement.
 
         :param test_case_id: A unique identifier for the measurement
+        :param group: An optional group id, if we want to group this measurement with others.
         """
+        self.group: Optional[str] = group
+        """An optional group id, if we want to group this measurement with others."""
+
         super().__init__(test_case_id)
 
         self.thread: Optional[threading.Thread] = None
@@ -61,6 +71,29 @@ class ProcessMeasurement(Measurement, ABC):
 
         self.error: str = ""
         """Any error messages from running measurement."""
+
+    # Overriden.
+    def generate_metadata(self) -> MeasurementMetadata:
+        """Returns Measurement metadata with additional info."""
+        metadata = super().generate_metadata()
+
+        # Add specific group being used, if any.
+        if self.group:
+            metadata.additional_data[self.PROCESS_GROUP_KEY] = self.group
+
+        return metadata
+
+    # Overriden.
+    def additional_setup(self, model: MeasurementMetadata):
+        """Customized method to set up Optional group id from metadata."""
+        # Set up the group.
+        if self.PROCESS_GROUP_KEY in model.additional_data:
+            self.group = model.additional_data[self.PROCESS_GROUP_KEY]
+        else:
+            self.group = None
+
+        # Update metadata.
+        self.set_metadata()
 
     # Overriden.
     @abstractmethod
@@ -77,7 +110,7 @@ class ProcessMeasurement(Measurement, ABC):
                 f"Command list must as least have one item: {command}"
             )
 
-        pid = ProcessMeasurement.start_process(command[0], command[1:])
+        pid = ProcessMeasurement.start_process(command)
         self.evaluate_async(pid, *args, **kwargs)
         evidence = self.wait_for_output()
         return evidence
@@ -89,7 +122,6 @@ class ProcessMeasurement(Measurement, ABC):
 
         :param pid: The process identifier
         """
-
         # Evaluate the measurement
         self.error = ""
         self.stored_value = None
@@ -105,7 +137,7 @@ class ProcessMeasurement(Measurement, ABC):
         try:
             self.stored_value = super().evaluate(pid, *args, **kwargs)
         except Exception as e:
-            self.error = f"Could not evaluate process: {e}"
+            self.error = f"Could not evaluate process: {e} - trace: {traceback.format_exc()}"
 
     def wait_for_output(self, poll_interval: int = 1) -> Evidence:
         """
