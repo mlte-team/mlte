@@ -15,9 +15,9 @@ def passed_percent_more_or_equal_then(threshold: float) -> Validator:
     :param threshold: The threshold of required pass tests.
     :return: A validator to check against this.
     """
-    bool_exp: Callable[[Array], bool] = lambda value: sum(
-        g for g in value.array
-    ) >= threshold
+    bool_exp: Callable[[Array], bool] = (
+        lambda value: sum(g for g in value.array) >= threshold
+    )
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
         success=f"The fraction of passes is at or over threshold {threshold}",
@@ -25,6 +25,7 @@ def passed_percent_more_or_equal_then(threshold: float) -> Validator:
         input_types=[Array],
     )
     return validator
+
 
 def all_accuracies_more_or_equal_than(threshold: float) -> Validator:
     """
