@@ -14,8 +14,9 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # global constants about folders and model to use.
 
 store_path = Path.cwd() / ".." / "store"
+# store_path = Path.cwd() / ".." / "store/models"
 
-set_context("EvalPro", "0.0.1")
+set_context("ReviewPro", "0.0.1")
 set_store(f"local://{store_path}")
 
 # The path at which datasets are stored

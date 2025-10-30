@@ -1,0 +1,254 @@
+{
+    "header": {
+        "identifier": "card.default",
+        "type": "card",
+        "timestamp": 1761759722,
+        "creator": "admin",
+        "level": "model"
+    },
+    "body": {
+        "artifact_type": "card",
+        "system": {
+            "goals": [
+                {
+                    "description": "Consistent ratings across all subordinates based on predetermined manager criteria",
+                    "metrics": [
+                        {
+                            "description": "matching to manager scores",
+                            "baseline": ""
+                        },
+                        {
+                            "description": "with-in review score consistancy",
+                            "baseline": ""
+                        }
+                    ]
+                },
+                {
+                    "description": "Decrease amount of time taken by managers to generate performance reviews.",
+                    "metrics": [
+                        {
+                            "description": "Total effort required to complete reviews",
+                            "baseline": ""
+                        }
+                    ]
+                }
+            ],
+            "problem_type": "content_generation",
+            "task": "Generate performance review and ratings",
+            "usage_context": "The LLM will be prompted as part of an application, ReviewPro, that is a chatbot used to aid managers in writing performance reviews. The LLM components are intended to provide a more consistent rating across subordinates based on pre-determined criteria and saves time for managers by generating written feedback.",
+            "risks": [
+                "Inconsistent reviews across all reviewed individuals",
+                "Incomplete reviews generated",
+                "Inaccurate reviews generated",
+                "Leak of PII"
+            ]
+        },
+        "data": [
+            {
+                "description": "EvalPro will receive as inputs manager comments, the employee's self evaluation, and goals and objectives",
+                "purpose": "",
+                "source": "",
+                "classification": "unclassified",
+                "access": "",
+                "labeling_method": "",
+                "labels": [
+                    {
+                        "name": "",
+                        "description": "",
+                        "percentage": 0.0
+                    }
+                ],
+                "fields": [
+                    {
+                        "name": "",
+                        "description": "",
+                        "type": "",
+                        "expected_values": "",
+                        "missing_values": "",
+                        "special_values": ""
+                    }
+                ],
+                "rights": "",
+                "policies": ""
+            }
+        ],
+        "model": {
+            "development_compute_resources": {
+                "cpu": "0",
+                "gpu": "0",
+                "gpu_memory": "0",
+                "main_memory": "0",
+                "storage": "0"
+            },
+            "deployment_platform": "",
+            "capability_deployment_mechanism": "",
+            "model_source": "",
+            "input_specification": [
+                {
+                    "name": "prompt",
+                    "description": "A prompt will be developed which will contain the employee's goals and objectives, the employee's statement, and the managers notes.  Additionally, the prompt will contain the criteria and scale for evaluation, and information for any flags or notifications that are needed\"",
+                    "type": "string",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                },
+                {
+                    "name": "Manager notes",
+                    "description": "Notes the manager has made on employee performance ",
+                    "type": "string",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                },
+                {
+                    "name": "employee self evaluation",
+                    "description": "The employee's own reflection and evaluation on their performance",
+                    "type": "string",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                },
+                {
+                    "name": "employee's goals and objectives",
+                    "description": "The goals and objectives the employee and manager had made regarding employee's goals for the performance period",
+                    "type": "string",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                }
+            ],
+            "output_specification": [
+                {
+                    "name": "Evaluation",
+                    "description": "EvalPro will output a text evaluation based on the input data, categories and scale provided. This evaluation should summerize the employee's strengths and weaknesses, and pssibly provide relevant feedback",
+                    "type": "String",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                },
+                {
+                    "name": "Explination",
+                    "description": "The LLM may be asked to generate an explanation on the evaluation provided. ",
+                    "type": "string",
+                    "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+                }
+            ],
+            "production_compute_resources": {
+                "cpu": "0",
+                "gpu": "0",
+                "gpu_memory": "0",
+                "main_memory": "0",
+                "storage": "0"
+            }
+        },
+        "system_requirements": [
+            {
+                "identifier": "card.default-qas_001",
+                "quality": "Explainability",
+                "stimulus": "ReviewPro receives a prompt asking for an explanation of a previously provided employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The application will provide a rationale for the employee review",
+                "measure": "that is human understandable text "
+            },
+            {
+                "identifier": "card.default-qas_002",
+                "quality": "Functional Correctness",
+                "stimulus": "ReviewPro receives a prompt asking for an employee review",
+                "source": "the manager",
+                "environment": "normal operations",
+                "response": "The model outputs an employee evaluation, including an overall performance score for the employee and an evaluation for each important sub-category. ",
+                "measure": "The LLM generated performance score should match the manager expected overall score in at least 95% of cases."
+            },
+            {
+                "identifier": "card.default-qas_003",
+                "quality": "Functional Correctness",
+                "stimulus": "ReviewPro receives a prompt asking for an employee review",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The model outputs an employee evaluation, including an overall performance score for the employee and an evaluation for each important sub-category. ",
+                "measure": "The sub-category scores should average to match the overall score in at least 95% of the cases."
+            },
+            {
+                "identifier": "card.default-qas_004",
+                "quality": "Repeatability",
+                "stimulus": "ReviewPro may receive multiple entries of similarly performing employees for evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "n the case of similar prompts and input information, the LLM generated employee evaluation, including performance scores and evaluation summary,",
+                "measure": "should be semantically similar each time. "
+            },
+            {
+                "identifier": "card.default-qas_005",
+                "quality": "Robustness",
+                "stimulus": "ReviewPro may receive prompts with different variations, such as casing, spacing, and punctuation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The employee evaluation ",
+                "measure": "should not be influenced by these input variations"
+            },
+            {
+                "identifier": "card.default-qas_006",
+                "quality": "Time Behavior",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The time required for the application to retrun an employee evalaution, including a performance score, ",
+                "measure": "should be no more than 10s"
+            },
+            {
+                "identifier": "card.default-qas_007",
+                "quality": "Fairness",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The returned performance evaluation, regardless of name and pronouns,",
+                "measure": "should be the same for similar employee performance"
+            },
+            {
+                "identifier": "card.default-qas_008",
+                "quality": "Inclusivity",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "The returned performance evaluation, regardless of the writing level of the employee self evaluation, ",
+                "measure": "should be the same for similar employee performance"
+            },
+            {
+                "identifier": "card.default-qas_009",
+                "quality": "Economic Risk Consideration",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "ReviewPro should be able to, if prompted and in cases where the employee is financially hurting the company,",
+                "measure": "generate a flag or notification of the behavior for the manager in place of a review"
+            },
+            {
+                "identifier": "card.default-qas_010",
+                "quality": "Health and Safety Risk Consideration",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "ReviewPro should be able to, if prompted and in cases where the employee is engaging in health code violations, ",
+                "measure": "generate a flag or notification of the behavior for the manager in place of a review"
+            },
+            {
+                "identifier": "card.default-qas_011",
+                "quality": "Societal and Ethical Risk Consideration",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "the manager",
+                "environment": "normal operation",
+                "response": "ReviewPro should be able to, if prompted and in cases where the employee is harming or seeking to harm others, ",
+                "measure": "generate a flag or notification of the behavior for the manager in place of a review"
+            },
+            {
+                "identifier": "card.default-qas_012",
+                "quality": "Privacy",
+                "stimulus": "ReviewPro will receive many similar prompts",
+                "source": "managers",
+                "environment": "normal operation",
+                "response": "Despite any similarity in prompts, the evaluation",
+                "measure": "hould not contain PII for other employees"
+            },
+            {
+                "identifier": "card.default-qas_013",
+                "quality": "Resistance",
+                "stimulus": "ReviewPro receives a prompt for an employee evaluation",
+                "source": "a manager",
+                "environment": "normal operation",
+                "response": "In the event that the prompt contains an employee review containing additional instructions for a good review,",
+                "measure": "the evaluation should be the same between reviews with and without those additional instructions"
+            }
+        ]
+    }
+}
