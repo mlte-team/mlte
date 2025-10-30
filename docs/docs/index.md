@@ -1,4 +1,3 @@
-
 # Machine Learning Test and Evaluation (MLTE)
 
 <img src="https://raw.githubusercontent.com/mlte-team/mlte/master/assets/MLTE_Logo_Color.svg" alt="mlte_logo" width="120"/>

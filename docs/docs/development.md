@@ -63,7 +63,33 @@ $ cd demo
 $ bash run_environment.sh
 ```
 
-When demo notebooks have been created and need to be added to the test catalog, updated with the following command. This requires the demo dependencies to be installed.
+#### Creating a new Demo
+
+A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Demos are to be named and populated as follows,
+
+1. `1_requirements.ipynb`
+    - Defines the  `MLTE` [Negotiation Card](negotiation_card.md), an example card can be found at `./demo/sample_store/models/OxfordFlower/card.default.json`
+    - Defines the `TestSuite`, more `TestSuite` information can be found in [Using `MLTE`](using_mlte.md#testing-models-with-`mlte`-(imt-and-sdmt))
+2. `2a_evidence_<quality_attribute> - 2<x>_evidence_<quality_atribute>`
+    - Naming of match the scheme, for example `2a_evidence_fairness`, `2b_evidence_robustness`, `2c_evidence_performance`.
+    - Gather the evidence for all `TestCase` in the `TestSuite`. Each notebook should gather evidence for all of the `TestCase`s that relate to the quality attribute in the name of the notebook.
+    - Each of these notebooks will be used as an entry in the Sample Test Catalog to give an example of the `Test Case`s evaluated in the notebook. The second cell must contain a JSON block with information that will be used to populate the Test Catalog entry. All fields are required.
+        ```json
+        {
+            "tags": ["General"],
+            "quality_attribute": "Detect OOD inputs and shifts in output",
+            "description": "During normal operation, the ML pipeline will log errors when out of distribution data is observed. The ML pipeline will create a log entry with a tag. During normal operation, ML pipeline will log errors when the output distribution changes. The ML pipeline will create a log entry with a tag.",
+            "inputs": "Existing ML model, sample image data that has out of bounds input, and that produces output confidence error",
+            "output": "Log with input issues tagged",
+        }
+        ```
+3. `3_report.ipynb`
+    - Create a `TestSuiteValidator` and validate the evidence collected.
+    - Generate a report to communicate the results of the evaluation.
+
+#### Populating the Test Catalog
+
+When demo notebooks have been created or edited and need to be added to the sample test catalog, it can be done automatically with the following command. This requires the demo dependencies to be installed and will go through all demos to update the entire sample catalog.
 
 ```bash
 $ make build-sample-catalog
