@@ -1,6 +1,6 @@
 {
     "name": "Responsible AI",
     "description": "QAs related to the ethical and societal impact of ML component usage.",
-    "parent": ""
+    "parent": null
 }
 
