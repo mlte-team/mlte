@@ -2,6 +2,26 @@
 
 This document describes some of the development practices used in `MLTE`.
 
+## Quick Start
+
+The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library IMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
+
+```bash
+$ pyenv install 3.9
+$ pyenv local 3.9
+$ make venv
+```
+
+The other part of MLTE is the frontend and backend. These are used for the SDMT process, and visualing results from the IMT process. This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 3 docker containers with an RDBS based backend. The frontend will be available at `localhost:8000` and will include a sample model, version, and negotiation card.
+
+```bash
+cd demo && bash run_environment.sh
+```
+
+All issue tracking for MLTE is done in this <a href="https://github.com/orgs/mlte-team/projects/5" target="_blank">Github Project</a> [Github Project].
+
+Once changes have been made, `make qa` and `make test` should be ran to ensure that code fits QA standards and all unit tests pass. If just making python changes, `make qa-python` can be used to instead of `make qa` to reduce runtime by not running QA on the frontend.
+
 ## Setup
 
 ### Python Version Support
@@ -63,7 +83,38 @@ $ cd demo
 $ bash run_environment.sh
 ```
 
-When demo notebooks have been created and need to be added to the test catalog, updated with the following command. This requires the demo dependencies to be installed.
+#### Creating a new Demo
+
+A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Demos are to be named and populated as follows. The number naming is used to signify the order in which the notebooks should be ran.
+
+0. `all notebooks`
+    - All notebooks will have to connect setup the `MLTE` context before their operation. This is done by importing the session module, `from demo.scenarios.session import *`
+    - All files outside of notebooks including data, or re-used functionality should be included within the demo folder
+1. `1_requirements.ipynb`
+    - Defines the  `MLTE` [Negotiation Card](negotiation_card.md), an example card can be found at `./demo/sample_store/models/OxfordFlower/card.default.json`
+    - Defines the `TestSuite`, more `TestSuite` information can be found in [Using `MLTE`](using_mlte.md#testing-models-with-`mlte`-(imt-and-sdmt))
+2. `2a_evidence_<quality_attribute> - 2<x>_evidence_<quality_atribute>`
+    - Naming of match the scheme, for example `2a_evidence_fairness`, `2b_evidence_robustness`, `2c_evidence_performance`.
+    - Gather the evidence for all `TestCase` in the `TestSuite`. Each notebook should gather evidence for all of the `TestCase`s that relate to the quality attribute in the name of the notebook.
+    - Each of these notebooks will be used as an entry in the Sample Test Catalog to give an example of the `Test Case`s evaluated in the notebook. The second cell must contain a JSON block with information that will be used to populate the Test Catalog entry. All fields are required.
+        ```json
+        {
+            "tags": ["General"],
+            "quality_attribute": "Detect OOD inputs and shifts in output",
+            "description": "During normal operation, the ML pipeline will log errors when out of distribution data is observed. The ML pipeline will create a log entry with a tag. During normal operation, ML pipeline will log errors when the output distribution changes. The ML pipeline will create a log entry with a tag.",
+            "inputs": "Existing ML model, sample image data that has out of bounds input, and that produces output confidence error",
+            "output": "Log with input issues tagged",
+        }
+        ```
+3. `3_report.ipynb`
+    - Create a `TestSuiteValidator` and validate the evidence collected.
+    - Generate a report to communicate the results of the evaluation.
+
+All other files related to the new demo including data 
+
+#### Populating the Test Catalog
+
+When demo notebooks have been created or edited and need to be added to the sample test catalog, it can be done automatically with the following command. This requires the demo dependencies to be installed and will go through all demos to update the entire sample catalog.
 
 ```bash
 $ make build-sample-catalog
@@ -80,6 +131,16 @@ To manually activate your environment, run:
 ```bash
 $ source .venv/bin/activate
 ```
+
+### Make Overview
+
+There are a couple of shorthand commands in the Makefile to run several of the below commands at the same time. The most useful ones include:
+
+* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands of frontend and backend.
+* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands of frontend and backend.
+* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+
+`make qa` and `make test` should be ran before every push to ensure that the changes made adhere to the QA standards and will pass the unit tests. These two encapsulate all of the commands below that are generally applicable.
 
 ### Import Sorting
 
@@ -173,14 +234,32 @@ $ make check-schema
 
 Schema failures result in build failures in CI.
 
-### Make Shorthand Commands
+### Front End Formatting and Linting
 
-There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
+We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
 
-* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands.
-* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands.
-* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+```bash
+$ make lint-frontend
+```
 
+Or manually from the root of the nuxt application:
+
+```bash
+$ npm run lint
+```
+
+### Front End Static Type Checking
+All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
+
+```bash
+$ make typecheck-frontend
+```
+
+Or manually from the root of the nuxt application:
+
+```bash
+$ npx vue-tsc
+```
 
 ## Front End
 
@@ -209,33 +288,6 @@ This will run the front end at `http://localhost:3000`. The backend can be run w
 
 ```bash
 $ mlte backend --store-uri fs://store
-```
-
-### Front End Formatting and Linting
-
-We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
-
-```bash
-$ make lint-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npm run lint
-```
-
-### Front End Static Type Checking
-All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
-
-```bash
-$ make typecheck-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npx vue-tsc
 ```
 
 ## Continuous Integration

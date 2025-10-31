@@ -24,14 +24,6 @@ To use the web UI (frontend/backend functionality), the `frontend` optional depe
 $ pip install "mlte[frontend,rdbs,gpu]"
 ```
 
-### Building `MLTE`
-If you want to build `MLTE` from its source code in this repository, see the <a href="https://mlte.readthedocs.io/en/latest/development/" target="_blank">development section</a> of the MLTE docs  for details on setting up a local environment to build and run MLTE from source. 
-
-To build the `MLTE` wheel from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder), run the following command:
-```bash
-$ make build-in-docker
-```
-
 ### Using `MLTE` as a Library
 
 `MLTE` can be imported and used as a regular library to access most of its functionality by importing the ``mlte`` package. Before most operations can be done on `MLTE`, a context and store need to be set via ``set_context("model_name", "model_version")`` and ``set_store("store_uri")``, which can be imported as follows:
@@ -70,9 +62,21 @@ After this, go to the hosted address (defaults to `http://localhost:8000`) to vi
 * Default user: admin
 * Default password: admin1234
 
+### Building `MLTE`
+If you want to build `MLTE` from its source code in this repository, see the <a href="https://mlte.readthedocs.io/en/latest/development/" target="_blank">development section</a> of the MLTE docs  for details on setting up a local environment to build and run MLTE from source. 
+
+To build the `MLTE` wheel from source in an isolated Docker environment, without setting up a local environment (the output will be in the `./dist` folder), run the following command:
+```bash
+$ make build-in-docker
+```
+
 ## Next Steps
 
 The `MLTE` Python package is best used in conjunction with the `MLTE` <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">process framework</a>. For more details on using the package, see our documentation page on <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a>.
+
+## Development
+
+All information relating to development of MLTE from demo information, development setup, development guidelines, and QA/CI information can be found <a href="https://mlte.readthedocs.io/en/latest/development/" target="_blank"> here</a>.
 
 ### Citing This Work
 
