@@ -14,7 +14,7 @@ $ mlte ui
 
 This is the simplest initial setup. This will install dependencies to use `MLTE` as a library, and the frontend/backend functionality. Then it starts up the `MLTE` frontend and backend with the backend using the `store/` directory to store data.
 
-Examples of how to use MLTE as a library can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">`MLTE` repository demos<a>. Although these are currently not able to be ran without installing `MLTE` through the repository and setting up the development environment.
+Examples of how to use MLTE as a library can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">`MLTE` repository demos<a>. Although these are currently not able to be ran without installing `MLTE` through the repository and setting up the development environment. 
 
 ## Installation
 

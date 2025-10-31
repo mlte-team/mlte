@@ -85,8 +85,11 @@ $ bash run_environment.sh
 
 #### Creating a new Demo
 
-A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Demos are to be named and populated as follows,
+A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Demos are to be named and populated as follows. The number naming is used to signify the order in which the notebooks should be ran.
 
+0. `all notebooks`
+    - All notebooks will have to connect setup the `MLTE` context before their operation. This is done by importing the session module, `from demo.scenarios.session import *`
+    - All files outside of notebooks including data, or re-used functionality should be included within the demo folder
 1. `1_requirements.ipynb`
     - Defines the  `MLTE` [Negotiation Card](negotiation_card.md), an example card can be found at `./demo/sample_store/models/OxfordFlower/card.default.json`
     - Defines the `TestSuite`, more `TestSuite` information can be found in [Using `MLTE`](using_mlte.md#testing-models-with-`mlte`-(imt-and-sdmt))
@@ -106,6 +109,8 @@ A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Dem
 3. `3_report.ipynb`
     - Create a `TestSuiteValidator` and validate the evidence collected.
     - Generate a report to communicate the results of the evaluation.
+
+All other files related to the new demo including data 
 
 #### Populating the Test Catalog
 
