@@ -15,7 +15,8 @@ from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.measurement.process_measurement_group import ProcessMeasurementGroup
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_case import TestCase
@@ -165,12 +166,11 @@ class TestSuite(Artifact):
         # Check that the QAS ids in the test cases are all valid QAS ids.
         with ManagedArtifactSession(store.session()) as store_session:
             # Load all negotiation card, to find the ids of the QAS there.
-            negotiation_cards = store_session.search_artifacts(
-                context.model,
-                context.version,
+            negotiation_cards = store_session.artifact_mapper.search(
                 Query(
                     filter=TypeFilter(item_type=ArtifactType.NEGOTIATION_CARD)
                 ),
+                context=(context.model, context.version),
             )
             for _, case in self.test_cases.items():
                 # Check each QAS id, in each test case.

@@ -1,21 +1,21 @@
-"""
-mlte/store/artifact/underlying/memory.py
-
-Implementation of in-memory artifact store.
-"""
+"""Implementation of in-memory artifact store."""
 
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Optional
+from typing import Any, Optional
 
-import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import (
+    ArtifactMapper,
+    ArtifactStoreSession,
+    ModelMapper,
+    VersionMapper,
+)
 from mlte.store.base import StoreURI
-from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # Data Structures
@@ -31,14 +31,6 @@ class ModelArtifacts:
 
         self.version_artifacts: dict[str, OrderedDict[str, ArtifactModel]] = {}
         """The version level artifacts, by version."""
-
-    def get_all_artifacts(
-        self, version_id: str
-    ) -> OrderedDict[str, ArtifactModel]:
-        """Returns all artifacts, from model and version level."""
-        all_artifacts = self.artifacts.copy()
-        all_artifacts.update(self.version_artifacts[version_id])
-        return all_artifacts
 
     def get_artifact(
         self, version_id: str, artifact_id: str
@@ -64,7 +56,7 @@ class ModelArtifacts:
             del self.artifacts[artifact_id]
 
 
-class MemoryStorage:
+class MemoryArtifactStorage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
@@ -89,86 +81,88 @@ class MemoryStorage:
 
 
 # -----------------------------------------------------------------------------
-# InMemoryStoreSession
+# InMemoryStore and InMemoryStoreSession
 # -----------------------------------------------------------------------------
+
+
+class InMemoryStore(ArtifactStore):
+    """An in-memory implementation of the MLTE artifact store."""
+
+    def __init__(self, uri: StoreURI) -> None:
+        super().__init__(uri=uri)
+
+        self.storage = MemoryArtifactStorage()
+        """The underlying storage for the store."""
+
+    def session(self) -> InMemoryStoreSession:
+        """
+        Return a session handle for the store instance.
+        :return: The session handle
+        """
+        return InMemoryStoreSession(storage=self.storage)
 
 
 class InMemoryStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
-    def __init__(self, *, storage: MemoryStorage) -> None:
+    def __init__(self, *, storage: MemoryArtifactStorage) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
+        self.version_mapper = InMemoryVersionMapper(storage=storage)
+        """The mapper to version CRUD."""
+
+        self.model_mapper = InMemoryModelMapper(
+            storage=storage, version_mapper=self.version_mapper
+        )
+        """The mapper to model CRUD."""
+
+        self.artifact_mapper = InMemoryArtifactMapper(storage=storage)
+        """The mapper to artifact CRUD."""
+
     def close(self) -> None:
         """Close the session."""
-        # NOTE(Kyle): Closing an in-memory session is a no-op.
+        # Closing an in-memory session is a no-op.
         pass
 
-    # -------------------------------------------------------------------------
-    # Structural Elements
-    # -------------------------------------------------------------------------
 
-    def create_model(self, model: Model) -> Model:
+# -----------------------------------------------------------------------------
+# Mappers.
+# -----------------------------------------------------------------------------
+
+
+class InMemoryModelMapper(ModelMapper):
+    """In-memory mapper for the model resource."""
+
+    def __init__(
+        self,
+        *,
+        storage: MemoryArtifactStorage,
+        version_mapper: InMemoryVersionMapper,
+    ) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+        self.version_mapper = version_mapper
+        """The mapper to version CRUD."""
+
+    def create(self, model: Model, context: Any = None) -> Model:
         if model.identifier in self.storage.models:
             raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
         self.storage.models[model.identifier] = ModelArtifacts()
         return Model(identifier=model.identifier, versions=[])
 
-    def read_model(self, model_id: str) -> Model:
+    def read(self, model_id: str, context: Any = None) -> Model:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
         return self._read_model(model_id)
 
-    def list_models(self) -> list[str]:
+    def list(self, context: Any = None) -> list[str]:
         return [model_id for model_id in self.storage.models.keys()]
 
-    def delete_model(self, model_id: str) -> Model:
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-
-        popped = self._read_model(model_id)
+    def delete(self, model_id: str, context: Any = None) -> Model:
+        popped = self.read(model_id)
         del self.storage.models[model_id]
-        return popped
-
-    def create_version(self, model_id: str, version: Version) -> Version:
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-
-        model = self.storage.models[model_id]
-        if version.identifier in model.version_artifacts:
-            raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
-
-        model.version_artifacts[version.identifier] = OrderedDict()
-        return Version(identifier=version.identifier)
-
-    def read_version(self, model_id: str, version_id: str) -> Version:
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-
-        model = self.storage.models[model_id]
-        if version_id not in model.version_artifacts:
-            raise errors.ErrorNotFound(f"Version {version_id}")
-
-        return self._read_version(model_id, version_id)
-
-    def list_versions(self, model_id: str) -> list[str]:
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-
-        model = self.storage.models[model_id]
-        return [version_id for version_id in model.version_artifacts.keys()]
-
-    def delete_version(self, model_id: str, version_id: str) -> Version:
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-
-        model = self.storage.models[model_id]
-        if version_id not in model.version_artifacts:
-            raise errors.ErrorNotFound(f"Version {version_id}")
-
-        popped = self._read_version(model_id, version_id)
-        del model.version_artifacts[version_id]
         return popped
 
     def _read_model(self, model_id: str) -> Model:
@@ -183,10 +177,52 @@ class InMemoryStoreSession(ArtifactStoreSession):
         return Model(
             identifier=model_id,
             versions=[
-                self._read_version(model_id, id)
+                self.version_mapper.read(model_id, id)
                 for id in self.storage.models[model_id].version_artifacts.keys()
             ],
         )
+
+
+class InMemoryVersionMapper(VersionMapper):
+    """In-memory mapper for the version resource."""
+
+    def __init__(self, *, storage: MemoryArtifactStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, version: Version, model_id: str) -> Version:
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+        model = self.storage.models[model_id]
+        if version.identifier in model.version_artifacts:
+            raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
+
+        model.version_artifacts[version.identifier] = OrderedDict()
+        return Version(identifier=version.identifier)
+
+    def read(self, version_id: str, model_id: str) -> Version:
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+        model = self.storage.models[model_id]
+        if version_id not in model.version_artifacts:
+            raise errors.ErrorNotFound(f"Version {version_id}")
+
+        return self._read_version(model_id, version_id)
+
+    def list(self, model_id: str) -> list[str]:
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+        model = self.storage.models[model_id]
+        return [version_id for version_id in model.version_artifacts.keys()]
+
+    def delete(self, version_id: str, model_id: str) -> Version:
+        popped = self.read(version_id, model_id)
+        model = self.storage.models[model_id]
+        del model.version_artifacts[version_id]
+        return popped
 
     def _read_version(self, model_id: str, version_id: str) -> Version:
         """
@@ -203,81 +239,25 @@ class InMemoryStoreSession(ArtifactStoreSession):
         ), f"Version {version_id} not found int list for model {model_id}."
         return Version(identifier=version_id)
 
-    # -------------------------------------------------------------------------
-    # Artifact
-    # -------------------------------------------------------------------------
 
-    def write_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact: ArtifactModel,
-        *,
-        force: bool = False,
-        parents: bool = False,
+class InMemoryArtifactMapper(ArtifactMapper):
+    """In-memory mapper for the artifact resource."""
+
+    def __init__(self, *, storage: MemoryArtifactStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def read(
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
-        if parents:
-            storeutil.create_parents(self, model_id, version_id)
-
-        artifact_id = artifact.header.identifier
-        try:
-            artifact = self._get_artifact(model_id, version_id, artifact_id)
-            if not force:
-                # If it exists and we are not "forcing" (overriting/editing), complain.
-                raise errors.ErrorAlreadyExists(f"Artifact '{artifact_id}'")
-        except errors.ErrorNotFound as ex:
-            if "Artifact" in str(ex):
-                # It is ok if artifact it was not found, it just means we are creating it.
-                pass
-            else:
-                # If model or version were not found.
-                raise ex
-
-        self.storage.add_artifact(
-            artifact, model_id, version_id, artifact.header.level
-        )
-        return artifact
-
-    def read_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
         return self._get_artifact(model_id, version_id, artifact_id)
 
-    def read_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> list[ArtifactModel]:
-        artifacts = self._get_artifacts(model_id, version_id)
-        return [artifact for artifact in artifacts.values()][
-            offset : offset + limit
-        ]
-
-    def search_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        query: Query = Query(),
-    ) -> list[ArtifactModel]:
-        artifacts = self._get_artifacts(model_id, version_id)
-        return [
-            artifact
-            for artifact in artifacts.values()
-            if query.filter.match(artifact)
-        ]
-
-    def delete_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
+    def delete(
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
-        artifact = self.read_artifact(model_id, version_id, artifact_id)
+        model_id, version_id = model_and_version
+        artifact = self.read(artifact_id, (model_id, version_id))
 
         if artifact.header.level == ArtifactLevel.VERSION:
             self.storage.models[model_id].delete_artifact(
@@ -287,6 +267,20 @@ class InMemoryStoreSession(ArtifactStoreSession):
             self.storage.models[model_id].delete_artifact(artifact_id)
 
         return artifact
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _store_artifact(
+        self, artifact: ArtifactModel, model_and_version: tuple[str, str]
+    ):
+        """Writes an artifact to the store."""
+        model_id, version_id = model_and_version
+        self.storage.add_artifact(
+            artifact, model_id, version_id, artifact.header.level
+        )
+        return self.read(artifact.header.identifier, (model_id, version_id))
 
     def _get_artifact(
         self, model_id: str, version_id: str, artifact_id: str
@@ -315,39 +309,3 @@ class InMemoryStoreSession(ArtifactStoreSession):
             )
         else:
             return artifact
-
-    def _get_artifacts(
-        self, model_id: str, version_id: str
-    ) -> OrderedDict[str, ArtifactModel]:
-        """
-        Get the artifcats from storage.
-        :param model_id: The identifier for the model.
-        :param version_id: The identifier for the version.
-        :raises ErrorNotFound: If the model or version are not present.
-        :return: The artifcats for this model and version, including model-level only.
-        """
-        if model_id not in self.storage.models:
-            raise errors.ErrorNotFound(f"Model {model_id}")
-        model_artifacts = self.storage.models[model_id]
-
-        if version_id not in model_artifacts.version_artifacts:
-            raise errors.ErrorNotFound(f"Version {version_id}")
-
-        return model_artifacts.get_all_artifacts(version_id)
-
-
-class InMemoryStore(ArtifactStore):
-    """An in-memory implementation of the MLTE artifact store."""
-
-    def __init__(self, uri: StoreURI) -> None:
-        super().__init__(uri=uri)
-
-        self.storage = MemoryStorage()
-        """The underlying storage for the store."""
-
-    def session(self) -> InMemoryStoreSession:
-        """
-        Return a session handle for the store instance.
-        :return: The session handle
-        """
-        return InMemoryStoreSession(storage=self.storage)

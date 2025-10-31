@@ -39,7 +39,7 @@ def create_model(
     created_model: Model
     with state_stores.artifact_store_session() as handle:
         try:
-            created_model = handle.create_model(model)
+            created_model = handle.model_mapper.create(model)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -80,7 +80,7 @@ def read_model(
     model_id = url_utils.revert_valid_url_part(model_id)
     try:
         with state_stores.artifact_store_session() as handle:
-            model = handle.read_model(model_id)
+            model = handle.model_mapper.read(model_id)
 
         return model
     except errors.ErrorNotFound as e:
@@ -101,7 +101,7 @@ def list_models(
     """
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.list_models()
+            return handle.model_mapper.list()
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -125,7 +125,7 @@ def delete_model(
     deleted_model: Model
     with state_stores.artifact_store_session() as handle:
         try:
-            deleted_model = handle.delete_model(model_id)
+            deleted_model = handle.model_mapper.delete(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -163,7 +163,7 @@ def create_version(
     model_id = url_utils.revert_valid_url_part(model_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.create_version(model_id, version)
+            return handle.version_mapper.create(version, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -193,7 +193,7 @@ def read_version(
     version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.read_version(model_id, version_id)
+            return handle.version_mapper.read(version_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -215,7 +215,7 @@ def list_versions(
     model_id = url_utils.revert_valid_url_part(model_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.list_versions(model_id)
+            return handle.version_mapper.list(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -241,7 +241,7 @@ def delete_version(
     version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.delete_version(model_id, version_id)
+            return handle.version_mapper.delete(version_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

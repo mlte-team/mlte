@@ -82,7 +82,9 @@ def read_artifact(
     artifact_id = url_utils.revert_valid_url_part(artifact_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.read_artifact(model_id, version_id, artifact_id)
+            return handle.artifact_mapper.read(
+                artifact_id, (model_id, version_id)
+            )
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -111,7 +113,9 @@ def read_artifacts(
     version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.read_artifacts(model_id, version_id, limit, offset)
+            return handle.artifact_mapper.list_details(
+                context=(model_id, version_id), limit=limit, offset=offset
+            )
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -137,7 +141,9 @@ def search_artifacts(
     version_id = url_utils.revert_valid_url_part(version_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.search_artifacts(model_id, version_id, query)
+            return handle.artifact_mapper.search(
+                query, context=(model_id, version_id)
+            )
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -161,7 +167,9 @@ def delete_artifact(
     artifact_id = url_utils.revert_valid_url_part(artifact_id)
     with state_stores.artifact_store_session() as handle:
         try:
-            return handle.delete_artifact(model_id, version_id, artifact_id)
+            return handle.artifact_mapper.delete(
+                artifact_id, (model_id, version_id)
+            )
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

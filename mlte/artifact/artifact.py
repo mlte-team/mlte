@@ -1,8 +1,4 @@
-"""
-mlte/artifact/artifact.py
-
-Artifact protocol implementation.
-"""
+"""Artifact protocol implementation."""
 
 from __future__ import annotations
 
@@ -10,7 +6,6 @@ import abc
 import typing
 from typing import Optional
 
-import mlte.store.artifact.util as storeutil
 from mlte.artifact.model import (
     ArtifactHeaderModel,
     ArtifactLevel,
@@ -20,7 +15,8 @@ from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.serializable import Serializable
 from mlte.session.session import session
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
 
 DEFAULT_ID = "default"
@@ -135,7 +131,7 @@ class Artifact(Serializable, abc.ABC):
         with ManagedArtifactSession(store.session()) as handle:
             # If we are forcing parent creation, ensure they are there before any hooks.
             if parents:
-                storeutil.create_parents(handle, context.model, context.version)
+                handle.create_parents(context.model, context.version)
 
             # Run any artifact-type specific pre save hooks.
             self.pre_save_hook(context, store)
@@ -145,12 +141,11 @@ class Artifact(Serializable, abc.ABC):
             assert isinstance(
                 model, ArtifactModel
             ), "Can't create object from non-ArtifactModel model."
-            return handle.write_artifact_with_header(
+            return handle.artifact_mapper.write_artifact_with_header(
                 context.model,
                 context.version,
                 model,
                 force=force,
-                parents=parents,
                 user=user,
             )
 
@@ -191,10 +186,8 @@ class Artifact(Serializable, abc.ABC):
             artifact = typing.cast(
                 Artifact,
                 cls.from_model(
-                    handle.read_artifact(
-                        context.model,
-                        context.version,
-                        identifier,
+                    handle.artifact_mapper.read(
+                        identifier, (context.model, context.version)
                     )
                 ),
             )
@@ -220,10 +213,8 @@ class Artifact(Serializable, abc.ABC):
         """Loads all artifact models of the given type for the given context and store."""
         with ManagedArtifactSession(store.session()) as handle:
             query_instance = Query(filter=TypeFilter(item_type=artifact_type))
-            artifact_models = handle.search_artifacts(
-                context.model,
-                context.version,
-                query_instance,
+            artifact_models = handle.artifact_mapper.search(
+                query_instance, context=(context.model, context.version)
             )
             return artifact_models
 

@@ -1,19 +1,19 @@
-"""
-mlte/store/artifact/underlying/fs.py
-
-Implementation of local file system artifact store.
-"""
+"""Implementation of local file system artifact store."""
 
 from __future__ import annotations
 
-import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import (
+    ArtifactMapper,
+    ArtifactStoreSession,
+    ModelMapper,
+    VersionMapper,
+)
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
-from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore
@@ -54,16 +54,44 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self.storage = storage
         """A reference to underlying storage."""
 
+        self.version_mapper = FileSystemVersionMapper(storage=storage)
+        """The mapper to version CRUD."""
+
+        self.model_mapper = FileSystemModelMapper(
+            storage=storage, version_mapper=self.version_mapper
+        )
+        """The mapper to model CRUD."""
+
+        self.artifact_mapper = FileSystemArtifactMapper(storage=storage)
+        """The mapper to artifact CRUD."""
+
     def close(self) -> None:
         """Close the session."""
         # Closing a local FS session is a no-op.
         pass
 
-    # -------------------------------------------------------------------------
-    # Resource Group: Models.
-    # -------------------------------------------------------------------------
 
-    def create_model(self, model: Model) -> Model:
+# -------------------------------------------------------------------------
+# Resource Group: Models.
+# -------------------------------------------------------------------------
+
+
+class FileSystemModelMapper(ModelMapper):
+    """File storage mapper for the model resource."""
+
+    def __init__(
+        self,
+        *,
+        storage: FileSystemStorage,
+        version_mapper: FileSystemVersionMapper,
+    ) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+        self.version_mapper = version_mapper
+        """A reference to the version mapper."""
+
+    def create(self, model: Model) -> Model:
         try:
             self.storage.create_resource_group(model.identifier)
         except FileExistsError:
@@ -71,65 +99,21 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
         return Model(identifier=model.identifier, versions=[])
 
-    def read_model(self, model_id: str) -> Model:
-        self._ensure_model_exists(model_id)
+    def read(self, model_id: str) -> Model:
         return self._read_model(model_id)
 
-    def list_models(self) -> list[str]:
+    def list(self) -> list[str]:
         return self.storage.list_resource_groups()
 
-    def delete_model(self, model_id: str) -> Model:
-        self._ensure_model_exists(model_id)
-        model = self._read_model(model_id)
+    def delete(self, model_id: str) -> Model:
+        model = self.read(model_id)
         self.storage.delete_resource_group(model_id)
         return model
-
-    # -------------------------------------------------------------------------
-    # Resource Group: Versions.
-    # -------------------------------------------------------------------------
-
-    def create_version(self, model_id: str, version: Version) -> Version:
-        self._ensure_model_exists(model_id)
-
-        try:
-            self.storage.create_resource_group(version.identifier, [model_id])
-        except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
-        return Version(identifier=version.identifier)
-
-    def read_version(self, model_id: str, version_id: str) -> Version:
-        self._ensure_model_exists(model_id)
-        self._ensure_version_exists(model_id, version_id)
-
-        return self._read_version(model_id, version_id)
-
-    def list_versions(self, model_id: str) -> list[str]:
-        self._ensure_model_exists(model_id)
-        return self.storage.list_resource_groups([model_id])
-
-    def delete_version(self, model_id: str, version_id: str) -> Version:
-        self._ensure_model_exists(model_id)
-        self._ensure_version_exists(model_id, version_id)
-
-        version = self._read_version(model_id, version_id)
-        self.storage.delete_resource_group(version_id, [model_id])
-        return version
-
-    # -------------------------------------------------------------------------
-    # Internal helpers.
-    # -------------------------------------------------------------------------
 
     def _ensure_model_exists(self, model_id: str) -> None:
         """Throws an ErrorNotFound if the given model  does not exist."""
         if not self.storage.exists_resource_group(model_id):
             raise errors.ErrorNotFound(f"Model {model_id}")
-
-    def _ensure_version_exists(self, model_id: str, version_id: str) -> None:
-        """Throws an ErrorNotFound if the given version of the given model does not exist."""
-        if not self.storage.exists_resource_group(version_id, [model_id]):
-            raise errors.ErrorNotFound(
-                f"Version {version_id} in model {model_id}"
-            )
 
     def _read_model(self, model_id: str) -> Model:
         """
@@ -140,11 +124,54 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         self._ensure_model_exists(model_id)
         return Model(
             identifier=model_id,
-            versions=[
-                self._read_version(model_id, id)
-                for id in self.list_versions(model_id)
-            ],
+            versions=self.version_mapper.list_details(model_id),
         )
+
+
+# -------------------------------------------------------------------------
+# Resource Group: Versions.
+# -------------------------------------------------------------------------
+
+
+class FileSystemVersionMapper(VersionMapper):
+    """File storage mapper for the version resource."""
+
+    def __init__(self, *, storage: FileSystemStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, version: Version, model_id: str) -> Version:
+        self._ensure_model_exists(model_id)
+
+        try:
+            self.storage.create_resource_group(version.identifier, [model_id])
+        except FileExistsError:
+            raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
+        return Version(identifier=version.identifier)
+
+    def read(self, version_id: str, model_id: str) -> Version:
+        return self._read_version(model_id, version_id)
+
+    def list(self, model_id: str) -> list[str]:
+        self._ensure_model_exists(model_id)
+        return self.storage.list_resource_groups([model_id])
+
+    def delete(self, version_id: str, model_id: str) -> Version:
+        version = self.read(version_id, model_id)
+        self.storage.delete_resource_group(version_id, [model_id])
+        return version
+
+    def _ensure_model_exists(self, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given model  does not exist."""
+        if not self.storage.exists_resource_group(model_id):
+            raise errors.ErrorNotFound(f"Model {model_id}")
+
+    def _ensure_version_exists(self, version_id: str, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given version of the given model does not exist."""
+        if not self.storage.exists_resource_group(version_id, [model_id]):
+            raise errors.ErrorNotFound(
+                f"Version {version_id} in model {model_id}"
+            )
 
     def _read_version(self, model_id: str, version_id: str) -> Version:
         """
@@ -154,32 +181,53 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         :return: The version object
         """
         self._ensure_model_exists(model_id)
-        self._ensure_version_exists(model_id, version_id)
+        self._ensure_version_exists(version_id, model_id)
         return Version(identifier=version_id)
 
-    # -------------------------------------------------------------------------
-    # Artifacts
-    # -------------------------------------------------------------------------
 
-    def write_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact: ArtifactModel,
-        *,
-        force: bool = False,
-        parents: bool = False,
+# -------------------------------------------------------------------------
+# Artifact mapper
+# -------------------------------------------------------------------------
+
+
+class FileSystemArtifactMapper(ArtifactMapper):
+    """File storage mapper for the artifact resource."""
+
+    def __init__(self, *, storage: FileSystemStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def read(
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
-        if parents:
-            storeutil.create_parents(self, model_id, version_id)
+        model_id, version_id = model_and_version
+        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
+        return ArtifactModel(
+            **self.storage.read_resource(artifact_id, group_ids)
+        )
 
-        artifacts = self._get_artifact_ids(model_id, version_id)
-        if artifact.header.identifier in artifacts and not force:
-            raise errors.ErrorAlreadyExists(
-                f"Artifact '{artifact.header.identifier}'"
-            )
+    def delete(
+        self, artifact_id: str, model_and_version: tuple[str, str]
+    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
+        artifact = self.read(artifact_id, (model_id, version_id))
+        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
+        self.storage.delete_resource(artifact_id, group_ids)
+        return artifact
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _store_artifact(
+        self,
+        artifact: ArtifactModel,
+        model_and_version: tuple[str, str],
+    ) -> ArtifactModel:
+        """Writes artifact to storage."""
 
         # Only store in version subgroup if it was requested.
+        model_id, version_id = model_and_version
         group_ids = [model_id]
         if artifact.header.level == ArtifactLevel.VERSION:
             group_ids += [version_id]
@@ -189,57 +237,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
             artifact.to_json(),
             group_ids,
         )
-        return artifact
-
-    def read_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
-        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
-        return ArtifactModel(
-            **self.storage.read_resource(artifact_id, group_ids)
-        )
-
-    def read_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> list[ArtifactModel]:
-        artifact_ids = self._get_artifact_ids(model_id, version_id)
-        return [
-            self.read_artifact(model_id, version_id, artifact_id)
-            for artifact_id in artifact_ids
-        ][offset : offset + limit]
-
-    def search_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        query: Query = Query(),
-    ) -> list[ArtifactModel]:
-        artifacts = self.read_artifacts(model_id, version_id)
-        return [
-            artifact for artifact in artifacts if query.filter.match(artifact)
-        ]
-
-    def delete_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
-        group_ids = self._get_artifact_groups(model_id, version_id, artifact_id)
-        artifact = self.read_artifact(model_id, version_id, artifact_id)
-        self.storage.delete_resource(artifact_id, group_ids)
-        return artifact
-
-    # -------------------------------------------------------------------------
-    # Internal helpers.
-    # -------------------------------------------------------------------------
+        return self.read(artifact.header.identifier, (model_id, version_id))
 
     def _get_artifact_groups(
         self, model_id: str, version_id: str, artifact_id: str
@@ -260,32 +258,23 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
 
     def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:
         """Returns all artifact ids from both model/version levels, and just model level."""
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(version_id, model_id)
         version_artifacts = []
-        version_artifacts = self._get_version_artifacts(model_id, version_id)
-        model_artifacts = self._get_model_level_artifacts(model_id)
+        version_artifacts = self.storage.list_resources(
+            group_ids=[model_id, version_id]
+        )
+        model_artifacts = self.storage.list_resources(group_ids=[model_id])
         return version_artifacts + model_artifacts
 
-    def _get_version_artifacts(
-        self, model_id: str, version_id: str
-    ) -> list[str]:
-        """
-        Get artifacts for a version from storage.
-        :param model_id: The identifier for the model
-        :param version_id: The identifier for the version
-        :raises ErrorNotFound: If the required structural elements are not present
-        :return: The associated artifacts
-        """
-        self._ensure_model_exists(model_id)
-        self._ensure_version_exists(model_id, version_id)
+    def _ensure_model_exists(self, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given model does not exist."""
+        if not self.storage.exists_resource_group(model_id):
+            raise errors.ErrorNotFound(f"Model {model_id}")
 
-        return self.storage.list_resources(group_ids=[model_id, version_id])
-
-    def _get_model_level_artifacts(self, model_id: str) -> list[str]:
-        """
-        Get artifacts for a model from storage, which are not inside a version, but at model-level.
-        :param model_id: The identifier for the model
-        :raises ErrorNotFound: If the required structural elements are not present
-        :return: The associated artifacts
-        """
-        self._ensure_model_exists(model_id)
-        return self.storage.list_resources(group_ids=[model_id])
+    def _ensure_version_exists(self, version_id: str, model_id: str) -> None:
+        """Throws an ErrorNotFound if the given version of the given model does not exist."""
+        if not self.storage.exists_resource_group(version_id, [model_id]):
+            raise errors.ErrorNotFound(
+                f"Version {version_id} in model {model_id}"
+            )

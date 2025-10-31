@@ -1,21 +1,23 @@
-"""
-mlte/store/artifact/underlying/rdbs/store.py
-
-Implementation of relational database system artifact store.
-"""
+"""Implementation of relational database system artifact store."""
 
 from __future__ import annotations
 
 import typing
+from typing import Any
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
 
-import mlte.store.artifact.util as storeutil
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import (
+    ArtifactMapper,
+    ArtifactStoreSession,
+    ModelMapper,
+    VersionMapper,
+)
 from mlte.store.artifact.underlying.rdbs import main_factory
 from mlte.store.artifact.underlying.rdbs.card_metadata import (
     init_classification_types,
@@ -25,6 +27,7 @@ from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
     init_evidence_types,
 )
 from mlte.store.artifact.underlying.rdbs.main_metadata import (
+    DBArtifact,
     DBBase,
     DBModel,
     DBVersion,
@@ -32,7 +35,6 @@ from mlte.store.artifact.underlying.rdbs.main_metadata import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
-from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
 # RelationalDBArtifactStore
@@ -82,15 +84,35 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         self.storage = storage
         """A reference to underlying storage."""
 
+        self.version_mapper = RDBSVersionMapper(storage=storage)
+        """The mapper to version CRUD."""
+
+        self.model_mapper = RDBSModelMapper(
+            storage=storage, version_mapper=self.version_mapper
+        )
+        """The mapper to model CRUD."""
+
+        self.artifact_mapper = RDBSArtifactMapper(storage=storage)
+        """The mapper to artifact CRUD."""
+
     def close(self) -> None:
         """Close the session."""
         self.storage.close()
 
-    # -------------------------------------------------------------------------
-    # Structural Elements
-    # -------------------------------------------------------------------------
 
-    def create_model(self, model: Model) -> Model:
+# -------------------------------------------------------------------------
+# Structural Elements
+# -------------------------------------------------------------------------
+
+
+class RDBSModelMapper(ModelMapper):
+    """In-memory mapper for the model resource."""
+
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, model: Model, context: Any = None) -> Model:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_model(model.identifier, session)
@@ -107,12 +129,12 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 session.commit()
                 return Model(identifier=model.identifier, versions=[])
 
-    def read_model(self, model_id: str) -> Model:
+    def read(self, model_id: str, context: Any = None) -> Model:
         with Session(self.storage.engine) as session:
             model, _ = DBReader.get_model(model_id, session)
             return model
 
-    def list_models(self) -> list[str]:
+    def list(self, context: Any = None) -> list[str]:
         models: list[str] = []
         with Session(self.storage.engine) as session:
             model_orms = session.scalars(select(DBModel))
@@ -120,14 +142,22 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 models.append(model_orm.name)
         return models
 
-    def delete_model(self, model_id: str) -> Model:
+    def delete(self, model_id: str, context: Any = None) -> Model:
         with Session(self.storage.engine) as session:
             model, model_orm = DBReader.get_model(model_id, session)
             session.delete(model_orm)
             session.commit()
             return model
 
-    def create_version(self, model_id: str, version: Version) -> Version:
+
+class RDBSVersionMapper(VersionMapper):
+    """In-memory mapper for the version resource."""
+
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def create(self, version: Version, model_id: str) -> Version:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_version(
@@ -148,12 +178,12 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 session.commit()
                 return Version(identifier=version.identifier)
 
-    def read_version(self, model_id: str, version_id: str) -> Version:
+    def read(self, version_id: str, model_id: str) -> Version:
         with Session(self.storage.engine) as session:
             version, _ = DBReader.get_version(model_id, version_id, session)
             return version
 
-    def list_versions(self, model_id: str) -> list[str]:
+    def list(self, model_id: str) -> list[str]:
         versions: list[str] = []
         with Session(self.storage.engine) as session:
             version_orms = session.scalars(
@@ -167,7 +197,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
                 versions.append(version_orm.name)
         return versions
 
-    def delete_version(self, model_id: str, version_id: str) -> Version:
+    def delete(self, version_id: str, model_id: str) -> Version:
         with Session(self.storage.engine) as session:
             version, version_orm = DBReader.get_version(
                 model_id, version_id, session
@@ -176,97 +206,33 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             session.commit()
             return version
 
-    # -------------------------------------------------------------------------
-    # Artifacts
-    # -------------------------------------------------------------------------
 
-    def write_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact: ArtifactModel,
-        *,
-        force: bool = False,
-        parents: bool = False,
+# -------------------------------------------------------------------------
+# Artifacts
+# -------------------------------------------------------------------------
+
+
+class RDBSArtifactMapper(ArtifactMapper):
+    """In-memory mapper for the version resource."""
+
+    def __init__(self, storage: RDBStorage) -> None:
+        self.storage = storage
+        """A reference to underlying storage."""
+
+    def read(
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
-        with Session(self.storage.engine) as session:
-            if parents:
-                storeutil.create_parents(self, model_id, version_id)
-            else:
-                # Ensure parents exist.
-                _ = DBReader.get_version(model_id, version_id, session)
-            # Check if artifact already exists.
-            try:
-                _, artifact_orm = DBReader.get_artifact(
-                    model_id,
-                    version_id,
-                    artifact.header.identifier,
-                    session,
-                )
-                if not force:
-                    raise errors.ErrorAlreadyExists(
-                        f"Artifact '{artifact.header.identifier}' already exists."
-                    )
-                else:
-                    # We have no edit functionality, nor any versioning system, so delete the previous version.
-                    # TODO: versioning? Keep previous versions?
-                    session.delete(artifact_orm)
-            except errors.ErrorNotFound:
-                # If artifact was not found, it is ok, force it or not we will create it.
-                pass
-
-            # Create the actual object.
-            new_artifact_orm = main_factory.create_artifact_orm(
-                artifact, model_id, version_id, artifact.header.level, session
-            )
-
-            # Use session to add object.
-            session.add(new_artifact_orm)
-            session.commit()
-            return artifact
-
-    def read_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
         with Session(self.storage.engine) as session:
             artifact, _ = DBReader.get_artifact(
                 model_id, version_id, artifact_id, session
             )
             return artifact
 
-    def read_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> list[ArtifactModel]:
-        # TODO: not the best support of offset and limit, still loading everything from DB.
-        with Session(self.storage.engine) as session:
-            artifacts = DBReader.get_artifacts(model_id, version_id, session)
-            return artifacts[offset : offset + limit]
-
-    def search_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        query: Query = Query(),
-    ) -> list[ArtifactModel]:
-        # TODO: not the most efficient way, since it loads all artifacts first, before filtering.
-        artifacts = self.read_artifacts(model_id, version_id)
-        return [
-            artifact for artifact in artifacts if query.filter.match(artifact)
-        ]
-
-    def delete_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
+    def delete(
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
+        model_id, version_id = model_and_version
         with Session(self.storage.engine) as session:
             artifact, artifact_orm = DBReader.get_artifact(
                 model_id, version_id, artifact_id, session
@@ -274,3 +240,46 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
             session.delete(artifact_orm)
             session.commit()
             return artifact
+
+    # -------------------------------------------------------------------------
+    # Internal helpers.
+    # -------------------------------------------------------------------------
+
+    def _read_artifact(
+        self, artifact_id: str, model_and_version: tuple[str, str]
+    ) -> tuple[ArtifactModel, DBArtifact]:
+        """
+        Looks for an artifact in the DB store, returns it as a model and as an ORM object,
+        or throws an ErrorNotFound if not present.
+        """
+        model_id, version_id = model_and_version
+        with Session(self.storage.engine) as session:
+            artifact, artifact_orm = DBReader.get_artifact(
+                model_id, version_id, artifact_id, session
+            )
+            return artifact, artifact_orm
+
+    def _store_artifact(
+        self,
+        artifact: ArtifactModel,
+        model_and_version: tuple[str, str],
+        session: Session,
+    ):
+        """Writes an artifact to the store."""
+        model_id, version_id = model_and_version
+        _, artifact_orm = self._read_artifact(
+            artifact.header.identifier, model_and_version
+        )
+        if artifact_orm:
+            # TODO: update artifact with new data.
+            pass
+        else:
+            # No existing artifact received, create from scratch.
+            artifact_orm = main_factory.create_artifact_orm(
+                artifact, model_id, version_id, artifact.header.level, session
+            )
+            session.add(artifact_orm)
+
+        session.commit()
+
+        return self.read(artifact.header.identifier, model_and_version)

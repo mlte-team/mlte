@@ -211,6 +211,7 @@ class ResourceMapper(ABC):
         :param new_resource: The data to create the resource
         :param context: Any additional context needed for this resource.
         :return: The created resource
+        :throws: ErrorAlreadyExists if found.
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
@@ -221,6 +222,7 @@ class ResourceMapper(ABC):
         :param updated_resource: The data to edit the resource
         :param context: Any additional context needed for this resource.
         :return: The edited resource
+        :throws: ErrorNotFound if not found.
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
@@ -231,6 +233,7 @@ class ResourceMapper(ABC):
         :param resource_identifier: The identifier for the resource
         :param context: Any additional context needed for this resource.
         :return: The resource
+        :throws: ErrorNotFound if not found.
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
@@ -250,6 +253,7 @@ class ResourceMapper(ABC):
         :param resource_identifier: The identifier for the resource
         :param context: Any additional context needed for this resource.
         :return: The deleted resource
+        :throws: ErrorNotFound if not found.
         """
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 

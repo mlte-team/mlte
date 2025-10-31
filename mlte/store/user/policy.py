@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 import mlte.store.error as errors
-from mlte.store.artifact.store import ArtifactStoreSession
+from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
@@ -29,7 +29,7 @@ def create_model_policies_if_needed(
     Function that checks, for all models, if policies have not been created.
     This is for cases where the model may have been created without the API.
     """
-    models = artifact_store.list_models()
+    models = artifact_store.model_mapper.list()
     for model_id in models:
         policy = Policy(ResourceType.MODEL, model_id)
         if not policy.is_stored(user_store):
