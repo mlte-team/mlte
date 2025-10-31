@@ -12,19 +12,15 @@ from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
     DBEvidence,
     DBEvidenceMetadata,
 )
-from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 
 # -------------------------------------------------------------------------
 # Evidence Factory Methods
 # -------------------------------------------------------------------------
 
 
-def create_evidence_orm(
-    evidence: EvidenceModel, artifact: DBArtifact
-) -> DBEvidence:
+def create_evidence_orm(evidence: EvidenceModel) -> DBEvidence:
     """Creates the DB object from the corresponding internal model."""
     value_orm = DBEvidence(
-        artifact=artifact,
         evidence_metadata=DBEvidenceMetadata(
             test_case_id=evidence.metadata.test_case_id,
             measurement=json.dumps(evidence.metadata.measurement.to_json()),
