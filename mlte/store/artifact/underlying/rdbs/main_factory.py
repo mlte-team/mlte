@@ -1,6 +1,7 @@
 """Creation of metadata objects from pydantic models."""
 
 import typing
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -41,6 +42,7 @@ def create_artifact_orm(
     version_id: str,
     level: ArtifactLevel,
     session: Session,
+    artifact_orm: Optional[DBArtifact] = None,
 ) -> typing.Union[DBArtifact]:
     """Converts an internal model to its corresponding DB object for artifacts."""
     # Get type and version info from DB.
@@ -57,15 +59,24 @@ def create_artifact_orm(
         version_orm_id = None
 
     # Create the artifact object, without the specific body.
-    artifact_orm = DBArtifact(
-        identifier=artifact.header.identifier,
-        type=artifact_type_orm,
-        timestamp=artifact.header.timestamp,
-        username=artifact.header.creator,
-        level=artifact.header.level,
-        version_id=version_orm_id,
-        model_id=model_orm_id,
-    )
+    if not artifact_orm:
+        artifact_orm = DBArtifact(
+            identifier=artifact.header.identifier,
+            type=artifact_type_orm,
+            timestamp=artifact.header.timestamp,
+            username=artifact.header.creator,
+            level=artifact.header.level,
+            version_id=version_orm_id,
+            model_id=model_orm_id,
+        )
+    else:
+        # If we are using existing orm, update it.
+        artifact_orm.type = artifact_type_orm
+        artifact_orm.timestamp = artifact.header.timestamp
+        artifact_orm.username = artifact.header.creator
+        artifact_orm.level = artifact.header.level
+        artifact_orm.version_id = version_orm_id
+        artifact_orm.model_id = model_orm_id
 
     # Create the body ORM object and return it.
     if artifact.header.type == ArtifactType.NEGOTIATION_CARD:

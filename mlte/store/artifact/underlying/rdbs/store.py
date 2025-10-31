@@ -264,24 +264,25 @@ class RDBSArtifactMapper(ArtifactMapper):
     ):
         """Writes an artifact to the store."""
         model_id, version_id = model_and_version
-        _, artifact_orm = self._read_artifact(
+        _, original_orm = self._read_artifact(
             artifact.header.identifier, model_and_version
         )
         with Session(self.storage.engine) as session:
-            if artifact_orm:
-                # TODO: update artifact with new data.
-                pass
-            else:
-                # No existing artifact received, create from scratch.
-                artifact_orm = main_factory.create_artifact_orm(
-                    artifact,
-                    model_id,
-                    version_id,
-                    artifact.header.level,
-                    session,
-                )
-                session.add(artifact_orm)
+            # Create or update ORM.
+            updated_orm = main_factory.create_artifact_orm(
+                artifact,
+                model_id,
+                version_id,
+                artifact.header.level,
+                session,
+                original_orm,
+            )
 
-                session.commit()
+            if not original_orm:
+                # If it was brand new, we have to add it explicitly to the session.
+                session.add(updated_orm)
+
+            # Create or edit changes in DB.
+            session.commit()
 
         return self.read(artifact.header.identifier, model_and_version)
