@@ -2,6 +2,26 @@
 
 This document describes some of the development practices used in `MLTE`.
 
+## Quick Start
+
+The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library IMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
+
+```bash
+$ pyenv install 3.9
+$ pyenv local 3.9
+$ make venv
+```
+
+The other part of MLTE is the frontend and backend. These are used for the SDMT process, and visualing results from the IMT process. This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 3 docker containers with an RDBS based backend. The frontend will be available at `localhost:8000` and will include a sample model, version, and negotiation card.
+
+```bash
+cd demo && bash run_environment.sh
+```
+
+All issue tracking for MLTE is done in this <a href="https://github.com/orgs/mlte-team/projects/5" target="_blank">Github Project</a> [Github Project].
+
+Once changes have been made, `make qa` and `make test` should be ran to ensure that code fits QA standards and all unit tests pass. If just making python changes, `make qa-python` can be used to instead of `make qa` to reduce runtime by not running QA on the frontend.
+
 ## Setup
 
 ### Python Version Support
@@ -107,6 +127,16 @@ To manually activate your environment, run:
 $ source .venv/bin/activate
 ```
 
+### Make Overview
+
+There are a couple of shorthand commands in the Makefile to run several of the below commands at the same time. The most useful ones include:
+
+* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands of frontend and backend.
+* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands of frontend and backend.
+* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+
+`make qa` and `make test` should be ran before every push to ensure that the changes made adhere to the QA standards and will pass the unit tests. These two encapsulate all of the commands below that are generally applicable.
+
 ### Import Sorting
 
 We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. You can run this locally with:
@@ -199,14 +229,32 @@ $ make check-schema
 
 Schema failures result in build failures in CI.
 
-### Make Shorthand Commands
+### Front End Formatting and Linting
 
-There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
+We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
 
-* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands.
-* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands.
-* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+```bash
+$ make lint-frontend
+```
 
+Or manually from the root of the nuxt application:
+
+```bash
+$ npm run lint
+```
+
+### Front End Static Type Checking
+All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
+
+```bash
+$ make typecheck-frontend
+```
+
+Or manually from the root of the nuxt application:
+
+```bash
+$ npx vue-tsc
+```
 
 ## Front End
 
@@ -235,33 +283,6 @@ This will run the front end at `http://localhost:3000`. The backend can be run w
 
 ```bash
 $ mlte backend --store-uri fs://store
-```
-
-### Front End Formatting and Linting
-
-We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
-
-```bash
-$ make lint-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npm run lint
-```
-
-### Front End Static Type Checking
-All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
-
-```bash
-$ make typecheck-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npx vue-tsc
 ```
 
 ## Continuous Integration
