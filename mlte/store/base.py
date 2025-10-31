@@ -205,7 +205,7 @@ class ResourceMapper(ABC):
     """Default limit for lists."""
 
     @abstractmethod
-    def create(self, new_resource: Any, context: Any = None) -> Any:
+    def create(self, new_resource: Any, context: Any) -> Any:
         """
         Create a new resource.
         :param new_resource: The data to create the resource
@@ -216,7 +216,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def edit(self, updated_resource: Any, context: Any = None) -> Any:
+    def edit(self, updated_resource: Any, context: Any) -> Any:
         """
         Edit an existing resource.
         :param updated_resource: The data to edit the resource
@@ -227,7 +227,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def read(self, resource_identifier: str, context: Any = None) -> Any:
+    def read(self, resource_identifier: str, context: Any) -> Any:
         """
         Read a resource.
         :param resource_identifier: The identifier for the resource
@@ -238,7 +238,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def list(self, context: Any = None) -> List[str]:
+    def list(self, context: Any) -> List[str]:
         """
         List all resources of this type in the store.
         :param context: Any additional context needed for this resource.
@@ -247,7 +247,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def delete(self, resource_identifier: str, context: Any = None) -> Any:
+    def delete(self, resource_identifier: str, context: Any) -> Any:
         """
         Delete a resource.
         :param resource_identifier: The identifier for the resource
@@ -275,7 +275,7 @@ class ResourceMapper(ABC):
             offset : offset + limit
         ]
 
-    def search(self, query: Query = Query(), context: Any = None) -> List[Any]:
+    def search(self, query: Query, context: Any = None) -> List[Any]:
         """
         Read a collection of resources, optionally filtered.
         :param query: The resource query to apply

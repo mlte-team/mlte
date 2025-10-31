@@ -87,9 +87,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         self.version_mapper = RDBSVersionMapper(storage=storage)
         """The mapper to version CRUD."""
 
-        self.model_mapper = RDBSModelMapper(
-            storage=storage, version_mapper=self.version_mapper
-        )
+        self.model_mapper = RDBSModelMapper(storage=storage)
         """The mapper to model CRUD."""
 
         self.artifact_mapper = RDBSArtifactMapper(storage=storage)

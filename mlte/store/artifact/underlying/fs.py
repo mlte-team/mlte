@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.context.model import Model, Version
@@ -91,7 +93,7 @@ class FileSystemModelMapper(ModelMapper):
         self.version_mapper = version_mapper
         """A reference to the version mapper."""
 
-    def create(self, model: Model) -> Model:
+    def create(self, model: Model, context: Any = None) -> Model:
         try:
             self.storage.create_resource_group(model.identifier)
         except FileExistsError:
@@ -99,13 +101,13 @@ class FileSystemModelMapper(ModelMapper):
 
         return Model(identifier=model.identifier, versions=[])
 
-    def read(self, model_id: str) -> Model:
+    def read(self, model_id: str, context: Any = None) -> Model:
         return self._read_model(model_id)
 
-    def list(self) -> list[str]:
+    def list(self, context: Any = None) -> list[str]:
         return self.storage.list_resource_groups()
 
-    def delete(self, model_id: str) -> Model:
+    def delete(self, model_id: str, context: Any = None) -> Model:
         model = self.read(model_id)
         self.storage.delete_resource_group(model_id)
         return model
