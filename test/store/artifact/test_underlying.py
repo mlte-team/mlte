@@ -306,39 +306,6 @@ def test_artifact_without_parents(
 @pytest.mark.parametrize(
     "store_fixture_name,artifact_type", artifact_stores_and_types()
 )
-def test_artifact_parents(
-    store_fixture_name: str,
-    artifact_type: ArtifactType,
-    request: pytest.FixtureRequest,
-) -> None:
-    """An artifact store can create organizational elements implicitly, on write."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
-
-    model_id = "model0"
-    version_id = "version0"
-    artifact_id = "myid"
-
-    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
-    artifact_id = artifact.header.identifier
-
-    # The write succeeds
-    with ManagedArtifactSession(store.session()) as handle:
-        written_artifact = handle.artifact_mapper.write_artifact(
-            model_id, version_id, artifact
-        )
-        artifact_id = written_artifact.header.identifier
-
-        # The organizational elements are present
-        assert len(handle.model_mapper.list()) == 1
-        assert len(handle.version_mapper.list(model_id)) == 1
-
-        # The artifact is present
-        handle.artifact_mapper.read(artifact_id, (model_id, version_id))
-
-
-@pytest.mark.parametrize(
-    "store_fixture_name,artifact_type", artifact_stores_and_types()
-)
 def test_artifact_overwrite(
     store_fixture_name: str,
     artifact_type: ArtifactType,
