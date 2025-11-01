@@ -32,6 +32,14 @@ class ModelArtifacts:
         self.version_artifacts: dict[str, OrderedDict[str, ArtifactModel]] = {}
         """The version level artifacts, by version."""
 
+    def get_all_artifacts(
+        self, version_id: str
+    ) -> OrderedDict[str, ArtifactModel]:
+        """Returns all artifacts, from model and version level."""
+        all_artifacts = self.artifacts.copy()
+        all_artifacts.update(self.version_artifacts[version_id])
+        return all_artifacts
+
     def get_artifact(
         self, version_id: str, artifact_id: str
     ) -> Optional[ArtifactModel]:
@@ -253,6 +261,13 @@ class InMemoryArtifactMapper(ArtifactMapper):
         model_id, version_id = model_and_version
         return self._get_artifact(model_id, version_id, artifact_id)
 
+    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+        model_id, version_id = model_and_version
+        return [
+            artifact_id
+            for artifact_id in self._get_artifacts(model_id, version_id)
+        ]
+
     def delete(
         self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
@@ -309,3 +324,22 @@ class InMemoryArtifactMapper(ArtifactMapper):
             )
         else:
             return artifact
+
+    def _get_artifacts(
+        self, model_id: str, version_id: str
+    ) -> OrderedDict[str, ArtifactModel]:
+        """
+        Get the artifcats from storage.
+        :param model_id: The identifier for the model.
+        :param version_id: The identifier for the version.
+        :raises ErrorNotFound: If the model or version are not present.
+        :return: The artifcats for this model and version, including model-level only.
+        """
+        if model_id not in self.storage.models:
+            raise errors.ErrorNotFound(f"Model {model_id}")
+        model_artifacts = self.storage.models[model_id]
+
+        if version_id not in model_artifacts.version_artifacts:
+            raise errors.ErrorNotFound(f"Version {version_id}")
+
+        return model_artifacts.get_all_artifacts(version_id)
