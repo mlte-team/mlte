@@ -44,7 +44,10 @@ def create_artifact_orm(
     session: Session,
     artifact_orm: Optional[DBArtifact] = None,
 ) -> typing.Union[DBArtifact]:
-    """Converts an internal model to its corresponding DB object for artifacts."""
+    """
+    Converts an internal model to its corresponding DB object for artifacts.
+    Can edit an existing ORM if provided.
+    """
     # Get type and version info from DB.
     artifact_type_orm = DBReader.get_artifact_type(
         artifact.header.type, session

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any
+from typing import Any, Optional
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -264,23 +264,28 @@ class RDBSArtifactMapper(ArtifactMapper):
     ):
         """Writes an artifact to the store."""
         model_id, version_id = model_and_version
-        _, original_orm = self._read_artifact(
-            artifact.header.identifier, model_and_version
-        )
+        original_orm: Optional[DBArtifact] = None
+        try:
+            _, original_orm = self._read_artifact(
+                artifact.header.identifier, model_and_version
+            )
+        except errors.ErrorNotFound:
+            # It is ok if we don't find it, we will just create it instead of editing.
+            pass
+
         with Session(self.storage.engine) as session:
-            # Create or update ORM.
+            # To simulate edition, we delete the current object and create a new one.
+            # TODO: Change this so we are actually editing the object in the DB.
+            if original_orm:
+                session.delete(original_orm)
             updated_orm = main_factory.create_artifact_orm(
                 artifact,
                 model_id,
                 version_id,
                 artifact.header.level,
                 session,
-                original_orm,
             )
-
-            if not original_orm:
-                # If it was brand new, we have to add it explicitly to the session.
-                session.add(updated_orm)
+            session.add(updated_orm)
 
             # Create or edit changes in DB.
             session.commit()
