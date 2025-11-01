@@ -13,7 +13,8 @@ import pytest
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
@@ -97,10 +98,10 @@ def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
     store = artifact_store_creators.create_memory_store()
     with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.create_model(Model(identifier=FX_MODEL_ID))
-        _ = handle.create_version(
-            FX_MODEL_ID,
+        _ = handle.model_mapper.create(Model(identifier=FX_MODEL_ID))
+        _ = handle.version_mapper.create(
             Version(identifier=FX_VERSION_ID),
+            FX_MODEL_ID,
         )
 
     return store, Context(FX_MODEL_ID, FX_VERSION_ID)

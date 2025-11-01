@@ -10,8 +10,8 @@ import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import (
-    ArtifactStore,
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
@@ -58,17 +58,17 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
     model_id = "model"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
+        handle.model_mapper.create(Model(identifier=model_id))
 
-        _ = handle.read_model(model_id)
+        _ = handle.model_mapper.read(model_id)
 
-        models = handle.list_models()
+        models = handle.model_mapper.list()
         assert len(models) == 1
 
-        handle.delete_model(model_id)
+        handle.model_mapper.delete(model_id)
 
         with pytest.raises(errors.ErrorNotFound):
-            handle.read_model(model_id)
+            handle.model_mapper.read(model_id)
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -81,9 +81,9 @@ def test_model_list(
     model_id = "model0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.create_model(Model(identifier=model_id))
+        _ = handle.model_mapper.create(Model(identifier=model_id))
 
-        models = handle.list_models()
+        models = handle.model_mapper.list()
         assert len(models) == 1
         assert models[0] == "model0"
 
@@ -99,19 +99,19 @@ def test_version(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
+        handle.model_mapper.create(Model(identifier=model_id))
 
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
-        _ = handle.read_version(model_id, version_id)
+        _ = handle.version_mapper.read(version_id, model_id)
 
-        versions = handle.list_versions(model_id)
+        versions = handle.version_mapper.list(model_id)
         assert len(versions) == 1
 
-        handle.delete_version(model_id, version_id)
+        handle.version_mapper.delete(model_id, version_id)
 
         with pytest.raises(errors.ErrorNotFound):
-            _ = handle.read_version(model_id, version_id)
+            _ = handle.version_mapper.read(version_id, model_id)
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -125,11 +125,13 @@ def test_two_versions_same_id_same_model(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
         with pytest.raises(errors.ErrorAlreadyExists):
-            handle.create_version(model_id, Version(identifier=version_id))
+            handle.version_mapper.create(
+                Version(identifier=version_id), model_id
+            )
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -144,12 +146,12 @@ def test_two_versions_same_id_different_model(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_model(Model(identifier=model2_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.model_mapper.create(Model(identifier=model2_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
         # No assert needed, just ensure that this doesn't throw an exception.
-        handle.create_version(model2_id, Version(identifier=version_id))
+        handle.version_mapper.create(Version(identifier=version_id), model2_id)
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -163,10 +165,10 @@ def test_version_list(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
-        versions = handle.list_versions(model_id)
+        versions = handle.version_mapper.list(model_id)
         assert len(versions) == 1
         assert versions[0] == "version0"
 
@@ -181,13 +183,15 @@ def check_artifact_writing(
 ) -> ArtifactModel:
     """Helper function that writes an artifact, and then reads it and check they are the same."""
     # First write it.
-    artifact = handle._add_header_data(artifact, user)
-    written_artifact = handle.write_artifact(model_id, version_id, artifact)
+    artifact = handle.artifact_mapper._add_header_data(artifact, user)
+    written_artifact = handle.artifact_mapper.write_artifact(
+        model_id, version_id, artifact
+    )
     artifact.header.identifier = written_artifact.header.identifier
     artifact_id = artifact.header.identifier
 
     # Then read it from storage.
-    read = handle.read_artifact(model_id, version_id, artifact_id)
+    read = handle.artifact_mapper.read(artifact_id, (model_id, version_id))
 
     # Ignore creator and timestamp changes.
     read.header.timestamp = artifact.header.timestamp
@@ -214,19 +218,20 @@ def test_search(
     version_id = "version0"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
         a0 = ArtifactModelFactory.make(artifact_type, "id0")
         a1 = ArtifactModelFactory.make(artifact_type, "id1")
 
         for artifact in [a0, a1]:
-            handle.write_artifact(model_id, version_id, artifact)
+            handle.artifact_mapper.write_artifact(
+                model_id, version_id, artifact
+            )
 
-        artifacts = handle.search_artifacts(
-            model_id,
-            version_id,
+        artifacts = handle.artifact_mapper.search(
             Query(filter=TypeFilter(item_type=artifact_type)),
+            (model_id, version_id),
         )
         assert len(artifacts) == 2
 
@@ -248,8 +253,8 @@ def test_artifact(
     user = TEST_API_USERNAME
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
         artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
         artifact_id = artifact.header.identifier
@@ -261,10 +266,10 @@ def test_artifact(
         artifact_id = written_artifact.header.identifier
 
         # Second check that we can delete the artifact, and that it is really deleted.
-        handle.delete_artifact(model_id, version_id, artifact_id)
+        handle.artifact_mapper.delete(artifact_id, (model_id, version_id))
 
         with pytest.raises(errors.ErrorNotFound):
-            _ = handle.read_artifact(model_id, version_id, artifact_id)
+            _ = handle.artifact_mapper.read(artifact_id, (model_id, version_id))
 
         # Third, try writing the artifact again, to ensure we can re-write an artifact after it was deleted, and there are no weird leftovers.
         check_artifact_writing(
@@ -293,7 +298,9 @@ def test_artifact_without_parents(
     # The write fails
     with pytest.raises(errors.ErrorNotFound):
         with ManagedArtifactSession(store.session()) as handle:
-            handle.write_artifact(model_id, version_id, artifact)
+            handle.artifact_mapper.write_artifact(
+                model_id, version_id, artifact
+            )
 
 
 @pytest.mark.parametrize(
@@ -316,17 +323,17 @@ def test_artifact_parents(
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as handle:
-        written_artifact = handle.write_artifact(
-            model_id, version_id, artifact, parents=True
+        written_artifact = handle.artifact_mapper.write_artifact(
+            model_id, version_id, artifact
         )
         artifact_id = written_artifact.header.identifier
 
         # The organizational elements are present
-        assert len(handle.list_models()) == 1
-        assert len(handle.list_versions(model_id)) == 1
+        assert len(handle.model_mapper.list()) == 1
+        assert len(handle.version_mapper.list(model_id)) == 1
 
         # The artifact is present
-        handle.read_artifact(model_id, version_id, artifact_id)
+        handle.artifact_mapper.read(artifact_id, (model_id, version_id))
 
 
 @pytest.mark.parametrize(
@@ -345,25 +352,29 @@ def test_artifact_overwrite(
     artifact_id = "myid"
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
 
         artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
         # The initial write succeeds
-        written_artifact = handle.write_artifact(model_id, version_id, artifact)
+        written_artifact = handle.artifact_mapper.write_artifact(
+            model_id, version_id, artifact
+        )
         artifact_id = written_artifact.header.identifier
 
         # Another attempt to write fails
         with pytest.raises(errors.ErrorAlreadyExists):
-            handle.write_artifact(
+            handle.artifact_mapper.write_artifact(
                 model_id,
                 version_id,
                 artifact,
             )
 
         # Attempt to write with `force` succeeds
-        handle.write_artifact(model_id, version_id, artifact, force=True)
+        handle.artifact_mapper.write_artifact(
+            model_id, version_id, artifact, force=True
+        )
 
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
@@ -379,9 +390,9 @@ def test_invalid_chars(
     user = TEST_API_USERNAME
 
     with ManagedArtifactSession(store.session()) as handle:
-        handle.create_model(Model(identifier=model_id))
-        handle.create_version(model_id, Version(identifier=version_id))
+        handle.model_mapper.create(Model(identifier=model_id))
+        handle.version_mapper.create(Version(identifier=version_id), model_id)
         artifact = ArtifactModelFactory.make(ArtifactType.REPORT, artifact_id)
-        handle.write_artifact_with_header(
+        handle.artifact_mapper.write_artifact_with_header(
             model_id, version_id, artifact, user=user
         )
