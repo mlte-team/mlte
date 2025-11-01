@@ -239,6 +239,12 @@ class RDBSArtifactMapper(ArtifactMapper):
             session.commit()
             return artifact
 
+    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+        model_id, version_id = model_and_version
+        with Session(self.storage.engine) as session:
+            artifacts = DBReader.get_artifacts(model_id, version_id, session)
+            return [artifact.header.identifier for artifact in artifacts]
+
     # -------------------------------------------------------------------------
     # Internal helpers.
     # -------------------------------------------------------------------------

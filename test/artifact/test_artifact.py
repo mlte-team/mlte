@@ -132,5 +132,6 @@ def test_artifact_parents(
         assert len(handle.version_mapper.list(ctx.model)) == 1
 
         # The artifact is present
-        handle.artifact_mapper.read(read_artifact.get_identifier(), (ctx.model, ctx.version))
-
+        handle.artifact_mapper.read(
+            read_artifact.get_identifier(), (ctx.model, ctx.version)
+        )

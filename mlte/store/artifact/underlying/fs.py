@@ -208,6 +208,10 @@ class FileSystemArtifactMapper(ArtifactMapper):
             **self.storage.read_resource(artifact_id, group_ids)
         )
 
+    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+        model_id, version_id = model_and_version
+        return self._get_artifact_ids(model_id, version_id)
+
     def delete(
         self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
@@ -243,7 +247,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
 
     def _get_artifact_groups(
         self, model_id: str, version_id: str, artifact_id: str
-    ) -> list[str]:
+    ) -> list[str]:  # type: ignore
         """Finds at what level an artifact is stored, and returns a list of those groups."""
         # First trying at the model/version level, then at the model level.
         group_ids = [model_id, version_id]
@@ -258,7 +262,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
 
         return group_ids
 
-    def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:
+    def _get_artifact_ids(self, model_id: str, version_id: str) -> list[str]:  # type: ignore
         """Returns all artifact ids from both model/version levels, and just model level."""
         self._ensure_model_exists(model_id)
         self._ensure_version_exists(version_id, model_id)
