@@ -154,25 +154,6 @@ class HTTPArtifactMapper(ArtifactMapper):
         self.storage = storage
         """The HTTP storage access."""
 
-    def write_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact: ArtifactModel,
-        *,
-        force: bool = False,
-        parents: bool = False,
-    ) -> ArtifactModel:
-        response = self.storage.post(
-            groups=_artifact_groups(model_id, version_id),
-            json=WriteArtifactRequest(
-                artifact=artifact,
-                force=force,
-                parents=parents,
-            ).to_json(),
-        )
-        return ArtifactModel(**(response["artifact"]))
-
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
@@ -184,15 +165,17 @@ class HTTPArtifactMapper(ArtifactMapper):
         return ArtifactModel(**response)
 
     def search(
-        self, query: Query, model_and_version: tuple[str, str]
+        self, query: Query, model_and_version: Optional[tuple[str, str]] = None
     ) -> list[ArtifactModel]:
-        # NOTE(Kyle): This operation always uses the "advanced search" functionality
-        model_id, version_id = model_and_version
+        groups: OrderedDict[str, str] = OrderedDict()
+        if model_and_version:
+            model_id, version_id = model_and_version
+            groups = _artifact_groups(model_id, version_id)
         response = self.storage.send_command(
             MethodType.POST,
             id="search",
             json=query.to_json(),
-            groups=_artifact_groups(model_id, version_id),
+            groups=groups,
         )
         return [ArtifactModel(**object) for object in response]
 
@@ -204,6 +187,16 @@ class HTTPArtifactMapper(ArtifactMapper):
             id=artifact_id, groups=_artifact_groups(model_id, version_id)
         )
         return ArtifactModel(**response)
+
+    def _store_artifact(
+        self, artifact: ArtifactModel, model_and_version: tuple[str, str]
+    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
+        response = self.storage.post(
+            groups=_artifact_groups(model_id, version_id),
+            json=WriteArtifactRequest(artifact=artifact).to_json(),
+        )
+        return ArtifactModel(**(response["artifact"]))
 
 
 def _version_group(model_id: str) -> OrderedDict[str, str]:

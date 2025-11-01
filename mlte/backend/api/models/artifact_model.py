@@ -22,10 +22,10 @@ class WriteArtifactRequest(BaseModel):
     """The model for the artifact to write."""
 
     force: bool = False
-    """Indicates that existing artifacts may be overwritten."""
+    """Indicates that existing artifacts may be overwritten. Only useful when API is accessed through HTTP."""
 
     parents: bool = False
-    """Indicates whether organizational elements should be created."""
+    """Indicates whether organizational elements should be created. Only useful when API is accessed through HTTP.."""
 
 
 class WriteArtifactResponse(BaseModel):
