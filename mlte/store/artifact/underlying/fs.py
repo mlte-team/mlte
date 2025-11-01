@@ -238,12 +238,17 @@ class FileSystemArtifactMapper(ArtifactMapper):
         if artifact.header.level == ArtifactLevel.VERSION:
             group_ids += [version_id]
 
-        self.storage.write_resource(
-            artifact.header.identifier,
-            artifact.to_json(),
-            group_ids,
-        )
-        return self.read(artifact.header.identifier, (model_id, version_id))
+        try:
+            self.storage.write_resource(
+                artifact.header.identifier,
+                artifact.to_json(),
+                group_ids,
+            )
+            return self.read(artifact.header.identifier, (model_id, version_id))
+        except FileNotFoundError:
+            raise errors.ErrorNotFound(
+                f"Model or version not found: {model_id}, {version_id}"
+            )
 
     def _get_artifact_groups(
         self, model_id: str, version_id: str, artifact_id: str
