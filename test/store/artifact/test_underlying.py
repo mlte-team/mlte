@@ -108,7 +108,7 @@ def test_version(
         versions = handle.version_mapper.list(model_id)
         assert len(versions) == 1
 
-        handle.version_mapper.delete(model_id, version_id)
+        handle.version_mapper.delete(version_id, model_id)
 
         with pytest.raises(errors.ErrorNotFound):
             _ = handle.version_mapper.read(version_id, model_id)

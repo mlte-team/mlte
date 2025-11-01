@@ -185,7 +185,7 @@ class InMemoryModelMapper(ModelMapper):
         return Model(
             identifier=model_id,
             versions=[
-                self.version_mapper.read(model_id, id)
+                self.version_mapper.read(id, model_id)
                 for id in self.storage.models[model_id].version_artifacts.keys()
             ],
         )

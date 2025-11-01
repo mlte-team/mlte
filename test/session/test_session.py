@@ -69,7 +69,7 @@ def test_eager_context_creation(
     )
     assert (
         s.stores.artifact_store.session()
-        .version_mapper.read(model, version)
+        .version_mapper.read(version, model)
         .identifier
         == version
     )

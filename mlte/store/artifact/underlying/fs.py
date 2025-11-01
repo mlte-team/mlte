@@ -152,7 +152,7 @@ class FileSystemVersionMapper(VersionMapper):
         return Version(identifier=version.identifier)
 
     def read(self, version_id: str, model_id: str) -> Version:
-        return self._read_version(model_id, version_id)
+        return self._read_version(version_id, model_id)
 
     def list(self, model_id: str) -> list[str]:
         self._ensure_model_exists(model_id)
@@ -175,7 +175,7 @@ class FileSystemVersionMapper(VersionMapper):
                 f"Version {version_id} in model {model_id}"
             )
 
-    def _read_version(self, model_id: str, version_id: str) -> Version:
+    def _read_version(self, version_id: str, model_id: str) -> Version:
         """
         Lazily construct a Version object on read.
         :param model_id: The model identifier
