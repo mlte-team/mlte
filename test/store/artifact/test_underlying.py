@@ -311,7 +311,7 @@ def test_artifact_overwrite(
     artifact_type: ArtifactType,
     request: pytest.FixtureRequest,
 ) -> None:
-    """An artifact cam be overwritten with the `force` option."""
+    """An artifact can be overwritten with the `force` option."""
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
     model_id = "model0"

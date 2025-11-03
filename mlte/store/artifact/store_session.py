@@ -177,7 +177,7 @@ class ArtifactMapper(ResourceMapper):
             if not force:
                 # If it exists and we are not "forcing" (overriting/editing), complain it already exists.
                 raise errors.ErrorAlreadyExists(
-                    f"Artifact '{artifact_id}' exists, and force param prevents overwriting it."
+                    f"Artifact '{artifact_id}' (force param prevents overwriting it)"
                 )
             return self.edit(artifact, (model_id, version_id))
         except errors.ErrorNotFound as ex:
