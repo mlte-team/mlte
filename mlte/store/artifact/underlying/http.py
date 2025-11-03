@@ -198,6 +198,24 @@ class HTTPArtifactMapper(ArtifactMapper):
         )
         return ArtifactModel(**(response["artifact"]))
 
+    def write_artifact(
+        self,
+        model_id: str,
+        version_id: str,
+        artifact: ArtifactModel,
+        *,
+        force: bool = False,
+    ) -> ArtifactModel:
+        response = self.storage.post(
+            groups=_artifact_groups(model_id, version_id),
+            json=WriteArtifactRequest(
+                artifact=artifact,
+                force=force,
+                parents=False,  # This is set to false as it will be handled at the object level when this store is used.
+            ).to_json(),
+        )
+        return ArtifactModel(**(response["artifact"]))
+
 
 def _version_group(model_id: str) -> OrderedDict[str, str]:
     """Returns the resource group info for versions inside a model."""
