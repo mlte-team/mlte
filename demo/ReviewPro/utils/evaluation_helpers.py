@@ -6,7 +6,6 @@ import os
 import re
 
 import pandas as pd
-from langchain.llms import GPT4All
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_openai import ChatOpenAI
 
@@ -76,6 +75,9 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
     chain = prompt_template | llm
 
     response_df = []
+
+    if "EmployeeName" in sample_input_data_df.columns:
+        sample_input_data_df.rename(columns={"EmployeeName": "Employee"},inplace=True,)
 
     for row_num, row in sample_input_data_df.iterrows():
         pii_data = {

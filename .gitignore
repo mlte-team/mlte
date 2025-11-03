@@ -53,3 +53,5 @@ default_store/
 
 .virtual_documents/
 
+# Demo credentials
+demo/ReviewPro/session_LLMinfo.py
