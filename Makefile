@@ -92,11 +92,11 @@ clean-demo:
 
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck clean-demo docs
+qa-python: schema isort format lint typecheck clean-demo docs build-sample-catalog
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
-check-qa-python: check-schema check-isort check-format lint typecheck docs
+check-qa-python: check-schema check-isort check-format lint typecheck docs check-sample-catalog
 
 # -----------------------------------------------------------------------------
 # Frontend QA
@@ -156,7 +156,7 @@ demo-test:
 # Shorthand actions and checks needed to update and review for pushing.
 # -----------------------------------------------------------------------------
 
-# All quality assurance, as well as schema generation
+# All quality assurance, as well as schema generation and sample catalog generation
 .PHONY: qa
 qa: qa-python qa-frontend
 
@@ -203,3 +203,15 @@ build-local:
 .PHONY: build-in-docker
 build-in-docker:
 	bash build_in_docker.sh
+
+# -----------------------------------------------------------------------------
+# Commands to generate test catalog entries
+# -----------------------------------------------------------------------------
+
+.PHONY: build-sample-catalog
+build-sample-catalog:
+	cd demo && bash catalog_entries.sh build scenarios
+
+.PHONY: check-sample-catalog
+check-sample-catalog:
+	cd demo && bash catalog_entries.sh check scenarios
