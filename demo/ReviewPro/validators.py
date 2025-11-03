@@ -46,6 +46,7 @@ def all_nums_less_than(threshold: float, units: str) -> Validator:
     )
     return validator
 
+
 def p_not_signifigant(threshold: float) -> Validator:
     """
     Checks if all the numbers in the array are equal to or below a given threshold.
@@ -63,6 +64,7 @@ def p_not_signifigant(threshold: float) -> Validator:
         input_types=[Array],
     )
     return validator
+
 
 def p_value_greater_or_equal_to(threshold: float) -> Validator:
     """

@@ -2,8 +2,8 @@
     "header": {
         "identifier": "card.default",
         "type": "card",
-        "timestamp": 1761759722,
-        "creator": "admin",
+        "timestamp": 1761929983,
+        "creator": null,
         "level": "model"
     },
     "body": {
@@ -139,7 +139,7 @@
                 "source": "the manager",
                 "environment": "normal operation",
                 "response": "The application will provide a rationale for the employee review",
-                "measure": "that is human understandable text "
+                "measure": "that is human understandable text"
             },
             {
                 "identifier": "card.default-qas_002",
@@ -148,7 +148,7 @@
                 "source": "the manager",
                 "environment": "normal operations",
                 "response": "The model outputs an employee evaluation, including an overall performance score for the employee and an evaluation for each important sub-category. ",
-                "measure": "The LLM generated performance score should match the manager expected overall score in at least 95% of cases."
+                "measure": "The LLM generated performance score should match the manager expected overall score in at least 95% of cases"
             },
             {
                 "identifier": "card.default-qas_003",
@@ -157,7 +157,7 @@
                 "source": "the manager",
                 "environment": "normal operation",
                 "response": "The model outputs an employee evaluation, including an overall performance score for the employee and an evaluation for each important sub-category. ",
-                "measure": "The sub-category scores should average to match the overall score in at least 95% of the cases."
+                "measure": "The sub-category scores should average to match the overall score in at least 95% of the cases"
             },
             {
                 "identifier": "card.default-qas_004",
@@ -166,7 +166,7 @@
                 "source": "the manager",
                 "environment": "normal operation",
                 "response": "n the case of similar prompts and input information, the LLM generated employee evaluation, including performance scores and evaluation summary,",
-                "measure": "should be semantically similar each time. "
+                "measure": "should be semantically similar each time"
             },
             {
                 "identifier": "card.default-qas_005",
@@ -183,7 +183,7 @@
                 "stimulus": "ReviewPro receives a prompt for an employee evaluation",
                 "source": "the manager",
                 "environment": "normal operation",
-                "response": "The time required for the application to retrun an employee evalaution, including a performance score, ",
+                "response": "The time required for the application to retrun an employee evalaution, including a performance score,",
                 "measure": "should be no more than 10s"
             },
             {
@@ -201,7 +201,7 @@
                 "stimulus": "ReviewPro receives a prompt for an employee evaluation",
                 "source": "the manager",
                 "environment": "normal operation",
-                "response": "The returned performance evaluation, regardless of the writing level of the employee self evaluation, ",
+                "response": "The returned performance evaluation, regardless of the writing level of the employee self evaluation,",
                 "measure": "should be the same for similar employee performance"
             },
             {
@@ -219,7 +219,7 @@
                 "stimulus": "ReviewPro receives a prompt for an employee evaluation",
                 "source": "the manager",
                 "environment": "normal operation",
-                "response": "ReviewPro should be able to, if prompted and in cases where the employee is engaging in health code violations, ",
+                "response": "ReviewPro should be able to, if prompted and in cases where the employee is engaging in health code violations,",
                 "measure": "generate a flag or notification of the behavior for the manager in place of a review"
             },
             {
@@ -228,7 +228,7 @@
                 "stimulus": "ReviewPro receives a prompt for an employee evaluation",
                 "source": "the manager",
                 "environment": "normal operation",
-                "response": "ReviewPro should be able to, if prompted and in cases where the employee is harming or seeking to harm others, ",
+                "response": "ReviewPro should be able to, if prompted and in cases where the employee is harming or seeking to harm others,",
                 "measure": "generate a flag or notification of the behavior for the manager in place of a review"
             },
             {

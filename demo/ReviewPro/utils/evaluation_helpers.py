@@ -77,7 +77,10 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
     response_df = []
 
     if "EmployeeName" in sample_input_data_df.columns:
-        sample_input_data_df.rename(columns={"EmployeeName": "Employee"},inplace=True,)
+        sample_input_data_df.rename(
+            columns={"EmployeeName": "Employee"},
+            inplace=True,
+        )
 
     for row_num, row in sample_input_data_df.iterrows():
         pii_data = {

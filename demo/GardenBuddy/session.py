@@ -30,6 +30,9 @@ OOD_DATASET_DIR = DATASETS_DIR / "ood"
 # Path where the model files are stored.
 MODELS_DIR = Path.cwd() / "model"
 
+# Path where the utilit funtion files are stored.
+UTILS_DIR = Path.cwd() / "utils"
+
 # The path at which media is stored
 MEDIA_DIR = Path.cwd() / "media"
 os.makedirs(MEDIA_DIR, exist_ok=True)
@@ -40,7 +43,7 @@ MODEL_FILE_PATH = MODELS_DIR / "oxford_flower_model.keras"
 # This is the external script that will load and run the model for inference/prediction.
 MODEL_COMMAND = [
     "python3",
-    Path.cwd() / "model_predict.py",
+    Path.cwd() / "utils/model_predict.py",
     "--images",
     SAMPLE_DATASET_DIR,
     "--model",

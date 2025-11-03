@@ -2,8 +2,8 @@
     "header": {
         "identifier": "card.default",
         "type": "card",
-        "timestamp": 1758804336,
-        "creator": "admin",
+        "timestamp": 1761934461,
+        "creator": null,
         "level": "model"
     },
     "body": {
@@ -14,8 +14,8 @@
                     "description": "Correct identification of flowers",
                     "metrics": [
                         {
-                            "description": "Accuracy > 0.9",
-                            "baseline": "Paper that describes the base model"
+                            "description": "Accuracy>0.9",
+                            "baseline": ""
                         }
                     ]
                 },
@@ -24,11 +24,11 @@
                     "metrics": [
                         {
                             "description": "40% growth in repeat visits",
-                            "baseline": "Strategic plan"
+                            "baseline": "Strategic Plan"
                         },
                         {
                             "description": "40% new visits",
-                            "baseline": "Strategic plan"
+                            "baseline": "Strategic Plan"
                         }
                     ]
                 }
@@ -36,136 +36,35 @@
             "problem_type": "classification",
             "task": "Identify flowers in pictures taken at the garden",
             "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
-            "risks": [
-                "Poor user experience due to incorrectly identified flowers",
-                "Poor user experience due to inability to identify flowers",
-                "Wrong results due to unknown flowers",
-                "Users do not like the results due to strange behavior."
-            ]
+            "risks": []
         },
         "data": [
             {
-                "description": "Oxford Flower Dataset.",
-                "purpose": "Training",
-                "source": "https://archive.ics.uci.edu/dataset/53/iris",
+                "description": "Oxford Flower 102 Dataset",
+                "purpose": "Training, Testing of Ml model",
+                "source": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
                 "classification": "unclassified",
                 "access": "None",
-                "labeling_method": "By hand",
+                "labeling_method": "Manually Labeled - 102 Labels",
                 "labels": [
                     {
-                        "name": "",
-                        "description": "",
+                        "name": "Class Name",
+                        "description": "Flower Name",
                         "percentage": 0.0
                     }
                 ],
                 "fields": [
                     {
-                        "name": "filename",
-                        "description": "Path to flower image.",
-                        "type": "String (to PNG file)",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Kingdom",
-                        "description": "The second highest taxonomic rank.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Phylum",
-                        "description": "The taxonomic rank below kingdom and above Clade 1.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Clade1",
-                        "description": "The taxonomic rank below Phylum and above Clade 2.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Clade2",
-                        "description": "The taxonomic rank below Clade 1 and above Clade 3.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Clade3",
-                        "description": "The taxonomic rank below Clade 2 and above Order.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Order",
-                        "description": "The taxonomic rank below Clade 3 and above Family.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Family",
-                        "description": "The taxonomic rank below Order and above Subfamily.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Subfamily",
-                        "description": "The taxonomic rank below Family and above Genus.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Genus",
-                        "description": "The taxonomic rank below Subfamily and above Species.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Common Name",
-                        "description": "Common name for the flower.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Other Name",
-                        "description": "Other name for the flower.",
-                        "type": "string",
-                        "expected_values": "N/A",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
-                    },
-                    {
-                        "name": "Label",
-                        "description": "Image Label",
-                        "type": "string",
-                        "expected_values": "Value between 0 and 102",
-                        "missing_values": "N/A",
-                        "special_values": "N/A"
+                        "name": "",
+                        "description": "",
+                        "type": "",
+                        "expected_values": "",
+                        "missing_values": "",
+                        "special_values": ""
                     }
                 ],
-                "rights": "N/A",
-                "policies": "N/A"
+                "rights": "",
+                "policies": ""
             }
         ],
         "model": {
@@ -178,21 +77,21 @@
             },
             "deployment_platform": "Model will be deployed as part of the Garden Buddy App on a small device loaned out to garden visitors.",
             "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
-            "model_source": "In-house",
+            "model_source": "in-house development",
             "input_specification": [
                 {
-                    "name": "flower-picture",
-                    "description": "Path to the picture of the flower taken at the garden",
-                    "type": "String",
-                    "expected_values": "String corresponding to a valid path to a picture in PNG format"
+                    "name": "file name",
+                    "description": "Path to flower image",
+                    "type": "string (to PNG file)",
+                    "expected_values": ""
                 }
             ],
             "output_specification": [
                 {
-                    "name": "flower-number-for-lookup",
-                    "description": "Number of the flower identified in the picture, which is used as a lookup number for a table that contains the identified flower information. This table is derived from the training data.",
-                    "type": "Integer",
-                    "expected_values": "Either flower number between 0 and 102, or -1 to indicate that it could not identify the flower."
+                    "name": "Flower label",
+                    "description": "Number linking to name of the flower present in the image",
+                    "type": "string",
+                    "expected_values": "value between 0 and 102"
                 }
             ],
             "production_compute_resources": {
@@ -205,88 +104,88 @@
         },
         "system_requirements": [
             {
-                "identifier": "default.card-qas_001",
+                "identifier": "card.default-qas_001",
                 "quality": "Fairness",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the Garden Buddy application",
-                "environment": "normal operations",
+                "environment": "normal operation",
                 "response": "Regardless of the location in the garden, the model can correctly identify the correct flowers",
                 "measure": "at least 90% of the time"
             },
             {
-                "identifier": "default.card-qas_002",
+                "identifier": "card.default-qas_002",
                 "quality": "Robustness",
-                "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry. ImageMagick will be used with different levels of blur introduced to the origional flower test data set to simulate the operational images taken",
-                "source": "the by the Garden Buddy application",
-                "environment": "normal operations",
-                "response": "The model successfully identifies flowers",
-                "measure": "at the same rate as non-blurry images, as measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05."
+                "stimulus": "The model receives a picture that is a bit blurry",
+                "source": "the Garden Buddy application",
+                "environment": "normal operation",
+                "response": "he model successfully identifies flowers",
+                "measure": "at the same rate as non-blurry images"
             },
             {
-                "identifier": "default.card-qas_003",
+                "identifier": "card.default-qas_003",
                 "quality": "Resilience",
-                "stimulus": "The model receives a picture taken at the garden, and it is a bit blurry. ImageMagick will be used with different channel loss introduced to the origional flower test data set to simulate the operational images taken",
-                "source": "the Garden Buddy application ",
-                "environment": "normal operations. These devices are known to sometimes lose a channel (i.e., RGB channel)",
-                "response": "The model successfully identifies flowers",
-                "measure": "at the same rate as full images, as measured using the Wilcoxon Rank-Sum test, with significance at p-value <=0.05."
+                "stimulus": "The model receives a picture taken at a garden",
+                "source": "the Garden Buddy application running on a loaned device",
+                "environment": "normal operations",
+                "response": "These devices are known to sometimes lose a channel (i.e., RGB channel). The model successfully identifies flowers",
+                "measure": "at the same rate as full images"
             },
             {
-                "identifier": "default.card-qas_004",
+                "identifier": "card.default-qas_004",
                 "quality": "Resource  Utilization",
                 "stimulus": "The model running on the loaned device receives pictures taken at the garden",
-                "source": "the flower identification application",
-                "environment": "normal operations. The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively)",
-                "response": "The model executes on the loaned device",
-                "measure": "without any errors due to unavailable resources"
+                "source": "the Garden Buddy application",
+                "environment": "normal operations",
+                "response": "The loaned devices are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively).",
+                "measure": "The model executes on the loaned device without any errors due to unavailable resources"
             },
             {
-                "identifier": "default.card-qas_005",
+                "identifier": "card.default-qas_005",
                 "quality": "Understandability",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
-                "response": "The application indicates main features that were used to recognize the flower, as part of the educational experience.",
+                "response": "The application indicates main features that were used to recognize the flower, as part of the educational experience. ",
                 "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
             },
             {
-                "identifier": "default.card-qas_006",
+                "identifier": "card.default-qas_006",
                 "quality": "Functional Correctness",
                 "stimulus": "The model receives a picture taken at the garden",
-                "source": "Garden Buddy application",
+                "source": "the Garden Buddy application",
                 "environment": "normal operations",
                 "response": "The model identifies the flower correctly",
-                "measure": "with an accurayc of at least 90%"
+                "measure": "with an accuracy of at least 90%"
             },
             {
-                "identifier": "default.card-qas_007",
+                "identifier": "card.default-qas_007",
                 "quality": "Functional Correctness",
                 "stimulus": "The model receives a picture taken at the garden",
-                "source": "Garden Biddy application",
+                "source": "the Garden Buddy application",
                 "environment": "normal operations",
                 "response": "Model correctly processes inputs and produces outputs",
                 "measure": "according to established input and output specifications without exceptions"
             },
             {
-                "identifier": "default.card-qas_008",
+                "identifier": "card.default-qas_008",
                 "quality": "Resilience",
                 "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
                 "response": "The model does not process the input",
-                "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input."
+                "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input"
             },
             {
-                "identifier": "default.card-qas_009",
+                "identifier": "card.default-qas_009",
                 "quality": "Analyzability",
                 "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
-                "response": "The model will process the input ",
+                "response": "The model will process the input",
                 "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
             },
             {
-                "identifier": "default.card-qas_010",
+                "identifier": "card.default-qas_010",
                 "quality": "Monitorability",
                 "stimulus": "The ML pipeline detects an output distribution change",
                 "source": "the output produced by the model",
@@ -295,8 +194,8 @@
                 "measure": "with the tag \"Model - Output Confidence Error - <Output>, where <Output> is the output produced by the model that triggered the condition"
             },
             {
-                "identifier": "default.card-qas_011",
-                "quality": "Time  Behavior",
+                "identifier": "card.default-qas_011",
+                "quality": "Time Behavior",
                 "stimulus": "Model running on the loaned device receives a picture",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
@@ -304,94 +203,94 @@
                 "measure": "is no more than two seconds"
             },
             {
-                "identifier": "default.card-qas_012",
+                "identifier": "card.default-qas_012",
                 "quality": "Repeatability",
-                "stimulus": "The model receives a picture taken at the garden, simulated by using the test data set,",
+                "stimulus": "The model receives a picture taken at the garden",
                 "source": "the Garden Buddy application",
-                "environment": "normal operation",
-                "response": "The results over 50 test data sets, each with 500 randomly selected test samples",
-                "measure": "will be compared using Kruskal-Wallis test will be used to evaluate if similarity of class of model results, with p<0.05 "
+                "environment": "normal operations",
+                "response": "The ML component should demonstrate consistently similar performance for pictures from the same garden from day to day",
+                "measure": "such that garden visitors and garden employees have consistent experiences using the app"
             },
             {
-                "identifier": "default.card-qas_013",
+                "identifier": "card.default-qas_013",
                 "quality": "Reproducibility",
-                "stimulus": "The ML component will periodically need to be retrained in which 10 sampled training data sets will be used to generate a new trained ML component,  ",
-                "source": "an automated, identicall retraining process",
-                "environment": "an automated, identicall retraining process",
-                "response": "The performance of the model, as measured on the same test data set,",
-                "measure": "using a Friedman test will be used to evaluate if similarity of class of model results, with p<0.05 "
+                "stimulus": "The ML component will need to be retrained. During which notifications",
+                "source": "stakeholders",
+                "environment": "normal operations",
+                "response": "The ML model produces",
+                "measure": "the same results on the test data set regardless of the training data used to train the ML component"
             },
             {
-                "identifier": "default.card-qas_014",
-                "quality": "Domain  Adaptability",
-                "stimulus": "The Garden Buddy application may be used in a VR environment, and as such the ML component may receive synthetic flower images",
+                "identifier": "card.default-qas_014",
+                "quality": "Domain Adaptability",
+                "stimulus": "The Garden Buddy application may be used in a VR environment, and as such the ML component may receive synthetic flower image",
                 "source": "the Garden Buddy application",
-                "environment": "normal operation",
-                "response": "Comparing the results of the application on the origional flower test data set and the new synthetic test data set,",
-                "measure": "should show no signifigant differences in performance on performance will be assessed using ANOVA on each label set, with significance at p-value < 0.05 "
+                "environment": "normal operations",
+                "response": "The performance of the ML model in the new VR  environment",
+                "measure": "should be similar to that in the current garden environment"
             },
             {
-                "identifier": "default.card-qas_015",
+                "identifier": "card.default-qas_015",
                 "quality": "Testability",
-                "stimulus": "ML component will transition from the development environment through integration with the operational ML enabled system",
-                "source": "Conclusion of development activities",
-                "environment": "into the operational environment",
-                "response": "The new ML component, post integrated into the ML-enabled operational system",
-                "measure": "should have test set results differ by less than 0.25% when comparing results to those obtained in the development environment. "
+                "stimulus": "The developed ML component is handed over to the operations for integration into the ML-enabled system",
+                "source": "conclusion of development activities",
+                "environment": "development",
+                "response": "The delivery of the ML component will include a test data set and corresponding component outputs. During integration testing of the ML component ",
+                "measure": "the differences between provided outputs and actual outputs should be less than 0.25%"
             },
             {
-                "identifier": "default.card-qas_016",
+                "identifier": "card.default-qas_016",
                 "quality": "Understandability",
                 "stimulus": "A new developer is joining the Garden Buddy team",
-                "source": "outside the organiation",
+                "source": "outside the organization",
                 "environment": "development",
                 "response": "The implementation and design choices are easily understood by a new developer after reading the code and documentation",
                 "measure": "after 2 person/days"
             },
             {
-                "identifier": "default.card-qas_017",
+                "identifier": "card.default-qas_017",
                 "quality": "Maintainability",
                 "stimulus": "A new flower is introduced into the garden",
                 "source": "the garden staff updating the garden and hosting traveling botanical exhibits",
-                "environment": "during run time",
+                "environment": "run time",
                 "response": "A new trained ML component, trained on updated training data and number of output labels,",
-                "measure": "will be available no later than 8 hours after the development team is notified."
+                "measure": "will be available no later than 8 hours after the development team is notified"
             },
             {
-                "identifier": "default.card-qas_018",
+                "identifier": "card.default-qas_018",
                 "quality": "Modifiability",
                 "stimulus": "The need for the app to run with a new input format for the ML component",
-                "source": "the operations/maintenance team needs to changing input data processing pipelines as a new device type is used for the Garden Buddy app ",
-                "environment": "normal operation",
+                "source": "the operations/maintenance team needs to changing input data processing pipelines as a new device type is used for the Garden Buddy app",
+                "environment": "normal operations",
                 "response": "The new sensor's data input  processing pipeline is to replace the old input data processing pipeline",
-                "measure": "and the total effort involved is less than 4 hours of operations staff time."
+                "measure": "and the total effort involved is less than 4 hours of operations staff time"
             },
             {
-                "identifier": "default.card-qas_019",
+                "identifier": "card.default-qas_019",
                 "quality": "Replaceability",
                 "stimulus": "The team needs to quickly change the ML model being run by the application",
                 "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used to generate the ML component",
-                "environment": "normal operation",
-                "response": "The model switch change over is made ",
+                "environment": "normal operations",
+                "response": "The model switch change over is made",
                 "measure": "and the total effort involved is less than 16 hours of development and operation teams' time"
             },
             {
-                "identifier": "default.card-qas_020",
+                "identifier": "card.default-qas_020",
                 "quality": "Retrainability",
                 "stimulus": "The ML component needs to be retrained",
-                "source": "as an environment necessitating a new model has occured ",
+                "source": "as an environment necessitating a new model has occurred",
                 "environment": "normal operation",
                 "response": "The development team kicks off the ML model retraining process",
-                "measure": "and the total personnel time devoted to kick off, monitoring and checking the output of the retraining process is no more than 1 hour. "
+                "measure": "and the total personnel time devoted to kick off, monitoring and checking the output of the retraining process is no more than 1 hour"
             },
             {
-                "identifier": "default.card-qas_021",
+                "identifier": "card.default-qas_021",
                 "quality": "Reusability",
                 "stimulus": "The decision to produce a new app, with only changing who it is marketed to, user interface, and platform is issued",
                 "source": "stakeholders",
                 "environment": "development time",
                 "response": "The existing garden buddy ML component is used in the new app",
-                "measure": "with limited changes to the ML component code were needed to integrate the ML component into the new app, totaling no more than 1/2 a development day. "
+                "measure": "with limited changes to the ML component code were needed to integrate the ML component into the new app, totaling no more than 1/2 a development day"
             }
         ]
     }

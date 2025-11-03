@@ -6,8 +6,9 @@ import time
 from resource import *
 from typing import Optional
 
-import garden
+# import garden
 import tensorflow as tf
+import utils.garden as garden
 
 LOG_FILE = "./log.txt"
 
