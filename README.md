@@ -78,7 +78,7 @@ The `MLTE` Python package is best used in conjunction with the `MLTE` <a href="h
 
 All information relating to development of MLTE from demo information, development setup, development guidelines, and QA/CI information can be found <a href="https://mlte.readthedocs.io/en/latest/development/" target="_blank"> here</a>.
 
-### Citing This Work
+## Citing This Work
 
 If you're interested in learning more about this work, you can read our <a href="https://ieeexplore.ieee.org/document/10173876" target="_blank">paper</a>. While not required, it is highly encouraged and greatly appreciated if you cite our paper when you use `MLTE` for academic research.
 
