@@ -50,38 +50,38 @@ class ManagedArtifactSession(ManagedSession):
 class ModelMapper(ResourceMapper):
     """An interface for mapping CRUD actions to models."""
 
-    def create(self, new_entry: Model, context: Any = None) -> Model:
+    def create(self, new_model: Model, context: Any = None) -> Model:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def read(self, entry_name: str, context: Any = None) -> Model:
+    def read(self, model_id: str, context: Any = None) -> Model:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def list(self, context: Any = None) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def edit(self, updated_entry: Model, context: Any = None) -> Model:
+    def edit(self, model: Model, context: Any = None) -> Model:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def delete(self, entry_name: str, context: Any = None) -> Model:
+    def delete(self, model_id: str, context: Any = None) -> Model:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
 
 class VersionMapper(ResourceMapper):
     """An interface for mapping CRUD actions to versions."""
 
-    def create(self, new_entry: Version, model_id: str) -> Version:
+    def create(self, new_version: Version, model_id: str) -> Version:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def read(self, entry_name: str, model_id: str) -> Version:
+    def read(self, version_id: str, model_id: str) -> Version:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def list(self, model_id: str) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def edit(self, updated_entry: Version, model_id: str) -> Version:
+    def edit(self, version: Version, model_id: str) -> Version:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def delete(self, entry_name: str, model_id: str) -> Version:
+    def delete(self, version_id: str, model_id: str) -> Version:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
 
@@ -89,20 +89,20 @@ class ArtifactMapper(ResourceMapper):
     """An interface for mapping CRUD actions to artifacts."""
 
     def create(
-        self, artifact: ArtifactModel, model_and_version: tuple[str, str]
+        self, new_artifact: ArtifactModel, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
         try:
             # If artifact to create exists, complain.
-            _ = self.read(artifact.header.identifier, model_and_version)
+            _ = self.read(new_artifact.header.identifier, model_and_version)
             raise errors.ErrorAlreadyExists(
-                f"Artifact '{artifact.header.identifier}' already exists."
+                f"Artifact '{new_artifact.header.identifier}' already exists."
             )
         except errors.ErrorNotFound:
             # We expect it not to be found when creating.
-            return self._store_artifact(artifact, model_and_version)
+            return self._store_artifact(new_artifact, model_and_version)
 
     def read(
-        self, entry_name: str, model_and_version: tuple[str, str]
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
@@ -117,7 +117,7 @@ class ArtifactMapper(ResourceMapper):
         return self._store_artifact(artifact, model_and_version)
 
     def delete(
-        self, entry_name: str, model_and_version: tuple[str, str]
+        self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
