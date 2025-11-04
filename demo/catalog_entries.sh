@@ -16,7 +16,7 @@ shift
 DEMOS=$@
 for demo in ${DEMOS[@]}
 do
-    for notebook_file in ${demo}/*ipynb
+    for notebook_file in ${demo}/*.ipynb
     do
         # Get the file name without the demo path prepended
         NAME=${notebook_file##*$demo/}

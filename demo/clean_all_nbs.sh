@@ -2,17 +2,11 @@
 
 # NOTE: this requires jq to be installed in the system.
 
-for file in ./scenarios/*.ipynb
+DEMOS=$@
+for demo in ${DEMOS[@]}
 do
-  source jq_clean_nb.sh "$file"
-done
-
-for file in ./EvalPro_demo/*.ipynb
-do
-  source jq_clean_nb.sh "$file"
-done
-
-for file in ./simple/*.ipynb
-do
-  source jq_clean_nb.sh "$file"
+  for notebook_file in ${demo}/*.ipynb
+  do
+    source jq_clean_nb.sh "$notebook_file"
+  done
 done

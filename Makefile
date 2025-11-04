@@ -88,7 +88,7 @@ typecheck:
 # Clean demo notebooks of temporary outputs.
 .PHONY: clean-demo
 clean-demo:
-	cd demo && bash clean_all_nbs.sh
+	cd demo && bash clean_all_nbs.sh GardenBuddy ReviewPro simple
 
 # QA for Python bits.
 .PHONY: qa-python
@@ -210,8 +210,8 @@ build-in-docker:
 
 .PHONY: build-sample-catalog
 build-sample-catalog:
-	cd demo && bash catalog_entries.sh build scenarios
+	cd demo && bash catalog_entries.sh build GardenBuddy ReviewPro
 
 .PHONY: check-sample-catalog
 check-sample-catalog:
-	cd demo && bash catalog_entries.sh check scenarios
+	cd demo && bash catalog_entries.sh check GardenBuddy ReviewPro
