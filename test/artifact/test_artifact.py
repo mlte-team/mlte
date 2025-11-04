@@ -126,12 +126,12 @@ def test_artifact_parents(
     read_artifact = artifact.save_with(ctx, store, parents=True)
 
     # The write succeeds
-    with ManagedArtifactSession(store.session()) as handle:
+    with ManagedArtifactSession(store.session()) as artifact_store:
         # The organizational elements are present
-        assert len(handle.model_mapper.list()) == 1
-        assert len(handle.version_mapper.list(ctx.model)) == 1
+        assert len(artifact_store.model_mapper.list()) == 1
+        assert len(artifact_store.version_mapper.list(ctx.model)) == 1
 
         # The artifact is present
-        handle.artifact_mapper.read(
+        artifact_store.artifact_mapper.read(
             read_artifact.get_identifier(), (ctx.model, ctx.version)
         )

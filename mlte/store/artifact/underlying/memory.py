@@ -204,7 +204,9 @@ class InMemoryVersionMapper(VersionMapper):
 
         model = self.storage.models[model_id]
         if version_id not in model.version_artifacts:
-            raise errors.ErrorNotFound(f"Version {version_id} for model {model_id}")
+            raise errors.ErrorNotFound(
+                f"Version {version_id} for model {model_id}"
+            )
 
         return Version(identifier=version_id)
 

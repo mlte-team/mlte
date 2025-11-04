@@ -97,9 +97,9 @@ FX_VERSION_ID = "v0"
 def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
     store = artifact_store_creators.create_memory_store()
-    with ManagedArtifactSession(store.session()) as handle:
-        _ = handle.model_mapper.create(Model(identifier=FX_MODEL_ID))
-        _ = handle.version_mapper.create(
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        _ = artifact_store.model_mapper.create(Model(identifier=FX_MODEL_ID))
+        _ = artifact_store.version_mapper.create(
             Version(identifier=FX_VERSION_ID),
             FX_MODEL_ID,
         )

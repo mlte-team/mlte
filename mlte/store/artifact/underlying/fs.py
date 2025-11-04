@@ -107,7 +107,7 @@ class FileSystemModelMapper(ModelMapper):
             identifier=model_id,
             versions=self.version_mapper.list_details(model_id),
         )
-    
+
     def list(self, context: Any = None) -> list[str]:
         return self.storage.list_resource_groups()
 
