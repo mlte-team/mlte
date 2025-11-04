@@ -12,7 +12,7 @@ $ pyenv local 3.12
 $ make venv
 ```
 
-The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 3 docker containers with an RDBS based backend. The frontend will be available at `localhost:8000` and will include a sample model, version, and [Negotiation Card](negotiation_card.md).
+The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 2 docker containers with a file system based store. This store will be populated with the data in `demo/store` which will include sample models, versions and [Negotiation Cards](negotiation_card.md) along with any results created by running the demo notebooks. This is volume mounted so any changes made using the frontend will be available locally in that same directory. The frontend will be available at `localhost:8000`.
 
 ```bash
 cd demo && bash run_environment.sh
