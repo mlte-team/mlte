@@ -20,7 +20,7 @@ cd demo && bash run_environment.sh
 
 All issue tracking for MLTE is done in this <a href="https://github.com/orgs/mlte-team/projects/5" target="_blank">Github Project</a> [Github Project].
 
-Once changes have been made, `make qa` and `make test` should be ran to ensure that code fits QA standards and all unit tests pass. If just making python changes, `make qa-python` can be used to instead of `make qa` to reduce runtime by not running QA on the frontend.
+Once changes have been made, `make qa` and `make test` should be ran to ensure that code fits QA standards and all unit tests pass. If just making python changes, `make qa-python` can be used instead of `make qa` to avoid having to setup a Node.js environment for the frontend QA.
 
 ## Setup
 
