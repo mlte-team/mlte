@@ -80,9 +80,9 @@ def read_artifact(
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
     artifact_id = url_utils.revert_valid_url_part(artifact_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.artifact_mapper.read(
+            return artifact_store.artifact_mapper.read(
                 artifact_id, (model_id, version_id)
             )
         except errors.ErrorNotFound as e:
@@ -111,9 +111,9 @@ def read_artifacts(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.artifact_mapper.list_details(
+            return artifact_store.artifact_mapper.list_details(
                 context=(model_id, version_id), limit=limit, offset=offset
             )
         except Exception as ex:
@@ -139,9 +139,9 @@ def search_artifacts(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.artifact_mapper.search(
+            return artifact_store.artifact_mapper.search(
                 query, context=(model_id, version_id)
             )
         except Exception as ex:
@@ -165,9 +165,9 @@ def delete_artifact(
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
     artifact_id = url_utils.revert_valid_url_part(artifact_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.artifact_mapper.delete(
+            return artifact_store.artifact_mapper.delete(
                 artifact_id, (model_id, version_id)
             )
         except errors.ErrorNotFound as e:

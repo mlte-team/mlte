@@ -37,9 +37,9 @@ def create_model(
     """
     # First create model.
     created_model: Model
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            created_model = handle.model_mapper.create(model)
+            created_model = artifact_store.model_mapper.create(model)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -51,15 +51,15 @@ def create_model(
         except Exception as ex:
             raise_http_internal_error(ex)
 
-    with state_stores.user_store_session() as handle:
+    with state_stores.user_store_session() as artifact_store:
         try:
             # Create permissions and groups to handle this model.
             policy = Policy(ResourceType.MODEL, created_model.identifier)
-            policy.save_to_store(handle)
+            policy.save_to_store(artifact_store)
 
             # Also make user have access to CRUD for this model, since they are its creator.
             policy.assign_to_user(current_user)
-            handle.user_mapper.edit(current_user)
+            artifact_store.user_mapper.edit(current_user)
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -79,8 +79,8 @@ def read_model(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     try:
-        with state_stores.artifact_store_session() as handle:
-            model = handle.model_mapper.read(model_id)
+        with state_stores.artifact_store_session() as artifact_store:
+            model = artifact_store.model_mapper.read(model_id)
 
         return model
     except errors.ErrorNotFound as e:
@@ -99,9 +99,9 @@ def list_models(
     List MLTE models.
     :return: A collection of model identifiers
     """
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.model_mapper.list()
+            return artifact_store.model_mapper.list()
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -123,9 +123,9 @@ def delete_model(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     deleted_model: Model
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            deleted_model = handle.model_mapper.delete(model_id)
+            deleted_model = artifact_store.model_mapper.delete(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -136,11 +136,11 @@ def delete_model(
                 detail="Internal server error.",
             )
 
-    with state_stores.user_store_session() as handle:
+    with state_stores.user_store_session() as artifact_store:
         # Now delete related permissions and groups.
         try:
             policy = Policy(ResourceType.MODEL, resource_id=model_id)
-            policy.remove_from_store(handle)
+            policy.remove_from_store(artifact_store)
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -161,9 +161,9 @@ def create_version(
     :return: The created version
     """
     model_id = url_utils.revert_valid_url_part(model_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.version_mapper.create(version, model_id)
+            return artifact_store.version_mapper.create(version, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -191,9 +191,9 @@ def read_version(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.version_mapper.read(version_id, model_id)
+            return artifact_store.version_mapper.read(version_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -213,9 +213,9 @@ def list_versions(
     :return: A collection of version identifiers
     """
     model_id = url_utils.revert_valid_url_part(model_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.version_mapper.list(model_id)
+            return artifact_store.version_mapper.list(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -239,9 +239,9 @@ def delete_version(
     """
     model_id = url_utils.revert_valid_url_part(model_id)
     version_id = url_utils.revert_valid_url_part(version_id)
-    with state_stores.artifact_store_session() as handle:
+    with state_stores.artifact_store_session() as artifact_store:
         try:
-            return handle.version_mapper.delete(version_id, model_id)
+            return artifact_store.version_mapper.delete(version_id, model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

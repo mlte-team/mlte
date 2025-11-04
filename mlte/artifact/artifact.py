@@ -182,11 +182,11 @@ class Artifact(Serializable, abc.ABC):
         """
         identifier = cls.build_full_id(identifier)
 
-        with ManagedArtifactSession(store.session()) as handle:
+        with ManagedArtifactSession(store.session()) as artifact_store:
             artifact = typing.cast(
                 Artifact,
                 cls.from_model(
-                    handle.artifact_mapper.read(
+                    artifact_store.artifact_mapper.read(
                         identifier, (context.model, context.version)
                     )
                 ),
