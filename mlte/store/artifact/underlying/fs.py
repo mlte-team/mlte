@@ -102,8 +102,12 @@ class FileSystemModelMapper(ModelMapper):
         return Model(identifier=model.identifier, versions=[])
 
     def read(self, model_id: str, context: Any = None) -> Model:
-        return self._read_model(model_id)
-
+        self._ensure_model_exists(model_id)
+        return Model(
+            identifier=model_id,
+            versions=self.version_mapper.list_details(model_id),
+        )
+    
     def list(self, context: Any = None) -> list[str]:
         return self.storage.list_resource_groups()
 
@@ -116,18 +120,6 @@ class FileSystemModelMapper(ModelMapper):
         """Throws an ErrorNotFound if the given model  does not exist."""
         if not self.storage.exists_resource_group(model_id):
             raise errors.ErrorNotFound(f"Model {model_id}")
-
-    def _read_model(self, model_id: str) -> Model:
-        """
-        Lazily construct a Model object on read.
-        :param model_id: The model identifier
-        :return: The model object
-        """
-        self._ensure_model_exists(model_id)
-        return Model(
-            identifier=model_id,
-            versions=self.version_mapper.list_details(model_id),
-        )
 
 
 # -------------------------------------------------------------------------
@@ -152,7 +144,9 @@ class FileSystemVersionMapper(VersionMapper):
         return Version(identifier=version.identifier)
 
     def read(self, version_id: str, model_id: str) -> Version:
-        return self._read_version(version_id, model_id)
+        self._ensure_model_exists(model_id)
+        self._ensure_version_exists(version_id, model_id)
+        return Version(identifier=version_id)
 
     def list(self, model_id: str) -> list[str]:
         self._ensure_model_exists(model_id)
@@ -174,17 +168,6 @@ class FileSystemVersionMapper(VersionMapper):
             raise errors.ErrorNotFound(
                 f"Version {version_id} in model {model_id}"
             )
-
-    def _read_version(self, version_id: str, model_id: str) -> Version:
-        """
-        Lazily construct a Version object on read.
-        :param model_id: The model identifier
-        :param version_id: The version identifier
-        :return: The version object
-        """
-        self._ensure_model_exists(model_id)
-        self._ensure_version_exists(version_id, model_id)
-        return Version(identifier=version_id)
 
 
 # -------------------------------------------------------------------------

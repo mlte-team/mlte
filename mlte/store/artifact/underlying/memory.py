@@ -163,7 +163,13 @@ class InMemoryModelMapper(ModelMapper):
     def read(self, model_id: str, context: Any = None) -> Model:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
-        return self._read_model(model_id)
+        return Model(
+            identifier=model_id,
+            versions=[
+                self.version_mapper.read(id, model_id)
+                for id in self.storage.models[model_id].version_artifacts.keys()
+            ],
+        )
 
     def list(self, context: Any = None) -> list[str]:
         return [model_id for model_id in self.storage.models.keys()]
@@ -172,23 +178,6 @@ class InMemoryModelMapper(ModelMapper):
         popped = self.read(model_id)
         del self.storage.models[model_id]
         return popped
-
-    def _read_model(self, model_id: str) -> Model:
-        """
-        Lazily construct a Model object on read.
-        :param model_id: The model identifier
-        :return: The model object
-        """
-        assert (
-            model_id in self.storage.models
-        ), f"Model {model_id} not found in list of models."
-        return Model(
-            identifier=model_id,
-            versions=[
-                self.version_mapper.read(id, model_id)
-                for id in self.storage.models[model_id].version_artifacts.keys()
-            ],
-        )
 
 
 class InMemoryVersionMapper(VersionMapper):
@@ -215,9 +204,9 @@ class InMemoryVersionMapper(VersionMapper):
 
         model = self.storage.models[model_id]
         if version_id not in model.version_artifacts:
-            raise errors.ErrorNotFound(f"Version {version_id}")
+            raise errors.ErrorNotFound(f"Version {version_id} for model {model_id}")
 
-        return self._read_version(model_id, version_id)
+        return Version(identifier=version_id)
 
     def list(self, model_id: str) -> list[str]:
         if model_id not in self.storage.models:
@@ -231,21 +220,6 @@ class InMemoryVersionMapper(VersionMapper):
         model = self.storage.models[model_id]
         del model.version_artifacts[version_id]
         return popped
-
-    def _read_version(self, model_id: str, version_id: str) -> Version:
-        """
-        Lazily construct a Version object on read.
-        :param model_id: The model identifier
-        :param version_id: The version identifier
-        :return: The version object
-        """
-        assert (
-            model_id in self.storage.models
-        ), f"Model {model_id} not found in list of models."
-        assert (
-            version_id in self.storage.models[model_id].version_artifacts
-        ), f"Version {version_id} not found int list for model {model_id}."
-        return Version(identifier=version_id)
 
 
 class InMemoryArtifactMapper(ArtifactMapper):
