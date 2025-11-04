@@ -242,23 +242,11 @@ We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org
 $ make lint-frontend
 ```
 
-Or manually from the root of the nuxt application:
-
-```bash
-$ npm run lint
-```
-
 ### Front End Static Type Checking
 All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
 
 ```bash
 $ make typecheck-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npx vue-tsc
 ```
 
 ## Front End
