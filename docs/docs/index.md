@@ -25,8 +25,6 @@ As part of the negotiation, teams fill out a `MLTE` [Negotiation Card](negotiati
 ## 4. Initial Model Testing (IMT)
 IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform preliminary testing to determine when the model exceeds baselines. Once model performance exceeds baselines, or if additional testing is needed to validate assumptions, the process moves to SDMT.
 
-IMT recognizes the iterative and experimental nature of model development. Teams use information from the [Negotiation Card](negotiation_card.md) during initial model development to inform model requirements, performance thresholds, and design decisions. Once initial development is complete, model teams perform preliminary testing through IMT to determine when the model exceeds their specified thresholds.
-
 1. TRAINED MODEL: Performing IMT assumes that teams have a trained model. 
 
 2. TEST MODEL USING `TESTSUITE`: Test the trained model against `TestCase`s selected during the negotiation with stakeholders during `MLTE` step ➀. 
