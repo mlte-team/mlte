@@ -4,7 +4,7 @@ This document describes some of the development practices used in `MLTE`.
 
 ## Quick Start
 
-The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library IMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
+The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library SDMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
 
 ```bash
 $ pyenv install 3.12
@@ -12,7 +12,7 @@ $ pyenv local 3.12
 $ make venv
 ```
 
-The other part of MLTE is the frontend and backend. These are used for the SDMT process, and visualing results from the IMT process. This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 3 docker containers with an RDBS based backend. The frontend will be available at `localhost:8000` and will include a sample model, version, and negotiation card.
+The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 3 docker containers with an RDBS based backend. The frontend will be available at `localhost:8000` and will include a sample model, version, and [Negotiation Card](negotiation_card.md).
 
 ```bash
 cd demo && bash run_environment.sh
