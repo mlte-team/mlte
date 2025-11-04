@@ -7,8 +7,8 @@ This document describes some of the development practices used in `MLTE`.
 The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library IMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
 
 ```bash
-$ pyenv install 3.9
-$ pyenv local 3.9
+$ pyenv install 3.12
+$ pyenv local 3.12
 $ make venv
 ```
 
@@ -31,16 +31,16 @@ Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both includ
 If you do not have one of these versions installed, or you want to target a specific version that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
 - Install `pyenv` as described in this link: https://github.com/pyenv/pyenv
-- Install the desired Python version (in this example, 3.9):
+- Install the desired Python version (in this example, 3.12):
 
 ```bash
-$ pyenv install 3.9
+$ pyenv install 3.12
 ```
 
 - While inside the root repository folder, run this command to set that Python version to be used when executed in that folder:
 
 ```bash
-$ pyenv local 3.9
+$ pyenv local 3.12
 ```
 
 - You can use `python --version` to check if it worked.
