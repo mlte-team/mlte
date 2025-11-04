@@ -123,7 +123,7 @@ def test_artifact_parents(
     artifact_id = artifact_model.header.identifier
 
     artifact = ArtifactFactory.from_model(artifact_model)
-    read_artifact = artifact.save_with(ctx, store, parents=True)
+    stored_artifact = artifact.save_with(ctx, store, parents=True)
 
     # The write succeeds
     with ManagedArtifactSession(store.session()) as artifact_store:
@@ -133,5 +133,5 @@ def test_artifact_parents(
 
         # The artifact is present
         artifact_store.artifact_mapper.read(
-            read_artifact.get_identifier(), (ctx.model, ctx.version)
+            stored_artifact.get_identifier(), (ctx.model, ctx.version)
         )
