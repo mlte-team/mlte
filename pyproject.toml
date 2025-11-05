@@ -75,6 +75,13 @@ notebook = "7.3.2"
 tensorflow = "2.18.0"
 pickleshare = "0.7.5"
 torch = "2.8.0"
+statsmodels = "0.14.5"
+openai = "2.6.1"
+langchain = "1.0.3"
+langchain-community gpt4all = "0.4.1"
+langchain[openai] = "1.0.1"
+
+
 
 [tool.poetry.group.dev]
 optional = true

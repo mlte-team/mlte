@@ -2,8 +2,8 @@
     "header": {
         "identifier": "card.default",
         "type": "card",
-        "timestamp": 1761934461,
-        "creator": null,
+        "timestamp": 1762363735,
+        "creator": "admin",
         "level": "model"
     },
     "body": {
@@ -118,7 +118,7 @@
                 "stimulus": "The model receives a picture that is a bit blurry",
                 "source": "the Garden Buddy application",
                 "environment": "normal operation",
-                "response": "he model successfully identifies flowers",
+                "response": "the model successfully identifies flowers",
                 "measure": "at the same rate as non-blurry images"
             },
             {
@@ -141,7 +141,7 @@
             },
             {
                 "identifier": "card.default-qas_005",
-                "quality": "Understandability",
+                "quality": "Explainability",
                 "stimulus": "The model receives a picture taken at the garden",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
@@ -168,7 +168,7 @@
             },
             {
                 "identifier": "card.default-qas_008",
-                "quality": "Resilience",
+                "quality": "Reliability",
                 "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
