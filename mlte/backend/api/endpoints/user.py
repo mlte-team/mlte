@@ -269,7 +269,7 @@ def list_user_models(
                 user = BasicUser(
                     **user_store.user_mapper.read(username).to_json()
                 )
-                all_models = artifact_store.list_models()
+                all_models = artifact_store.model_mapper.list()
                 for model_id in all_models:
                     permission = Permission(
                         resource_type=ResourceType.MODEL,

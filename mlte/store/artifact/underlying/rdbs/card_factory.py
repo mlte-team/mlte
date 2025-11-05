@@ -33,7 +33,6 @@ from mlte.store.artifact.underlying.rdbs.card_metadata import (
     DBModelResourcesDescriptor,
     DBNegotiationCard,
 )
-from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 
 # -------------------------------------------------------------------------
@@ -43,7 +42,6 @@ from mlte.store.artifact.underlying.rdbs.reader import DBReader
 
 def create_card_orm(
     negotiation_card: NegotiationCardModel,
-    artifact_orm: Optional[DBArtifact],
     session: Session,
 ) -> DBNegotiationCard:
     """Creates the DB object from the corresponding internal model."""
@@ -74,7 +72,6 @@ def create_card_orm(
 
     # Create the actual object.
     negotiation_card_orm = DBNegotiationCard(
-        artifact=artifact_orm,
         sys_goals=[],
         sys_problem_type=problem_type_orm,
         sys_task=negotiation_card.system.task,

@@ -1,16 +1,20 @@
-"""
-Implementation of HTTP artifact store.
-"""
+"""Implementation of HTTP artifact store."""
 
 from __future__ import annotations
 
 import typing
-from typing import List, Optional, OrderedDict
+from typing import Any, Optional, OrderedDict
 
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.models.artifact_model import WriteArtifactRequest
 from mlte.context.model import Model, Version
-from mlte.store.artifact.store import ArtifactStore, ArtifactStoreSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import (
+    ArtifactMapper,
+    ArtifactStoreSession,
+    ModelMapper,
+    VersionMapper,
+)
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
@@ -58,61 +62,141 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
         self.storage = storage
         """HTTP Storage."""
 
+        self.version_mapper = HTTPVersionMapper(storage=storage)
+        """The mapper to version CRUD."""
+
+        self.model_mapper = HTTPModelMapper(storage=storage)
+        """The mapper to model CRUD."""
+
+        self.artifact_mapper = HTTPArtifactMapper(storage=storage)
+        """The mapper to artifact CRUD."""
+
         self.storage.start_session()
 
     def close(self):
         # No closing needed.
         pass
 
-    # -------------------------------------------------------------------------
-    # Model
-    # -------------------------------------------------------------------------
 
-    def create_model(self, model: Model) -> Model:
+# -------------------------------------------------------------------------
+# Model
+# -------------------------------------------------------------------------
+
+
+class HTTPModelMapper(ModelMapper):
+    """HTTP mapper for the model resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def create(self, model: Model, context: Any = None) -> Model:
         response = self.storage.post(json=model.to_json())
         return Model(**response)
 
-    def read_model(self, model_id: str) -> Model:
+    def read(self, model_id: str, context: Any = None) -> Model:
         response = self.storage.get(id=model_id)
         return Model(**response)
 
-    def list_models(self) -> List[str]:
+    def list(self, context: Any = None) -> list[str]:
         response = self.storage.get()
-        return typing.cast(List[str], response)
+        return typing.cast(list[str], response)
 
-    def delete_model(self, model_id: str) -> Model:
+    def delete(self, model_id: str, context: Any = None) -> Model:
         response = self.storage.delete(id=model_id)
         return Model(**response)
 
-    # -------------------------------------------------------------------------
-    # Version
-    # -------------------------------------------------------------------------
 
-    def create_version(self, model_id: str, version: Version) -> Version:
+# -------------------------------------------------------------------------
+# Version
+# -------------------------------------------------------------------------
+
+
+class HTTPVersionMapper(VersionMapper):
+    """HTTP mapper for the version resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def create(self, version: Version, model_id: str) -> Version:
         response = self.storage.post(
             json=version.to_json(), groups=_version_group(model_id)
         )
         return Version(**response)
 
-    def read_version(self, model_id: str, version_id: str) -> Version:
+    def read(self, version_id: str, model_id: str) -> Version:
         response = self.storage.get(
             id=version_id, groups=_version_group(model_id)
         )
         return Version(**response)
 
-    def list_versions(self, model_id: str) -> List[str]:
+    def list(self, model_id: str) -> list[str]:
         response = self.storage.get(groups=_version_group(model_id))
-        return typing.cast(List[str], response)
+        return typing.cast(list[str], response)
 
-    def delete_version(self, model_id: str, version_id: str) -> Version:
+    def delete(self, version_id: str, model_id: str) -> Version:
         response = self.storage.delete(
             id=version_id, groups=_version_group(model_id)
         )
         return Version(**response)
 
-    # -------------------------------------------------------------------------
-    # Artifacts
-    # -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# Artifacts
+# -------------------------------------------------------------------------
+
+
+class HTTPArtifactMapper(ArtifactMapper):
+    """HTTP mapper for the artifact resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def read(
+        self, artifact_id: str, model_and_version: tuple[str, str]
+    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
+        response = self.storage.get(
+            id=artifact_id,
+            groups=_artifact_groups(model_id, version_id),
+        )
+        return ArtifactModel(**response)
+
+    def search(
+        self, query: Query, model_and_version: Optional[tuple[str, str]] = None
+    ) -> list[ArtifactModel]:
+        groups: OrderedDict[str, str] = OrderedDict()
+        if model_and_version:
+            model_id, version_id = model_and_version
+            groups = _artifact_groups(model_id, version_id)
+        response = self.storage.send_command(
+            MethodType.POST,
+            id="search",
+            json=query.to_json(),
+            groups=groups,
+        )
+        return [ArtifactModel(**object) for object in response]
+
+    def delete(
+        self, artifact_id: str, model_and_version: tuple[str, str]
+    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
+        response = self.storage.delete(
+            id=artifact_id, groups=_artifact_groups(model_id, version_id)
+        )
+        return ArtifactModel(**response)
+
+    def _store_artifact(
+        self, artifact: ArtifactModel, model_and_version: tuple[str, str]
+    ) -> ArtifactModel:
+        model_id, version_id = model_and_version
+        response = self.storage.post(
+            groups=_artifact_groups(model_id, version_id),
+            json=WriteArtifactRequest(artifact=artifact).to_json(),
+        )
+        return ArtifactModel(**(response["artifact"]))
 
     def write_artifact(
         self,
@@ -121,68 +205,16 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
         artifact: ArtifactModel,
         *,
         force: bool = False,
-        parents: bool = False,
     ) -> ArtifactModel:
         response = self.storage.post(
             groups=_artifact_groups(model_id, version_id),
             json=WriteArtifactRequest(
                 artifact=artifact,
                 force=force,
-                parents=parents,
+                parents=False,  # This is set to false as it will be handled at the object level when this store is used.
             ).to_json(),
         )
         return ArtifactModel(**(response["artifact"]))
-
-    def read_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
-        response = self.storage.get(
-            id=artifact_id,
-            groups=_artifact_groups(model_id, version_id),
-        )
-        return ArtifactModel(**response)
-
-    def read_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        limit: int = 100,
-        offset: int = 0,
-    ) -> List[ArtifactModel]:
-        response = self.storage.get(
-            groups=_artifact_groups(model_id, version_id),
-            query_args={"limit": f"{limit}", "offset": f"{offset}"},
-        )
-        return [ArtifactModel(**object) for object in response]
-
-    def search_artifacts(
-        self,
-        model_id: str,
-        version_id: str,
-        query: Query = Query(),
-    ) -> List[ArtifactModel]:
-        # NOTE(Kyle): This operation always uses the "advanced search" functionality
-        response = self.storage.send_command(
-            MethodType.POST,
-            id="search",
-            json=query.to_json(),
-            groups=_artifact_groups(model_id, version_id),
-        )
-        return [ArtifactModel(**object) for object in response]
-
-    def delete_artifact(
-        self,
-        model_id: str,
-        version_id: str,
-        artifact_id: str,
-    ) -> ArtifactModel:
-        response = self.storage.delete(
-            id=artifact_id, groups=_artifact_groups(model_id, version_id)
-        )
-        return ArtifactModel(**response)
 
 
 def _version_group(model_id: str) -> OrderedDict[str, str]:

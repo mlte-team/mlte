@@ -1,8 +1,4 @@
-"""
-test/artifact/test_artifact.py
-
-Unit tests for MLTE artifact protocol implementation.
-"""
+"""Unit tests for MLTE artifact protocol implementation."""
 
 import typing
 from typing import Tuple
@@ -10,6 +6,7 @@ from typing import Tuple
 import pytest
 
 from mlte.artifact.artifact import Artifact
+from mlte.artifact.factory import ArtifactFactory
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.evidence.types.integer import Integer
@@ -21,10 +18,12 @@ from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
 from mlte.session.session import set_context, set_store
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType, StoreURI
 from mlte.tests.model import TestSuiteModel
 from mlte.tests.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
+from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.fixture import store_with_context  # noqa
 from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
 
@@ -108,3 +107,31 @@ def test_load_all_models(
 
     assert len(models) == 2
     assert models[0].header.type == artifact_type
+
+
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_artifact_parents(
+    artifact_type: ArtifactType,
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+) -> None:
+    """An artifact can create organizational elements implicitly, on write."""
+    store, ctx = store_with_context
+
+    artifact_id = "myid"
+
+    artifact_model = ArtifactModelFactory.make(artifact_type, artifact_id)
+    artifact_id = artifact_model.header.identifier
+
+    artifact = ArtifactFactory.from_model(artifact_model)
+    stored_artifact = artifact.save_with(ctx, store, parents=True)
+
+    # The write succeeds
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        # The organizational elements are present
+        assert len(artifact_store.model_mapper.list()) == 1
+        assert len(artifact_store.version_mapper.list(ctx.model)) == 1
+
+        # The artifact is present
+        artifact_store.artifact_mapper.read(
+            stored_artifact.get_identifier(), (ctx.model, ctx.version)
+        )
