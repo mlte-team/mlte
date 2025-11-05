@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 
@@ -21,3 +22,6 @@ set_store(f"local://{store_path}")
 
 # The path at which datasets are stored
 DATASETS_DIR = Path.cwd() / "data"
+
+load_dotenv()
+api_key = os.getenv("API_KEY")
