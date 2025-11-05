@@ -2,17 +2,19 @@
 
 # NOTE: this requires jq to be installed in the system.
 
-for file in ./scenarios/*.ipynb
+DEMOS=$@
+for demo in ${DEMOS[@]}
 do
-  source jq_clean_nb.sh "$file"
-done
-
-for file in ./EvalPro_demo/*.ipynb
-do
-  source jq_clean_nb.sh "$file"
-done
-
-for file in ./simple/*.ipynb
-do
-  source jq_clean_nb.sh "$file"
+  for notebook_file in ${demo}/*.ipynb
+  do
+    source jq_clean_nb.sh "$notebook_file"
+  done
+  # Iterate over any notebooks in subfolders of the demos
+  for subfolder_notebook_file in ${demo}/*/*.ipynb
+  do
+    echo $subfolder_notebook_file
+    if [ -f "$subfolder_notebook_file" ]; then
+      source jq_clean_nb.sh "$subfolder_notebook_file"
+    fi
+  done
 done

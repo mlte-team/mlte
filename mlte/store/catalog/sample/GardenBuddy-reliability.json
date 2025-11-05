@@ -1,0 +1,16 @@
+{
+    "header": {
+        "identifier": "GardenBuddy-reliability",
+        "creator": "admin",
+        "created": 1762354691,
+        "updater": null,
+        "updated": 1762354691,
+        "catalog_id": "sample"
+    },
+    "tags": [],
+    "quality_attribute": "",
+    "code": "# ## 2h. Evidence - Reliability QAS Measurements\n# \n# Measure reliability in the context of input variations.\n\n# ### Initialize MLTE Context\n# \n# MLTE contains a global context that manages the currently active _session_. Initializing the context tells MLTE how to store all of the artifacts that it produces. This import will also set up global constants related to folders and model to use.\n\n# Sets up context for the model being used, sets up constants related to folders and model data to be used.\nfrom session import *\n\n\n# ### Set up scenario test case\n\nfrom mlte.negotiation.artifact import NegotiationCard\n\ncard = NegotiationCard.load()\nqa = 7\nprint(card.quality_scenarios[qa].identifier)\nprint(card.quality_scenarios[qa].quality)\nprint(\n    card.quality_scenarios[qa].stimulus,\n    \\\"from \\\",\n    card.quality_scenarios[qa].source,\n    \\\" during \\\",\n    card.quality_scenarios[qa].environment,\n    \\\". \\\",\n    card.quality_scenarios[qa].response,\n    card.quality_scenarios[qa].measure,\n)\n\n\n# **A Specific test case generated from the scenario:**\n# \n# **Data and Data Source:**\tTest dataset needs to include entries that are intended to fail, generated based on Equivalence Testing and Boundary Testing.\n# \n# **Measurement and Condition:**\tLog entries are produced for all erroneous inputs.\n# \n# **Context:**\tNormal Operation\n\n# ### Helper Functions\n# \n# Prepare all functions and data for the measurements.\n\n# Load model module\nfrom utils import model_predict\n\n\ndef run_and_get_log() -> str:\n    \\\"\\\"\\\"Runs the model and gets the log.\\\"\\\"\\\"\n    model_predict.run_model(OOD_DATASET_DIR, MODEL_FILE_PATH)\n\n    return model_predict.load_log()\n\n\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.evidence.types.string import String\n\n# Evaluate, identifier has to be the same one defined in the TestSuite.\nmeasurement = ExternalMeasurement(\n    \\\"input format validation error\\\", String, run_and_get_log\n)\nresult = measurement.evaluate()\n\n# Inspect value\n# print(result)\n\n# Save to artifact store\nresult.save(force=True)\n\n\n\n",
+    "description": "",
+    "inputs": "",
+    "output": ""
+}
