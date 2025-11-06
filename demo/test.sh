@@ -19,7 +19,7 @@ do
   for file in ${demo}/*.ipynb
   do
     # Avoid running this notebook because it relies on an OpenAI API key that we cannot have configured by default
-    if [[ "$file" != "2f_evidence_time_behavior.ipynb" ]]; then
+    if [[ "$file" != "ReviewPro/2f_evidence_time_behavior.ipynb" ]]; then
       poetry run pytest --nbmake "$file"
     fi
   done
