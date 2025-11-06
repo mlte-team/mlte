@@ -52,6 +52,3 @@ pgdata/
 default_store/
 
 .virtual_documents/
-
-# Demo env
-demo/ReviewPro/.env
