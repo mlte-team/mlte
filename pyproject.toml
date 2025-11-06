@@ -78,7 +78,7 @@ torch = "2.8.0"
 statsmodels = "0.14.5"
 openai = "2.6.1"
 langchain = "1.0.3"
-langchain-community = "0.4.1"
+langchain-community = "0.3.30"
 gpt4all = "2.8.2"
 langchain-openai = "1.0.1"
 
