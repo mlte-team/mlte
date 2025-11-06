@@ -15,20 +15,20 @@ A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Dem
     - `<x>` being letters starting at `a` and continually incrementing, for example `2a_evidence_fairness`, `2b_evidence_robustness`, `2c_evidence_resilience`.
     - Each notebook should gather evidence for all the `TestCase`s that test a quality attribute scenario from the [Negotiation Card](negotiation_card.md) that relate to the quality attribute in the name of the notebook.
     - Each of these notebooks will be also used as an entry in the Sample Test Catalog to give an example of the `Test Case`s evaluated in the notebook. The second cell must contain a JSON block with information that will be used to populate the Test Catalog entry. All fields are required.
-        - Tags: System-defined tags that are used in catalog search to group the catalog entries. Current options are found in `mlte/frontend/nuxt-app/composables/state.ts`as the const `useTagOptions`. These will be updated to be a custom list in the near future at which point a list of options will be found in `mlte/store/custom_list/tags`.
-        - Quality Attribute: High-level quality attribute category that the notebook is validating. Options can be found in `mlte/store/custom_list/quality_attributes` and should match the quality attribute in the notebook name.
-        - Description: Description of the scenario that this notebook is testing.
-        - Inputs: Inputs to the model that are being tested.
-        - Outputs: Expected output from the test
-        ```json
-        {
-            "tags": ["General"],
-            "quality_attribute": "Detect OOD inputs and shifts in output",
-            "description": "During normal operation, the ML pipeline will log errors when out of distribution data is observed. The ML pipeline will create a log entry with a tag. During normal operation, ML pipeline will log errors when the output distribution changes. The ML pipeline will create a log entry with a tag.",
-            "inputs": "Existing ML model, sample image data that has out of bounds input, and that produces output confidence error",
-            "output": "Log with input issues tagged",
-        }
-        ```
+        - `Tags`: System-defined tags that are used in catalog search to group the catalog entries. Current options are found in `mlte/frontend/nuxt-app/composables/state.ts`as the const `useTagOptions`. These will be updated to be a custom list in the near future at which point a list of options will be found in `mlte/store/custom_list/tags`.
+        - `Quality Attribute`: High-level quality attribute category that the notebook is validating. Options can be found in `mlte/store/custom_list/quality_attributes` and should match the quality attribute in the notebook name.
+        - `Description`: Description of the scenario that this notebook is testing.
+        - `Inputs`: Inputs to the model that are being tested.
+        - `Outputs`: Expected output from the test.
+            ```json
+            {
+                "tags": ["General"],
+                "quality_attribute": "Detect OOD inputs and shifts in output",
+                "description": "During normal operation, the ML pipeline will log errors when out of distribution data is observed. The ML pipeline will create a log entry with a tag. During normal operation, ML pipeline will log errors when the output distribution changes. The ML pipeline will create a log entry with a tag.",
+                "inputs": "Existing ML model, sample image data that has out of bounds input, and that produces output confidence error",
+                "output": "Log with input issues tagged",
+            }
+            ```
 4. `3a_automatic_validation.ipynb`
     - Create a `TestSuiteValidator` and validate the evidence collected
 5. `3b_manual_validation.ipynb`

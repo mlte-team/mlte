@@ -101,7 +101,7 @@ $ source .venv/bin/activate
 
 There are a couple of shorthand commands in the Makefile to run several of the below commands at the same time. The most useful ones include:
 
-* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, static type checking commands of Python and Typescript code, and sample test catalog generatiion.
+* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, static type checking commands of Python and Typescript code, and sample test catalog generation.
 * `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, static type checking commands of Python and Typescript code and sample catalog check.
 * `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
 
