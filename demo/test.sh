@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set up script to stop tests when first one fails.
-set -e 
+set -e
 
 # Remove everything from temp stores to avoid outdated data.
 rm -rf ./store
@@ -18,6 +18,9 @@ for demo in ${DEMOS[@]}
 do 
   for file in ${demo}/*.ipynb
   do
-    poetry run pytest --nbmake "$file"
+    # Avoid running this notebook because it relies on an OpenAI API key that we cannot have configured by default
+    if [[ "$file" != "2f_evidence_time_behavior.ipynb" ]]; then
+      poetry run pytest --nbmake "$file"
+    fi
   done
 done
