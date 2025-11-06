@@ -155,10 +155,10 @@ def create_code_str(notebook_data: NotebookNode) -> str:
         mode="r", suffix=".ipynb"
     ) as temp_notebook_file, tempfile.NamedTemporaryFile(
         mode="r", suffix=".py"
-    ) as script_file:
-        script_path = Path(script_file.name)
-        notebook_data.cells.pop(1)
-        nbformat.write(local_notebook_data, temp_notebook_file.name)
+    ) as temp_script_file:
+        script_path = Path(temp_script_file.name)
+        notebook_path = Path(temp_notebook_file.name)
+        nbformat.write(local_notebook_data, notebook_path)
         subprocess.run(
             [
                 "jupyter",
@@ -169,12 +169,11 @@ def create_code_str(notebook_data: NotebookNode) -> str:
                 script_path.parent,
                 "--output",
                 script_path.stem,
-                temp_notebook_file.name,
+                notebook_path,
             ],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
         )
-        script = script_file.readlines()
+        script = temp_script_file.readlines()
 
     # Remove "#!/usr/bin/env python", # coding: utf-8\n" at the start and extra new line at the end
     script = script[3:-1]
