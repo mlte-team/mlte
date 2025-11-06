@@ -80,7 +80,7 @@ openai = "2.6.1"
 langchain = "1.0.3"
 langchain-community = "0.3.30"
 gpt4all = "2.8.2"
-langchain-openai = "1.0.1"
+langchain-openai = "0.3.34"
 
 
 
