@@ -1,6 +1,7 @@
-from dotenv import load_dotenv
 import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 from mlte.session import set_context, set_store
 
@@ -24,4 +25,3 @@ set_store(f"local://{store_path}")
 DATASETS_DIR = Path.cwd() / "data"
 
 load_dotenv()
-api_key = os.getenv("API_KEY")
