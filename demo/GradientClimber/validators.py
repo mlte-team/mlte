@@ -16,7 +16,7 @@ def passed_percent_more_or_equal_then(threshold: float) -> Validator:
     :return: A validator to check against this.
     """
     bool_exp: Callable[[Array], bool] = (
-        lambda value: sum(g for g in value.array) >= threshold
+        lambda value: sum(g for g in value.array)/max(len(value.array),1) >= threshold
     )
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
