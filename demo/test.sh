@@ -16,8 +16,19 @@ LC_COLLATE=C
 DEMOS="$@"
 for demo in ${DEMOS[@]}
 do 
+  # Load demo env vars, if any.
+  if [ -f ./${demo}/.env ]; then
+    echo "Loading env vars for ${demo}."
+    set -o allexport
+    source "./${demo}/.env"
+    set +o allexport
+  fi
+
   for file in ${demo}/*.ipynb
-  do
+  do    
+    echo "============================================================================================================================"
+    echo "$file"
+
     # Avoid running this notebook when the API key is missing, as it relies on an OpenAI API key that we cannot have configured by default
     if [[ "$file" == "ReviewPro/2f_evidence_time_behavior.ipynb" ]] && [[ -z "$OPENAI_API_KEY" ]]; then
       echo "Skipping notebook that requires unset API key env var."
