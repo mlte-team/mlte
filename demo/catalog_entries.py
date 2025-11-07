@@ -159,7 +159,7 @@ def create_code_str(notebook_data: NotebookNode) -> str:
         script_path = Path(temp_script_file.name)
         notebook_path = Path(temp_notebook_file.name)
         nbformat.write(local_notebook_data, notebook_path)
-        subprocess.run(
+        subprocess_output = subprocess.run(
             [
                 "jupyter",
                 "nbconvert",
@@ -171,8 +171,13 @@ def create_code_str(notebook_data: NotebookNode) -> str:
                 script_path.stem,
                 notebook_path,
             ],
-            stdout=subprocess.DEVNULL,
+            capture_output=True,
         )
+        if not subprocess_output.stderr.decode("utf-8").startswith(
+            "[NbConvertApp] Converting notebook"
+        ):
+            print(subprocess_output.stderr.decode("utf-8"))
+
         script = temp_script_file.readlines()
 
     # Remove "#!/usr/bin/env python", # coding: utf-8\n" at the start and extra new line at the end
