@@ -4,7 +4,7 @@ This demo requires an OpenAI API key in order to access the LLM during its execu
 
 ```bash
 # demo/ReviewPro/.env
-OPENAPI_KEY="my_api_key"
+OPENAI_API_KEY="my_api_key"
 # If behind a proxy
 SSL_CERT_FILE="my_cert_file"
 ```
