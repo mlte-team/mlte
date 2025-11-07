@@ -2,6 +2,20 @@
 
 This section walks users through how to set up and run the `MLTE` Python package, as well as offering examples of how to use `MLTE` in machine learning projects.
 
+## Quick Start
+
+`MLTE` can be installed and ran with its frontend with
+
+```bash
+$ pip install "mlte[frontend]"
+$ mlte backend --store-uri fs://store
+$ mlte ui
+```
+
+This is the simplest initial setup. This will install dependencies to use `MLTE` as a library, and the frontend/backend functionality. Then it starts up the `MLTE` frontend and backend with the backend using the `store/` directory to store data.
+
+Examples of how to use MLTE as a library can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">`MLTE` repository demos<a>. Although these are currently not able to be ran without installing `MLTE` through the repository and setting up the development environment. 
+
 ## Installation
 
 If you already have Python installed you can install `MLTE` with
@@ -20,7 +34,6 @@ To use the web UI (frontend/backend functionality), the `frontend` optional depe
 ```bash
 $ pip install "mlte[frontend,rdbs,gpu]"
 ```
-
 
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.
 
@@ -53,12 +66,6 @@ Some common flags used with the backend include the following:
  - **Token key**: The backend comes with a default secret for signing authentication tokens. In real deployments, you should define a new secret to be used for token signing instead of the default one. This can be done by either passing it as a command line argument with the `--jwt-secret` flag, or creating an `.env` file with the secret string on the variable `JWT_SECRET_KEY="<secret_string>"`
 
  - **Allowed origins**: In order for the frontend to be able to communicate with the backend, the frontend needs to be allowed as an origin in the backend. This can be done by specifying the `--allowed-origins` flag when starting the backend. When run through the `MLTE` package, the frontend will be hosted at `http://localhost:8080`. This address is configured to be allowed by default, so the flag does not need to be used by default, but if the frontend is hosted on another address then this flag needs to be set with the correct address.
-
- A sample artifact store is included in this repo, currently containing only a sample negotiation card artifact. To start the backend with this store, run it using the following command from the root of this repo:
-
- ```bash
-$ mlte backend --store-uri fs://demo/sample_store
-```
 
 ### Frontend
 
