@@ -17,6 +17,11 @@ shift
 DEMOS=$@
 for demo in ${DEMOS[@]}
 do
+    if [[ $MODE == "build" ]]; then
+        echo "Building catalog entries for demo $demo"
+    elif [[ $MODE == "check" ]]; then
+        echo "Checking catalog entries for demo $demo"
+    fi
     for notebook_file in ${demo}/*.ipynb
     do
         # Get the file name without the demo path prepended
