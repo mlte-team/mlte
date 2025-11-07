@@ -1,12 +1,10 @@
 ###documentation
 
-import itertools
-import json
 import os
 import re
 
 import pandas as pd
-from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 # set up model info
