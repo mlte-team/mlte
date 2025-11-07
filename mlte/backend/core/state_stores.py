@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from typing import Generator
 
 from mlte.backend.core.state import state
-from mlte.store.artifact.store import ArtifactStoreSession
+from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.catalog.catalog_group import CatalogStoreGroupSession
 from mlte.store.custom_list.store_session import CustomListStoreSession
 from mlte.store.user.store_session import UserStoreSession

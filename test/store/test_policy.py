@@ -3,7 +3,8 @@
 import pytest
 
 from mlte.context.model import Model
-from mlte.store.artifact.store import ArtifactStore, ManagedArtifactSession
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.user.policy import Policy, create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
@@ -135,7 +136,9 @@ def test_create_policy_if_needed(
     ) as artifact_store_session:
         with ManagedUserSession(user_store.session()) as user_store_session:
             # Create a model which will not have permissions.
-            artifact_store_session.create_model(Model(identifier=model_id))
+            artifact_store_session.model_mapper.create(
+                Model(identifier=model_id)
+            )
 
             # Add policies.
             create_model_policies_if_needed(
