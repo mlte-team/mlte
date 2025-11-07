@@ -29,12 +29,15 @@ A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Dem
                 "output": "Log with input issues tagged",
             }
             ```
-4. `3a_automatic_validation.ipynb`
-    - Create a `TestSuiteValidator` and validate the evidence collected
-5. `3b_manual_validation.ipynb`
-    - Validate all test cases that need to be manually validated by the user, this may not apply in all cases.
-6. `3c_report.ipynb`
-    - Generate a report to communicate the results of the evaluation.
+4. `3_report.ipynb`
+    - Validate all test cases and generate a report to communicated the results of the evaluation.
+    - If manual validation is needed for some of the test cases (they can't be automated), split into these three notebooks INSTEAD:
+        - 4.1. `3a_automatic_validation.ipynb`
+                - Create a `TestSuiteValidator` and validate the evidence collected
+        - 4.2. `3b_manual_validation.ipynb`
+                - Validate all test cases that need to be manually validated by the user, this may not apply in all cases.
+        - 4.3. `3c_report.ipynb`
+                - Generate a report to communicate the results of the evaluation.
 
 ## Populating the Sample Test Catalog
 
