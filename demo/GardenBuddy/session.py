@@ -30,9 +30,6 @@ OOD_DATASET_DIR = DATASETS_DIR / "ood"
 # Path where the model files are stored.
 MODELS_DIR = Path.cwd() / "model"
 
-# Path where the utilit funtion files are stored.
-UTILS_DIR = Path.cwd() / "utils"
-
 # The path at which media is stored
 MEDIA_DIR = Path.cwd() / "media"
 os.makedirs(MEDIA_DIR, exist_ok=True)
