@@ -1,0 +1,467 @@
+,evaluationOutput,prompt,extractedOverallRating,extractedDrinks,extractedTimeliness,extractedCustomerSatisfaction,extractedStoreOperations,extractedOnTime,extractedName,modelCalled,averageScore
+0,"Employee: Kate  
+Date and history: [Insert Date] - Employee since [Insert Start Date]  
+
+Overall Rating: Fully Successful (3)  
+- Kate meets the basic requirements of her role but lacks enthusiasm and engagement that could enhance her performance and contributions to the team. While she completes her main tasks, there are areas that need improvement to align with store goals and values.  
+
+Critical Element:  
+
+1. Makes Drinks (Coffee, Latte, etc): Fully Successful (3)  
+   - Kate successfully makes drinks as ordered, meeting the basic expectations of her position. However, there is room to improve her knowledge and skills in coffee preparation to enhance product quality.  
+
+2. Timeliness (how quick you got your order done): Fully Successful (3)  
+   - Orders are generally completed in an acceptable timeframe. However, occasional delays have been noted, primarily due to distractions during shifts.  
+
+3. Customer Satisfaction: Fully Successful (3)  
+   - While Kate efficiently serves customers, adding a personal touch or engagement could improve customer satisfaction and loyalty.  
+
+4. Store Operations: Needs Improvement (2)  
+   - Kate has been inconsistent in cleaning machines and maintaining store standards. Improving her attentiveness to store operations is crucial.  
+
+5. Shows up to work on time: Needs Improvement (2)  
+   - Kate's punctuality needs improvement, as frequent lateness disrupts team dynamics and operational flow.  
+
+Comments and Suggestions:  
+
+Kate is a diligent worker who fulfills her primary responsibilities. However, she would greatly benefit from enhancing her engagement with both her tasks and customers. Focusing on punctuality and actively participating in maintaining store operations could significantly improve her performance. It is recommended that Kate works on minimizing distractions during her shifts and takes a proactive approach in her daily tasks.
+
+**Goals for Next Review Period:**  
+
+- Attend a training session to improve coffee preparation skills.  
+- Work on reducing lateness by setting a consistent schedule.  
+- Engage with customers by learning one or two names per shift, enhancing customer experience and satisfaction.
+- Prioritize cleaning duties, ensuring all closing tasks are completed efficiently.  
+
+By addressing these areas, Kate can not only improve her own work experience but also contribute more positively to the team and store environment.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Kate
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. 
+
+Manager comments
+
+Kate has shown up late to work numerous times over the past few months 
+Kate frequently fails to clean the machines at the end of the shift
+Kate is easily distracted when working
+        
+",3.0,3.0,3.0,3.0,2.0,2.0,Kate,gpt-4o,3.0
+1,"Employee Evaluation
+
+Employee: Casey  
+Date and history: Evaluation as of [Date]
+
+Overall Rating: Fully Successful (3)  
+- While Casey meets the basic job requirements and achieves essential tasks, their performance does not consistently exceed expectations. There are areas for improvement, particularly in reliability and efficiency, which impact overall performance.
+
+Critical Elements:
+- Makes drinks (Coffee, Latte, etc): Fully Successful (3)  
+  - Casey can make standard drinks satisfactorily; however, there's room for improvement in consistency and focus to reduce distraction and improve quality.
+
+- Timeliness (how quick you got your order done): Unacceptable (0)  
+  - Casey’s tendency to become distracted often results in longer wait times for customers. Timeliness is crucial, and improvement is needed in maintaining focus during busy shifts.
+
+- Customer Satisfaction: Fully Successful (3)  
+  - While Casey performs basic customer service tasks adequately, they lack the enthusiasm that could enhance customer experiences. Casey is personable, contributing positively to the work environment.
+
+- Store Operations: Unacceptable (0)  
+  - Consistent with leaving tasks unfinished, such as not cleaning machines at the end of shifts, it’s crucial for Casey to take more responsibility to improve store operations.
+
+- Shows up to work on time: Unacceptable (0)  
+  - Casey has shown up late occasionally, impacting team coverage and efficiency. Punctuality is essential to ensure smooth operations.
+
+Comments and Suggestions:
+Casey is a valued team member for morale enhancement but needs to improve in several key areas. To align better with company standards and customer expectations, focusing on improving punctuality and maintaining workplace responsibilities is necessary. For efficiency, reducing distractions during shifts and better time management when making drinks would be beneficial. Implementing a structured checklist for end-of-shift duties could support Casey in meeting store operation standards. Encouraging punctuality and providing a clear understanding of expectations should help Casey make positive strides. Training or mentorship with senior staff might also provide Casey with a model for enhancing professionalism in daily tasks.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Casey
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+Earn a living
+
+Employee self evaluation
+
+As I reflect on my time working as a barista, I have to be honest about what I'm really here for - I need this job to pay my bills and I make coffee because that's what I'm paid to do. I show up, I make the drinks people order, and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating ""memorable experiences"" - I'm just trying to get through my shifts without any major problems so I can keep earning a steady income. I do the basic requirements of the job because I need the money, but I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts. I understand this might not be the level of engagement management is looking for, I try to do what's asked of me to maintain my employment and financial stability.
+
+Manager comments
+
+Casey has shown up late to work a few times over the past few months - always apologetic
+Casey doesn’t always clean the machines at the end of the shift
+Casey is someone everyone enjoys being around
+Casey makes okay coffee but is easily distracted when working, which has led to longer wait times for customers
+It’s tough to count on Casey - I always have to ensure there is a ‘responsible adult’ on shift with them
+        
+",3.0,3.0,0.0,3.0,0.0,0.0,Casey,gpt-4o,1.0
+2,"**Employee Evaluation**
+
+**Employee:** Charlie  
+**Date:** [insert date]  
+**History:** [Write any relevant history of employment or recent performance-related events]  
+
+**Overall Rating:** Exceeds Expectations (4)  
+- **Justification:** Charlie has demonstrated strong capabilities in building and maintaining customer relationships, which has positively impacted customer satisfaction scores. However, there are areas for improvement, particularly in operational and cleanliness execution.
+
+**Critical Elements:**
+
+- **Makes drinks (Coffee, Latte, etc):** Fully Successful (3)  
+  - Charlie's attention to detail in personalized service is commendable, but there's room to enhance proficiency in making drinks faster and more efficiently.
+
+- **Timeliness (how quick you got your order done):** Fully Successful (3)  
+  - While customer interactions are intentionally paced, focusing on efficiency during peak hours will help improve service speed.
+
+- **Customer Satisfaction:** Outstanding (5)  
+  - Charlie's efforts in personalized service and customer engagement have clearly enhanced our customer satisfaction, reflected in feedback and direct compliments from patrons.
+
+- **Store Operations:** Fully Successful (3)  
+  - Understanding of store operations is developing, especially noticing Charlie's initiative in learning about espresso-making. However, further improvement is needed for consistent execution of daily tasks.
+
+- **Shows up to work on time:** Outstanding (5)  
+  - Charlie consistently shows up on time, maintaining reliability and exemplifying strong punctuality.
+
+**Comments and Suggestions:**
+
+Charlie has made a significant positive impact on our customer experience through personalized service and strong communication skills. To elevate performance further, Charlie should work on improving the cleanliness of the work environment, a critical operational aspect that sometimes falls short. Deepening proficiency with the equipment, especially the espresso machine, by pursuing training opportunities would enhance service capability. Completing the POS system training will also ensure smooth transaction processing. Continued focus on these goals will help Charlie to leverage his strengths for broader operational excellence.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Charlie
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Improve cleanliness of work environment
+Learn product offerings and coffee attributes
+Complete training on the POS system
+
+Employee self evaluation
+
+Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices.
+I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time.
+
+Manager comments
+
+Seems more focused on customers than on running equipment
+Store sometimes not clean
+Great customer satisfaction scores
+- Shows up on time
+        
+",4.0,3.0,3.0,5.0,3.0,5.0,** Charlie,gpt-4o,4.0
+3,"Employee Evaluation
+
+Employee: Collin  
+Date and History: Evaluation conducted on September 30, 2023. Collin has been employed with the coffee shop since November 2022. 
+
+Overall Rating: Outstanding (5)  
+- Text Justification: Collin consistently demonstrates exceptional performance in all areas. His dedication to providing excellent customer service, timely and high-quality drink preparation, and maintaining a clean and organized environment significantly contributes to the coffee shop's success. Collin's efforts exceed the expectations set for his role and positively impact the entire team.
+
+Critical Elements:
+
+- Makes drinks (Coffee, Latte, etc): Outstanding (5)  
+  Collin’s skill in preparing drinks is evident in the frequency of customer requests for his service. His attention to detail and quality results in drinks that are both aesthetically pleasing and delicious, earning positive feedback consistently.
+
+- Timeliness (how quick you got your order done): Outstanding (5)  
+  Collin is not only swift but also maintains the quality of his drinks in fast-paced environments, boosting customer satisfaction and allowing the shop to serve more customers efficiently.
+
+- Customer Satisfaction: Outstanding (5)  
+  Collin has the highest customer satisfaction scores in the district, which reflect his friendly demeanor, effective communication, and the warm, inviting atmosphere he creates.
+
+- Store Operations: Outstanding (5)  
+  His proactive approach to maintaining cleanliness and organization significantly improves shop operations. Collin often anticipates operational needs and addresses potential issues before they arise.
+
+- Shows up to work on time: Outstanding (5)  
+  Collin is unfailingly punctual and often arrives early when needed, demonstrating reliability and a strong work ethic.
+
+Comments and Suggestions:
+Collin’s contributions are invaluable, and his performance sets a benchmark for the team. To continue his development, it might be beneficial to explore potential leadership or mentorship roles, where he can further share his expertise and skills with newer or less experienced staff. Additionally, the continued pursuit of creative drink innovations could enhance the menu, attracting even more customers.
+
+Goals/Objectives:
+1. Collin aims to further improve his average customer satisfaction rating for his drinks through innovative techniques and customer feedback.
+2. Enhance the speed of drink preparation while maintaining high-quality standards to continue to set benchmarks in timeliness.
+
+Employee Self-Evaluation:
+Collin has expressed pride in receiving positive customer feedback on his friendliness and efficiency. He recognizes the importance of maintaining this momentum and is eager to implement strategies to further elevate his service.
+
+Manager Comments:
+Collin's outstanding ratings truly reflect his capabilities and contributions to the coffee shop. His commitment to customer satisfaction, timeliness, and operational excellence is exemplary. He is an asset to our team, and his continued dedication will no doubt lead to even further achievement.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Collin
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+I want to improve my average customer satisfaction rating for my drinks 
+I want to improve my average time that it takes to make a drink
+
+Employee self evaluation
+
+I have received positive feedback from customers about my overall friendliness, quality of drinks and time it takes me to make any drink from the menu. Customers will frequently come in asking me to make their drink for them.
+
+Manager comments
+
+Collin has the highest rating in customer satisfaction and timeliness in the district. 
+Collin is always on time, and is even willing to come in early if required. 
+Collin goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers
+        
+",5.0,5.0,5.0,5.0,5.0,5.0,Collin,gpt-4o,5.0
+4,"Employee Evaluation
+
+Employee: Dave  
+Date and History: Evaluation covering the past six months
+
+Overall Rating: Exceeds Expectations (4)  
+- Dave has demonstrated a significant ability to connect with customers which has positively impacted customer satisfaction scores. He shows a strong desire for personal growth and to improve, particularly in customer service. However, there are some aspects, like store cleanliness, which need improvement.
+
+Critical Elements:
+
+- **Makes drinks (Coffee, Latte, etc):** Fully Successful (3)  
+  Dave is consistently making drinks to the required standard and has shown interest in expanding his skills, such as learning the espresso machine, which could enhance his competence in this area.
+
+- **Timeliness (how quick you got your order done):** Fully Successful (3)  
+  He completes orders within a reasonable timeframe, though there's room for improvement with speed during peak hours.
+
+- **Customer Satisfaction:** Outstanding (5)  
+  Dave excels at building rapport with customers, remembering names, and ensuring a personalized experience. His efforts have been instrumental in boosting customer satisfaction.
+
+- **Store Operations:** Fully Successful (3)  
+  While Dave is effective in several operational aspects, the cleanliness of the work environment requires more attention and consistency.
+
+- **Shows up to work on time:** Exceeds Expectations (4)  
+  Dave is reliable and punctual, consistently arriving on time and ready to work.
+
+Comments and Suggestions:  
+Dave has shown he is a valuable team member with a genuine passion for enhancing customer experience. His ability to build strong connections with customers is his standout strength. To take his performance to the next level, focusing on the cleanliness of the work area is essential. Additionally, continuing his interest in mastering the espresso machine and improving efficiency during peak times will further enhance his skillset. Offering him more structured training opportunities and feedback sessions could help support these efforts.
+
+Goals/Objectives for the Future:  
+- Improve cleanliness of work environment  
+- Learn product offerings and coffee attributes  
+- Complete training on the POS system  
+- Continue to develop machine handling skills, specifically the espresso machine","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Dave
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+oals/objectives: - Improve cleanliness of work environment - Learn product offerings and coffee attributes - Complete training on the POS system
+
+Employee self evaluation
+
+Over the past six months, I’ve focused on building stronger connections with our regular customers. I’ve made it a point to learn at least one new name each shift and to greet returning guests personally. I’ve also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I’ve also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices. I believe I’ve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I’ve received directly from customers. I’m proud of the rapport I’ve started to build, and I feel more confident initiating conversations and remembering orders. I’ve consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I’m committed to improving the customer experience one interaction at a time
+
+Manager comments
+
+Seems more focused on customers than on running equipment - Store sometimes not clean - Great customer satisfaction scores - Shows up on time
+        
+",4.0,3.0,3.0,5.0,3.0,4.0,Dave,gpt-4o,4.0
+5,"Employee: Beth  
+Date and history: Reviewed on October 2023; has been with the coffee shop for 2 years.  
+Overall Rating: Exceeds Expectations (4)  
+- Beth consistently delivers high-quality beverages, and her dedication to crafting exceptional coffee is evident in the positive feedback from customers. Her enthusiasm and creativity behind the bar are significant assets. However, her involvement in some operational tasks could be enhanced.
+
+Critical Element:  
+- **Makes drinks (Coffee, Latte, etc):** Outstanding (5)  
+  Beth's beverages are frequently praised by customers, and her skillful crafting and creativity make her a standout barista in the store.
+
+- **Timeliness (how quick you got your order done):** Exceeds Expectations (4)  
+  Beth handles orders efficiently and generally maintains quick service during busy times, though occasionally multitasking with operational duties slightly impacts speed.
+
+- **Customer Satisfaction:** Exceeds Expectations (4)  
+  Beth's pleasant demeanor and attention to detail ensure a high level of customer satisfaction, with customers often complementing her personalized approach.
+
+- **Store Operations:** Fully Successful (3)  
+  While Beth performs her operational tasks adequately, she demonstrates less enthusiasm and involvement in tasks such as cleaning and equipment maintenance.
+
+- **Shows up to work on time:** Fully Successful (3)  
+  Beth is mostly punctual and reliable, with minimal instances of tardiness noted.
+
+Comments and Suggestions:  
+Beth excels in creating top-notch beverages and should continue to innovate in this area. Encouraging her to engage more actively with cleaning and maintaining equipment would be beneficial. Pairing Beth with a colleague who prefers operational tasks could leverage her strengths and ensure all store functions run smoothly.
+
+Based on the inputs:  
+
+Goals/objectives  
+- Continue to innovate and develop new coffee drinks.  
+- Maintain enthusiasm for her role and seek to contribute to team tasks that enhance store operations.
+
+Goals for Future Development:  
+- Encourage Beth to participate more in cleaning and maintenance routines to promote a healthy work environment.
+
+Overall Comments:  
+1. Beth's coffee-making skills are exceptional and contribute significantly to the shop's reputation.  
+2. Encourage Beth to develop new, creative beverage offerings to enhance the menu further.  
+3. Consider pairing Beth with a team member who emphasizes operational effectiveness for a balanced approach to store duties.  ","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Beth
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+    Earn a living
+
+Employee self evaluation
+
+During this review period, I’ve focused on what I do best—crafting exceptional, high-quality coffee that consistently delights our customers. I take pride in the precision and creativity I bring to every drink, and I’m proud that my coffee has even received recognition beyond the store. While I’m less enthusiastic about managing store operations, cleaning, or equipment maintenance, I recognize these tasks are part of the role and I strive to contribute when needed. My passion lies in being behind the bar, creating standout beverages that keep customers coming back.
+
+Manager comments
+
+Goals for Future Development:
+Keep encouraging Beth to clean the equipment after use. 
+
+Overall Comments:
+1-    Beth makes amazing coffee 
+2-    Beth should be encouraged to continue developing new beverages for the store
+3-    Beth should be paired with someone who will open/close the store and wants to keep equipment clean and functional. 
+        
+",4.0,5.0,4.0,4.0,3.0,3.0,Beth,gpt-4o,4.0
+6,"Employee Evaluation
+
+Employee: Annabeth  
+Date: [Insert Date]
+
+Overall Rating: Fully Successful (3)  
+- Annabeth consistently shows up on time, contributes positively to store operations, and maintains cleanliness and equipment functionality. However, there is room for improvement in coffee-making skills, particularly in menu knowledge and preparation efficiency.
+
+Critical Element:
+
+- Makes drinks (Coffee, Latte, etc): Fully Successful (3)  
+  Annabeth is enthusiastic about learning and dedicated to improving her drink preparation skills but is currently reliant on quick guides for recipes.
+
+- Timeliness: Exceeds Expectations (4)  
+  Annabeth is known for her punctuality and willingness to work difficult shifts, contributing to a smooth workflow during her hours.
+
+- Customer Satisfaction: Fully Successful (3)  
+  Annabeth maintains a positive attitude and ensures that the store environment is welcoming, though improving drink preparation speed and accuracy could enhance customer satisfaction.
+
+- Store Operations: Exceeds Expectations (4)  
+  Annabeth effectively manages shifts and keeps equipment in top condition, demonstrating reliability and initiative.
+
+- Shows up to work on time: Outstanding (5)  
+  Consistently punctual and reliable, Annabeth is always prepared to start her shift on time, even during challenging hours.
+
+Comments and Suggestions:
+
+Annabeth is a valued team member, showing dedication and reliability, particularly with opening and closing tasks as well as maintaining equipment cleanliness. To enhance her contributions, Annabeth is encouraged to deepen her understanding of the menu offerings to improve beverage preparation accuracy. Additional training and mentorship from experienced baristas will aid in boosting her confidence and efficiency at the coffee bar. Overall, Annabeth's positive demeanor and proactive approach to operational tasks greatly benefit the store, and with further development in drink preparation skills, she can become an even more integral member of the team.","System: You are an assistant to the manager of a small coffee shop.
+Human: 
+Complete an employee evaluation using this template format for a response:
+
+Employee: Annabeth
+Date and history:
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+- With text justification
+Critical Element: (Same scale as overall rating)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your order done)
+- Customer Satisfaction 
+- Store Operations
+- Shows up to work on time
+Comments and Suggestions:
+
+Based on the inputs:
+
+Goals/objectives
+Make coffee
+    Earn a living
+
+Employee self evaluation
+
+Over the past review period, I’ve really enjoyed taking on responsibilities that support the overall operation of the store, such as managing shifts, maintaining cleanliness, and troubleshooting or repairing equipment—areas where I feel confident and proactive. I take pride in creating a smooth, well-organized environment for both customers and coworkers. However, I recognize that my coffee-making skills are an area for improvement. While I’m enthusiastic about learning, I sometimes feel less confident behind the bar during high-volume periods. I’m committed to dedicating time to practice and seeking feedback so I can become more consistent and efficient in drink preparation.
+
+Manager comments
+
+Strengths:
+Annabeth always shows up to the coffee shop on time and ready to start their shift.  They are happy to work the critical, difficult to fill morning weekend hours, and have been working on learning the store opening and closing procedures. They always make sure the equipment is in clean and functioning order for the next shift.
+
+Areas for Improvement:
+Annabeth doesn’t know the menu very well, and without the recipe quick guides cannot make the correct coffee beverage. 
+
+Goals for Future Development:
+A should learn the different types of coffees available on the menu, and roughly how to prepare them.
+
+Overall Comments:
+1-    Stores should make sure the quick guides are up-to-date with the current menu selections as well as common off menu selections
+2-    Annabeth should continue to be encouraged to work at the store, and be given additional training for opening and closing the store
+3-    Annabeth should be in situations where their strengths of making sure equipment is clean and functional are utilized
+4-    Annabeth should be paired with a barista who knows the menu well and can make beverage selections outside of what is printed in the quick guides
+        
+",3.0,3.0,4.0,3.0,4.0,5.0,Annabeth,gpt-4o,4.0

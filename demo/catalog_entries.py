@@ -155,11 +155,11 @@ def create_code_str(notebook_data: NotebookNode) -> str:
         mode="r", suffix=".ipynb"
     ) as temp_notebook_file, tempfile.NamedTemporaryFile(
         mode="r", suffix=".py"
-    ) as script_file:
-        script_path = Path(script_file.name)
-        notebook_data.cells.pop(1)
-        nbformat.write(local_notebook_data, temp_notebook_file.name)
-        subprocess.run(
+    ) as temp_script_file:
+        script_path = Path(temp_script_file.name)
+        notebook_path = Path(temp_notebook_file.name)
+        nbformat.write(local_notebook_data, notebook_path)
+        subprocess_output = subprocess.run(
             [
                 "jupyter",
                 "nbconvert",
@@ -169,12 +169,16 @@ def create_code_str(notebook_data: NotebookNode) -> str:
                 script_path.parent,
                 "--output",
                 script_path.stem,
-                temp_notebook_file.name,
+                notebook_path,
             ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
         )
-        script = script_file.readlines()
+        if not subprocess_output.stderr.decode("utf-8").startswith(
+            "[NbConvertApp] Converting notebook"
+        ):
+            print(subprocess_output.stderr.decode("utf-8"))
+
+        script = temp_script_file.readlines()
 
     # Remove "#!/usr/bin/env python", # coding: utf-8\n" at the start and extra new line at the end
     script = script[3:-1]

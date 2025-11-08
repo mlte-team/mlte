@@ -2,6 +2,26 @@
 
 This document describes some of the development practices used in `MLTE`.
 
+## Quick Start
+
+The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library SDMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
+
+```bash
+$ pyenv install 3.12
+$ pyenv local 3.12
+$ make venv
+```
+
+The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup as explained in the demo section by using the `demo/run_environment.sh` script. This will start `MLTE` as 2 docker containers with a file system based store. This store will be populated with the data in `demo/store` which will include sample models, versions and [Negotiation Cards](negotiation_card.md) along with any results created by running the demo notebooks. This is volume mounted so any changes made using the frontend will be available locally in that same directory. The frontend will be available at `localhost:8000`.
+
+```bash
+cd demo && bash run_environment.sh
+```
+
+All issue tracking for MLTE is done in this <a href="https://github.com/orgs/mlte-team/projects/5" target="_blank">Github Project</a> [Github Project].
+
+Once changes have been made, `make qa` and `make test` should be ran to ensure that code fits QA standards and all unit tests pass. If just making python changes, `make qa-python` can be used instead of `make qa` to avoid having to setup a Node.js environment for the frontend QA.
+
 ## Setup
 
 ### Python Version Support
@@ -11,16 +31,16 @@ Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both includ
 If you do not have one of these versions installed, or you want to target a specific version that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
 - Install `pyenv` as described in this link: https://github.com/pyenv/pyenv
-- Install the desired Python version (in this example, 3.9):
+- Install the desired Python version (in this example, 3.12):
 
 ```bash
-$ pyenv install 3.9
+$ pyenv install 3.12
 ```
 
 - While inside the root repository folder, run this command to set that Python version to be used when executed in that folder:
 
 ```bash
-$ pyenv local 3.9
+$ pyenv local 3.12
 ```
 
 - You can use `python --version` to check if it worked.
@@ -48,13 +68,13 @@ Now you are ready to start working on `MLTE`!
 
 ### Demos
 
-There are several demos available in the `demo\` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
+There are several demos available in the `demo/` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
 
 ```bash
 $ poetry install --with demo
 ```
 
-You can go to the Jupyter notebooks in the subfolders inside the `demo\` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
+You can go to the Jupyter notebooks in the subfolders inside the `demo/` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
 
 If you want to run the frontend UI and backend in an environment that will allow you to see the results of the artifacts created by the demos, you can run the following script, which will run them inside a container and point them to the proper store:
 
@@ -63,11 +83,7 @@ $ cd demo
 $ bash run_environment.sh
 ```
 
-When demo notebooks have been created and need to be added to the test catalog, updated with the following command. This requires the demo dependencies to be installed.
-
-```bash
-$ make build-sample-catalog
-```
+Information relating to creating a new demo can be found [here](new_demo.md).
 
 ## Project Development Commands
 
@@ -80,6 +96,16 @@ To manually activate your environment, run:
 ```bash
 $ source .venv/bin/activate
 ```
+
+### Make Overview
+
+There are a couple of shorthand commands in the Makefile to run several of the below commands at the same time. The most useful ones include:
+
+* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, static type checking commands of Python and Typescript code, and sample test catalog generation.
+* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, static type checking commands of Python and Typescript code and sample catalog check.
+* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+
+`make qa` and `make test` should be ran before every push to ensure that the changes made adhere to the QA standards and will pass the unit tests. These two encapsulate all of the commands below that are generally applicable.
 
 ### Import Sorting
 
@@ -173,14 +199,20 @@ $ make check-schema
 
 Schema failures result in build failures in CI.
 
-### Make Shorthand Commands
+### Front End Formatting and Linting
 
-There are a couple of shorthand commands in the Makefile to run several of the above commands at the same time. The most useful ones include:
+We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
 
-* `make qa`: executes the schema generation, doc check, source sorting, formatting, linting, and static type checking commands.
-* `make check-qa`: executes the schema check, doc check, source sorting check, formatting check, linting check, and static type checking commands.
-* `make ci`: executes the same commands as `check-qa`, but also runs `test` to execute the unit tests, cleaning caches first to better simulate execution in a CI environment.
+```bash
+$ make lint-frontend
+```
 
+### Front End Static Type Checking
+All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
+
+```bash
+$ make typecheck-frontend
+```
 
 ## Front End
 
@@ -209,33 +241,6 @@ This will run the front end at `http://localhost:3000`. The backend can be run w
 
 ```bash
 $ mlte backend --store-uri fs://store
-```
-
-### Front End Formatting and Linting
-
-We format and lint all .vue, .js, and .ts files with <a href="https://eslint.org/" target="_blank">ESLint</a>, which can be run from the root of the repository with:
-
-```bash
-$ make lint-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npm run lint
-```
-
-### Front End Static Type Checking
-All typescript code takes advantage of static typing. This type checking can be done by running the following command from the root of the repository:
-
-```bash
-$ make typecheck-frontend
-```
-
-Or manually from the root of the nuxt application:
-
-```bash
-$ npx vue-tsc
 ```
 
 ## Continuous Integration

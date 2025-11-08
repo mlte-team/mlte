@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from typing import Optional
 
-import mlte.store.artifact.util as storeutil
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.session.session_stores import SessionStores, setup_stores
@@ -83,9 +82,7 @@ class Session:
         """Creates the currently configured context in the currently configured session. Fails if either is not set. Does nothing if already created."""
         artifact_store = self.stores.artifact_store
         context = self.context
-        storeutil.create_parents(
-            artifact_store.session(), context.model, context.version
-        )
+        artifact_store.session().create_parents(context.model, context.version)
 
 
 # Globally-accessible application state

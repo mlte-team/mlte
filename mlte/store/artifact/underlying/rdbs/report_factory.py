@@ -8,7 +8,6 @@ from mlte.store.artifact.underlying.rdbs import (
     result_factory,
     suite_factory,
 )
-from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.report_metadata import (
     DBCommentDescriptor,
     DBReport,
@@ -21,25 +20,19 @@ from mlte.store.artifact.underlying.rdbs.report_metadata import (
 
 def create_report_orm(
     report: ReportModel,
-    artifact: DBArtifact,
     session: Session,
 ) -> DBReport:
     """Creates the DB object from the corresponding internal model."""
     # Create the internal card, suite and results ORMs that will be preserved as a copy.
     # Note that they will not be stored as independent artifacts, thus the None artifac_orm param.
     card_orm = card_factory.create_card_orm(
-        report.negotiation_card, artifact_orm=None, session=session
+        report.negotiation_card, session=session
     )
-    suite_orm = suite_factory.create_suite_orm(
-        report.test_suite, artifact_orm=None
-    )
-    results_orm = result_factory.create_results_orm(
-        report.test_results, artifact_orm=None
-    )
+    suite_orm = suite_factory.create_suite_orm(report.test_suite)
+    results_orm = result_factory.create_results_orm(report.test_results)
 
     # Create the actual object.
     report_orm = DBReport(
-        artifact=artifact,
         negotiation_card_identifier=report.negotiation_card_id,
         negotiation_card=card_orm,
         test_suite_identifier=report.test_suite_id,

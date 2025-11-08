@@ -36,6 +36,10 @@ class QASDescriptor(BaseModel):
     measure: Optional[str] = None
     """Used to determine if the goals of the responses of the scenario have been achieved."""
 
+    def __str__(self) -> str:
+        """Converts to a string representation of the QA scenario."""
+        return f"{self.identifier} - {self.quality}: {self.stimulus} from {self.source} during {self.environment}. {self.response} {self.measure}."
+
 
 # -----------------------------------------------------------------------------
 # Functions to handle the QAS model.

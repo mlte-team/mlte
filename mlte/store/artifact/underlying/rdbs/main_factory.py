@@ -1,6 +1,7 @@
 """Creation of metadata objects from pydantic models."""
 
 import typing
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -41,10 +42,12 @@ def create_artifact_orm(
     version_id: str,
     level: ArtifactLevel,
     session: Session,
-) -> typing.Union[
-    DBTestSuite, DBTestResults, DBNegotiationCard, DBReport, DBEvidence
-]:
-    """Converts an internal model to its corresponding DB object for artifacts."""
+    artifact_orm: Optional[DBArtifact] = None,
+) -> typing.Union[DBArtifact]:
+    """
+    Converts an internal model to its corresponding DB object for artifacts.
+    Can edit an existing ORM if provided.
+    """
     # Get type and version info from DB.
     artifact_type_orm = DBReader.get_artifact_type(
         artifact.header.type, session
@@ -59,36 +62,55 @@ def create_artifact_orm(
         version_orm_id = None
 
     # Create the artifact object, without the specific body.
-    artifact_orm = DBArtifact(
-        identifier=artifact.header.identifier,
-        type=artifact_type_orm,
-        timestamp=artifact.header.timestamp,
-        username=artifact.header.creator,
-        level=artifact.header.level,
-        version_id=version_orm_id,
-        model_id=model_orm_id,
-    )
+    if not artifact_orm:
+        artifact_orm = DBArtifact(
+            identifier=artifact.header.identifier,
+            type=artifact_type_orm,
+            timestamp=artifact.header.timestamp,
+            username=artifact.header.creator,
+            level=artifact.header.level,
+            version_id=version_orm_id,
+            model_id=model_orm_id,
+        )
+    else:
+        # If we are using existing orm, update it.
+        artifact_orm.type = artifact_type_orm
+        artifact_orm.timestamp = artifact.header.timestamp
+        artifact_orm.username = artifact.header.creator
+        artifact_orm.level = artifact.header.level
+        artifact_orm.version_id = version_orm_id
+        artifact_orm.model_id = model_orm_id
 
     # Create the body ORM object and return it.
     if artifact.header.type == ArtifactType.NEGOTIATION_CARD:
         card = typing.cast(NegotiationCardModel, artifact.body)
-        return card_factory.create_card_orm(card, artifact_orm, session)
+        artifact_orm.body_negotiation_card = card_factory.create_card_orm(
+            card, session
+        )
     elif artifact.header.type == ArtifactType.TEST_SUITE:
         test_suite = typing.cast(TestSuiteModel, artifact.body)
-        return suite_factory.create_suite_orm(test_suite, artifact_orm)
+        artifact_orm.body_test_suite = suite_factory.create_suite_orm(
+            test_suite
+        )
     elif artifact.header.type == ArtifactType.EVIDENCE:
         value = typing.cast(EvidenceModel, artifact.body)
-        return evidence_factory.create_evidence_orm(value, artifact_orm)
+        artifact_orm.body_evidence = evidence_factory.create_evidence_orm(value)
     elif artifact.header.type == ArtifactType.TEST_RESULTS:
         test_results = typing.cast(TestResultsModel, artifact.body)
-        return result_factory.create_results_orm(test_results, artifact_orm)
+        artifact_orm.body_test_results = result_factory.create_results_orm(
+            test_results
+        )
     elif artifact.header.type == ArtifactType.REPORT:
         report = typing.cast(ReportModel, artifact.body)
-        return report_factory.create_report_orm(report, artifact_orm, session)
+        artifact_orm.body_report = report_factory.create_report_orm(
+            report, session
+        )
     else:
         raise Exception(
             f"Unsupported artifact type for conversion: {artifact.header.type}"
         )
+
+    return artifact_orm
 
 
 # -------------------------------------------------------------------------

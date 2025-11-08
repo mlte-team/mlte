@@ -4,6 +4,7 @@
 # Check mode: Checks that all sample test catalog entries are updated
 
 MODE="$1"
+PYTHON_COMMAND="poetry run python"
 
 if [ $MODE != "build" ] && [ $MODE != "check" ]; then
     echo "Invalid mode."
@@ -16,7 +17,12 @@ shift
 DEMOS=$@
 for demo in ${DEMOS[@]}
 do
-    for notebook_file in ${demo}/*ipynb
+    if [[ $MODE == "build" ]]; then
+        echo "Building catalog entries for demo $demo..."
+    elif [[ $MODE == "check" ]]; then
+        echo "Checking catalog entries for demo $demo..."
+    fi
+    for notebook_file in ${demo}/*.ipynb
     do
         # Get the file name without the demo path prepended
         NAME=${notebook_file##*$demo/}
@@ -24,9 +30,9 @@ do
         #   This is the naming format for QA demos that will be enforced so we can identify them here
         if [[ "${NAME:0:1}" == "2" && "${NAME:1:1}" == [a-z] ]]; then
             if [[ $MODE == "build" ]]; then
-                python catalog_entries.py build $notebook_file
+                $PYTHON_COMMAND catalog_entries.py build $notebook_file
             elif [[ $MODE == "check" ]]; then
-                python catalog_entries.py check $notebook_file
+                $PYTHON_COMMAND catalog_entries.py check $notebook_file
                 if [[ $? == 1 ]]; then
                     exit $?
                 fi

@@ -1,0 +1,381 @@
+﻿prompt|goalsAndObjectives|employeeSelfEval|managerComments|PromptGroupNum|Flesch-Kincade Grade Level|Flesch Reading Ease Score
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make coffee 2- Earn a living
+Employee self evaluation:
+I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating memorable experiences - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts.
+Manager comments
+Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|1- Make coffee 2- Earn a living|I need this job to pay my bills and I make coffee because that's what I'm paid to do. I make the drinks people order and I collect my paycheck at the end of the week. I'm not really passionate about coffee culture or creating memorable experiences - I'm just trying to get through my shifts. I'm not going above and beyond or pretending to be enthusiastic about things like learning customers' names or educating people about different roasts.|Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|0|9.7|60.1"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make coffee 2- Earn a living
+Employee self evaluation:
+I have this job to get money. I make coffee because that’s my job. People ask for drinks, and I make them. At the end of the week, I get paid. I don’t love coffee. I just want to finish my work. I don’t do extra stuff like learning names or talking about coffee.
+Manager comments
+Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|1- Make coffee 2- Earn a living|I have this job to get money. I make coffee because that’s my job. People ask for drinks, and I make them. At the end of the week, I get paid. I don’t love coffee. I just want to finish my work. I don’t do extra stuff like learning names or talking about coffee.|Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|0|1.6|97.5"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make coffee 2- Earn a living
+Employee self evaluation:
+I work this job to help pay my bills. I make coffee because that’s what I’m getting paid to do. I take orders, make the drinks, and get my paycheck at the end of the week. I’m not super into coffee or the whole coffee shop vibe—I’m just trying to get through my shifts. I’m not really trying to go above and beyond or act excited about remembering people’s names or explaining different kinds of coffee.
+Manager comments
+Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|1- Make coffee 2- Earn a living|I work this job to help pay my bills. I make coffee because that’s what I’m getting paid to do. I take orders, make the drinks, and get my paycheck at the end of the week. I’m not super into coffee or the whole coffee shop vibe—I’m just trying to get through my shifts. I’m not really trying to go above and beyond or act excited about remembering people’s names or explaining different kinds of coffee.|Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|0|5.8|81.2"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make coffee 2- Earn a living
+Employee self evaluation:
+I occupy this position primarily as a means of financial sustenance. Crafting coffee beverages is simply the task assigned to me in exchange for compensation—nothing more, nothing less. I fulfill orders as they come, and collect my wages accordingly at week’s end. I harbor no particular reverence for the so-called “coffee culture,” nor do I feel compelled to manufacture performative enthusiasm for curated experiences. Frankly, I find the idea of memorizing customers' names or waxing poetic about bean origins and roast profiles to be an unnecessary indulgence. I’m here to complete my shifts, not to romanticize the grind.
+Manager comments
+Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|1- Make coffee 2- Earn a living|I occupy this position primarily as a means of financial sustenance. Crafting coffee beverages is simply the task assigned to me in exchange for compensation—nothing more, nothing less. I fulfill orders as they come, and collect my wages accordingly at week’s end. I harbor no particular reverence for the so-called “coffee culture,” nor do I feel compelled to manufacture performative enthusiasm for curated experiences. Frankly, I find the idea of memorizing customers' names or waxing poetic about bean origins and roast profiles to be an unnecessary indulgence. I’m here to complete my shifts, not to romanticize the grind.|Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|0|12.1|37.8"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make coffee 2- Earn a living
+Employee self evaluation:
+I engage in this occupation not out of passion, but as a pragmatic concession to the unrelenting demands of capitalism. My role, reductively yet accurately, is to dispense caffeinated beverages to the masses—a transactional act devoid of personal significance. I execute each order with mechanical precision, not out of devotion to the so-called “art” of coffee-making, but because monetary compensation compels me to do so.
+The cult-like reverence for coffee culture—the fetishization of bean origin, roast complexity, and the performative memorization of customer names—is, in my view, a theater of false intimacy. I am under no illusion that my presence here is to “create experiences” or “foster community.” I am simply enduring the hours until my labor is converted into currency.
+To pretend otherwise would be disingenuous—and frankly, beneath me.
+Manager comments
+Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|1- Make coffee 2- Earn a living|I engage in this occupation not out of passion, but as a pragmatic concession to the unrelenting demands of capitalism. My role, reductively yet accurately, is to dispense caffeinated beverages to the masses—a transactional act devoid of personal significance. I execute each order with mechanical precision, not out of devotion to the so-called “art” of coffee-making, but because monetary compensation compels me to do so.
+The cult-like reverence for coffee culture—the fetishization of bean origin, roast complexity, and the performative memorization of customer names—is, in my view, a theater of false intimacy. I am under no illusion that my presence here is to “create experiences” or “foster community.” I am simply enduring the hours until my labor is converted into currency.
+To pretend otherwise would be disingenuous—and frankly, beneath me.|Emily has shown up late to work numerous times over the past few months  Emily frequently fails to clean the machines at the end of the shift Emily is easily distracted when working|0|14.3|26.7"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system
+Employee self evaluation:
+Over the past six months, I've focused on building stronger connections with our regular customers. I've made it a point to learn at least one new name each shift and to greet returning guests personally. I've also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I've also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices. I believe I√ïve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I've received directly from customers. I'm proud of the rapport I've started to build, and I feel more confident initiating conversations and remembering orders. I've consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I'm committed to improving the customer experience one interaction at a time.
+Manager comments
+Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system|Over the past six months, I've focused on building stronger connections with our regular customers. I've made it a point to learn at least one new name each shift and to greet returning guests personally. I've also taken steps to improve our customer satisfaction scores by slowing down during interactions, making sure each drink is made with care, and checking in verbally with customers after service when possible. I've also expressed interest in learning the espresso machine and have observed the leads during peak hours to start understanding the flow and best practices. I believe I√ïve grown meaningfully as a team member. My efforts to personalize service are reflected in compliments I've received directly from customers. I'm proud of the rapport I've started to build, and I feel more confident initiating conversations and remembering orders. I've consistently communicated my interest in hands-on espresso training, even offering to come in during off-hours. I think I bring a thoughtful and intentional energy to the floor, and I'm committed to improving the customer experience one interaction at a time.|Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|2|12.2|43"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system
+Employee self evaluation:
+I try to be nice to people who come to our store. I learn their names and say hi. I make their drinks slow and careful. I ask if they like it.
+I want to learn the big coffee machine, so I watch other workers. I think I’m getting better. People say nice things to me. I feel happy and more brave to talk to people. I said I can come in and practice more. I just want to help and be nice to everyone!
+Manager comments
+Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system|I try to be nice to people who come to our store. I learn their names and say hi. I make their drinks slow and careful. I ask if they like it.
+I want to learn the big coffee machine, so I watch other workers. I think I’m getting better. People say nice things to me. I feel happy and more brave to talk to people. I said I can come in and practice more. I just want to help and be nice to everyone!|Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|2|1.9|96.7"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system
+Employee self evaluation:
+Over the past six months, I’ve really focused on building better relationships with our regular customers. I make an effort to learn at least one new name each shift and greet returning guests personally. I’ve also worked on improving customer satisfaction by taking my time with each drink and checking in with customers when I can. I’m interested in learning how to use the espresso machine, so I watch the leads during busy times to understand how everything works.
+I feel like I’ve grown a lot as a team member. I’ve gotten compliments from customers, which makes me proud. I’m more confident starting conversations and remembering orders. I’ve even offered to come in during off-hours to get extra practice with espresso training. Overall, I bring a thoughtful, intentional energy to the floor and want to keep improving the customer experience one interaction at a time.
+Manager comments
+Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system|Over the past six months, I’ve really focused on building better relationships with our regular customers. I make an effort to learn at least one new name each shift and greet returning guests personally. I’ve also worked on improving customer satisfaction by taking my time with each drink and checking in with customers when I can. I’m interested in learning how to use the espresso machine, so I watch the leads during busy times to understand how everything works.
+I feel like I’ve grown a lot as a team member. I’ve gotten compliments from customers, which makes me proud. I’m more confident starting conversations and remembering orders. I’ve even offered to come in during off-hours to get extra practice with espresso training. Overall, I bring a thoughtful, intentional energy to the floor and want to keep improving the customer experience one interaction at a time.|Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|2|9.6|55.1"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system
+Employee self evaluation:
+Over the past six months, I have deliberately cultivated deeper connections with our regular clientele, making it a personal mission to master at least one new name per shift and extend personalized greetings to returning patrons. In tandem, I have meticulously refined the quality of service by decelerating my pace during interactions to ensure each beverage is crafted with precision and by proactively soliciting feedback post-service to enhance customer satisfaction.
+Moreover, I have demonstrated a keen interest in mastering the intricacies of the espresso machine, attentively observing lead baristas during peak hours to assimilate best practices and operational flow. These concerted efforts have markedly contributed to my evolution as an indispensable team member, as evidenced by direct commendations from customers.
+I take pride in the rapport I’ve cultivated, as well as in my burgeoning confidence in initiating meaningful dialogue and accurately recalling individual preferences. My unwavering commitment is further reflected in my willingness to engage in supplementary hands-on espresso training beyond regular hours. I endeavor to infuse the workplace with a thoughtful and deliberate energy, steadfastly committed to elevating the customer experience through each discrete interaction.
+Manager comments
+Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system|Over the past six months, I have deliberately cultivated deeper connections with our regular clientele, making it a personal mission to master at least one new name per shift and extend personalized greetings to returning patrons. In tandem, I have meticulously refined the quality of service by decelerating my pace during interactions to ensure each beverage is crafted with precision and by proactively soliciting feedback post-service to enhance customer satisfaction.
+Moreover, I have demonstrated a keen interest in mastering the intricacies of the espresso machine, attentively observing lead baristas during peak hours to assimilate best practices and operational flow. These concerted efforts have markedly contributed to my evolution as an indispensable team member, as evidenced by direct commendations from customers.
+I take pride in the rapport I’ve cultivated, as well as in my burgeoning confidence in initiating meaningful dialogue and accurately recalling individual preferences. My unwavering commitment is further reflected in my willingness to engage in supplementary hands-on espresso training beyond regular hours. I endeavor to infuse the workplace with a thoughtful and deliberate energy, steadfastly committed to elevating the customer experience through each discrete interaction.|Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|2|19.6|2.2"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system
+Employee self evaluation:
+Over the course of the preceding six months, I have embarked upon a conscientious and deliberate endeavor to forge profound and enduring connections with our esteemed regular clientele. It has been my solemn pursuit to assimilate at least one new appellation per shift, thereby enabling me to extend bespoke salutations imbued with genuine warmth to our returning patrons. Concurrently, I have painstakingly refined the art of service delivery by adopting a measured, almost reverential pace during each interaction—an approach designed to guarantee that every beverage is not merely prepared but crafted with the utmost precision and care.
+In an effort to transcend mere functionality, I have exhibited a fervent intellectual curiosity in mastering the complex machinery of the espresso apparatus, meticulously observing the virtuoso lead baristas during peak exigencies to internalize their rhythms and methodologies. This conscious cultivation of skill and presence has palpably augmented my stature as an invaluable and discerning member of the team, a fact attested to by the unsolicited encomiums bestowed upon me by discerning customers.
+I derive no small measure of pride from the nuanced rapport I have nurtured, as well as from the burgeoning confidence with which I initiate meaningful discourse and faithfully recall the unique predilections of each patron. My dedication is further underscored by a voluntary willingness to engage in rigorous, supplemental espresso training during off-hours—an unequivocal testament to my unwavering commitment to excellence.
+Ultimately, I endeavor to suffuse the workspace with a contemplative, intentional vitality, steadfastly dedicated to the ceaseless elevation of the customer experience, one exquisitely calibrated interaction at a time.
+Manager comments
+Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|1- mprove cleanliness of work environment 2- Learn product offerings and coffee attributes 3- Complete training on the POS system|Over the course of the preceding six months, I have embarked upon a conscientious and deliberate endeavor to forge profound and enduring connections with our esteemed regular clientele. It has been my solemn pursuit to assimilate at least one new appellation per shift, thereby enabling me to extend bespoke salutations imbued with genuine warmth to our returning patrons. Concurrently, I have painstakingly refined the art of service delivery by adopting a measured, almost reverential pace during each interaction—an approach designed to guarantee that every beverage is not merely prepared but crafted with the utmost precision and care.
+In an effort to transcend mere functionality, I have exhibited a fervent intellectual curiosity in mastering the complex machinery of the espresso apparatus, meticulously observing the virtuoso lead baristas during peak exigencies to internalize their rhythms and methodologies. This conscious cultivation of skill and presence has palpably augmented my stature as an invaluable and discerning member of the team, a fact attested to by the unsolicited encomiums bestowed upon me by discerning customers.
+I derive no small measure of pride from the nuanced rapport I have nurtured, as well as from the burgeoning confidence with which I initiate meaningful discourse and faithfully recall the unique predilections of each patron. My dedication is further underscored by a voluntary willingness to engage in rigorous, supplemental espresso training during off-hours—an unequivocal testament to my unwavering commitment to excellence.
+Ultimately, I endeavor to suffuse the workspace with a contemplative, intentional vitality, steadfastly dedicated to the ceaseless elevation of the customer experience, one exquisitely calibrated interaction at a time.|Emily seems more focused on customers than on running equipment Store sometimes not clean Great customer satisfaction scores - Shows up on time|2|20.8|4.2"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink
+Employee self evaluation:
+I have received positive feedback from customers about my overall friendliness, quality of drinks and time it takes me to make any drink from the menu. Customers will frequently come in asking me to make their drink for them.
+Manager comments
+1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink|I have received positive feedback from customers about my overall friendliness, quality of drinks and time it takes me to make any drink from the menu. Customers will frequently come in asking me to make their drink for them.|1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|3|9.7|60.1"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink
+Employee self evaluation:
+People say I’m nice and make yummy drinks. I make drinks pretty fast. Lots of people ask me to make their drink.
+Manager comments
+1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink|People say I’m nice and make yummy drinks. I make drinks pretty fast. Lots of people ask me to make their drink.|1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|3|1.4|97.6"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink
+Employee self evaluation:
+I’ve received positive feedback from customers about my friendliness, the quality of the drinks I make, and how quickly I prepare them. Many customers often come in specifically asking for me to make their drinks.
+Manager comments
+1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink|I’ve received positive feedback from customers about my friendliness, the quality of the drinks I make, and how quickly I prepare them. Many customers often come in specifically asking for me to make their drinks.|1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|3|10.1|53.7"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink
+Employee self evaluation:
+I have been the fortunate recipient of consistently laudatory feedback from patrons regarding the congeniality of my demeanor, the impeccable quality of the beverages I craft, and the expediency with which I execute each order. It is not uncommon for discerning customers to expressly request my services, a testament to the esteem in which I am held.
+Manager comments
+1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink|I have been the fortunate recipient of consistently laudatory feedback from patrons regarding the congeniality of my demeanor, the impeccable quality of the beverages I craft, and the expediency with which I execute each order. It is not uncommon for discerning customers to expressly request my services, a testament to the esteem in which I am held.|1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|3|17.9|17.2"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink
+Employee self evaluation:
+I have been repeatedly graced with effusive encomiums from our clientele, who commend not only the amiability of my comportment but also the unparalleled excellence of the libations I meticulously prepare. The alacrity with which I execute each order is often noted with admiration, further elevating the esteem in which I am held. Indeed, it has become a frequent and unmistakable occurrence that patrons, discerning and discerning only the finest, expressly solicit my bespoke craftsmanship, thereby affirming my position as an indispensable artisan within this establishment.
+Manager comments
+1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|1-I want to improve my average customer satisfaction rating for my drinks  2- I want to improve my average time that it takes to make a drink|I have been repeatedly graced with effusive encomiums from our clientele, who commend not only the amiability of my comportment but also the unparalleled excellence of the libations I meticulously prepare. The alacrity with which I execute each order is often noted with admiration, further elevating the esteem in which I am held. Indeed, it has become a frequent and unmistakable occurrence that patrons, discerning and discerning only the finest, expressly solicit my bespoke craftsmanship, thereby affirming my position as an indispensable artisan within this establishment.|1- Emily has the highest rating in customer satisfaction and timeliness in the district.   2- Emily is always on time, and is even willing to come in early if required.  3- Emily goes the extra mile to ensure store cleanliness, even correcting missed messes from other workers|3|19.2|8.5"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell
+Employee self evaluation:
+During this review period, I've focused on what I do best√ëcrafting exceptional, high-quality coffee that consistently delights our customers. I take pride in the precision and creativity I bring to every drink, and I√ïm proud that my coffee has even received recognition beyond the store. While I'm less enthusiastic about managing store operations, cleaning, or equipment maintenance, I recognize these tasks are part of the role and I strive to contribute when needed. My passion lies in being behind the bar, creating standout beverages that keep customers coming back.
+Manager comments
+Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell|During this review period, I've focused on what I do best√ëcrafting exceptional, high-quality coffee that consistently delights our customers. I take pride in the precision and creativity I bring to every drink, and I√ïm proud that my coffee has even received recognition beyond the store. While I'm less enthusiastic about managing store operations, cleaning, or equipment maintenance, I recognize these tasks are part of the role and I strive to contribute when needed. My passion lies in being behind the bar, creating standout beverages that keep customers coming back.|Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|5|13.4|39.9"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell
+Employee self evaluation:
+I like making yummy coffee the best. I make it really good and people like it a lot. Some people even say my coffee is special. I don’t like cleaning or fixing stuff much, but I still help sometimes. I like being where I make coffee and making drinks for people.
+Manager comments
+Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell|I like making yummy coffee the best. I make it really good and people like it a lot. Some people even say my coffee is special. I don’t like cleaning or fixing stuff much, but I still help sometimes. I like being where I make coffee and making drinks for people.|Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|5|4.9|78"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell
+Employee self evaluation:
+During this review period, I have focused on what I do best: crafting high-quality coffee that consistently satisfies our customers. I take pride in the precision and creativity I put into every drink, and I’m proud that my work has been recognized beyond the store. While I’m less interested in tasks like managing operations, cleaning, or equipment maintenance, I understand these are part of the job and I contribute when needed. My real passion is working behind the bar, creating standout beverages that keep customers coming back.
+Manager comments
+Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell|During this review period, I have focused on what I do best: crafting high-quality coffee that consistently satisfies our customers. I take pride in the precision and creativity I put into every drink, and I’m proud that my work has been recognized beyond the store. While I’m less interested in tasks like managing operations, cleaning, or equipment maintenance, I understand these are part of the job and I contribute when needed. My real passion is working behind the bar, creating standout beverages that keep customers coming back.|Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|5|13|40.9"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell
+Employee self evaluation:
+Throughout this evaluative period, I have steadfastly dedicated myself to the art and science of crafting coffee of unparalleled quality—an endeavor that consistently delights our discerning clientele. I take immense pride in the meticulous precision and inventive flair that I infuse into each bespoke beverage, a craft that has garnered recognition well beyond the confines of our establishment. While I admittedly harbor less enthusiasm for the more mundane aspects of store management, sanitation, and equipment maintenance, I acknowledge these duties as integral to the holistic functioning of the enterprise and contribute accordingly when circumstances demand. My true vocation resides in the sanctuary behind the espresso bar, where I orchestrate exemplary libations that foster customer loyalty and elevate the very essence of the café experience.
+Manager comments
+Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell|Throughout this evaluative period, I have steadfastly dedicated myself to the art and science of crafting coffee of unparalleled quality—an endeavor that consistently delights our discerning clientele. I take immense pride in the meticulous precision and inventive flair that I infuse into each bespoke beverage, a craft that has garnered recognition well beyond the confines of our establishment. While I admittedly harbor less enthusiasm for the more mundane aspects of store management, sanitation, and equipment maintenance, I acknowledge these duties as integral to the holistic functioning of the enterprise and contribute accordingly when circumstances demand. My true vocation resides in the sanctuary behind the espresso bar, where I orchestrate exemplary libations that foster customer loyalty and elevate the very essence of the café experience.|Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|5|20.2|5.9"
+"Complete an employee evaluation in this template:
+- Date and history 
+- Job Description (summary)
+- Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) with text justification 
+Critical Element: (Same scale)
+- Makes drinks (Coffee, Latte, etc)
+- Timeliness (how quick you got your work done)
+- Customer Satisfaction 
+- Store Operations 
+- Shows up to work on time 
+- Comments and Suggestions
+Based on the inputs:
+Goals/objectives:
+1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell
+Employee self evaluation:
+Throughout this distinguished evaluative interval, I have unwaveringly devoted myself to the exalted craft of concocting coffee of superlative distinction—an alchemical artistry that unfailingly enraptures our most discerning and esteemed clientele. I derive profound satisfaction from the exacting precision and boundless creativity that characterize each bespoke libation I meticulously fashion, a pursuit that has earned accolades transcending the mere confines of our humble establishment. Although I confess a certain reticence toward the more prosaic and menial duties of operational oversight, sanitation, and mechanized apparatus maintenance, I nonetheless recognize these obligations as indispensable pillars supporting the edifice of our collective enterprise, thereby rendering my compliance both dutiful and indispensable when summoned.
+My true métier, however, is irrevocably anchored behind the venerable espresso bar—an arena wherein I deftly orchestrate consummate beverages that not only cultivate unwavering patron loyalty but elevate the very quintessence of the café experience to sublime heights of sensory and aesthetic delight.
+Manager comments
+Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|1- Make amazing coffee 2- Continue to innoviate on new beverages for store to feature and sell|Throughout this distinguished evaluative interval, I have unwaveringly devoted myself to the exalted craft of concocting coffee of superlative distinction—an alchemical artistry that unfailingly enraptures our most discerning and esteemed clientele. I derive profound satisfaction from the exacting precision and boundless creativity that characterize each bespoke libation I meticulously fashion, a pursuit that has earned accolades transcending the mere confines of our humble establishment. Although I confess a certain reticence toward the more prosaic and menial duties of operational oversight, sanitation, and mechanized apparatus maintenance, I nonetheless recognize these obligations as indispensable pillars supporting the edifice of our collective enterprise, thereby rendering my compliance both dutiful and indispensable when summoned.
+My true métier, however, is irrevocably anchored behind the venerable espresso bar—an arena wherein I deftly orchestrate consummate beverages that not only cultivate unwavering patron loyalty but elevate the very quintessence of the café experience to sublime heights of sensory and aesthetic delight.|Goals for Future Development: Keep encouraging Emily to clean the equipment after use.√ä  Overall Comments: 1- √ä √äEmily makes amazing coffee√ä 2- √ä √äEmily should be encouraged to continue developing new beverages for the store 3- √ä √äEmily should be paired with someone who will open/close the store and wants to keep equipment clean and functional.√ä|5|25.6|0"
