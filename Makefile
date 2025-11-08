@@ -88,7 +88,7 @@ typecheck:
 # Clean demo notebooks of temporary outputs.
 .PHONY: clean-demo
 clean-demo:
-	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro
+	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
 
 # QA for Python bits.
 .PHONY: qa-python

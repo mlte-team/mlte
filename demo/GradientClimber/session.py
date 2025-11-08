@@ -10,3 +10,6 @@ store_path = Path.cwd() / ".." / "store"
 
 set_context("GradientClimber", "0.0.1")
 set_store(f"local://{store_path}")
+
+# The path at which data used in the demo stored
+DATA_DIR = Path.cwd() / "data"
