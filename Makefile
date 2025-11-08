@@ -86,13 +86,13 @@ typecheck:
 	poetry run mypy tools/
 
 # Clean demo notebooks of temporary outputs.
-.PHONY: clean-demo
-clean-demo:
+.PHONY: demo-clean
+demo-clean:
 	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
 
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck clean-demo docs build-sample-catalog
+qa-python: schema isort format lint typecheck demo-clean docs build-sample-catalog
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
