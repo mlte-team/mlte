@@ -150,7 +150,7 @@ test:
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	cd demo && bash test.sh simple GardenBuddy ReviewPro
+	cd demo && bash test.sh simple GardenBuddy ReviewPro GradientClimber
 
 # -----------------------------------------------------------------------------
 # Shorthand actions and checks needed to update and review for pushing.
