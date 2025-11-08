@@ -1,0 +1,6 @@
+{
+    "name": "Resistance",
+    "description": "Capability of an ML component to safeguard against malicious purposes.​",
+    "parent": "Security and Privacy"
+}
+

@@ -185,7 +185,7 @@ TestCase(
 )
 ```
 
-To see a simple example of a `TestSuite`, refer to the `2_test_suite.ipynb` notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">simple demo folder</a>. To see an example of a more extensive `TestSuite` including quality attribute scenarios, see the requirements notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/scenarios" target="_blank">scenario demo folder</a>. All demos and corresponding instructions can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo folder</a>.
+To see a simple example of a `TestSuite`, refer to the `2_test_suite.ipynb` notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">simple demo folder</a>. To see an example of a more extensive `TestSuite` including quality attribute scenarios, see the requirements notebook in the <a href="https://github.com/mlte-team/mlte/tree/master/demo/GardenBuddy" target="_blank">scenario demo folder</a>. All demos and corresponding instructions can be found in the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo folder</a>.
 
 ### 2. Collect `Evidence`
 

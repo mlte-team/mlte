@@ -1,0 +1,6 @@
+{
+    "name": "Replaceability",
+    "description": "Ca Capability of an ML component to replace (or be replaced by) another ML component for the same purpose in the same environment.​",
+    "parent": "Maintenance and Evolution"
+}
+

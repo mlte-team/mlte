@@ -1,0 +1,6 @@
+{
+    "name": "Maintainability",
+    "description": "Ease with which the ML component can be modified to correct faults, to improve performance or other attributes, or to adapt to a changed environment.​",
+    "parent": "Maintenance and Evolution"
+}
+

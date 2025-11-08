@@ -1,0 +1,6 @@
+{
+    "name": "Robustness",
+    "description": "Capability of ML component to preserve its level of functional correctness under specified fault modes or conditions.​",
+    "parent": "Continued Operation"
+}
+

@@ -1,0 +1,6 @@
+{
+    "name": "Fairness",
+    "description": "Capability of an ML component to produce results that are not biased towards certain populations, including, but not limited to protected attributes (e.g., race, gender, income).​",
+    "parent": "Responsible AI"
+}
+

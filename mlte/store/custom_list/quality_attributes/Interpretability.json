@@ -1,0 +1,6 @@
+{
+    "name": "Interpretability",
+    "description": "Capability of an ML component to be transparent in its execution and produce information concerning the relationship between inputs and outputs.​",
+    "parent": "Confidence"
+}
+

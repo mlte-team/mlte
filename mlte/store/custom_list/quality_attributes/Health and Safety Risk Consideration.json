@@ -1,0 +1,6 @@
+{
+    "name": "Health and Safety Risk Consideration",
+    "description": "Capability of an ML component to mitigate the potential risk of its results to the health and safety of system users.​",
+    "parent": "Responsible AI"
+}
+

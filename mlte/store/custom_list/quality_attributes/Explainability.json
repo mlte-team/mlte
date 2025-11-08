@@ -1,0 +1,6 @@
+{
+    "name": "Explainability",
+    "description": "Capability of an ML component to provide information that can explain model outputs (decisions) in human terms.​",
+    "parent": "Confidence"
+}
+

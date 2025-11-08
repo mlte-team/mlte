@@ -1,0 +1,6 @@
+{
+    "name": "Monitorability",
+    "description": "Capability of an ML component to produce data that can be used to measure runtime attributes (e.g., performance degradation, latency) that can effectively be observed and used by the ML-enabled system or operators to take action aligned with requirements.​",
+    "parent": "Behavior Analysis"
+}
+

@@ -1,0 +1,6 @@
+{
+    "name": "Deployability",
+    "description": "Capability of an ML component to be deployed into production when needed, without any unanticipated side effects and within specified resource and time constraints.​",
+    "parent": "Continued Operation"
+}
+
