@@ -39,15 +39,6 @@ class SampleCatalog:
         """
         parsed_uri = StoreURI.from_string(stores_uri)
 
-        # Set file system URI if we didn't get one, or if we got a non-file system one.
-        if parsed_uri.type != StoreType.LOCAL_FILESYSTEM:
-            # We will always create the sample catalog store as a file system store, regardless of where the other
-            # stores of the system are.
-            parsed_uri = StoreURI.create_default_fs_uri()
-
-        # The base stores folder has to exist, so create it if it doesn't.
-        os.makedirs(f"{parsed_uri.path}", exist_ok=True)
-
         # Create the actual sample catalog.
         print(f"Creating sample catalog at URI: {parsed_uri}")
         catalog = create_catalog_store(
