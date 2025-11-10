@@ -51,13 +51,13 @@ $ mlte backend
 
 Some common flags used with the backend include the following:
 
- - **Artifact store**: the default artifact store will store any artifacts in a non-persistent, in-memory store. To change the store type, use the `--store-uri` flag. Please see the [Store URIs](#store-uris) section for details about each store type and corresponding URI. Note that this flag will also set the internal user store, used to handle users and permissions needed for the UI. To use a relational database to store artifacts, you will need to set up the database engine separately; see the [Using a Relational DB](#using-a-relational-db-engine-backend) section below for details. As an example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
+ - **Store**: The default store will store any object in a non-persistent, in-memory store. This will contain artifacts, users, custom lists, the local test catalog store, and the sample catalog store. To change the store type, use the `--store-uri` flag. Please see the [Store URIs](#store-uris) section for details about each store type and corresponding URI. To use a relational database to store artifacts, you will need to set up the database engine separately; see the [Using a Relational DB](#using-a-relational-db-engine-backend) section below for details. As an example, to run the backend with a store located in a folder called `store` relative to the folder where you are running mlte, you can run the backend like this:
 
     ```bash
     $ mlte backend --store-uri fs://store
     ```
 
- - **Test catalog stores**: Optionally, you can specify one or more test catalog stores to be used by the system. This is done with the `--catalog-uris` flag, which is similar to the flag for artifact stores. Unlike that flag, however, catalogs need to have an ID, and this flag allows you to specify more than one test catalog if required. The value of this flag is a string with a dictionary with the ids and the actual store URIs. For example, to run the backend with two catalogs, one called "cat1" and another one called "cat2", the first one being in memory and the second one being in a local folder called `store`, you would run this command:
+ - **Additional test catalog stores**: By default, there will be the local catalog and the read-only sample catalog.  Optionally, you can specify one or more additional test catalog stores to be used by the system. This is done with the `--catalog-uris` flag, which is similar to the flag for artifact stores. Unlike that flag, however, catalogs need to have an ID, and this flag allows you to specify more than one test catalog if required. The value of this flag is a string with a dictionary with the ids and the actual store URIs. For example, to run the backend with two additional catalogs, one called "cat1" and another one called "cat2", the first one being in memory and the second one being in a local folder called `store`, you would run this command:
 
     ```bash
     $ mlte backend --catalog-uris '{"cat1": "memory://", "cat2": "fs://store"}'
@@ -84,15 +84,15 @@ After this, go to the hosted address (defaults to `http://localhost:8000`) to vi
 
 ## Store URIs
 
-The following are the types of store URIs used by the system.
+The following are the types of store URIs used by the system. 
 
-- **In Memory Store** (``memory://``): a temporary, in memory store, useful for quick tests. Items stored here are not permanent. The URI for this store is simply the given string without any parameters.
+- **In Memory Store** (``memory://``): A temporary, in memory store, useful for quick tests. Items stored here are not permanent. The URI for this store is simply the given string without any parameters.
 
-- **File System Store** (``fs://<store_path>``): a local file system store. The  ``<store_path>`` parameter has to be a path to an existing folder in your local system. The store will be created in subfolders inside it. This makes it easy to review the store contents by just opening the JSON files with their information.
+- **File System Store** (``fs://<store_path>``): A local file system store. The  ``<store_path>`` parameter has to be a path to an existing folder in your local system. The store will be created in subfolders inside it. This makes it easy to review the store contents by just opening the JSON files with their information.
 
-- **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): a store in a relational database (DB) engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html" target="_blank">page</a> for details on supported drivers, and see section below on [Using a Relational DB](#using-a-relational-db-engine-backend) for more details on the other parameters for this URI.
+- **Database Engine Store** (``<db_engine>://<db_user>:<db_password>@<db_host>/<db_name>``): A store in a relational database (DB) engine. By default, only PostgreSQL (``<db_engine> = postgresql``) is supported, but other engines can be added by simply installing the proper DBAPI drivers. See this <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html" target="_blank">page</a> for details on supported drivers, and see section below on [Using a Relational DB](#using-a-relational-db-engine-backend) for more details on the other parameters for this URI.
 
-- **HTTP Store** (``http://<user>:<password>@<host>:<port>``): this points to a store handled by a remote `MLTE` backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the `MLTE` frontend. The ``<host>`` and ``<port>`` point to the server where the `MLTE` backend is running (defaults to ``localhost`` and ``8080``). Refer to the [Running the Backend and User Interface](#running-the-backend-and-user-interface) section for instructions on setting up the `MLTE` backend and frontend.
+- **HTTP Store** (``http://<user>:<password>@<host>:<port>``): This points to a store handled by a remote `MLTE` backend, which in turn will have a local store of one of the other three types. The ``<user>`` and ``<password>`` have to be valid credentials created by the `MLTE` frontend. The ``<host>`` and ``<port>`` point to the server where the `MLTE` backend is running (defaults to ``localhost`` and ``8080``). Refer to the [Running the Backend and User Interface](#running-the-backend-and-user-interface) section for instructions on setting up the `MLTE` backend and frontend.
 
 ### Using a Relational DB Engine Backend
 
