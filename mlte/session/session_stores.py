@@ -125,7 +125,7 @@ def setup_stores(
         raise RuntimeError(
             f"Remote catalog store ID cannot be {SessionStores.DEFAULT_CATALOG_STORE_ID}. This is the default catalog store ID."
         )
-        
+
     # Create default catalog
     stores.add_catalog_store_from_uri(
         stores_uri, SessionStores.DEFAULT_CATALOG_STORE_ID

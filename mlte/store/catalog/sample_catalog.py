@@ -12,7 +12,7 @@ import os
 import mlte.store.catalog.sample as sample_entries
 from mlte._private.fixed_json import json
 from mlte.catalog.model import CatalogEntry
-from mlte.store.base import StoreType, StoreURI
+from mlte.store.base import StoreURI
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import (
     CatalogStore,
