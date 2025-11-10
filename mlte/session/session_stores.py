@@ -120,11 +120,16 @@ def setup_stores(
         store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
     )
 
-    # Create default catalog if not configured.
-    if SessionStores.DEFAULT_CATALOG_STORE_ID not in catalog_uris:
-        stores.add_catalog_store_from_uri(
-            stores_uri, SessionStores.DEFAULT_CATALOG_STORE_ID
+    # Throw error if trying to set a remote catalog with the id of the default catalog
+    if SessionStores.DEFAULT_CATALOG_STORE_ID in catalog_uris:
+        raise RuntimeError(
+            f"Remote catalog store ID cannot be {SessionStores.DEFAULT_CATALOG_STORE_ID}. This is the default catalog store ID."
         )
+        
+    # Create default catalog
+    stores.add_catalog_store_from_uri(
+        stores_uri, SessionStores.DEFAULT_CATALOG_STORE_ID
+    )
 
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():
