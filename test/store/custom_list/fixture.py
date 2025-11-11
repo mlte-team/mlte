@@ -5,6 +5,7 @@ from __future__ import annotations
 import typing
 from typing import Generator, List, Optional
 
+from mlte.store.custom_list.underlying.http import HttpCustomListStore
 import pytest
 
 from mlte.backend.core.config import settings
@@ -12,7 +13,9 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel, CustomListModel
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
-from mlte.user.model import ResourceType
+from mlte.user.model import ResourceType, UserWithPassword
+from test.backend.fixture import user_generator
+from test.backend.fixture.test_api import TestAPI
 from test.store.custom_list.custom_list_store_creators import (
     create_fs_store,
     create_http_store,
@@ -38,13 +41,30 @@ def custom_list_stores() -> Generator[str, None, None]:
         yield store_fixture_name.value
 
 
+def create_api_and_http_store(user: Optional[UserWithPassword] = None) -> HttpCustomListStore:
+    """
+    Get a HttpStore configured with test client.
+    :return: The configured store
+    """
+    user = user_generator.build_admin_user()
+    test_api = TestAPI(user=user)
+    client = test_api.get_test_client()
+
+    return create_http_store(
+        username=client.username,
+        password=client.password,
+        uri=str(client.client.base_url),
+        client=client,
+    )
+
+
 @pytest.fixture(scope="function")
 def create_test_store(
     tmpdir_factory,
 ) -> typing.Callable[[str], CustomListStore]:
     def _make(store_fixture_name) -> CustomListStore:
         if store_fixture_name == StoreType.REMOTE_HTTP.value:
-            return create_http_store()
+            return create_api_and_http_store()
         elif store_fixture_name == StoreType.LOCAL_MEMORY.value:
             return create_memory_store()
         elif store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
