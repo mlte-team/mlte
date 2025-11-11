@@ -33,7 +33,7 @@ do
                 $PYTHON_COMMAND catalog_entries.py build $notebook_file
             elif [[ $MODE == "check" ]]; then
                 if ! $PYTHON_COMMAND catalog_entries.py check $notebook_file; then
-                    exit $?
+                    exit 1
                 fi
             fi
         fi
