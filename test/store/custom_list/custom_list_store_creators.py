@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import typing
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
-from mlte.store.common.http_clients import OAuthHttpClient
 from sqlalchemy import StaticPool
 
 from mlte._private import url as url_utils
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
 from mlte.store.custom_list.underlying.http import HttpCustomListStore
@@ -34,6 +34,7 @@ def create_http_store(
         ),
         client=client,
     )
+
 
 def create_memory_store() -> InMemoryCustomListStore:
     return typing.cast(

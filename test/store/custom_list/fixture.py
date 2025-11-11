@@ -5,7 +5,6 @@ from __future__ import annotations
 import typing
 from typing import Generator, List, Optional
 
-from mlte.store.custom_list.underlying.http import HttpCustomListStore
 import pytest
 
 from mlte.backend.core.config import settings
@@ -13,6 +12,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel, CustomListModel
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
+from mlte.store.custom_list.underlying.http import HttpCustomListStore
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
@@ -41,7 +41,9 @@ def custom_list_stores() -> Generator[str, None, None]:
         yield store_fixture_name.value
 
 
-def create_api_and_http_store(user: Optional[UserWithPassword] = None) -> HttpCustomListStore:
+def create_api_and_http_store(
+    user: Optional[UserWithPassword] = None,
+) -> HttpCustomListStore:
     """
     Get a HttpStore configured with test client.
     :return: The configured store
