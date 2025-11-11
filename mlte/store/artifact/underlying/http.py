@@ -60,7 +60,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 
     def __init__(self, *, storage: HttpStorage) -> None:
         self.storage = storage
-        """HTTP Storage."""
+        """HTTP storage."""
 
         self.version_mapper = HTTPVersionMapper(storage=storage)
         """The mapper to version CRUD."""

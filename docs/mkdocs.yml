@@ -28,5 +28,6 @@ nav:
   - 'References':
     - 'MLTE Measurements': 'mlte_measurements.md'
     - 'MLTE Negotiation Card': 'negotiation_card.md'
+    - 'New Demo Guide': 'new_demo.md'
     - 'Resources': 'resources.md'
     - API Reference: reference/

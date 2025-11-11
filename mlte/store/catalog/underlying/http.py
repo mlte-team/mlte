@@ -64,7 +64,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
         self, *, storage: HttpStorage, read_only: bool = False
     ) -> None:
         self.storage = storage
-        """Http Storage"""
+        """HTTP storage"""
 
         self.read_only = read_only
         """Whether this is read only or not."""
@@ -196,7 +196,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         return new_entry
 
     def _convert_to_remote(self, entry: CatalogEntry) -> CatalogEntry:
-        """Creates a new entry from the given one, convertint it to remote by moving the remote catalog id to its identifier."""
+        """Creates a new entry from the given one, converting it to remote by moving the remote catalog id to its identifier."""
         new_entry = entry.model_copy()
         new_entry.header = entry.header.model_copy()
 
