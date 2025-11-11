@@ -54,7 +54,7 @@ export const useTagOptions = () =>
     { name: "Object Detection", selected: false },
     { name: "Sentiment Analysis", selected: false },
     { name: "Regression", selected: false },
-    { name: "Reinforcement Learning", selected: false},
+    { name: "Reinforcement Learning", selected: false },
     { name: "Segmentation", selected: false },
     { name: "Tabular", selected: false },
     { name: "Time Series", selected: false },
