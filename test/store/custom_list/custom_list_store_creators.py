@@ -10,13 +10,22 @@ from sqlalchemy import StaticPool
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
+from mlte.store.custom_list.underlying.http import HttpCustomListStore
 from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 from mlte.store.custom_list.underlying.rdbs.store import RDBCustomListStore
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 
 
+def create_http_store() -> HttpCustomListStore:
+    return typing.cast(
+        HttpCustomListStore,
+        create_custom_list_store(
+            StoreURI.create_uri_string(StoreType.REMOTE_HTTP)
+        ),
+    )
+
+
 def create_memory_store() -> InMemoryCustomListStore:
-    """Returns an in-memory store."""
     return typing.cast(
         InMemoryCustomListStore,
         create_custom_list_store(
