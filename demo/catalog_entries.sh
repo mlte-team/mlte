@@ -32,8 +32,7 @@ do
             if [[ $MODE == "build" ]]; then
                 $PYTHON_COMMAND catalog_entries.py build $notebook_file
             elif [[ $MODE == "check" ]]; then
-                $PYTHON_COMMAND catalog_entries.py check $notebook_file
-                if [[ $? == 1 ]]; then
+                if ! $PYTHON_COMMAND catalog_entries.py check $notebook_file; then
                     exit $?
                 fi
             fi
