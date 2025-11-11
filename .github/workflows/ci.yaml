@@ -23,8 +23,6 @@ jobs:
         run: poetry install --with dev --all-extras
       - name: Vet schemas
         run: make check-schema
-      - name: Check catalog entries
-        run: make check-sample-catalog
       - name: Sort imports with isort
         run: make check-isort
       - name: Format with black
@@ -40,7 +38,9 @@ jobs:
       - name: Install demo dependencies
         run: poetry install --with dev,demo --all-extras        
       - name: Execute demo tests
-        run: make demo-test        
+        run: make demo-test
+      - name: Check catalog entries
+        run: make check-sample-catalog
       - name: Install frontend dependencies
         run: make frontend-env
       - name: Lint frontend
