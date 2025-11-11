@@ -30,7 +30,9 @@ do
         #   This is the naming format for QA demos that will be enforced so we can identify them here
         if [[ "${NAME:0:1}" == "2" && "${NAME:1:1}" == [a-z] ]]; then
             if [[ $MODE == "build" ]]; then
-                $PYTHON_COMMAND catalog_entries.py build $notebook_file
+                if ! $PYTHON_COMMAND catalog_entries.py build $notebook_file; then
+                    exit 1
+                fi
             elif [[ $MODE == "check" ]]; then
                 if ! $PYTHON_COMMAND catalog_entries.py check $notebook_file; then
                     exit 1
