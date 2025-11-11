@@ -64,11 +64,12 @@ def test_eager_context_creation(
     s = session()
 
     assert (
-        s.stores.artifact_store.session().read_model(model).identifier == model
+        s.stores.artifact_store.session().model_mapper.read(model).identifier
+        == model
     )
     assert (
         s.stores.artifact_store.session()
-        .read_version(model, version)
+        .version_mapper.read(version, model)
         .identifier
         == version
     )

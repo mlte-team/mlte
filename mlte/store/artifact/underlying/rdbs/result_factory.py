@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.measurement.model import MeasurementMetadata
 from mlte.results.model import ResultModel, TestResultsModel
@@ -11,7 +9,6 @@ from mlte.store.artifact.underlying.rdbs import suite_factory
 from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
     DBEvidenceMetadata,
 )
-from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact
 from mlte.store.artifact.underlying.rdbs.result_metadata import (
     DBResult,
     DBTestResults,
@@ -24,16 +21,12 @@ from mlte.store.artifact.underlying.rdbs.result_metadata import (
 
 def create_results_orm(
     test_results: TestResultsModel,
-    artifact_orm: Optional[DBArtifact],
 ) -> DBTestResults:
     """Creates the DB object from the corresponding internal model."""
     test_results_orm = DBTestResults(
-        artifact=artifact_orm,
         results=[],
         test_suite_identifier=test_results.test_suite_id,
-        test_suite=suite_factory.create_suite_orm(
-            test_results.test_suite, artifact_orm=None
-        ),
+        test_suite=suite_factory.create_suite_orm(test_results.test_suite),
     )
     for test_case_id, result in test_results.results.items():
         result_orm = DBResult(

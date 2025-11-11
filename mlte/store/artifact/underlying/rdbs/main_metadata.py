@@ -104,7 +104,7 @@ class DBArtifact(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
-    timestamp: Mapped[int] = mapped_column(BigInteger)
+    timestamp: Mapped[Optional[int]] = mapped_column(BigInteger)
     username: Mapped[Optional[str]]
     level: Mapped[str]
 
