@@ -8,7 +8,8 @@ from typing import Optional
 
 # import garden
 import tensorflow as tf
-import utils.garden as garden
+
+from . import garden
 
 LOG_FILE = "./log.txt"
 
