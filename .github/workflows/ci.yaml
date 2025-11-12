@@ -52,8 +52,6 @@ jobs:
         run: make docs 
       - name: Execute unit tests
         run: make test
-      - name: Check catalog entries
-        run: make check-sample-catalog
   
   demos:
     needs: define-matrix
@@ -73,7 +71,9 @@ jobs:
       - name: Install demo dependencies
         run: poetry install --with dev,demo --all-extras        
       - name: Execute demo tests
-        run: make demo-test        
+        run: make demo-test
+      - name: Check catalog entries
+        run: make check-sample-catalog
 
   frontend:
     runs-on: ubuntu-latest
