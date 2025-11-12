@@ -1,0 +1,19 @@
+{
+    "header": {
+        "identifier": "ReviewPro-explainability",
+        "creator": "admin",
+        "created": 1762969414,
+        "updater": null,
+        "updated": 1762969414,
+        "catalog_id": "sample"
+    },
+    "tags": [
+        "LLM",
+        "content generation"
+    ],
+    "quality_attribute": "explainability",
+    "code": "# ## 2a. Evidence - Explainability QAS Measurements\n# \n# Evidence collected in this section checks for the Explainability QAS scenario defined in the previous step. Note that some functions and data will be loaded from external Python files.\n# \n# The cell below must contain JSON data about this evidence that will be used to automatically populate the sample test catalog.\n\n# ### Initialize MLTE Context\n# \n# MLTE contains a global context that manages the currently active _session_. Initializing the context tells MLTE how to store all of the artifacts that it produces. This import will also set up global constants related to folders and model to use.\n\n# Sets up context for the model being used, sets up constants related to folders and model data to be used.\n\nfrom session import *\n\n\n# ### Set up scenario test case \n\nfrom mlte.negotiation.artifact import NegotiationCard\n\ncard = NegotiationCard.load()\nqa = 0\nprint(card.quality_scenarios[qa])\n\n\n# **A Specific test case generated from the scenario:**\n# \n# **Data and Data Source:**\tThe LLM receives a prompt from the manager asking for an employee evaluation, and the original test data set can be used to mimic this request.\n# \n# **Measurement and Condition:**\tWhen queried for an explination of the score, the LLM will return an explination how the score is supported by the evidence, in this case the employee\\\"s self review and goals and objectives and manager\\\"s notes.  \n# \n# **Context:**\tNormal Operation \n# \n\n# ### Gather evidence\n\nimport pandas as pd\nimport os\n\n# create list of file names for data\n# Read the CSV with the correct encoding\n# initial input to ReviewPro\ninput_df = pd.read_csv(\n    os.path.join(DATASETS_DIR, \\\"2abc_llm_input_functional_correctness.csv\\\")\n)\n\n# initial output of ReviewPro\noutput_df = pd.read_csv(\n    os.path.join(DATASETS_DIR, \\\"2abc_llm_output_functional_correctness.csv\\\")\n)\n\n# response when asked to explain evaluation score\nresponse_df = pd.read_csv(\n    os.path.join(DATASETS_DIR, \\\"2a_llm_output_explainability.csv\\\")\n)\noutput_df.drop(columns=[\\\"Unnamed: 0\\\"], inplace=True)\n\n# Preview the cleaned dataframe\nprint(input_df.columns)\noutput_df.columns\n\n\n# ### Save evidence (the LLM explination of the responses) to the specific scenario\n\ndef pull_explination(filename):\n    \\\"\\\"\\\"Runs the model and gets the log.\\\"\\\"\\\"\n    print(filename)\n    response_df = pd.read_csv(filename)\n    print(response_df.columns)\n\n    return response_df.response.tolist()\n\n\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.evidence.types.array import Array\n\n\n# Save to MLTE store.\nevi_collector = ExternalMeasurement(\n    \\\"LLM provides evidence\\\", Array, pull_explination\n)\n\nevi = evi_collector.evaluate(\n    os.path.join(DATASETS_DIR, \\\"2a_llm_output_explainability.csv\\\")\n)\nevi.save(force=True)\n\n\n\n",
+    "description": "The model should return, when prompted, a human-understandable explination of the review. This case attaches the generated image which needs to be manually validated for test pass/fail",
+    "inputs": "A request for a review in a crafted prompt, with the supporting material (employee statement, goals and objectives, and manager comments)",
+    "output": "Response explaining how and if the LLM agrees with the prior assessment, which needs to be manually validated for pass/fail"
+}
