@@ -118,17 +118,15 @@ def load_base_results(data_folder: str, test_filename: str) -> pd.DataFrame:
 def load_taxonomy(data_folder: str) -> pd.DataFrame:
     """Loads taxonomy info about the flowers and returns a dict with it."""
     df_labels = pd.read_csv(
-        path.join(data_folder, "OxfordFlowerLabels.csv"), header=0
+        path.join(data_folder, "0_oxford_flower_labels.csv"), header=0
     )
-    # print(df_labels.head())
+
     df_labels.drop(columns=["Phylum", "Class"], inplace=True)
     df_labels.rename(columns={"Phylum.1": "Phylum"}, inplace=True)
-    # df_labels.drop([0], inplace=True)
-    # df_labels['Common Name'] = df_labels['Common Name'].str.strip()
+
     df_labels["Label Name"] = df_labels["Common Name"].replace(
         " ", "_", regex=True
     )
-    # print(df_labels)
 
     df_dict = pd.DataFrame.from_dict(
         {"Label": list(label_dict), "Label Name": label_dict.values()}

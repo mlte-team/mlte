@@ -210,8 +210,8 @@ build-in-docker:
 
 .PHONY: build-sample-catalog
 build-sample-catalog:
-	cd demo && bash catalog_entries.sh build GardenBuddy
+	cd demo && bash catalog_entries.sh build GardenBuddy ReviewPro
 
 .PHONY: check-sample-catalog
 check-sample-catalog:
-	cd demo && bash catalog_entries.sh check GardenBuddy
+	cd demo && bash catalog_entries.sh check GardenBuddy ReviewPro
