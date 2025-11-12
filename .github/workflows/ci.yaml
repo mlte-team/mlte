@@ -17,7 +17,7 @@ jobs:
         run: echo 'os_matrix=["ubuntu-latest"]' >> "$GITHUB_OUTPUT"
       - name: Define Python version matrix
         id: py_ver_matrix
-        run: echo 'py_ver_matrix=["3.9", "3.10", "3.11", "3.12"] >> "$GITHUB_OUTPUT'
+        run: echo 'py_ver_matrix=["3.9", "3.10", "3.11", "3.12"]' >> "$GITHUB_OUTPUT"
 
   test:
     needs: define-matrix
