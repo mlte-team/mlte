@@ -56,6 +56,11 @@ jobs:
         run: poetry install --with dev,demo --all-extras        
       - name: Execute demo tests
         run: make demo-test        
+    
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Install frontend dependencies
         run: make frontend-env
       - name: Lint frontend
