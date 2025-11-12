@@ -52,11 +52,27 @@ jobs:
         run: make docs 
       - name: Execute unit tests
         run: make test
+  
+  demos:
+    needs: define-matrix
+    strategy:
+      matrix:
+        os: ${{ fromJSON(needs.define-matrix.outputs.os_matrix) }}
+        python-version: ${{ fromJSON(needs.define-matrix.outputs.py_ver_matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: curl -sSL https://install.python-poetry.org | python -
       - name: Install demo dependencies
         run: poetry install --with dev,demo --all-extras        
       - name: Execute demo tests
         run: make demo-test        
-    
+
   frontend:
     runs-on: ubuntu-latest
     steps:
