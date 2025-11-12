@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Define os matrix
         id: os_matrix
-        run: echo 'os_matrix=$env.OS_VERSIONS' >> "$GITHUB_OUTPUT"
+        run: echo 'os_matrix=$OS_VERSIONS' >> "$GITHUB_OUTPUT"
       - name: Define Python version matrix
         id: py_ver_matrix
-        run: echo 'py_ver_matrix=$env.PYTHON_VERSIONS' >> "$GITHUB_OUTPUT"
+        run: echo 'py_ver_matrix=$PYTHON_VERSIONS' >> "$GITHUB_OUTPUT"
 
   library-backend:
     needs: define-matrix
