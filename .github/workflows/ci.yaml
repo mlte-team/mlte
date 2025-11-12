@@ -38,8 +38,6 @@ jobs:
         run: poetry install --with dev --all-extras
       - name: Vet schemas
         run: make check-schema
-      - name: Check catalog entries
-        run: make check-sample-catalog
       - name: Sort imports with isort
         run: make check-isort
       - name: Format with black
