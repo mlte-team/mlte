@@ -11,13 +11,13 @@ env:
 jobs:
   test:
     strategy:
-    runs-on: $os
+    runs-on: ${{ env.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python $python-version
+      - name: Set up Python ${{ env.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: $python-version
+          python-version: ${{ env.python-version }}
       - name: Install poetry
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
