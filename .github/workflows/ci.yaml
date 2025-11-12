@@ -4,19 +4,20 @@ on:
   - push
   - pull_request
 
+env:
+  os: [ubuntu-latest]
+  python-version: ['3.9', '3.10', '3.11', '3.12']
+
 jobs:
   test:
     strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
-    runs-on: ${{ matrix.os }}
+    runs-on: $os
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python $python-version
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: $python-version
       - name: Install poetry
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
