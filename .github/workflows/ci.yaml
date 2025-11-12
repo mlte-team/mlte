@@ -8,23 +8,23 @@ jobs:
   define-matrix:
     runs-on: ubuntu-latest
     outputs:
-      os_matrix: ${{ steps.set_os.outputs.os_matrix }}
-      python_ver_matrix: ${{ steps.set_py_ver.outputs.python_ver_matrix }}
+      os_matrix: ${{ steps.os_matrix.outputs.os_matrix }}
+      py_ver_matrix: ${{ steps.py_ver_matrix.outputs.py_ver_matrix }}
 
     steps:
       - name: Define os matrix
         id: os_matrix
         run: echo 'os_matrix=["ubuntu-latest"]' >> "$GITHUB_OUTPUT"
       - name: Define Python version matrix
-        id: python_ver_matrix
-        run: echo 'python_ver_matrix=["3.9", "3.10", "3.11", "3.12"] >> "$GITHUB_OUTPUT'
+        id: py_ver_matrix
+        run: echo 'py_ver_matrix=["3.9", "3.10", "3.11", "3.12"] >> "$GITHUB_OUTPUT'
 
   test:
     needs: define-matrix
     strategy:
       matrix:
         os: ${{ fromJSON(needs.define-matrix.outputs.os_matrix) }}
-        python-version: ${{ fromJSON(needs.define-matrix.outputs.python_ver_matrix) }}
+        python-version: ${{ fromJSON(needs.define-matrix.outputs.py_ver_matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
