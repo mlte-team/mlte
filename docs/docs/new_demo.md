@@ -10,7 +10,7 @@ A demo is a set of Jupyter notebooks that walk through the MLTE IMT process. Dem
     - All files outside of notebooks including the session module, data, or re-used functionality should be included within the folder for the demo.
 2. `1_requirements.ipynb`
     - Defines the  `MLTE` [Negotiation Card](negotiation_card.md), an example card can be found at `demo/sample_store/models/OxfordFlower/card.default.json`. This can be created manually within the notebook, or loaded from a `.json` file of a card.
-    - Defines the `TestSuite`, more `TestSuite` information can be found in [Using `MLTE`](using_mlte.md#testing-models-with-`mlte`-(imt-and-sdmt))
+    - Defines the `TestSuite`, more `TestSuite` information can be found in [Using `MLTE`](using_mlte.md).
 3. `2<x>_evidence_<quality_atribute>`
     - `<x>` being letters starting at `a` and continually incrementing, for example `2a_evidence_fairness`, `2b_evidence_robustness`, `2c_evidence_resilience`.
     - Each notebook should gather evidence for all the `TestCase`s that test a quality attribute scenario from the [Negotiation Card](negotiation_card.md) that relate to the quality attribute in the name of the notebook.
