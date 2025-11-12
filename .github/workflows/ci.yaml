@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       os_matrix: ${{ steps.set_os.outputs.os_matrix }}
-      python_ver_matrix: ${{ steps.set_py_ver.outputs.os_matrix }}
+      python_ver_matrix: ${{ steps.set_py_ver.outputs.python_ver_matrix }}
 
     steps:
       - name: Define os matrix
