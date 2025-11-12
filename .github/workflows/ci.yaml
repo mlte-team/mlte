@@ -52,6 +52,8 @@ jobs:
         run: make docs 
       - name: Execute unit tests
         run: make test
+      - name: Check catalog entries
+        run: make check-sample-catalog
   
   demos:
     needs: define-matrix
