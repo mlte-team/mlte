@@ -4,6 +4,10 @@ on:
   - push
   - pull_request
 
+env:
+  OS_VERSIONS: '["ubuntu-latest"]'
+  PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12"]'
+
 jobs:
   define-matrix:
     runs-on: ubuntu-latest
@@ -14,10 +18,10 @@ jobs:
     steps:
       - name: Define os matrix
         id: os_matrix
-        run: echo 'os_matrix=["ubuntu-latest"]' >> "$GITHUB_OUTPUT"
+        run: echo 'os_matrix=$env.OS_VERSIONS' >> "$GITHUB_OUTPUT"
       - name: Define Python version matrix
         id: py_ver_matrix
-        run: echo 'py_ver_matrix=["3.9", "3.10", "3.11", "3.12"]' >> "$GITHUB_OUTPUT"
+        run: echo 'py_ver_matrix=$env.PYTHON_VERSIONS' >> "$GITHUB_OUTPUT"
 
   library-backend:
     needs: define-matrix
