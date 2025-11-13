@@ -86,7 +86,7 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
 
     logging.info(f"Backend will add catalog stores: {catalog_uris}")
 
-    state.stores = setup_stores(stores_uri, catalog_uris, set_user_store=True)
+    state.stores = setup_stores(stores_uri, catalog_uris)
 
 
 def main() -> int:

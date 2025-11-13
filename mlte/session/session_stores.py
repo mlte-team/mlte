@@ -90,14 +90,12 @@ class SessionStores:
 def setup_stores(
     stores_uri: str,
     catalog_uris: dict[str, str] = {},
-    set_user_store: bool = False,
 ) -> SessionStores:
     """
     Sets up all stores required by MLTE, from the provided URIs.
 
     :param stores_uri: The store URI string, used as the common type and root location for all non-catalog stores.
     :param catalog_uris: A dict of URIs for catalog stores.
-    :param set_user_store: Whether to set up a user store or not.
     """
     stores = SessionStores()
 
@@ -106,9 +104,8 @@ def setup_stores(
     stores.set_artifact_store(artifact_store)
 
     # Initialize the backing user store instance.
-    if set_user_store:
-        user_store = user_store_factory.create_user_store(stores_uri)
-        stores.set_user_store(user_store)
+    user_store = user_store_factory.create_user_store(stores_uri)
+    stores.set_user_store(user_store)
 
     # Initialize the backing custom list store instance.
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
