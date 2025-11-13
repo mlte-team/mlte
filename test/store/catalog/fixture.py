@@ -75,14 +75,15 @@ def create_test_store(
     def _make(
         store_fixture_name, catalog_id: str = test_catalog_id
     ) -> CatalogStore:
-        if store_fixture_name == StoreType.LOCAL_MEMORY.value:
+        if store_fixture_name == StoreType.REMOTE_HTTP.value:
+            return create_api_and_http_store(catalog_id)
+        elif store_fixture_name == StoreType.LOCAL_MEMORY.value:
             return create_memory_store()
         elif store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
             return create_fs_store(tmpdir_factory.mktemp("data"))
         elif store_fixture_name == StoreType.RELATIONAL_DB.value:
             return create_rdbs_store()
-        elif store_fixture_name == StoreType.REMOTE_HTTP.value:
-            return create_api_and_http_store(catalog_id)
+
         else:
             raise RuntimeError(
                 f"Invalid store type received: {store_fixture_name}"

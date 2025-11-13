@@ -4,12 +4,31 @@ on:
   - push
   - pull_request
 
+env:
+  OS_VERSIONS: '["ubuntu-latest"]'
+  PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12"]'
+
 jobs:
-  test:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      os_matrix: ${{ steps.os_matrix.outputs.os_matrix }}
+      py_ver_matrix: ${{ steps.py_ver_matrix.outputs.py_ver_matrix }}
+
+    steps:
+      - name: Define os matrix
+        id: os_matrix
+        run: echo "os_matrix=$OS_VERSIONS" >> "$GITHUB_OUTPUT"
+      - name: Define Python version matrix
+        id: py_ver_matrix
+        run: echo "py_ver_matrix=$PYTHON_VERSIONS" >> "$GITHUB_OUTPUT"
+
+  library-backend:
+    needs: define-matrix
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        os: ${{ fromJSON(needs.define-matrix.outputs.os_matrix) }}
+        python-version: ${{ fromJSON(needs.define-matrix.outputs.py_ver_matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -32,15 +51,36 @@ jobs:
       - name: Typecheck with mypy
         run: make typecheck
       - name: Check docs
-        run: make docs
+        run: make docs 
       - name: Execute unit tests
         run: make test
+  
+  demos:
+    needs: define-matrix
+    strategy:
+      matrix:
+        os: ${{ fromJSON(needs.define-matrix.outputs.os_matrix) }}
+        python-version: ${{ fromJSON(needs.define-matrix.outputs.py_ver_matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: curl -sSL https://install.python-poetry.org | python -
       - name: Install demo dependencies
         run: poetry install --with dev,demo --all-extras        
       - name: Execute demo tests
         run: make demo-test
       - name: Check catalog entries
         run: make check-sample-catalog
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Install frontend dependencies
         run: make frontend-env
       - name: Lint frontend
