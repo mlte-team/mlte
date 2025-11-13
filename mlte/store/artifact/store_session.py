@@ -173,7 +173,7 @@ class ArtifactMapper(ResourceMapper):
         """
         artifact_id = artifact.header.identifier
         try:
-            artifact = self.read(artifact_id, (model_id, version_id))
+            _ = self.read(artifact_id, (model_id, version_id))
             if not force:
                 # If it exists and we are not "forcing" (overriting/editing), complain it already exists.
                 raise errors.ErrorAlreadyExists(
