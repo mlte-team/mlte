@@ -124,7 +124,7 @@
             },
             {
                 "identifier": "default.card-qas_003",
-                "quality": "Compliance, position",
+                "quality": "Compliance",
                 "stimulus": "Regardless of input values",
                 "source": "sensors",
                 "environment": "normal operation",
@@ -133,7 +133,7 @@
             },
             {
                 "identifier": "default.card-qas_004",
-                "quality": "Compliance, velocity",
+                "quality": "Compliance",
                 "stimulus": "Regardless of input values ",
                 "source": "sensors",
                 "environment": "normal operation",
