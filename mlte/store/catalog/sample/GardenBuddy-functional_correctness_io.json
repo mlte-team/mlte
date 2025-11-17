@@ -2,16 +2,16 @@
     "header": {
         "identifier": "GardenBuddy-functional_correctness_io",
         "creator": "admin",
-        "created": 1762957120,
+        "created": 1763412923,
         "updater": null,
-        "updated": 1762957120,
+        "updated": 1763412923,
         "catalog_id": "sample"
     },
     "tags": [
         "Computer Vision",
         "Object detection"
     ],
-    "quality_attribute": "functional correctness",
+    "quality_attribute": "Functional Correctness",
     "code": "# ## 2g. Evidence - Functional Correctness - I/O Specification QAS Measurements\n# \n# Measure proper input specification.\n# \n# The cell below must contain JSON data about this evidence that will be used to automatically populate the sample test catalog.\n\n# ### Initialize MLTE Context\n# \n# MLTE contains a global context that manages the currently active _session_. Initializing the context tells MLTE how to store all of the artifacts that it produces. This import will also set up global constants related to folders and model to use.\n\n# Sets up context for the model being used, sets up constants related to folders and model data to be used.\nfrom session import *\n\n\n# ### Set up scenario test case\n\nfrom mlte.negotiation.artifact import NegotiationCard\n\ncard = NegotiationCard.load()\nqa = 6\nprint(card.quality_scenarios[qa])\n\n\n# **A Specific test case generated from the scenario:**\n# \n# **Data and Data Source:**\tTest dataset must conform to input specification.\n# \n# **Measurement and Condition:**\tDuring test execution all data in the test dataset produces an output that conforms to the output specification.\n# \n# **Context:**\tNormal Operation\n\n# ### Helper Functions\n# \n# Prepare all functions and data for the measurements.\n\n# Load model module\nfrom utils import model_predict\nfrom utils import garden\n\n\ndef run_and_get_log() -> str:\n    \\\"\\\"\\\"Runs the model and gets the log.\\\"\\\"\\\"\n    model_predict.run_model(SAMPLE_DATASET_DIR, MODEL_FILE_PATH)\n\n    return model_predict.load_log()\n\n\n# ### Measurements\n# \n# Finally, we execute the measurements and store the results.\n\nfrom mlte.measurement.external_measurement import ExternalMeasurement\nfrom mlte.evidence.types.string import String\n\n# Check input format is okay.\nmeasurement = ExternalMeasurement(\n    \\\"input format validation success\\\", String, run_and_get_log\n)\nresult = measurement.evaluate()\n# print(result)\nresult.save(force=True)\n\n# Check output format is okay.\nmeasurement = ExternalMeasurement(\n    \\\"output format validation success\\\", String, run_and_get_log\n)\nresult = measurement.evaluate()\n# print(result)\nresult.save(force=True)\n\n\n\n",
     "description": "Test conformance of input and output to specification",
     "inputs": "Model inputs, output specification",
