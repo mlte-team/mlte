@@ -90,21 +90,3 @@ def create_image(y_pred):
     plt.savefig(IMAGE_PATH)
 
     return IMAGE_PATH
-
-
-def create_model_image(model_path):
-    """Helper function to create an image of the decision tree model for this dataset."""
-    loaded_model = _load_model(model_path)
-    iris = sk_datasets.load_iris(as_frame=True)
-
-    fig = plt.figure(figsize=(12, 12))
-    _ = sk_tree.plot_tree(
-        loaded_model,
-        feature_names=iris.feature_names,
-        class_names=iris.target_names,
-        filled=True,
-    )
-
-    fig.savefig(IMAGE_PATH_INTER)
-
-    return IMAGE_PATH_INTER

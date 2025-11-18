@@ -26,7 +26,6 @@ MODEL_PATH = MODELS_DIR / "model_demo.pkl"
 # The path at which media is stored
 MEDIA_DIR = BASE_FOLDER / "media"
 IMAGE_PATH = MEDIA_DIR / "classes.png"
-IMAGE_PATH_INTER = MEDIA_DIR / "trained_model_image.png"
 
 # Command to be used to train the model.
 TRAIN_CMD = [
