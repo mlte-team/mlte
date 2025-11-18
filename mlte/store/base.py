@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, List, Optional, Protocol
 
+from mlte.store.cross_validator import CompositeValidator
 from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------
@@ -192,9 +193,7 @@ class ManagedSession:
 
 
 class ResourceMapper(ABC):
-    """
-    A generic interface for mapping CRUD actions to store specific resources.
-    """
+    """A generic interface for mapping CRUD actions to store specific resources."""
 
     NOT_IMPLEMENTED_ERROR_MSG = (
         "Cannot invoke method that has not been implemented for this mapper."
@@ -203,6 +202,9 @@ class ResourceMapper(ABC):
 
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
+
+    validators: CompositeValidator = CompositeValidator()
+    """CompositeValidator to handle validation of the resource."""
 
     @abstractmethod
     def create(self, new_resource: Any, context: Any) -> Any:

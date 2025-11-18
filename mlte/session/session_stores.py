@@ -4,9 +4,11 @@ from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
+from mlte.store.cross_validator import CatalogEntryValidator
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
@@ -134,5 +136,9 @@ def setup_stores(
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():
         stores.add_catalog_store_from_uri(uri, id)
+
+    # Set up validators
+    with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store_session:
+        artifact_store_session.artifact_mapper.validators.append(CatalogEntryValidator(artifact_store=stores.artifact_store, custom_list_store=stores.custom_list_store))
 
     return stores

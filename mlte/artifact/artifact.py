@@ -136,6 +136,9 @@ class Artifact(Serializable, abc.ABC):
             # Run any artifact-type specific pre save hooks.
             self.pre_save_hook(context, store)
 
+            # Run validation
+            artifact_store.artifact_mapper.validators.validate_all()
+
             # Convert to model and save.
             model = self.to_model()
             assert isinstance(
