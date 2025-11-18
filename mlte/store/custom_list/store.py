@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mlte.store.base import Store, StoreURI
+from mlte.store.base import Store
 from mlte.store.custom_list.store_session import CustomListStoreSession
 
 # -----------------------------------------------------------------------------
@@ -11,14 +11,7 @@ from mlte.store.custom_list.store_session import CustomListStoreSession
 
 
 class CustomListStore(Store):
-    """
-    An abstract custom list store
-    """
-
-    def __init__(self, uri: StoreURI):
-        """Base constructor"""
-        super().__init__(uri=uri)
-        """Store uri."""
+    """An abstract custom list store"""
 
     def session(self) -> CustomListStoreSession:
         """
