@@ -46,20 +46,6 @@ def memory_store() -> InMemoryUserStore:
     return create_memory_store()
 
 
-def create_rdbs_store() -> RelationalDBUserStore:
-    return RelationalDBUserStore(
-        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-
-
-@pytest.fixture(scope="function")
-def rdbs_store() -> RelationalDBUserStore:
-    """A fixture for an in-memory RDBS store."""
-    return create_rdbs_store()
-
-
 def create_fs_store(path: Path) -> FileSystemUserStore:
     return typing.cast(
         FileSystemUserStore,
@@ -73,6 +59,20 @@ def create_fs_store(path: Path) -> FileSystemUserStore:
 def fs_store(tmp_path) -> FileSystemUserStore:
     """A fixture for an local FS store."""
     return create_fs_store(tmp_path)
+
+
+def create_rdbs_store() -> RelationalDBUserStore:
+    return RelationalDBUserStore(
+        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+
+
+@pytest.fixture(scope="function")
+def rdbs_store() -> RelationalDBUserStore:
+    """A fixture for an in-memory RDBS store."""
+    return create_rdbs_store()
 
 
 def user_stores() -> Generator[str, None, None]:

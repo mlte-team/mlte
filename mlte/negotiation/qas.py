@@ -38,7 +38,10 @@ class QASDescriptor(BaseModel):
 
     def __str__(self) -> str:
         """Converts to a string representation of the QA scenario."""
-        return f"{self.identifier} - {self.quality}: {self.stimulus} from {self.source} during {self.environment}. {self.response} {self.measure}."
+        prefix = f"{self.identifier} ({self.quality}):"
+        desc1 = f"{self.stimulus} from {self.source} during {self.environment}."
+        desc2 = f"{self.response} {self.measure}."
+        return f"{prefix} {desc1[0].upper()}{desc1[1:]} {desc2[0].upper()}{desc2[1:]}"
 
 
 # -----------------------------------------------------------------------------

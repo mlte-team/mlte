@@ -129,6 +129,4 @@ class NegotiationCard(Artifact):
     def print_quality_scenarios(self):
         """Prints the scenarios in a user-friendly way."""
         for scenario in self.quality_scenarios:
-            prefix = f"{scenario.identifier} ({scenario.quality}): "
-            description = f"{scenario.stimulus} from {scenario.source} while in {scenario.environment}, {scenario.response}, {scenario.measure}"
-            print(f"{prefix}{description.lower().capitalize()}")
+            print(scenario)

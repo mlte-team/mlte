@@ -18,7 +18,7 @@ class SessionStores:
     Contains the store sessions currently being used.
     """
 
-    DEFAULT_CATALOG_STORE_ID = "local"
+    LOCAL_CATALOG_STORE_ID = "local"
     """Name of the default catalog store."""
 
     def __init__(self):
@@ -90,14 +90,12 @@ class SessionStores:
 def setup_stores(
     stores_uri: str,
     catalog_uris: dict[str, str] = {},
-    set_user_store: bool = False,
 ) -> SessionStores:
     """
     Sets up all stores required by MLTE, from the provided URIs.
 
     :param stores_uri: The store URI string, used as the common type and root location for all non-catalog stores.
     :param catalog_uris: A dict of URIs for catalog stores.
-    :param set_user_store: Whether to set up a user store or not.
     """
     stores = SessionStores()
 
@@ -106,9 +104,8 @@ def setup_stores(
     stores.set_artifact_store(artifact_store)
 
     # Initialize the backing user store instance.
-    if set_user_store:
-        user_store = user_store_factory.create_user_store(stores_uri)
-        stores.set_user_store(user_store)
+    user_store = user_store_factory.create_user_store(stores_uri)
+    stores.set_user_store(user_store)
 
     # Initialize the backing custom list store instance.
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
@@ -120,11 +117,16 @@ def setup_stores(
         store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
     )
 
-    # Create default catalog if not configured.
-    if SessionStores.DEFAULT_CATALOG_STORE_ID not in catalog_uris:
-        stores.add_catalog_store_from_uri(
-            stores_uri, SessionStores.DEFAULT_CATALOG_STORE_ID
+    # Throw error if trying to set a remote catalog with the id of the local catalog
+    if SessionStores.LOCAL_CATALOG_STORE_ID in catalog_uris:
+        raise RuntimeError(
+            f"Remote catalog store ID cannot be {SessionStores.LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
         )
+
+    # Create local catalog
+    stores.add_catalog_store_from_uri(
+        stores_uri, SessionStores.LOCAL_CATALOG_STORE_ID
+    )
 
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():

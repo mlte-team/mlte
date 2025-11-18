@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Optional
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
@@ -98,7 +98,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         list_name = self._check_valid_custom_list(list_name)
         return self._read_entry(entry_name, list_name)
 
-    def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
+    def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         return self.storage.list_resources([list_name.value])
 
