@@ -138,7 +138,8 @@ def setup_stores(
         stores.add_catalog_store_from_uri(uri, id)
 
     # Set up validators
-    with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store_session:
-        artifact_store_session.artifact_mapper.validators.append(CatalogEntryValidator(artifact_store=stores.artifact_store, custom_list_store=stores.custom_list_store))
+    # with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store_session:
+    #     # artifact_store_session.artifact_mapper.validators.append(CatalogEntryValidator(artifact_store=stores.artifact_store, custom_list_store=stores.custom_list_store))
+    #     ...
 
     return stores
