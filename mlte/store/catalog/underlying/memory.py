@@ -7,9 +7,9 @@ from typing import Any, Dict, List
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.common.storage import Storage

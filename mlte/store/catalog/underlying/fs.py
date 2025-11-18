@@ -8,9 +8,9 @@ from typing import Any, List, Optional
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.common.fs_storage import FileSystemStorage

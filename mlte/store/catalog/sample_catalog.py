@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/sample_catalog.py
-
-MLTE sample catalog to come with installation.
-"""
+"""MLTE sample catalog to come with installation."""
 
 from __future__ import annotations
 
@@ -14,8 +10,8 @@ from mlte._private.fixed_json import json
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
 from mlte.store.catalog.factory import create_catalog_store
-from mlte.store.catalog.store import (
-    CatalogStore,
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )

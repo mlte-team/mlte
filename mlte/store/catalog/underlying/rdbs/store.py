@@ -9,9 +9,9 @@ from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.catalog.underlying.rdbs.metadata import DBBase
