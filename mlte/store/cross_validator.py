@@ -1,19 +1,27 @@
 """"""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Any
 
-import mlte.artifact.artifact as Artifact
+import mlte.store.artifact.store as ArtifactStore
+from mlte.artifact.model import ArtifactModel
 from mlte.catalog.model import CatalogEntry
-from mlte.store.artifact.store import ArtifactStore
-from mlte.store.catalog.store import CatalogStore
-from mlte.store.custom_list.store import CustomListStore
+
+# import mlte.store.catalog.store as CatalogStore
+# import mlte.store.custom_list.store as CustomListStore
 
 
 class CrossValidator(ABC):
     """"""
 
-    def __init__(self, artifact_store: ArtifactStore = None, catalog_store: CatalogStore = None, custom_list_store: CustomListStore = None):
+    def __init__(
+        self,
+        artifact_store: ArtifactStore.ArtifactStore = None,
+        catalog_store: any = None,
+        custom_list_store: any = None,
+    ):
         """
         Initialize a CrossValidator instance.
         :param artifact_store: Artifact store to use for validation.
@@ -30,15 +38,17 @@ class CrossValidator(ABC):
         Validate a resource.
         :param new_resource: The data to create or edit the resource to be validated
         :return: The validated resource
-        :raises RuntimeError: On failed validation 
+        :raises RuntimeError: On failed validation
         """
-        raise NotImplementedError("Can't validate without a specific implementation.")
-    
+        raise NotImplementedError(
+            "Can't validate without a specific implementation."
+        )
+
 
 class ArtifactUserValidator(CrossValidator):
     """Implementation of CrossValidator to validate an Artifact against the User store."""
 
-    def validate(self, new_artifact: Artifact.Artifact) -> Artifact.Artifact:
+    def validate(self, new_artifact: ArtifactModel) -> ArtifactModel:
         pass
 
 

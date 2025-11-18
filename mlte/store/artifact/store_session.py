@@ -8,12 +8,7 @@ from typing import Any, Optional, cast
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
 from mlte.context.model import Model, Version
-from mlte.store.base import (
-    ManagedSession,
-    ResourceMapper,
-    StoreSession,
-    StoreURI,
-)
+from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
 
 
 class ArtifactStoreSession(StoreSession):
