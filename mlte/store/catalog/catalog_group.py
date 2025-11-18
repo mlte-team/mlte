@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/catalog_group.py
-
-MLTE catalog store group interface implementation.
-"""
+"""MLTE catalog store group interface implementation."""
 
 from __future__ import annotations
 

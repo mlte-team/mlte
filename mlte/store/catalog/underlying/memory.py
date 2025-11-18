@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/underlying/memory.py
-
-Implementation of in-memory catalog store.
-"""
+"""Implementation of in-memory catalog store."""
 
 from __future__ import annotations
 

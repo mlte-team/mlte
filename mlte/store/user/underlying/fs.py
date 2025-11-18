@@ -1,8 +1,4 @@
-"""
-mlte/store/artifact/underlying/fs.py
-
-Implementation of local file system artifact store.
-"""
+"""Implementation of local file system artifact store."""
 
 from __future__ import annotations
 

@@ -1,8 +1,4 @@
-"""
-mlte/artifact/model.py
-
-Model implementation for MLTE artifacts.
-"""
+"""Model implementation for MLTE artifacts."""
 
 from __future__ import annotations
 

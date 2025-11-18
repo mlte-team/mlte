@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/auth/authentication.py
-
-Authentication handling.
-"""
+"""Authentication handling."""
 
 import logging
 

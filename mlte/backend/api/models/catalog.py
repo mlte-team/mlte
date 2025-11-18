@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/models/catalog_model.py
-
-Catalog data.
-"""
+"""Catalog data."""
 
 from mlte.model.base_model import BaseModel
 

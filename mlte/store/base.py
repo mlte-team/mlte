@@ -1,8 +1,4 @@
-"""
-mlte/store/base.py
-
-MLTE general store interface.
-"""
+"""MLTE general store interface."""
 
 from __future__ import annotations
 

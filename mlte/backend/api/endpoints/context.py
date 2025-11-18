@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/context.py
-
-Endpoints for artifact organization context.
-"""
+"""Endpoints for artifact organization context."""
 
 from __future__ import annotations
 

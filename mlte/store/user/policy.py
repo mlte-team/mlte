@@ -1,8 +1,4 @@
-"""
-mlte/store/user/policy.py
-
-Class to define group and permission policies.
-"""
+"""Class to define group and permission policies."""
 
 from __future__ import annotations
 

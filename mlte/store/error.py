@@ -1,8 +1,4 @@
-"""
-mlte/store/error.py
-
-Error definitions for store implementations.
-"""
+"""Error definitions for store implementations."""
 
 
 class ErrorAlreadyExists(RuntimeError):

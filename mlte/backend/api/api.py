@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/api.py
-
-Top-level API functionality.
-"""
+"""Top-level API functionality."""
 
 from fastapi import APIRouter
 

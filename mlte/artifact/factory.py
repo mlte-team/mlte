@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mlte.artifact.artifact import Artifact
+import mlte.artifact.artifact as Artifact
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.factory import EvidenceFactory
@@ -15,7 +15,7 @@ from mlte.tests.test_suite import TestSuite
 class ArtifactFactory:
 
     @staticmethod
-    def from_model(artifact_model: ArtifactModel) -> Artifact:
+    def from_model(artifact_model: ArtifactModel) -> Artifact.Artifact:
         """Returns a proper artifact from the given model."""
         artifact_type = artifact_model.body.artifact_type
         if artifact_type == ArtifactType.NEGOTIATION_CARD:

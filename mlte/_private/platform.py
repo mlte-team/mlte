@@ -1,8 +1,4 @@
-"""
-mlte/_private/platform.py
-
-Platform discovery.
-"""
+"""Platform discovery."""
 
 import os
 import sys

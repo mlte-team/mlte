@@ -1,8 +1,4 @@
-"""
-mlte/backend/core/config.py
-
-Configuration management for FastAPI application.
-"""
+"""Configuration management for FastAPI application."""
 
 from __future__ import annotations
 

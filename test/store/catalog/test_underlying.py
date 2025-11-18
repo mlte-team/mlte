@@ -1,8 +1,4 @@
-"""
-test/store/catalog/test_underlying.py
-
-Unit tests for the underlying catalog store implementations.
-"""
+"""Unit tests for the underlying catalog store implementations."""
 
 import pytest
 

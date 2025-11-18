@@ -1,8 +1,4 @@
-"""
-mlte/report/model.py
-
-Model implementation for MLTE report.
-"""
+"""Model implementation for MLTE report."""
 
 from typing import List, Literal
 
