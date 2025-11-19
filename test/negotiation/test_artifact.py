@@ -15,6 +15,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.negotiation import qas
 from mlte.negotiation.artifact import NegotiationCard
+from mlte.negotiation.model import DataDescriptor
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 from test.fixture.artifact import ArtifactModelFactory
@@ -80,12 +81,17 @@ def test_save_overwrite(
     card = get_sample_negotiation_card()
     card.save_with(ctx, store)
 
+    # Change card.
+    card.data.append(DataDescriptor(description="New data descriptor"))
+
     # Write without `force` fails
     with pytest.raises(errors.ErrorAlreadyExists):
         card.save_with(ctx, store)
 
     # Force write succeeds
-    card.save_with(ctx, store, force=True)
+    read_card_model = card.save_with(ctx, store, force=True)
+    read_card = NegotiationCard.from_model(read_card_model)
+    assert card == read_card
 
 
 def test_qas_id_generation():

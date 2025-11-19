@@ -86,13 +86,13 @@ typecheck:
 	poetry run mypy tools/
 
 # Clean demo notebooks of temporary outputs.
-.PHONY: clean-demo
-clean-demo:
-	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro
+.PHONY: demo-clean
+demo-clean:
+	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
 
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck clean-demo docs build-sample-catalog
+qa-python: schema isort format lint typecheck demo-clean docs build-sample-catalog
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
@@ -150,7 +150,7 @@ test:
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
 demo-test:
-	cd demo && bash test.sh simple GardenBuddy ReviewPro
+	cd demo && bash test.sh simple GardenBuddy ReviewPro GradientClimber
 
 # -----------------------------------------------------------------------------
 # Shorthand actions and checks needed to update and review for pushing.
@@ -210,8 +210,8 @@ build-in-docker:
 
 .PHONY: build-sample-catalog
 build-sample-catalog:
-	cd demo && bash catalog_entries.sh build GardenBuddy ReviewPro
+	cd demo && bash catalog_entries.sh build GardenBuddy ReviewPro GradientClimber
 
 .PHONY: check-sample-catalog
 check-sample-catalog:
-	cd demo && bash catalog_entries.sh check GardenBuddy ReviewPro
+	cd demo && bash catalog_entries.sh check GardenBuddy ReviewPro GradientClimber

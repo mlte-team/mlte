@@ -1,0 +1,163 @@
+{
+    "header": {
+        "identifier": "card.default",
+        "type": "card",
+        "timestamp": 1760390237,
+        "creator": "admin",
+        "level": "model"
+    },
+    "body": {
+        "artifact_type": "card",
+        "system": {
+            "goals": [
+                {
+                    "description": "Climb to top of hill currently located in front of car.",
+                    "metrics": [
+                        {
+                            "description": "Position provided as input to model",
+                            "baseline": ""
+                        }
+                    ]
+                }
+            ],
+            "problem_type": "other",
+            "task": "Autonomous control",
+            "usage_context": "An autonomous vehicle with an underpowered engine operating in a hilly environment, with control provided by a reinforcement learning model. The vehicle is constrained by an mission configuration that is prior to each use use, which defines the area of operation and regulations that the vehicle must comply with. ",
+            "risks": [
+                    "Collision with pedestrian",
+                    "Exceeding regulatory operational constraints"
+            ]
+
+        },
+        "data": [
+            {
+                "description": "dataset is provided by a physics simulation egine",
+                "source": "AI gymnasium (https://gymnasium.farama.org/ - loaded with import gymnasium as gym)",
+                "classification": "unclassified",
+                "access": "must be able to access/install packages",
+                "labeling_method": "",
+                "labels": [
+                    {
+                        "name": "",
+                        "description": "",
+                        "percentage": 0.0
+                    }
+                ],
+                "fields": [
+                    {
+                        "name": "position",
+                        "description": "Position of vehicle",
+                        "type": "float",
+                        "expected_values": "-1.2 to 0.6",
+                        "missing_values": "",
+                        "special_values": ""
+                    },
+                    {
+                        "name": "velocity",
+                        "description": "Velocity of vehicle",
+                        "type": "",
+                        "expected_values": "-1 to 1",
+                        "missing_values": "",
+                        "special_values": ""
+                    }
+                ],
+                "rights": "",
+                "policies": ""
+            }
+        ],
+        "model": {
+            "development_compute_resources": {
+                "cpu": "1",
+                "gpu": "0",
+                "memory": "0",
+                "storage": "0"
+            },
+            "deployment_platform": "embedded automotive processor",
+            "capability_deployment_mechanism": "Loaded onto  using standard software update and configuration methods",
+            "input_specification": [
+                {
+                    "name": "position",
+                    "description": "",
+                    "type": "float",
+                    "expected_values": "-1.2 to 0.6"
+                },
+                {
+                    "name": "velocity",
+                    "description": "Velocity of vehicle",
+                    "type": "-1 to 1",
+                    "expected_values": ""
+                }
+            ],
+            "output_specification": [
+                {
+                    "name": "command",
+                    "description": "There are 3 discrete deterministic actions:\n\n0: Accelerate to the left\n1: Don\u2019t accelerate\n2: Accelerate to the right",
+                    "type": "sparse categorically encoded classification",
+                    "expected_values": "0,1,2"
+                }
+            ],
+            "production_compute_resources": {
+                "cpu": "1",
+                "gpu": "0",
+                "memory": "2MB",
+                "storage": "0"
+            }
+        },
+        "system_requirements": [
+            {
+                "identifier": "default.card-qas_001",
+                "quality": "Functional Correctness",
+                "stimulus": "The gradient climber system gets an initialization command",
+                "source": "the user",
+                "environment": "normal operation",
+                "response": "The model successfully navigates the vehicle",
+                "measure": "to the goal position within the desired time bound"
+            },
+            {
+                "identifier": "default.card-qas_002",
+                "quality": "Reliability",
+                "stimulus": "Model receives valid input values",
+                "source": "sensors",
+                "environment": "normal operations.",
+                "response": "The model output is correct",
+                "measure": "and improves the expected reward 99.9% of the time"
+            },
+            {
+                "identifier": "default.card-qas_003",
+                "quality": "Compliance",
+                "stimulus": "Regardless of input values",
+                "source": "sensors",
+                "environment": "normal operation",
+                "response": "The model will produce output values that ensure the vehicle",
+                "measure": "remains in the area of operation specified in the set operational configuration."
+            },
+            {
+                "identifier": "default.card-qas_004",
+                "quality": "Compliance",
+                "stimulus": "Regardless of input values ",
+                "source": "sensors",
+                "environment": "normal operation",
+                "response": "The model will produce output values that ensure the vehicle",
+                "measure": "speed does not exceed limit."
+            },
+            {
+                "identifier": "default.card-qas_006",
+                "quality": "Deployability",
+                "stimulus": "When a new version of a model is made available following retraining",
+                "source": "the system maintenance plan",
+                "environment": "maintenance",
+                "response": "Maintenance personnel are able to load the new model on existing hardware",
+                "measure": "with available memory and produce outputs at the required operational rate"
+            },
+            {
+                "identifier": "default.card-qas_007",
+                "quality": "Portability",
+                "stimulus": "A new model is trained during the model training process",
+                "source": "the system maintenance plan",
+                "environment": "maintenance",
+                "response": "The model artifact should be generated",
+                "measure": "in a format that can be ported across platforms with no need for retraining."
+            }
+        ]
+    }
+}

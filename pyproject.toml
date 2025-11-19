@@ -77,9 +77,8 @@ torch = "2.8.0"
 statsmodels = "0.14.5"
 openai = "2.6.1"
 langchain = "0.3.27"
-#langchain-community = "0.3.30"
-#gpt4all = "2.8.2"
 langchain-openai = "0.3.34"
+gymnasium = "1.1.1"
 
 [tool.poetry.group.dev]
 optional = true
