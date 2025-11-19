@@ -228,6 +228,8 @@ class InMemoryArtifactMapper(ArtifactMapper):
     """In-memory mapper for the artifact resource."""
 
     def __init__(self, *, storage: MemoryArtifactStorage) -> None:
+        super().__init__()
+
         self.storage = storage
         """A reference to underlying storage."""
 

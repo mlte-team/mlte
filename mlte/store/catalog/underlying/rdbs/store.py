@@ -78,6 +78,8 @@ class RDBEntryMapper(CatalogEntryMapper):
     """RDB mapper for a catalog entry resource."""
 
     def __init__(self, storage: RDBStorage) -> None:
+        super().__init__()
+
         self.storage = storage
         """A reference to underlying storage."""
 

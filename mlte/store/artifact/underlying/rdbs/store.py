@@ -214,6 +214,8 @@ class RDBSArtifactMapper(ArtifactMapper):
     """In-memory mapper for the version resource."""
 
     def __init__(self, storage: RDBStorage) -> None:
+        super().__init__()
+
         self.storage = storage
         """A reference to underlying storage."""
 

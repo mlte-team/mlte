@@ -86,6 +86,8 @@ class InMemoryCatalogEntryMapper(CatalogEntryMapper):
     """In-memory mapper for the catalog resource."""
 
     def __init__(self, *, storage: MemoryCatalogStorage) -> None:
+        super().__init__()
+
         self.storage = storage
         """A reference to underlying storage."""
 

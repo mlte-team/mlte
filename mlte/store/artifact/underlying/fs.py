@@ -179,6 +179,8 @@ class FileSystemArtifactMapper(ArtifactMapper):
     """File storage mapper for the artifact resource."""
 
     def __init__(self, *, storage: FileSystemStorage) -> None:
+        super().__init__()
+        
         self.storage = storage
         """A reference to underlying storage."""
 

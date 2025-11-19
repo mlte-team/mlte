@@ -199,8 +199,9 @@ class ResourceMapper(ABC):
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
 
-    validators: CompositeValidator = CompositeValidator()
-    """CompositeValidator to handle validation of the resource."""
+    def __init__(self):
+        """CompositeValidator to handle validation of the resource."""
+        self.composite_validator: CompositeValidator = CompositeValidator()
 
     @abstractmethod
     def create(self, new_resource: Any, context: Any) -> Any:

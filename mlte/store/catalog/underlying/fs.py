@@ -90,6 +90,8 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     """Subfolder for entries."""
 
     def __init__(self, storage: FileSystemStorage) -> None:
+        super().__init__()
+
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
