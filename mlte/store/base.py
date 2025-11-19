@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, List, Optional, Protocol
 
-from mlte.store.cross_validator import CompositeValidator
+from mlte.store.validators.composite_validator import CompositeValidator
 from mlte.store.query import Query
 
 # -----------------------------------------------------------------------------

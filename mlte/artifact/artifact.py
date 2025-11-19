@@ -140,7 +140,7 @@ class Artifact(Serializable, abc.ABC):
             model = self.to_model()
 
             # Run validation
-            artifact_store.artifact_mapper.validators.validate_all()
+            artifact_store.artifact_mapper.composite_validator.validate_all(model)
 
             assert isinstance(
                 model, ArtifactModel

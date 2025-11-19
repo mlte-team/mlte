@@ -8,7 +8,7 @@ from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
-from mlte.store.cross_validator import CatalogEntryValidator
+from mlte.store.validators.validators import ArtifactCustomListValidator, ArtifactUserValidator, CatalogEntryValidator
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
@@ -135,8 +135,8 @@ def setup_stores(
         stores.add_catalog_store_from_uri(uri, id)
 
     # Set up validators
-    # with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store_session:
-    #     # artifact_store_session.artifact_mapper.validators.append(CatalogEntryValidator(artifact_store=stores.artifact_store, custom_list_store=stores.custom_list_store))
-    #     ...
+    with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store_session:
+        artifact_store_session.artifact_mapper.composite_validator.validators.append(ArtifactUserValidator(user_store=stores.user_store))
+        artifact_store_session.artifact_mapper.composite_validator.validators.append(ArtifactCustomListValidator(custom_list_store=stores.custom_list_store))
 
     return stores
