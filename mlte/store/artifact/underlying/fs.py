@@ -41,6 +41,7 @@ class LocalFileSystemStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
+        # TODO: This is the problem line causing things to reinstantiate and then lose my validators
         return LocalFileSystemStoreSession(storage=self.storage)
 
 

@@ -1,6 +1,7 @@
 """Collection of inter store validation implementations."""
 
 from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 from mlte.catalog.model import CatalogEntry
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.custom_list.store_session import ManagedCustomListSession
@@ -45,12 +46,15 @@ class ArtifactCustomListValidator(CrossValidator):
             raise RuntimeError("Artifact custom list validator's custom list store has not been set.")
         
         with ManagedCustomListSession(self.custom_list_store.session()) as session:
-            for requirement in new_artifact.body.system_requirements:
-                if requirement.quality != "":
-                    try:
-                        session.custom_list_entry_mapper.read(requirement.quality, CustomListName.QUALITY_ATTRIBUTES)
-                    except ErrorNotFound:
-                        raise RuntimeError(f"Artifact quality attribute validation failure. Custom list entry: {requirement.quality} not found.")
+            if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+                for requirement in new_artifact.body.system_requirements:
+                    # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
+                    #   if it is allowed to be empty, this will have to not error for the frontend
+                    if requirement.quality != "":
+                        try:
+                            session.custom_list_entry_mapper.read(requirement.quality, CustomListName.QUALITY_ATTRIBUTES)
+                        except ErrorNotFound:
+                            raise RuntimeError(f"Artifact quality attribute validation failure. Custom list entry: {requirement.quality} not found.")
 
 
 class CatalogEntryValidator(CrossValidator):
@@ -67,5 +71,4 @@ class CatalogEntryValidator(CrossValidator):
     def validate(self, new_entry: CatalogEntry) -> CatalogEntry:
         if self.custom_list_store == None:
             raise RuntimeError("Catalog custom list validator's custom list store has not been set.")
-
-        print("CATALOGENTRYVALIDATOR")
+        ...
