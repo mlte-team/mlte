@@ -1,4 +1,4 @@
-""" """
+"""Collection of inter store validation implementations."""
 
 from mlte.artifact.model import ArtifactModel
 from mlte.catalog.model import CatalogEntry

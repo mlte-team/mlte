@@ -1,4 +1,4 @@
-""" """
+"""Class and interface definitions for top level validators."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ class CompositeValidator:
     def __init__(self):
         """Initialize a CompositeValidator instance."""
 
-        self.validators = []
+        self.validators: CrossValidator = []
         """List of validators to execute."""
 
     def validate_all(self, new_resource: any) -> None:
@@ -22,8 +22,9 @@ class CompositeValidator:
 
 
 class CrossValidator(ABC):
-    """"""
+    """Interface to define a CrossValidator that validates store entries against data in separate stores."""
 
+    # TODO: These are any to avoid circular imports, can this be added somehow?
     def __init__(
         self,
         artifact_store: any = None,
