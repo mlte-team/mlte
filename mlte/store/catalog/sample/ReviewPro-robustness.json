@@ -2,18 +2,18 @@
     "header": {
         "identifier": "ReviewPro-robustness",
         "creator": "admin",
-        "created": 1762969422,
+        "created": 1763413890,
         "updater": null,
-        "updated": 1762969422,
+        "updated": 1763413890,
         "catalog_id": "sample"
     },
     "tags": [
         "LLM",
         "content generation"
     ],
-    "quality_attribute": "robustness",
+    "quality_attribute": "Robustness",
     "code": "# ## 2e. Evidence - Robustness QAS Measurements\n# \n# Evidence collected in this section checks for the robustness QAS scenario defined in the previous step. Note that some functions and data will be loaded from external Python files.\n# \n# The cell below must contain JSON data about this evidence that will be used to automatically populate the sample test catalog.\n\n# ### Initialize MLTE Context\n# \n# MLTE contains a global context that manages the currently active _session_. Initializing the context tells MLTE how to store all of the artifacts that it produces. This import will also set up global constants related to folders and model to use.\n\n# Sets up context for the model being used, sets up constants related to folders and model data to be used.\nfrom session import *\n\n\n# ### Set up test case from scenario\n\nfrom mlte.negotiation.artifact import NegotiationCard\n\ncard = NegotiationCard.load()\nqa = 4\nprint(card.quality_scenarios[qa])\n\n\n# ### A Specific test case generated from the scenario:\n# \n# **Data and Data Source:**\tThe original test data set can be used. The test data will be augmented by altering entries by changing case, adding white space padding and removing punctuation.\n# \n# **Measurement and Condition:**\tThe LLM output will be analyzed to determine if the scores generated to the prompts series, which are different only by the removal or addition of whitespace and punction as detailed above, are the same 95% of the time.\n# \n# **Context:**\tNormal Operation\n\n# ### Gather evidence\n\n# import necessary packages\nimport pandas as pd\n\n\n# Read the files with with the necessary input data and LLM evaluation results\ninput_df = pd.read_csv(\n    os.path.join(DATASETS_DIR, \\\"2e_llm_input_robustness.csv\\\")\n)\nresponse_df = pd.read_csv(\n    os.path.join(DATASETS_DIR, \\\"2e_llm_output_robustness.csv\\\")\n)\nresponse_df.drop(columns=[\\\"Unnamed: 0\\\"], inplace=True)\ninput_df.drop(columns=[\\\"Unnamed: 0\\\"], inplace=True)\n\nresponse_df\n\n\n# ### Save evidence to the specicified scenario\n\n# evaluate if all results are the same\ndef all_scores_equal(response_df):\n    mx = 0\n    for s in response_df.extractedOverallRating.unique():\n        n = len(response_df[response_df.extractedOverallRating == s])\n        if n > mx:\n            mx = n\n    max_val_pcent = mx / len(response_df)\n\n    return float(max_val_pcent)\n\n\nmax_val_pcent = all_scores_equal(response_df)\nif max_val_pcent >= 0.95:\n    print(\n        f\\\"test passes with {max_val_pcent} of evaluation scores being the same\\\"\n    )\nelse:\n    print(f\\\"test fails with only {max_val_pcent} being the same\\\")\n\n\nfrom mlte.evidence.types.real import Real\nfrom mlte.measurement.external_measurement import ExternalMeasurement\n\n# Evaluate accuracy, identifier has to be the same one defined in the TestSuite.\nrepeatable_measurement = ExternalMeasurement(\n    \\\"LLM is robsust to format\\\", Real, all_scores_equal\n)\nrepeated_pcent = repeatable_measurement.evaluate(response_df)\n\n# Inspect value\nprint(repeated_pcent)\n\n# Save to artifact store\nrepeated_pcent.save(force=True)\n\n\n\n",
-    "description": "evaluation on if the model results are influenced by addition or removal of whitespace and punction in the prompt or supporting information",
+    "description": "Evaluation on if the model results are influenced by addition or removal of whitespace and punction in the prompt or supporting information",
     "inputs": "A request for a review in a crafted prompt, with the supporting material (employee statement, goals and objectives, and manager comments) with whitespace and punction improperly both added and removed",
-    "output": "generated reviews, with the evaluation scores extracted and compared"
+    "output": "Generated reviews, with the evaluation scores extracted and compared"
 }
