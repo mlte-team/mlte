@@ -13,7 +13,7 @@ from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.composite_validator import CompositeValidator
-from mlte.store.validators.validators import (
+from mlte.store.validators.cross_validators import (
     ArtifactCustomListValidator,
     ArtifactUserValidator,
     CatalogCustomListValidator,
