@@ -13,6 +13,7 @@ from mlte.store.catalog.store_session import (
     CatalogStoreSession,
 )
 from mlte.store.common.storage import Storage
+from mlte.store.validators.composite_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # Memory Store
@@ -35,7 +36,7 @@ class InMemoryCatalogStore(CatalogStore):
         :return: The session handle
         """
         return InMemoryCatalogStoreSession(
-            storage=self.storage, read_only=self.read_only
+            storage=self.storage, validators=self.validators, read_only=self.read_only
         )
 
     def clone(self) -> InMemoryCatalogStore:
@@ -66,7 +67,7 @@ class InMemoryCatalogStoreSession(CatalogStoreSession):
     """An in-memory implementation of the MLTE user store."""
 
     def __init__(
-        self, *, storage: MemoryCatalogStorage, read_only: bool = False
+        self, *, storage: MemoryCatalogStorage, validators: CompositeValidator, read_only: bool = False
     ) -> None:
         self.storage = storage
         """The storage."""
@@ -74,7 +75,7 @@ class InMemoryCatalogStoreSession(CatalogStoreSession):
         self.read_only = read_only
         """Whether this is read only or not."""
 
-        self.entry_mapper = InMemoryCatalogEntryMapper(storage=storage)
+        self.entry_mapper = InMemoryCatalogEntryMapper(storage=storage, validators=validators)
 
     def close(self) -> None:
         """Close the session."""
@@ -85,25 +86,29 @@ class InMemoryCatalogStoreSession(CatalogStoreSession):
 class InMemoryCatalogEntryMapper(CatalogEntryMapper):
     """In-memory mapper for the catalog resource."""
 
-    def __init__(self, *, storage: MemoryCatalogStorage) -> None:
+    def __init__(self, *, storage: MemoryCatalogStorage, validators: CompositeValidator) -> None:
         super().__init__()
 
         self.storage = storage
         """A reference to underlying storage."""
 
-    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        if entry.header.identifier in self.storage.entries:
-            raise errors.ErrorAlreadyExists(f"Entry {entry.header.identifier}")
+        self.validators: CompositeValidator = validators
 
-        self.storage.entries[entry.header.identifier] = entry
-        return entry
+    def create(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+        new_entry = self.validators.validate_all(new_entry)
+        if new_entry.header.identifier in self.storage.entries:
+            raise errors.ErrorAlreadyExists(f"Entry {new_entry.header.identifier}")
 
-    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        if entry.header.identifier not in self.storage.entries:
-            raise errors.ErrorNotFound(f"Entry {entry.header.identifier}")
+        self.storage.entries[new_entry.header.identifier] = new_entry
+        return new_entry
 
-        self.storage.entries[entry.header.identifier] = entry
-        return entry
+    def edit(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+        new_entry = self.validators.validate_all(new_entry)
+        if new_entry.header.identifier not in self.storage.entries:
+            raise errors.ErrorNotFound(f"Entry {new_entry.header.identifier}")
+
+        self.storage.entries[new_entry.header.identifier] = new_entry
+        return new_entry
 
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         if entry_id not in self.storage.entries:

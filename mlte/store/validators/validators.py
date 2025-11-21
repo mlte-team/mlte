@@ -29,13 +29,14 @@ class ArtifactUserValidator(CrossValidator):
         if self.user_store == None:
             raise RuntimeError("Artifact user validator's user store has not been set.")
         
-        with ManagedUserSession(self.user_store.session()) as session:
+        print("art user valid")
+        if new_artifact.header.creator:
+            with ManagedUserSession(self.user_store.session()) as session:
             # TODO: Make sure this is always valid, it is what we do in the simple demo, maybe some other places
-            if new_artifact.header.creator:
                 try:
                     session.user_mapper.read(new_artifact.header.creator)
                 except ErrorNotFound:
-                    raise RuntimeError(f"Artifact creator validation failure. User: {new_artifact.header.creator} not found.")
+                    raise RuntimeError(f"Artifact creator validation failure. User: {new_artifact.header.creator} not found. For artifact {new_artifact.header.identifier}.")
         
         return new_artifact
 
@@ -54,8 +55,9 @@ class ArtifactCustomListValidator(CrossValidator):
         if self.custom_list_store == None:
             raise RuntimeError("Artifact custom list validator's custom list store has not been set.")
         
-        with ManagedCustomListSession(self.custom_list_store.session()) as session:
-            if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+        print("art cl valid")
+        if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+            with ManagedCustomListSession(self.custom_list_store.session()) as session:
                 for requirement in new_artifact.body.system_requirements:
                     # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
                     #   if it is allowed to be empty, this will have to not error for the frontend
@@ -63,7 +65,7 @@ class ArtifactCustomListValidator(CrossValidator):
                         try:
                             session.custom_list_entry_mapper.read(requirement.quality, CustomListName.QUALITY_ATTRIBUTES)
                         except ErrorNotFound:
-                            raise RuntimeError(f"Artifact quality attribute validation failure. Custom list entry: {requirement.quality} not found.")
+                            raise RuntimeError(f"Artifact quality attribute validation failure. Custom list entry: {requirement.quality} not found. For artifact {new_artifact.header.identifier}.")
 
         return new_artifact
 
@@ -82,16 +84,22 @@ class CatalogUserValidator(CrossValidator):
         if self.user_store == None:
             raise RuntimeError("Catalog user validator's user store has not been set.")
         
+        print("cat user valid")
+        # print(new_entry)
+        # print(new_entry.header.creator)
+        # print(new_entry.header.updater)
         with ManagedUserSession(self.user_store.session()) as session:
             try:
                 session.user_mapper.read(new_entry.header.creator)
             except ErrorNotFound:
-                raise RuntimeError(f"Catalog creator validation failure. User: {new_entry.header.creator} not found.")
+                raise RuntimeError(f"Catalog creator validation failure. User: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}.")
             
-            try:
-                session.user_mapper.read(new_entry.header.updater)
-            except ErrorNotFound:
-                raise RuntimeError(f"Catalog creator validation failure. User: {new_entry.header.creator} not found.")
+            # TODO: Ensure this is valid, this is how we start catalog entries
+            if new_entry.header.updater != None and new_entry.header.updater != "":
+                try:
+                    session.user_mapper.read(new_entry.header.updater)
+                except ErrorNotFound:
+                    raise RuntimeError(f"Catalog creator validation failure. User: {new_entry.header.updater} not found. For catalog entry {new_entry.header.identifier}.")
         
         return new_entry
 
@@ -110,10 +118,14 @@ class CatalogCustomListValidator(CrossValidator):
         if self.custom_list_store == None:
             raise RuntimeError("Catalog custom list validator's custom list store has not been set.")
         
-        with ManagedCustomListSession(self.custom_list_store.session()) as session:
-            try:
-                session.custom_list_entry_mapper.read(new_entry.quality_attribute, CustomListName.QUALITY_ATTRIBUTES)
-            except ErrorNotFound:
-                raise RuntimeError(f"Catalog entry quality attribute validation failure. Custom list entry: {new_entry.quality_attribute} not found.")
+        print("cat cl valid")
+        # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
+        #   if it is allowed to be empty, this will have to not error for the frontend
+        if new_entry.quality_attribute != "":
+            with ManagedCustomListSession(self.custom_list_store.session()) as session:
+                try:
+                    session.custom_list_entry_mapper.read(new_entry.quality_attribute, CustomListName.QUALITY_ATTRIBUTES)
+                except ErrorNotFound:
+                    raise RuntimeError(f"Catalog entry quality attribute validation failure. Custom list entry: {new_entry.quality_attribute} not found. For catalog entry {new_entry.header.identifier}.")
 
         return new_entry

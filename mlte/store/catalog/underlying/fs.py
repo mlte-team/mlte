@@ -104,12 +104,12 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         """Set the subfolder for this resource."""
 
     def create(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        # self.validators.validate_all(new_entry)
+        new_entry = self.validators.validate_all(new_entry)
         self.storage.ensure_resource_does_not_exist(new_entry.header.identifier)
         return self._write_entry(new_entry)
 
     def edit(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        # self.validators.validate_all(new_entry)
+        new_entry = self.validators.validate_all(new_entry)
         self.storage.ensure_resource_exists(new_entry.header.identifier)
         return self._write_entry(new_entry)
 

@@ -15,6 +15,7 @@ from mlte.store.catalog.store_session import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )
+from mlte.store.validators.composite_validator import CompositeValidator
 
 
 class SampleCatalog:
@@ -26,6 +27,7 @@ class SampleCatalog:
     @staticmethod
     def setup_sample_catalog(
         stores_uri: str,
+        validators: CompositeValidator,
     ) -> CatalogStore:
         """
         Sets up the sample catalog.
@@ -40,6 +42,7 @@ class SampleCatalog:
         catalog = create_catalog_store(
             parsed_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
         )
+        catalog.set_validators(validators)
 
         # Ensure the catalog is always reset to its initial state, and mark it as read only.
         SampleCatalog.reset_catalog(catalog)
