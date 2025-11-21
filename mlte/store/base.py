@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, List, Optional, Protocol
 
-from mlte.store.validators.composite_validator import CompositeValidator
 from mlte.store.query import Query
+from mlte.store.validators.composite_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -153,7 +153,7 @@ class Store:
         self.uri = uri
         """The parsed store URI."""
 
-        self.validators: CompositeValidator = None
+        self.validators: CompositeValidator = CompositeValidator()
         """The inter store validators for this store."""
 
     def set_validators(self, validators: CompositeValidator):

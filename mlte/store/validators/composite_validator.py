@@ -9,30 +9,32 @@ from typing import Any
 class CompositeValidator:
     """Class to compose CrossValidators."""
 
-    def __init__(self, validators: CrossValidator = []):
+    def __init__(self, validators: list[CrossValidator] = []):
         """Initialize a CompositeValidator instance."""
 
-        self.validators: CrossValidator = validators
+        self.validators: list[CrossValidator] = validators
         """List of validators to execute."""
 
-    def validate_all(self, new_resource: any) -> None:
+    def validate_all(self, new_resource: Any):
         """Validate all validators."""
         if self.validators:
             for validator in self.validators:
                 validator.validate(new_resource)
         else:
-            print("Validators still none, figure out how to make catalog validators work.")
+            print(
+                "Validators still none, figure out how to make catalog validators work."
+            )
 
 
 class CrossValidator(ABC):
     """Interface to define a CrossValidator that validates store entries against data in separate stores."""
 
-    # TODO: These are any to avoid circular imports, can this be added somehow?
+    # TODO: These are Any to avoid circular imports, can this be added somehow?
     def __init__(
         self,
-        artifact_store: any = None,
-        user_store: any = None,
-        custom_list_store: any = None,
+        artifact_store: Any = None,
+        user_store: Any = None,
+        custom_list_store: Any = None,
     ):
         """
         Initialize a CrossValidator instance.

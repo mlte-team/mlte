@@ -48,7 +48,9 @@ class FileSystemCatalogStore(CatalogStore):
         :return: The session handle
         """
         return FileSystemCatalogStoreSession(
-            storage=self.storage, validators=self.validators, read_only=self.read_only,
+            storage=self.storage,
+            validators=self.validators,
+            read_only=self.read_only,
         )
 
 
@@ -61,7 +63,10 @@ class FileSystemCatalogStoreSession(CatalogStoreSession):
     """A local file-system implementation of the MLTE catalog store."""
 
     def __init__(
-        self, storage: FileSystemStorage, validators: CompositeValidator, read_only: bool = False, 
+        self,
+        storage: FileSystemStorage,
+        validators: CompositeValidator,
+        read_only: bool = False,
     ) -> None:
         self.storage = storage
         """The storage."""
@@ -69,7 +74,9 @@ class FileSystemCatalogStoreSession(CatalogStoreSession):
         self.read_only = read_only
         """Whether this is read only or not."""
 
-        self.entry_mapper = FileSystemCatalogEntryMapper(storage=storage, validators=validators)
+        self.entry_mapper = FileSystemCatalogEntryMapper(
+            storage=storage, validators=validators
+        )
         """The mapper to entries CRUD."""
 
     def close(self) -> None:
@@ -89,7 +96,9 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     ENTRIES_FOLDER = "entries"
     """Subfolder for entries."""
 
-    def __init__(self, storage: FileSystemStorage, validators: CompositeValidator) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, validators: CompositeValidator
+    ) -> None:
         super().__init__()
 
         self.storage = storage.clone()
@@ -103,13 +112,17 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         )
         """Set the subfolder for this resource."""
 
-    def create(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        new_entry = self.validators.validate_all(new_entry)
+    def create(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
+        self.validators.validate_all(new_entry)
         self.storage.ensure_resource_does_not_exist(new_entry.header.identifier)
         return self._write_entry(new_entry)
 
-    def edit(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        new_entry = self.validators.validate_all(new_entry)
+    def edit(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
+        self.validators.validate_all(new_entry)
         self.storage.ensure_resource_exists(new_entry.header.identifier)
         return self._write_entry(new_entry)
 

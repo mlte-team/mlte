@@ -95,7 +95,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self.storage = storage
         """The HTTP storage access."""
 
-    def create(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+    def create(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
         new_entry = self._convert_to_local(new_entry)
@@ -107,7 +109,9 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
-    def edit(self, new_entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+    def edit(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
         local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
         edited_entry = self._convert_to_local(new_entry)

@@ -46,7 +46,7 @@ class RelationalDBArtifactStore(ArtifactStore):
     """A DB implementation of the MLTE artifact store."""
 
     def __init__(self, uri, **kwargs):
-        super().__init__(self, uri=uri)
+        super().__init__(uri=uri)
 
         self.storage = RDBStorage(
             uri,
@@ -61,7 +61,9 @@ class RelationalDBArtifactStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBArtifactStoreSession(storage=self.storage, validators=self.validators)
+        return RelationalDBArtifactStoreSession(
+            storage=self.storage, validators=self.validators
+        )
 
 
 def init_artifact_store_tables(engine: Engine):
@@ -81,7 +83,9 @@ def init_artifact_store_tables(engine: Engine):
 class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     """A relational DB implementation of the MLTE artifact store session."""
 
-    def __init__(self, storage: RDBStorage, validators: CompositeValidator) -> None:
+    def __init__(
+        self, storage: RDBStorage, validators: CompositeValidator
+    ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -91,7 +95,9 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         self.model_mapper = RDBSModelMapper(storage=storage)
         """The mapper to model CRUD."""
 
-        self.artifact_mapper = RDBSArtifactMapper(storage=storage, validators=validators)
+        self.artifact_mapper = RDBSArtifactMapper(
+            storage=storage, validators=validators
+        )
         """The mapper to artifact CRUD."""
 
     def close(self) -> None:
@@ -214,7 +220,9 @@ class RDBSVersionMapper(VersionMapper):
 class RDBSArtifactMapper(ArtifactMapper):
     """In-memory mapper for the version resource."""
 
-    def __init__(self, storage: RDBStorage, validators: CompositeValidator) -> None:
+    def __init__(
+        self, storage: RDBStorage, validators: CompositeValidator
+    ) -> None:
         super().__init__()
 
         self.storage = storage
