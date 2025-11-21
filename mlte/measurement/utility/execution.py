@@ -1,8 +1,4 @@
-"""
-mlte/measurement/utility/execution.py
-
-Utilities for execution of measurements.
-"""
+"""Utilities for execution of measurements."""
 
 import concurrent.futures
 from typing import Any, Callable, List

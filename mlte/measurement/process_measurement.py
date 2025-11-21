@@ -1,8 +1,4 @@
-"""
-mlte/measurement/process_measurement.py
-
-Base class for measurement of external processes asynchronously.
-"""
+"""Base class for measurement of external processes asynchronously."""
 
 from __future__ import annotations
 

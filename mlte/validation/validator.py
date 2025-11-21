@@ -1,8 +1,4 @@
-"""
-mlte/validation/validator.py
-
-The validation base class.
-"""
+"""The validation base class."""
 
 from __future__ import annotations
 

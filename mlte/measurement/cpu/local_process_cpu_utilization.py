@@ -1,8 +1,4 @@
-"""
-mlte/measurement/cpu/local_process_cpu_utilization.py
-
-CPU utilization measurement for local training processes.
-"""
+"""CPU utilization measurement for local training processes."""
 
 from __future__ import annotations
 

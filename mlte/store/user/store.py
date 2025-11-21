@@ -1,8 +1,4 @@
-"""
-mlte/store/user/store.py
-
-MLTE user store interface implementation.
-"""
+"""MLTE user store interface implementation."""
 
 from __future__ import annotations
 

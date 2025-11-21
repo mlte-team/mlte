@@ -1,8 +1,4 @@
-"""
-mlte/model/api/serialization_error.py
-
-Exception used for serialization issues.
-"""
+"""Exception used for serialization issues."""
 
 from __future__ import annotations
 

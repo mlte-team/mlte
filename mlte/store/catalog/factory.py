@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/factory.py
-
-Top-level functions for catalog store creation.
-"""
+"""Top-level functions for catalog store creation."""
 
 from typing import Optional
 

@@ -1,8 +1,4 @@
-"""
-mlte/model/base_model.py
-
-Base model implementation for all MLTE models.
-"""
+"""Base model implementation for all MLTE models."""
 
 from __future__ import annotations
 

@@ -1,6 +1,4 @@
 """
-mlte/measurement/memory/nvidia_gpu_memory_utilization.py
-
 Memory utilization measurement for gpu processes.
 
 It relies on the pynvml package for status. We dynamically import it, so that we can can return useful

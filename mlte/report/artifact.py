@@ -1,8 +1,4 @@
-"""
-mlte/report/artifact.py
-
-Artifact implementation for MLTE report.
-"""
+"""Artifact implementation for MLTE report."""
 
 from __future__ import annotations
 

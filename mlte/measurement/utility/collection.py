@@ -1,8 +1,4 @@
-"""
-mlte/measurement/utility/collection.py
-
-Utilities related to measurement collection.
-"""
+"""Utilities related to measurement collection."""
 
 from typing import Any, Iterable, List, Union
 

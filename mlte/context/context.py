@@ -1,6 +1,4 @@
 """
-mlte/context/context.py
-
 MLTE artifact context definition.
 
 The MLTE artifact context defines the information necessary to

@@ -1,8 +1,4 @@
-"""
-mlte/context/model.py
-
-Model implementation for MLTE context information.
-"""
+"""Model implementation for MLTE context information."""
 
 from typing import List
 

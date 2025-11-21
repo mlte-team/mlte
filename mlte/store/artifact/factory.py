@@ -1,8 +1,4 @@
-"""
-mlte/store/artifact/factory.py
-
-Top-level functions for artifact store creation.
-"""
+"""Top-level functions for artifact store creation."""
 
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.underlying.fs import LocalFileSystemStore

@@ -1,8 +1,4 @@
-"""
-mlte/backend/app_factory.py
-
-Web application factory.
-"""
+"""Web application factory."""
 
 from __future__ import annotations
 

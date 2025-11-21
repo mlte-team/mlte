@@ -1,8 +1,4 @@
-"""
-mlte/user/model.py
-
-Model implementation for a User.
-"""
+"""Model implementation for a User."""
 
 from __future__ import annotations
 

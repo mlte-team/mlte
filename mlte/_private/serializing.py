@@ -1,8 +1,4 @@
-"""
-mlte/_private/serializing.py
-
-Internal utilities for serializing code.
-"""
+"""Internal utilities for serializing code."""
 
 import base64
 import typing

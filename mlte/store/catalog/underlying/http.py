@@ -8,9 +8,9 @@ from typing import Any, List, Optional, OrderedDict, Tuple
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.common.http_clients import OAuthHttpClient
@@ -93,10 +93,12 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         self.storage = storage
         """The HTTP storage access."""
 
-    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+    def create(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(entry.header.identifier)
-        new_entry = self._convert_to_local(entry)
+        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
+        new_entry = self._convert_to_local(new_entry)
 
         response = self.storage.post(
             json=new_entry.to_json(), groups=_entry_group(local_catalog_id)
@@ -105,10 +107,12 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         local_entry = CatalogEntry(**response)
         return self._convert_to_remote(local_entry)
 
-    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+    def edit(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
         # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(entry.header.identifier)
-        edited_entry = self._convert_to_local(entry)
+        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
+        edited_entry = self._convert_to_local(new_entry)
 
         response = self.storage.put(
             json=edited_entry.to_json(), groups=_entry_group(local_catalog_id)

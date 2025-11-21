@@ -1,8 +1,4 @@
-"""
-mlte/store/underlying/http_clients.py
-
-HTTP clients that can be used by underlying stores to access remote HTTP stores.
-"""
+"""HTTP clients that can be used by underlying stores to access remote HTTP stores."""
 
 from __future__ import annotations
 

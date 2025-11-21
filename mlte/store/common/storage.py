@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/common/storage.py
-
-Base storage class.
-"""
+"""Base storage class."""
 
 from mlte.store.base import StoreURI
 

@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/token.py
-
-Token endpoint.
-"""
+"""Token endpoint."""
 
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm

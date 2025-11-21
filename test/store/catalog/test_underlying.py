@@ -1,8 +1,4 @@
-"""
-test/store/catalog/test_underlying.py
-
-Unit tests for the underlying catalog store implementations.
-"""
+"""Unit tests for the underlying catalog store implementations."""
 
 import pytest
 
@@ -12,7 +8,8 @@ from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
 )
-from mlte.store.catalog.store import CatalogStore, ManagedCatalogSession
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.query import Query
 from test.store.catalog.catalog_store_creators import (  # noqa
     create_fs_store,

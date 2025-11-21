@@ -1,6 +1,4 @@
-"""
-Unit tests for TestSuiteValidator functionality.
-"""
+"""Unit tests for TestSuiteValidator functionality."""
 
 from __future__ import annotations
 

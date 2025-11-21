@@ -1,8 +1,4 @@
-"""
-mlte/measurement/external_measurement.py
-
-Base class for measurements calculated by external functions.
-"""
+"""Base class for measurements calculated by external functions."""
 
 from __future__ import annotations
 

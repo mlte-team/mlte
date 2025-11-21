@@ -1,8 +1,4 @@
-"""
-mlte/frontend/config.py
-
-Configuration management for the frontend.
-"""
+"""Configuration management for the frontend."""
 
 from __future__ import annotations
 

@@ -151,6 +151,8 @@ class HTTPArtifactMapper(ArtifactMapper):
     """HTTP mapper for the artifact resource."""
 
     def __init__(self, storage: HttpStorage) -> None:
+        super().__init__()
+
         self.storage = storage
         """The HTTP storage access."""
 

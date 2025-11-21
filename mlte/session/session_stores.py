@@ -4,6 +4,7 @@ from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
@@ -11,6 +12,13 @@ from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
+from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validators import (
+    ArtifactCustomListValidator,
+    ArtifactUserValidator,
+    CatalogCustomListValidator,
+    CatalogUserValidator,
+)
 
 
 class SessionStores:
@@ -111,8 +119,20 @@ def setup_stores(
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
     stores.set_custom_list_store(custom_list_store)
 
+    # Setup catalog store validators
+    catalog_store_validators = CompositeValidator(
+        [
+            CatalogUserValidator(user_store=stores.user_store),
+            CatalogCustomListValidator(
+                custom_list_store=stores.custom_list_store
+            ),
+        ]
+    )
+
     # Catalogs: first add the sample catalog store.
-    sample_catalog = SampleCatalog.setup_sample_catalog(stores_uri)
+    sample_catalog = SampleCatalog.setup_sample_catalog(
+        stores_uri, catalog_store_validators
+    )
     stores.add_catalog_store(
         store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
     )
@@ -131,5 +151,27 @@ def setup_stores(
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():
         stores.add_catalog_store_from_uri(uri, id)
+
+    # Setup artifact store validators
+    artifact_store_validators = CompositeValidator(
+        [
+            ArtifactUserValidator(user_store=stores.user_store),
+            ArtifactCustomListValidator(
+                custom_list_store=stores.custom_list_store
+            ),
+        ]
+    )
+    stores.artifact_store.set_validators(artifact_store_validators)
+
+    # Add catalog store validators to stores
+    for uri, catalog_store in stores.catalog_stores.catalogs.items():
+        if uri == SessionStores.LOCAL_CATALOG_STORE_ID:
+            catalog_store.set_validators(catalog_store_validators)
+        # It is added to the sample catalog when it is setup initially
+        elif (
+            uri != SampleCatalog.SAMPLE_CATALOG_ID
+            and StoreURI.from_string(uri).type != StoreType.REMOTE_HTTP
+        ):
+            catalog_store.set_validators(catalog_store_validators)
 
     return stores

@@ -1,6 +1,4 @@
 """
-mlte/artifact/type.py
-
 MLTE artifact type implementation.
 
 The artifact type enumeration is partitioned from the artifact model

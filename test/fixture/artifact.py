@@ -197,7 +197,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
         ),
         system_requirements=[
             QASDescriptor(
-                quality="fairness",
+                quality="Fairness",
                 stimulus="new data arrives",
                 source="from new area",
                 environment="normal time",
@@ -205,7 +205,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
                 measure="less than 1 percent difference",
             ),
             QASDescriptor(
-                quality="fairness",
+                quality="Fairness",
                 stimulus="new data arrives",
                 source="from new area",
                 environment="normal time",

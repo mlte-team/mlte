@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/endpoints/group.py
-
-Group CRUD endpoint.
-"""
+"""Group CRUD endpoint."""
 
 from __future__ import annotations
 

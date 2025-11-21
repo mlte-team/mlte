@@ -1,8 +1,4 @@
-"""
-mlte/measurement/memory/local_process_memory_utilization.py
-
-Memory utilization measurement for local training processes.
-"""
+"""Memory utilization measurement for local training processes."""
 
 from __future__ import annotations
 

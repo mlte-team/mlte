@@ -1,8 +1,4 @@
-"""
-mlte/validation/model.py
-
-Model implementation for the TestResults artifact.
-"""
+"""Model implementation for the TestResults artifact."""
 
 from typing import Literal, Optional
 

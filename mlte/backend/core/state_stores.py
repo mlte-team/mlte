@@ -1,8 +1,4 @@
-"""
-mlte/backend/core/state_stores.py
-
-Managed store sessions obtained from the global state context.
-"""
+"""Managed store sessions obtained from the global state context."""
 
 from contextlib import contextmanager
 from typing import Generator

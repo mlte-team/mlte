@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/auth/authorization.py
-
-Setup of OAuth based authorization checks.
-"""
+"""Setup of OAuth based authorization checks."""
 
 import logging
 from json import JSONDecodeError

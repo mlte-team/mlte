@@ -1,8 +1,4 @@
-"""
-mlte/measurement/storage/local_object_size.py
-
-Storage capacity measurement for locally-stored objects.
-"""
+"""Storage capacity measurement for locally-stored objects."""
 
 import os
 from typing import Optional

@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/codes.py
-
-Status codes for MLTE backend.
-"""
+"""Status codes for MLTE backend."""
 
 OK = 200
 """HTTP 'OK'"""

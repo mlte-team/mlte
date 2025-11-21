@@ -1,8 +1,4 @@
-"""
-mlte/store/api/endpoints/health.py
-
-Generic health check endpoint.
-"""
+"""Generic health check endpoint."""
 
 from fastapi import APIRouter
 
