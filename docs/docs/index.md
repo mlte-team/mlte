@@ -42,7 +42,7 @@ In SDMT, teams focus on ensuring that the model fulfills the larger set of syste
 `TestCase`s are artifacts that define metrics, measurement methods, and passing conditions. This allows teams to encode their requirements to be captured throughout the model development process.
 
 ## 7. Test Catalog
-The `MLTE` Test Catalog contains reusable — local or organizational — examples of test cases sorted by quality attribute. Model developers can use the catalog to find examples of tests, similar to looking for code examples on StackOverflow. Model developers can also contribute test code back to the Test Catalog so that it can be used by others.
+The `MLTE` [Test Catalog](test_catalog.md) contains reusable — local or organizational — examples of test cases sorted by quality attribute. Model developers can use the catalog to find examples of tests, similar to looking for code examples on StackOverflow. Model developers can also contribute test code back to the Test Catalog so that it can be used by others.
 
 ## 8. Testing Evidence
 Artifacts are collected throughout the testing process when tests are executed, and then they are stored to provide a body of evidence that a model meets all its requirements. 

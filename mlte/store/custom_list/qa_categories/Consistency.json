@@ -1,1 +1,5 @@
-{"name": "Consistency","description": "QAs related to producing consistent results over time.","parent": null}
+{
+    "name": "Consistency",
+    "description": "QAs related to producing consistent results over time.",
+    "parent": null
+}
