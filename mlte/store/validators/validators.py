@@ -1,11 +1,13 @@
 """Collection of inter store validation implementations."""
 
+import typing
 from typing import Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.artifact.type import ArtifactType
 from mlte.catalog.model import CatalogEntry
 from mlte.custom_list.custom_list_names import CustomListName
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
@@ -65,10 +67,14 @@ class ArtifactCustomListValidator(CrossValidator):
             self.custom_list_store.session()
         ) as session:
             if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
-                for requirement in new_artifact.body.system_requirements:
+                card = typing.cast(NegotiationCardModel, new_artifact.body)
+                for requirement in card.system_requirements:
                     # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
                     #   if it is allowed to be empty, this will have to not error for the frontend
-                    if requirement.quality != "":
+                    if (
+                        requirement.quality != ""
+                        and requirement.quality is not None
+                    ):
                         try:
                             session.custom_list_entry_mapper.read(
                                 requirement.quality,
@@ -98,12 +104,13 @@ class CatalogUserValidator(CrossValidator):
             )
 
         with ManagedUserSession(self.user_store.session()) as session:
-            try:
-                session.user_mapper.read(new_entry.header.creator)
-            except ErrorNotFound:
-                raise RuntimeError(
-                    f"Catalog creator validation failure. User: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
-                )
+            if new_entry.header.creator is not None:
+                try:
+                    session.user_mapper.read(new_entry.header.creator)
+                except ErrorNotFound:
+                    raise RuntimeError(
+                        f"Catalog creator validation failure. User: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
+                    )
 
             # TODO: Ensure this is valid, this is how we start catalog entries
             if (
@@ -116,8 +123,6 @@ class CatalogUserValidator(CrossValidator):
                     raise RuntimeError(
                         f"Catalog creator validation failure. User: {new_entry.header.updater} not found. For catalog entry {new_entry.header.identifier}."
                     )
-
-        return new_entry
 
 
 class CatalogCustomListValidator(CrossValidator):

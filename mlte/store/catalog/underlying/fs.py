@@ -99,13 +99,10 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     def __init__(
         self, storage: FileSystemStorage, validators: CompositeValidator
     ) -> None:
-        super().__init__()
+        super().__init__(validators=validators)
 
         self.storage = storage.clone()
         """A reference to underlying storage."""
-
-        self.validators: CompositeValidator = validators
-        """A reference to the store validators."""
 
         self.storage.setup_base_path(
             Path(self.storage.sub_folder, self.ENTRIES_FOLDER)

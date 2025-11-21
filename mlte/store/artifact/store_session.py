@@ -88,9 +88,6 @@ class VersionMapper(ResourceMapper):
 class ArtifactMapper(ResourceMapper):
     """An interface for mapping CRUD actions to artifacts."""
 
-    def __init__(self) -> None:
-        super().__init__()
-
     def create(
         self, new_artifact: ArtifactModel, model_and_version: tuple[str, str]
     ) -> ArtifactModel:

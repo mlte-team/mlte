@@ -42,7 +42,6 @@ class LocalFileSystemStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        # TODO: This is the problem line causing things to reinstantiate and then lose my validators
         return LocalFileSystemStoreSession(
             storage=self.storage, validators=self.validators
         )
@@ -189,11 +188,10 @@ class FileSystemArtifactMapper(ArtifactMapper):
     def __init__(
         self, *, storage: FileSystemStorage, validators: CompositeValidator
     ) -> None:
+        super().__init__(validators=validators)
+
         self.storage = storage
         """A reference to underlying storage."""
-
-        self.validators: CompositeValidator = validators
-        """A reference to the store validators."""
 
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]

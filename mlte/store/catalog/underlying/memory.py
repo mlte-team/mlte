@@ -97,12 +97,10 @@ class InMemoryCatalogEntryMapper(CatalogEntryMapper):
     def __init__(
         self, *, storage: MemoryCatalogStorage, validators: CompositeValidator
     ) -> None:
-        super().__init__()
+        super().__init__(validators=validators)
 
         self.storage = storage
         """A reference to underlying storage."""
-
-        self.validators: CompositeValidator = validators
 
     def create(
         self, new_entry: CatalogEntry, context: Any = None

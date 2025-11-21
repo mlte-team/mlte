@@ -90,8 +90,6 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     COMPOSITE_ID_SEPARATOR = "--"
 
     def __init__(self, storage: HttpStorage) -> None:
-        super().__init__()
-
         self.storage = storage
         """The HTTP storage access."""
 

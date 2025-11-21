@@ -223,13 +223,10 @@ class RDBSArtifactMapper(ArtifactMapper):
     def __init__(
         self, storage: RDBStorage, validators: CompositeValidator
     ) -> None:
-        super().__init__()
+        super().__init__(validators=validators)
 
         self.storage = storage
         """A reference to underlying storage."""
-
-        self.validators: CompositeValidator = validators
-        """A reference to the store validators."""
 
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]
