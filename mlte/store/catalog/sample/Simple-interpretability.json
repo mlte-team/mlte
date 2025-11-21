@@ -11,9 +11,9 @@
         "decision tree",
         "classification"
     ],
-    "quality_attribute": "interpretability",
+    "quality_attribute": "Interpretability",
     "code": "def create_model_image(model_path):\n\t#Helper function to create an image of the decision tree model for this dataset.\n\tloaded_model = _load_model(model_path)\n\tiris = sk_datasets.load_iris(as_frame=True)\n\n\tfig = plt.figure(figsize=(12,12))\n\t_ = sk_tree.plot_tree(loaded_model, feature_names = iris.feature_names, class_names = iris.target_names, filled = True)\n\n\n\tfig.savefig(IMAGE_PATH_INTER)\n\n\treturn IMAGE_PATH_INTER\n",
     "description":"",
     "inputs": "A request for a review in a crafted prompt, with the supporting material (employee statement, goals and objectives, and manager comments)",
-    "output": "the time it takes for a review to be generated "
+    "output": "The time it takes for a review to be generated "
 }
