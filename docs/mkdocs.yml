@@ -24,10 +24,10 @@ plugins:
 nav:
   - Home: 'index.md'
   - 'Using MLTE': 'using_mlte.md'
+  - 'Test Catalog': 'test_catalog.md'
   - 'Development': 'development.md'
   - 'References':
     - 'MLTE Measurements': 'mlte_measurements.md'
     - 'MLTE Negotiation Card': 'negotiation_card.md'
     - 'New Demo Guide': 'new_demo.md'
-    - 'Resources': 'resources.md'
     - API Reference: reference/

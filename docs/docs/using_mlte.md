@@ -143,7 +143,7 @@ Alternatively, these two things can also be set by environment variables before 
 
 Now that you have the `MLTE` infrastructure set up, your team can hold a negotiation to discuss requirements with stakeholders. This should include system/product owners, software engineers, data scientists, and anyone else involved in the project. 
 
-- The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` UI as described [above](#frontend). You can also refer to its [contents](negotiation_card.md).
+- The negotiation facilitator should review the instructions and content of the Negotiation Card, which can be found in the `MLTE` UI as described [above](#frontend). You can also refer to its [contents](negotiation_card.md). Additionally, the `MLTE` [Test Catalog](test_catalog.md) contains examples of tests written for quality attributes that can assist in requirements definition.
 - The negotiation is a collaborative discussion where all involved parties aim to agree on project requirements and discuss technical details.
 - Once the negotiation is complete and the Negotiation Card is filled in as much as possible (it does not have to all be filled out at once), development can begin. The Negotiation Card gives the team a reference for project goals and allows them to plan out their development cycles appropriately.
 
