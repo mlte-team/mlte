@@ -16,6 +16,7 @@ from mlte.store.artifact.store_session import (
 )
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
+from mlte.store.validators.composite_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore
@@ -42,7 +43,7 @@ class LocalFileSystemStore(ArtifactStore):
         :return: The session handle
         """
         # TODO: This is the problem line causing things to reinstantiate and then lose my validators
-        return LocalFileSystemStoreSession(storage=self.storage)
+        return LocalFileSystemStoreSession(storage=self.storage, validators=self.validators)
 
 
 # -----------------------------------------------------------------------------
@@ -53,7 +54,7 @@ class LocalFileSystemStore(ArtifactStore):
 class LocalFileSystemStoreSession(ArtifactStoreSession):
     """A local file-system implementation of the MLTE artifact store."""
 
-    def __init__(self, storage: FileSystemStorage) -> None:
+    def __init__(self, storage: FileSystemStorage, validators: CompositeValidator) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -65,7 +66,7 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         )
         """The mapper to model CRUD."""
 
-        self.artifact_mapper = FileSystemArtifactMapper(storage=storage)
+        self.artifact_mapper = FileSystemArtifactMapper(storage=storage, validators=validators)
         """The mapper to artifact CRUD."""
 
     def close(self) -> None:
@@ -179,11 +180,12 @@ class FileSystemVersionMapper(VersionMapper):
 class FileSystemArtifactMapper(ArtifactMapper):
     """File storage mapper for the artifact resource."""
 
-    def __init__(self, *, storage: FileSystemStorage) -> None:
-        super().__init__()
-        
+    def __init__(self, *, storage: FileSystemStorage, validators: CompositeValidator) -> None:
         self.storage = storage
         """A reference to underlying storage."""
+
+        self.validators: CompositeValidator = validators
+        """A reference to the store validators."""
 
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]

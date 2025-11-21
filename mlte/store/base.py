@@ -153,6 +153,12 @@ class Store:
         self.uri = uri
         """The parsed store URI."""
 
+        self.validators: CompositeValidator = None
+        """The inter store validators for this store."""
+
+    def set_validators(self, validators: CompositeValidator):
+        self.validators = validators
+
     def session(self) -> StoreSession:
         """
         Return a session handle for the store instance.
@@ -198,10 +204,6 @@ class ResourceMapper(ABC):
 
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
-
-    def __init__(self):
-        """CompositeValidator to handle validation of the resource."""
-        self.composite_validator: CompositeValidator = CompositeValidator()
 
     @abstractmethod
     def create(self, new_resource: Any, context: Any) -> Any:

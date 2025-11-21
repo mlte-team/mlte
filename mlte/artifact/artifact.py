@@ -144,7 +144,7 @@ class Artifact(Serializable, abc.ABC):
             ), "Can't create object from non-ArtifactModel model."
 
             # Run validation
-            artifact_store.artifact_mapper.composite_validator.validate_all(model)
+            artifact_store.artifact_mapper.validators.validate_all(model)
 
             return artifact_store.artifact_mapper.write_artifact_with_header(
                 context.model,

@@ -8,7 +8,8 @@ from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
-from mlte.store.validators.validators import ArtifactCustomListValidator, ArtifactUserValidator, CatalogEntryValidator
+from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.validators import ArtifactCustomListValidator, ArtifactUserValidator, CatalogCustomListValidator, CatalogUserValidator
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
@@ -134,9 +135,18 @@ def setup_stores(
     for id, uri in catalog_uris.items():
         stores.add_catalog_store_from_uri(uri, id)
 
-    # Set up validators
-    with ManagedArtifactSession(stores.artifact_store.session()) as artifact_store:
-        artifact_store.artifact_mapper.composite_validator.validators.append(ArtifactUserValidator(user_store=stores.user_store))
-        artifact_store.artifact_mapper.composite_validator.validators.append(ArtifactCustomListValidator(custom_list_store=stores.custom_list_store))
+    # Setup artifact store validators
+    artifact_store_validators = CompositeValidator([
+        ArtifactUserValidator(user_store=stores.user_store),
+        ArtifactCustomListValidator(custom_list_store=stores.custom_list_store)
+    ])
+    artifact_store.set_validators(artifact_store_validators)
+
+    # Setup catalog store validators
+    catalog_store_validators = CompositeValidator([
+        CatalogUserValidator(user_store=stores.user_store),
+        CatalogCustomListValidator(custom_list_store=stores.custom_list_store)
+    ])
+    # TODO: Figure out how to add these to the right catalog stores
 
     return stores

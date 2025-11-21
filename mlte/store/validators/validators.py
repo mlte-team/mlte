@@ -30,10 +30,12 @@ class ArtifactUserValidator(CrossValidator):
             raise RuntimeError("Artifact user validator's user store has not been set.")
         
         with ManagedUserSession(self.user_store.session()) as session:
-            try:
-                session.user_mapper.read(new_artifact.header.creator)
-            except ErrorNotFound:
-                raise RuntimeError(f"Artifact creator validation failure. User: {new_artifact.header.creator} not found.")
+            # TODO: Make sure this is always valid, it is what we do in the simple demo, maybe some other places
+            if new_artifact.header.creator:
+                try:
+                    session.user_mapper.read(new_artifact.header.creator)
+                except ErrorNotFound:
+                    raise RuntimeError(f"Artifact creator validation failure. User: {new_artifact.header.creator} not found.")
         
         return new_artifact
 

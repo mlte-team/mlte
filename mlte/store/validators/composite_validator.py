@@ -9,16 +9,19 @@ from typing import Any
 class CompositeValidator:
     """Class to compose CrossValidators."""
 
-    def __init__(self):
+    def __init__(self, validators: CrossValidator = []):
         """Initialize a CompositeValidator instance."""
 
-        self.validators: CrossValidator = []
+        self.validators: CrossValidator = validators
         """List of validators to execute."""
 
     def validate_all(self, new_resource: any) -> None:
         """Validate all validators."""
-        for validator in self.validators:
-            validator.validate(new_resource)
+        if self.validators:
+            for validator in self.validators:
+                validator.validate(new_resource)
+        else:
+            print("Validators still none, figure out how to make catalog validators work.")
 
 
 class CrossValidator(ABC):
