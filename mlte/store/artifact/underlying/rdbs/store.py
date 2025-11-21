@@ -35,6 +35,7 @@ from mlte.store.artifact.underlying.rdbs.main_metadata import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
+from mlte.store.validators.composite_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # RelationalDBArtifactStore
@@ -45,7 +46,7 @@ class RelationalDBArtifactStore(ArtifactStore):
     """A DB implementation of the MLTE artifact store."""
 
     def __init__(self, uri, **kwargs):
-        ArtifactStore.__init__(self, uri=uri)
+        super().__init__(self, uri=uri)
 
         self.storage = RDBStorage(
             uri,
@@ -60,7 +61,7 @@ class RelationalDBArtifactStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return RelationalDBArtifactStoreSession(storage=self.storage)
+        return RelationalDBArtifactStoreSession(storage=self.storage, validators=self.validators)
 
 
 def init_artifact_store_tables(engine: Engine):
@@ -80,7 +81,7 @@ def init_artifact_store_tables(engine: Engine):
 class RelationalDBArtifactStoreSession(ArtifactStoreSession):
     """A relational DB implementation of the MLTE artifact store session."""
 
-    def __init__(self, storage: RDBStorage) -> None:
+    def __init__(self, storage: RDBStorage, validators: CompositeValidator) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -90,7 +91,7 @@ class RelationalDBArtifactStoreSession(ArtifactStoreSession):
         self.model_mapper = RDBSModelMapper(storage=storage)
         """The mapper to model CRUD."""
 
-        self.artifact_mapper = RDBSArtifactMapper(storage=storage)
+        self.artifact_mapper = RDBSArtifactMapper(storage=storage, validators=validators)
         """The mapper to artifact CRUD."""
 
     def close(self) -> None:
@@ -213,11 +214,14 @@ class RDBSVersionMapper(VersionMapper):
 class RDBSArtifactMapper(ArtifactMapper):
     """In-memory mapper for the version resource."""
 
-    def __init__(self, storage: RDBStorage) -> None:
+    def __init__(self, storage: RDBStorage, validators: CompositeValidator) -> None:
         super().__init__()
 
         self.storage = storage
         """A reference to underlying storage."""
+
+        self.validators: CompositeValidator = validators
+        """A reference to the store validators."""
 
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]

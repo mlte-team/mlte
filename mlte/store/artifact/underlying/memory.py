@@ -16,6 +16,7 @@ from mlte.store.artifact.store_session import (
     VersionMapper,
 )
 from mlte.store.base import StoreURI
+from mlte.store.validators.composite_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # Data Structures
@@ -107,13 +108,13 @@ class InMemoryStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return InMemoryStoreSession(storage=self.storage)
+        return InMemoryStoreSession(storage=self.storage, validators=self.validators)
 
 
 class InMemoryStoreSession(ArtifactStoreSession):
     """An in-memory implementation of the MLTE artifact store."""
 
-    def __init__(self, *, storage: MemoryArtifactStorage) -> None:
+    def __init__(self, *, storage: MemoryArtifactStorage, validators: CompositeValidator) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -125,7 +126,7 @@ class InMemoryStoreSession(ArtifactStoreSession):
         )
         """The mapper to model CRUD."""
 
-        self.artifact_mapper = InMemoryArtifactMapper(storage=storage)
+        self.artifact_mapper = InMemoryArtifactMapper(storage=storage, validators=validators)
         """The mapper to artifact CRUD."""
 
     def close(self) -> None:
@@ -227,12 +228,15 @@ class InMemoryVersionMapper(VersionMapper):
 class InMemoryArtifactMapper(ArtifactMapper):
     """In-memory mapper for the artifact resource."""
 
-    def __init__(self, *, storage: MemoryArtifactStorage) -> None:
+    def __init__(self, *, storage: MemoryArtifactStorage, validators: CompositeValidator) -> None:
         super().__init__()
 
         self.storage = storage
         """A reference to underlying storage."""
 
+        self.validators: CompositeValidator = validators
+        """A reference to the store validators."""
+        
     def read(
         self, artifact_id: str, model_and_version: tuple[str, str]
     ) -> ArtifactModel:
