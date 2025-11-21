@@ -34,7 +34,6 @@ class ArtifactUserValidator(CrossValidator):
                 "Artifact user validator's user store has not been set."
             )
 
-        print("art user valid")
         if new_artifact.header.creator:
             with ManagedUserSession(self.user_store.session()) as session:
                 # TODO: Make sure this is always valid, it is what we do in the simple demo, maybe some other places
