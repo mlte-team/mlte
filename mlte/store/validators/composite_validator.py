@@ -20,10 +20,6 @@ class CompositeValidator:
         if self.validators:
             for validator in self.validators:
                 validator.validate(new_resource)
-        else:
-            print(
-                "Validators still none, figure out how to make catalog validators work."
-            )
 
 
 class CrossValidator(ABC):
