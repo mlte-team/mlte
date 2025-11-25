@@ -102,6 +102,7 @@ class RDBEntryMapper(CatalogEntryMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
+                self.validators.validate_all(entry)
                 entry_orm = DBReader._build_entry_orm(entry, session)
                 session.add(entry_orm)
                 session.commit()
@@ -112,6 +113,7 @@ class RDBEntryMapper(CatalogEntryMapper):
                 return stored_entry
 
     def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+        self.validators.validate_all(entry)
         with Session(self.storage.engine) as session:
             _, entry_orm = DBReader.get_entry(entry.header.identifier, session)
 

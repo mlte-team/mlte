@@ -1,7 +1,9 @@
 """Unit tests for CrossValidator functionality."""
 
 from pathlib import Path
+from unittest.mock import patch
 import pytest
+import sqlalchemy
 
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
@@ -12,11 +14,12 @@ from mlte.store.catalog.store_session import ManagedCatalogSession
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.fixture import get_test_entry_for_store
+from sqlalchemy.pool import NullPool
 
-# from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.defaults import IN_MEMORY_SQLITE_DB
 
-# IN_MEMORY_SQLITE_DB
-URIS = ["memory://", "fs://"]
+CACHED_IN_MEMORY_SQLITE_DB = IN_MEMORY_SQLITE_DB + "?cache=shared&mode=memory"
+URIS = ["memory://", "fs://", CACHED_IN_MEMORY_SQLITE_DB]
 MODEL_ID = "model0"
 VERISON_ID = "version0"
 ARTIFACT_ID = "myid"
@@ -26,15 +29,27 @@ INVALID_USER = "not a user"
 # HTTP wasn't working, and rdbs isn't seeing custom_list entry table
 
 
+@pytest.fixture(scope="function")
+def shared_sqlite_engine():
+    """Opens a connection to a shared in-memory DB and keeps it alive."""
+    engine = sqlalchemy.create_engine(CACHED_IN_MEMORY_SQLITE_DB, poolclass=NullPool)
+    yield engine
+    engine.dispose()
+
+
 @pytest.mark.parametrize("store_uri", URIS)
-def test_artifact_cross_validators(store_uri: str, tmp_path: Path):
+def test_artifact_cross_validators(store_uri: str, tmp_path: Path, shared_sqlite_engine):
     """Test artifact cross validators."""
 
     if StoreURI.from_string(store_uri).type == StoreType.LOCAL_FILESYSTEM:
         store_uri += str(tmp_path)
 
-    print(store_uri)
-    stores = setup_stores(store_uri)
+    if store_uri == CACHED_IN_MEMORY_SQLITE_DB:
+        with patch("mlte.store.common.rdbs_storage.sqlalchemy.create_engine") as mock_create_engine:
+            mock_create_engine.return_value = shared_sqlite_engine
+            stores = setup_stores(store_uri)
+    else:
+        stores = setup_stores(store_uri)
 
     with ManagedArtifactSession(
         stores.artifact_store.session()
