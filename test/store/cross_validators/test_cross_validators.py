@@ -103,8 +103,6 @@ def test_artifact_cross_validators(
                 VALID_USER,
             )
 
-    # TODO: make sure this is create and edit
-
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_catalog_cross_validators(
