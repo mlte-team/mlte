@@ -5,7 +5,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-import sqlalchemy
 
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
@@ -18,6 +17,7 @@ from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.fixture import get_test_entry_for_store
 from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.fixture import shared_sqlite_engine  # noqa
 
 URIS = ["memory://", "fs://", IN_MEMORY_SQLITE_DB]
 MODEL_ID = "model0"
@@ -27,19 +27,10 @@ VALID_USER = "admin"
 INVALID_USER = "not a user"
 
 
-@pytest.fixture(scope="function")
-def shared_sqlite_engine():
-    """Opens a connection to a shared in-memory DB and keeps it alive."""
-    engine = sqlalchemy.create_engine(IN_MEMORY_SQLITE_DB)
-    engine.dispose = lambda: None  # type: ignore
-    yield engine
-    engine.dispose()
-
-
 @pytest.mark.parametrize("store_uri", URIS)
 def test_artifact_cross_validators(
-    store_uri: str, tmp_path: Path, shared_sqlite_engine
-):
+    store_uri: str, tmp_path: Path, shared_sqlite_engine  # noqa
+) -> None:
     """Test artifact cross validators."""
 
     if StoreURI.from_string(store_uri).type == StoreType.LOCAL_FILESYSTEM:
@@ -105,8 +96,8 @@ def test_artifact_cross_validators(
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_catalog_cross_validators(
-    store_uri: str, tmp_path: Path, shared_sqlite_engine
-):
+    store_uri: str, tmp_path: Path, shared_sqlite_engine  # noqa
+) -> None:
     """Test catalog cross validators."""
 
     if StoreURI.from_string(store_uri).type == StoreType.LOCAL_FILESYSTEM:

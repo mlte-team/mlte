@@ -1,6 +1,7 @@
 """Unit tests for global session management."""
 
 import os
+from unittest.mock import patch
 
 import pytest
 
@@ -8,6 +9,8 @@ from mlte.session import session, set_context, set_store
 from mlte.session.session import Session, add_catalog_store, reset_session
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
+from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.fixture import shared_sqlite_engine  # noqa
 
 from ..store.artifact.fixture import (  # noqa
     artifact_stores,
@@ -47,7 +50,9 @@ def test_session() -> None:
 
 @pytest.mark.parametrize("store_fixture_name", artifact_stores())
 def test_eager_context_creation(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_fixture_name: str,
+    request: pytest.FixtureRequest,
+    shared_sqlite_engine,  # noqa
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
     print(store_fixture_name)
@@ -58,9 +63,16 @@ def test_eager_context_creation(
     version = "v0.0.1"
     store: ArtifactStore = request.getfixturevalue(store_fixture_name)
 
-    set_store(store.uri.uri)
-    set_context(model, version, lazy=False)
+    if store.uri.uri == IN_MEMORY_SQLITE_DB:
+        with patch(
+            "mlte.store.common.rdbs_storage.sqlalchemy.create_engine"
+        ) as mock_create_engine:
+            mock_create_engine.return_value = shared_sqlite_engine
+            set_store(store.uri.uri)
+    else:
+        set_store(store.uri.uri)
 
+    set_context(model, version, lazy=False)
     s = session()
 
     assert (
