@@ -87,6 +87,24 @@ def create_image(y_pred):
     plt.xlabel("Class Label")
     plt.xticks([0, 1, 2])
     plt.ylabel("Occurrences")
-    plt.savefig(IMAGE_PATH)
+    plt.savefig(IMAGE_PATH_CLASSES)
 
-    return IMAGE_PATH
+    return IMAGE_PATH_CLASSES
+
+
+def create_model_image(model_path: str):
+    """Helper function to create an image of the decision tree model for this dataset."""
+    loaded_model = _load_model(model_path)
+    iris = sk_datasets.load_iris(as_frame=True)
+
+    fig = plt.figure(figsize=(12, 12))
+    _ = sk_tree.plot_tree(
+        loaded_model,
+        feature_names=iris.feature_names,
+        class_names=iris.target_names,
+        filled=True,
+    )
+
+    fig.savefig(IMAGE_PATH_INTER)
+
+    return IMAGE_PATH_INTER
