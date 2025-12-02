@@ -2,7 +2,6 @@
 
 import typing
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -17,7 +16,10 @@ from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.fixture import get_test_entry_for_store
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import shared_sqlite_engine  # noqa
+from test.store.fixture import (  # noqa
+    patched_create_engine,
+    shared_sqlite_engine,
+)
 
 URIS = [
     StoreURI.create_uri_string(StoreType.LOCAL_MEMORY, ""),
@@ -33,7 +35,7 @@ INVALID_USER = "not a user"
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_artifact_cross_validators(
-    store_uri: str, tmp_path: Path, shared_sqlite_engine  # noqa
+    store_uri: str, tmp_path: Path, patched_create_engine  # noqa
 ) -> None:
     """Test artifact cross validators."""
 
@@ -41,10 +43,7 @@ def test_artifact_cross_validators(
         store_uri += str(tmp_path)
 
     if store_uri == IN_MEMORY_SQLITE_DB:
-        with patch(
-            "mlte.store.common.rdbs_storage.sqlalchemy.create_engine"
-        ) as mock_create_engine:
-            mock_create_engine.return_value = shared_sqlite_engine
+        with patched_create_engine():
             stores = setup_stores(store_uri)
     else:
         stores = setup_stores(store_uri)
@@ -100,7 +99,7 @@ def test_artifact_cross_validators(
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_catalog_cross_validators(
-    store_uri: str, tmp_path: Path, shared_sqlite_engine  # noqa
+    store_uri: str, tmp_path: Path, patched_create_engine  # noqa
 ) -> None:
     """Test catalog cross validators."""
 
@@ -108,10 +107,7 @@ def test_catalog_cross_validators(
         store_uri += str(tmp_path)
 
     if store_uri == IN_MEMORY_SQLITE_DB:
-        with patch(
-            "mlte.store.common.rdbs_storage.sqlalchemy.create_engine"
-        ) as mock_create_engine:
-            mock_create_engine.return_value = shared_sqlite_engine
+        with patched_create_engine():
             stores = setup_stores(store_uri)
     else:
         stores = setup_stores(store_uri)
