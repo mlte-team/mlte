@@ -25,6 +25,11 @@ class ArtifactUserValidator(CrossValidator):
         super().__init__(user_store=user_store)
 
     def validate(self, new_artifact: ArtifactModel) -> None:
+        if self.user_store is None:
+            raise RuntimeError(
+                "Artifact user validator's user store has not been set."
+            )
+
         if new_artifact.header.creator:
             with ManagedUserSession(self.user_store.session()) as session:
                 try:
@@ -45,6 +50,11 @@ class ArtifactCustomListValidator(CrossValidator):
         super().__init__(custom_list_store=custom_list_store)
 
     def validate(self, new_artifact: ArtifactModel) -> None:
+        if self.custom_list_store is None:
+            raise RuntimeError(
+                "Artifact custom list validator's custom list store has not been set."
+            )
+
         with ManagedCustomListSession(
             self.custom_list_store.session()
         ) as session:
@@ -75,6 +85,11 @@ class CatalogUserValidator(CrossValidator):
         super().__init__(user_store=user_store)
 
     def validate(self, new_entry: CatalogEntry) -> None:
+        if self.user_store is None:
+            raise RuntimeError(
+                "Catalog user validator's user store has not been set."
+            )
+
         with ManagedUserSession(self.user_store.session()) as session:
             if new_entry.header.creator is not None:
                 try:
@@ -103,6 +118,11 @@ class CatalogCustomListValidator(CrossValidator):
         super().__init__(custom_list_store=custom_list_store)
 
     def validate(self, new_entry: CatalogEntry) -> None:
+        if self.custom_list_store is None:
+            raise RuntimeError(
+                "Catalog custom list validator's custom list store has not been set."
+            )
+
         # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
         #   if it is allowed to be empty, this will have to not error for the frontend
         if (
