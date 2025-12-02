@@ -140,5 +140,5 @@ def test_catalog_cross_validators(
         entry.quality_attribute = "not a quality attribute"
         with pytest.raises(RuntimeError):
             local_catalog_session.entry_mapper.create_with_header(
-                entry, INVALID_USER
+                entry, VALID_USER
             )
