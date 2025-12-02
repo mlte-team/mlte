@@ -82,7 +82,9 @@ class LocalProcessMemoryUtilization(ProcessMeasurement):
             time.sleep(poll_interval)
 
         # Calculate stats, use kilobytes as the psutil function returns values in that unit.
-        avg = int(sum(captures) / len(captures)) * Units.kilobyte
+        avg = 0 * Units.kilobyte
+        if len(captures) > 0:
+            avg = int(sum(captures) / len(captures)) * Units.kilobyte
         minimum = min(captures) * Units.kilobyte
         maximum = max(captures) * Units.kilobyte
 
