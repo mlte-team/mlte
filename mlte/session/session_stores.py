@@ -164,14 +164,10 @@ def setup_stores(
     stores.artifact_store.set_validators(artifact_store_validators)
 
     # Add catalog store validators to stores
-    for uri, catalog_store in stores.catalog_stores.catalogs.items():
+    for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
         if uri == SessionStores.LOCAL_CATALOG_STORE_ID:
             catalog_store.set_validators(catalog_store_validators)
-        # It is added to the sample catalog when it is setup initially
-        elif (
-            uri != SampleCatalog.SAMPLE_CATALOG_ID
-            and StoreURI.from_string(uri).type != StoreType.REMOTE_HTTP
-        ):
+        elif StoreURI.from_string(uri).type != StoreType.REMOTE_HTTP:
             catalog_store.set_validators(catalog_store_validators)
 
     return stores

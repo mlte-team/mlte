@@ -43,11 +43,10 @@ class CrossValidator(ABC):
         self.custom_list_store = custom_list_store
 
     @abstractmethod
-    def validate(self, new_resource: Any) -> Any:
+    def validate(self, new_resource: Any) -> None:
         """
         Validate a resource.
         :param new_resource: The data to create or edit the resource to be validated
-        :return: The validated resource
         :raises RuntimeError: On failed validation
         """
         raise NotImplementedError(

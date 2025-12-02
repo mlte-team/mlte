@@ -36,7 +36,6 @@ class ArtifactUserValidator(CrossValidator):
 
         if new_artifact.header.creator:
             with ManagedUserSession(self.user_store.session()) as session:
-                # TODO: Make sure this is always valid, it is what we do in the simple demo, maybe some other places
                 try:
                     session.user_mapper.read(new_artifact.header.creator)
                 except ErrorNotFound:
@@ -70,10 +69,7 @@ class ArtifactCustomListValidator(CrossValidator):
                 for requirement in card.system_requirements:
                     # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
                     #   if it is allowed to be empty, this will have to not error for the frontend
-                    if (
-                        requirement.quality != ""
-                        and requirement.quality is not None
-                    ):
+                    if requirement.quality is not None:
                         try:
                             session.custom_list_entry_mapper.read(
                                 requirement.quality,
@@ -111,11 +107,7 @@ class CatalogUserValidator(CrossValidator):
                         f"Catalog creator validation failure. User: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
                     )
 
-            # TODO: Ensure this is valid, this is how we start catalog entries
-            if (
-                new_entry.header.updater is not None
-                and new_entry.header.updater != ""
-            ):
+            if new_entry.header.updater is not None:
                 try:
                     session.user_mapper.read(new_entry.header.updater)
                 except ErrorNotFound:
