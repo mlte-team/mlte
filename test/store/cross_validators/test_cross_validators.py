@@ -22,7 +22,7 @@ from test.store.fixture import shared_sqlite_engine  # noqa
 URIS = [
     StoreURI.create_uri_string(StoreType.LOCAL_MEMORY, ""),
     StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, ""),
-    IN_MEMORY_SQLITE_DB
+    IN_MEMORY_SQLITE_DB,
 ]
 MODEL_ID = "model0"
 VERISON_ID = "version0"

@@ -165,9 +165,14 @@ def setup_stores(
 
     # Add catalog store validators to stores
     for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
-        if uri == SessionStores.LOCAL_CATALOG_STORE_ID:
+        if catalog_id == SessionStores.LOCAL_CATALOG_STORE_ID:
             catalog_store.set_validators(catalog_store_validators)
-        elif StoreURI.from_string(uri).type != StoreType.REMOTE_HTTP:
+        # Validators are added to the sample catalog when it is setup initially, and that catalog
+        #   does not have a parsable uri
+        elif (
+            catalog_id != SampleCatalog.SAMPLE_CATALOG_ID
+            and StoreURI.from_string(catalog_id).type != StoreType.REMOTE_HTTP
+        ):
             catalog_store.set_validators(catalog_store_validators)
 
     return stores
