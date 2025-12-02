@@ -553,7 +553,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "title": "Quality"
         },
         "stimulus": {

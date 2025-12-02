@@ -97,7 +97,7 @@
           "type": "null"
         }
       ],
-      "default": null,
+      "default": "",
       "title": "Quality Attribute"
     },
     "code": {

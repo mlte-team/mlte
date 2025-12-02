@@ -18,7 +18,7 @@ class QASDescriptor(BaseModel):
     identifier: Optional[str] = None
     """The unique identifier for the QAS."""
 
-    quality: Optional[str] = None
+    quality: Optional[str] = ""
     """System property that is being evaluated."""
 
     stimulus: Optional[str] = None
