@@ -4,7 +4,6 @@ from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
-from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
@@ -127,7 +126,7 @@ def setup_stores(
 def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     """
     Creates an artifact store, validators for it, and adds it to stores
-    
+
     :param stores_uri: The store URI string
     :param stores: The SessionStores object that the new store will be added to
     """
@@ -145,10 +144,12 @@ def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     stores.set_artifact_store(artifact_store)
 
 
-def setup_catalog_stores(stores_uri: str, stores: SessionStores, catalog_uris: dict[str, str]) -> None:
+def setup_catalog_stores(
+    stores_uri: str, stores: SessionStores, catalog_uris: dict[str, str]
+) -> None:
     """
     Creates catalog stores, validators for them, and adds it to stores
-    
+
     :param stores_uri: The store URI string
     :param stores: The SessionStores object that the new stores will be added to
     :param catalog_uris: A dict of URIs for catalog stores.
@@ -188,12 +189,4 @@ def setup_catalog_stores(stores_uri: str, stores: SessionStores, catalog_uris: d
 
     # Add catalog store validators to stores
     for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
-        if catalog_id == SessionStores.LOCAL_CATALOG_STORE_ID:
-            catalog_store.set_validators(catalog_store_validators)
-        # Validators are added to the sample catalog when it is setup initially, and that catalog
-        #   does not have a parsable uri
-        elif (
-            catalog_id != SampleCatalog.SAMPLE_CATALOG_ID
-            and StoreURI.from_string(catalog_id).type != StoreType.REMOTE_HTTP
-        ):
-            catalog_store.set_validators(catalog_store_validators)
+        catalog_store.set_validators(catalog_store_validators)
