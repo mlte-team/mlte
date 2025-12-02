@@ -19,7 +19,11 @@ from test.store.catalog.fixture import get_test_entry_for_store
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.fixture import shared_sqlite_engine  # noqa
 
-URIS = ["memory://", "fs://", IN_MEMORY_SQLITE_DB]
+URIS = [
+    StoreURI.create_uri_string(StoreType.LOCAL_MEMORY, ""),
+    StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, ""),
+    IN_MEMORY_SQLITE_DB
+]
 MODEL_ID = "model0"
 VERISON_ID = "version0"
 ARTIFACT_ID = "myid"
