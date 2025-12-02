@@ -107,10 +107,6 @@ def setup_stores(
     """
     stores = SessionStores()
 
-    # Initialize the backing artifact store instance.
-    artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
-    stores.set_artifact_store(artifact_store)
-
     # Initialize the backing user store instance.
     user_store = user_store_factory.create_user_store(stores_uri)
     stores.set_user_store(user_store)
@@ -119,7 +115,45 @@ def setup_stores(
     custom_list_store = InitialCustomLists.setup_custom_list_store(stores_uri)
     stores.set_custom_list_store(custom_list_store)
 
-    # Setup catalog store validators
+    # Initialize the backing artifact store instance.
+    setup_arifact_store(stores_uri, stores)
+
+    # Initialize the backing catalog stores instances.
+    setup_catalog_stores(stores_uri, stores, catalog_uris)
+
+    return stores
+
+
+def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
+    """
+    Creates an artifact store, validators for it, and adds it to stores
+    
+    :param stores_uri: The store URI string
+    :param stores: The SessionStores object that the new store will be added to
+    """
+    artifact_store_validators = CompositeValidator(
+        [
+            ArtifactUserValidator(user_store=stores.user_store),
+            ArtifactCustomListValidator(
+                custom_list_store=stores.custom_list_store
+            ),
+        ]
+    )
+
+    artifact_store = artifact_store_factory.create_artifact_store(stores_uri)
+    artifact_store.set_validators(artifact_store_validators)
+    stores.set_artifact_store(artifact_store)
+
+
+def setup_catalog_stores(stores_uri: str, stores: SessionStores, catalog_uris: dict[str, str]) -> None:
+    """
+    Creates catalog stores, validators for them, and adds it to stores
+    
+    :param stores_uri: The store URI string
+    :param stores: The SessionStores object that the new stores will be added to
+    :param catalog_uris: A dict of URIs for catalog stores.
+    """
+
     catalog_store_validators = CompositeValidator(
         [
             CatalogUserValidator(user_store=stores.user_store),
@@ -152,17 +186,6 @@ def setup_stores(
     for id, uri in catalog_uris.items():
         stores.add_catalog_store_from_uri(uri, id)
 
-    # Setup artifact store validators
-    artifact_store_validators = CompositeValidator(
-        [
-            ArtifactUserValidator(user_store=stores.user_store),
-            ArtifactCustomListValidator(
-                custom_list_store=stores.custom_list_store
-            ),
-        ]
-    )
-    stores.artifact_store.set_validators(artifact_store_validators)
-
     # Add catalog store validators to stores
     for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
         if catalog_id == SessionStores.LOCAL_CATALOG_STORE_ID:
@@ -174,5 +197,3 @@ def setup_stores(
             and StoreURI.from_string(catalog_id).type != StoreType.REMOTE_HTTP
         ):
             catalog_store.set_validators(catalog_store_validators)
-
-    return stores
