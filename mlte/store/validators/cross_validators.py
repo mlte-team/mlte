@@ -61,8 +61,6 @@ class ArtifactCustomListValidator(CrossValidator):
             if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
                 card = typing.cast(NegotiationCardModel, new_artifact.body)
                 for requirement in card.system_requirements:
-                    # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
-                    #   if it is allowed to be empty, this will have to not error for the frontend
                     if requirement.quality is not None:
                         try:
                             session.custom_list_entry_mapper.read(
@@ -123,12 +121,7 @@ class CatalogCustomListValidator(CrossValidator):
                 "Catalog custom list validator's custom list store has not been set."
             )
 
-        # TODO: Determine if this should be allowed to be empty str or not. Is defaulted to None in model
-        #   if it is allowed to be empty, this will have to not error for the frontend
-        if (
-            new_entry.quality_attribute != ""
-            and new_entry.quality_attribute is not None
-        ):
+        if (new_entry.quality_attribute != ""):
             with ManagedCustomListSession(
                 self.custom_list_store.session()
             ) as session:
