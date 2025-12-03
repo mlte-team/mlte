@@ -121,7 +121,7 @@ class CatalogCustomListValidator(CrossValidator):
                 "Catalog custom list validator's custom list store has not been set."
             )
 
-        if (new_entry.quality_attribute != ""):
+        if new_entry.quality_attribute != "":
             with ManagedCustomListSession(
                 self.custom_list_store.session()
             ) as session:

@@ -275,7 +275,7 @@ class DBQAS(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[Optional[str]]
-    quality: Mapped[Optional[str]]
+    quality: Mapped[str]
     stimulus: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
     environment: Mapped[Optional[str]]
