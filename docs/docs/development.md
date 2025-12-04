@@ -26,7 +26,7 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Python Version Support
 
-Currently, `MLTE` supports Python versions between `3.9` and `3.12`, both included.
+Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included.
 
 If you do not have one of these versions installed, or you want to target a specific version that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
 
