@@ -60,7 +60,11 @@ def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
         NegotiationCard,
         NegotiationCard.load_with(card.identifier, context=ctx, store=store),
     )
-    qas_ids = [scenario.identifier for scenario in card.quality_scenarios]
+    qas_ids = [
+        scenario.identifier
+        for scenario in card.quality_scenarios
+        if scenario.identifier
+    ]
 
     id = "test_suite"
     test_suite = get_sample_test_suite(identifier=id, qas_ids=qas_ids)
@@ -72,7 +76,7 @@ def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
 
 
 def test_save_load_default(
-    store_with_context: tuple[ArtifactStore, Context]  # noqa
+    store_with_context: tuple[ArtifactStore, Context],  # noqa
 ):
     store, ctx = store_with_context
     test_suite = get_sample_test_suite(identifier=TestSuite.build_full_id())
@@ -92,7 +96,7 @@ def test_save_invalid_qasids():
 
 
 def test_load_failure(
-    store_with_context: tuple[ArtifactStore, Context]  # noqa
+    store_with_context: tuple[ArtifactStore, Context],  # noqa
 ):
     """Fail to load a suite that doesn't exist."""
     store, ctx = store_with_context

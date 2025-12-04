@@ -26,7 +26,7 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     """Report can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

@@ -42,7 +42,7 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     """Negotiation card can be saved to and loaded from artifact store."""
     store, ctx = store_with_context  # noqa
@@ -72,7 +72,7 @@ def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
 
 
 def test_save_overwrite(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     """Save succeeds when old artifact is overwritten."""
     store, ctx = store_with_context  # noqa
