@@ -52,7 +52,7 @@ def create_token_response(access_token: jwt.EncodedToken) -> TokenResponse:
 
 @router.post(f"{TOKEN_ENDPOINT_URL}")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> TokenResponse:
     """
     OAuth 2 Access Server Token Endpoint. Assumes use of JWT Bearer tokens, with username being the embedded information.

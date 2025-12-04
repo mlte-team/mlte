@@ -45,7 +45,7 @@ def test_from_bytes():
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
     store, ctx = store_with_context
