@@ -4,7 +4,7 @@ from typing import Optional, TypeAlias
 
 import pint
 
-Units = pint.UnitRegistry()  # type: ignore[type-arg]
+Units: pint.UnitRegistry = pint.UnitRegistry()  # type: ignore[type-arg]
 """Unit registry, contains all common units (use lowercase and singular unit name as attribute)."""
 
 Unit: TypeAlias = pint.Unit
