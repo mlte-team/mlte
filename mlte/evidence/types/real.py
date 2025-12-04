@@ -5,7 +5,7 @@ An Evidence instance for a scalar, real value.
 from __future__ import annotations
 
 import typing
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -42,7 +42,7 @@ class Real(Evidence):
         self.unit = unit
         """The unit, if any."""
 
-    def get_value_w_units(self) -> Quantity:
+    def get_value_w_units(self) -> Quantity[Any]:
         """
         Returns the float value as a Quantity, potentially with units.
         """

@@ -60,7 +60,11 @@ def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
         NegotiationCard,
         NegotiationCard.load_with(card.identifier, context=ctx, store=store),
     )
-    qas_ids = [scenario.identifier for scenario in card.quality_scenarios]
+    qas_ids = [
+        scenario.identifier
+        for scenario in card.quality_scenarios
+        if scenario.identifier
+    ]
 
     id = "test_suite"
     test_suite = get_sample_test_suite(identifier=id, qas_ids=qas_ids)
