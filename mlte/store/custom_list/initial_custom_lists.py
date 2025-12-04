@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from types import ModuleType
 
 import mlte.store.custom_list.qa_categories as qa_category_entries
@@ -11,7 +10,6 @@ from mlte._private.reflection import get_json_resources
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store import error
-from mlte.store.base import StoreType, StoreURI
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import (
@@ -33,18 +31,9 @@ class InitialCustomLists:
         :param stores_uri: The URI of the store being used (i.e., base folder, base DB, etc).
         :return: A custom list store populated with the initial entries.
         """
-        # Workaround to force FS if HTTP is requested, as it is not supported yet.
-        # TODO: Remove this check HTTP is implemented.
-        parsed_uri = StoreURI.from_string(stores_uri)
-        if parsed_uri.type == StoreType.REMOTE_HTTP:
-            # Creates a  file system URI using the default stores folder.
-            parsed_uri = StoreURI.create_default_fs_uri()
-            os.makedirs(f"{parsed_uri.path}", exist_ok=True)
-
         # Create the initial custom lists.
         print(f"Creating initial custom lists at URI: {stores_uri}")
-        # TODO : After section above is removed with implementation of HTTP, make this var stores_uri
-        custom_list_store = create_custom_list_store(parsed_uri.uri)
+        custom_list_store = create_custom_list_store(stores_uri)
 
         with ManagedCustomListSession(custom_list_store.session()) as session:
             # Load both QA categoties and QA as default lists.

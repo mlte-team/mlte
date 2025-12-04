@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/underlying/fs.py
-
-Implementation of local file system catalog store.
-"""
+"""Implementation of local file system catalog store."""
 
 from __future__ import annotations
 
@@ -12,12 +8,13 @@ from typing import Any, List, Optional
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.common.fs_storage import FileSystemStorage
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # FileSystemCatalogStore
@@ -36,8 +33,7 @@ class FileSystemCatalogStore(CatalogStore):
     def __init__(
         self, uri: StoreURI, catalog_folder: Optional[str] = None
     ) -> None:
-        self.uri = uri
-        """Store uri."""
+        super().__init__(uri=uri)
 
         if not catalog_folder:
             catalog_folder = self.DEFAULT_CATALOG_FOLDER
@@ -52,7 +48,9 @@ class FileSystemCatalogStore(CatalogStore):
         :return: The session handle
         """
         return FileSystemCatalogStoreSession(
-            storage=self.storage, read_only=self.read_only
+            storage=self.storage,
+            validators=self.validators,
+            read_only=self.read_only,
         )
 
 
@@ -65,7 +63,10 @@ class FileSystemCatalogStoreSession(CatalogStoreSession):
     """A local file-system implementation of the MLTE catalog store."""
 
     def __init__(
-        self, storage: FileSystemStorage, read_only: bool = False
+        self,
+        storage: FileSystemStorage,
+        validators: CompositeValidator,
+        read_only: bool = False,
     ) -> None:
         self.storage = storage
         """The storage."""
@@ -73,7 +74,9 @@ class FileSystemCatalogStoreSession(CatalogStoreSession):
         self.read_only = read_only
         """Whether this is read only or not."""
 
-        self.entry_mapper = FileSystemCatalogEntryMapper(storage=storage)
+        self.entry_mapper = FileSystemCatalogEntryMapper(
+            storage=storage, validators=validators
+        )
         """The mapper to entries CRUD."""
 
     def close(self) -> None:
@@ -93,7 +96,11 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     ENTRIES_FOLDER = "entries"
     """Subfolder for entries."""
 
-    def __init__(self, storage: FileSystemStorage) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, validators: CompositeValidator
+    ) -> None:
+        super().__init__(validators=validators)
+
         self.storage = storage.clone()
         """A reference to underlying storage."""
 
@@ -102,13 +109,19 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
         )
         """Set the subfolder for this resource."""
 
-    def create(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        self.storage.ensure_resource_does_not_exist(entry.header.identifier)
-        return self._write_entry(entry)
+    def create(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
+        self.validators.validate_all(new_entry)
+        self.storage.ensure_resource_does_not_exist(new_entry.header.identifier)
+        return self._write_entry(new_entry)
 
-    def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
-        self.storage.ensure_resource_exists(entry.header.identifier)
-        return self._write_entry(entry)
+    def edit(
+        self, new_entry: CatalogEntry, context: Any = None
+    ) -> CatalogEntry:
+        self.validators.validate_all(new_entry)
+        self.storage.ensure_resource_exists(new_entry.header.identifier)
+        return self._write_entry(new_entry)
 
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         return self._read_entry(entry_id)

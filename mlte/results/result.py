@@ -1,8 +1,4 @@
-"""
-mlte/validation/result.py
-
-The result of measurement validation.
-"""
+"""The result of measurement validation."""
 
 from __future__ import annotations
 

@@ -1,8 +1,4 @@
-"""
-mlte/negotiation/artifact.py
-
-Artifact implementation for negotiation card.
-"""
+"""Artifact implementation for negotiation card."""
 
 from __future__ import annotations
 

@@ -667,16 +667,9 @@
           "title": "Identifier"
         },
         "quality": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Quality"
+          "default": "",
+          "title": "Quality",
+          "type": "string"
         },
         "stimulus": {
           "anyOf": [

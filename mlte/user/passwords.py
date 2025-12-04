@@ -1,8 +1,4 @@
-"""
-mlte/user/authentication.py
-
-Handling of passwords.
-"""
+"""Handling of passwords."""
 
 import bcrypt
 

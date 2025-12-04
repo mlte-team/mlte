@@ -63,6 +63,8 @@ jobs:
         python-version: ${{ fromJSON(needs.define-matrix.outputs.py_ver_matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Clear space from tools folder, not needed because this runs in docker
+        run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5

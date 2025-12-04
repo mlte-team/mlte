@@ -1,8 +1,4 @@
-"""
-mlte/backend/api/error_handlers.py
-
-Methods to handle and raise HTTP errors.
-"""
+"""Methods to handle and raise HTTP errors."""
 
 import logging
 import traceback as tb
