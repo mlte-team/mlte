@@ -17,7 +17,7 @@ from mlte.store.catalog.store_session import (
 from mlte.store.catalog.underlying.rdbs.metadata import DBBase
 from mlte.store.catalog.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # RelationalDBCatalogStore

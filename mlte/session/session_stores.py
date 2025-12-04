@@ -11,11 +11,11 @@ from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 from mlte.store.validators.cross_validators import (
-    ArtifactCustomListValidator,
+    ArtifactQAValidator,
     ArtifactUserValidator,
-    CatalogCustomListValidator,
+    CatalogQAValidator,
     CatalogUserValidator,
 )
 
@@ -115,15 +115,15 @@ def setup_stores(
     stores.set_custom_list_store(custom_list_store)
 
     # Initialize the backing artifact store instance.
-    setup_arifact_store(stores_uri, stores)
+    _setup_arifact_store(stores_uri, stores)
 
     # Initialize the backing catalog stores instances.
-    setup_catalog_stores(stores_uri, stores, catalog_uris)
+    _setup_catalog_stores(stores_uri, stores, catalog_uris)
 
     return stores
 
 
-def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
+def _setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     """
     Creates an artifact store, validators for it, and adds it to stores
 
@@ -133,9 +133,7 @@ def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     artifact_store_validators = CompositeValidator(
         [
             ArtifactUserValidator(user_store=stores.user_store),
-            ArtifactCustomListValidator(
-                custom_list_store=stores.custom_list_store
-            ),
+            ArtifactQAValidator(custom_list_store=stores.custom_list_store),
         ]
     )
 
@@ -144,7 +142,7 @@ def setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     stores.set_artifact_store(artifact_store)
 
 
-def setup_catalog_stores(
+def _setup_catalog_stores(
     stores_uri: str, stores: SessionStores, catalog_uris: dict[str, str]
 ) -> None:
     """
@@ -158,9 +156,7 @@ def setup_catalog_stores(
     catalog_store_validators = CompositeValidator(
         [
             CatalogUserValidator(user_store=stores.user_store),
-            CatalogCustomListValidator(
-                custom_list_store=stores.custom_list_store
-            ),
+            CatalogQAValidator(custom_list_store=stores.custom_list_store),
         ]
     )
 

@@ -16,7 +16,7 @@ from mlte.store.artifact.store_session import (
     VersionMapper,
 )
 from mlte.store.base import StoreURI
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # Data Structures

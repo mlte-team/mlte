@@ -35,7 +35,7 @@ from mlte.store.artifact.underlying.rdbs.main_metadata import (
 )
 from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # RelationalDBArtifactStore

@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any, List, Optional, Protocol
 
 from mlte.store.query import Query
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # StoreType

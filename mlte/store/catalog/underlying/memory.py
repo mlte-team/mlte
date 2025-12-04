@@ -13,7 +13,7 @@ from mlte.store.catalog.store_session import (
     CatalogStoreSession,
 )
 from mlte.store.common.storage import Storage
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # Memory Store

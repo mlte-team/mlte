@@ -16,7 +16,7 @@ from mlte.store.artifact.store_session import (
 )
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
-from mlte.store.validators.composite_validator import CompositeValidator
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore
