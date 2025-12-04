@@ -1,10 +1,10 @@
 """Loads and defines shared Units and Quantiies to be used."""
 
-from typing import Any, Optional, TypeAlias
+from typing import Optional, TypeAlias
 
 import pint
 
-Units: pint.UnitRegistry[Any] = pint.UnitRegistry()
+Units = pint.UnitRegistry()  # type: ignore[type-arg]
 """Unit registry, contains all common units (use lowercase and singular unit name as attribute)."""
 
 Unit: TypeAlias = pint.Unit
@@ -14,7 +14,7 @@ Quantity: TypeAlias = pint.Quantity
 """Quantity type that contains a magnitude and a Unit."""
 
 
-def quantity_to_str(quantity: Quantity[Any]) -> str:
+def quantity_to_str(quantity: Quantity) -> str:  # type: ignore[type-arg]
     """Converts a quantity to string, not adding `dimensionless` if there are no units."""
     return (
         f"{quantity}"

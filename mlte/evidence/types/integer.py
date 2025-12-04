@@ -5,7 +5,7 @@ An Evidence instance for a scalar, integral value.
 from __future__ import annotations
 
 import typing
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -41,7 +41,7 @@ class Integer(Evidence):
         self.unit = unit
         """The unit, if any."""
 
-    def get_value_w_units(self) -> Quantity[Any]:
+    def get_value_w_units(self) -> Quantity:  # type: ignore[type-arg]
         """
         Returns the int value as a Quantity, potentially with units.
         """
