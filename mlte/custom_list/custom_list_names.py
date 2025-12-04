@@ -10,8 +10,12 @@ from strenum import StrEnum
 class CustomListName(StrEnum):
     """Class to store hard coded set of Custom List names."""
 
+    CLASSIFICATION = "classification"
+    PROBLEM_TYPES = "problem_types"
+    TAGS = "tags"
     QA_CATEGORIES = "qa_categories"
     QUALITY_ATTRIBUTES = "quality_attributes"
+
 
 
 class CustomListNameDict(dict[CustomListName, CustomListName]):
