@@ -63,7 +63,7 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     """Array can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

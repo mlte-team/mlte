@@ -269,7 +269,7 @@ def test_statistics_construction():
 
 
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context]  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],  # noqa
 ) -> None:
     store, ctx = store_with_context
 
