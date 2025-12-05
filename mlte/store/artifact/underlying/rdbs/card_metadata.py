@@ -7,7 +7,7 @@ from typing import Optional
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
-from mlte.negotiation.model import DataClassification, ProblemType
+from mlte.negotiation.model import DataClassification
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact, DBBase
 
 # -------------------------------------------------------------------------
@@ -35,7 +35,7 @@ class DBNegotiationCard(DBBase):
     sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("nc_problem_type.id")
     )
-    sys_problem_type: Mapped[Optional[DBProblemType]] = relationship()
+    sys_problem_type: Mapped[str] # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
@@ -293,17 +293,6 @@ class DBQAS(DBBase):
 # -------------------------------------------------------------------------
 # Pre-filled table functions.
 # -------------------------------------------------------------------------
-
-
-def init_problem_types(session: Session):
-    """Initializes the table with the configured problem types."""
-    if session.scalars(select(DBProblemType)).first() is None:
-        types = [e.value for e in ProblemType]
-        for type in types:
-            type_obj = DBProblemType(name=type)
-            session.add(type_obj)
-        session.commit()
-
 
 def init_classification_types(session: Session):
     """Initializes the table with the configured classification types."""

@@ -11,26 +11,6 @@ from mlte.model.base_model import BaseModel
 from mlte.negotiation import qas
 
 # -----------------------------------------------------------------------------
-# ProblemType
-# -----------------------------------------------------------------------------
-
-
-class ProblemType(StrEnum):
-    """An enumeration over machine learning problem types."""
-
-    CLASSIFICATION = "classification"
-    CLUSTERING = "clustering"
-    TREND = "trend"
-    ALERT = "alert"
-    FORECASTING = "forecasting"
-    CONTENT_GENERATION = "content_generation"
-    BENCHMARKING = "benchmarking"
-    GOALS = "goals"
-    DETECTION = "detection"
-    OTHER = "other"
-
-
-# -----------------------------------------------------------------------------
 # GoalDescriptor (and sub-models)
 # -----------------------------------------------------------------------------
 
@@ -220,7 +200,7 @@ class SystemDescriptor(BaseModel):
     goals: list[GoalDescriptor] = []
     """A description of system goals."""
 
-    problem_type: Optional[ProblemType] = None
+    problem_type: str = ""
     """A description of the machine learning problem type."""
 
     task: Optional[str] = None

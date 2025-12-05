@@ -21,7 +21,6 @@ from mlte.store.artifact.store_session import (
 from mlte.store.artifact.underlying.rdbs import main_factory
 from mlte.store.artifact.underlying.rdbs.card_metadata import (
     init_classification_types,
-    init_problem_types,
 )
 from mlte.store.artifact.underlying.rdbs.evidence_metadata import (
     init_evidence_types,
@@ -70,7 +69,6 @@ def init_artifact_store_tables(engine: Engine):
     """Pre-populate tables."""
     with Session(engine) as session:
         init_artifact_types(session)
-        init_problem_types(session)
         init_classification_types(session)
         init_evidence_types(session)
 

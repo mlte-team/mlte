@@ -17,7 +17,6 @@ from mlte.negotiation.model import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardModel,
-    ProblemType,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -139,7 +138,7 @@ def create_card_model(
             usage_context=negotiation_card_orm.sys_usage_context,
             risks=[risk.description for risk in negotiation_card_orm.sys_risks],
             problem_type=(
-                ProblemType(negotiation_card_orm.sys_problem_type.name)
+                negotiation_card_orm.sys_problem_type.name
                 if negotiation_card_orm.sys_problem_type is not None
                 else None
             ),

@@ -584,7 +584,7 @@
           "$ref": "#/$defs/SystemDescriptor",
           "default": {
             "goals": [],
-            "problem_type": null,
+            "problem_type": "",
             "task": null,
             "usage_context": null,
             "risks": []
@@ -633,23 +633,6 @@
       },
       "title": "NegotiationCardModel",
       "type": "object"
-    },
-    "ProblemType": {
-      "description": "An enumeration over machine learning problem types.",
-      "enum": [
-        "classification",
-        "clustering",
-        "trend",
-        "alert",
-        "forecasting",
-        "content_generation",
-        "benchmarking",
-        "goals",
-        "detection",
-        "other"
-      ],
-      "title": "ProblemType",
-      "type": "string"
     },
     "QASDescriptor": {
       "description": "Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario.",
@@ -777,15 +760,9 @@
           "type": "array"
         },
         "problem_type": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ProblemType"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
+          "default": "",
+          "title": "Problem Type",
+          "type": "string"
         },
         "task": {
           "anyOf": [
