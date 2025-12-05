@@ -183,7 +183,7 @@ export class CustomListEntry {
   constructor(
     public name: string = "",
     public description: string = "",
-    public parent: string = "",
+    public parent: string | null = null,
   ) {}
 }
 
