@@ -17,7 +17,6 @@ class CustomListName(StrEnum):
     QUALITY_ATTRIBUTES = "quality_attributes"
 
 
-
 class CustomListNameDict(dict[CustomListName, CustomListName]):
     """
     Class to create dicts to map one custom list name to another.

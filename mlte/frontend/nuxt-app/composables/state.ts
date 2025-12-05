@@ -21,24 +21,6 @@ export const useClassificationOptions = () =>
     { value: "other", text: "Other" },
   ]);
 
-// TODO: Pull these from the schema or a custom list
-export const useProblemTypeOptions = () =>
-  useState<Array<SelectOption>>("problemTypeOptions", () => [
-    { value: "alert", text: "Alert" },
-    { value: "benchmarking", text: "Benchmarking" },
-    { value: "classification", text: "Classification" },
-    { value: "clustering", text: "Clustering" },
-    { value: "content_generation", text: "Content Generation" },
-    { value: "detection", text: "Detection" },
-    { value: "forecasting", text: "Forecasting" },
-    { value: "goals", text: "Goals" },
-    { value: "sentiment_analysis", text: "Sentiment Analysis" },
-    { value: "summarization", text: "Summarization" },
-    { value: "translation", text: "Translation" },
-    { value: "trend", text: "Trend" },
-    { value: "other", text: "Other" },
-  ]);
-
 // --------------------------------------------------------------------------------------------------------------
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
@@ -75,6 +57,41 @@ export const useCustomListOptions = async () => {
 
   return {
     customListOptions,
+  };
+};
+
+/**
+ * Export the state variable problemTypeOptions to be globally available.
+ *
+ * problemTypeOptions: List of SelectOption to be used when making a <Select> for Problem Types.
+ *
+ * @returns {ref<Array<SelectOption>>} problemTypeOptions Ref to global problemTypeOptions
+ * @returns {function} fetchProblemTypeData Hook to update problemTypeOptions list with API
+ */
+export const useProblemTypeOptions = async () => {
+  const problemTypeOptions = useState<Array<SelectOption>>(
+    "problemTypeOptions",
+    () => [],
+  );
+
+  const fetchProblemTypeData = async () => {
+    const apiData = await getCustomList("problem_types");
+    if (apiData) {
+      problemTypeOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        new SelectOption(entry.name, entry.name);
+      });
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (problemTypeOptions.value.length === 0) {
+    await fetchProblemTypeData();
+  }
+
+  return {
+    problemTypeOptions,
+    fetchProblemTypeData,
   };
 };
 

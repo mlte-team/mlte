@@ -207,9 +207,6 @@ const props = defineProps({
   },
 });
 
-const displaySection = ref<boolean>(true);
-const problemTypeOptions = useProblemTypeOptions();
-
 // Provide hook for parent page to call addGoal. Needed for descriptor import.
 const parentAddGoal = () => {
   addGoal();
@@ -225,6 +222,9 @@ defineExpose({
   parentAddGoal,
   parentAddRisk,
 });
+
+const displaySection = ref<boolean>(true);
+const { problemTypeOptions } = await useProblemTypeOptions();
 
 // Add GoalDescriptor to goal list.
 function addGoal() {

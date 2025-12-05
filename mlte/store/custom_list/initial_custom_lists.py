@@ -6,9 +6,9 @@ from types import ModuleType
 
 import mlte.store.custom_list.classification as classification_entries
 import mlte.store.custom_list.problem_types as problem_type_entries
-import mlte.store.custom_list.tags as tags_entries
 import mlte.store.custom_list.qa_categories as qa_category_entries
 import mlte.store.custom_list.quality_attributes as quality_attribute_entries
+import mlte.store.custom_list.tags as tags_entries
 from mlte._private.reflection import get_json_resources
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
