@@ -18,6 +18,7 @@ from mlte.store.validators.cross_validators import (
     CatalogQAValidator,
     CatalogUserValidator,
 )
+from mlte.store.validators.cross_validators.catalog_tag_validator import CatalogTagValidator
 
 
 class SessionStores:
@@ -155,6 +156,7 @@ def _setup_catalog_stores(
 
     catalog_store_validators = CompositeValidator(
         [
+            CatalogTagValidator(custom_list_store=stores.custom_list_store),
             CatalogUserValidator(user_store=stores.user_store),
             CatalogQAValidator(custom_list_store=stores.custom_list_store),
         ]

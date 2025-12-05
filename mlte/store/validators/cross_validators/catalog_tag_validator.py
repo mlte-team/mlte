@@ -1,4 +1,4 @@
-"""Validator for the quality attribute field of a catalog entry."""
+"""Validator for the tags field of a catalog entry."""
 
 from mlte.catalog.model import CatalogEntry
 from mlte.custom_list.custom_list_names import CustomListName
@@ -8,30 +8,30 @@ from mlte.store.error import ErrorNotFound
 from mlte.store.validators.cross_validator import CrossValidator
 
 
-class CatalogQAValidator(CrossValidator):
-    """Implementation of CrossValidator to validate a catalog entry QA ßagainst custom list store."""
+class CatalogTagValidator(CrossValidator):
+    """Implementation of CrossValidator to validate a catalog entries tags against custom list store."""
 
     def __init__(
         self,
         custom_list_store: CustomListStore,
     ):
         """
-        Initialize a CatalogQAValidator instance.
+        Initialize a CatalogTagValidator instance.
         :param custom_list_store: Custom list store store to use for validation.
         """
         self.custom_list_store = custom_list_store
 
     def validate(self, new_entry: CatalogEntry) -> None:
-        if new_entry.quality_attribute != "":
-            with ManagedCustomListSession(
-                self.custom_list_store.session()
-            ) as session:
+        with ManagedCustomListSession(
+            self.custom_list_store.session()
+        ) as session:
+            for tag in new_entry.tags:
                 try:
                     session.custom_list_entry_mapper.read(
-                        new_entry.quality_attribute,
-                        CustomListName.QUALITY_ATTRIBUTES,
+                        tag,
+                        CustomListName.TAGS,
                     )
                 except ErrorNotFound:
                     raise RuntimeError(
-                        f"Catalog entry quality attribute validation failure. Quality attribute: {new_entry.quality_attribute} not found. For catalog entry {new_entry.header.identifier}."
+                        f"Catalog entry tag validation failure. Tag: {tag} not found. For catalog entry {new_entry.header.identifier}."
                     )

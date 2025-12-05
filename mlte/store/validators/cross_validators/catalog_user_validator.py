@@ -1,4 +1,4 @@
-"""Validator for the user fields of a catalog entry."""
+"""Validator for the user field of a catalog entry."""
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.error import ErrorNotFound
@@ -27,7 +27,7 @@ class CatalogUserValidator(CrossValidator):
                     session.user_mapper.read(new_entry.header.creator)
                 except ErrorNotFound:
                     raise RuntimeError(
-                        f"Catalog creator validation failure. User: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
+                        f"Catalog creator validation failure. Creator user: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
                     )
 
             if new_entry.header.updater is not None:
@@ -35,5 +35,5 @@ class CatalogUserValidator(CrossValidator):
                     session.user_mapper.read(new_entry.header.updater)
                 except ErrorNotFound:
                     raise RuntimeError(
-                        f"Catalog creator validation failure. User: {new_entry.header.updater} not found. For catalog entry {new_entry.header.identifier}."
+                        f"Catalog creator validation failure. Updater user: {new_entry.header.updater} not found. For catalog entry {new_entry.header.identifier}."
                     )
