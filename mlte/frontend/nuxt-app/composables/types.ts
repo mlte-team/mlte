@@ -383,7 +383,7 @@ export class TestCatalogHeader {
     public identifier: string = "",
     public creator: string = "",
     public created: number = -1,
-    public updater: string = "",
+    public updater: string | null = null,
     public updated: number = -1,
     public catalog_id: string = "",
   ) {}
