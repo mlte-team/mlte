@@ -160,7 +160,7 @@ const formErrors = ref<Dictionary<boolean>>({
   identifier: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const tagOptions = useTagOptions();
+const { tagOptions } = await useTagOptions();
 
 await updateQAData();
 populateCatalogOptions();

@@ -39,27 +39,6 @@ export const useProblemTypeOptions = () =>
     { value: "other", text: "Other" },
   ]);
 
-// TODO: Pull these from the schema or a custom list
-export const useTagOptions = () =>
-  useState<Array<CheckboxOption>>("tagOptions", () => [
-    { name: "Audio Analysis", selected: false },
-    { name: "Classification", selected: false },
-    { name: "Computer Vision", selected: false },
-    { name: "Decoder", selected: false },
-    { name: "Encoder", selected: false },
-    { name: "General", selected: false },
-    { name: "Generative Model", selected: false },
-    { name: "Infrared", selected: false },
-    { name: "NLP", selected: false },
-    { name: "Object Detection", selected: false },
-    { name: "Sentiment Analysis", selected: false },
-    { name: "Regression", selected: false },
-    { name: "Reinforcement Learning", selected: false },
-    { name: "Segmentation", selected: false },
-    { name: "Tabular", selected: false },
-    { name: "Time Series", selected: false },
-  ]);
-
 // --------------------------------------------------------------------------------------------------------------
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
@@ -96,6 +75,38 @@ export const useCustomListOptions = async () => {
 
   return {
     customListOptions,
+  };
+};
+
+/**
+ * Export the state variable tagOptions to be globally available.
+ *
+ * tagOptions: List of CheckboxOption to be used when making a list of checkboxes for tags.
+ *
+ * @returns {ref<Array<CheckboxOption>>} tagOptions Ref to global tagOptions
+ * @returns {function} fetchTagData Hook to update tagOptions list with API
+ */
+export const useTagOptions = async () => {
+  const tagOptions = useState<Array<CheckboxOption>>("tagOptions", () => []);
+
+  const fetchTagData = async () => {
+    const apiData = await getCustomList("tags");
+    if (apiData) {
+      tagOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        tagOptions.value.push(new CheckboxOption(entry.name, false));
+      });
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (tagOptions.value.length === 0) {
+    await fetchTagData();
+  }
+
+  return {
+    tagOptions,
+    fetchTagData,
   };
 };
 

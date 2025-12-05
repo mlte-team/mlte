@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from types import ModuleType
 
+import mlte.store.custom_list.classification as classification_entries
+import mlte.store.custom_list.problem_types as problem_type_entries
+import mlte.store.custom_list.tags as tags_entries
 import mlte.store.custom_list.qa_categories as qa_category_entries
 import mlte.store.custom_list.quality_attributes as quality_attribute_entries
 from mlte._private.reflection import get_json_resources
@@ -36,7 +39,16 @@ class InitialCustomLists:
         custom_list_store = create_custom_list_store(stores_uri)
 
         with ManagedCustomListSession(custom_list_store.session()) as session:
-            # Load both QA categoties and QA as default lists.
+            # Load all of the custom lists as default lists.
+            InitialCustomLists._load_resources_to_list(
+                session, classification_entries, CustomListName.CLASSIFICATION
+            )
+            InitialCustomLists._load_resources_to_list(
+                session, problem_type_entries, CustomListName.PROBLEM_TYPES
+            )
+            InitialCustomLists._load_resources_to_list(
+                session, tags_entries, CustomListName.TAGS
+            )
             InitialCustomLists._load_resources_to_list(
                 session, qa_category_entries, CustomListName.QA_CATEGORIES
             )
