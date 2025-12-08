@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from strenum import StrEnum
-
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.negotiation import qas

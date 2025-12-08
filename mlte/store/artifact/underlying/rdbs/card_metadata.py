@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import ForeignKey, select
-from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact, DBBase
 
@@ -269,4 +269,3 @@ class DBQAS(DBBase):
 
     def __repr__(self) -> str:
         return f"ModelIODescriptor(id={self.id!r}, quality={self.quality!r}, stimulus={self.stimulus!r}, source={self.source!r}, environment={self.environment!r}, response={self.response!r}, measure={self.measure!r})"
-
