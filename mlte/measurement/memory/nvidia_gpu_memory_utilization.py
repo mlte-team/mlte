@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-import mlte.measurement.pynvml_utils as pynvml_utils
+import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.measurement.common import CommonStatistics
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.measurement.units import Quantity, Unit, Units

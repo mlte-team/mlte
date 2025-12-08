@@ -14,12 +14,12 @@ The following are specific built-in measurement classes provided by MLTE:
     - Measures the amount memory being used per-GPU during an experiment.
     - Returns custom evidence in the form of an NvidiaGPUMemoryStatistics object.
     - Requires a CUDA-capable NVIDIA GPU to be used, as well as the CUDA Toolkit and the NVML library.
-    - Requires the pynvml library (`pip install nvidia-ml-py`) to be installed.
+    - Requires the optional gpu dependencies to be installed.
 - NvidiaGPUPowerUtilization
     - Measures the power (in watts) used by the specific NVIDIA GPU.
     - Returns custom evidence in the form of an NvidiaGPUPowerStatistics object.
     - Requires a CUDA-capable NVIDIA GPU to be used, as well as the CUDA Toolkit and the NVML library.
-    - Requires the pynvml library (`pip install nvidia-ml-py`) to be installed.
+    - Requires the optional gpu dependencies to be installed.
 
 The following are more generic measurement classes that can be used directly, or extended:
 

@@ -7,7 +7,7 @@ from typing import Tuple
 import pint
 import pytest
 
-import mlte.measurement.pynvml_utils as pynvml_utils
+import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.context.context import Context
 from mlte.measurement.power import (
     NvidiaGPUPowerStatistics,
@@ -21,7 +21,10 @@ from mlte.measurement.units import Quantity, Units
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.measurement.test_pynvml_utils import has_pynvml, has_torch_cuda
+from test.measurement.utility.test_pynvml_utils import (
+    has_pynvml,
+    has_torch_cuda,
+)
 from test.store.artifact.fixture import store_with_context  # noqa
 
 # =================================================================================================
@@ -157,8 +160,7 @@ def test_power_validate_success() -> None:
 
     # Blocks until process exit
     delay = 2
-    # TODO: Why specify units?
-    stats = m.evaluate(get_cuda_load_command(delay), unit=Units.watt)
+    stats = m.evaluate(get_cuda_load_command(delay))
 
     validator = Validator(bool_exp=lambda _: True, success="yay", failure="oh")
     vr = validator.validate(stats)

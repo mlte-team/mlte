@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-import mlte.measurement.pynvml_utils as pynvml_utils
+import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.measurement.common import CommonStatistics
 from mlte.measurement.process_measurement import ProcessMeasurement
 from mlte.measurement.units import Quantity, Unit, Units
@@ -105,10 +105,6 @@ class NvidiaGPUPowerUtilization(ProcessMeasurement):
         :param unit: The unit to return the memory size in, defaults to statistics default unit.
         :return: The captured statistics
         """
-
-        # Keep collecting stats until the controlling process goes away.
-        # It might actually take the controlling process a while to start up the memory utilization
-        # so just collect the entire time whether we have utilization or not.
         average, minimum, maximum = (
             pynvml_utils.aggregate_measurements_from_process(
                 pid,

@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import mlte.measurement.pynvml_utils as pynvml_utils
+import mlte.measurement.utility.pynvml_utils as pynvml_utils
 
 # =================================================================================================
 #  _   _ _   _ _ _ _   _
@@ -97,8 +97,8 @@ def make_pynvml_mocks(device_count: int = 2, mock_handle: int = 1234):
 # =================================================================================================
 
 
-@patch("mlte.measurement.pynvml_utils.psutil.pid_exists")
-@patch("mlte.measurement.pynvml_utils.import_module")
+@patch("mlte.measurement.utility.pynvml_utils.psutil.pid_exists")
+@patch("mlte.measurement.utility.pynvml_utils.import_module")
 def test_aggregate_measurements_from_process(
     mock_import_module, mock_pid_exists
 ):
@@ -124,7 +124,7 @@ def test_aggregate_measurements_from_process(
     assert average == 3.5
 
 
-@patch("mlte.measurement.pynvml_utils.import_module")
+@patch("mlte.measurement.utility.pynvml_utils.import_module")
 def test_get_statistics_faking_gpu(mock_import_module):
     """
     This tests to see if the get statistic function:
@@ -155,7 +155,7 @@ def test_gpu_out_of_range():
     # We have to patch the path to where it was actually included to make sure we get the right
     # instance mocked
     with patch(
-        "mlte.measurement.pynvml_utils.import_module"
+        "mlte.measurement.utility.pynvml_utils.import_module"
     ) as mock_import_module:
         mock_handle = 1234
 

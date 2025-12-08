@@ -116,8 +116,6 @@ def get_pynvml_statistic(
     the handle. For example:
 
     fn(pynvml, handle) -> float:
-        # NOTE: Pynvml exposes version 1 of the structure which has:
-        # total, used, free
         memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
         return float(memory_info.used)
 

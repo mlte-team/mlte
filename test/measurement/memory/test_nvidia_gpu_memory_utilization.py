@@ -7,8 +7,8 @@ from typing import Tuple
 import pint
 import pytest
 
-import mlte.measurement.pynvml_utils as pynvml_utils
-import test.measurement.test_pynvml_utils as test_pynvml_utils
+import mlte.measurement.utility.pynvml_utils as pynvml_utils
+import test.measurement.utility.test_pynvml_utils as test_pynvml_utils
 from mlte.context.context import Context
 from mlte.measurement.memory import (
     NvidiaGPUMemoryStatistics,
@@ -52,39 +52,6 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
 
     # The command must be a list. So, add python and join the python command
     return ["python", "-c", "; ".join(cmd)]
-
-
-# def has_torch_cuda() -> bool:
-#     """
-#     Checks to see if torch and cuda are available. We need both of these for this test.
-#     :return: True if we have access to torch and cuda.
-#     """
-#     # DESIGN NOTE: Arguably, we could use nvidia-smi alone to see if we have access to cuda, but
-#     # we don't have code to load the cuda device without torch. We could use a different package
-#     # such as cupy, but that still requires something that probably isn't installed.
-#
-#     try:
-#         torch = importlib.import_module("torch")
-#         return bool(torch.cuda.is_available())
-#     except ModuleNotFoundError:
-#         # The module isn't there, so we can't run our experiment anyway
-#         return False
-#     except AttributeError:
-#         # We had some other error so we can't run the test with cuda either.
-#         return False
-
-
-# def has_pynvml():
-#     """
-#     Checks to see if pynvml is available without actually trying to import.
-#     NOTE: A system may have pynvml but NOT underlying libraries so a call to
-#     get device count is needed.
-#     :return: True if available for import.
-#     """
-#     import importlib.util
-#
-#     spec = importlib.util.find_spec("pynvml")
-#     return spec is not None
 
 
 # =================================================================================================
