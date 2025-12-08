@@ -53,13 +53,15 @@
         </p>
 
         <FormFieldsQualityAttributes
-          :initial-quality-attribute="requirement.quality"
+          :model-value="requirement.quality"
           @update-attribute="requirement.quality = $event"
         >
-          <b>System Quality:</b> What is the model quality attribute category to
-          be tested, such as accuracy, performance, robustness, fairness, or
-          resource consumption?
-          <InfoIcon>
+          <template #label>
+            <b>System Quality:</b> What is the model quality attribute category
+            to to to be tested, such as accuracy, performance, robustness,
+            resource consumption?
+          </template>
+          <template #tooltip>
             Quality attribute category by which the model will be evaluated in
             the context of the system <br />
             (e.g., Accuracy, Performance, Robustness, Fairness, Resource
@@ -67,7 +69,7 @@
             <br />
             <br />
             <i>Example: Response time.</i>
-          </InfoIcon>
+          </template>
         </FormFieldsQualityAttributes>
 
         <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">

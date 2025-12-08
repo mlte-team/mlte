@@ -1,37 +1,21 @@
 <template>
-  <div>
-    <UsaSelect
-      :model-value="modelValue"
-      :options="problemTypeOptions"
-      :disabled="props.disabled"
-      @update:model-value="emit('update:modelValue', $event)"
-    >
-      <template #label>
-        ML Problem Type
-        <InfoIcon>
-          Type of ML problem that the model is intended to solve.
-          <br />
-          <br />
-          <i
-            >Example: Classification, Clustering, Detection, and others in
-            drop-down list.</i
-          >
-        </InfoIcon>
-      </template>
-    </UsaSelect>
-
-    <div v-if="modelValue === 'Other'">
-      <div class="inline-input-left" style="width: 30rem">
-        <UsaTextInput v-model="newProblemType">
-          <template #label> New Problem Type </template>
-        </UsaTextInput>
-      </div>
-
-      <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submit"> Save </UsaButton>
-      </div>
-    </div>
-  </div>
+  <TemplatesCustomListSelect
+    :model-value="modelValue"
+    :options="problemTypeOptions"
+    @update:model-value="$emit('update:modelValue', $event)"
+    @save-new-entry="submit"
+  >
+    <template #label> ML Problem Type </template>
+    <template #tooltip>
+      Type of ML problem that the model is intended to solve.
+      <br />
+      <br />
+      <i>
+        Example: Classification, Clustering, Detection, and others in drop-down
+        list.
+      </i>
+    </template>
+  </TemplatesCustomListSelect>
 </template>
 
 <script setup lang="ts">
@@ -41,25 +25,20 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
 });
 
-const newProblemType = ref("");
 const { problemTypeOptions, fetchProblemTypeData } =
   await useProblemTypeOptions();
 
 // Submit new entry to API
-async function submit() {
+async function submit(newProblemType: string) {
   const response = await createCustomListEntry(
     "problem_types",
-    new CustomListEntry(newProblemType.value, "", null),
+    new CustomListEntry(newProblemType, "", null),
   );
   if (response) {
     await fetchProblemTypeData();
-    emit("update:modelValue", newProblemType.value);
+    emit("update:modelValue", newProblemType);
   }
 }
 </script>

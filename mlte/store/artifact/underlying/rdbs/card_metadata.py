@@ -177,7 +177,9 @@ class DBDataDescriptor(DBBase):
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
-    classification: Mapped[str] # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
+    classification: Mapped[
+        str
+    ]  # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
     labels: Mapped[list[DBLabelDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )
