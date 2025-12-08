@@ -1,18 +1,5 @@
 {
   "$defs": {
-    "DataClassification": {
-      "description": "An enumeration of data classification levels.",
-      "enum": [
-        "unclassified",
-        "cui",
-        "pii",
-        "phi",
-        "classified",
-        "other"
-      ],
-      "title": "DataClassification",
-      "type": "string"
-    },
     "DataDescriptor": {
       "description": "Describes a dataset used in model development.",
       "properties": {
@@ -53,15 +40,9 @@
           "title": "Source"
         },
         "classification": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DataClassification"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
+          "default": "",
+          "title": "Classification",
+          "type": "string"
         },
         "access": {
           "anyOf": [

@@ -167,8 +167,8 @@ class DataDescriptor(BaseModel):
     source: Optional[str] = None
     """A description of the data source."""
 
-    classification: Optional[DataClassification] = None
-    """A description of the data classification level."""
+    classification: str = ""
+    """A description of the data classification level. Selected from classification custom list."""
 
     access: Optional[str] = None
     """A description of the manner in which this data is accessed."""
@@ -201,7 +201,7 @@ class SystemDescriptor(BaseModel):
     """A description of system goals."""
 
     problem_type: str = ""
-    """A description of the machine learning problem type."""
+    """A description of the machine learning problem type. Selected from problem types custom list."""
 
     task: Optional[str] = None
     """A description of the machine learning task."""

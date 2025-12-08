@@ -35,7 +35,9 @@ class DBNegotiationCard(DBBase):
     sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("nc_problem_type.id")
     )
-    sys_problem_type: Mapped[str] # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
+    sys_problem_type: Mapped[
+        str
+    ]  # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
@@ -175,7 +177,7 @@ class DBDataDescriptor(DBBase):
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
-    classification: Mapped[DBDataClassification] = relationship()
+    classification: Mapped[str] # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
     labels: Mapped[list[DBLabelDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )
@@ -293,6 +295,7 @@ class DBQAS(DBBase):
 # -------------------------------------------------------------------------
 # Pre-filled table functions.
 # -------------------------------------------------------------------------
+
 
 def init_classification_types(session: Session):
     """Initializes the table with the configured classification types."""

@@ -19,7 +19,7 @@ class QASDescriptor(BaseModel):
     """The unique identifier for the QAS."""
 
     quality: str = ""
-    """System property that is being evaluated."""
+    """System property that is being evaluated. Selected from quality attributes custom list."""
 
     stimulus: Optional[str] = None
     """The condition that triggers this scenario."""
