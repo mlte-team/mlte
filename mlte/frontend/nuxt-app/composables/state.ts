@@ -1,34 +1,49 @@
 // --------------------------------------------------------------------------------------------------------------
-// Schema values
-// --------------------------------------------------------------------------------------------------------------
-
-// TODO: Pull these from the schema or a custom list
-export const useClassificationOptions = () =>
-  useState<Array<SelectOption>>("classificationOptions", () => [
-    { value: "unclassified", text: "Unclassified" },
-    {
-      value: "cui",
-      text: "Controlled Unclassified Information (CUI)",
-    },
-    {
-      value: "pii",
-      text: "Personally Identifiable Information (PII)",
-    },
-    {
-      value: "phi",
-      text: "Protected Health Information (PHI)",
-    },
-    { value: "other", text: "Other" },
-  ]);
-
-// --------------------------------------------------------------------------------------------------------------
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
 
 /**
+ * Export the state variable classificationOptions to be globally available.
+ *
+ * classificationOptions: List of SelectOption to be used when making a <Select> for classification.
+ *
+ * @returns {ref<Array<SelectOption>>} classificationOptions Ref to global classificationOptions
+ * @returns {function} fetchClassificationData Hook to update classificationOptions list with API
+ */
+export const useClassificationOptions = async () => {
+  const classificationOptions = useState<Array<SelectOption>>(
+    "classificationOptions",
+    () => [],
+  );
+
+  const fetchClassificationData = async () => {
+    const apiData = await getCustomList("classification");
+    if (apiData) {
+      classificationOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        classificationOptions.value.push(
+          new SelectOption(entry.name, entry.name),
+        );
+      });
+      classificationOptions.value.push(new SelectOption("Other", "Other"));
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (classificationOptions.value.length === 0) {
+    await fetchClassificationData();
+  }
+
+  return {
+    classificationOptions,
+    fetchClassificationData,
+  };
+};
+
+/**
  * Export the state variable customListOptions to be globally available.
  *
- * customListOptions: List of SelectOptions to be used when making a <Select> for Custom List Names.
+ * customListOptions: List of SelectOptions to be used when making a <Select> for custom list names.
  *
  * @returns {Array<SelectOption>} customListOptions Ref to global customListOptions
  */
@@ -63,7 +78,7 @@ export const useCustomListOptions = async () => {
 /**
  * Export the state variable problemTypeOptions to be globally available.
  *
- * problemTypeOptions: List of SelectOption to be used when making a <Select> for Problem Types.
+ * problemTypeOptions: List of SelectOption to be used when making a <Select> for problem types.
  *
  * @returns {ref<Array<SelectOption>>} problemTypeOptions Ref to global problemTypeOptions
  * @returns {function} fetchProblemTypeData Hook to update problemTypeOptions list with API
@@ -139,7 +154,7 @@ export async function updateQAData() {
 /**
  * Export the state variable QACategoryOptions to be globally available.
  *
- * QACategoryOptions: List of QAOptions to be used when making a <Select> for QA Categories.
+ * QACategoryOptions: List of QAOptions to be used when making a <Select> for QA categories.
  *
  * @returns {ref<Array<QAOption>>} QACategoryOptions Ref to global QACategoryOptions
  * @returns {function} fetchQACData Hook to update QACategoryOptions list with API

@@ -82,20 +82,7 @@
             </UsaTextInput>
           </div>
 
-          <UsaSelect
-            v-model="dataItem.classification"
-            :options="classificationOptions"
-          >
-            <template #label>
-              Data Classification
-              <InfoIcon>
-                What is the classification of the data?
-                <br />
-                <br />
-                <i>Example: Classified, Unclassified, PHI, etc.</i>
-              </InfoIcon>
-            </template>
-          </UsaSelect>
+          <FormFieldsClasfficationSelect v-model="dataItem.classification" />
 
           <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
             <template #label>
