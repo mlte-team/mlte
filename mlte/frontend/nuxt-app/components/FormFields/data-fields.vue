@@ -372,7 +372,6 @@ defineExpose({
 
 const displaySection = ref<boolean>(true);
 const displayDataset = ref<Array<boolean>>([]);
-const classificationOptions = useClassificationOptions();
 
 props.modelValue.forEach(() => {
   displayDataset.value.push(true);

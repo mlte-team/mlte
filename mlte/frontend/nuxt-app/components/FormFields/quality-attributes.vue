@@ -82,7 +82,7 @@ const selectedQAOptions = ref<Array<QAOption>>([]);
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.initialQualityAttribute) {
   AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.text === props.initialQualityAttribute) {
+    if (attribute.text === props.initialQualityAttribute && attribute.parent) {
       qaCategory.value = attribute.parent;
       categoryChange(qaCategory.value, props.initialQualityAttribute);
     }

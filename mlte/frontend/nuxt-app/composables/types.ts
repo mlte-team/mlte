@@ -29,7 +29,7 @@ export class QAOption {
     public value: string,
     public text: string,
     public description: string,
-    public parent: string,
+    public parent: string | null,
   ) {}
 }
 
