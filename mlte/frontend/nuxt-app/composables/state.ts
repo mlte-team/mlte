@@ -79,8 +79,9 @@ export const useProblemTypeOptions = async () => {
     if (apiData) {
       problemTypeOptions.value = [];
       apiData.forEach((entry: CustomListEntry) => {
-        new SelectOption(entry.name, entry.name);
+        problemTypeOptions.value.push(new SelectOption(entry.name, entry.name));
       });
+      problemTypeOptions.value.push(new SelectOption("Other", "Other"));
     }
   };
 

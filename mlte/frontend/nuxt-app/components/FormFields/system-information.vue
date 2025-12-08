@@ -24,23 +24,7 @@
         </template>
       </UsaTextarea>
 
-      <UsaSelect
-        v-model="props.modelValue.problem_type"
-        :options="problemTypeOptions"
-      >
-        <template #label>
-          ML Problem Type
-          <InfoIcon>
-            Type of ML problem that the model is intended to solve.
-            <br />
-            <br />
-            <i
-              >Example: Classification, Clustering, Detection, and others in
-              drop-down list.</i
-            >
-          </InfoIcon>
-        </template>
-      </UsaSelect>
+      <FormFieldsProblemTypeSelect v-model="props.modelValue.problem_type" />
 
       <UsaTextarea
         v-model="props.modelValue.usage_context"
@@ -224,7 +208,6 @@ defineExpose({
 });
 
 const displaySection = ref<boolean>(true);
-const { problemTypeOptions } = await useProblemTypeOptions();
 
 // Add GoalDescriptor to goal list.
 function addGoal() {
