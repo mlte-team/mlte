@@ -109,17 +109,6 @@ class ModelDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class DataClassification(StrEnum):
-    """An enumeration of data classification levels."""
-
-    UNCLASSIFIED = "unclassified"
-    CUI = "cui"
-    PII = "pii"
-    PHI = "phi"
-    CLASSIFIED = "classified"
-    OTHER = "other"
-
-
 class LabelDescriptor(BaseModel):
     """Describes a dataset label."""
 

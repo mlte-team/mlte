@@ -13,7 +13,6 @@ from deepdiff import DeepDiff  # type: ignore
 
 from mlte.artifact.type import ArtifactType
 from mlte.negotiation.model import (
-    DataClassification,
     DataDescriptor,
     FieldDescriptor,
     GoalDescriptor,
@@ -23,7 +22,6 @@ from mlte.negotiation.model import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardModel,
-    ProblemType,
     SystemDescriptor,
 )
 from test.fixture.artifact import ArtifactModelFactory
@@ -68,7 +66,7 @@ def test_system_descriptor() -> None:
                     ],
                 )
             ],
-            problem_type=ProblemType.CLASSIFICATION,
+            problem_type="Classification",
             task="task",
             usage_context="usage_context",
             risks=["fp", "fn", "other"],
@@ -181,7 +179,7 @@ def test_data_descriptor() -> None:
         DataDescriptor(
             description="description",
             purpose="purpose",
-            classification=DataClassification.UNCLASSIFIED,
+            classification="Unclassified",
             access="access",
             labeling_method="by hand",
             fields=[
