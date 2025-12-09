@@ -431,7 +431,7 @@ function dataItemEmpty(dataItem: DataDescriptor) {
   if (
     dataItem.description !== "" ||
     dataItem.source !== "" ||
-    dataItem.classification !== "Unclassified" ||
+    dataItem.classification !== "" ||
     dataItem.access !== "" ||
     dataItem.labeling_method !== ""
   ) {

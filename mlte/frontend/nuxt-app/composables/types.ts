@@ -159,7 +159,7 @@ export class DataDescriptor {
     public description: string = "",
     public purpose: string = "",
     public source: string = "",
-    public classification: string = "Unclassified",
+    public classification: string = "",
     public access: string = "",
     public labeling_method: string = "",
     public labels: Array<LabelDescriptor> = [new LabelDescriptor()],
@@ -172,7 +172,7 @@ export class DataDescriptor {
 export class SystemDescriptor {
   constructor(
     public goals: Array<GoalDescriptor> = [new GoalDescriptor()],
-    public problem_type: string = "classification",
+    public problem_type: string = "",
     public task: string = "",
     public usage_context: string = "",
     public risks: Array<string> = [],
