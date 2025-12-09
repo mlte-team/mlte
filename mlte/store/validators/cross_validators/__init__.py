@@ -1,3 +1,6 @@
+from mlte.store.validators.cross_validators.artifact_classification_validator import (
+    ArtifactClassificationValidator,
+)
 from mlte.store.validators.cross_validators.artifact_problem_type_validator import (
     ArtifactProblemTypeValidator,
 )
@@ -18,6 +21,7 @@ from mlte.store.validators.cross_validators.catalog_user_validator import (
 )
 
 __all__ = [
+    "ArtifactClassificationValidator",
     "ArtifactProblemTypeValidator",
     "ArtifactQAValidator",
     "ArtifactUserValidator",

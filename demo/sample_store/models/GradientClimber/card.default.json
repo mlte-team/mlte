@@ -33,7 +33,7 @@
             {
                 "description": "dataset is provided by a physics simulation egine",
                 "source": "AI gymnasium (https://gymnasium.farama.org/ - loaded with import gymnasium as gym)",
-                "classification": "unclassified",
+                "classification": "Unclassified",
                 "access": "must be able to access/install packages",
                 "labeling_method": "",
                 "labels": [

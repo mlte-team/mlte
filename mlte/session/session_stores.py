@@ -13,6 +13,7 @@ from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.cross_validator import CompositeValidator
 from mlte.store.validators.cross_validators import (
+    ArtifactClassificationValidator,
     ArtifactProblemTypeValidator,
     ArtifactQAValidator,
     ArtifactUserValidator,
@@ -134,6 +135,9 @@ def _setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     """
     artifact_store_validators = CompositeValidator(
         [
+            ArtifactClassificationValidator(
+                custom_list_store=stores.custom_list_store,
+            ),
             ArtifactProblemTypeValidator(
                 custom_list_store=stores.custom_list_store
             ),

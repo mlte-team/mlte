@@ -59,6 +59,7 @@ def test_artifact_cross_validators(
         artifact = ArtifactModelFactory.make(
             ArtifactType.NEGOTIATION_CARD, ARTIFACT_ID
         )
+        body = typing.cast(NegotiationCardModel, artifact.body)
         artifact_id = artifact.header.identifier
 
         # Valid submission
@@ -82,8 +83,39 @@ def test_artifact_cross_validators(
                 INVALID_USER,
             )
 
+        # Invalid problem type submission
+        valid_problem_type = body.system.problem_type
+        body.system.problem_type = "not a problem type"
+        artifact.body = body
+        with pytest.raises(RuntimeError):
+            _ = check_artifact_writing(
+                artifact_store,
+                MODEL_ID,
+                VERISON_ID,
+                artifact_id,
+                artifact,
+                VALID_USER,
+            )
+        body.system.problem_type = valid_problem_type
+        artifact.body = body
+
+        # Invalid classification submission
+        valid_classification = body.data[0].classification
+        body.data[0].classification = "not a classification"
+        artifact.body = body
+        with pytest.raises(RuntimeError):
+            _ = check_artifact_writing(
+                artifact_store,
+                MODEL_ID,
+                VERISON_ID,
+                artifact_id,
+                artifact,
+                VALID_USER,
+            )
+        body.data[0].classification = valid_classification
+        artifact.body = body
+
         # Invalid quality attribute submission
-        body = typing.cast(NegotiationCardModel, artifact.body)
         body.system_requirements[0].quality = "not a quality attribute"
         artifact.body = body
         with pytest.raises(RuntimeError):
@@ -131,6 +163,14 @@ def test_catalog_cross_validators(
             local_catalog_session.entry_mapper.create_with_header(
                 entry, user=INVALID_USER
             )
+
+        # Invalid tag submission
+        entry.tags.append("not a tag")
+        with pytest.raises(RuntimeError):
+            local_catalog_session.entry_mapper.create_with_header(
+                entry, user=VALID_USER
+            )
+        entry.tags.pop()
 
         # Invalid quality attribute submission
         entry.quality_attribute = "not a quality attribute"

@@ -159,7 +159,7 @@ export class DataDescriptor {
     public description: string = "",
     public purpose: string = "",
     public source: string = "",
-    public classification: string = "unclassified",
+    public classification: string = "Unclassified",
     public access: string = "",
     public labeling_method: string = "",
     public labels: Array<LabelDescriptor> = [new LabelDescriptor()],
