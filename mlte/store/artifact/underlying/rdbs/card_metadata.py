@@ -31,12 +31,7 @@ class DBNegotiationCard(DBBase):
     sys_goals: Mapped[list[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
-    sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("nc_problem_type.id")
-    )
-    sys_problem_type: Mapped[
-        str
-    ]  # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
+    sys_problem_type: Mapped[str]
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
@@ -149,14 +144,11 @@ class DBDataDescriptor(DBBase):
     labeling_method: Mapped[Optional[str]]
     rights: Mapped[Optional[str]]
     policies: Mapped[Optional[str]]
-    classification_id: Mapped[str]
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
-    classification: Mapped[
-        str
-    ]  # TODO: Does this need to map to the custom list table? Did I set that up for QA/QAC?
+    classification: Mapped[str]
     labels: Mapped[list[DBLabelDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )

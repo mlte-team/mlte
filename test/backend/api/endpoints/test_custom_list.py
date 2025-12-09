@@ -226,7 +226,7 @@ def test_list_lists(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
 
     collection = res.json()
-    assert len(collection) == 2
+    assert len(collection) == 5
 
 
 @pytest.mark.parametrize(
