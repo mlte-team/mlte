@@ -93,7 +93,7 @@
     </div>
 
     <h2 class="section-header">Test Results</h2>
-    <form-fields-results-table v-model="reportBody.test_results" />
+    <ReportResultsTable v-model="reportBody.test_results" />
 
     <hr />
     <h2 class="section-header">Additional Context</h2>
