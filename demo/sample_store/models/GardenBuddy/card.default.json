@@ -132,7 +132,7 @@
             },
             {
                 "identifier": "card.default-qas_004",
-                "quality": "Resource  Utilization",
+                "quality": "Resource Utilization",
                 "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",
