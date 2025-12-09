@@ -178,8 +178,6 @@ const props = defineProps({
   },
 });
 
-await updateQAData();
-
 const displaySection = ref<boolean>(true);
 const systemModalHeaders = ref([
   { id: "systemQuality", label: "System Quality", sortable: false },

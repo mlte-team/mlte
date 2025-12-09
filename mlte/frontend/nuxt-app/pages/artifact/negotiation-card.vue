@@ -121,6 +121,7 @@ const formErrors = ref({
   identifier: false,
 });
 
+await updateCardCustomLists();
 if (queryArtifactId !== undefined) {
   const card = await getCard(
     queryModel as string,

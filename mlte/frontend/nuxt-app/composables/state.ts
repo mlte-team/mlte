@@ -143,14 +143,6 @@ export const useTagOptions = async () => {
   };
 };
 
-// Function to update both QAC and QA with API
-export async function updateQAData() {
-  const { fetchQACData } = await useQACategoryOptions();
-  await fetchQACData();
-  const { fetchQAData } = await useQualityAttributeOptions();
-  await fetchQAData();
-}
-
 /**
  * Export the state variable QACategoryOptions to be globally available.
  *
@@ -225,3 +217,31 @@ export const useQualityAttributeOptions = async () => {
     fetchQAData,
   };
 };
+
+// --------------------------------------------------------------------------------------------------------------
+// Update functions
+// --------------------------------------------------------------------------------------------------------------
+
+// Function to update all custom lists used in a negotiation card
+export async function updateCardCustomLists() {
+  const { fetchProblemTypeData } = await useProblemTypeOptions();
+  await fetchProblemTypeData();
+  const { fetchClassificationData } = await useClassificationOptions();
+  await fetchClassificationData();
+  await updateQAData();
+}
+
+// Function to update all custom lists used in a test catalog entry
+export async function updateCatalogCustomLists() {
+  const { fetchTagData } = await useTagOptions();
+  await fetchTagData();
+  await updateQAData();
+}
+
+// Function to update both QAC and QA with API
+export async function updateQAData() {
+  const { fetchQACData } = await useQACategoryOptions();
+  await fetchQACData();
+  const { fetchQAData } = await useQualityAttributeOptions();
+  await fetchQAData();
+}
