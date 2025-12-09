@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-const emit = defineEmits(["cancel", "submit", "updateEntry"]);
+const emit = defineEmits(["cancel", "submit"]);
 const props = defineProps({
   modelValue: {
     type: Object as PropType<CustomListEntry>,
