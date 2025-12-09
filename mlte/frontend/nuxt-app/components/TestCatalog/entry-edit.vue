@@ -55,7 +55,7 @@
       </span>
     </div>
 
-    <FormFieldsQualityAttributes
+    <CustomListQualityAttributeSelect
       :model-value="props.modelValue.quality_attribute"
       :disabled="props.readOnly"
       @update-attribute="props.modelValue.quality_attribute = $event"
@@ -67,7 +67,7 @@
           validating, e.g., functional correctness, performance, robustness.
         </InfoIcon>
       </template>
-    </FormFieldsQualityAttributes>
+    </CustomListQualityAttributeSelect>
 
     <label class="usa-label">
       Code
