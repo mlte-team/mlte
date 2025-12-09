@@ -26,15 +26,12 @@ class ArtifactClassificationValidator(CrossValidator):
         self.custom_list_store = custom_list_store
 
     def validate(self, new_artifact: ArtifactModel) -> None:
-        print("validating")
-
         with ManagedCustomListSession(
             self.custom_list_store.session()
         ) as session:
             if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
                 card = typing.cast(NegotiationCardModel, new_artifact.body)
                 for dataset in card.data:
-                    print(dataset.classification)
                     if dataset.classification != "":
                         try:
                             session.custom_list_entry_mapper.read(
