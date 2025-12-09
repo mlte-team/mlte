@@ -24,7 +24,7 @@
         </template>
       </UsaTextarea>
 
-      <FormFieldsProblemTypeSelect v-model="props.modelValue.problem_type" />
+      <CustomListProblemTypeSelect v-model="props.modelValue.problem_type" />
 
       <UsaTextarea
         v-model="props.modelValue.usage_context"

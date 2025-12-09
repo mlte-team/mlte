@@ -82,7 +82,7 @@
             </UsaTextInput>
           </div>
 
-          <FormFieldsClasfficationSelect v-model="dataItem.classification" />
+          <CustomListClasfficationSelect v-model="dataItem.classification" />
 
           <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
             <template #label>

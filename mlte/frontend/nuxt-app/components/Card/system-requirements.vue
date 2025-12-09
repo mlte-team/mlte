@@ -52,7 +52,7 @@
           {{ requirement.measure }}.
         </p>
 
-        <FormFieldsQualityAttributes
+        <CustomListQualityAttributeSelect
           :model-value="requirement.quality"
           @update-attribute="requirement.quality = $event"
         >
@@ -70,7 +70,7 @@
             <br />
             <i>Example: Response time.</i>
           </template>
-        </FormFieldsQualityAttributes>
+        </CustomListQualityAttributeSelect>
 
         <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">
           <template #label>

@@ -81,16 +81,13 @@
       field. Click on the Example button to see specific examples for a section.
     </p>
 
-    <FormFieldsSystemInformation
-      ref="systemInformationRef"
-      v-model="form.system"
-    />
+    <CardSystemInformation ref="systemInformationRef" v-model="form.system" />
 
-    <FormFieldsDataFields ref="dataRef" v-model="form.data" />
+    <CardDataFields ref="dataRef" v-model="form.data" />
 
-    <FormFieldsModelFields ref="modelRef" v-model="form.model" />
+    <CardModelFields ref="modelRef" v-model="form.model" />
 
-    <FormFieldsSystemRequirements v-model="form.system_requirements" />
+    <CardSystemRequirements v-model="form.system_requirements" />
 
     <div class="submit-footer">
       <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
