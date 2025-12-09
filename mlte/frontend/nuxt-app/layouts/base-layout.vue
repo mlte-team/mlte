@@ -20,7 +20,7 @@
     <div class="flex-container">
       <div class="sidebar left-sidebar">
         <div style="position: fixed">
-          <div v-if="route.name != 'login-page'" class="grid-row grid-gap">
+          <div v-if="route.name != 'login'" class="grid-row grid-gap">
             <div
               class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
             >
@@ -38,7 +38,7 @@
                     <NuxtLink
                       :to="{ path: '/catalog' }"
                       :class="{
-                        'usa-current': route.name === 'catalog-test-catalog',
+                        'usa-current': route.name === 'catalog',
                       }"
                       @click="$emit('nav')"
                     >
@@ -47,9 +47,9 @@
                   </li>
                   <li class="usa-sidenav__item">
                     <NuxtLink
-                      :to="{ path: '/custom-list/custom-list' }"
+                      :to="{ path: '/custom-list' }"
                       :class="{
-                        'usa-current': route.name === 'custom-list-custom-list',
+                        'usa-current': route.name === 'custom-list',
                       }"
                       @click="$emit('nav')"
                     >
