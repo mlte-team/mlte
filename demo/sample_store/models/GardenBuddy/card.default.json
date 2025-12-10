@@ -33,7 +33,7 @@
                     ]
                 }
             ],
-            "problem_type": "classification",
+            "problem_type": "Classification",
             "task": "Identify flowers in pictures taken at the garden",
             "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
             "risks": []
