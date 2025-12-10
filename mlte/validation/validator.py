@@ -292,4 +292,18 @@ class Validator(Serializable):
         """Test instance for equality."""
         if not isinstance(other, Validator):
             return False
-        return self._equal(other)
+
+        # Compare bool exp functions separately, then remove from model as encoding can be different due to creation context.
+        bool_exps_same = (
+            serializing.compare_callable(self.bool_exp, other.bool_exp)
+            if self.bool_exp and other.bool_exp
+            else self.bool_exp == other.bool_exp
+        )
+
+        a_model = self.to_model()
+        b_model = other.to_model()
+
+        a_model.bool_exp = None
+        b_model.bool_exp = None
+
+        return a_model == b_model and bool_exps_same
