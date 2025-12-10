@@ -1,8 +1,4 @@
-"""
-mlte/store/user/underlying/memory.py
-
-Implementation of in-memory user store.
-"""
+"""Implementation of in-memory user store."""
 
 from __future__ import annotations
 

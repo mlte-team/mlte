@@ -9,14 +9,15 @@ from sqlalchemy.orm import DeclarativeBase, Session
 
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
-from mlte.store.catalog.store import (
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
-    CatalogStore,
     CatalogStoreSession,
 )
 from mlte.store.catalog.underlying.rdbs.metadata import DBBase
 from mlte.store.catalog.underlying.rdbs.reader import DBReader
 from mlte.store.common.rdbs_storage import RDBStorage
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # RelationalDBCatalogStore
@@ -27,7 +28,7 @@ class RelationalDBCatalogStore(CatalogStore):
     """A DB implementation of the MLTE user store."""
 
     def __init__(self, uri, **kwargs):
-        CatalogStore.__init__(self, uri=uri)
+        super().__init__(uri=uri)
 
         self.storage = RDBStorage(
             uri,
@@ -42,7 +43,9 @@ class RelationalDBCatalogStore(CatalogStore):
         :return: The session handle
         """
         return RelationalDBCatalogStoreSession(
-            storage=self.storage, read_only=self.read_only
+            storage=self.storage,
+            validators=self.validators,
+            read_only=self.read_only,
         )
 
 
@@ -54,14 +57,19 @@ class RelationalDBCatalogStore(CatalogStore):
 class RelationalDBCatalogStoreSession(CatalogStoreSession):
     """A relational DB implementation of the MLTE user store session."""
 
-    def __init__(self, storage: RDBStorage, read_only: bool = False) -> None:
+    def __init__(
+        self,
+        storage: RDBStorage,
+        validators: CompositeValidator,
+        read_only: bool = False,
+    ) -> None:
         self.storage = storage
         """RDB storage."""
 
         self.read_only = read_only
         """Whether this is read only or not."""
 
-        self.entry_mapper = RDBEntryMapper(storage)
+        self.entry_mapper = RDBEntryMapper(storage, validators=validators)
         """The mapper to user CRUD."""
 
     def close(self) -> None:
@@ -77,7 +85,11 @@ class RelationalDBCatalogStoreSession(CatalogStoreSession):
 class RDBEntryMapper(CatalogEntryMapper):
     """RDB mapper for a catalog entry resource."""
 
-    def __init__(self, storage: RDBStorage) -> None:
+    def __init__(
+        self, storage: RDBStorage, validators: CompositeValidator
+    ) -> None:
+        super().__init__(validators=validators)
+
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -90,6 +102,7 @@ class RDBEntryMapper(CatalogEntryMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
+                self.validators.validate_all(entry)
                 entry_orm = DBReader._build_entry_orm(entry, session)
                 session.add(entry_orm)
                 session.commit()
@@ -100,6 +113,7 @@ class RDBEntryMapper(CatalogEntryMapper):
                 return stored_entry
 
     def edit(self, entry: CatalogEntry, context: Any = None) -> CatalogEntry:
+        self.validators.validate_all(entry)
         with Session(self.storage.engine) as session:
             _, entry_orm = DBReader.get_entry(entry.header.identifier, session)
 

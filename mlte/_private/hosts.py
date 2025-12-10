@@ -1,8 +1,4 @@
-"""
-mlte/_private/hosts.py
-
-Host checking utilities.
-"""
+"""Host checking utilities."""
 
 from typing import List
 

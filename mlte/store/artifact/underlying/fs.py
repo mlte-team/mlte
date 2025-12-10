@@ -16,6 +16,7 @@ from mlte.store.artifact.store_session import (
 )
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # LocalFileSystemStore
@@ -41,7 +42,9 @@ class LocalFileSystemStore(ArtifactStore):
         Return a session handle for the store instance.
         :return: The session handle
         """
-        return LocalFileSystemStoreSession(storage=self.storage)
+        return LocalFileSystemStoreSession(
+            storage=self.storage, validators=self.validators
+        )
 
 
 # -----------------------------------------------------------------------------
@@ -52,7 +55,9 @@ class LocalFileSystemStore(ArtifactStore):
 class LocalFileSystemStoreSession(ArtifactStoreSession):
     """A local file-system implementation of the MLTE artifact store."""
 
-    def __init__(self, storage: FileSystemStorage) -> None:
+    def __init__(
+        self, storage: FileSystemStorage, validators: CompositeValidator
+    ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 
@@ -64,7 +69,9 @@ class LocalFileSystemStoreSession(ArtifactStoreSession):
         )
         """The mapper to model CRUD."""
 
-        self.artifact_mapper = FileSystemArtifactMapper(storage=storage)
+        self.artifact_mapper = FileSystemArtifactMapper(
+            storage=storage, validators=validators
+        )
         """The mapper to artifact CRUD."""
 
     def close(self) -> None:
@@ -178,7 +185,11 @@ class FileSystemVersionMapper(VersionMapper):
 class FileSystemArtifactMapper(ArtifactMapper):
     """File storage mapper for the artifact resource."""
 
-    def __init__(self, *, storage: FileSystemStorage) -> None:
+    def __init__(
+        self, *, storage: FileSystemStorage, validators: CompositeValidator
+    ) -> None:
+        super().__init__(validators=validators)
+
         self.storage = storage
         """A reference to underlying storage."""
 

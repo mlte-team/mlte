@@ -1,8 +1,4 @@
-"""
-mlte/store/base.py
-
-MLTE general store interface.
-"""
+"""MLTE general store interface."""
 
 from __future__ import annotations
 
@@ -11,6 +7,7 @@ from enum import Enum
 from typing import Any, List, Optional, Protocol
 
 from mlte.store.query import Query
+from mlte.store.validators.cross_validator import CompositeValidator
 
 # -----------------------------------------------------------------------------
 # StoreType
@@ -156,6 +153,12 @@ class Store:
         self.uri = uri
         """The parsed store URI."""
 
+        self.validators: CompositeValidator = CompositeValidator()
+        """The inter store validators for this store."""
+
+    def set_validators(self, validators: CompositeValidator):
+        self.validators = validators
+
     def session(self) -> StoreSession:
         """
         Return a session handle for the store instance.
@@ -192,9 +195,7 @@ class ManagedSession:
 
 
 class ResourceMapper(ABC):
-    """
-    A generic interface for mapping CRUD actions to store specific resources.
-    """
+    """A generic interface for mapping CRUD actions to store specific resources."""
 
     NOT_IMPLEMENTED_ERROR_MSG = (
         "Cannot invoke method that has not been implemented for this mapper."
@@ -203,6 +204,12 @@ class ResourceMapper(ABC):
 
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
+
+    def __init__(
+        self, *, validators: CompositeValidator = CompositeValidator()
+    ) -> None:
+        self.validators: CompositeValidator = validators
+        """A reference to the store validators."""
 
     @abstractmethod
     def create(self, new_resource: Any, context: Any) -> Any:

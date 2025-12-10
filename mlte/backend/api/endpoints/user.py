@@ -1,6 +1,4 @@
 """
-mlte/backend/api/endpoints/user.py
-
 User CRUD endpoint. Note that all endpoints return a BasicUser instead of a User,
 which automatically removes the hashed password from the model returned.
 """

@@ -1,8 +1,4 @@
-"""
-mlte/value/test_value.py
-
-Unit tests for Value.
-"""
+"""Unit tests for Value."""
 
 from typing import Tuple
 

@@ -1,6 +1,4 @@
 """
-mlte/backend/api/models/artifact_model.py
-
 Model implementations for artifact store intermediaries for the API.
 
 NOTE(Kyle): I am unsure as to how I want to refactor the API to account

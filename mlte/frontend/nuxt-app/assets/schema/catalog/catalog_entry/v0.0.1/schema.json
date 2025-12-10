@@ -89,16 +89,9 @@
       "type": "array"
     },
     "quality_attribute": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Quality Attribute"
+      "default": "",
+      "title": "Quality Attribute",
+      "type": "string"
     },
     "code": {
       "title": "Code",

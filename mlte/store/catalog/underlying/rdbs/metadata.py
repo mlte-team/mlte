@@ -47,7 +47,7 @@ class DBCatalogEntry(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tags: Mapped[str]
-    quality_attribute: Mapped[Optional[str]]
+    quality_attribute: Mapped[str]
     code: Mapped[str]
     description: Mapped[Optional[str]]
     inputs: Mapped[Optional[str]]

@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/sample_catalog.py
-
-MLTE sample catalog to come with installation.
-"""
+"""MLTE sample catalog to come with installation."""
 
 from __future__ import annotations
 
@@ -14,11 +10,12 @@ from mlte._private.fixed_json import json
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
 from mlte.store.catalog.factory import create_catalog_store
-from mlte.store.catalog.store import (
-    CatalogStore,
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )
+from mlte.store.validators.cross_validator import CompositeValidator
 
 
 class SampleCatalog:
@@ -30,6 +27,7 @@ class SampleCatalog:
     @staticmethod
     def setup_sample_catalog(
         stores_uri: str,
+        validators: CompositeValidator,
     ) -> CatalogStore:
         """
         Sets up the sample catalog.
@@ -44,6 +42,7 @@ class SampleCatalog:
         catalog = create_catalog_store(
             parsed_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
         )
+        catalog.set_validators(validators)
 
         # Ensure the catalog is always reset to its initial state, and mark it as read only.
         SampleCatalog.reset_catalog(catalog)

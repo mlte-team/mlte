@@ -1,8 +1,4 @@
-"""
-mlte/store/common/query.py
-
-Query and filtering functionality for store operations.
-"""
+"""Query and filtering functionality for store operations."""
 
 from __future__ import annotations
 

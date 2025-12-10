@@ -1,8 +1,4 @@
-"""
-mlte/store/catalog/catalog_group.py
-
-MLTE catalog store group interface implementation.
-"""
+"""MLTE catalog store group interface implementation."""
 
 from __future__ import annotations
 
@@ -12,7 +8,8 @@ from typing import Dict, List, Optional, cast
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, StoreSession
 from mlte.store.catalog.factory import create_catalog_store
-from mlte.store.catalog.store import CatalogStore, CatalogStoreSession
+from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.store_session import CatalogStoreSession
 from mlte.store.error import ErrorAlreadyExists, ErrorNotFound
 from mlte.store.query import Query
 

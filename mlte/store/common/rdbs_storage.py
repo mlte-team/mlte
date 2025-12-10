@@ -1,8 +1,4 @@
-"""
-mlte/store/common/rdbs/store.py
-
-Base RDBS store.
-"""
+"""Base RDBS store."""
 
 from __future__ import annotations
 
