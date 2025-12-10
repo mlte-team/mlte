@@ -20,7 +20,7 @@
                     ]
                 }
             ],
-            "problem_type": "other",
+            "problem_type": "Control",
             "task": "Autonomous control",
             "usage_context": "An autonomous vehicle with an underpowered engine operating in a hilly environment, with control provided by a reinforcement learning model. The vehicle is constrained by an mission configuration that is prior to each use use, which defines the area of operation and regulations that the vehicle must comply with. ",
             "risks": [
