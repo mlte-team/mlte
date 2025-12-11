@@ -135,4 +135,12 @@ class TestCase(Serializable):
         """Test instance for equality."""
         if not isinstance(other, TestCase):
             return False
-        return self._equal(other)
+
+        # Validator has to be compared separately due to their storing of serialized code.
+        validators_are_equal = self.validator == other.validator
+        a_model = self.to_model()
+        b_model = other.to_model()
+        a_model.validator = None
+        b_model.validator = None
+
+        return a_model == b_model and validators_are_equal

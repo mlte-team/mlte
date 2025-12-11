@@ -7,7 +7,7 @@ from typing import Any, Callable
 import dill  # type: ignore
 
 
-def encode_callable(callable: Callable[[Any], Any]) -> str:
+def encode_callable(callable: Callable[..., Any]) -> str:
     """
     Encodes the callable as a base64 string.
 
@@ -17,7 +17,7 @@ def encode_callable(callable: Callable[[Any], Any]) -> str:
     return base64.b64encode(dill.dumps(callable)).decode("utf-8")
 
 
-def decode_callable(encoded_callable: str) -> Callable[[Any], Any]:
+def decode_callable(encoded_callable: str) -> Callable[..., Any]:
     """
     Decodes the callable from a base64 string.
 
@@ -25,6 +25,16 @@ def decode_callable(encoded_callable: str) -> Callable[[Any], Any]:
     :return: A callable function.
     """
     return typing.cast(
-        Callable[[Any], Any],
+        Callable[..., Any],
         dill.loads(base64.b64decode(encoded_callable.encode("utf-8"))),
     )
+
+
+def compare_callable(c1: Callable[..., Any], c2: Callable[..., Any]) -> bool:
+    """
+    Compares two callables.
+
+    :param c1, c2: Two callables to compare.
+    :return: True if equal in code, false if not.
+    """
+    return c1.__code__ == c2.__code__

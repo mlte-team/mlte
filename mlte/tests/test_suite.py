@@ -208,5 +208,17 @@ class TestSuite(Artifact):
         """Compare TestSuite instances for equality."""
         if not isinstance(other, TestSuite):
             return False
-        reference: TestSuite = other
-        return self.to_model() == reference.to_model()
+
+        # We compare cases directly, since they have serialized validators that have to be compared in a particular way.
+        all_cases_equal = False
+        if len(self.test_cases) == len(other.test_cases):
+            for id, _ in self.test_cases.items():
+                if (
+                    id not in other.test_cases
+                    or self.test_cases[id] != other.test_cases[id]
+                ):
+                    all_cases_equal = False
+                    break
+            all_cases_equal = True
+
+        return self.identifier == other.identifier and all_cases_equal

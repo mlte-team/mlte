@@ -41,7 +41,7 @@ class Integer(Evidence):
         self.unit = unit
         """The unit, if any."""
 
-    def get_value_w_units(self) -> Quantity:
+    def get_value_w_units(self) -> Quantity:  # type: ignore[type-arg]
         """
         Returns the int value as a Quantity, potentially with units.
         """
