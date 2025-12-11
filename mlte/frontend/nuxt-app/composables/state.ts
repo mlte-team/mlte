@@ -1,73 +1,49 @@
 // --------------------------------------------------------------------------------------------------------------
-// Schema values
-// --------------------------------------------------------------------------------------------------------------
-
-// TODO: Pull these from the schema or a custom list
-export const useClassificationOptions = () =>
-  useState<Array<SelectOption>>("classificationOptions", () => [
-    { value: "unclassified", text: "Unclassified" },
-    {
-      value: "cui",
-      text: "Controlled Unclassified Information (CUI)",
-    },
-    {
-      value: "pii",
-      text: "Personally Identifiable Information (PII)",
-    },
-    {
-      value: "phi",
-      text: "Protected Health Information (PHI)",
-    },
-    { value: "other", text: "Other" },
-  ]);
-
-// TODO: Pull these from the schema or a custom list
-export const useProblemTypeOptions = () =>
-  useState<Array<SelectOption>>("problemTypeOptions", () => [
-    { value: "alert", text: "Alert" },
-    { value: "benchmarking", text: "Benchmarking" },
-    { value: "classification", text: "Classification" },
-    { value: "clustering", text: "Clustering" },
-    { value: "content_generation", text: "Content Generation" },
-    { value: "detection", text: "Detection" },
-    { value: "forecasting", text: "Forecasting" },
-    { value: "goals", text: "Goals" },
-    { value: "sentiment_analysis", text: "Sentiment Analysis" },
-    { value: "summarization", text: "Summarization" },
-    { value: "translation", text: "Translation" },
-    { value: "trend", text: "Trend" },
-    { value: "other", text: "Other" },
-  ]);
-
-// TODO: Pull these from the schema or a custom list
-export const useTagOptions = () =>
-  useState<Array<CheckboxOption>>("tagOptions", () => [
-    { name: "Audio Analysis", selected: false },
-    { name: "Classification", selected: false },
-    { name: "Computer Vision", selected: false },
-    { name: "Decoder", selected: false },
-    { name: "Encoder", selected: false },
-    { name: "General", selected: false },
-    { name: "Generative Model", selected: false },
-    { name: "Infrared", selected: false },
-    { name: "NLP", selected: false },
-    { name: "Object Detection", selected: false },
-    { name: "Sentiment Analysis", selected: false },
-    { name: "Regression", selected: false },
-    { name: "Reinforcement Learning", selected: false },
-    { name: "Segmentation", selected: false },
-    { name: "Tabular", selected: false },
-    { name: "Time Series", selected: false },
-  ]);
-
-// --------------------------------------------------------------------------------------------------------------
 // Custom Lists
 // --------------------------------------------------------------------------------------------------------------
 
 /**
+ * Export the state variable classificationOptions to be globally available.
+ *
+ * classificationOptions: List of SelectOption to be used when making a <Select> for classification.
+ *
+ * @returns {ref<Array<SelectOption>>} classificationOptions Ref to global classificationOptions
+ * @returns {function} fetchClassificationData Hook to update classificationOptions list with API
+ */
+export const useClassificationOptions = async () => {
+  const classificationOptions = useState<Array<SelectOption>>(
+    "classificationOptions",
+    () => [],
+  );
+
+  const fetchClassificationData = async () => {
+    const apiData = await getCustomList("classification");
+    if (apiData) {
+      classificationOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        classificationOptions.value.push(
+          new SelectOption(entry.name, entry.name),
+        );
+      });
+      classificationOptions.value.push(new SelectOption("Other", "Other"));
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (classificationOptions.value.length === 0) {
+    await fetchClassificationData();
+  }
+
+  return {
+    classificationOptions,
+    fetchClassificationData,
+  };
+};
+
+/**
  * Export the state variable customListOptions to be globally available.
  *
- * customListOptions: List of SelectOptions to be used when making a <Select> for Custom List Names.
+ * customListOptions: List of SelectOptions to be used when making a <Select> for custom list names.
  *
  * @returns {Array<SelectOption>} customListOptions Ref to global customListOptions
  */
@@ -99,18 +75,78 @@ export const useCustomListOptions = async () => {
   };
 };
 
-// Function to update both QAC and QA with API
-export async function updateQAData() {
-  const { fetchQACData } = await useQACategoryOptions();
-  await fetchQACData();
-  const { fetchQAData } = await useQualityAttributeOptions();
-  await fetchQAData();
-}
+/**
+ * Export the state variable problemTypeOptions to be globally available.
+ *
+ * problemTypeOptions: List of SelectOption to be used when making a <Select> for problem types.
+ *
+ * @returns {ref<Array<SelectOption>>} problemTypeOptions Ref to global problemTypeOptions
+ * @returns {function} fetchProblemTypeData Hook to update problemTypeOptions list with API
+ */
+export const useProblemTypeOptions = async () => {
+  const problemTypeOptions = useState<Array<SelectOption>>(
+    "problemTypeOptions",
+    () => [],
+  );
+
+  const fetchProblemTypeData = async () => {
+    const apiData = await getCustomList("problem_types");
+    if (apiData) {
+      problemTypeOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        problemTypeOptions.value.push(new SelectOption(entry.name, entry.name));
+      });
+      problemTypeOptions.value.push(new SelectOption("Other", "Other"));
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (problemTypeOptions.value.length === 0) {
+    await fetchProblemTypeData();
+  }
+
+  return {
+    problemTypeOptions,
+    fetchProblemTypeData,
+  };
+};
+
+/**
+ * Export the state variable tagOptions to be globally available.
+ *
+ * tagOptions: List of CheckboxOption to be used when making a list of checkboxes for tags.
+ *
+ * @returns {ref<Array<CheckboxOption>>} tagOptions Ref to global tagOptions
+ * @returns {function} fetchTagData Hook to update tagOptions list with API
+ */
+export const useTagOptions = async () => {
+  const tagOptions = useState<Array<CheckboxOption>>("tagOptions", () => []);
+
+  const fetchTagData = async () => {
+    const apiData = await getCustomList("tags");
+    if (apiData) {
+      tagOptions.value = [];
+      apiData.forEach((entry: CustomListEntry) => {
+        tagOptions.value.push(new CheckboxOption(entry.name, false));
+      });
+    }
+  };
+
+  // On setup, populate the data if it is not present
+  if (tagOptions.value.length === 0) {
+    await fetchTagData();
+  }
+
+  return {
+    tagOptions,
+    fetchTagData,
+  };
+};
 
 /**
  * Export the state variable QACategoryOptions to be globally available.
  *
- * QACategoryOptions: List of QAOptions to be used when making a <Select> for QA Categories.
+ * QACategoryOptions: List of QAOptions to be used when making a <Select> for QA categories.
  *
  * @returns {ref<Array<QAOption>>} QACategoryOptions Ref to global QACategoryOptions
  * @returns {function} fetchQACData Hook to update QACategoryOptions list with API
@@ -181,3 +217,31 @@ export const useQualityAttributeOptions = async () => {
     fetchQAData,
   };
 };
+
+// --------------------------------------------------------------------------------------------------------------
+// Update functions
+// --------------------------------------------------------------------------------------------------------------
+
+// Function to update all custom lists used in a negotiation card
+export async function updateCardCustomLists() {
+  const { fetchProblemTypeData } = await useProblemTypeOptions();
+  await fetchProblemTypeData();
+  const { fetchClassificationData } = await useClassificationOptions();
+  await fetchClassificationData();
+  await updateQAData();
+}
+
+// Function to update all custom lists used in a test catalog entry
+export async function updateCatalogCustomLists() {
+  const { fetchTagData } = await useTagOptions();
+  await fetchTagData();
+  await updateQAData();
+}
+
+// Function to update both QAC and QA with API
+export async function updateQAData() {
+  const { fetchQACData } = await useQACategoryOptions();
+  await fetchQACData();
+  const { fetchQAData } = await useQualityAttributeOptions();
+  await fetchQAData();
+}

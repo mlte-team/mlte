@@ -86,6 +86,8 @@ export default withNuxt(
           useApi: true,
 
           // State objects
+          updateCardCustomLists: true,
+          updateCatalogCustomLists: true,
           updateQAData: true,
           useClassificationOptions: true,
           useCustomListOptions: true,

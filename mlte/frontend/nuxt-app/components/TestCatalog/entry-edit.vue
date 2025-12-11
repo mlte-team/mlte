@@ -56,15 +56,17 @@
     </div>
 
     <FormFieldsQualityAttributes
-      :initial-quality-attribute="props.modelValue.quality_attribute"
+      :model-value="props.modelValue.quality_attribute"
       :disabled="props.readOnly"
       @update-attribute="props.modelValue.quality_attribute = $event"
     >
-      Quality Attribute Category
-      <InfoIcon>
-        High-level quality attribute category that the test example is
-        validating, e.g., functional correctness, performance, robustness.
-      </InfoIcon>
+      <template #label> Quality Attribute Category </template>
+      <template #tooltip>
+        <InfoIcon>
+          High-level quality attribute category that the test example is
+          validating, e.g., functional correctness, performance, robustness.
+        </InfoIcon>
+      </template>
     </FormFieldsQualityAttributes>
 
     <label class="usa-label">
@@ -160,9 +162,9 @@ const formErrors = ref<Dictionary<boolean>>({
   identifier: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
-const tagOptions = useTagOptions();
+const { tagOptions } = await useTagOptions();
 
-await updateQAData();
+await updateCatalogCustomLists();
 populateCatalogOptions();
 tagOptions.value.forEach((tagOption: CheckboxOption) => {
   if (props.modelValue.tags.find((x) => x === tagOption.name)) {

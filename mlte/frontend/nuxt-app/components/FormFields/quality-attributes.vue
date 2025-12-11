@@ -1,65 +1,40 @@
 <template>
   <div>
-    <UsaSelect
-      v-model="qaCategory"
+    <TemplatesCustomListSelect
+      :model-value="qaCategory"
+      :disabled="props.disabled"
       :options="QACategoryOptions"
-      :disabled="props.disabled"
-      @change="categoryChange(qaCategory)"
+      @update:model-value="categoryChange($event)"
+      @save-new-entry="submitCategory"
     >
       <template #label>
-        <slot />
+        <slot name="label" />
       </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
+      <template #tooltip>
+        <slot name="tooltip" />
+      </template>
+    </TemplatesCustomListSelect>
 
-    <div v-if="qaCategory === 'Other'">
-      <div class="inline-input-left" style="width: 30rem">
-        <UsaTextInput v-model="newQACategory">
-          <template #label> New Quality Attribute Category </template>
-        </UsaTextInput>
-      </div>
-
-      <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submitCategory"
-          >Save</UsaButton
-        >
-      </div>
-    </div>
-
-    <UsaSelect
-      v-model="qualityAttribute"
+    <TemplatesCustomListSelect
+      :model-value="props.modelValue"
+      :disabled="props.disabled"
       :options="selectedQAOptions"
-      :disabled="props.disabled"
-      @change="emit('updateAttribute', $event.target.value)"
+      @update:model-value="emit('updateAttribute', $event)"
+      @save-new-entry="submitQA"
     >
-      <template #label>
-        Quality Attribute
-        <InfoIcon>
-          More specific quality attribute that the test example is validating,
-          e.g., accuracy, inference time, robustness to image blur.
-        </InfoIcon>
+      <template #label> Quality Attribute </template>
+      <template #tooltip>
+        More specific quality attribute that the test example is validating,
+        e.g., accuracy, inference time, robustness to image blur.
       </template>
-      <template #error-message>Not defined</template>
-    </UsaSelect>
-
-    <div v-if="qualityAttribute === 'Other'">
-      <div class="inline-input-left" style="width: 30rem">
-        <UsaTextInput v-model="newQualityAttribute">
-          <template #label> New Quality Attribute </template>
-        </UsaTextInput>
-      </div>
-
-      <div class="inline-button">
-        <UsaButton class="secondary-button" @click="submitQA"> Save </UsaButton>
-      </div>
-    </div>
+    </TemplatesCustomListSelect>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["updateAttribute"]);
+const emit = defineEmits(["update:modelValue", "updateAttribute"]);
 const props = defineProps({
-  initialQualityAttribute: {
+  modelValue: {
     type: String,
     required: true,
   },
@@ -70,9 +45,6 @@ const props = defineProps({
 });
 
 const qaCategory = ref("");
-const newQACategory = ref("");
-const qualityAttribute = ref(props.initialQualityAttribute);
-const newQualityAttribute = ref("");
 
 const { QACategoryOptions, fetchQACData } = await useQACategoryOptions();
 const { qualityAttributeOptions: AllQAOptions, fetchQAData } =
@@ -80,11 +52,11 @@ const { qualityAttributeOptions: AllQAOptions, fetchQAData } =
 const selectedQAOptions = ref<Array<QAOption>>([]);
 
 // On load, populate parent QA Category field if a qualiity attribute is selected
-if (props.initialQualityAttribute) {
+if (props.modelValue) {
   AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.text === props.initialQualityAttribute) {
+    if (attribute.text === props.modelValue && attribute.parent) {
       qaCategory.value = attribute.parent;
-      categoryChange(qaCategory.value, props.initialQualityAttribute);
+      categoryChange(qaCategory.value, props.modelValue);
     }
   });
 }
@@ -92,18 +64,19 @@ if (props.initialQualityAttribute) {
 /**
  * Handle QA Category change.
  *
- * @param {string} newCategory The newly selected category
+ * @param {string} selectedCategory The newly selected category
  * @param {string} [initialAttribute] Optional param to set QA when changing QA Category. Used on startup
  */
-function categoryChange(newCategory: string, initialAttrbute?: string) {
+function categoryChange(selectedCategory: string, initialAttrbute?: string) {
+  qaCategory.value = selectedCategory;
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.parent === newCategory) {
+    if (attribute.parent === selectedCategory) {
       selectedQAOptions.value.push(attribute);
     }
   });
 
-  if (newCategory != "Other") {
+  if (selectedCategory != "Other") {
     selectedQAOptions.value.push(new QAOption("Other", "Other", "", ""));
   }
 
@@ -115,31 +88,28 @@ function categoryChange(newCategory: string, initialAttrbute?: string) {
 }
 
 // Submit new QA Category to API
-async function submitCategory() {
+async function submitCategory(newCategory: string) {
   const response = await createCustomListEntry(
     "qa_categories",
-    new CustomListEntry(newQACategory.value, "", ""),
+    new CustomListEntry(newCategory, "", null),
   );
   if (response) {
     await fetchQACData();
-    qaCategory.value = newQACategory.value;
-    categoryChange(newQACategory.value);
-    newQACategory.value = "";
+    qaCategory.value = newCategory;
+    categoryChange(newCategory);
   }
 }
 
 // Submit new QA to API
-async function submitQA() {
+async function submitQA(newQA: string) {
   const response = await createCustomListEntry(
     "quality_attributes",
-    new CustomListEntry(newQualityAttribute.value, "", qaCategory.value),
+    new CustomListEntry(newQA, "", qaCategory.value),
   );
   if (response) {
     await fetchQAData();
-    categoryChange(qaCategory.value, qualityAttribute.value);
-    qualityAttribute.value = newQualityAttribute.value;
-    emit("updateAttribute", qualityAttribute.value);
-    newQualityAttribute.value = "";
+    categoryChange(qaCategory.value, props.modelValue);
+    emit("updateAttribute", newQA);
   }
 }
 </script>

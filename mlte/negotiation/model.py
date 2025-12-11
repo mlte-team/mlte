@@ -4,31 +4,9 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from strenum import StrEnum
-
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.negotiation import qas
-
-# -----------------------------------------------------------------------------
-# ProblemType
-# -----------------------------------------------------------------------------
-
-
-class ProblemType(StrEnum):
-    """An enumeration over machine learning problem types."""
-
-    CLASSIFICATION = "classification"
-    CLUSTERING = "clustering"
-    TREND = "trend"
-    ALERT = "alert"
-    FORECASTING = "forecasting"
-    CONTENT_GENERATION = "content_generation"
-    BENCHMARKING = "benchmarking"
-    GOALS = "goals"
-    DETECTION = "detection"
-    OTHER = "other"
-
 
 # -----------------------------------------------------------------------------
 # GoalDescriptor (and sub-models)
@@ -129,17 +107,6 @@ class ModelDescriptor(BaseModel):
 # -----------------------------------------------------------------------------
 
 
-class DataClassification(StrEnum):
-    """An enumeration of data classification levels."""
-
-    UNCLASSIFIED = "unclassified"
-    CUI = "cui"
-    PII = "pii"
-    PHI = "phi"
-    CLASSIFIED = "classified"
-    OTHER = "other"
-
-
 class LabelDescriptor(BaseModel):
     """Describes a dataset label."""
 
@@ -187,8 +154,8 @@ class DataDescriptor(BaseModel):
     source: Optional[str] = None
     """A description of the data source."""
 
-    classification: Optional[DataClassification] = None
-    """A description of the data classification level."""
+    classification: str = ""
+    """A description of the data classification level. Selected from classification custom list."""
 
     access: Optional[str] = None
     """A description of the manner in which this data is accessed."""
@@ -220,8 +187,8 @@ class SystemDescriptor(BaseModel):
     goals: list[GoalDescriptor] = []
     """A description of system goals."""
 
-    problem_type: Optional[ProblemType] = None
-    """A description of the machine learning problem type."""
+    problem_type: str = ""
+    """A description of the machine learning problem type. Selected from problem types custom list."""
 
     task: Optional[str] = None
     """A description of the machine learning task."""

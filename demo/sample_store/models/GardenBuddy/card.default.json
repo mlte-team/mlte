@@ -33,7 +33,7 @@
                     ]
                 }
             ],
-            "problem_type": "classification",
+            "problem_type": "Classification",
             "task": "Identify flowers in pictures taken at the garden",
             "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
             "risks": []
@@ -43,7 +43,7 @@
                 "description": "Oxford Flower 102 Dataset",
                 "purpose": "Training, Testing of Ml model",
                 "source": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
-                "classification": "unclassified",
+                "classification": "Unclassified",
                 "access": "None",
                 "labeling_method": "Manually Labeled - 102 Labels",
                 "labels": [
@@ -132,7 +132,7 @@
             },
             {
                 "identifier": "card.default-qas_004",
-                "quality": "Resource  Utilization",
+                "quality": "Resource Utilization",
                 "stimulus": "The model running on the loaned device receives pictures taken at the garden",
                 "source": "the Garden Buddy application",
                 "environment": "normal operations",

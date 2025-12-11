@@ -20,7 +20,6 @@ from mlte.evidence.model import EvidenceModel, IntegerValueModel
 from mlte.evidence.types.integer import Integer
 from mlte.measurement.model import MeasurementMetadata
 from mlte.negotiation.model import (
-    DataClassification,
     DataDescriptor,
     FieldDescriptor,
     GoalDescriptor,
@@ -30,7 +29,6 @@ from mlte.negotiation.model import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardModel,
-    ProblemType,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -126,7 +124,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
                     ],
                 )
             ],
-            problem_type=ProblemType.CLASSIFICATION,
+            problem_type="Classification",
             task="task",
             usage_context="usage_context",
             risks=["fp", "fn", "other"],
@@ -135,7 +133,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
             DataDescriptor(
                 description="description",
                 purpose="purpose",
-                classification=DataClassification.UNCLASSIFIED,
+                classification="Unclassified",
                 access="access",
                 labeling_method="by hand",
                 fields=[

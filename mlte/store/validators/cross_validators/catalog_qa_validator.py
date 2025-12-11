@@ -1,4 +1,4 @@
-"""Validator for the quality attribute fields of a catalog entry."""
+"""Validator for the quality attribute field of a catalog entry."""
 
 from mlte.catalog.model import CatalogEntry
 from mlte.custom_list.custom_list_names import CustomListName
@@ -33,5 +33,5 @@ class CatalogQAValidator(CrossValidator):
                     )
                 except ErrorNotFound:
                     raise RuntimeError(
-                        f"Catalog entry quality attribute validation failure. Custom list entry: {new_entry.quality_attribute} not found. For catalog entry {new_entry.header.identifier}."
+                        f"Catalog entry quality attribute validation failure. Quality attribute: {new_entry.quality_attribute} not found. For catalog entry {new_entry.header.identifier}."
                     )

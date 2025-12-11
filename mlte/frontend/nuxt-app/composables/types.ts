@@ -29,7 +29,7 @@ export class QAOption {
     public value: string,
     public text: string,
     public description: string,
-    public parent: string,
+    public parent: string | null,
   ) {}
 }
 
@@ -159,7 +159,7 @@ export class DataDescriptor {
     public description: string = "",
     public purpose: string = "",
     public source: string = "",
-    public classification: string = "unclassified",
+    public classification: string = "",
     public access: string = "",
     public labeling_method: string = "",
     public labels: Array<LabelDescriptor> = [new LabelDescriptor()],
@@ -172,7 +172,7 @@ export class DataDescriptor {
 export class SystemDescriptor {
   constructor(
     public goals: Array<GoalDescriptor> = [new GoalDescriptor()],
-    public problem_type: string = "classification",
+    public problem_type: string = "",
     public task: string = "",
     public usage_context: string = "",
     public risks: Array<string> = [],
@@ -183,7 +183,7 @@ export class CustomListEntry {
   constructor(
     public name: string = "",
     public description: string = "",
-    public parent: string = "",
+    public parent: string | null = null,
   ) {}
 }
 
@@ -383,7 +383,7 @@ export class TestCatalogHeader {
     public identifier: string = "",
     public creator: string = "",
     public created: number = -1,
-    public updater: string = "",
+    public updater: string | null = null,
     public updated: number = -1,
     public catalog_id: string = "",
   ) {}

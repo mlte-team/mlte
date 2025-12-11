@@ -172,6 +172,7 @@ class ArtifactMapper(ResourceMapper):
         for artifact should be implictly created (default: False)
         """
         artifact_id = artifact.header.identifier
+        self.validators.validate_all(artifact)
         try:
             _ = self.read(artifact_id, (model_id, version_id))
             if not force:
@@ -183,7 +184,6 @@ class ArtifactMapper(ResourceMapper):
         except errors.ErrorNotFound as ex:
             if "Artifact" in str(ex):
                 # This means artifact did not exist; we want to create it.
-                self.validators.validate_all(artifact)
                 return self.create(artifact, (model_id, version_id))
             else:
                 # If model or version were not found, we can't move fowrad.

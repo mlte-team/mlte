@@ -7,7 +7,6 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from mlte.negotiation.model import (
-    DataClassification,
     DataDescriptor,
     FieldDescriptor,
     GoalDescriptor,
@@ -17,7 +16,6 @@ from mlte.negotiation.model import (
     ModelIODescriptor,
     ModelResourcesDescriptor,
     NegotiationCardModel,
-    ProblemType,
     SystemDescriptor,
 )
 from mlte.negotiation.qas import QASDescriptor
@@ -33,7 +31,6 @@ from mlte.store.artifact.underlying.rdbs.card_metadata import (
     DBModelResourcesDescriptor,
     DBNegotiationCard,
 )
-from mlte.store.artifact.underlying.rdbs.reader import DBReader
 
 # -------------------------------------------------------------------------
 # Negotiation Card Methods
@@ -46,11 +43,6 @@ def create_card_orm(
 ) -> DBNegotiationCard:
     """Creates the DB object from the corresponding internal model."""
     # Create intermedidate objects.
-    problem_type_orm = (
-        DBReader.get_problem_type(negotiation_card.system.problem_type, session)
-        if negotiation_card.system.problem_type is not None
-        else None
-    )
     if negotiation_card.model.development_compute_resources:
         model_dev_resources_orm = DBModelResourcesDescriptor(
             cpu=negotiation_card.model.development_compute_resources.cpu,
@@ -73,7 +65,7 @@ def create_card_orm(
     # Create the actual object.
     negotiation_card_orm = DBNegotiationCard(
         sys_goals=[],
-        sys_problem_type=problem_type_orm,
+        sys_problem_type=negotiation_card.system.problem_type,
         sys_task=negotiation_card.system.task,
         sys_usage_context=negotiation_card.system.usage_context,
         sys_risks=[],
@@ -138,11 +130,7 @@ def create_card_model(
             task=negotiation_card_orm.sys_task,
             usage_context=negotiation_card_orm.sys_usage_context,
             risks=[risk.description for risk in negotiation_card_orm.sys_risks],
-            problem_type=(
-                ProblemType(negotiation_card_orm.sys_problem_type.name)
-                if negotiation_card_orm.sys_problem_type is not None
-                else None
-            ),
+            problem_type=negotiation_card_orm.sys_problem_type,
             goals=_build_goal_descriptors(negotiation_card_orm.sys_goals),
         ),
         data=_build_data_descriptors(negotiation_card_orm.data_descriptors),
@@ -191,13 +179,6 @@ def _build_data_descriptor_orm(
     data_descriptor: DataDescriptor, session: Session
 ) -> DBDataDescriptor:
     """Creates a DBDataDescriptor object from a DataDescriptor."""
-    class_orm = (
-        DBReader.get_classification_type(
-            data_descriptor.classification, session
-        )
-        if data_descriptor.classification is not None
-        else None
-    )
     data_orm = DBDataDescriptor(
         description=data_descriptor.description,
         purpose=data_descriptor.purpose,
@@ -206,7 +187,7 @@ def _build_data_descriptor_orm(
         labeling_method=data_descriptor.labeling_method,
         rights=data_descriptor.rights,
         policies=data_descriptor.policies,
-        classification=class_orm,
+        classification=data_descriptor.classification,
         labels=[],
         fields=[],
     )
@@ -276,9 +257,7 @@ def _build_data_descriptors(
             description=data_descriptor.description,
             purpose=data_descriptor.purpose,
             source=data_descriptor.source,
-            classification=DataClassification(
-                data_descriptor.classification.name
-            ),
+            classification=data_descriptor.classification,
             access=data_descriptor.access,
             labeling_method=data_descriptor.labeling_method,
             rights=data_descriptor.rights,

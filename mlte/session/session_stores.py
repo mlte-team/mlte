@@ -13,9 +13,12 @@ from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.cross_validator import CompositeValidator
 from mlte.store.validators.cross_validators import (
+    ArtifactClassificationValidator,
+    ArtifactProblemTypeValidator,
     ArtifactQAValidator,
     ArtifactUserValidator,
     CatalogQAValidator,
+    CatalogTagValidator,
     CatalogUserValidator,
 )
 
@@ -132,6 +135,12 @@ def _setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
     """
     artifact_store_validators = CompositeValidator(
         [
+            ArtifactClassificationValidator(
+                custom_list_store=stores.custom_list_store,
+            ),
+            ArtifactProblemTypeValidator(
+                custom_list_store=stores.custom_list_store
+            ),
             ArtifactUserValidator(user_store=stores.user_store),
             ArtifactQAValidator(custom_list_store=stores.custom_list_store),
         ]
@@ -155,6 +164,7 @@ def _setup_catalog_stores(
 
     catalog_store_validators = CompositeValidator(
         [
+            CatalogTagValidator(custom_list_store=stores.custom_list_store),
             CatalogUserValidator(user_store=stores.user_store),
             CatalogQAValidator(custom_list_store=stores.custom_list_store),
         ]

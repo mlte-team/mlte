@@ -121,6 +121,7 @@ const formErrors = ref({
   identifier: false,
 });
 
+await updateCardCustomLists();
 if (queryArtifactId !== undefined) {
   const card = await getCard(
     queryModel as string,
@@ -431,7 +432,7 @@ function dataItemEmpty(dataItem: DataDescriptor) {
   if (
     dataItem.description !== "" ||
     dataItem.source !== "" ||
-    dataItem.classification !== "unclassified" ||
+    dataItem.classification !== "" ||
     dataItem.access !== "" ||
     dataItem.labeling_method !== ""
   ) {

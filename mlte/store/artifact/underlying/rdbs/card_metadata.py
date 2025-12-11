@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import ForeignKey, select
-from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from mlte.negotiation.model import DataClassification, ProblemType
 from mlte.store.artifact.underlying.rdbs.main_metadata import DBArtifact, DBBase
 
 # -------------------------------------------------------------------------
@@ -32,10 +31,7 @@ class DBNegotiationCard(DBBase):
     sys_goals: Mapped[list[DBGoalDescriptor]] = relationship(
         cascade="all, delete-orphan"
     )
-    sys_problem_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("nc_problem_type.id")
-    )
-    sys_problem_type: Mapped[Optional[DBProblemType]] = relationship()
+    sys_problem_type: Mapped[str]
     sys_task: Mapped[Optional[str]]
     sys_usage_context: Mapped[Optional[str]]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
@@ -131,29 +127,9 @@ class DBGeneralRisk(DBBase):
         return f"Risk(id={self.id!r}, description={self.description!r})"
 
 
-class DBProblemType(DBBase):
-    __tablename__ = "nc_problem_type"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-
-    def __repr__(self) -> str:
-        return f"ProblemType(id={self.id!r}, name={self.name!r})"
-
-
 # -------------------------------------------------------------------------
 # Data description.
 # -------------------------------------------------------------------------
-
-
-class DBDataClassification(DBBase):
-    __tablename__ = "nc_data_classification"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-
-    def __repr__(self) -> str:
-        return f"DataClassification(id={self.id!r}, name={self.name!r})"
 
 
 class DBDataDescriptor(DBBase):
@@ -168,14 +144,11 @@ class DBDataDescriptor(DBBase):
     labeling_method: Mapped[Optional[str]]
     rights: Mapped[Optional[str]]
     policies: Mapped[Optional[str]]
-    classification_id: Mapped[int] = mapped_column(
-        ForeignKey(DBDataClassification.get_id_column())
-    )
     negotiation_card_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
-    classification: Mapped[DBDataClassification] = relationship()
+    classification: Mapped[str]
     labels: Mapped[list[DBLabelDescriptor]] = relationship(
         cascade="all, delete-orphan", back_populates="data_descriptor"
     )
@@ -288,28 +261,3 @@ class DBQAS(DBBase):
 
     def __repr__(self) -> str:
         return f"ModelIODescriptor(id={self.id!r}, quality={self.quality!r}, stimulus={self.stimulus!r}, source={self.source!r}, environment={self.environment!r}, response={self.response!r}, measure={self.measure!r})"
-
-
-# -------------------------------------------------------------------------
-# Pre-filled table functions.
-# -------------------------------------------------------------------------
-
-
-def init_problem_types(session: Session):
-    """Initializes the table with the configured problem types."""
-    if session.scalars(select(DBProblemType)).first() is None:
-        types = [e.value for e in ProblemType]
-        for type in types:
-            type_obj = DBProblemType(name=type)
-            session.add(type_obj)
-        session.commit()
-
-
-def init_classification_types(session: Session):
-    """Initializes the table with the configured classification types."""
-    if session.scalars(select(DBDataClassification)).first() is None:
-        types = [e.value for e in DataClassification]
-        for type in types:
-            type_obj = DBDataClassification(name=type)
-            session.add(type_obj)
-        session.commit()

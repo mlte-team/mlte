@@ -33,7 +33,7 @@
                     ]
                 }
             ],
-            "problem_type": "content_generation",
+            "problem_type": "Generative Model",
             "task": "Generate performance review and ratings",
             "usage_context": "The LLM will be prompted as part of an application, ReviewPro, that is a chatbot used to aid managers in writing performance reviews. The LLM components are intended to provide a more consistent rating across subordinates based on pre-determined criteria and saves time for managers by generating written feedback.",
             "risks": [
@@ -48,7 +48,7 @@
                 "description": "EvalPro will receive as inputs manager comments, the employee's self evaluation, and goals and objectives",
                 "purpose": "",
                 "source": "",
-                "classification": "unclassified",
+                "classification": "Unclassified",
                 "access": "",
                 "labeling_method": "",
                 "labels": [

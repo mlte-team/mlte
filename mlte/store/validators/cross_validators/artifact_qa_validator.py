@@ -32,7 +32,7 @@ class ArtifactQAValidator(CrossValidator):
             if new_artifact.header.type == ArtifactType.NEGOTIATION_CARD:
                 card = typing.cast(NegotiationCardModel, new_artifact.body)
                 for requirement in card.system_requirements:
-                    if requirement.quality is not None:
+                    if requirement.quality != "":
                         try:
                             session.custom_list_entry_mapper.read(
                                 requirement.quality,
@@ -40,5 +40,5 @@ class ArtifactQAValidator(CrossValidator):
                             )
                         except ErrorNotFound:
                             raise RuntimeError(
-                                f"Artifact quality attribute validation failure. Custom list entry: {requirement.quality} not found. For artifact {new_artifact.header.identifier}."
+                                f"Artifact quality attribute validation failure. Quality attribute: {requirement.quality} not found. For artifact {new_artifact.header.identifier}."
                             )
