@@ -1,5 +1,5 @@
 """
-Memory utilization measurement for gpu processes.
+Power utilization measurement in watts for NVIDIA gpu processes.
 
 This relies on the pynvml package for status. We dynamically import it, so that we can return useful
 results when it isn't available.
@@ -14,9 +14,11 @@ Links at bottom:
 API Docs - https://docs.nvidia.com/deploy/nvml-api/index.html
 Python Binding Docs - https://pypi.org/project/nvidia-ml-py/
 
-Example for getting memory utilization (nvmlDeviceGetMemoryInfo):
+Example for getting memory utilization (nvmlDeviceGetPowerUsage):
 
-https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvmlDeviceQueries_1g2dfeb1db82aa1de91aa6edf941c85ca8
+https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvmlDeviceQueries_1g7ef7dff0ff14238d08a19ad7fb23fc87
+
+This call returns milliwatts used.
 
 """
 
@@ -37,25 +39,25 @@ from mlte.measurement.units import Quantity, Unit, Units
 # -----------------------------------------------------------------------------
 
 
-class NvidiaGPUMemoryStatistics(CommonStatistics):
-    # Nvidia-smi cli uses MiB so we use that for consistency.
-    DEFAULT_UNIT = Units.mebibyte
+class NvidiaGPUPowerStatistics(CommonStatistics):
+    # Nvidia-smi cli uses watts so we use that for consistency.
+    DEFAULT_UNIT = Units.watt
 
     """
     The NvidiaGPUMemoryStatistics class encapsulates data
-    and functionality for tracking and updating memory
-    utilization statistics for an NVIDIA GPU.
+    and functionality for tracking and updating power usage
+    statistics for an NVIDIA GPU.
     """
 
     def __init__(
         self, avg: float, min: float, max: float, unit: Unit = DEFAULT_UNIT
     ):
         """
-        Initialize a NvidiaGPUMemoryStatistics instance.
+        Initialize a NvidiaGPUPowerStatistics instance.
 
-        :param avg: The average memory utilization
-        :param min: The minimum memory utilization
-        :param max: The maximum memory utilization
+        :param avg: The average power utilization
+        :param min: The minimum power utilization
+        :param max: The maximum power utilization
         :param unit: the unit the values comes in, as a value from Units; defaults to DEFAULT_UNIT
         """
         super().__init__(avg, min, max, unit)
@@ -69,8 +71,8 @@ class NvidiaGPUMemoryStatistics(CommonStatistics):
 # -----------------------------------------------------------------------------
 
 
-class NvidiaGPUMemoryUtilization(ProcessMeasurement):
-    """Measure memory utilization for a specific gpu."""
+class NvidiaGPUPowerUtilization(ProcessMeasurement):
+    """Measure power utilization for a specific gpu."""
 
     def __init__(
         self,
@@ -79,7 +81,7 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
         gpu_id: int = 0,
     ):
         """
-        Initialize a NvidiaGPUMemoryUtilization instance.
+        Initialize a NvidiaGPUPowerUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
@@ -92,9 +94,9 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
     def __call__(
         self,
         pid: int,
-        unit: Unit = NvidiaGPUMemoryStatistics.DEFAULT_UNIT,
+        unit: Unit = NvidiaGPUPowerStatistics.DEFAULT_UNIT,
         poll_interval: int = 1,
-    ) -> NvidiaGPUMemoryStatistics:
+    ) -> NvidiaGPUPowerStatistics:
         """
         Monitor memory usage on a specific gpu.
 
@@ -103,34 +105,28 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
         :param unit: The unit to return the memory size in, defaults to statistics default unit.
         :return: The captured statistics
         """
-
-        # Keep collecting stats until the controlling process goes away.
-        # It might actually take the controlling process a while to start up the memory utilization
-        # so just collect the entire time whether we have utilization or not.
-
         average, minimum, maximum = (
             pynvml_utils.aggregate_measurements_from_process(
                 pid,
                 poll_interval,
                 gpu_id=self.gpu_id,
-                fn=_get_nvml_memory_usage_bytes,
+                fn=_get_nvml_power_usage_watts,
                 default=-1,
             )
         )
 
         # Coerce to the desired target units
-        return NvidiaGPUMemoryStatistics(
-            Quantity(average, Units.bytes).to(unit).magnitude,
-            Quantity(minimum, Units.bytes).to(unit).magnitude,
-            Quantity(maximum, Units.bytes).to(unit).magnitude,
+        return NvidiaGPUPowerStatistics(
+            Quantity(average, Units.watt).to(unit).magnitude,
+            Quantity(minimum, Units.watt).to(unit).magnitude,
+            Quantity(maximum, Units.watt).to(unit).magnitude,
             unit=unit,
         )
 
     # Overriden.
-
     @classmethod
-    def get_output_type(cls) -> type[NvidiaGPUMemoryStatistics]:
-        return NvidiaGPUMemoryStatistics
+    def get_output_type(cls) -> type[NvidiaGPUPowerStatistics]:
+        return NvidiaGPUPowerStatistics
 
 
 # -----------------------------------------------------------------------------
@@ -138,14 +134,12 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
 # -----------------------------------------------------------------------------
 
 
-def _get_nvml_memory_usage_bytes(pynvml, handle) -> float:
+def _get_nvml_power_usage_watts(pynvml, handle) -> float:
     """
-    Function to be passed to the pynvml utility to get the memory usage in bytes.
+    Function to be passed to the pynvml utility to get the power usage in watts.
     :param pynvml: The pynvml module
     :param handle: A handle to the gpy
-    :return: The memory usage in watts
+    :return: The power usage in watts
     """
-    # NOTE: Pynvml exposes version 1 of the structure which has:
-    # total, used, free
-    memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-    return int(memory_info.used)
+    milliwatts_used = pynvml.nvmlDeviceGetPowerUsage(handle)
+    return float(milliwatts_used / 1000)
