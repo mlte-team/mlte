@@ -1,5 +1,8 @@
 <template>
-  <TemplatesCollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader
+    v-model="displaySection"
+    @change="displaySection = $event"
+  >
     <template #title> System Context for Model </template>
   </TemplatesCollapsibleHeader>
 
@@ -134,7 +137,9 @@
         <hr />
       </div>
 
-      <ButtonAddItem class="margin-button" @click="addGoal()"> Add Goal </ButtonAddItem>
+      <ButtonAddItem class="margin-button" @click="addGoal()">
+        Add Goal
+      </ButtonAddItem>
     </div>
 
     <div class="input-group">
@@ -176,7 +181,9 @@
         <hr />
       </div>
 
-      <ButtonAddItem class="margin-button" @click="addRisk()"> Add Risk </ButtonAddItem>
+      <ButtonAddItem class="margin-button" @click="addRisk()">
+        Add Risk
+      </ButtonAddItem>
     </div>
   </div>
 </template>

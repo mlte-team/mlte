@@ -159,7 +159,9 @@
         >
           <template #label>
             Expected Values
-            <TemplatesTooltipInfo> Expected values for the output. </TemplatesTooltipInfo>
+            <TemplatesTooltipInfo>
+              Expected values for the output.
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
         <ButtonDeleteItem

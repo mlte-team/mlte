@@ -1,5 +1,8 @@
 <template>
-  <TemplatesCollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader
+    v-model="displaySection"
+    @change="displaySection = $event"
+  >
     <template #title> Data </template>
   </TemplatesCollapsibleHeader>
 
@@ -180,7 +183,9 @@
                 <UsaTextInput v-model="label.name">
                   <template #label>
                     Label Name
-                    <TemplatesTooltipInfo> Label in data set. </TemplatesTooltipInfo>
+                    <TemplatesTooltipInfo>
+                      Label in data set.
+                    </TemplatesTooltipInfo>
                   </template>
                 </UsaTextInput>
               </div>
@@ -189,7 +194,9 @@
                 <UsaTextInput v-model="label.description">
                   <template #label>
                     Label Description
-                    <TemplatesTooltipInfo> Short description of label. </TemplatesTooltipInfo>
+                    <TemplatesTooltipInfo>
+                      Short description of label.
+                    </TemplatesTooltipInfo>
                   </template>
                 </UsaTextInput>
               </div>
@@ -205,13 +212,18 @@
                 </UsaTextInput>
               </div>
               <div class="inline-button">
-                <ButtonDeleteItem @click="deleteLabel(dataItemIndex, labelIndex)">
+                <ButtonDeleteItem
+                  @click="deleteLabel(dataItemIndex, labelIndex)"
+                >
                   Delete Label
                 </ButtonDeleteItem>
               </div>
             </div>
 
-            <ButtonAddItem class="margin-button" @click="addLabel(dataItemIndex)">
+            <ButtonAddItem
+              class="margin-button"
+              @click="addLabel(dataItemIndex)"
+            >
               Add Additional Label
             </ButtonAddItem>
           </div>
@@ -254,7 +266,9 @@
                   <UsaTextInput v-model="field.description">
                     <template #label>
                       Field Description
-                      <TemplatesTooltipInfo> Short field description. </TemplatesTooltipInfo>
+                      <TemplatesTooltipInfo>
+                        Short field description.
+                      </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -319,7 +333,10 @@
               <hr />
             </div>
 
-            <ButtonAddItem class="margin-button" @click="addField(dataItemIndex)">
+            <ButtonAddItem
+              class="margin-button"
+              @click="addField(dataItemIndex)"
+            >
               Add Additional Field
             </ButtonAddItem>
           </div>

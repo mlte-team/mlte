@@ -14,7 +14,9 @@
       >
         <template #label>
           Catalog
-          <TemplatesTooltipInfo> Catalog where test example will be stored. </TemplatesTooltipInfo>
+          <TemplatesTooltipInfo>
+            Catalog where test example will be stored.
+          </TemplatesTooltipInfo>
         </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
@@ -24,7 +26,9 @@
       >
         <template #label>
           Identifier
-          <TemplatesTooltipInfo> User-defined identifier for the test example. </TemplatesTooltipInfo>
+          <TemplatesTooltipInfo>
+            User-defined identifier for the test example.
+          </TemplatesTooltipInfo>
         </template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
@@ -88,7 +92,9 @@
     >
       <template #label>
         Description
-        <TemplatesTooltipInfo> Description of the test example. </TemplatesTooltipInfo>
+        <TemplatesTooltipInfo>
+          Description of the test example.
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>

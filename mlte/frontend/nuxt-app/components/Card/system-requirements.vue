@@ -1,5 +1,8 @@
 <template>
-  <TemplatesCollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader
+    v-model="displaySection"
+    @change="displaySection = $event"
+  >
     <template #title> System Derived Requirements </template>
   </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
