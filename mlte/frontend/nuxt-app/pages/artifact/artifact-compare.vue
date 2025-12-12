@@ -47,7 +47,7 @@
       </div>
     </div>
     <div v-if="report1 && report2">
-      <ReportCompare
+      <ReportReportCompare
         :version1="versionSelection1"
         :version2="versionSelection2"
         :report1="report1"
