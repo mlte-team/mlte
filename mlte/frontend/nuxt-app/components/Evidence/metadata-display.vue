@@ -4,7 +4,7 @@
     <ul>
       <li><b>Test Case ID: </b>{{ props.evidenceMetadata.test_case_id }}</li>
       <li>
-        <MeasurementDisplay :measurement="props.evidenceMetadata.measurement" />
+        <MeasurementDataDisplay :measurement="props.evidenceMetadata.measurement" />
       </li>
     </ul>
   </div>

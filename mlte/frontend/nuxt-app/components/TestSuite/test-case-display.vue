@@ -11,7 +11,7 @@
         </ul>
       </li>
       <li>
-        <MeasurementDisplay :measurement="testCase.measurement" />
+        <MeasurementDataDisplay :measurement="testCase.measurement" />
       </li>
       <li>
         <b>Validator</b>
