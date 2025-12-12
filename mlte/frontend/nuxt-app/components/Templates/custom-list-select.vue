@@ -8,9 +8,9 @@
     >
       <template #label>
         <slot name="label" />
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           <slot name="tooltip" />
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </template>
     </UsaSelect>
 

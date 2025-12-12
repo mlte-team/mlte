@@ -8,10 +8,10 @@
     >
       <template #label>
         Artifact ID
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           The Artifact ID this negotiation card <br />
           will be saved under upon submission.
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>

@@ -1,7 +1,7 @@
 <template>
-  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader v-model="displaySection" @change="displaySection = $event">
     <template #title> Data </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
 
   <div v-if="displaySection">
     <div class="input-group">
@@ -39,7 +39,7 @@
             <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">
               <template #label>
                 Dataset Description
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Short description of the data set that will be used for model
                   development.
                   <br />
@@ -48,26 +48,26 @@
                     >Example: Voice recordings from phone calls made to numbers
                     in the 412 area code.</i
                   >
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextarea>
 
             <UsaTextarea v-model="dataItem.purpose" style="height: 5.5rem">
               <template #label>
                 Dataset Purpose
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Purpose of the dataset in relation to the model.
                   <br />
                   <br />
                   <i>Example: Training, fine-tuning, etc.</i>
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextarea>
 
             <UsaTextInput v-model="dataItem.source">
               <template #label>
                 Source
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Where is the data coming from, e.g., Enterprise Data, Public
                   Data Source, <br />
                   Synthetic Data?
@@ -77,7 +77,7 @@
                     >Example: Company log data collected between 2023/01/01 and
                     2023/12/31.</i
                   >
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>
           </div>
@@ -87,7 +87,7 @@
           <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
             <template #label>
               Requirements and Constraints for Data Access
-              <InfoIcon>
+              <TemplatesTooltipInfo>
                 How will the data be accessed? What accounts are needed?
                 <br />
                 <br />
@@ -95,14 +95,14 @@
                   >Example: Data is stored on the "blue" server that requires an
                   account on the "solid" network.</i
                 >
-              </InfoIcon>
+              </TemplatesTooltipInfo>
             </template>
           </UsaTextarea>
 
           <UsaTextarea v-model="dataItem.rights" style="height: 5.5rem">
             <template #label>
               Data Rights
-              <InfoIcon>
+              <TemplatesTooltipInfo>
                 Are there particular ways in which the data can or cannot be
                 used?
                 <br />
@@ -115,14 +115,14 @@
                   <br />
                   any non-authorized equipment.</i
                 >
-              </InfoIcon>
+              </TemplatesTooltipInfo>
             </template>
           </UsaTextarea>
 
           <UsaTextarea v-model="dataItem.policies" style="height: 5.5rem">
             <template #label>
               Data Policies
-              <InfoIcon>
+              <TemplatesTooltipInfo>
                 Are there policies that govern the data and its use, such as
                 <br />
                 Personally Identifiable Information [PII]?
@@ -136,7 +136,7 @@
                   <br />
                   therefore become PII.</i
                 >
-              </InfoIcon>
+              </TemplatesTooltipInfo>
             </template>
           </UsaTextarea>
 
@@ -163,13 +163,13 @@
             >
               <template #label>
                 Labeling Method
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   How data was labeled, e.g., hand labeled by expert, <br />
                   labeled by automated process.
                   <br />
                   <br />
                   <i>Example: Hand labeled by single domain expert.</i>
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextarea>
             <div
@@ -180,7 +180,7 @@
                 <UsaTextInput v-model="label.name">
                   <template #label>
                     Label Name
-                    <InfoIcon> Label in data set. </InfoIcon>
+                    <TemplatesTooltipInfo> Label in data set. </TemplatesTooltipInfo>
                   </template>
                 </UsaTextInput>
               </div>
@@ -189,7 +189,7 @@
                 <UsaTextInput v-model="label.description">
                   <template #label>
                     Label Description
-                    <InfoIcon> Short description of label. </InfoIcon>
+                    <TemplatesTooltipInfo> Short description of label. </TemplatesTooltipInfo>
                   </template>
                 </UsaTextInput>
               </div>
@@ -198,9 +198,9 @@
                 <UsaTextInput v-model="label.percentage" type="number">
                   <template #label>
                     Percentage
-                    <InfoIcon>
+                    <TemplatesTooltipInfo>
                       Percentage of data elements with that label.
-                    </InfoIcon>
+                    </TemplatesTooltipInfo>
                   </template>
                 </UsaTextInput>
               </div>
@@ -245,7 +245,7 @@
                   <UsaTextInput v-model="field.name">
                     <template #label>
                       Field Name
-                      <InfoIcon> Field name. </InfoIcon>
+                      <TemplatesTooltipInfo> Field name. </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -254,7 +254,7 @@
                   <UsaTextInput v-model="field.description">
                     <template #label>
                       Field Description
-                      <InfoIcon> Short field description. </InfoIcon>
+                      <TemplatesTooltipInfo> Short field description. </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -265,10 +265,10 @@
                   <UsaTextInput v-model="field.type">
                     <template #label>
                       Field Type
-                      <InfoIcon>
+                      <TemplatesTooltipInfo>
                         Field type, e.g., number, string, Boolean, data, image,
                         audio.
-                      </InfoIcon>
+                      </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -277,10 +277,10 @@
                   <UsaTextInput v-model="field.expected_values">
                     <template #label>
                       Expected Values
-                      <InfoIcon>
+                      <TemplatesTooltipInfo>
                         Expected values for field, e.g., any, range,
                         enumeration.
-                      </InfoIcon>
+                      </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -291,10 +291,10 @@
                   <UsaTextInput v-model="field.missing_values">
                     <template #label>
                       Handling Missing Values
-                      <InfoIcon>
+                      <TemplatesTooltipInfo>
                         How to interpret missing values, e.g., null, empty
                         string.
-                      </InfoIcon>
+                      </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>
@@ -303,9 +303,9 @@
                   <UsaTextInput v-model="field.special_values">
                     <template #label>
                       Handling Special Values
-                      <InfoIcon>
+                      <TemplatesTooltipInfo>
                         How to interpret special values, e.g., 999, N/A.
-                      </InfoIcon>
+                      </TemplatesTooltipInfo>
                     </template>
                   </UsaTextInput>
                 </div>

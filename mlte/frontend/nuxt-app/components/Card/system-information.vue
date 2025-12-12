@@ -1,7 +1,7 @@
 <template>
-  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader v-model="displaySection" @change="displaySection = $event">
     <template #title> System Context for Model </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
 
   <div v-if="displaySection">
     <div class="input-group">
@@ -14,13 +14,13 @@
       <UsaTextarea v-model="props.modelValue.task" style="height: 5.5rem">
         <template #label>
           ML Task
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Well-defined task that model is expected to perform, or problem that
             the model is expected to solve.
             <br />
             <br />
             <i>Example: Match voice recordings spoken by the same person.</i>
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
 
@@ -32,7 +32,7 @@
       >
         <template #label>
           Usage Context for the Model
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Who is intended to utilize the system/model; how the results of the
             model are <br />
             going to be used by end users or in the context of a larger system.
@@ -44,7 +44,7 @@
               <br />
               an intel analyst a list of matching voice recordings.</i
             >
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
     </div>
@@ -65,7 +65,7 @@
         <UsaTextarea v-model="goal.description" style="height: 5.5rem">
           <template #label>
             Goal Description
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short description for the goal.
               <br />
               <br />
@@ -73,7 +73,7 @@
                 >Example: Identify voice recordings that belong to a given
                 person of interest.</i
               >
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
@@ -85,7 +85,7 @@
             <UsaTextInput v-model="metric.description">
               <template #label>
                 Description
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Performance metric that captures the system's ability to
                   accomplish the goal,<br />
                   i.e., acceptance criteria for determining that the model is
@@ -93,7 +93,7 @@
                   <br />
                   <br />
                   <i>Example: Accuracy > 90%</i>
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>
           </div>
@@ -102,7 +102,7 @@
             <UsaTextInput v-model="metric.baseline">
               <template #label>
                 Baseline Source
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Indicates where the performance metric goal comes from, or why
                   it is <br />
                   believed to be achievable.
@@ -113,7 +113,7 @@
                     stated in the paper<br />
                     by Smith et al.</i
                   ><br />
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>
           </div>
@@ -156,7 +156,7 @@
         >
           <template #label>
             Risk
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short description for the risk.
               <br />
               <br />
@@ -164,7 +164,7 @@
                 Example: Model may not indicate proper results if data is out
                 bounds.
               </i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
