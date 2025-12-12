@@ -17,7 +17,7 @@
     </UsaTextInput>
     <div v-else>
       <h1 class="section-header">{{ queryArtifactId }}</h1>
-      <CreatorDisplay :creator="creator" :timestamp="timestamp" />
+      <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
     </div>
 
     <template #page-title>Negotiation Card</template>

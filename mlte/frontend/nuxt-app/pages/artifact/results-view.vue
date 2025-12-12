@@ -3,7 +3,7 @@
     <title>Test Results</title>
     <template #page-title>Test Results</template>
     <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <CreatorDisplay :creator="creator" :timestamp="timestamp" />
+    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
 
     <div>
       <h2 class="section-header">Results</h2>
