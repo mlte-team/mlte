@@ -5,13 +5,13 @@
 
   <div v-if="displaySection">
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Data
         <template #info>
           Details of the data that will be used at any point during the
           development of the model.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <hr />
       <div
         v-for="(dataItem, dataItemIndex) in props.modelValue"
@@ -141,7 +141,7 @@
           </UsaTextarea>
 
           <div class="input-group" style="margin-top: 1em">
-            <SubHeader>
+            <TemplatesSubHeader>
               Labels and Distribution
               <template #example>
                 <UsaTable
@@ -156,7 +156,7 @@
                 distribution in the dataset. This may not be applicable in all
                 cases.
               </template>
-            </SubHeader>
+            </TemplatesSubHeader>
             <UsaTextarea
               v-model="dataItem.labeling_method"
               style="height: 5.5rem"
@@ -217,7 +217,7 @@
           </div>
 
           <div class="input-group" style="margin-top: 1em">
-            <SubHeader>
+            <TemplatesSubHeader>
               Data Schema
               <template #example>
                 <UsaTable
@@ -232,7 +232,7 @@
                 out all sections below for each data field. This may not be
                 applicable in all cases.
               </template>
-            </SubHeader>
+            </TemplatesSubHeader>
             <div
               v-for="(field, fieldIndex) in dataItem.fields"
               :key="fieldIndex"

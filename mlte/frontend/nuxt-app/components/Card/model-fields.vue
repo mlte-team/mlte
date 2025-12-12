@@ -5,7 +5,7 @@
 
   <div v-if="displayIO">
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Input Specification
         <template #example>
           <UsaTable
@@ -19,7 +19,7 @@
           Describe the input data type and format needed for model to conduct
           inference.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -89,7 +89,7 @@
     </div>
 
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Output Specification
         <template #example>
           <UsaTable
@@ -103,7 +103,7 @@
           Describe the output format and specification needed for the system to
           ingest model results.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -185,7 +185,7 @@
 
   <div v-if="displayResources">
     <div class="input-group">
-      <SubHeader>
+      <TemplatesSubHeader>
         Development Compute Resources
         <template #example>
           GPUs = 2, GPU Memory = 1 GB, CPUs = 1, Main Memory = 512 MB, Storage =
@@ -195,7 +195,7 @@
           Describe the amount and type of compute resources needed for
           development such as training, fine-tuning, or evaluation.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput
@@ -244,10 +244,10 @@
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Deployment
         <template #info> Operational environment of the model. </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <UsaTextarea
         v-model="props.modelValue.deployment_platform"
         style="height: 5.5rem"
@@ -302,7 +302,7 @@
     </div>
 
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Production Compute Resources
         <template #example>
           Example: GPUs = 2, CPUs = 2, Main Memory = 256 MB, Storage = 512 MB
@@ -311,7 +311,7 @@
           Describe the amount and type of compute resources needed for
           inference.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput

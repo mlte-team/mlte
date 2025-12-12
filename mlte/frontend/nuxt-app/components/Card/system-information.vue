@@ -5,12 +5,12 @@
 
   <div v-if="displaySection">
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         General Information
         <template #info>
           General information about the problem and usage context.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <UsaTextarea v-model="props.modelValue.task" style="height: 5.5rem">
         <template #label>
           ML Task
@@ -50,13 +50,13 @@
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Goals
         <template #info>
           Goals or objectives that the model is going to help satisfy as part of
           the system.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -77,9 +77,9 @@
           </template>
         </UsaTextarea>
 
-        <SubHeader :render-example="false" :render-info="false">
+        <TemplatesSubHeader :render-example="false" :render-info="false">
           Metrics
-        </SubHeader>
+        </TemplatesSubHeader>
         <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
@@ -138,13 +138,13 @@
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Risks
         <template #info>
           Risks to model performance such as false positives, false negatives,
           hallucinations, or bias.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 

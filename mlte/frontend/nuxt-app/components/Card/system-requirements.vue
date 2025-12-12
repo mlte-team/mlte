@@ -4,7 +4,7 @@
   </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
     <div class="input-group">
-      <SubHeader>
+      <TemplatesSubHeader>
         Requirements
         <template #info>
           <p>
@@ -30,7 +30,7 @@
             class="table"
           />
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
