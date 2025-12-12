@@ -205,15 +205,15 @@
                 </UsaTextInput>
               </div>
               <div class="inline-button">
-                <DeleteButton @click="deleteLabel(dataItemIndex, labelIndex)">
+                <ButtonDeleteItem @click="deleteLabel(dataItemIndex, labelIndex)">
                   Delete Label
-                </DeleteButton>
+                </ButtonDeleteItem>
               </div>
             </div>
 
-            <AddButton class="margin-button" @click="addLabel(dataItemIndex)">
+            <ButtonAddItem class="margin-button" @click="addLabel(dataItemIndex)">
               Add Additional Label
-            </AddButton>
+            </ButtonAddItem>
           </div>
 
           <div class="input-group" style="margin-top: 1em">
@@ -310,32 +310,32 @@
                   </UsaTextInput>
                 </div>
               </div>
-              <DeleteButton
+              <ButtonDeleteItem
                 class="margin-button"
                 @click="deleteField(dataItemIndex, fieldIndex)"
               >
                 Delete Field
-              </DeleteButton>
+              </ButtonDeleteItem>
               <hr />
             </div>
 
-            <AddButton class="margin-button" @click="addField(dataItemIndex)">
+            <ButtonAddItem class="margin-button" @click="addField(dataItemIndex)">
               Add Additional Field
-            </AddButton>
+            </ButtonAddItem>
           </div>
 
-          <DeleteButton
+          <ButtonDeleteItem
             class="margin-button"
             @click="deleteDataItem(dataItemIndex)"
           >
             Delete Dataset
-          </DeleteButton>
+          </ButtonDeleteItem>
           <hr />
         </div>
       </div>
-      <AddButton class="margin-button" @click="addDataItem()">
+      <ButtonAddItem class="margin-button" @click="addDataItem()">
         Add Dataset
-      </AddButton>
+      </ButtonAddItem>
     </div>
   </div>
 </template>

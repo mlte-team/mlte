@@ -155,17 +155,17 @@
             </InfoIcon>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteRequirement(requirementIndex)"
         >
           Delete Requirement
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addRequirement()">
+      <ButtonAddItem class="margin-button" @click="addRequirement()">
         Add Requirement
-      </AddButton>
+      </ButtonAddItem>
     </div>
   </div>
 </template>

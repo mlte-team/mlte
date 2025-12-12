@@ -2,7 +2,7 @@
   <div>
     <h3 class="no-margin-sub-header" style="display: inline-block">
       <slot />
-      <ExampleButton v-if="props.renderExample" @click="visible = true" />
+      <ButtonViewExample v-if="props.renderExample" @click="visible = true" />
     </h3>
     <TemplatesModalWrapper
       :visible="visible"

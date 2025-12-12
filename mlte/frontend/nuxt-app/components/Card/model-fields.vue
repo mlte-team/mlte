@@ -75,17 +75,17 @@
             </InfoIcon>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteInputSpec(inputIndex)"
         >
           Delete Input
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addInputSpec()">
+      <ButtonAddItem class="margin-button" @click="addInputSpec()">
         Add Additional Input
-      </AddButton>
+      </ButtonAddItem>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
@@ -162,17 +162,17 @@
             <InfoIcon> Expected values for the output. </InfoIcon>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteOutputSpec(outputIndex)"
         >
           Delete Output
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addOutputSpec()">
+      <ButtonAddItem class="margin-button" @click="addOutputSpec()">
         Add Additional Output
-      </AddButton>
+      </ButtonAddItem>
     </div>
   </div>
 

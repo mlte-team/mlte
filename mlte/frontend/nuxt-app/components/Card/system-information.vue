@@ -118,23 +118,23 @@
             </UsaTextInput>
           </div>
           <div class="inline-button">
-            <DeleteButton @click="deleteMetric(goalIndex, metricIndex)">
+            <ButtonDeleteItem @click="deleteMetric(goalIndex, metricIndex)">
               Delete Metric
-            </DeleteButton>
+            </ButtonDeleteItem>
           </div>
         </div>
-        <AddButton class="margin-button" @click="addMetric(goalIndex)">
+        <ButtonAddItem class="margin-button" @click="addMetric(goalIndex)">
           Add Metric
-        </AddButton>
+        </ButtonAddItem>
         <div class="inline-button" style="vertical-align: bottom">
-          <DeleteButton @click="deleteGoal(goalIndex)">
+          <ButtonDeleteItem @click="deleteGoal(goalIndex)">
             Delete Goal
-          </DeleteButton>
+          </ButtonDeleteItem>
         </div>
         <hr />
       </div>
 
-      <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
+      <ButtonAddItem class="margin-button" @click="addGoal()"> Add Goal </ButtonAddItem>
     </div>
 
     <div class="input-group">
@@ -169,14 +169,14 @@
         </UsaTextarea>
 
         <div class="margin-button">
-          <DeleteButton @click="deleteRisk(riskIndex)">
+          <ButtonDeleteItem @click="deleteRisk(riskIndex)">
             Delete Risk
-          </DeleteButton>
+          </ButtonDeleteItem>
         </div>
         <hr />
       </div>
 
-      <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+      <ButtonAddItem class="margin-button" @click="addRisk()"> Add Risk </ButtonAddItem>
     </div>
   </div>
 </template>
