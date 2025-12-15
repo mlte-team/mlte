@@ -52,7 +52,7 @@
     <div class="rounded-border insection-margin">
       <h3>Results</h3>
     </div>
-    <form-fields-results-table
+    <ReportResultsTable
       v-model="reportBody.test_results"
       class="section-margin"
     />

@@ -3,7 +3,7 @@
     <title>Test Suite</title>
     <template #page-title>Test Suite</template>
     <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <CreatorDisplay :creator="creator" :timestamp="timestamp" />
+    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
 
     <TestSuiteTestCaseList :test-cases="suiteBody.test_cases" />
   </NuxtLayout>

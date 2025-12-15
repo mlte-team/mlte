@@ -1,30 +1,33 @@
 <template>
-  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader
+    v-model="displaySection"
+    @change="displaySection = $event"
+  >
     <template #title> System Context for Model </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
 
   <div v-if="displaySection">
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         General Information
         <template #info>
           General information about the problem and usage context.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <UsaTextarea v-model="props.modelValue.task" style="height: 5.5rem">
         <template #label>
           ML Task
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Well-defined task that model is expected to perform, or problem that
             the model is expected to solve.
             <br />
             <br />
             <i>Example: Match voice recordings spoken by the same person.</i>
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
 
-      <FormFieldsProblemTypeSelect v-model="props.modelValue.problem_type" />
+      <CustomListProblemTypeSelect v-model="props.modelValue.problem_type" />
 
       <UsaTextarea
         v-model="props.modelValue.usage_context"
@@ -32,7 +35,7 @@
       >
         <template #label>
           Usage Context for the Model
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Who is intended to utilize the system/model; how the results of the
             model are <br />
             going to be used by end users or in the context of a larger system.
@@ -44,19 +47,19 @@
               <br />
               an intel analyst a list of matching voice recordings.</i
             >
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Goals
         <template #info>
           Goals or objectives that the model is going to help satisfy as part of
           the system.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -65,7 +68,7 @@
         <UsaTextarea v-model="goal.description" style="height: 5.5rem">
           <template #label>
             Goal Description
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short description for the goal.
               <br />
               <br />
@@ -73,19 +76,19 @@
                 >Example: Identify voice recordings that belong to a given
                 person of interest.</i
               >
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
-        <SubHeader :render-example="false" :render-info="false">
+        <TemplatesSubHeader :render-example="false" :render-info="false">
           Metrics
-        </SubHeader>
+        </TemplatesSubHeader>
         <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
           <div class="inline-input-left">
             <UsaTextInput v-model="metric.description">
               <template #label>
                 Description
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Performance metric that captures the system's ability to
                   accomplish the goal,<br />
                   i.e., acceptance criteria for determining that the model is
@@ -93,7 +96,7 @@
                   <br />
                   <br />
                   <i>Example: Accuracy > 90%</i>
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>
           </div>
@@ -102,7 +105,7 @@
             <UsaTextInput v-model="metric.baseline">
               <template #label>
                 Baseline Source
-                <InfoIcon>
+                <TemplatesTooltipInfo>
                   Indicates where the performance metric goal comes from, or why
                   it is <br />
                   believed to be achievable.
@@ -113,38 +116,40 @@
                     stated in the paper<br />
                     by Smith et al.</i
                   ><br />
-                </InfoIcon>
+                </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>
           </div>
           <div class="inline-button">
-            <DeleteButton @click="deleteMetric(goalIndex, metricIndex)">
+            <ButtonDeleteItem @click="deleteMetric(goalIndex, metricIndex)">
               Delete Metric
-            </DeleteButton>
+            </ButtonDeleteItem>
           </div>
         </div>
-        <AddButton class="margin-button" @click="addMetric(goalIndex)">
+        <ButtonAddItem class="margin-button" @click="addMetric(goalIndex)">
           Add Metric
-        </AddButton>
+        </ButtonAddItem>
         <div class="inline-button" style="vertical-align: bottom">
-          <DeleteButton @click="deleteGoal(goalIndex)">
+          <ButtonDeleteItem @click="deleteGoal(goalIndex)">
             Delete Goal
-          </DeleteButton>
+          </ButtonDeleteItem>
         </div>
         <hr />
       </div>
 
-      <AddButton class="margin-button" @click="addGoal()"> Add Goal </AddButton>
+      <ButtonAddItem class="margin-button" @click="addGoal()">
+        Add Goal
+      </ButtonAddItem>
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Risks
         <template #info>
           Risks to model performance such as false positives, false negatives,
           hallucinations, or bias.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -156,7 +161,7 @@
         >
           <template #label>
             Risk
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short description for the risk.
               <br />
               <br />
@@ -164,19 +169,21 @@
                 Example: Model may not indicate proper results if data is out
                 bounds.
               </i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
         <div class="margin-button">
-          <DeleteButton @click="deleteRisk(riskIndex)">
+          <ButtonDeleteItem @click="deleteRisk(riskIndex)">
             Delete Risk
-          </DeleteButton>
+          </ButtonDeleteItem>
         </div>
         <hr />
       </div>
 
-      <AddButton class="margin-button" @click="addRisk()"> Add Risk </AddButton>
+      <ButtonAddItem class="margin-button" @click="addRisk()">
+        Add Risk
+      </ButtonAddItem>
     </div>
   </div>
 </template>

@@ -2,6 +2,7 @@
   <TemplatesCustomListSelect
     :model-value="modelValue"
     :options="classificationOptions"
+    :error="formErrors.classification"
     @update:model-value="$emit('update:modelValue', $event)"
     @save-new-entry="submit"
   >
@@ -11,6 +12,10 @@
       <br />
       <br />
       <i>Example: Classified, Unclassified, PHI, etc.</i>
+    </template>
+    <template #new-label> New Data Classification </template>
+    <template #error-message>
+      New classification must be submitted before form submission.
     </template>
   </TemplatesCustomListSelect>
 </template>
@@ -26,6 +31,8 @@ const props = defineProps({
 
 const { classificationOptions, fetchClassificationData } =
   await useClassificationOptions();
+
+const formErrors = inject("formErrors", { classification: false });
 
 // Submit new entry to API
 async function submit(newClassification: string) {

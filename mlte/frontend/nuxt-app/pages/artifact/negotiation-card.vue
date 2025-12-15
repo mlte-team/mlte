@@ -8,16 +8,16 @@
     >
       <template #label>
         Artifact ID
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           The Artifact ID this negotiation card <br />
           will be saved under upon submission.
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>
     <div v-else>
       <h1 class="section-header">{{ queryArtifactId }}</h1>
-      <CreatorDisplay :creator="creator" :timestamp="timestamp" />
+      <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
     </div>
 
     <template #page-title>Negotiation Card</template>
@@ -81,16 +81,13 @@
       field. Click on the Example button to see specific examples for a section.
     </p>
 
-    <FormFieldsSystemInformation
-      ref="systemInformationRef"
-      v-model="form.system"
-    />
+    <CardSystemInformation ref="systemInformationRef" v-model="form.system" />
 
-    <FormFieldsDataFields ref="dataRef" v-model="form.data" />
+    <CardDataFields ref="dataRef" v-model="form.data" />
 
-    <FormFieldsModelFields ref="modelRef" v-model="form.model" />
+    <CardModelFields ref="modelRef" v-model="form.model" />
 
-    <FormFieldsSystemRequirements v-model="form.system_requirements" />
+    <CardSystemRequirements v-model="form.system_requirements" />
 
     <div class="submit-footer">
       <UsaButton class="primary-button" @click="cancelFormSubmission('/')">
@@ -103,6 +100,7 @@
 
 <script setup lang="ts">
 import { cancelFormSubmission } from "~/composables/form-methods";
+import { provide } from "vue";
 
 const queryModel = useRoute().query.model;
 const queryVersion = useRoute().query.version;
@@ -117,9 +115,14 @@ const userInputArtifactId = ref("default");
 const creator = ref("");
 const timestamp = ref("");
 const form = ref(new NegotiationCardModel());
-const formErrors = ref({
+const formErrors = ref<Dictionary<boolean>>({
   identifier: false,
+  problem_type: false,
+  classification: false,
+  qa: false,
 });
+
+provide("formErrors", formErrors);
 
 await updateCardCustomLists();
 if (queryArtifactId !== undefined) {
@@ -138,9 +141,34 @@ if (queryArtifactId !== undefined) {
 // Handle submission of form.
 async function submit() {
   const identifier = (queryArtifactId as string) || userInputArtifactId.value;
-  resetFormErrors(formErrors.value);
+  formErrors.value = resetFormErrors(formErrors.value);
+  let inputError = false;
+
   if (identifier === "") {
     formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (form.value.system.problem_type === "Other") {
+    formErrors.value.problem_type = true;
+    inputError = true;
+  }
+
+  form.value.data.forEach((dataDescriptor: DataDescriptor) => {
+    if (dataDescriptor.classification === "Other") {
+      formErrors.value.classification = true;
+      inputError = true;
+    }
+  });
+
+  form.value.system_requirements.forEach((requirement: QASDescriptor) => {
+    if (requirement.quality === "Other") {
+      formErrors.value.qa = true;
+      inputError = true;
+    }
+  });
+
+  if (inputError) {
     inputErrorAlert();
     return;
   }

@@ -2,6 +2,7 @@
   <TemplatesCustomListSelect
     :model-value="modelValue"
     :options="problemTypeOptions"
+    :error="formErrors.problem_type"
     @update:model-value="$emit('update:modelValue', $event)"
     @save-new-entry="submit"
   >
@@ -14,6 +15,10 @@
         Example: Classification, Clustering, Detection, and others in drop-down
         list.
       </i>
+    </template>
+    <template #new-label> New Problem Type </template>
+    <template #error-message>
+      New problem type must be submitted before form submission.
     </template>
   </TemplatesCustomListSelect>
 </template>
@@ -29,6 +34,8 @@ const props = defineProps({
 
 const { problemTypeOptions, fetchProblemTypeData } =
   await useProblemTypeOptions();
+
+const formErrors = inject("formErrors", { problem_type: false });
 
 // Submit new entry to API
 async function submit(newProblemType: string) {

@@ -14,7 +14,9 @@
       >
         <template #label>
           Catalog
-          <InfoIcon> Catalog where test example will be stored. </InfoIcon>
+          <TemplatesTooltipInfo>
+            Catalog where test example will be stored.
+          </TemplatesTooltipInfo>
         </template>
         <template #error-message>A catalog must be selected</template>
       </UsaSelect>
@@ -24,7 +26,9 @@
       >
         <template #label>
           Identifier
-          <InfoIcon> User-defined identifier for the test example. </InfoIcon>
+          <TemplatesTooltipInfo>
+            User-defined identifier for the test example.
+          </TemplatesTooltipInfo>
         </template>
         <template #error-message>Identifier is required.</template>
       </UsaTextInput>
@@ -33,10 +37,10 @@
     <div class="multi-line-checkbox-div">
       <label class="usa-label">
         Tags
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           System-defined tags that are used in catalog search. Select as many as
           are relevant to the test example.
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </label>
       <span
         v-for="(tag, tagIndex) in tagOptions"
@@ -55,23 +59,22 @@
       </span>
     </div>
 
-    <FormFieldsQualityAttributes
+    <CustomListQualityAttributeSelect
       :model-value="props.modelValue.quality_attribute"
       :disabled="props.readOnly"
-      @update-attribute="props.modelValue.quality_attribute = $event"
+      @update:model-value="props.modelValue.quality_attribute = $event"
     >
       <template #label> Quality Attribute Category </template>
       <template #tooltip>
-        <InfoIcon>
-          High-level quality attribute category that the test example is
-          validating, e.g., functional correctness, performance, robustness.
-        </InfoIcon>
+        High-level quality attribute category that the test example is
+        validating, e.g., functional correctness, performance, robustness.
       </template>
-    </FormFieldsQualityAttributes>
+      <template #new-qac-label> New Quality Attribute Category</template>
+    </CustomListQualityAttributeSelect>
 
     <label class="usa-label">
       Code
-      <InfoIcon> Code for the test example. </InfoIcon>
+      <TemplatesTooltipInfo> Code for the test example. </TemplatesTooltipInfo>
       <CopyIcon @click="copyCode()" />
     </label>
     <Codemirror
@@ -88,7 +91,9 @@
     >
       <template #label>
         Description
-        <InfoIcon> Description of the test example. </InfoIcon>
+        <TemplatesTooltipInfo>
+          Description of the test example.
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message>Not defined</template>
     </UsaTextarea>
@@ -96,10 +101,10 @@
     <UsaTextInput v-model="modelValue.inputs" :disabled="props.readOnly">
       <template #label>
         Inputs
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           Inputs that are required to run the test example, e.g., data sets,
           parameters.
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
@@ -107,10 +112,10 @@
     <UsaTextInput v-model="modelValue.output" :disabled="props.readOnly">
       <template #label>
         Output
-        <InfoIcon>
+        <TemplatesTooltipInfo>
           Output of the test example, e.g., value, log entry, database entry,
           alert.
-        </InfoIcon>
+        </TemplatesTooltipInfo>
       </template>
       <template #error-message>Not defined</template>
     </UsaTextInput>
@@ -133,6 +138,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue";
+import { provide } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { python } from "@codemirror/lang-python";
 const extensions = [python()];
@@ -160,9 +166,12 @@ timestamp.value = new Date(
 const formErrors = ref<Dictionary<boolean>>({
   catalog: false,
   identifier: false,
+  qa: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const { tagOptions } = await useTagOptions();
+
+provide("formErrors", formErrors);
 
 await updateCatalogCustomLists();
 populateCatalogOptions();
@@ -202,6 +211,11 @@ async function submit() {
 
   if (props.modelValue.header.identifier === "") {
     formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.quality_attribute === "Other") {
+    formErrors.value.qa = true;
     inputError = true;
   }
 

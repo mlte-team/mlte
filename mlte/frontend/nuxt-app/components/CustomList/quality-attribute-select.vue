@@ -3,6 +3,7 @@
     <TemplatesCustomListSelect
       :model-value="qaCategory"
       :disabled="props.disabled"
+      :error="formErrors.qa"
       :options="QACategoryOptions"
       @update:model-value="categoryChange($event)"
       @save-new-entry="submitCategory"
@@ -13,13 +14,20 @@
       <template #tooltip>
         <slot name="tooltip" />
       </template>
+      <template #new-label>
+        <slot name="new-qac-label" />
+      </template>
+      <template #error-message>
+        New quality attribute category must be submitted before form submission.
+      </template>
     </TemplatesCustomListSelect>
 
     <TemplatesCustomListSelect
       :model-value="props.modelValue"
-      :disabled="props.disabled"
+      :disabled="props.disabled || qaCategory === 'Other'"
+      :error="formErrors.qa"
       :options="selectedQAOptions"
-      @update:model-value="emit('updateAttribute', $event)"
+      @update:model-value="emit('update:modelValue', $event)"
       @save-new-entry="submitQA"
     >
       <template #label> Quality Attribute </template>
@@ -27,12 +35,16 @@
         More specific quality attribute that the test example is validating,
         e.g., accuracy, inference time, robustness to image blur.
       </template>
+      <template #new-label> New Quality Attribute </template>
+      <template #error-message>
+        New quality attribute must be submitted before form submission.
+      </template>
     </TemplatesCustomListSelect>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["update:modelValue", "updateAttribute"]);
+const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
     type: String,
@@ -51,6 +63,8 @@ const { qualityAttributeOptions: AllQAOptions, fetchQAData } =
   await useQualityAttributeOptions();
 const selectedQAOptions = ref<Array<QAOption>>([]);
 
+const formErrors = inject("formErrors", { qa: false });
+
 // On load, populate parent QA Category field if a qualiity attribute is selected
 if (props.modelValue) {
   AllQAOptions.value.forEach((attribute: QAOption) => {
@@ -65,9 +79,9 @@ if (props.modelValue) {
  * Handle QA Category change.
  *
  * @param {string} selectedCategory The newly selected category
- * @param {string} [initialAttribute] Optional param to set QA when changing QA Category. Used on startup
+ * @param {string} [selectedAttribute] Optional param to set QA when changing QA Category
  */
-function categoryChange(selectedCategory: string, initialAttrbute?: string) {
+function categoryChange(selectedCategory: string, selectedAttribute?: string) {
   qaCategory.value = selectedCategory;
   selectedQAOptions.value = [];
   AllQAOptions.value.forEach((attribute: QAOption) => {
@@ -80,10 +94,13 @@ function categoryChange(selectedCategory: string, initialAttrbute?: string) {
     selectedQAOptions.value.push(new QAOption("Other", "Other", "", ""));
   }
 
-  if (initialAttrbute === undefined) {
-    emit("updateAttribute", "");
+  if (selectedCategory == "Other") {
+    // Value set to "Other" implies that a category addition is in progress, and should cause an error on submit.
+    emit("update:modelValue", "Other");
+  } else if (selectedAttribute === undefined) {
+    emit("update:modelValue", "");
   } else {
-    emit("updateAttribute", initialAttrbute);
+    emit("update:modelValue", selectedAttribute);
   }
 }
 
@@ -96,7 +113,7 @@ async function submitCategory(newCategory: string) {
   if (response) {
     await fetchQACData();
     qaCategory.value = newCategory;
-    categoryChange(newCategory);
+    categoryChange(newCategory, "Other");
   }
 }
 
@@ -109,7 +126,7 @@ async function submitQA(newQA: string) {
   if (response) {
     await fetchQAData();
     categoryChange(qaCategory.value, props.modelValue);
-    emit("updateAttribute", newQA);
+    emit("update:modelValue", newQA);
   }
 }
 </script>

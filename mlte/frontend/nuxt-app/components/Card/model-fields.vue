@@ -1,11 +1,11 @@
 <template>
-  <CollapsibleHeader v-model="displayIO" @change="displayIO = $event">
+  <TemplatesCollapsibleHeader v-model="displayIO" @change="displayIO = $event">
     <template #title> Model Inputs and Outputs </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
 
   <div v-if="displayIO">
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Input Specification
         <template #example>
           <UsaTable
@@ -19,7 +19,7 @@
           Describe the input data type and format needed for model to conduct
           inference.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -31,65 +31,65 @@
         <UsaTextInput v-model="inputSpec.name">
           <template #label>
             Input Name
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Input name.
               <br />
               <br />
               <i>Example: Audio Recording.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextInput>
 
         <UsaTextarea v-model="inputSpec.description" style="height: 5.5rem">
           <template #label>
             Description
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short input description.
               <br />
               <br />
               <i>Example: Audio recording file for matching.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
         <UsaTextInput v-model="inputSpec.type">
           <template #label>
             Type
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Input type, e.g., number, string, Boolean, data, image, audio.
               <br />
               <br />
               <i>Example: Audio.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextInput>
 
         <UsaTextarea v-model="inputSpec.expected_values" style="height: 5.5rem">
           <template #label>
             Expected Values
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Expected values for the input.
               <br />
               <br />
               <i>Example: Non-empty audio file of type WAV, MP3 or MP4.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteInputSpec(inputIndex)"
         >
           Delete Input
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addInputSpec()">
+      <ButtonAddItem class="margin-button" @click="addInputSpec()">
         Add Additional Input
-      </AddButton>
+      </ButtonAddItem>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Output Specification
         <template #example>
           <UsaTable
@@ -103,7 +103,7 @@
           Describe the output format and specification needed for the system to
           ingest model results.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -116,31 +116,31 @@
         <UsaTextInput v-model="outputSpec.name">
           <template #label>
             Output Name
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Output name.
               <br />
               <br />
               <i>Example: Matching recordings.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextInput>
 
         <UsaTextarea v-model="outputSpec.description" style="height: 5.5rem">
           <template #label>
             Description
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Short output description.
               <br />
               <br />
               <i>Example: Set of matching recordings from the database.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
         <UsaTextInput v-model="outputSpec.type">
           <template #label>
             Type
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Field type, e.g., number, string, Boolean, data, image, audio.
               <br />
               <br />
@@ -149,7 +149,7 @@
                 empty <br />
                 vector means that there were no matches.
               </i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextInput>
 
@@ -159,33 +159,35 @@
         >
           <template #label>
             Expected Values
-            <InfoIcon> Expected values for the output. </InfoIcon>
+            <TemplatesTooltipInfo>
+              Expected values for the output.
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteOutputSpec(outputIndex)"
         >
           Delete Output
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addOutputSpec()">
+      <ButtonAddItem class="margin-button" @click="addOutputSpec()">
         Add Additional Output
-      </AddButton>
+      </ButtonAddItem>
     </div>
   </div>
 
-  <CollapsibleHeader
+  <TemplatesCollapsibleHeader
     v-model="displayResources"
     @change="displayResources = $event"
   >
     <template #title> Resources and Infrastructure </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
 
   <div v-if="displayResources">
     <div class="input-group">
-      <SubHeader>
+      <TemplatesSubHeader>
         Development Compute Resources
         <template #example>
           GPUs = 2, GPU Memory = 1 GB, CPUs = 1, Main Memory = 512 MB, Storage =
@@ -195,7 +197,7 @@
           Describe the amount and type of compute resources needed for
           development such as training, fine-tuning, or evaluation.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput
@@ -244,24 +246,24 @@
     </div>
 
     <div class="input-group">
-      <SubHeader :render-example="false">
+      <TemplatesSubHeader :render-example="false">
         Deployment
         <template #info> Operational environment of the model. </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <UsaTextarea
         v-model="props.modelValue.deployment_platform"
         style="height: 5.5rem"
       >
         <template #label>
           Deployment Platform
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Describe the deployment platform for the model and any software
             <br />
             dependencies.
             <br />
             <br />
             <i>Example: Local server due to data classification issues.</i>
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
 
@@ -271,7 +273,7 @@
       >
         <template #label>
           Capability Deployment Mechanism
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             Describe how the model capabilities will be made available, <br />
             e.g., API, user facing, data feed.
             <br />
@@ -281,14 +283,14 @@
               <br />
               from the intel analyst UI.</i
             >
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextarea>
 
       <UsaTextInput v-model="props.modelValue.model_source">
         <template #label>
           Model Source
-          <InfoIcon>
+          <TemplatesTooltipInfo>
             The source of the model.
             <br />
             <br />
@@ -296,13 +298,13 @@
               >Example: In-house, Hugging Face, specific URL of git
               repository.</i
             >
-          </InfoIcon>
+          </TemplatesTooltipInfo>
         </template>
       </UsaTextInput>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
-      <SubHeader>
+      <TemplatesSubHeader>
         Production Compute Resources
         <template #example>
           Example: GPUs = 2, CPUs = 2, Main Memory = 256 MB, Storage = 512 MB
@@ -311,7 +313,7 @@
           Describe the amount and type of compute resources needed for
           inference.
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
       <div>
         <div class="inline-input-left">
           <UsaTextInput

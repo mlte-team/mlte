@@ -2,15 +2,15 @@
   <div>
     <h3 class="no-margin-sub-header" style="display: inline-block">
       <slot />
-      <ExampleButton v-if="props.renderExample" @click="visible = true" />
+      <ButtonViewExample v-if="props.renderExample" @click="visible = true" />
     </h3>
-    <ModalWrapper
+    <TemplatesModalWrapper
       :visible="visible"
       @toggle-visible="(value) => (visible = value)"
     >
       <template #heading> Example: </template>
       <slot name="example" />
-    </ModalWrapper>
+    </TemplatesModalWrapper>
     <p v-if="props.renderInfo">
       <slot name="info" />
     </p>

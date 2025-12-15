@@ -3,7 +3,7 @@
     <title>Report</title>
     <template #page-title>Report</template>
     <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <CreatorDisplay :creator="creator" :timestamp="timestamp" />
+    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
 
     <div>
       <h2 class="section-header">System Information</h2>
@@ -93,7 +93,7 @@
     </div>
 
     <h2 class="section-header">Test Results</h2>
-    <form-fields-results-table v-model="reportBody.test_results" />
+    <ReportResultsTable v-model="reportBody.test_results" />
 
     <hr />
     <h2 class="section-header">Additional Context</h2>

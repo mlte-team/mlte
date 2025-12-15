@@ -30,13 +30,13 @@
         </span>
       </div>
 
-      <ModalWrapper
+      <TemplatesModalWrapper
         :visible="modalVisible"
         @toggle-visible="(value: boolean) => (modalVisible = value)"
       >
         <template #heading>{{ modalHeading }}</template>
         {{ modalData }}
-      </ModalWrapper>
+      </TemplatesModalWrapper>
 
       <div style="overflow-x: scroll">
         <table class="table usa-table usa-table--borderless">

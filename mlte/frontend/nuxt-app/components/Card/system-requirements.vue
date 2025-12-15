@@ -1,10 +1,13 @@
 <template>
-  <CollapsibleHeader v-model="displaySection" @change="displaySection = $event">
+  <TemplatesCollapsibleHeader
+    v-model="displaySection"
+    @change="displaySection = $event"
+  >
     <template #title> System Derived Requirements </template>
-  </CollapsibleHeader>
+  </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
     <div class="input-group">
-      <SubHeader>
+      <TemplatesSubHeader>
         Requirements
         <template #info>
           <p>
@@ -30,7 +33,7 @@
             class="table"
           />
         </template>
-      </SubHeader>
+      </TemplatesSubHeader>
 
       <hr />
 
@@ -52,9 +55,9 @@
           {{ requirement.measure }}.
         </p>
 
-        <FormFieldsQualityAttributes
+        <CustomListQualityAttributeSelect
           :model-value="requirement.quality"
-          @update-attribute="requirement.quality = $event"
+          @update:model-value="requirement.quality = $event"
         >
           <template #label>
             <b>System Quality:</b> What is the model quality attribute category
@@ -70,14 +73,15 @@
             <br />
             <i>Example: Response time.</i>
           </template>
-        </FormFieldsQualityAttributes>
+          <template #new-qac-label>New System Quality</template>
+        </CustomListQualityAttributeSelect>
 
         <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">
           <template #label>
             <b>Stimulus:</b> What is the input to the model, the action, or the
             event that will enable testing of the quality attribute category,
             such as input data, system event, or user operation?
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               A condition arriving at the system/model (e.g., data,
               <br />
               event, user operation, attack, request for modification,
@@ -86,7 +90,7 @@
               <br />
               <br />
               <i>Example: Model receives an audio recording.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
@@ -94,7 +98,7 @@
           <template #label>
             <b>Source of Stimulus:</b> Where is the stimulus coming from, such
             as a system component, system user, or data source?
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Where the stimulus comes from (e.g., data source, <br />
               internal/external user, internal/external component or system,
               <br />
@@ -102,7 +106,7 @@
               <br />
               <br />
               <i>Example: Intel analyst application.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
@@ -111,14 +115,14 @@
             <b>Environment:</b> What are the conditions under which the scenario
             occurs, such as normal operations, overload conditions, or under
             attack?
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Set of circumstances in which the scenario takes place <br />
               (e.g., normal operations, overload condition, startup, development
               time).
               <br />
               <br />
               <i>Example: Normal operations.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
@@ -126,7 +130,7 @@
           <template #label>
             <b>Response:</b> What occurs as a result of the stimulus, such as
             inference on the data, event processing, or data validation?
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Activity that occurs as the result of the arrival of the
               <br />
               stimulus (e.g., inference, process event, deny access, <br />
@@ -134,7 +138,7 @@
               <br />
               <br />
               <i>Example: Inference time.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
 
@@ -143,7 +147,7 @@
             <b>Response Measure: </b>What is the measure that will determine
             that the correct response has been achieved, such as a statistical
             property, latency, or execution time?
-            <InfoIcon>
+            <TemplatesTooltipInfo>
               Measures used to determine that the responses enumerated for
               <br />
               the scenario have been achieved (e.g., statistical property,
@@ -152,20 +156,20 @@
               <br />
               <br />
               <i>Example: At most 5 seconds.</i>
-            </InfoIcon>
+            </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <DeleteButton
+        <ButtonDeleteItem
           class="margin-button"
           @click="deleteRequirement(requirementIndex)"
         >
           Delete Requirement
-        </DeleteButton>
+        </ButtonDeleteItem>
         <hr />
       </div>
-      <AddButton class="margin-button" @click="addRequirement()">
+      <ButtonAddItem class="margin-button" @click="addRequirement()">
         Add Requirement
-      </AddButton>
+      </ButtonAddItem>
     </div>
   </div>
 </template>

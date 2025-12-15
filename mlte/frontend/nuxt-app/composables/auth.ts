@@ -11,6 +11,6 @@ export function confirmLogout() {
     token.value = undefined;
     user.value = undefined;
     userRole.value = undefined;
-    navigateTo("/login-page");
+    navigateTo("/login");
   }
 }

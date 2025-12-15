@@ -7,9 +7,9 @@
     <b>Differences: </b> {{ headerDifferences.join(", ") }}
   </div>
   <b>{{ version1 }}</b>
-  <HeaderDisplay :header="report1.header" />
+  <TemplatesArtifactHeader :header="report1.header" />
   <b>{{ version2 }}</b>
-  <HeaderDisplay :header="report2.header" />
+  <TemplatesArtifactHeader :header="report2.header" />
   <h3>Test Results</h3>
   <div v-for="key in keySet" :key="key">
     <p><b>Result for: </b>{{ key }}</p>
