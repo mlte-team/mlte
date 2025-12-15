@@ -57,7 +57,7 @@
 
         <CustomListQualityAttributeSelect
           :model-value="requirement.quality"
-          @update-attribute="requirement.quality = $event"
+          @update:model-value="requirement.quality = $event"
         >
           <template #label>
             <b>System Quality:</b> What is the model quality attribute category
@@ -73,6 +73,7 @@
             <br />
             <i>Example: Response time.</i>
           </template>
+          <template #new-qac-label>New System Quality</template>
         </CustomListQualityAttributeSelect>
 
         <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">

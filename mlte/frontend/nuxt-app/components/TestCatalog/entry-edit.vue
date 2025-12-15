@@ -62,15 +62,14 @@
     <CustomListQualityAttributeSelect
       :model-value="props.modelValue.quality_attribute"
       :disabled="props.readOnly"
-      @update-attribute="props.modelValue.quality_attribute = $event"
+      @update:model-value="props.modelValue.quality_attribute = $event"
     >
       <template #label> Quality Attribute Category </template>
       <template #tooltip>
-        <TemplatesTooltipInfo>
-          High-level quality attribute category that the test example is
-          validating, e.g., functional correctness, performance, robustness.
-        </TemplatesTooltipInfo>
+        High-level quality attribute category that the test example is
+        validating, e.g., functional correctness, performance, robustness.
       </template>
+      <template #new-qac-label> New Quality Attribute Category</template>
     </CustomListQualityAttributeSelect>
 
     <label class="usa-label">
@@ -139,6 +138,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue";
+import { provide } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { python } from "@codemirror/lang-python";
 const extensions = [python()];
@@ -166,9 +166,12 @@ timestamp.value = new Date(
 const formErrors = ref<Dictionary<boolean>>({
   catalog: false,
   identifier: false,
+  qa: false,
 });
 const catalogOptions = ref<Array<SelectOption>>([]);
 const { tagOptions } = await useTagOptions();
+
+provide("formErrors", formErrors);
 
 await updateCatalogCustomLists();
 populateCatalogOptions();
@@ -208,6 +211,11 @@ async function submit() {
 
   if (props.modelValue.header.identifier === "") {
     formErrors.value.identifier = true;
+    inputError = true;
+  }
+
+  if (props.modelValue.quality_attribute === "Other") {
+    formErrors.value.qa = true;
     inputError = true;
   }
 
