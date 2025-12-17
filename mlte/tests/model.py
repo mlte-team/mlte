@@ -1,6 +1,4 @@
-"""
-Model implementation for the TestSuite artifact.
-"""
+"""Model implementation for the TestSuite artifact."""
 
 from typing import Literal, Optional
 
