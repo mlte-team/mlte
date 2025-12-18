@@ -127,6 +127,7 @@ class TestCase(Serializable):
         TestCase(identifier="ID", goal="GOAL", quality_scenarios=["QA"]),
 
     def to_template_str(self) -> str:
+        """Convert the test case into a template string."""
         import inspect
 
         source = inspect.getsource(self.template)

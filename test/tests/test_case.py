@@ -18,7 +18,7 @@ def get_sample_test_case():
     return test_case
 
 
-def test_round_trip() -> None:
+def test_round_trip():
     """TestCase can be converted to model and back."""
     test_case = get_sample_test_case()
 
