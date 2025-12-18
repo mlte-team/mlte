@@ -565,6 +565,28 @@ export async function getSuite(
   }
 }
 
+export async function getSuiteTemplate(
+  model: string,
+  version: string,
+  cardId: string,
+): Promise<string | null> {
+  const suiteTemplate: string | null = await useApi(
+    "/model/" +
+      model +
+      "/version/" +
+      version +
+      "/artifact/" +
+      cardId +
+      "/suite_template",
+    "GET",
+  );
+  if (suiteTemplate) {
+    return suiteTemplate;
+  } else {
+    return null;
+  }
+}
+
 /**
  * Get Test Results from API.
  *

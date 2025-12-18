@@ -183,7 +183,7 @@ def delete_artifact(
             raise_http_internal_error(ex)
 
 
-@router.post("/{artifact_id}/suite_template")
+@router.get("/{artifact_id}/suite_template")
 def suite_template(
     model_id: str,
     version_id: str,
