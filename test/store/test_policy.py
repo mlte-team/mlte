@@ -9,7 +9,9 @@ from mlte.store.user.policy import Policy, create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
-from test.store.artifact.fixture import artifact_stores
+from test.store.artifact.fixture import (
+    artifact_stores,
+)
 from test.store.artifact.fixture import fs_store as artifact_fs_store  # noqa
 from test.store.artifact.fixture import (  # noqa
     http_store as artifact_http_store,
