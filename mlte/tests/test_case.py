@@ -5,6 +5,7 @@ from __future__ import annotations
 import typing
 from typing import Optional
 
+from mlte._private.function_info import get_function_code
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.model.base_model import BaseModel
@@ -128,10 +129,7 @@ class TestCase(Serializable):
 
     def to_template_str(self) -> str:
         """Convert the test case into a template string."""
-        import inspect
-
-        source = inspect.getsource(self.template)
-        source = source[source.find("\n") + 1 :]
+        source = get_function_code(self.template)
         source = source.replace("ID", self.identifier)
         source = source.replace("GOAL", self.goal)
         source = source.replace("QA", self.quality_scenarios[0])

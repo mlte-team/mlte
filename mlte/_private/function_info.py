@@ -3,7 +3,7 @@ from __future__ import annotations
 import gc
 import inspect
 from types import FrameType, FunctionType
-from typing import Any, Mapping, Optional
+from typing import Any, Callable, Mapping, Optional
 
 from mlte._private import meta
 
@@ -134,3 +134,12 @@ def get_class_from_func(func: Optional[FunctionType]) -> Optional[type]:
                 items_to_check.append(ref)
 
     return None
+
+
+def get_function_code(func: Callable[[], str]) -> str:
+    """Return a string of a function source code, without the definition."""
+    source = inspect.getsource(func)
+
+    # Remove the function definition line.
+    source = source[source.find("\n") + 1 :]
+    return source

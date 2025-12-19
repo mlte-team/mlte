@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import typing
 
+from mlte._private.function_info import get_function_code
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -210,20 +211,18 @@ class TestSuite(Artifact):
 
     def to_template_str(self) -> str:
         """Convert the test suite into a template string."""
-        import inspect
+        source = get_function_code(self.template)[8:]
 
-        source = inspect.getsource(self.template)
-        # Remove the def line and indentation spaces from the first import
-        source = source[source.find("\n") + 9 :]
+        # Remove all extra indentation.
+        source = source.replace("\n        ", "\n")
 
         cases = ""
         for _, test in self.test_cases.items():
-            cases += test.to_template_str() + "        "
+            cases += test.to_template_str()
 
-        # Substitute in cases template, remove trailing spaces and extra new line
-        source = source.replace("        # CASES", cases[:-9])
-        # Remove all extra indentation
-        source = source.replace("\n        ", "\n")
+        # Substitute in cases template.
+        source = source.replace("        # CASES", cases[:-1])
+
         return source
 
     # -------------------------------------------------------------------------

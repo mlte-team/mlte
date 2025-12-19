@@ -7,7 +7,7 @@ from mlte.tests.test_suite import TestSuite
 
 def generate_suite_str(requirements: list[QASDescriptor]) -> str:
     """
-    Generate a TestSuite template string from a list of requirements
+    Generate a TestSuite template string from a list of requirements.
 
     :param requirements: List of system requirements to make into TestCases
     :return: TestSuite template string that can be used to instantiate a TestSuite

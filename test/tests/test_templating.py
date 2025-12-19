@@ -9,4 +9,3 @@ def test_generate_suite_str():
     card = get_sample_negotiation_card()
     suite_str = generate_suite_str(card.quality_scenarios)
     exec(suite_str)
-    assert True
