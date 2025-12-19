@@ -1,12 +1,11 @@
-"""
-TestCase defines structure for all tests to be defined for a TestSuite.
-"""
+"""TestCase defines structure for all tests to be defined for a TestSuite."""
 
 from __future__ import annotations
 
 import typing
 from typing import Optional
 
+from mlte._private.function_info import get_function_code
 from mlte.evidence.artifact import Evidence
 from mlte.measurement.measurement import Measurement
 from mlte.model.base_model import BaseModel
@@ -17,9 +16,7 @@ from mlte.validation.validator import Validator
 
 
 class TestCase(Serializable):
-    """
-    Class that contains all information about a test case.
-    """
+    """Class that contains all information about a test case."""
 
     def __init__(
         self,
@@ -122,6 +119,21 @@ class TestCase(Serializable):
             ),
         )
         return test_case
+
+    # -------------------------------------------------------------------------
+    # Templating.
+    # -------------------------------------------------------------------------
+
+    def template(self):
+        TestCase(identifier="ID", goal="GOAL", quality_scenarios=["QA"]),
+
+    def to_template_str(self) -> str:
+        """Convert the test case into a template string."""
+        source = get_function_code(self.template)
+        source = source.replace("ID", self.identifier)
+        source = source.replace("GOAL", self.goal)
+        source = source.replace("QA", self.quality_scenarios[0])
+        return source
 
     # -------------------------------------------------------------------------
     # Builtin overloads.

@@ -19,3 +19,14 @@ export function resetFormErrors(
 export function timestampToString(timestamp: number): string {
   return new Date(timestamp * 1000).toLocaleString("en-US");
 }
+
+// Copies input string to the clipboard. Exposed this way to allow for use in @click due to vue bug
+export const useCopyToClipboard = () => {
+  const copyToClipboard = (str: string) => {
+    navigator.clipboard.writeText(str);
+  };
+
+  return {
+    copyToClipboard,
+  };
+};

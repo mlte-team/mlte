@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import typing
+
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -9,6 +11,7 @@ import mlte.store.error as errors
 from mlte._private import url as url_utils
 from mlte.artifact.factory import ArtifactFactory
 from mlte.artifact.model import ArtifactModel
+from mlte.artifact.type import ArtifactType
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.models.artifact_model import (
@@ -18,7 +21,9 @@ from mlte.backend.api.models.artifact_model import (
 from mlte.backend.core import state_stores
 from mlte.backend.core.state import state
 from mlte.context.context import Context
+from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.query import Query
+from mlte.tests.templating import generate_suite_str
 
 # The router exported by this submodule
 router = APIRouter()
@@ -170,6 +175,43 @@ def delete_artifact(
             return artifact_store.artifact_mapper.delete(
                 artifact_id, (model_id, version_id)
             )
+        except errors.ErrorNotFound as e:
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e} not found."
+            )
+        except Exception as ex:
+            raise_http_internal_error(ex)
+
+
+@router.get("/{artifact_id}/suite_template")
+def suite_template(
+    model_id: str,
+    version_id: str,
+    artifact_id: str,
+    current_user: AuthorizedUser,
+) -> str:
+    """
+    Create a TestSuite template from a negotiation card artifact
+    :param model_id: The model identifier
+    :param version_id: The version identifier
+    :param artifact_id: The identifier for the artifact
+    :return: The read artifact
+    """
+    model_id = url_utils.revert_valid_url_part(model_id)
+    version_id = url_utils.revert_valid_url_part(version_id)
+    artifact_id = url_utils.revert_valid_url_part(artifact_id)
+    with state_stores.artifact_store_session() as artifact_store:
+        try:
+            artifact = artifact_store.artifact_mapper.read(
+                artifact_id, (model_id, version_id)
+            )
+            if artifact.header.type == ArtifactType.NEGOTIATION_CARD:
+                card = typing.cast(NegotiationCardModel, artifact.body)
+                return generate_suite_str(card.system_requirements)
+            else:
+                raise Exception(
+                    "Artifact passed to suite_template endpoint was not a negotiation card."
+                )
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

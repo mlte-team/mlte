@@ -1,11 +1,10 @@
-"""
-TestSuite contains a collection of TestCases.
-"""
+"""TestSuite contains a collection of TestCases."""
 
 from __future__ import annotations
 
 import typing
 
+from mlte._private.function_info import get_function_code
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
 from mlte.artifact.type import ArtifactType
@@ -195,6 +194,36 @@ class TestSuite(Artifact):
                     raise RuntimeError(
                         f"Quality Attribute Scenario with id {qas_id} was not found on any NegotiationCard"
                     )
+
+    # -------------------------------------------------------------------------
+    # Templating.
+    # -------------------------------------------------------------------------
+
+    def template(self):
+        from mlte.tests.test_case import TestCase  # noqa
+        from mlte.tests.test_suite import TestSuite
+
+        suite = TestSuite(  # noqa
+            test_cases=[
+                # CASES
+            ]
+        )
+
+    def to_template_str(self) -> str:
+        """Convert the test suite into a template string."""
+        source = get_function_code(self.template)[8:]
+
+        # Remove all extra indentation.
+        source = source.replace("\n        ", "\n")
+
+        cases = ""
+        for _, test in self.test_cases.items():
+            cases += test.to_template_str()
+
+        # Substitute in cases template.
+        source = source.replace("        # CASES", cases[:-1])
+
+        return source
 
     # -------------------------------------------------------------------------
     # Builtin overloads.

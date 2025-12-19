@@ -35,6 +35,12 @@
       </div>
     </template>
 
+    <TestSuiteTemplateDisplay
+      :model-value="testSuiteTemplate"
+      :visible="testSuiteModalVisible"
+      @toggle-visible="testSuiteModalVisible = false"
+    />
+
     <!-- <UsaBreadcrumb :items="path" /> -->
     <div style="display: flex">
       <div class="model-version-div">
@@ -101,6 +107,12 @@
                   >
                     <UsaButton class="primary-button"> Edit </UsaButton>
                   </NuxtLink>
+                  <UsaButton
+                    class="primary-button"
+                    @click="viewSuiteTemplate(card.id)"
+                  >
+                    Suite Template
+                  </UsaButton>
                 </td>
               </tr>
             </tbody>
@@ -349,6 +361,8 @@ const newVersionIdentifier = ref("");
 const modelOptions = ref<Array<SelectOption>>([]);
 const versionOptions = ref<Array<SelectOption>>([]);
 const modelList = ref<Array<string>>([]);
+const testSuiteModalVisible = ref<boolean>(false);
+const testSuiteTemplate = ref<string>("");
 
 const selectedModel = useCookie("selectedModel", {
   decode(value) {
@@ -582,6 +596,23 @@ async function submitNewVersion(modelName: string, versionName: string) {
     selectModel(modelName, false);
     newVersionIdentifier.value = "";
     selectVersion(versionName);
+  }
+}
+
+/**
+ * Enable the TestSuite template modal
+ *
+ * @param cardId ID of card to display a template TestSuite for
+ */
+async function viewSuiteTemplate(cardId: string) {
+  const response = await getSuiteTemplate(
+    selectedModel.value,
+    selectedVersion.value,
+    cardId,
+  );
+  if (response) {
+    testSuiteTemplate.value = response;
+    testSuiteModalVisible.value = true;
   }
 }
 </script>

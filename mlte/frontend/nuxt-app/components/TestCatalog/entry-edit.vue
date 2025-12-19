@@ -75,7 +75,7 @@
     <label class="usa-label">
       Code
       <TemplatesTooltipInfo> Code for the test example. </TemplatesTooltipInfo>
-      <CopyIcon @click="copyCode()" />
+      <CopyIcon @click="copyToClipboard(props.modelValue.code)" />
     </label>
     <Codemirror
       v-model="modelValue.code"
@@ -142,6 +142,7 @@ import { provide } from "vue";
 import { Codemirror } from "vue-codemirror";
 import { python } from "@codemirror/lang-python";
 const extensions = [python()];
+const { copyToClipboard } = useCopyToClipboard();
 
 const emit = defineEmits(["cancel", "submit", "updateEntry"]);
 const props = defineProps({
@@ -247,10 +248,5 @@ function tagChange(selected: boolean, tagName: string) {
       props.modelValue.tags.splice(index, 1);
     }
   }
-}
-
-// Copies contents of code form field to the clipboard.
-function copyCode() {
-  navigator.clipboard.writeText(props.modelValue.code);
 }
 </script>
