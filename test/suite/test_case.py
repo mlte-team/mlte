@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from mlte.evidence.types.integer import Integer
 from mlte.results.result import Failure, Success
-from mlte.tests.test_case import TestCase
+from mlte.suite.test_case import TestCase
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 

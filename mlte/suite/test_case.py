@@ -11,7 +11,7 @@ from mlte.measurement.measurement import Measurement
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Result
-from mlte.tests.model import TestCaseModel
+from mlte.suite.model import TestCaseModel
 from mlte.validation.validator import Validator
 
 

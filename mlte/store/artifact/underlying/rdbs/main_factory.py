@@ -29,7 +29,7 @@ from mlte.store.artifact.underlying.rdbs.reader import DBReader
 from mlte.store.artifact.underlying.rdbs.report_metadata import DBReport
 from mlte.store.artifact.underlying.rdbs.result_metadata import DBTestResults
 from mlte.store.artifact.underlying.rdbs.suite_metadata import DBTestSuite
-from mlte.tests.model import TestSuiteModel
+from mlte.suite.model import TestSuiteModel
 
 # -------------------------------------------------------------------------
 # DB artifact factory.

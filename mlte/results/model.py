@@ -5,7 +5,7 @@ from typing import Literal, Optional
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.model import BaseModel
-from mlte.tests.model import TestSuiteModel
+from mlte.suite.model import TestSuiteModel
 
 
 class ResultModel(BaseModel):
