@@ -34,6 +34,7 @@ def get_sample_test_suite(
                     150000000
                 ),
                 measurement=LocalObjectSize("model size"),
+                note="example note",
             ),
         ],
     )

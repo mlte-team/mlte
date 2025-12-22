@@ -24,6 +24,9 @@ class TestCaseModel(BaseModel):
     validator: Optional[ValidatorModel] = None
     """Validation to be used for this test case."""
 
+    note: Optional[str] = None
+    """Additional information to go along with this test case."""
+
 
 class TestSuiteModel(BaseModel):
     """The model implementation for the TestSuite artifact."""
