@@ -1,8 +1,8 @@
 """Template generator for TestSuite from system requirements."""
 
 from mlte.negotiation.qas import QASDescriptor
-from mlte.tests.test_case import TestCase
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.test_case import TestCase
+from mlte.suite.test_suite import TestSuite
 
 
 def generate_suite_str(requirements: list[QASDescriptor]) -> str:

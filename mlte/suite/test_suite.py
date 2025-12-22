@@ -200,8 +200,8 @@ class TestSuite(Artifact):
     # -------------------------------------------------------------------------
 
     def template(self):
-        from mlte.tests.test_case import TestCase  # noqa
-        from mlte.tests.test_suite import TestSuite
+        from mlte.suite.test_case import TestCase  # noqa
+        from mlte.suite.test_suite import TestSuite
 
         suite = TestSuite(  # noqa
             test_cases=[

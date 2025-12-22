@@ -1,6 +1,6 @@
 """Tests for template generation."""
 
-from mlte.tests.templating import generate_suite_str
+from mlte.suite.templating import generate_suite_str
 from test.negotiation.test_artifact import get_sample_negotiation_card
 
 
