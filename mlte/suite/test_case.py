@@ -93,7 +93,7 @@ class TestCase(Serializable):
                 else None
             ),
             validator=self.validator.to_model() if self.validator else None,
-            note=self.note if self.note else None,
+            note=self.note,
         )
 
     @classmethod
@@ -122,7 +122,7 @@ class TestCase(Serializable):
                 if model.validator
                 else None
             ),
-            note=model.note if model.note else None,
+            note=model.note,
         )
         return test_case
 
