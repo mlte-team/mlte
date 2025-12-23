@@ -6,7 +6,7 @@ from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.results.model import TestResultsModel
-from mlte.tests.model import TestSuiteModel
+from mlte.suite.model import TestSuiteModel
 
 
 class CommentDescriptor(BaseModel):

@@ -34,8 +34,8 @@ from mlte.negotiation.model import (
 from mlte.negotiation.qas import QASDescriptor
 from mlte.report.model import CommentDescriptor, ReportModel
 from mlte.results.model import ResultModel, TestResultsModel
-from mlte.tests.model import TestCaseModel, TestSuiteModel
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.model import TestCaseModel, TestSuiteModel
+from mlte.suite.test_suite import TestSuite
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 

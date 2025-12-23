@@ -20,8 +20,8 @@ from mlte.session.session import set_context, set_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType, StoreURI
-from mlte.tests.model import TestSuiteModel
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.model import TestSuiteModel
+from mlte.suite.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.fixture import store_with_context  # noqa

@@ -14,8 +14,8 @@ from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.storage import LocalObjectSize
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.store.artifact.store import ArtifactStore
-from mlte.tests.test_case import TestCase
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.test_case import TestCase
+from mlte.suite.test_suite import TestSuite
 from test.negotiation.test_artifact import get_sample_negotiation_card
 from test.store.artifact.fixture import store_with_context  # noqa
 
@@ -34,6 +34,7 @@ def get_sample_test_suite(
                     150000000
                 ),
                 measurement=LocalObjectSize("model size"),
+                note="example note",
             ),
         ],
     )

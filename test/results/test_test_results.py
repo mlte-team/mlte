@@ -14,7 +14,7 @@ from mlte.evidence.types.integer import Integer
 from mlte.results.result import Failure, Info, Result
 from mlte.results.test_results import TestResults
 from mlte.store.artifact.store import ArtifactStore
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory

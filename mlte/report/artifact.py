@@ -17,8 +17,8 @@ from mlte.report.model import CommentDescriptor, ReportModel
 from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
 from mlte.store.artifact.store import ArtifactStore
-from mlte.tests.model import TestSuiteModel
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.model import TestSuiteModel
+from mlte.suite.test_suite import TestSuite
 
 
 class Report(Artifact):

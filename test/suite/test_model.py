@@ -7,7 +7,7 @@ from __future__ import annotations
 import typing
 
 from mlte.artifact.type import ArtifactType
-from mlte.tests.model import TestSuiteModel
+from mlte.suite.model import TestSuiteModel
 from test.fixture.artifact import ArtifactModelFactory
 
 
