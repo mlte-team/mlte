@@ -1,8 +1,4 @@
-"""
-tools/schema.py
-
-A tool for generating and vetting MLTE artifact schemas.
-"""
+"""tools/schema.py"""
 
 from __future__ import annotations
 
@@ -82,7 +78,7 @@ CONFIGS = [
         sub_path="artifact",
     ),
     Config(
-        model=ModelImport(path="mlte.tests.model", model="TestSuiteModel"),
+        model=ModelImport(path="mlte.suite.model", model="TestSuiteModel"),
         output_path="tests/v0.0.1",
         sub_path="artifact",
     ),

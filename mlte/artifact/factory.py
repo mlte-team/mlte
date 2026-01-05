@@ -9,7 +9,7 @@ from mlte.evidence.factory import EvidenceFactory
 from mlte.negotiation.artifact import NegotiationCard
 from mlte.report.artifact import Report
 from mlte.results.test_results import TestResults
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.test_suite import TestSuite
 
 
 class ArtifactFactory:

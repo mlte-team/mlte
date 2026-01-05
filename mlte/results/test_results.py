@@ -13,9 +13,9 @@ from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
 from mlte.results.model import TestResultsModel
 from mlte.results.result import Failure, Info, Result, Success
-from mlte.tests.model import TestSuiteModel
-from mlte.tests.test_case import TestCase
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.model import TestSuiteModel
+from mlte.suite.test_case import TestCase
+from mlte.suite.test_suite import TestSuite
 
 # -----------------------------------------------------------------------------
 # TestResults

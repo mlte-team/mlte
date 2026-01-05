@@ -12,8 +12,8 @@ from mlte.measurement.storage.local_object_size import LocalObjectSize
 from mlte.session.session import session, set_context
 from mlte.session.session_stores import SessionStores
 from mlte.store.artifact.store import ArtifactStore
-from mlte.tests.test_case import TestCase
-from mlte.tests.test_suite import TestSuite
+from mlte.suite.test_case import TestCase
+from mlte.suite.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata

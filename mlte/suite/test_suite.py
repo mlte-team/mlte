@@ -17,8 +17,8 @@ from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
-from mlte.tests.model import TestSuiteModel
-from mlte.tests.test_case import TestCase
+from mlte.suite.model import TestSuiteModel
+from mlte.suite.test_case import TestCase
 
 
 class TestSuite(Artifact):
@@ -200,8 +200,8 @@ class TestSuite(Artifact):
     # -------------------------------------------------------------------------
 
     def template(self):
-        from mlte.tests.test_case import TestCase  # noqa
-        from mlte.tests.test_suite import TestSuite
+        from mlte.suite.test_case import TestCase  # noqa
+        from mlte.suite.test_suite import TestSuite
 
         suite = TestSuite(  # noqa
             test_cases=[

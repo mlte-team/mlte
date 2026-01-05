@@ -23,7 +23,7 @@ from mlte.backend.core.state import state
 from mlte.context.context import Context
 from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.query import Query
-from mlte.tests.templating import generate_suite_str
+from mlte.suite.templating import generate_suite_str
 
 # The router exported by this submodule
 router = APIRouter()

@@ -8,7 +8,7 @@ from mlte.store.artifact.underlying.rdbs.suite_metadata import (
     DBTestCase,
     DBTestSuite,
 )
-from mlte.tests.model import TestCaseModel, TestSuiteModel
+from mlte.suite.model import TestCaseModel, TestSuiteModel
 from mlte.validation.model import ValidatorModel
 
 # -------------------------------------------------------------------------

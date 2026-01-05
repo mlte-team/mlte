@@ -14,7 +14,7 @@ from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.model import ReportModel
 from mlte.results.model import TestResultsModel
 from mlte.store.query import Filterable
-from mlte.tests.model import TestSuiteModel
+from mlte.suite.model import TestSuiteModel
 
 
 class ArtifactLevel(StrEnum):
