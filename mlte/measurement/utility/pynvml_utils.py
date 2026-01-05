@@ -23,49 +23,34 @@ from typing import Callable, Optional, Tuple
 
 import psutil
 
-# 0 = Info logging (default)
-# 1 = Warning logging
-# 2 = Error logging
-# 3 = Raise exceptions
-ERROR_LEVEL = 0
-
 
 def _handle_error(msg: str, e: Optional[Exception] = None):
     logger = logging.getLogger(__name__)
-    if ERROR_LEVEL == 0:
-        logger.info(f"{msg}, {e}")
-    elif ERROR_LEVEL == 1:
-        logger.warning(f"{msg}, {e}")
-    elif ERROR_LEVEL == 2:
-        logger.error(f"{msg}, {e}")
-        traceback.print_exc()
-    elif ERROR_LEVEL == 3:
-        logger.error(msg)
-        traceback.print_exc()
-        if e is not None:
-            raise e
+    logger.error(msg)
+    traceback.print_exc()
+    if e is not None:
+        raise e
+    else:
+        raise ValueError(msg)
 
 
 def aggregate_measurements_from_process(
     pid: int,
     poll_interval: float,
-    gpu_id: int,
+    gpu_ids: list[int],
     fn: Callable[[types.ModuleType, int], float],
-    default: float = 0.0,
 ) -> Tuple[float, float, float]:
     """
     :param pid: The process identifier
     :param poll_interval: The poll interval, in seconds
-    :param gpu_id: The id of the gpu for which to collect
+    :param gpu_ids: List of 1 or more gpu_ids to read and aggregate.
     :param fn: The pynvml function to call that actually extracts the value. See get_pynvml_statistic
     for details.
-    :param default: The value to use for a sample if we fail to get value for any reason such as the module
-    could not be loaded or the gpu could not be found.
     :return: minimum, maximum, average
     """
 
-    maximum: float = 0
     minimum: float = sys.maxsize
+    maximum: float = 0
     total: float = 0
     count: int = 0
 
@@ -77,18 +62,18 @@ def aggregate_measurements_from_process(
             if not psutil.pid_exists(pid):
                 break
 
-            return_value = get_pynvml_statistic(
-                gpu_id=gpu_id, fn=fn, default=default
+            return_values: list[float] = get_pynvml_statistic(
+                gpu_ids=gpu_ids, fn=fn
             )
 
             # If invalid, then we get this. We might want to keep track of how many we get.
-            if return_value == -1:
-                break
+            # if return_values == default:
+            #     break
 
-            minimum = min(minimum, return_value)
-            maximum = max(maximum, return_value)
-            total += return_value
-            count += 1
+            minimum = min(minimum, min(return_values))
+            maximum = max(maximum, max(return_values))
+            total += sum(return_values)
+            count += len(return_values)
 
             time.sleep(poll_interval)
         except psutil.NoSuchProcess:
@@ -103,10 +88,8 @@ def aggregate_measurements_from_process(
 
 
 def get_pynvml_statistic(
-    gpu_id: int,
-    fn: Callable[[types.ModuleType, int], float],
-    default: float = 0.0,
-) -> float:
+    gpu_ids: list[int], fn: Callable[[types.ModuleType, int], float]
+) -> list[float]:
     """
     Dynamically loads the pynvml library, initializes it, makes the call
     on the library and returns the value.
@@ -121,12 +104,13 @@ def get_pynvml_statistic(
 
     NOTE: The pynvml "handle" type is unavailable to the typing system.
 
-    :param gpu_id: The id (index) of the gpu.
+    :param gpu_ids: One or more gpu.
     :param fn: The function to be called to get the value.
-    :param default: The value to return if we fail to get value for any reason such as the module
-    could not be loaded or the gpu could not be found.
     :return: The value returned by the function.
     """
+
+    # This is outside the try so that we always appear to return something.
+    results: list[float] = []
     try:
         pynvml = import_module("pynvml")
 
@@ -138,37 +122,33 @@ def get_pynvml_statistic(
             # Get the number of NVIDIA devices
             device_count = pynvml.nvmlDeviceGetCount()
 
-            if gpu_id > device_count - 1:
-                # TODO: Switch to new logging/error handling system
-                _handle_error(
-                    f"GPU monitor requested for {gpu_id} gpu but there are only {device_count} gpus available.",
-                    None,
-                )
-                return default
+            # We take a stringent approach at this pount. If they request a gpu that doesn't exist, bail out completely.
+            for gpu_id in gpu_ids:
+                if gpu_id > device_count - 1:
+                    raise ValueError(
+                        f"GPU monitor requested for gpu {gpu_id} but there are only {device_count} gpus available.",
+                    )
 
-            # Error checking to see if they have too many.
-            handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
-
-            # Now, make their call passing back the value as-is
-            return fn(pynvml, handle)
+            for gpu_id in gpu_ids:
+                # Aggregate all results
+                handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
+                tmp = fn(pynvml, handle)
+                results.append(tmp)
 
         except pynvml.NVMLError as error:
-            # TODO: Switch to new logging/error handling system
-            print(error)
-            return default
+            _handle_error("NVML supporting library not installed.", error)
 
     except ModuleNotFoundError as e:
         # TODO: Switch to new logging/error handling system
         _handle_error("Warning: pynvml not found.", e)
-        return default
     except AttributeError as e:
         # TODO: Switch to new logging/error handling system
         _handle_error("Error: Attribute not found in module 'pynvml'.", e)
-        return default
     except Exception as e:
         # TODO: Switch to new logging/error handling system
         # This is for things such as pynvml.NVMLError_LibraryNotFound - "NVML Shared Library Not Found"
         # This is when we can find pynvml but we don't actually have the underlying platform library which
         # will be triggered by a call to init.
         _handle_error(f"Other exception '{e}'", e)
-        return default
+
+    return results

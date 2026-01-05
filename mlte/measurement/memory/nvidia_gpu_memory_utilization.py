@@ -22,7 +22,7 @@ https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvm
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.measurement.common import CommonStatistics
@@ -39,7 +39,7 @@ from mlte.measurement.units import Quantity, Unit, Units
 
 class NvidiaGPUMemoryStatistics(CommonStatistics):
     # Nvidia-smi cli uses MiB so we use that for consistency.
-    DEFAULT_UNIT = Units.mebibyte
+    DEFAULT_UNIT: Unit = Units.mebibyte
 
     """
     The NvidiaGPUMemoryStatistics class encapsulates data
@@ -76,17 +76,21 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
         self,
         identifier: Optional[str] = None,
         group: Optional[str] = None,
-        gpu_id: int = 0,
+        gpu_ids: Union[int, list[int]] = 0,
     ):
         """
         Initialize a NvidiaGPUMemoryUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
-        :param gpu_id: The id of the gpu
+        :param gpu_ids: A list of 1 or more gpu ids to use.
         """
         super().__init__(identifier, group)
-        self.gpu_id = gpu_id
+
+        self.gpu_ids: list[int] = (
+            [gpu_ids] if isinstance(gpu_ids, int) else gpu_ids
+        )
+        assert len(self.gpu_ids) > 0
 
     # Overriden.
     def __call__(
@@ -99,8 +103,8 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
         Monitor memory usage on a specific gpu.
 
         :param pid: The process identifier
-        :param poll_interval: The poll interval, in seconds
         :param unit: The unit to return the memory size in, defaults to statistics default unit.
+        :param poll_interval: The poll interval, in seconds
         :return: The captured statistics
         """
 
@@ -108,13 +112,12 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
         # It might actually take the controlling process a while to start up the memory utilization
         # so just collect the entire time whether we have utilization or not.
 
-        average, minimum, maximum = (
+        minimum, maximum, average = (
             pynvml_utils.aggregate_measurements_from_process(
                 pid,
                 poll_interval,
-                gpu_id=self.gpu_id,
+                gpu_ids=self.gpu_ids,
                 fn=_get_nvml_memory_usage_bytes,
-                default=-1,
             )
         )
 
@@ -148,4 +151,4 @@ def _get_nvml_memory_usage_bytes(pynvml, handle) -> float:
     # NOTE: Pynvml exposes version 1 of the structure which has:
     # total, used, free
     memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-    return int(memory_info.used)
+    return float(memory_info.used)

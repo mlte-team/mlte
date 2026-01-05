@@ -2,7 +2,9 @@
 
 import time
 import typing
+from dataclasses import dataclass
 from typing import Tuple
+from unittest.mock import patch
 
 import pint
 import pytest
@@ -22,6 +24,7 @@ from mlte.measurement.units import Quantity, Units
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
+from test.measurement.utility.test_pynvml_utils import make_pynvml_mocks
 from test.store.artifact.fixture import store_with_context  # noqa
 
 # =================================================================================================
@@ -54,31 +57,41 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
     return ["python", "-c", "; ".join(cmd)]
 
 
+def fake_gpu_command(delay_sec: float = 0.25) -> list[str]:
+    """
+    Returns a command that sleeps briefly imagining the gpu is doing someting,
+    :param delay_sec: The amount of time to sleep.
+    :return: A formatted single command string to hand to subprocess
+    """
+
+    return ["python", "-c", f"import time; time.sleep({delay_sec})"]
+
+
 # =================================================================================================
 # NvidiaGPUMemoryUtilization
 # =================================================================================================
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = NvidiaGPUMemoryUtilization("id", gpu_id=1)
+    m = NvidiaGPUMemoryUtilization("id", gpu_ids=1)
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.memory.nvidia_gpu_memory_utilization.NvidiaGPUMemoryUtilization"
     )
-    assert m.gpu_id == 1
+    assert m.gpu_ids == [1]
 
 
 def test_constructor_type_group():
     """ "Checks that the constructor sets up type properly, with group."""
-    m = NvidiaGPUMemoryUtilization("id", gpu_id=1, group="group1")
+    m = NvidiaGPUMemoryUtilization("id", gpu_ids=1, group="group1")
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.memory.nvidia_gpu_memory_utilization.NvidiaGPUMemoryUtilization"
     )
-    assert m.gpu_id == 1
+    assert m.gpu_ids == [1]
 
 
 @pytest.mark.skipif(
@@ -91,7 +104,7 @@ def test_nvidia_get_memory_usage():
     :return: None
     """
     # If we don't have a gpu, we'll just get some value back and shouldn't just crash
-    pynvml_utils.get_pynvml_statistic(0, _get_nvml_memory_usage_bytes)
+    pynvml_utils.get_pynvml_statistic([0], _get_nvml_memory_usage_bytes)
 
 
 @pytest.mark.skipif(
@@ -99,11 +112,10 @@ def test_nvidia_get_memory_usage():
     reason="NvidiaGPUMemoryUtilization has pynvml so can't test errors.",
 )
 def test_nvidia_get_memory_usage_no_pynvml():
-    # If we do NOT have pynvml then the thing should return the default values
-    assert (
-        pynvml_utils.get_pynvml_statistic(0, _get_nvml_memory_usage_bytes, -2)
-        == -2
-    )
+    # If we do not have pynvml then it should raise an exception
+    with pytest.raises(Exception) as excinfo:
+        pynvml_utils.get_pynvml_statistic([0], _get_nvml_memory_usage_bytes)
+        assert "NVMLError_LibraryNotFound" in str(excinfo.value)
 
 
 @pytest.mark.skipif(
@@ -126,6 +138,47 @@ def test_memory_evaluate() -> None:
     assert stats.max.magnitude > 0
     assert stats.avg.magnitude > 0
     assert stats.min.magnitude >= 0
+    assert len(str(stats)) > 0
+    assert int(time.time() - start) >= delay
+
+
+@dataclass
+class FakeMemoryInfo:
+    used: float = 0.0
+
+
+@patch("mlte.measurement.utility.pynvml_utils.import_module")
+def test_memory_evaluate_fake_gpu(mock_import_module):
+    # We have to patch the path to where it was actually included to make sure we get the right
+    # instance mocked
+    mocked_pynvml, mock_handle = make_pynvml_mocks()
+    mock_import_module.return_value = mocked_pynvml
+
+    # Mock out the get memory call
+    # memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+    # return int(memory_info.used)
+
+    # We need to preload this with bytes
+    mocked_pynvml.nvmlDeviceGetMemoryInfo.side_effect = [
+        FakeMemoryInfo(3),
+        FakeMemoryInfo(6),
+    ]
+
+    start = time.time()
+
+    # NOTE: This assumes that the testing environment has access to gpu0
+    m = NvidiaGPUMemoryUtilization("identifier", gpu_ids=[0, 1])
+
+    # Capture memory utilization; blocks until process exit
+    delay = 0.25
+    stats: NvidiaGPUMemoryStatistics = typing.cast(
+        NvidiaGPUMemoryStatistics, m.evaluate(fake_gpu_command(delay))
+    )
+
+    # The gpu returns
+    assert stats.max.to(Units.bytes).magnitude == 6
+    assert stats.avg.to(Units.bytes).magnitude == 4.5
+    assert stats.min.to(Units.bytes).magnitude == 3
     assert len(str(stats)) > 0
     assert int(time.time() - start) >= delay
 
