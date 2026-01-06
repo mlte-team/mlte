@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Optional
+from typing import Optional, Tuple
 
 import psutil
 
@@ -71,10 +71,10 @@ class LocalProcessMemoryUtilization(ProcessMeasurement):
         """
         captures = []
         while True:
-            size_in_kb = _get_memory_usage_psutil(pid)
-            if size_in_kb == 0:
+            rss_in_kb, running = _get_memory_usage_psutil(pid)
+            if rss_in_kb == 0 and not running:
                 break
-            captures.append(size_in_kb)
+            captures.append(rss_in_kb)
             time.sleep(poll_interval)
 
         # Calculate stats, use kilobytes as the psutil function returns values in that unit.
@@ -138,16 +138,16 @@ def _get_memory_usage_pmap(pid: int) -> int:
         )
 
 
-def _get_memory_usage_psutil(pid: int) -> int:
+def _get_memory_usage_psutil(pid: int) -> Tuple[int, bool]:
     """
-    Get the current memory usage for the process with `pid`.
+    Get the current memory usage for the process with `pid` when it is running.
 
     :param pid: The identifier of the process
-    :return: The current memory usage in KB
+    :return: The current memory usage in KB and True if it is running
     """
     try:
         curr_proc = psutil.Process(pid)
         mem_in_kb = curr_proc.memory_info().rss / 1024
-        return int(mem_in_kb)
+        return int(mem_in_kb), True
     except psutil.NoSuchProcess:
-        return 0
+        return 0, False
