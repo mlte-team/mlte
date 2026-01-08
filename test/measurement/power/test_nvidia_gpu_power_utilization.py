@@ -3,6 +3,7 @@
 import time
 import typing
 from typing import Tuple
+from unittest.mock import patch
 
 import pint
 import pytest
@@ -22,8 +23,10 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.measurement.utility.test_pynvml_utils import (
+    fake_gpu_command,
     has_pynvml,
     has_torch_cuda,
+    make_pynvml_mocks,
 )
 from test.store.artifact.fixture import store_with_context  # noqa
 
@@ -58,26 +61,26 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
 # =================================================================================================
 def test_constructor_type():
     """ "Checks that the constructor sets up type properly."""
-    m = NvidiaGPUPowerUtilization("id", gpu_id=1)
+    m = NvidiaGPUPowerUtilization("id", gpu_ids=1)
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.power.nvidia_gpu_power_utilization.NvidiaGPUPowerUtilization"
     )
-    assert m.gpu_id == 1
+    assert m.gpu_ids == [1]
 
 
 def test_constructor_type_group():
     """ "Checks that the constructor sets up type properly, with group."""
-    m = NvidiaGPUPowerUtilization("id", gpu_id=1, group="group1")
+    m = NvidiaGPUPowerUtilization("id", gpu_ids=1, group="group1")
 
     assert (
         m.evidence_metadata
         and m.evidence_metadata.measurement.measurement_class
         == "mlte.measurement.power.nvidia_gpu_power_utilization.NvidiaGPUPowerUtilization"
     )
-    assert m.gpu_id == 1
+    assert m.gpu_ids == [1]
 
 
 @pytest.mark.skipif(
@@ -90,7 +93,7 @@ def test_nvidia_get_power_usage():
     :return: None
     """
     # If we don't have a gpu, we'll just get some value back and shouldn't just crash
-    pynvml_utils.get_pynvml_statistic(0, _get_nvml_power_usage_watts)
+    pynvml_utils.get_pynvml_statistic([0], _get_nvml_power_usage_watts)
 
 
 @pytest.mark.skipif(
@@ -98,11 +101,10 @@ def test_nvidia_get_power_usage():
     reason="NvidiaGPUPowerUtilization has pynvml so can't test errors.",
 )
 def test_nvidia_get_power_usage_no_pynvml():
-    # If we do NOT have pynvml then the thing should return the default values
-    assert (
-        pynvml_utils.get_pynvml_statistic(0, _get_nvml_power_usage_watts, -2)
-        == -2
-    )
+    # If we do not have pynvml then it should raise an exception
+    with pytest.raises(Exception) as excinfo:
+        pynvml_utils.get_pynvml_statistic([0], _get_nvml_power_usage_watts)
+        assert "NVMLError_LibraryNotFound" in str(excinfo.value)
 
 
 @pytest.mark.skipif(
@@ -125,6 +127,36 @@ def test_power_evaluate() -> None:
     assert stats.max.magnitude > 0
     assert stats.avg.magnitude > 0
     assert stats.min.magnitude >= 0
+    assert len(str(stats)) > 0
+    assert int(time.time() - start) >= delay
+
+
+@patch("mlte.measurement.utility.pynvml_utils.import_module")
+def test_power_evaluate_fake_gpu(mock_import_module):
+    # We have to patch the path to where it was actually included to make sure we get the right
+    # instance mocked
+    mocked_pynvml, mock_handle = make_pynvml_mocks()
+    mock_import_module.return_value = mocked_pynvml
+
+    # We need to preload this with bytes
+    # NOTE: The internal function returns milliwatts even thought our tool returns watts
+    mocked_pynvml.nvmlDeviceGetPowerUsage.side_effect = [9000, 12000]
+
+    start = time.time()
+
+    # NOTE: This assumes that the testing environment has access to gpu0
+    m = NvidiaGPUPowerUtilization("identifier", gpu_ids=[0, 1])
+
+    # Capture memory utilization; blocks until process exit
+    delay = 0.25
+    stats: NvidiaGPUPowerStatistics = typing.cast(
+        NvidiaGPUPowerStatistics, m.evaluate(fake_gpu_command(delay))
+    )
+
+    # The gpu returns milliwatts
+    assert stats.max.magnitude == 12
+    assert stats.avg.magnitude == 10.5
+    assert stats.min.magnitude == 9
     assert len(str(stats)) > 0
     assert int(time.time() - start) >= delay
 

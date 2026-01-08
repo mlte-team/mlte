@@ -16,6 +16,16 @@ import mlte.measurement.utility.pynvml_utils as pynvml_utils
 # =================================================================================================
 
 
+def fake_gpu_command(delay_sec: float = 0.25) -> list[str]:
+    """
+    Returns a command that sleeps briefly imagining the gpu is doing something.
+    :param delay_sec: The amount of time to sleep.
+    :return: A formatted single command string to hand to subprocess
+    """
+
+    return ["python", "-c", f"import time; time.sleep({delay_sec})"]
+
+
 def has_pynvml():
     try:
         pynvml = import_module("pynvml")
@@ -114,9 +124,8 @@ def test_aggregate_measurements_from_process(
         pynvml_utils.aggregate_measurements_from_process(
             pid=4,
             poll_interval=0.1,
-            gpu_id=0,
+            gpu_ids=[0],
             fn=make_stack_fn([5, 4, 3, 2]),
-            default=20.0,
         )
     )
     assert minimum == 2
@@ -142,13 +151,14 @@ def test_get_statistics_faking_gpu(mock_import_module):
     # Now, at this point import_lib is mocked and will return a fake library.
     # So, we should be able to call our test function and check for the handle and get back the mocked library
     ret_val = pynvml_utils.get_pynvml_statistic(
-        0,
+        [0],
         lambda a, b: pynvml_test_import_handle(
             a, b, mocked_pynvml, mock_handle
         ),
     )
 
-    assert ret_val == 0.0
+    assert len(ret_val) == 1
+    assert ret_val[0] == 0.0
 
 
 def test_gpu_out_of_range():
@@ -167,8 +177,8 @@ def test_gpu_out_of_range():
 
         # Now, at this point import_lib is mocked and will return a fake library.
         # So, we should be able to call our test function and check for the handle and get back the mocked library
-        ret_val = pynvml_utils.get_pynvml_statistic(4, pynvml_dummy_fn, -2)
-        assert ret_val == -2
+        with pytest.raises(Exception):
+            pynvml_utils.get_pynvml_statistic([4], pynvml_dummy_fn)
 
 
 @pytest.mark.skipif(
@@ -177,11 +187,11 @@ def test_gpu_out_of_range():
 )
 def test_pynvml_not_found():
     # TODO: In the future have a way to discriminate between different internal errors
-    ret_val = pynvml_utils.get_pynvml_statistic(
-        0, lambda p, h: pynvml_dummy_fn(p, h, 4.0), -3
-    )
-
-    assert ret_val == -3
+    with pytest.raises(Exception) as excinfo:
+        pynvml_utils.get_pynvml_statistic(
+            [0], lambda p, h: pynvml_dummy_fn(p, h, 4.0)
+        )
+        assert "NVMLError_LibraryNotFound" in str(excinfo.value)
 
 
 # =================================================================================================
@@ -202,5 +212,6 @@ def get_memory_total(pynvml, handle: int) -> float:
     reason="NvidiaGPUMemoryUtilization requires cuda to test.",
 )
 def test_cuda_access():
-    ret_val = pynvml_utils.get_pynvml_statistic(0, get_memory_total)
-    assert ret_val > 0
+    ret_val = pynvml_utils.get_pynvml_statistic([0], get_memory_total)
+    assert len(ret_val) == 1
+    assert ret_val[0] > 0

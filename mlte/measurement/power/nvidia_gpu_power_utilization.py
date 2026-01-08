@@ -24,7 +24,7 @@ This call returns milliwatts used.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.measurement.common import CommonStatistics
@@ -78,17 +78,21 @@ class NvidiaGPUPowerUtilization(ProcessMeasurement):
         self,
         identifier: Optional[str] = None,
         group: Optional[str] = None,
-        gpu_id: int = 0,
+        gpu_ids: Union[int, list[int]] = 0,
     ):
         """
         Initialize a NvidiaGPUPowerUtilization instance.
 
         :param identifier: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
-        :param gpu_id: The id of the gpu
+        :param gpu_ids: A list of 1 or more gpu ids to use.
         """
         super().__init__(identifier, group)
-        self.gpu_id = gpu_id
+
+        self.gpu_ids: list[int] = (
+            [gpu_ids] if isinstance(gpu_ids, int) else gpu_ids
+        )
+        assert len(self.gpu_ids) > 0
 
     # Overriden.
     def __call__(
@@ -105,13 +109,12 @@ class NvidiaGPUPowerUtilization(ProcessMeasurement):
         :param unit: The unit to return the memory size in, defaults to statistics default unit.
         :return: The captured statistics
         """
-        average, minimum, maximum = (
+        minimum, maximum, average = (
             pynvml_utils.aggregate_measurements_from_process(
                 pid,
                 poll_interval,
-                gpu_id=self.gpu_id,
+                gpu_ids=self.gpu_ids,
                 fn=_get_nvml_power_usage_watts,
-                default=-1,
             )
         )
 
