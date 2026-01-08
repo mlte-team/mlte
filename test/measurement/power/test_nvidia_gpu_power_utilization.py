@@ -23,6 +23,7 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.measurement.utility.test_pynvml_utils import (
+    fake_gpu_command,
     has_pynvml,
     has_torch_cuda,
     make_pynvml_mocks,
@@ -53,16 +54,6 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
 
     # The command must be a list. So, add python and join the python command
     return ["python", "-c", "; ".join(cmd)]
-
-
-def fake_gpu_command(delay_sec: float = 0.25) -> list[str]:
-    """
-    Returns a command that sleeps briefly imagining the gpu is doing someting,
-    :param delay_sec: The amount of time to sleep.
-    :return: A formatted single command string to hand to subprocess
-    """
-
-    return ["python", "-c", f"import time; time.sleep({delay_sec})"]
 
 
 # =================================================================================================
@@ -111,7 +102,6 @@ def test_nvidia_get_power_usage():
 )
 def test_nvidia_get_power_usage_no_pynvml():
     # If we do not have pynvml then it should raise an exception
-    # NOTE We do not
     with pytest.raises(Exception) as excinfo:
         pynvml_utils.get_pynvml_statistic([0], _get_nvml_power_usage_watts)
         assert "NVMLError_LibraryNotFound" in str(excinfo.value)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Optional, Tuple
+from typing import Optional
 
 import psutil
 
@@ -138,7 +138,7 @@ def _get_memory_usage_pmap(pid: int) -> int:
         )
 
 
-def _get_memory_usage_psutil(pid: int) -> Tuple[int, bool]:
+def _get_memory_usage_psutil(pid: int) -> tuple[int, bool]:
     """
     Get the current memory usage for the process with `pid` when it is running.
 

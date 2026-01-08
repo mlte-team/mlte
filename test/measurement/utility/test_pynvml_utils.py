@@ -16,6 +16,16 @@ import mlte.measurement.utility.pynvml_utils as pynvml_utils
 # =================================================================================================
 
 
+def fake_gpu_command(delay_sec: float = 0.25) -> list[str]:
+    """
+    Returns a command that sleeps briefly imagining the gpu is doing something.
+    :param delay_sec: The amount of time to sleep.
+    :return: A formatted single command string to hand to subprocess
+    """
+
+    return ["python", "-c", f"import time; time.sleep({delay_sec})"]
+
+
 def has_pynvml():
     try:
         pynvml = import_module("pynvml")

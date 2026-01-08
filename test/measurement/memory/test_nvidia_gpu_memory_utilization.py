@@ -24,7 +24,10 @@ from mlte.measurement.units import Quantity, Units
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.measurement.utility.test_pynvml_utils import make_pynvml_mocks
+from test.measurement.utility.test_pynvml_utils import (
+    fake_gpu_command,
+    make_pynvml_mocks,
+)
 from test.store.artifact.fixture import store_with_context  # noqa
 
 # =================================================================================================
@@ -55,16 +58,6 @@ def get_cuda_load_command(delay_sec: int = 2) -> list[str]:
 
     # The command must be a list. So, add python and join the python command
     return ["python", "-c", "; ".join(cmd)]
-
-
-def fake_gpu_command(delay_sec: float = 0.25) -> list[str]:
-    """
-    Returns a command that sleeps briefly imagining the gpu is doing someting,
-    :param delay_sec: The amount of time to sleep.
-    :return: A formatted single command string to hand to subprocess
-    """
-
-    return ["python", "-c", f"import time; time.sleep({delay_sec})"]
 
 
 # =================================================================================================

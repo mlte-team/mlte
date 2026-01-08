@@ -66,10 +66,6 @@ def aggregate_measurements_from_process(
                 gpu_ids=gpu_ids, fn=fn
             )
 
-            # If invalid, then we get this. We might want to keep track of how many we get.
-            # if return_values == default:
-            #     break
-
             minimum = min(minimum, min(return_values))
             maximum = max(maximum, max(return_values))
             total += sum(return_values)
