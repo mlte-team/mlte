@@ -20,7 +20,8 @@ cp -r ./sample_store ./store
 
 # Set env vars to not use a relational DB, but a file store, and point to the one here.
 export STORE_TYPE=fs
-export HOST_FS_STORE="../../demo/store"
+export HOST_FS_STORE="$(pwd -P)/store"
+echo "Mounting store on local absolute path ${HOST_FS_STORE}"
 
 # We will use dockerized versions of frontend and backend. This will also build them if needed.
 (cd $DOCKER_FOLDER && source rebuild_and_restart.sh)
