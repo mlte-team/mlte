@@ -8,14 +8,14 @@
 venv-clean:
 	rm -rf ./.venv
 
-.PHONY: venv
-venv:
+.PHONY: python-venv
+python-venv:
 	python -m venv .venv && \
 	poetry lock && \
 	poetry install --with dev,demo --all-extras
 
 .PHONY: venv-redo
-venv-redo: venv-clean venv
+venv-redo: venv-clean python-venv
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
@@ -104,7 +104,7 @@ check-qa-python: check-schema check-isort check-format lint typecheck docs check
 
 # CI for Python bits
 .PHONY: ci-python
-ci-python: python-env-clean check-qa-python test demo-test
+ci-python: python-env-clean python-venv check-qa-python test demo-test
 
 # -----------------------------------------------------------------------------
 # Frontend QA
