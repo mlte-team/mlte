@@ -12,7 +12,7 @@ store
 test
 testbed
 tools
-.bumversion.cfg
+.bumpversion.cfg
 .coverage
 .dockerignore
 .flake8
