@@ -5,7 +5,9 @@ FROM mlte-python
 WORKDIR /mnt/app
 
 # Install dev dependencies
-RUN poetry install --with dev,demo --all-extras
+RUN poetry install --with dev,demo --all-extras \
+    && rm -rf /root/.cache/pypoetry/artifacts \
+    && rm -rf /root/.cache/pypoetry/cache
 
 # Install jq for demo QA
 RUN apt-get install -y jq
@@ -17,7 +19,6 @@ RUN apt-get update && apt-get install -y git
 COPY .git .git
 COPY Makefile .
 COPY .flake8 .
-
 
 # Execute qa-python by default
 ENTRYPOINT ["make"]
