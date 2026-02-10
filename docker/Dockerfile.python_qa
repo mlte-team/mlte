@@ -1,0 +1,23 @@
+# Image definition for MLTE backend container.
+
+FROM mlte-python
+
+WORKDIR /mnt/app
+
+# Install dev dependencies
+RUN poetry install --with dev,demo --all-extras
+
+# Install jq for demo QA
+RUN apt-get install -y jq
+
+# Install git for docs QA
+RUN apt-get update && apt-get install -y git
+
+# Copy in all items that are used in QA/CI
+COPY .git .git
+COPY Makefile .
+COPY .flake8 .
+
+
+# Execute qa-python by default
+ENTRYPOINT ["make"]

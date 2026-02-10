@@ -87,16 +87,22 @@ typecheck:
 
 # Clean python cache files
 .PHONY: python-env-clean
-python-env-clean: rm -r -f .mypy_cache .pytest_cache default_store/
+python-env-clean:
+	rm -r -f .mypy_cache .pytest_cache default_store/
 
 # Clean demo notebooks of temporary outputs
 .PHONY: demo-clean
 demo-clean:
 	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
 
-# QA for Python bits.
+# QA for Python bits
 .PHONY: qa-python
 qa-python: schema isort format lint typecheck demo-clean docs build-sample-catalog
+
+# QA for Python bits, ran within a docker container
+.PHONY: qa-python-docker
+qa-python-docker:
+	cd docker && sh run_python_qa.sh qa-python
 
 # Check all QA tasks for Python
 .PHONY: check-qa-python
@@ -105,6 +111,11 @@ check-qa-python: check-schema check-isort check-format lint typecheck docs check
 # CI for Python bits
 .PHONY: ci-python
 ci-python: python-env-clean python-venv check-qa-python test demo-test
+
+# CI for Python bits ran within a docker container
+.PHONY: ci-python-docker
+ci-python-docker:
+	cd docker && sh run_python_qa.sh ci-python
 
 # -----------------------------------------------------------------------------
 # Frontend QA
