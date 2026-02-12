@@ -4,7 +4,7 @@
 
 `MLTE` (pronounced "melt") is a framework and infrastructure for evaluating machine learning models and systems. To get started with the `MLTE` Python package, continuing reading below. The `MLTE` framework can be found in the <a href="https://mlte.readthedocs.io/en/latest/" target="_blank">documentation</a>, along with a more in-depth guide to <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">using `MLTE`</a> that expands on the quick start guide below. For examples of use cases, see the <a href="https://github.com/mlte-team/mlte/tree/master/demo" target="_blank">demo folder</a>. 
 
-![Version Badge](https://img.shields.io/badge/release-v2.4.0-e19b38)
+![Version Badge](https://img.shields.io/badge/release-v2.5.0-e19b38)
 [![Python](https://img.shields.io/pypi/pyversions/mlte.svg)](https://badge.fury.io/py/mlte)
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Tests](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml/badge.svg)](https://github.com/mlte-team/mlte/actions/workflows/ci.yaml)
