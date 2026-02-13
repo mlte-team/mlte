@@ -64,7 +64,7 @@ If stakeholders do not consider the results to be satisfactory, more negotiation
 
 # MLTE Metadata
 
-- Version: 2.4.0
+- Version: 2.5.0
 - Contact Email: mlte dot team dot info at gmail dot com
 - Citations: While not required, it is highly encouraged and greatly appreciated if you cite our paper when you use `MLTE` for academic research.
 
