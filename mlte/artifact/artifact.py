@@ -106,7 +106,7 @@ class Artifact(Serializable, abc.ABC):
             session().stores.artifact_store,
             force=force,
             parents=parents,
-            user=user,
+            user=user if user else session().credentials.user,
         )
 
     def save_with(

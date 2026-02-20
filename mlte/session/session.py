@@ -1,4 +1,4 @@
-"""Manages session info: context (model and version) and stores."""
+"""Manages session info: context (model and version), stores and credentials."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ from typing import Optional
 
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
+from mlte.session.credentials import Credentials
 from mlte.session.session_stores import SessionStores, setup_stores
 
 
@@ -21,7 +22,9 @@ class Session:
     ENV_CONTEXT_MODEL_VAR = "MLTE_CONTEXT_MODEL"
     ENV_CONTEXT_VERSION_VAR = "MLTE_CONTEXT_VERSION"
     ENV_STORE_URI_VAR = "MLTE_STORE_URI"
-    """Environment variables to get model, version and store_uri from, if needed."""
+    ENV_CURRENT_USER_VAR = "MLTE_CURRENT_USER"
+    ENV_CURRENT_PASS_VAR = "MLTE_CURRENT_PASS"
+    """Environment variables to get model, version, store_uri and credentials from, if needed."""
 
     def __init__(self):
         """Constructors, just resets all vars."""
@@ -34,6 +37,9 @@ class Session:
 
         self._stores: Optional[SessionStores] = None
         """All stores in this session."""
+
+        self._credentials: Optional[Credentials] = None
+        """Current user and password for auditing and connections."""
 
     @property
     def context(self) -> Context:
@@ -66,6 +72,17 @@ class Session:
 
         return self._stores
 
+    @property
+    def credentials(self) -> Credentials:
+        if self._credentials is None:
+            # If the stores have not been manually set, get URI from environment.
+            user = self._get_env_var(self.ENV_CURRENT_USER_VAR)
+            password = self._get_env_var(self.ENV_CURRENT_PASS_VAR)
+            if user and password:
+                self._credentials = Credentials(user, password)
+
+        return self._credentials
+
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
@@ -73,6 +90,10 @@ class Session:
     def _set_stores(self, stores: SessionStores) -> None:
         """Set the session stores."""
         self._stores = stores
+
+    def _set_credentials(self, credentials: Credentials) -> None:
+        """Set the session stores."""
+        self._credentials = credentials
 
     def _get_env_var(self, env_var: str) -> Optional[str]:
         """Get env var or return none if does not exist."""
@@ -117,6 +138,15 @@ def set_store(store_uri: str):
     :param store_uri: The store URI string
     """
     g_session._set_stores(setup_stores(store_uri))
+
+
+def set_credentials(user: str, password: str):
+    """
+    Set the global MLTE credentials.
+    :param user: The user
+    :param password: The password
+    """
+    g_session._set_credentials(Credentials(user, password))
 
 
 def add_catalog_store(catalog_store_uri: str, id: str):
