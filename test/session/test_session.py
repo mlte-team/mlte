@@ -5,7 +5,12 @@ import os
 import pytest
 
 from mlte.session import session, set_context, set_store
-from mlte.session.session import Session, add_catalog_store, reset_session
+from mlte.session.session import (
+    Session,
+    add_catalog_store,
+    reset_session,
+    set_credentials,
+)
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
 from test.store.defaults import IN_MEMORY_SQLITE_DB
@@ -130,3 +135,69 @@ def test_no_store_setup():
 
         _ = s.stores.artifact_store
         _ = s.stores.custom_list_store
+
+
+def test_credentials_set():
+    "Test that credentials can be set in the session."
+    user = "test_user"
+    password = "test_password"
+
+    set_credentials(user, password)
+    s = session()
+
+    assert s.credentials and s.credentials.user == user
+    assert s.credentials and s.credentials.password == password
+
+
+def test_credentials_from_env_vars():
+    """Test that credentials can be properly loaded from env vars."""
+    user = "test_user"
+    password = "test_password"
+    os.environ[Session.ENV_CURRENT_USER_VAR] = user
+    os.environ[Session.ENV_CURRENT_PASS_VAR] = password
+
+    s = session()
+
+    assert s.credentials and s.credentials.user == user
+    assert s.credentials and s.credentials.password == password
+    del os.environ[Session.ENV_CURRENT_USER_VAR]
+    del os.environ[Session.ENV_CURRENT_PASS_VAR]
+
+
+def test_credentials_ignore_env_vars():
+    """Test that env var credentials are not used if they were manually set."""
+    user = "test_user"
+    password = "test_password"
+    set_credentials(user, password)
+    os.environ[Session.ENV_CURRENT_USER_VAR] = "override_user"
+    os.environ[Session.ENV_CURRENT_PASS_VAR] = "override_password"
+
+    s = session()
+
+    assert s.credentials and s.credentials.user == user
+    assert s.credentials and s.credentials.password == password
+    del os.environ[Session.ENV_CURRENT_USER_VAR]
+    del os.environ[Session.ENV_CURRENT_PASS_VAR]
+
+
+def test_reset():
+    """Tests that the reset function works."""
+    user = "test_user"
+    password = "test_password"
+    model = "model"
+    version = "v0.0.1"
+    cat_id = "test_cat"
+    store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    catalog_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+
+    set_context(model, version)
+    set_store(store_uri)
+    add_catalog_store(catalog_store_uri, cat_id)
+    set_credentials(user, password)
+
+    reset_session()
+
+    s = session()
+    assert s._context is None
+    assert s._stores is None
+    assert s._credentials is None

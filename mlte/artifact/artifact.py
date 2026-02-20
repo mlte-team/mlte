@@ -101,12 +101,15 @@ class Artifact(Serializable, abc.ABC):
         :param user: The username of the user executing this action.
         :return: The ArtifactModel of the saved artifact.
         """
+        credentials = session().credentials
         return self.save_with(
             session().context,
             session().stores.artifact_store,
             force=force,
             parents=parents,
-            user=user if user else session().credentials.user,
+            user=(
+                user if user else (credentials.user if credentials else None)
+            ),
         )
 
     def save_with(

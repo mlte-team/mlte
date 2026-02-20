@@ -73,7 +73,7 @@ class Session:
         return self._stores
 
     @property
-    def credentials(self) -> Credentials:
+    def credentials(self) -> Optional[Credentials]:
         if self._credentials is None:
             # If the stores have not been manually set, get URI from environment.
             user = self._get_env_var(self.ENV_CURRENT_USER_VAR)
