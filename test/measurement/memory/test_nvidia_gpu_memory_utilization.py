@@ -155,6 +155,8 @@ def test_memory_evaluate_fake_gpu(mock_import_module):
     mocked_pynvml.nvmlDeviceGetMemoryInfo.side_effect = [
         FakeMemoryInfo(3),
         FakeMemoryInfo(6),
+        FakeMemoryInfo(3),
+        FakeMemoryInfo(6),
     ]
 
     start = time.time()

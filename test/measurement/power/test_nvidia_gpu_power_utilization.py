@@ -140,7 +140,12 @@ def test_power_evaluate_fake_gpu(mock_import_module):
 
     # We need to preload this with bytes
     # NOTE: The internal function returns milliwatts even thought our tool returns watts
-    mocked_pynvml.nvmlDeviceGetPowerUsage.side_effect = [9000, 12000]
+    mocked_pynvml.nvmlDeviceGetPowerUsage.side_effect = [
+        9000,
+        12000,
+        9000,
+        12000,
+    ]
 
     start = time.time()
 
