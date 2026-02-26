@@ -107,6 +107,15 @@ There are a couple of shorthand commands in the Makefile to run several of the b
 
 `make qa` and `make test` should be ran before every push to ensure that the changes made adhere to the QA standards and will pass the unit tests. These two encapsulate all of the commands below that are generally applicable.
 
+If you want to run either the frontend or backend QA/CI without setting up the environment, there are scripts available to run them within containers. These will mount your local version as a volume and run the QA/CI with the environment in the container while applying the results to your local copy.
+
+```bash
+$ cd docker && bash run_python_qa.sh # Python QA
+$ cd docker && bash run_python_qa.sh ci-python # Python CI
+$ cd docker && bash run_frontend_qa.sh # Frontend QA
+$ cd docker && bash run_frontend_qa.sh ci-frontend # Frontend CI
+```
+
 ### Import Sorting
 
 We sort all Python import code in this project with <a href="https://github.com/PyCQA/isort" target="_blank">`isort`</a>. You can run this locally with:
