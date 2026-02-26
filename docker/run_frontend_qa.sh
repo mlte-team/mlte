@@ -7,5 +7,5 @@ set -e
 
 docker run --rm \
     -v "$(pwd)/../mlte:/mnt/app/mlte" \
-    -v /mnt/app/mlte/frontend/nuxt-app/node_modules \
+    --tmpfs /mnt/app/node_modules \
     mlte-frontend-qa "$@"
