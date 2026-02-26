@@ -1,0 +1,14 @@
+# Image definition for MLTE frontend container.
+FROM mlte-frontend-env
+
+WORKDIR /mnt/app
+
+# Install make
+RUN apt update && apt install -y make
+
+# Copy in files needed for QA/CI
+COPY Makefile .
+
+# Execute qa-frontend by default
+ENTRYPOINT ["make"]
+CMD ["qa-frontend"]
