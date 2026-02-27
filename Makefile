@@ -4,8 +4,8 @@
 # Python env setup
 # -----------------------------------------------------------------------------
 
-.PHONY: venv-clean
-venv-clean:
+.PHONY: python-venv-remove
+python-venv-remove:
 	rm -rf ./.venv
 
 .PHONY: python-venv
@@ -15,7 +15,7 @@ python-venv:
 	poetry install --with dev,demo --all-extras
 
 .PHONY: venv-redo
-venv-redo: venv-clean python-venv
+venv-redo: python-venv-remove python-venv
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
@@ -128,8 +128,8 @@ frontend-env:
 	npm install && \
 	npx gulp init
 
-.PHONY: frontend-env-clean
-frontend-env-clean:
+.PHONY: frontend-env-remove
+frontend-env-remove:
 	rm -rf mlte/frontend/nuxt-app/node_modules
 	rm -rf mlte/frontend/nuxt-app/.nuxt
 	rm -rf mlte/frontend/nuxt-app/.output
@@ -151,15 +151,28 @@ typecheck-frontend:
 
 # QA for frontend (node.js) bits
 .PHONY: qa-frontend
-qa-frontend: lint-frontend typecheck-frontend
+qa-frontend: 
+	lint-frontend typecheck-frontend
+
+# QA for the frontend (node.js) bits, ran within a docker container
+.PHONY qa-frontend-docker
+qa-frontend-docker:
+	cd docker && bash run_frontend_qa.sh qa-frontend
 
 # Check all QA tasks for frontend
 .PHONY: check-qa-frontend
-check-qa-frontend: check-lint-frontend typecheck-frontend
+check-qa-frontend:
+	check-lint-frontend typecheck-frontend
 
 # CI for frontend (node.js) bits
 .PHONY: ci-frontend
-ci-frontend: frontend-env-clean frontend-env check-qa-frontend
+ci-frontend:
+	frontend-env-remove frontend-env check-qa-frontend
+
+# CI for frontend (node.js) bits, ran within a docker container
+.PHONY: ci-frontend-docker
+ci-frontend-docker:
+	cd docker && bash run_frontend_qa.sh ci-frontend
 
 # -----------------------------------------------------------------------------
 # Unit Tests
@@ -189,7 +202,7 @@ check-qa: check-qa-python check-qa-frontend
 
 # Clean cache files
 .PHONY: clean
-clean: frontend-env-clean python-env-clean
+clean: frontend-env-remove python-env-clean
 
 # This is basically equivalent to what the CI server will do
 .PHONY: ci

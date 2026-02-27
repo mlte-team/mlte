@@ -110,10 +110,10 @@ There are a couple of shorthand commands in the Makefile to run several of the b
 If you want to run either the frontend or backend QA/CI without setting up the environment, there are scripts available to run them within containers. These will mount your local version as a volume and run the QA/CI with the environment in the container while applying the results to your local copy.
 
 ```bash
-$ cd docker && bash run_python_qa.sh # Python QA
-$ cd docker && bash run_python_qa.sh ci-python # Python CI
-$ cd docker && bash run_frontend_qa.sh # Frontend QA
-$ cd docker && bash run_frontend_qa.sh ci-frontend # Frontend CI
+$ make qa-python-docker
+$ make ci-python-docker
+$ make qa-frontend-docker
+$ make ci-frontend-docker
 ```
 
 ### Import Sorting
