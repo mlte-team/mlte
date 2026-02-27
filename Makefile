@@ -155,7 +155,7 @@ qa-frontend:
 	lint-frontend typecheck-frontend
 
 # QA for the frontend (node.js) bits, ran within a docker container
-.PHONY qa-frontend-docker
+.PHONY: qa-frontend-docker
 qa-frontend-docker:
 	cd docker && bash run_frontend_qa.sh qa-frontend
 
