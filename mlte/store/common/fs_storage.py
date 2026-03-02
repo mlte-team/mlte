@@ -1,6 +1,4 @@
-"""
-Common functions for file-based stores.
-"""
+"""Common functions for file-based stores."""
 
 from __future__ import annotations
 
