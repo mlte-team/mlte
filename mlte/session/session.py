@@ -78,7 +78,7 @@ class Session:
             # If the stores have not been manually set, get URI from environment.
             user = self._get_env_var(self.ENV_CURRENT_USER_VAR)
             password = self._get_env_var(self.ENV_CURRENT_PASS_VAR)
-            if user and password:
+            if user:
                 self._credentials = Credentials(user, password)
 
         return self._credentials
@@ -140,11 +140,11 @@ def set_store(store_uri: str):
     g_session._set_stores(setup_stores(store_uri))
 
 
-def set_credentials(user: str, password: str):
+def set_credentials(user: str, password: Optional[str] = None):
     """
     Set the global MLTE credentials.
     :param user: The user
-    :param password: The password
+    :param password: The password (can be ommitted if only user is being set)
     """
     g_session._set_credentials(Credentials(user, password))
 
