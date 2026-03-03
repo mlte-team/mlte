@@ -151,8 +151,7 @@ typecheck-frontend:
 
 # QA for frontend (node.js) bits
 .PHONY: qa-frontend
-qa-frontend: 
-	lint-frontend typecheck-frontend
+qa-frontend: lint-frontend typecheck-frontend
 
 # QA for the frontend (node.js) bits, ran within a docker container
 .PHONY: qa-frontend-docker
@@ -161,13 +160,11 @@ qa-frontend-docker:
 
 # Check all QA tasks for frontend
 .PHONY: check-qa-frontend
-check-qa-frontend:
-	check-lint-frontend typecheck-frontend
+check-qa-frontend: check-lint-frontend typecheck-frontend
 
 # CI for frontend (node.js) bits
 .PHONY: ci-frontend
-ci-frontend:
-	frontend-env-remove frontend-env check-qa-frontend
+ci-frontend: frontend-env-remove frontend-env check-qa-frontend
 
 # CI for frontend (node.js) bits, ran within a docker container
 .PHONY: ci-frontend-docker
