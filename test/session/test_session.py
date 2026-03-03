@@ -41,15 +41,18 @@ def test_session() -> None:
     cat_id = "test_cat"
     store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
     catalog_store_uri = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    test_user = "test_user"
 
     set_context(model, version)
     set_store(store_uri)
+    set_credentials(test_user)
     add_catalog_store(catalog_store_uri, cat_id)
 
     s = session()
 
     assert s.context.model == model
     assert s.context.version == version
+    assert s.credentials and s.credentials.user == "test_user"
     assert s.stores.artifact_store.uri.uri == store_uri
     assert s.stores.custom_list_store.uri.uri == store_uri
     assert s.stores.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri

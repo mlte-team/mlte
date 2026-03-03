@@ -29,5 +29,5 @@ def create_artifact_store(uri: str) -> ArtifactStore:
         return RelationalDBArtifactStore(parsed_uri)
     else:
         raise Exception(
-            f"Store can't be created, unknown URI prefix received for uri {parsed_uri}"
+            f"Artifact store can't be created, unknown URI prefix received for uri {parsed_uri}"
         )

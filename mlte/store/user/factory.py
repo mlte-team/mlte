@@ -24,5 +24,5 @@ def create_user_store(uri: str) -> UserStore:
         return FileSystemUserStore(parsed_uri)
     else:
         raise Exception(
-            f"Store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
+            f"User store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
         )

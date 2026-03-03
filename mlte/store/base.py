@@ -118,7 +118,7 @@ class StoreURI:
     def create_uri_string(type: StoreType, path: Optional[str] = None) -> str:
         """Creates a URI using the default (first) prefix for the given type."""
         prefix = StoreURI.PREFIXES[type][0]
-        return f"{prefix}{StoreURI.DELIMITER}{path}"
+        return f"{prefix}{StoreURI.DELIMITER}{path if path else ''}"
 
     @staticmethod
     def create_default_fs_uri() -> StoreURI:
