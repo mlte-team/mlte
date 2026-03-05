@@ -8,8 +8,8 @@ from mlte.backend.core.state import state
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import UserWithPassword
-from test.store.fixture import store_types  # noqa
 from test.store.user.fixture import create_test_user_store  # noqa
+from test.store.utils import store_types  # noqa
 
 # -----------------------------------------------------------------------------
 # Helpers

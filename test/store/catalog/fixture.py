@@ -23,7 +23,7 @@ from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 from mlte.user.model import ResourceType
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import create_api_and_http_uri
+from test.store.utils import create_api_and_http_uri
 
 CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 """Base URI for catalogs."""

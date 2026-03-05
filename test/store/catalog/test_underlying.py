@@ -12,7 +12,7 @@ from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.query import Query
 from test.store.catalog.fixture import get_test_entry_for_store
-from test.store.fixture import store_types
+from test.store.utils import store_types
 
 # -----------------------------------------------------------------------------
 # Tests

@@ -21,7 +21,7 @@ from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 from mlte.store.custom_list.underlying.rdbs.store import RDBCustomListStore
 from mlte.user.model import ResourceType, UserWithPassword
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import create_api_and_http_uri
+from test.store.utils import create_api_and_http_uri
 
 CUSTOM_LIST_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CUSTOM_LIST.value}"
 """Base URI for custom lists."""

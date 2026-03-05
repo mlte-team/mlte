@@ -18,7 +18,7 @@ from test.store.artifact.fixture import (  # noqa
     create_test_artifact_store,
     store_types_and_artifact_types,
 )
-from test.store.fixture import store_types  # noqa
+from test.store.utils import store_types  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())

@@ -1,8 +1,4 @@
-"""
-test/backend/fixture/test_api.py
-
-Test API.
-"""
+"""Test API."""
 
 from __future__ import annotations
 
@@ -13,18 +9,19 @@ import httpx
 from fastapi.testclient import TestClient
 
 import mlte.backend.core.app_factory as app_factory
+import test.store.artifact.fixture as artifact_store_fixture
+import test.store.catalog.fixture as catalog_store_fixture
+import test.store.custom_list.fixture as custom_list_store_fixture
 import test.store.user.fixture as user_store_fixture
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
+from mlte.session.session_stores import setup_stores
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
 from test.backend.fixture import user_generator
-from test.store.artifact import artifact_store_creators
-from test.store.catalog import catalog_store_creators
-from test.store.custom_list import custom_list_store_creators
 
 TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
 """JWT token secret used for signing tokens."""
@@ -95,14 +92,14 @@ class TestAPI:
         state.reset()
         state.stores.set_user_store(user_store_fixture.create_memory_store())
         state.stores.set_artifact_store(
-            artifact_store_creators.create_memory_store()
+            artifact_store_fixture.create_memory_store()
         )
         if default_catalog_id:
             state.stores.add_catalog_store(
-                catalog_store_creators.create_memory_store(), default_catalog_id
+                catalog_store_fixture.create_memory_store(), default_catalog_id
             )
         state.stores.set_custom_list_store(
-            custom_list_store_creators.create_memory_store()
+            custom_list_store_fixture.create_memory_store()
         )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 

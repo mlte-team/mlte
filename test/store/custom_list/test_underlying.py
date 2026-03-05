@@ -11,7 +11,7 @@ from test.store.custom_list.fixture import (  # noqa
     get_test_entry,
     get_test_list,
 )
-from test.store.fixture import store_types  # noqa
+from test.store.utils import store_types  # noqa
 
 # -----------------------------------------------------------------------------
 # Tests

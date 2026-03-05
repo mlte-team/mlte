@@ -23,7 +23,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.user.model import UserWithPassword
 from test.store.artifact import artifact_store_creators
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import create_api_and_http_uri
+from test.store.utils import create_api_and_http_uri
 
 
 def create_memory_store() -> InMemoryStore:

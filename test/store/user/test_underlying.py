@@ -15,8 +15,8 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-from test.store.fixture import store_types
 from test.store.user.fixture import create_test_user_store  # noqa
+from test.store.utils import store_types
 
 TEST_MOD_ID = "mod1"
 

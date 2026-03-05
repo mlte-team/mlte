@@ -11,6 +11,23 @@ from test.store.fixture import (  # noqa
 )
 
 
+def create_test_session_stores(
+    uri_type: StoreType,
+    tmp_path,
+    patched_create_engine,  # noqa
+    catalog_uris: dict[str, str] = {},
+) -> SessionStores:
+    """Creates appropriate test session stores."""
+    uri_string = create_uri_string(uri_type, tmp_path)
+    if uri_type == StoreType.RELATIONAL_DB:
+        with patched_create_engine():
+            session_stores = setup_stores(uri_string, catalog_uris)
+    else:
+        session_stores = setup_stores(uri_string, catalog_uris)
+
+    return session_stores
+
+
 def create_uri_string(uri_type: StoreType, tmp_path) -> str:
     if uri_type == StoreType.RELATIONAL_DB:
         uri_string = IN_MEMORY_SQLITE_DB
@@ -34,13 +51,9 @@ def test_add_catalog_store_from_uri():
 def test_setup_stores(
     uri_type: StoreType, tmp_path, patched_create_engine  # noqa
 ):
-    uri_string = create_uri_string(uri_type, tmp_path)
-
-    if uri_type == StoreType.RELATIONAL_DB:
-        with patched_create_engine():
-            session_stores = setup_stores(uri_string)
-    else:
-        session_stores = setup_stores(uri_string)
+    session_stores = create_test_session_stores(
+        uri_type, tmp_path, patched_create_engine
+    )
 
     assert session_stores.artifact_store is not None
     assert session_stores.custom_list_store is not None
@@ -52,17 +65,14 @@ def test_setup_stores(
 def test_setup_stores_with_catalog_uris(
     uri_type: StoreType, tmp_path, patched_create_engine  # noqa
 ):
-    uri_string = create_uri_string(uri_type, tmp_path)
     cat_id = "catalog1"
     catalog_uris = {
         cat_id: StoreURI.create_uri_string(StoreType.REMOTE_HTTP, "catalog1")
     }
 
-    if uri_type == StoreType.RELATIONAL_DB:
-        with patched_create_engine():
-            session_stores = setup_stores(uri_string, catalog_uris)
-    else:
-        session_stores = setup_stores(uri_string, catalog_uris)
+    session_stores = create_test_session_stores(
+        uri_type, tmp_path, patched_create_engine, catalog_uris
+    )
 
     assert cat_id in session_stores.catalog_stores.catalogs
 

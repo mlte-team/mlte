@@ -18,7 +18,7 @@ from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 from mlte.user.model import UserWithPassword
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import create_api_and_http_uri
+from test.store.utils import create_api_and_http_uri
 
 CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryUserStore] = None
 """Global, initial, in memory store, cached for faster testing."""
