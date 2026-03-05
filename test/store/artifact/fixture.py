@@ -1,27 +1,56 @@
-"""
-test/store/fixture.py
-
-Fixtures for MLTE artifact store unit tests.
-"""
+"""Fixtures for MLTE artifact store unit tests."""
 
 from __future__ import annotations
 
 import typing
+from pathlib import Path
 from typing import Generator, Optional, Tuple
 
 import pytest
+from sqlalchemy import StaticPool
 
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.context.model import Model, Version
+from mlte.store.artifact.factory import create_artifact_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
+from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
-from mlte.store.base import StoreType
+from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
+from mlte.store.base import StoreType, StoreURI
 from mlte.user.model import UserWithPassword
-from test.backend.fixture import user_generator
-from test.backend.fixture.test_api import TestAPI
 from test.store.artifact import artifact_store_creators
+from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.fixture import create_api_and_http_uri
+
+
+def create_memory_store() -> InMemoryStore:
+    return typing.cast(
+        InMemoryStore,
+        create_artifact_store(
+            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+        ),
+    )
+
+
+def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
+    return typing.cast(
+        LocalFileSystemStore,
+        create_artifact_store(
+            StoreURI.create_uri_string(
+                StoreType.LOCAL_FILESYSTEM, str(tmp_path)
+            )
+        ),
+    )
+
+
+def create_rdbs_store() -> RelationalDBArtifactStore:
+    return RelationalDBArtifactStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
 
 
 def create_api_and_http_store(
@@ -31,18 +60,8 @@ def create_api_and_http_store(
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    # Set an in memory store and get a test http client, configured for the app.
-    if user is None:
-        user = user_generator.build_admin_user()
-    test_api = TestAPI(user=user)
-    client = test_api.get_test_client()
-
-    return artifact_store_creators.create_http_store(
-        username=client.username,
-        password=client.password,
-        uri=str(client.client.base_url),
-        client=client,
-    )
+    client, uri = create_api_and_http_uri(user)
+    return HttpArtifactStore(uri=uri, client=client)
 
 
 def store_types_and_artifact_types() -> (

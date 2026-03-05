@@ -3,27 +3,27 @@
 from __future__ import annotations
 
 import typing
+from pathlib import Path
 from typing import Optional
 
 import pytest
+from sqlalchemy import StaticPool
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
-from mlte.store.base import StoreType
+from mlte.store.base import StoreType, StoreURI
+from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
+from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.http import (
     HTTPCatalogGroupEntryMapper,
     HttpCatalogGroupStore,
 )
+from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
+from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 from mlte.user.model import ResourceType
-from test.backend.fixture import user_generator
-from test.backend.fixture.test_api import TestAPI
-from test.store.catalog.catalog_store_creators import (
-    create_fs_store,
-    create_http_store,
-    create_memory_store,
-    create_rdbs_store,
-)
+from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.fixture import create_api_and_http_uri
 
 CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 """Base URI for catalogs."""
@@ -35,6 +35,40 @@ TEST_CATALOG_ID = "cat1"
 """Default values."""
 
 
+def create_memory_store() -> InMemoryCatalogStore:
+    """Returns an in-memory store. Caches an initialized one to make testing faster."""
+    global CACHED_DEFAULT_MEMORY_STORE
+    if CACHED_DEFAULT_MEMORY_STORE is None:
+        CACHED_DEFAULT_MEMORY_STORE = typing.cast(
+            InMemoryCatalogStore,
+            create_catalog_store(
+                StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+            ),
+        )
+
+    return CACHED_DEFAULT_MEMORY_STORE.clone()
+
+
+def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
+    """Creates a file system store."""
+    return typing.cast(
+        FileSystemCatalogStore,
+        create_catalog_store(
+            StoreURI.create_uri_string(
+                StoreType.LOCAL_FILESYSTEM, str(tmp_path)
+            )
+        ),
+    )
+
+
+def create_rdbs_store() -> RelationalDBCatalogStore:
+    """Creates a relational DB store."""
+    return RelationalDBCatalogStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
+
+
 def create_api_and_http_store(
     catalog_id: str = TEST_CATALOG_ID,
 ) -> HttpCatalogGroupStore:
@@ -42,17 +76,8 @@ def create_api_and_http_store(
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    # Set an in memory store and get a test http client, configured for the app.
-    user = user_generator.build_admin_user()
-    test_api = TestAPI(user=user, default_catalog_id=catalog_id)
-    client = test_api.get_test_client()
-
-    return create_http_store(
-        username=client.username,
-        password=client.password,
-        uri=str(client.client.base_url),
-        client=client,
-    )
+    client, uri = create_api_and_http_uri(default_catalog_id=catalog_id)
+    return HttpCatalogGroupStore(uri=uri, client=client)
 
 
 @pytest.fixture(scope="function")
