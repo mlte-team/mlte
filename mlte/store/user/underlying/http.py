@@ -1,0 +1,149 @@
+"""Implementation of HTTP user store"""
+
+import typing
+from typing import Any, Optional, Union
+
+from mlte.store.base import StoreURI
+from mlte.store.common.http_clients import OAuthHttpClient
+from mlte.store.common.http_storage import HttpStorage
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import (
+    GroupMapper,
+    UserMapper,
+    UserStoreSession,
+)
+from mlte.user.model import (
+    BasicUser,
+    Group,
+    ResourceType,
+    User,
+    UserWithPassword,
+)
+
+# -----------------------------------------------------------------------------
+# HttpUserStore
+# -----------------------------------------------------------------------------
+
+
+class HttpUserStore(UserStore):
+    """A http implementation of the MLTE user store."""
+
+    def __init__(
+        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
+    ) -> None:
+        self.user_storage = HttpStorage(
+            uri=uri, resource_type=ResourceType.USER, client=client
+        )
+        """HTTP user storage."""
+
+        self.group_storage = HttpStorage(
+            uri=uri, resource_type=ResourceType.GROUP, client=client
+        )
+        """HTTP group storage."""
+
+        super().__init__(uri=uri)
+
+    def session(self) -> UserStoreSession:
+        """
+        Return a session handle for the store instance.
+        :return: The session handle
+        """
+        return HttpUserStoreSession(
+            user_storage=self.user_storage, group_storage=self.group_storage
+        )
+
+
+# -----------------------------------------------------------------------------
+# HttpUserStoreSession
+# -----------------------------------------------------------------------------
+
+
+class HttpUserStoreSession(UserStoreSession):
+    """An HTTP implementation of the MLTE user store session."""
+
+    def __init__(
+        self, *, user_storage: HttpStorage, group_storage: HttpStorage
+    ) -> None:
+        self.user_storage = user_storage
+        """HTTP user storage."""
+
+        self.group_storage = group_storage
+        """HTTP group storage."""
+
+        self.user_mapper = HttpUserMapper(user_storage)
+        """User mapper."""
+
+        self.group_mapper = HttpGroupMapper(group_storage)
+        """Group mapper."""
+
+    def close(self):
+        # No closing needed
+        pass
+
+
+# -----------------------------------------------------------------------------
+# HttpUserMapper
+# -----------------------------------------------------------------------------
+
+
+class HttpUserMapper(UserMapper):
+    """HTTP mapper for the user resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def create(self, new_user: UserWithPassword, context: Any = None) -> User:
+        response = self.storage.post(json=new_user.to_json())
+        return User(**response)
+
+    def read(self, entry_name: str, context: Any = None) -> User:
+        response = self.storage.get(id=entry_name)
+        return User(**response)
+
+    def list(self, context: Any = None) -> list[str]:
+        response = self.storage.get()
+        return typing.cast(list[str], response)
+
+    def edit(
+        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+    ) -> User:
+        response = self.storage.put(json=user.to_json())
+        return User(**response)
+
+    def delete(self, user_name: str, context: Any = None) -> User:
+        response = self.storage.delete(id=user_name)
+        return User(**response)
+
+
+# -----------------------------------------------------------------------------
+# HttpGroupMapper
+# -----------------------------------------------------------------------------
+
+
+class HttpGroupMapper(GroupMapper):
+    """HTTP mapper for the group resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def create(self, new_group: Group, context: Any = None) -> Group:
+        response = self.storage.post(json=new_group.to_json())
+        return Group(**response)
+
+    def read(self, group_name: str, context: Any = None) -> Group:
+        response = self.storage.get(id=group_name)
+        return Group(**response)
+
+    def list(self, context: Any = None) -> list[str]:
+        response = self.storage.get()
+        return typing.cast(list[str], response)
+
+    def edit(self, group: Group, context: Any = None) -> Group:
+        response = self.storage.put(json=group.to_json())
+        return Group(**response)
+
+    def delete(self, group_name: str, context: Any = None) -> Group:
+        response = self.storage.delete(id=group_name)
+        return Group(**response)

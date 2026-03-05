@@ -3,6 +3,7 @@
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.user.store import UserStore
 from mlte.store.user.underlying.fs import FileSystemUserStore
+from mlte.store.user.underlying.http import HttpUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 
 
@@ -22,6 +23,8 @@ def create_user_store(uri: str) -> UserStore:
         return RelationalDBUserStore(parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
         return FileSystemUserStore(parsed_uri)
+    if parsed_uri.type == StoreType.REMOTE_HTTP:
+        return HttpUserStore(uri=parsed_uri)
     else:
         raise Exception(
             f"User store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
