@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Generator, List, Optional
+from typing import List, Optional
 
 import pytest
 
@@ -30,15 +30,6 @@ DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_ENTRY_NAME = "test_entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
 DEFAULT_PARENT = None
-
-
-def custom_list_stores() -> Generator[str, None, None]:
-    """
-    Yield catalog store fixture names.
-    :return: Store fixture name
-    """
-    for store_fixture_name in StoreType:
-        yield store_fixture_name.value
 
 
 def create_api_and_http_store(

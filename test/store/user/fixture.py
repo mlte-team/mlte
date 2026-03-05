@@ -1,26 +1,27 @@
-"""
-test/store/user/fixture.py
-
-Fixtures for MLTE user store unit tests.
-"""
+"""Fixtures for MLTE user store unit tests."""
 
 from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Optional
 
 import pytest
 from sqlalchemy.pool import StaticPool
 
+from mlte._private import url as url_utils
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.user.factory import create_user_store
+from mlte.store.user.store import UserStore
 from mlte.store.user.underlying.fs import FileSystemUserStore
+from mlte.store.user.underlying.http import HttpUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
-from test.store.defaults import IN_MEMORY_SQLITE_DB
-
-_STORE_FIXTURE_NAMES = ["memory_store", "rdbs_store", "fs_store"]
+from mlte.user.model import UserWithPassword
+from test.backend.fixture import user_generator
+from test.backend.fixture.test_api import TestAPI
+from test.store.defaults import IN_MEMORY_SQLITE_DB, get_http_defaults_if_needed
 
 CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryUserStore] = None
 """Global, initial, in memory store, cached for faster testing."""
@@ -40,12 +41,6 @@ def create_memory_store() -> InMemoryUserStore:
     return CACHED_DEFAULT_MEMORY_STORE.clone()
 
 
-@pytest.fixture(scope="function")
-def memory_store() -> InMemoryUserStore:
-    """A fixture for an in-memory store."""
-    return create_memory_store()
-
-
 def create_fs_store(path: Path) -> FileSystemUserStore:
     return typing.cast(
         FileSystemUserStore,
@@ -53,12 +48,6 @@ def create_fs_store(path: Path) -> FileSystemUserStore:
             StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, str(path))
         ),
     )
-
-
-@pytest.fixture(scope="function")
-def fs_store(tmp_path) -> FileSystemUserStore:
-    """A fixture for an local FS store."""
-    return create_fs_store(tmp_path)
 
 
 def create_rdbs_store() -> RelationalDBUserStore:
@@ -69,16 +58,56 @@ def create_rdbs_store() -> RelationalDBUserStore:
     )
 
 
+def create_http_store(
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    uri: Optional[str] = None,
+    client: Optional[OAuthHttpClient] = None,
+) -> HttpUserStore:
+    username, password, uri = get_http_defaults_if_needed(
+        username, password, uri
+    )
+    return HttpUserStore(
+        uri=StoreURI.from_string(
+            url_utils.set_url_username_password(uri, username, password)
+        ),
+        client=client,
+    )
+
+
+def create_api_and_http_store(
+    user: Optional[UserWithPassword] = None,
+) -> HttpUserStore:
+    """
+    Get a HttpStore configured with test client.
+    :return: The configured store
+    """
+    user = user_generator.build_admin_user()
+    test_api = TestAPI(user=user)
+    client = test_api.get_test_client()
+
+    return create_http_store(
+        username=client.username,
+        password=client.password,
+        uri=str(client.client.base_url),
+        client=client,
+    )
+
+
 @pytest.fixture(scope="function")
-def rdbs_store() -> RelationalDBUserStore:
-    """A fixture for an in-memory RDBS store."""
-    return create_rdbs_store()
+def create_test_user_store(
+    tmpdir_factory,
+) -> typing.Callable[[str], UserStore]:
+    def _make(store_type) -> UserStore:
+        if store_type == StoreType.REMOTE_HTTP.value:
+            return create_api_and_http_store()
+        elif store_type == StoreType.LOCAL_MEMORY.value:
+            return create_memory_store()
+        elif store_type == StoreType.LOCAL_FILESYSTEM.value:
+            return create_fs_store(tmpdir_factory.mktemp("data"))
+        elif store_type == StoreType.RELATIONAL_DB.value:
+            return create_rdbs_store()
+        else:
+            raise RuntimeError(f"Invalid store type received: {store_type}")
 
-
-def user_stores() -> Generator[str, None, None]:
-    """
-    Yield User store fixture names.
-    :return: Store fixture name
-    """
-    for store_fixture_name in _STORE_FIXTURE_NAMES:
-        yield store_fixture_name
+    return _make

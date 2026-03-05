@@ -1,13 +1,9 @@
-"""
-test/store/catalog/fixture.py
-
-Fixtures for MLTE catalog store unit tests.
-"""
+"""Fixtures for MLTE catalog store unit tests."""
 
 from __future__ import annotations
 
 import typing
-from typing import Generator, Optional
+from typing import Optional
 
 import pytest
 
@@ -37,15 +33,6 @@ DEFAULT_ENTRY_DESC = "Code sample"
 DEFAULT_ENTRY_CODE = "print('hello')"
 TEST_CATALOG_ID = "cat1"
 """Default values."""
-
-
-def catalog_stores() -> Generator[str, None, None]:
-    """
-    Yield catalog store fixture names.
-    :return: Store fixture name
-    """
-    for store_fixture_name in StoreType:
-        yield store_fixture_name.value
 
 
 def create_api_and_http_store(

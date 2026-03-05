@@ -6,6 +6,7 @@ Fixtures for MLTE artifact store unit tests.
 
 from __future__ import annotations
 
+import typing
 from typing import Generator, Optional, Tuple
 
 import pytest
@@ -15,20 +16,17 @@ from mlte.context.context import Context
 from mlte.context.model import Model, Version
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.artifact.underlying.fs import LocalFileSystemStore
 from mlte.store.artifact.underlying.http import HttpArtifactStore
-from mlte.store.artifact.underlying.memory import InMemoryStore
-from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
+from mlte.store.base import StoreType
 from mlte.user.model import UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
 from test.store.artifact import artifact_store_creators
 
-_STORE_FIXTURE_NAMES = ["http_store", "memory_store", "fs_store", "rdbs_store"]
 
-
-@pytest.fixture(scope="function")
-def http_store(user: Optional[UserWithPassword] = None) -> HttpArtifactStore:
+def create_api_and_http_store(
+    user: Optional[UserWithPassword] = None,
+) -> HttpArtifactStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
@@ -47,43 +45,37 @@ def http_store(user: Optional[UserWithPassword] = None) -> HttpArtifactStore:
     )
 
 
-@pytest.fixture(scope="function")
-def memory_store() -> InMemoryStore:
-    """A fixture for an in-memory store."""
-    return artifact_store_creators.create_memory_store()
-
-
-@pytest.fixture(scope="function")
-def fs_store(tmp_path) -> LocalFileSystemStore:
-    """A fixture for an local FS store."""
-    return artifact_store_creators.create_fs_store(tmp_path)
-
-
-@pytest.fixture(scope="function")
-def rdbs_store() -> RelationalDBArtifactStore:
-    """A fixture for an in-memory RDBS store."""
-    return artifact_store_creators.create_rdbs_store()
-
-
-def artifact_stores() -> Generator[str, None, None]:
-    """
-    Yield store fixture names.
-    :return: Store fixture name
-    """
-    for store_fixture_name in _STORE_FIXTURE_NAMES:
-        yield store_fixture_name
-
-
-def artifact_stores_and_types() -> (
-    Generator[Tuple[str, ArtifactType], None, None]
+def store_types_and_artifact_types() -> (
+    Generator[Tuple[StoreType, ArtifactType], None, None]
 ):
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)
     """
-    for store_fixture_name in _STORE_FIXTURE_NAMES:
-        for type in ArtifactType:
-            yield store_fixture_name, type
+    for store_type in StoreType:
+        for artifact_type in ArtifactType:
+            yield store_type, artifact_type
+
+
+@pytest.fixture(scope="function")
+def create_test_artifact_store(
+    tmpdir_factory,
+) -> typing.Callable[[str], ArtifactStore]:
+    def _make(store_type) -> ArtifactStore:
+        if store_type == StoreType.REMOTE_HTTP.value:
+            return create_api_and_http_store()
+        elif store_type == StoreType.LOCAL_MEMORY.value:
+            return artifact_store_creators.create_memory_store()
+        elif store_type == StoreType.LOCAL_FILESYSTEM.value:
+            return artifact_store_creators.create_fs_store(
+                tmpdir_factory.mktemp("data")
+            )
+        elif store_type == StoreType.RELATIONAL_DB.value:
+            return artifact_store_creators.create_rdbs_store()
+        else:
+            raise RuntimeError(f"Invalid store type received: {store_type}")
+
+    return _make
 
 
 # The mode identifier for default context

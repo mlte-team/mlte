@@ -9,23 +9,9 @@ from mlte.store.user.policy import Policy, create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
-from test.store.artifact.fixture import (
-    artifact_stores,
-)
-from test.store.artifact.fixture import fs_store as artifact_fs_store  # noqa
-from test.store.artifact.fixture import (  # noqa
-    http_store as artifact_http_store,
-)
-from test.store.artifact.fixture import (  # noqa
-    memory_store as artifact_memory_store,
-)
-from test.store.artifact.fixture import (  # noqa
-    rdbs_store as artifact_rdbs_store,
-)
-from test.store.user.fixture import fs_store as user_fs_store  # noqa
-from test.store.user.fixture import memory_store as user_memory_store  # noqa
-from test.store.user.fixture import rdbs_store as user_rdbs_store  # noqa
-from test.store.user.fixture import user_stores
+from test.store.artifact.fixture import create_test_artifact_store  # noqa
+from test.store.fixture import store_types  # noqa
+from test.store.user.fixture import create_test_user_store  # noqa
 
 
 @pytest.mark.parametrize(
@@ -68,18 +54,19 @@ class TestPolicy:
             assert found_permissions[MethodType.POST]
 
     @staticmethod
-    @pytest.mark.parametrize("store_fixture_name", user_stores())
+    @pytest.mark.parametrize("store_type", store_types())
     def test_save_remove(
         resource_type: ResourceType,
         id: str,
         read: bool,
         edit: bool,
         create: bool,
-        store_fixture_name: str,
+        store_type: str,
         request: pytest.FixtureRequest,
+        create_test_user_store,  # noqa
     ):
         """Tests that policies can be properly saved and removed."""
-        store: UserStore = request.getfixturevalue(f"user_{store_fixture_name}")
+        store: UserStore = create_test_user_store(store_type)
         policy = Policy(resource_type, id, read, edit, create)
 
         with ManagedUserSession(store.session()) as user_store:
@@ -116,22 +103,17 @@ class TestPolicy:
             assert group in user.groups
 
 
-@pytest.mark.parametrize("art_store_fixture_name", artifact_stores())
-@pytest.mark.parametrize("user_store_fixture_name", user_stores())
+@pytest.mark.parametrize("user_store_type", store_types())
 def test_create_policy_if_needed(
-    art_store_fixture_name: str,
-    user_store_fixture_name: str,
-    request: pytest.FixtureRequest,
+    store_type: str,
+    create_test_artifact_store,  # noqa
+    create_test_user_store,  # noqa
 ):
     """Checks that policies for models created outside of backend are properly updated."""
     model_id = "m1"
     policy = Policy(ResourceType.MODEL, resource_id=model_id)
-    artifact_store: ArtifactStore = request.getfixturevalue(
-        f"artifact_{art_store_fixture_name}"
-    )
-    user_store: UserStore = request.getfixturevalue(
-        f"user_{user_store_fixture_name}"
-    )
+    artifact_store: ArtifactStore = create_test_artifact_store(store_type)
+    user_store: UserStore = create_test_user_store(store_type)
 
     with ManagedArtifactSession(
         artifact_store.session()

@@ -13,18 +13,12 @@ from mlte.session.session import (
 )
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
+from test.store.artifact.fixture import create_test_artifact_store  # noqa
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.fixture import (  # noqa
     patched_create_engine,
     shared_sqlite_engine,
-)
-
-from ..store.artifact.fixture import (  # noqa
-    artifact_stores,
-    fs_store,
-    http_store,
-    memory_store,
-    rdbs_store,
+    store_types,
 )
 
 
@@ -58,20 +52,19 @@ def test_session() -> None:
     assert s.stores.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_eager_context_creation(
-    store_fixture_name: str,
-    request: pytest.FixtureRequest,
+    store_type: str,
+    create_test_artifact_store,  # noqa
     patched_create_engine,  # noqa
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
-    print(store_fixture_name)
-    if store_fixture_name == "http_store":
+    if store_type == "http_store":
         return
 
     model = "model"
     version = "v0.0.1"
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     if store.uri.uri == IN_MEMORY_SQLITE_DB:
         with patched_create_engine():

@@ -1,8 +1,4 @@
-"""
-test/store/test_underlying.py
-
-Unit tests for the underlying artifact store implementations.
-"""
+"""Unit tests for the underlying artifact store implementations."""
 
 import pytest
 
@@ -17,43 +13,29 @@ from mlte.store.artifact.store_session import (
 )
 from mlte.store.query import Query, TypeFilter
 from test.backend.fixture.user_generator import TEST_API_USERNAME
-from test.store.artifact import artifact_store_creators
-
-from ...fixture.artifact import ArtifactModelFactory
-from .fixture import (  # noqa
-    artifact_stores,
-    artifact_stores_and_types,
-    fs_store,
-    http_store,
-    memory_store,
-    rdbs_store,
+from test.fixture.artifact import ArtifactModelFactory
+from test.store.artifact.fixture import (  # noqa
+    create_test_artifact_store,
+    store_types_and_artifact_types,
 )
+from test.store.fixture import store_types  # noqa
 
 
-def test_init_memory() -> None:
-    """An in-memory store can be initialized."""
-    _ = artifact_store_creators.create_memory_store()
+@pytest.mark.parametrize("store_type", store_types())
+def test_init_store(
+    store_type: str, create_test_artifact_store  # noqa
+) -> None:
+    """A store can be initialized."""
+    _ = create_test_artifact_store(store_type)
+
+    # If we get here, the fixture was called and the store was initialized.
+    assert True
 
 
-def test_init_http() -> None:
-    """A remote HTTP store can be initialized."""
-    _ = artifact_store_creators.create_http_store()
-
-
-def test_init_fs(tmp_path) -> None:
-    """An local FS store can be initialized."""
-    _ = artifact_store_creators.create_fs_store(tmp_path)
-
-
-def test_init_rdbs() -> None:
-    """A relational DB store can be initialized."""
-    _ = artifact_store_creators.create_rdbs_store()
-
-
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
-def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_model(store_type: str, create_test_artifact_store) -> None:  # noqa
     """An artifact store supports model operations."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model"
 
@@ -71,12 +53,12 @@ def test_model(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             artifact_store.model_mapper.read(model_id)
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_model_list(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: str, create_test_artifact_store  # noqa
 ) -> None:
     """Models can be listed."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
 
@@ -88,12 +70,10 @@ def test_model_list(
         assert models[0] == "model0"
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
-def test_version(
-    store_fixture_name: str, request: pytest.FixtureRequest
-) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_version(store_type: str, create_test_artifact_store) -> None:  # noqa
     """An artifact store supports model version operations."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -116,12 +96,12 @@ def test_version(
             _ = artifact_store.version_mapper.read(version_id, model_id)
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_two_versions_same_id_same_model(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: str, create_test_artifact_store  # noqa
 ) -> None:
     """An artifact store does't allow creating two versions with same id if they are in the same model."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -138,12 +118,12 @@ def test_two_versions_same_id_same_model(
             )
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_two_versions_same_id_different_model(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: str, create_test_artifact_store  # noqa
 ) -> None:
     """An artifact store can create two versions with same id if they are in different models."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model1"
     model2_id = "model2"
@@ -162,12 +142,12 @@ def test_two_versions_same_id_different_model(
         )
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_version_list(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: str, create_test_artifact_store  # noqa
 ) -> None:
     """Versions can be listed."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -216,15 +196,15 @@ def check_artifact_writing(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type", artifact_stores_and_types()
+    "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_search(
-    store_fixture_name: str,
+    store_type: str,
     artifact_type: ArtifactType,
-    request: pytest.FixtureRequest,
+    create_test_artifact_store,  # noqa
 ) -> None:
     """An artifact store store supports queries."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -251,15 +231,15 @@ def test_search(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type", artifact_stores_and_types()
+    "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact(
-    store_fixture_name: str,
+    store_type: str,
     artifact_type: ArtifactType,
-    request: pytest.FixtureRequest,
+    create_test_artifact_store,  # noqa
 ) -> None:
     """An artifact store supports basic artifact operations."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -298,15 +278,15 @@ def test_artifact(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type", artifact_stores_and_types()
+    "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact_without_parents(
-    store_fixture_name: str,
+    store_type: str,
     artifact_type: ArtifactType,
-    request: pytest.FixtureRequest,
+    create_test_artifact_store,  # noqa
 ) -> None:
     """An artifact does not create organizational elements by default, on write."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -324,15 +304,15 @@ def test_artifact_without_parents(
 
 
 @pytest.mark.parametrize(
-    "store_fixture_name,artifact_type", artifact_stores_and_types()
+    "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact_overwrite(
-    store_fixture_name: str,
+    store_type: str,
     artifact_type: ArtifactType,
-    request: pytest.FixtureRequest,
+    create_test_artifact_store,  # noqa
 ) -> None:
     """An artifact can be overwritten with the `force` option."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model0"
     version_id = "version0"
@@ -366,12 +346,12 @@ def test_artifact_overwrite(
         )
 
 
-@pytest.mark.parametrize("store_fixture_name", artifact_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_invalid_chars(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: str, create_test_artifact_store  # noqa
 ) -> None:
     """Test creation with chars that may be invalid in some storage types."""
-    store: ArtifactStore = request.getfixturevalue(store_fixture_name)
+    store: ArtifactStore = create_test_artifact_store(store_type)
 
     model_id = "model/test"
     version_id = "version/test"

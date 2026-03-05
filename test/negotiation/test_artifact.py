@@ -1,8 +1,4 @@
-"""
-test/negotiation/test_negotiation_card.py
-
-Unit tests for negotiation card.
-"""
+"""Unit tests for negotiation card."""
 
 from __future__ import annotations
 
@@ -18,11 +14,12 @@ from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import DataDescriptor
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreType
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.fixture import (  # noqa
     FX_MODEL_ID,
     FX_VERSION_ID,
-    memory_store,
+    create_test_artifact_store,
     store_with_context,
 )
 
@@ -54,8 +51,9 @@ def test_save_load(
     assert loaded == card
 
 
-def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
+def test_save_noparents(create_test_artifact_store) -> None:  # noqa
     """Save fails when no parents are present."""
+    memory_store = create_test_artifact_store(StoreType.LOCAL_MEMORY)
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = get_sample_negotiation_card()
@@ -63,8 +61,9 @@ def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
         card.save_with(ctx, memory_store)
 
 
-def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
+def test_save_parents(create_test_artifact_store) -> None:  # noqa
     """Save succeeds when parents are present."""
+    memory_store = create_test_artifact_store(StoreType.LOCAL_MEMORY)
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = get_sample_negotiation_card()

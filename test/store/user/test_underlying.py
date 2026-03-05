@@ -1,8 +1,4 @@
-"""
-test/store/user/test_underlying.py
-
-Unit tests for the underlying user store implementations.
-"""
+"""Unit tests for the underlying user store implementations."""
 
 from typing import List
 
@@ -19,16 +15,8 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-
-from .fixture import (  # noqa
-    create_fs_store,
-    create_memory_store,
-    create_rdbs_store,
-    fs_store,
-    memory_store,
-    rdbs_store,
-    user_stores,
-)
+from test.store.fixture import store_types
+from test.store.user.fixture import create_test_user_store  # noqa
 
 TEST_MOD_ID = "mod1"
 
@@ -92,25 +80,19 @@ def get_test_permissions() -> List[Permission]:
 # -----------------------------------------------------------------------------
 
 
-def test_init_memory() -> None:
-    """An in-memory store can be initialized."""
-    _ = create_memory_store()
+@pytest.mark.parametrize("store_type", store_types())
+def test_init_store(store_type: str, create_test_user_store) -> None:  # noqa
+    """A store can be initialized."""
+    _ = create_test_user_store(store_type)
+
+    # If we get here, the fixture was called and the store was initialized.
+    assert True
 
 
-def test_init_rdbs() -> None:
-    """A relational DB store can be initialized."""
-    _ = create_rdbs_store()
-
-
-def test_init_fs(tmp_path) -> None:
-    """A FSstore can be initialized."""
-    _ = create_fs_store(tmp_path)
-
-
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_user(store_type: str, create_test_user_store) -> None:  # noqa
     """An artifact store supports user operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_user = get_test_user()
     email2 = "email2@server.com"
@@ -153,12 +135,12 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             user_store.user_mapper.read(test_user.username)
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_user_group_change(
-    store_fixture_name: str, request: pytest.FixtureRequest
-) -> None:
+    store_type: str, create_test_user_store  # noqa
+) -> None:  # noqa
     """Test proper syncchronization between users and groups."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_user = get_test_user()
 
@@ -181,10 +163,10 @@ def test_user_group_change(
         assert read_user.groups[0] == updated_group
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_group(store_type: str, create_test_user_store) -> None:  # noqa
     """An artifact store supports group operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_group = get_test_group()
     p3 = Permission(
@@ -221,12 +203,10 @@ def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             user_store.group_mapper.read(test_group.name)
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_permission(
-    store_fixture_name: str, request: pytest.FixtureRequest
-) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_permission(store_type: str, create_test_user_store) -> None:  # noqa
     """An artifact store supports permission operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_permission1 = get_test_permissions()[0]
 
