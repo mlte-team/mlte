@@ -21,7 +21,6 @@ from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.store.base import StoreType, StoreURI
 from mlte.user.model import UserWithPassword
-from test.store.artifact import artifact_store_creators
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
@@ -84,13 +83,11 @@ def create_test_artifact_store(
         if store_type == StoreType.REMOTE_HTTP.value:
             return create_api_and_http_store()
         elif store_type == StoreType.LOCAL_MEMORY.value:
-            return artifact_store_creators.create_memory_store()
+            return create_memory_store()
         elif store_type == StoreType.LOCAL_FILESYSTEM.value:
-            return artifact_store_creators.create_fs_store(
-                tmpdir_factory.mktemp("data")
-            )
+            return create_fs_store(tmpdir_factory.mktemp("data"))
         elif store_type == StoreType.RELATIONAL_DB.value:
-            return artifact_store_creators.create_rdbs_store()
+            return create_rdbs_store()
         else:
             raise RuntimeError(f"Invalid store type received: {store_type}")
 
@@ -107,7 +104,7 @@ FX_VERSION_ID = "v0"
 @pytest.fixture(scope="function")
 def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
-    store = artifact_store_creators.create_memory_store()
+    store = create_memory_store()
     with ManagedArtifactSession(store.session()) as artifact_store:
         _ = artifact_store.model_mapper.create(Model(identifier=FX_MODEL_ID))
         _ = artifact_store.version_mapper.create(

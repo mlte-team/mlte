@@ -1,9 +1,11 @@
 """Unit tests for the underlying catalog store implementations."""
 
+from typing import Callable
+
 import pytest
 
 import mlte.store.error as errors
-from mlte.store.base import StoreType
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
@@ -20,18 +22,22 @@ from test.store.utils import store_types
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_init_store(store_type: str, create_test_store) -> None:  # noqa
+def test_init_store(
+    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
+) -> None:  # noqa
     """A store can be initialized."""
-    _ = create_test_store(store_type)
+    _ = create_test_catalog_store(store_type)
 
     # If we get here, the fixture was called and the store was initialized.
     assert True
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_catalog_entry(store_type: str, create_test_store) -> None:  # noqa
+def test_catalog_entry(
+    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
+) -> None:  # noqa
     """A catalog store supports catalog entry operations."""
-    store: CatalogStore = create_test_store(store_type)
+    store: CatalogStore = create_test_catalog_store(store_type)
 
     test_entry = get_test_entry_for_store(store_name=store_type)
     description2 = "short code sample"
@@ -67,7 +73,10 @@ def test_catalog_entry(store_type: str, create_test_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_catalog_group(store_type: str, create_test_store) -> None:  # noqa
+def test_catalog_group(
+    store_type: str,
+    create_test_catalog_store: Callable[[str, dict[str, str]], CatalogStore],
+) -> None:  # noqa
     """A catalog store group supports general operations."""
     if store_type == StoreType.REMOTE_HTTP.value:
         # NOTE: MLTE does not support having 2 separate TestAPIs at the same time,
@@ -77,8 +86,14 @@ def test_catalog_group(store_type: str, create_test_store) -> None:  # noqa
 
     store1_id = "st1"
     store2_id = "st2"
-    store1: CatalogStore = create_test_store(store_type, store1_id)
-    store2: CatalogStore = create_test_store(store_type, store2_id)
+    store1: CatalogStore = create_test_catalog_store(
+        store_type,
+        {store1_id: StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)},
+    )
+    store2: CatalogStore = create_test_catalog_store(
+        store_type,
+        {store2_id: StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)},
+    )
 
     store_group = CatalogStoreGroup()
     store_group.add_catalog(store1_id, store1)
@@ -105,9 +120,11 @@ def test_catalog_group(store_type: str, create_test_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_list_details(store_type: str, create_test_store) -> None:  # noqa
+def test_list_details(
+    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
+) -> None:  # noqa
     """A catalog store store supports queries."""
-    store: CatalogStore = create_test_store(store_type)
+    store: CatalogStore = create_test_catalog_store(store_type)
 
     with ManagedCatalogSession(store.session()) as session:
         e0 = get_test_entry_for_store(
@@ -131,9 +148,11 @@ def test_list_details(store_type: str, create_test_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_search(store_type: str, create_test_store) -> None:  # noqa
+def test_search(
+    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
+) -> None:  # noqa
     """A catalog store store supports queries."""
-    store: CatalogStore = create_test_store(store_type)
+    store: CatalogStore = create_test_catalog_store(store_type)
 
     with ManagedCatalogSession(store.session()) as session:
         e0 = get_test_entry_for_store(
@@ -158,10 +177,16 @@ def test_search(store_type: str, create_test_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_invalid_chars(store_type: str, create_test_store) -> None:  # noqa
+def test_invalid_chars(
+    store_type: str,
+    create_test_catalog_store: Callable[[str, dict[str, str]], CatalogStore],
+) -> None:  # noqa
     """A catalog store store supports invalid storage chars."""
     catalog_id = "weird/catalog_id"
-    store: CatalogStore = create_test_store(store_type, catalog_id)
+    store: CatalogStore = create_test_catalog_store(
+        store_type,
+        {catalog_id: StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)},
+    )
 
     entry_id = "weird/name"
     test_entry = get_test_entry_for_store(

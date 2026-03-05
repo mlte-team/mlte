@@ -7,7 +7,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
 from test.store.custom_list.fixture import (  # noqa
-    create_test_store,
+    create_test_custom_list_store,
     get_test_entry,
     get_test_list,
 )
@@ -19,18 +19,22 @@ from test.store.utils import store_types  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_init_store(store_type: str, create_test_store) -> None:  # noqa
+def test_init_store(
+    store_type: str, create_test_custom_list_store  # noqa
+) -> None:
     """A store can be initialized."""
-    _ = create_test_store(store_type)
+    _ = create_test_custom_list_store(store_type)
 
     # If we get here, the fixture was called and the store was initialized.
     assert True
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_custom_list_entry(store_type: str, create_test_store) -> None:  # noqa
+def test_custom_list_entry(
+    store_type: str, create_test_custom_list_store  # noqa
+) -> None:
     """A custom list store supports custom list entry operations."""
-    store: CustomListStore = create_test_store(store_type)
+    store: CustomListStore = create_test_custom_list_store(store_type)
 
     test_list = get_test_list()
     test_entry = get_test_entry()
@@ -78,10 +82,10 @@ def test_custom_list_entry(store_type: str, create_test_store) -> None:  # noqa
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_custom_list_parent_mappings(
-    store_type: str, create_test_store  # noqa
+    store_type: str, create_test_custom_list_store  # noqa
 ) -> None:
     """A custom list store properly handles parent relations."""
-    store: CustomListStore = create_test_store(store_type)
+    store: CustomListStore = create_test_custom_list_store(store_type)
 
     parent_list_name = CustomListName.QA_CATEGORIES
     child_list_name = CustomListName.QUALITY_ATTRIBUTES

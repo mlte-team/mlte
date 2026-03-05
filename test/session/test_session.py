@@ -18,8 +18,8 @@ from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.fixture import (  # noqa
     patched_create_engine,
     shared_sqlite_engine,
-    store_types,
 )
+from test.store.utils import store_types  # noqa
 
 
 @pytest.fixture(autouse=True)

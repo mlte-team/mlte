@@ -11,6 +11,7 @@ from sqlalchemy import StaticPool
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
+from mlte.session.session_stores import SessionStores
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
@@ -27,6 +28,9 @@ from test.store.utils import create_api_and_http_uri
 
 CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 """Base URI for catalogs."""
+
+CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryCatalogStore] = None
+"""Global, initial, in memory store, cached for faster testing."""
 
 DEFAULT_ENTRY_ID = "e1"
 DEFAULT_ENTRY_DESC = "Code sample"
@@ -70,36 +74,34 @@ def create_rdbs_store() -> RelationalDBCatalogStore:
 
 
 def create_api_and_http_store(
-    catalog_id: str = TEST_CATALOG_ID,
+    catalog_uris: dict[str, str] = {},
 ) -> HttpCatalogGroupStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    client, uri = create_api_and_http_uri(default_catalog_id=catalog_id)
+    client, uri = create_api_and_http_uri(catalog_uris=catalog_uris)
     return HttpCatalogGroupStore(uri=uri, client=client)
 
 
 @pytest.fixture(scope="function")
-def create_test_store(
-    tmpdir_factory, test_catalog_id: str = TEST_CATALOG_ID
-) -> typing.Callable[[str], CatalogStore]:
+def create_test_catalog_store(
+    tmpdir_factory, catalog_uris: dict[str, str] = {}
+) -> typing.Callable[[StoreType, dict[str, str]], CatalogStore]:
     def _make(
-        store_fixture_name, catalog_id: str = test_catalog_id
+        store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
     ) -> CatalogStore:
-        if store_fixture_name == StoreType.REMOTE_HTTP.value:
-            return create_api_and_http_store(catalog_id)
-        elif store_fixture_name == StoreType.LOCAL_MEMORY.value:
+        if store_type == StoreType.REMOTE_HTTP:
+            return create_api_and_http_store(catalog_uris=catalog_uris)
+        elif store_type == StoreType.LOCAL_MEMORY:
             return create_memory_store()
-        elif store_fixture_name == StoreType.LOCAL_FILESYSTEM.value:
+        elif store_type == StoreType.LOCAL_FILESYSTEM:
             return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_fixture_name == StoreType.RELATIONAL_DB.value:
+        elif store_type == StoreType.RELATIONAL_DB:
             return create_rdbs_store()
 
         else:
-            raise RuntimeError(
-                f"Invalid store type received: {store_fixture_name}"
-            )
+            raise RuntimeError(f"Invalid store type received: {store_type}")
 
     return _make
 
@@ -132,7 +134,7 @@ def get_test_entry(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = TEST_CATALOG_ID,
+    catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
     creator: Optional[str] = None,
     updater: Optional[str] = None,
 ) -> CatalogEntry:
@@ -156,7 +158,7 @@ def get_test_entry_for_store(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = TEST_CATALOG_ID,
+    catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
     store_name: str = "",
 ) -> CatalogEntry:
     """Helper to get an entry structure."""

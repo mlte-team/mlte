@@ -3,21 +3,18 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import httpx
 from fastapi.testclient import TestClient
 
 import mlte.backend.core.app_factory as app_factory
-import test.store.artifact.fixture as artifact_store_fixture
-import test.store.catalog.fixture as catalog_store_fixture
-import test.store.custom_list.fixture as custom_list_store_fixture
-import test.store.user.fixture as user_store_fixture
 from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
 from mlte.session.session_stores import setup_stores
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
@@ -81,7 +78,7 @@ class TestAPI:
     def __init__(
         self,
         user: Optional[UserWithPassword] = None,
-        default_catalog_id: Optional[str] = None,
+        catalog_uris: dict[str, str] = {},
     ) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
 
@@ -90,16 +87,8 @@ class TestAPI:
 
         # Set up API global state.
         state.reset()
-        state.stores.set_user_store(user_store_fixture.create_memory_store())
-        state.stores.set_artifact_store(
-            artifact_store_fixture.create_memory_store()
-        )
-        if default_catalog_id:
-            state.stores.add_catalog_store(
-                catalog_store_fixture.create_memory_store(), default_catalog_id
-            )
-        state.stores.set_custom_list_store(
-            custom_list_store_fixture.create_memory_store()
+        state.stores = setup_stores(
+            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY), catalog_uris
         )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 
@@ -172,11 +161,11 @@ class TestAPI:
         admin_client = self.get_test_client_for_admin()
         res = admin_client.post(f"{uri}", json=entity.to_json())
         assert res.status_code == codes.OK
-        return typing.cast(Dict[str, Any], res.json())
+        return typing.cast(dict[str, Any], res.json())
 
     def admin_read_entity(self, entity_id: str, uri: str) -> dict[str, Any]:
         """Get the given entity using an admin."""
         admin_client = self.get_test_client_for_admin()
         res = admin_client.get(f"{uri}/{entity_id}")
         assert res.status_code == codes.OK
-        return typing.cast(Dict[str, Any], res.json())
+        return typing.cast(dict[str, Any], res.json())

@@ -21,21 +21,21 @@ def store_types() -> Generator[str, None, None]:
 
 
 def create_api_and_http_uri(
-    user: Optional[UserWithPassword] = None, default_catalog_id: str = None
-) -> tuple[OAuthHttpClient, str]:
+    user: Optional[UserWithPassword] = None, catalog_uris: dict[str, str] = {}
+) -> tuple[OAuthHttpClient, StoreURI]:
     """
     Get the params to configure an HTTP store, creating a test API.
     :return: The client to the test API, and the URI to connect.
     """
     user = user_generator.build_admin_user()
-    test_api = TestAPI(user=user, default_catalog_id=default_catalog_id)
+    test_api = TestAPI(user=user, catalog_uris=catalog_uris)
     client = test_api.get_test_client()
 
     username, password, uri = get_http_defaults_if_needed(
         client.username, client.password, str(client.client.base_url)
     )
-    uri = StoreURI.from_string(
+    store_uri = StoreURI.from_string(
         url_utils.set_url_username_password(uri, username, password)
     )
 
-    return client, uri
+    return client, store_uri
