@@ -1,20 +1,22 @@
 """Implementation of HTTP user store"""
 
 import typing
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Union
 
-from mlte.store.base import StoreURI
+from mlte.store.base import ResourceMapper, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
+    PermissionMapper,
     UserMapper,
     UserStoreSession,
 )
 from mlte.user.model import (
     BasicUser,
     Group,
+    Permission,
     ResourceType,
     User,
     UserWithPassword,
@@ -74,6 +76,9 @@ class HttpUserStoreSession(UserStoreSession):
         """User mapper."""
 
         self.group_mapper = HttpGroupMapper(group_storage)
+        """Group mapper."""
+
+        self.permission_mapper = HttpPermissionMapper(group_storage)
         """Group mapper."""
 
     def close(self):
@@ -147,3 +152,40 @@ class HttpGroupMapper(GroupMapper):
     def delete(self, group_name: str, context: Any = None) -> Group:
         response = self.storage.delete(id=group_name)
         return Group(**response)
+
+
+# -------------------------------------------------------------------------
+# HttpPermissionMapper
+# -------------------------------------------------------------------------
+
+
+class HttpPermissionMapper(PermissionMapper):
+    """HTTP mapper for the permission resource."""
+
+    def __init__(self, storage: HttpStorage) -> None:
+        self.storage = storage
+        """The HTTP storage access."""
+
+    def list(self, context: Any = None) -> list[str]:
+        response = self.storage.get("s/permissions")
+        return typing.cast(list[str], response)
+
+    def list_details(
+        self,
+        context: Any = None,
+        limit: int = ResourceMapper.DEFAULT_LIST_LIMIT,
+        offset: int = 0,
+    ) -> List[Any]:
+        """
+        Read details of resources within limit and offset.
+        :param context: Any additional context needed for this resource.
+        :param limit: The limit on resources to read
+        :param offset: The offset on resources to read
+        :return: The read resources
+        """
+        response = self.storage.get("s/permissions/details")
+        return [permission for permission in response][offset : offset + limit]
+
+    def read(self, permission_str: str, context: Any = None) -> Group:
+        response = self.storage.get(id=f"s/permission/{permission_str}")
+        return Permission(**response)

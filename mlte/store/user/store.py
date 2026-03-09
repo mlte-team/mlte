@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from mlte.store import error
-from mlte.store.base import Store, StoreURI
+from mlte.store.base import Store, StoreType, StoreURI
 from mlte.store.user.policy import Policy
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import ResourceType, RoleType, UserWithPassword
@@ -35,8 +35,8 @@ class UserStore(Store):
         super().__init__(uri=uri)
         """Store uri."""
 
-        # Sets up default user and permissions.
-        if add_default_data:
+        # Sets up default user and permissions. For security, this is not done for remote stores.
+        if add_default_data and uri.type != StoreType.REMOTE_HTTP:
             self._init_default_user()
             self._init_default_permissions()
 

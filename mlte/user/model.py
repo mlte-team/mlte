@@ -70,9 +70,9 @@ class BasicUser(BaseModel):
 
 
 class User(BasicUser):
-    """User with additional information only used locally when stored."""
+    """User with all needed information, and no plain password."""
 
-    hashed_password: str
+    hashed_password: Optional[str] = None
     """The hashed password of the user."""
 
     def update_user_data(self, new_user_data: BasicUser) -> User:
