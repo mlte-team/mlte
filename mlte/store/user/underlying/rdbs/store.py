@@ -11,6 +11,7 @@ from sqlalchemy.orm import DeclarativeBase, Session
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.rdbs_storage import RDBStorage
+from mlte.store.user import user_policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -123,6 +124,9 @@ class RDBUserMapper(UserMapper):
                 )
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
+                # Assign policies for all users.
+                user = user_policy.assing_default_user_policies(user)
+
                 # Hash password and create a user with hashed passwords to be stored.
                 hashed_user = user.to_hashed_user()
                 user_orm = self._build_user(hashed_user, session)
@@ -160,6 +164,9 @@ class RDBUserMapper(UserMapper):
 
     def delete(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
+            # Delete related permissions and groups.
+            user_policy.delete_default_user_policies(username, self)
+
             user, user_orm = DBReader.get_user(username, session)
             session.delete(user_orm)
             session.commit()

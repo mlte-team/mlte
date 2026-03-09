@@ -16,13 +16,14 @@ from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.models.artifact_model import USER_ME_ID
 from mlte.backend.core import state_stores
-from mlte.store.user.policy import Policy
+from mlte.store.user import user_policy
 from mlte.user.model import (
     BasicUser,
     MethodType,
     Permission,
     ResourceType,
     RoleType,
+    User,
     UserWithPassword,
 )
 
@@ -72,7 +73,7 @@ def create_user(
     *,
     user: UserWithPassword,
     current_user: AuthorizedUser,
-) -> BasicUser:
+) -> User:
     """
     Create a MLTE user.
     :param user: The user to create
@@ -86,31 +87,7 @@ def create_user(
 
     with state_stores.user_store_session() as user_store:
         try:
-            # Give every new user permissions to create (only) new models.
-            model_create_policy = Policy(
-                ResourceType.MODEL,
-                resource_id=None,
-                create_group=True,
-                edit_group=False,
-                read_group=False,
-            )
-            model_create_policy.assign_to_user(user)
-
-            # Give every new user permissions to modify all custom lists
-            custom_list_policy = Policy(
-                ResourceType.CUSTOM_LIST, resource_id=None
-            )
-            custom_list_policy.assign_to_user(user)
-
-            # Give user permissions to modify its data.
-            own_user_policy = Policy(
-                ResourceType.USER, resource_id=user.username
-            )
-            own_user_policy.save_to_store(user_store)
-            own_user_policy.assign_to_user(user)
-
-            # Store the user.
-            new_user: BasicUser = user_store.user_mapper.create(user)
+            new_user = user_store.user_mapper.create(user)
             stored_user = user_store.user_mapper.read(new_user.username)
             return stored_user
         except errors.ErrorAlreadyExists as e:
@@ -126,7 +103,7 @@ def edit_user(
     *,
     user: Union[UserWithPassword, BasicUser],
     current_user: AuthorizedUser,
-) -> BasicUser:
+) -> User:
     """
     Edit a MLTE user.
     :param user: The user to edit
@@ -137,15 +114,11 @@ def edit_user(
 
     with state_stores.user_store_session() as user_store:
         try:
+            # TODO: this is a weird permission check that is outside the common permission checks.
             # We only want to allow admins to edit a user's groups.
             if current_user.role != RoleType.ADMIN:
-                # If not admin, keep current groups and ignore the new ones, if any.
-                current_groups = user_store.user_mapper.read(
-                    user.username
-                ).groups
-                user.groups = current_groups
+                user = user_policy.ignore_new_groups(user, user_store)
 
-            # Edit the user.
             return user_store.user_mapper.edit(user)
         except errors.ErrorNotFound as e:
             raise HTTPException(
@@ -160,7 +133,7 @@ def read_user(
     *,
     username: str,
     current_user: AuthorizedUser,
-) -> BasicUser:
+) -> User:
     """
     Read a MLTE user.
     :param username: The username
@@ -198,7 +171,7 @@ def list_users(
 @router.get("s/details")
 def list_users_details(
     current_user: AuthorizedUser,
-) -> List[BasicUser]:
+) -> List[User]:
     """
     List MLTE users, with details for each user.
     :return: A collection of users with their details.
@@ -208,7 +181,7 @@ def list_users_details(
             detailed_users = []
             usernames = user_store.user_mapper.list()
             for username in usernames:
-                user_details = BasicUser(
+                user_details = User(
                     **user_store.user_mapper.read(username).to_json()
                 )
                 detailed_users.append(user_details)
@@ -222,7 +195,7 @@ def delete_user(
     *,
     username: str,
     current_user: AuthorizedUser,
-) -> BasicUser:
+) -> User:
     """
     Delete a MLTE user.
     :param username: The username
@@ -231,11 +204,6 @@ def delete_user(
     with state_stores.user_store_session() as user_store:
         try:
             deleted_user = user_store.user_mapper.delete(username)
-
-            # Now delete related permissions and groups.
-            policy = Policy(ResourceType.USER, resource_id=username)
-            policy.remove_from_store(user_store)
-
             return deleted_user
         except errors.ErrorNotFound as e:
             raise HTTPException(

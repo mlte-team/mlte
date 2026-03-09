@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
+from mlte.store.user import user_policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -107,6 +108,9 @@ class InMemoryUserMapper(UserMapper):
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
+        # Assign policies for all users.
+        user = user_policy.assing_default_user_policies(user)
+
         # Create user with hashed passwords.
         stored_user = user.to_hashed_user()
 
@@ -150,6 +154,9 @@ class InMemoryUserMapper(UserMapper):
     def delete(self, username: str, context: Any = None) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
+
+        # Now delete related permissions and groups.
+        user_policy.delete_default_user_policies(username, self)
 
         popped = self.storage.users[username]
         del self.storage.users[username]
