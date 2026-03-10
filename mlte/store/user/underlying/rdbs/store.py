@@ -11,7 +11,8 @@ from sqlalchemy.orm import DeclarativeBase, Session
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.rdbs_storage import RDBStorage
-from mlte.store.user import user_policy
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -89,14 +90,19 @@ class RelationalDBUserStoreSession(UserStoreSession):
         self.storage = storage
         """RDB storage."""
 
-        self.user_mapper = RDBUserMapper(storage)
-        """The mapper to user CRUD."""
-
         self.group_mapper = RDBGroupMapper(storage)
         """The mapper to group CRUD."""
 
         self.permission_mapper = RDBPermissionMapper(storage)
         """The mapper to group CRUD."""
+
+        self.policy_store = PolicyStore(
+            self.group_mapper, self.permission_mapper
+        )
+        """The Policy store abstraction."""
+
+        self.user_mapper = RDBUserMapper(storage, self.policy_store)
+        """The mapper to user CRUD."""
 
     def close(self) -> None:
         """Close the session."""
@@ -111,9 +117,12 @@ class RelationalDBUserStoreSession(UserStoreSession):
 class RDBUserMapper(UserMapper):
     """RDB mapper for the user resource."""
 
-    def __init__(self, storage: RDBStorage) -> None:
+    def __init__(self, storage: RDBStorage, policy_store: PolicyStore) -> None:
         self.storage = storage
         """A reference to underlying storage."""
+
+        self.policy_store = policy_store
+        """Policy store abstraection"""
 
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
@@ -125,7 +134,9 @@ class RDBUserMapper(UserMapper):
             except errors.ErrorNotFound:
                 # If it was not found, it means we can create it.
                 # Assign policies for all users.
-                user = user_policy.assing_default_user_policies(user)
+                user = user_policy.set_default_user_policies(
+                    user, self.policy_store
+                )
 
                 # Hash password and create a user with hashed passwords to be stored.
                 hashed_user = user.to_hashed_user()
@@ -165,7 +176,9 @@ class RDBUserMapper(UserMapper):
     def delete(self, username: str, context: Any = None) -> User:
         with Session(self.storage.engine) as session:
             # Delete related permissions and groups.
-            user_policy.delete_default_user_policies(username, self)
+            user_policy.delete_default_user_policies(
+                username, self.policy_store
+            )
 
             user, user_orm = DBReader.get_user(username, session)
             session.delete(user_orm)

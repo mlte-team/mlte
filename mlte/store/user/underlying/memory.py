@@ -6,7 +6,8 @@ from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user import user_policy
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -81,8 +82,15 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.group_mapper = InMemoryGroupMapper(storage=storage)
         """The mapper to group CRUD."""
 
+        self.policy_store = PolicyStore(
+            self.group_mapper, self.permission_mapper
+        )
+        """The Policy store abstraction."""
+
         self.user_mapper = InMemoryUserMapper(
-            storage=storage, group_mapper=self.group_mapper
+            storage=storage,
+            group_mapper=self.group_mapper,
+            policy_store=self.policy_store,
         )
         """The mapper to user CRUD."""
 
@@ -96,7 +104,11 @@ class InMemoryUserMapper(UserMapper):
     """In-memory mapper for the user resource."""
 
     def __init__(
-        self, *, storage: MemoryUserStorage, group_mapper: InMemoryGroupMapper
+        self,
+        *,
+        storage: MemoryUserStorage,
+        group_mapper: InMemoryGroupMapper,
+        policy_store: PolicyStore,
     ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
@@ -104,12 +116,15 @@ class InMemoryUserMapper(UserMapper):
         self.group_mapper = group_mapper
         """A reference to the group mapper, to get updated group info if needed."""
 
+        self.policy_store = policy_store
+        """Policy store abstraection"""
+
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
         # Assign policies for all users.
-        user = user_policy.assing_default_user_policies(user)
+        user = user_policy.set_default_user_policies(user, self.policy_store)
 
         # Create user with hashed passwords.
         stored_user = user.to_hashed_user()
@@ -156,7 +171,7 @@ class InMemoryUserMapper(UserMapper):
             raise errors.ErrorNotFound(f"User {username}")
 
         # Now delete related permissions and groups.
-        user_policy.delete_default_user_policies(username, self)
+        user_policy.delete_default_user_policies(username, self.policy_store)
 
         popped = self.storage.users[username]
         del self.storage.users[username]

@@ -7,7 +7,8 @@ from typing import Any, List, Union
 
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
-from mlte.store.user import user_policy
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import (
     GroupMapper,
@@ -67,7 +68,14 @@ class FileSystemUserStoreSession(UserStoreSession):
         self.group_mapper = FileSystemGroupMappper(storage)
         """The mapper to group CRUD."""
 
-        self.user_mapper = FileSystemUserMappper(storage, self.group_mapper)
+        self.policy_store = PolicyStore(
+            self.group_mapper, self.permission_mapper
+        )
+        """The Policy store abstraction."""
+
+        self.user_mapper = FileSystemUserMappper(
+            storage, self.group_mapper, self.policy_store
+        )
         """The mapper to user CRUD."""
 
     def close(self) -> None:
@@ -88,7 +96,10 @@ class FileSystemUserMappper(UserMapper):
     """Subfolder for users."""
 
     def __init__(
-        self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper
+        self,
+        storage: FileSystemStorage,
+        group_mapper: FileSystemGroupMappper,
+        policy_store: PolicyStore,
     ) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
@@ -101,11 +112,14 @@ class FileSystemUserMappper(UserMapper):
         )
         """Set the subfolder for this resource."""
 
+        self.policy_store = policy_store
+        """Policy store abstraection"""
+
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
 
         # Assign policies for all users.
-        user = user_policy.assing_default_user_policies(user, self)
+        user = user_policy.set_default_user_policies(user, self.policy_store)
 
         new_user = user.to_hashed_user()
 
@@ -146,7 +160,7 @@ class FileSystemUserMappper(UserMapper):
         user = self._read_user(username)
 
         # Now delete related permissions and groups.
-        user_policy.delete_default_user_policies(username, self)
+        user_policy.delete_default_user_policies(username, self.policy_store)
 
         self.storage.delete_resource(username)
         return user

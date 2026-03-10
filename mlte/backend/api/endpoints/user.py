@@ -16,7 +16,7 @@ from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.api.models.artifact_model import USER_ME_ID
 from mlte.backend.core import state_stores
-from mlte.store.user import user_policy
+from mlte.store.user.policy import user_policy
 from mlte.user.model import (
     BasicUser,
     MethodType,
