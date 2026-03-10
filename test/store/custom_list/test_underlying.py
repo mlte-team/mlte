@@ -4,23 +4,19 @@ import pytest
 
 import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import CustomListName
+from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from test.store.custom_list.fixture import (  # noqa
-    create_test_custom_list_store,
+from test.store.custom_list.conftest import (
     get_test_entry,
     get_test_list,
 )
-from test.store.utils import store_types  # noqa
-
-# -----------------------------------------------------------------------------
-# Tests
-# -----------------------------------------------------------------------------
+from test.store.utils import store_types
 
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_init_store(
-    store_type: str, create_test_custom_list_store  # noqa
+    store_type: StoreType, create_test_custom_list_store
 ) -> None:
     """A store can be initialized."""
     _ = create_test_custom_list_store(store_type)
@@ -31,7 +27,7 @@ def test_init_store(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_custom_list_entry(
-    store_type: str, create_test_custom_list_store  # noqa
+    store_type: StoreType, create_test_custom_list_store
 ) -> None:
     """A custom list store supports custom list entry operations."""
     store: CustomListStore = create_test_custom_list_store(store_type)
@@ -82,7 +78,7 @@ def test_custom_list_entry(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_custom_list_parent_mappings(
-    store_type: str, create_test_custom_list_store  # noqa
+    store_type: StoreType, create_test_custom_list_store
 ) -> None:
     """A custom list store properly handles parent relations."""
     store: CustomListStore = create_test_custom_list_store(store_type)

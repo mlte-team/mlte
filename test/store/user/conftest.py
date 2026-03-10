@@ -82,10 +82,12 @@ def _create_user_store(store_type: StoreType, tmpdir=None) -> UserStore:
 
 
 @pytest.fixture(scope="function")
-def create_test_user_store(tmpdir_factory):
+def create_test_user_store(
+    tmpdir_factory,
+) -> typing.Callable[[StoreType], UserStore]:
     """Fixture used to manually create a test store."""
 
-    def _make(store_type: StoreType):
+    def _make(store_type: StoreType) -> UserStore:
         """Internal function used to capture the tmpdir_factory fixture result."""
         return _create_user_store(store_type, tmpdir_factory.mktemp("data"))
 

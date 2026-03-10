@@ -14,7 +14,7 @@ from mlte.custom_list.model import CustomListEntryModel
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
-from test.store.custom_list.fixture import get_custom_list_uri, get_test_entry
+from test.store.custom_list.conftest import get_custom_list_uri, get_test_entry
 
 # -----------------------------------------------------------------------------
 # Helpers

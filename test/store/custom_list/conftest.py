@@ -32,7 +32,7 @@ DEFAULT_ENTRY_DESCRIPTION = "test description"
 DEFAULT_PARENT = None
 
 
-def create_memory_store() -> InMemoryCustomListStore:
+def _create_memory_store() -> InMemoryCustomListStore:
     return typing.cast(
         InMemoryCustomListStore,
         create_custom_list_store(
@@ -41,7 +41,7 @@ def create_memory_store() -> InMemoryCustomListStore:
     )
 
 
-def create_fs_store(path: Path) -> FileSystemCustomListStore:
+def _create_fs_store(path: Path) -> FileSystemCustomListStore:
     return typing.cast(
         FileSystemCustomListStore,
         create_custom_list_store(
@@ -50,14 +50,14 @@ def create_fs_store(path: Path) -> FileSystemCustomListStore:
     )
 
 
-def create_rdbs_store() -> RDBCustomListStore:
+def _create_rdbs_store() -> RDBCustomListStore:
     return RDBCustomListStore(
         uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
         poolclass=StaticPool,
     )
 
 
-def create_api_and_http_store(
+def _create_api_and_http_store(
     user: Optional[UserWithPassword] = None,
 ) -> HttpCustomListStore:
     """
@@ -68,21 +68,32 @@ def create_api_and_http_store(
     return HttpCustomListStore(uri=uri, client=client)
 
 
+def _create_custom_list_store(
+    store_type: StoreType, tmpdir=None
+) -> CustomListStore:
+    """Function equivalent to the store's factory method, to be used for testing."""
+    if store_type == StoreType.REMOTE_HTTP:
+        return _create_api_and_http_store()
+    elif store_type == StoreType.LOCAL_MEMORY:
+        return _create_memory_store()
+    elif store_type == StoreType.LOCAL_FILESYSTEM:
+        return _create_fs_store(tmpdir)
+    elif store_type == StoreType.RELATIONAL_DB:
+        return _create_rdbs_store()
+    else:
+        raise RuntimeError(f"Invalid store type received: {store_type}")
+
+
 @pytest.fixture(scope="function")
 def create_test_custom_list_store(
     tmpdir_factory,
-) -> typing.Callable[[str], CustomListStore]:
-    def _make(store_type) -> CustomListStore:
-        if store_type == StoreType.REMOTE_HTTP:
-            return create_api_and_http_store()
-        elif store_type == StoreType.LOCAL_MEMORY:
-            return create_memory_store()
-        elif store_type == StoreType.LOCAL_FILESYSTEM:
-            return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_type == StoreType.RELATIONAL_DB:
-            return create_rdbs_store()
-        else:
-            raise RuntimeError(f"Invalid store type received: {store_type}")
+) -> typing.Callable[[StoreType], CustomListStore]:
+    """Fixture to manually create a CustomList store."""
+
+    def _make(store_type: StoreType) -> CustomListStore:
+        return _create_custom_list_store(
+            store_type, tmpdir_factory.mktemp("data")
+        )
 
     return _make
 
