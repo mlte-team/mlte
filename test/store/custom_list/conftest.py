@@ -50,12 +50,11 @@ def _create_fs_store(path: Path) -> FileSystemCustomListStore:
     )
 
 
-def _create_rdbs_store(patched_create_engine) -> RDBCustomListStore:
-    with patched_create_engine():
-        return RDBCustomListStore(
-            uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-            poolclass=StaticPool,
-        )
+def _create_rdbs_store() -> RDBCustomListStore:
+    return RDBCustomListStore(
+        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
 
 
 def _create_api_and_http_store(
@@ -69,33 +68,34 @@ def _create_api_and_http_store(
     return HttpCustomListStore(uri=uri, client=client)
 
 
-def _create_custom_list_store(
-    store_type: StoreType, patched_create_engine=None, tmpdir=None
-) -> CustomListStore:
+def _create_custom_list_store(uri: str, tmpdir_factory) -> CustomListStore:
     """Function equivalent to the store's factory method, to be used for testing."""
+    store_type = StoreURI.from_string(uri).type
     if store_type == StoreType.REMOTE_HTTP:
         return _create_api_and_http_store()
     elif store_type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
     elif store_type == StoreType.LOCAL_FILESYSTEM:
-        return _create_fs_store(tmpdir)
+        return _create_fs_store(tmpdir_factory.mktemp("data"))
     elif store_type == StoreType.RELATIONAL_DB:
-        return _create_rdbs_store(patched_create_engine)
+        return _create_rdbs_store()
     else:
         raise RuntimeError(f"Invalid store type received: {store_type}")
 
 
 @pytest.fixture(scope="function")
 def create_test_custom_list_store(
-    patched_create_engine,
     tmpdir_factory,
+    patched_create_engine,
 ) -> typing.Callable[[StoreType], CustomListStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(store_type: StoreType) -> CustomListStore:
-        return _create_custom_list_store(
-            store_type, patched_create_engine, tmpdir_factory.mktemp("data")
-        )
+        with patched_create_engine():
+            return _create_custom_list_store(
+                StoreURI.create_uri_string(store_type),
+                tmpdir_factory,
+            )
 
     return _make
 

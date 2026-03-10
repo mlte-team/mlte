@@ -65,13 +65,12 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     )
 
 
-def create_rdbs_store(patched_create_engine) -> RelationalDBCatalogStore:
+def create_rdbs_store() -> RelationalDBCatalogStore:
     """Creates a relational DB store."""
-    with patched_create_engine():
-        return RelationalDBCatalogStore(
-            StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-            poolclass=StaticPool,
-        )
+    return RelationalDBCatalogStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
 
 
 def create_api_and_http_store(
@@ -85,26 +84,41 @@ def create_api_and_http_store(
     return HttpCatalogGroupStore(uri=uri, client=client)
 
 
+def _create_catalog_store(
+    uri: str,
+    catalog_uris: dict[str, str],
+    tmpdir_factory,
+) -> CatalogStore:
+    """Function equivalent to the store's factory method, to be used for testing."""
+    store_type = StoreURI.from_string(uri).type
+    if store_type == StoreType.REMOTE_HTTP:
+        return create_api_and_http_store(catalog_uris=catalog_uris)
+    elif store_type == StoreType.LOCAL_MEMORY:
+        return create_memory_store()
+    elif store_type == StoreType.LOCAL_FILESYSTEM:
+        return create_fs_store(tmpdir_factory.mktemp("data"))
+    elif store_type == StoreType.RELATIONAL_DB:
+        return create_rdbs_store()
+
+    else:
+        raise RuntimeError(f"Invalid store type received: {store_type}")
+
+
 @pytest.fixture(scope="function")
 def create_test_catalog_store(
-    patched_create_engine, tmpdir_factory, catalog_uris: dict[str, str] = {}
+    tmpdir_factory, patched_create_engine, catalog_uris: dict[str, str] = {}
 ) -> typing.Callable[[StoreType, dict[str, str]], CatalogStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(
         store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
     ) -> CatalogStore:
-        if store_type == StoreType.REMOTE_HTTP:
-            return create_api_and_http_store(catalog_uris=catalog_uris)
-        elif store_type == StoreType.LOCAL_MEMORY:
-            return create_memory_store()
-        elif store_type == StoreType.LOCAL_FILESYSTEM:
-            return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_type == StoreType.RELATIONAL_DB:
-            return create_rdbs_store(patched_create_engine)
-
-        else:
-            raise RuntimeError(f"Invalid store type received: {store_type}")
+        with patched_create_engine():
+            return _create_catalog_store(
+                StoreURI.create_uri_string(store_type),
+                catalog_uris,
+                tmpdir_factory,
+            )
 
     return _make
 

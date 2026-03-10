@@ -47,13 +47,12 @@ def _create_fs_store(path: Path) -> FileSystemUserStore:
     )
 
 
-def _create_rdbs_store(patched_create_engine) -> RelationalDBUserStore:
-    with patched_create_engine():
-        return RelationalDBUserStore(
-            uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-            connect_args={"check_same_thread": False},
-            poolclass=StaticPool,
-        )
+def _create_rdbs_store() -> RelationalDBUserStore:
+    return RelationalDBUserStore(
+        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
 
 def _create_api_and_http_store(
@@ -67,18 +66,17 @@ def _create_api_and_http_store(
     return HttpUserStore(uri=uri, client=client)
 
 
-def _create_user_store(
-    store_type: StoreType, patched_create_engine=None, tmpdir=None
-) -> UserStore:
+def _create_user_store(uri: str, tmpdir_factory) -> UserStore:
     """Function equivalent to the store's factory method, to be used for testing."""
+    store_type = StoreURI.from_string(uri).type
     if store_type == StoreType.REMOTE_HTTP:
         return _create_api_and_http_store()
     elif store_type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
     elif store_type == StoreType.LOCAL_FILESYSTEM:
-        return _create_fs_store(tmpdir)
+        return _create_fs_store(tmpdir_factory.mktemp("data"))
     elif store_type == StoreType.RELATIONAL_DB:
-        return _create_rdbs_store(patched_create_engine)
+        return _create_rdbs_store()
     else:
         raise RuntimeError(f"Invalid store type received: {store_type}")
 
@@ -92,8 +90,10 @@ def create_test_user_store(
 
     def _make(store_type: StoreType) -> UserStore:
         """Internal function used to capture the tmpdir_factory fixture result."""
-        return _create_user_store(
-            store_type, patched_create_engine, tmpdir_factory.mktemp("data")
-        )
+        with patched_create_engine():
+            return _create_user_store(
+                StoreURI.create_uri_string(store_type),
+                tmpdir_factory,
+            )
 
     return _make

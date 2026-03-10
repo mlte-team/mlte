@@ -45,12 +45,11 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     )
 
 
-def create_rdbs_store(patched_create_engine) -> RelationalDBArtifactStore:
-    with patched_create_engine():
-        return RelationalDBArtifactStore(
-            StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-            poolclass=StaticPool,
-        )
+def create_rdbs_store() -> RelationalDBArtifactStore:
+    return RelationalDBArtifactStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
 
 
 def create_api_and_http_store(
@@ -76,24 +75,34 @@ def store_types_and_artifact_types() -> (
             yield store_type, artifact_type
 
 
+def _create_artifact_store(uri: str, tmpdir_factory) -> ArtifactStore:
+    """Function equivalent to the store's factory method, to be used for testing."""
+    store_type = StoreURI.from_string(uri).type
+    if store_type == StoreType.REMOTE_HTTP:
+        return create_api_and_http_store()
+    elif store_type == StoreType.LOCAL_MEMORY:
+        return create_memory_store()
+    elif store_type == StoreType.LOCAL_FILESYSTEM:
+        return create_fs_store(tmpdir_factory.mktemp("data"))
+    elif store_type == StoreType.RELATIONAL_DB:
+        return create_rdbs_store()
+    else:
+        raise RuntimeError(f"Invalid store type received: {store_type}")
+
+
 @pytest.fixture(scope="function")
 def create_test_artifact_store(
-    patched_create_engine,
     tmpdir_factory,
-) -> typing.Callable[[str], ArtifactStore]:
+    patched_create_engine,
+) -> typing.Callable[[StoreType], ArtifactStore]:
     """Fixture to manually create a CustomList store."""
 
-    def _make(store_type) -> ArtifactStore:
-        if store_type == StoreType.REMOTE_HTTP:
-            return create_api_and_http_store()
-        elif store_type == StoreType.LOCAL_MEMORY:
-            return create_memory_store()
-        elif store_type == StoreType.LOCAL_FILESYSTEM:
-            return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_type == StoreType.RELATIONAL_DB.value:
-            return create_rdbs_store(patched_create_engine)
-        else:
-            raise RuntimeError(f"Invalid store type received: {store_type}")
+    def _make(store_type: StoreType) -> ArtifactStore:
+        with patched_create_engine():
+            return _create_artifact_store(
+                StoreURI.create_uri_string(store_type),
+                tmpdir_factory,
+            )
 
     return _make
 

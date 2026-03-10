@@ -7,11 +7,11 @@ import pytest
 import sqlalchemy
 
 from mlte.session.session_stores import setup_stores
-from test.store.artifact.conftest import create_test_artifact_store
-from test.store.catalog.conftest import create_test_catalog_store
-from test.store.custom_list.conftest import create_test_custom_list_store
+from test.store.artifact.conftest import _create_artifact_store
+from test.store.catalog.conftest import _create_catalog_store
+from test.store.custom_list.conftest import _create_custom_list_store
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.user.conftest import create_test_user_store
+from test.store.user.conftest import _create_user_store
 
 
 @pytest.fixture
@@ -42,31 +42,35 @@ def patched_create_engine(shared_sqlite_engine):
     return _patched_create_engine_context
 
 
-@pytest.fixture(scope="function")
-def patched_setup_stores():
+@pytest.fixture
+def patched_setup_stores(tmpdir_factory, patched_create_engine):
     """Fixture to patch store factories for setup_stores method."""
 
-    @contextmanager
-    def _patched_setup_stores(
-        stores_uri: str,
-        catalog_uris: dict[str, str] = {},
-    ):
-        with patch(
-            "mlte.store.user.factory.create_user_store",
-            return_value=create_test_user_store,
-        ):
-            with patch(
-                "mlte.store.custom_list.factory.create_custom_list_store",
-                return_value=create_test_custom_list_store,
-            ):
-                with patch(
-                    "mlte.store.artifact.factory.create_artifact_store",
-                    return_value=create_test_artifact_store,
-                ):
-                    with patch(
-                        "mlte.store.catalog.store.factory.create_catalog_store",
-                        return_value=create_test_catalog_store,
-                    ):
-                        yield setup_stores(stores_uri, catalog_uris)
+    def _create_user_store_with_fixtures(uri: str):
+        return _create_user_store(uri, tmpdir_factory)
 
-    return _patched_setup_stores
+    def _create_custom_list_store_with_fixtures(uri: str):
+        return _create_custom_list_store(uri, tmpdir_factory)
+
+    def _create_artifact_store_with_fixtures(uri: str):
+        return _create_artifact_store(uri, tmpdir_factory)
+
+    def _create_catalog_store_with_fixtures(
+        uri: str, catalog_uris: dict[str, str]
+    ):
+        return _create_catalog_store(uri, catalog_uris, tmpdir_factory)
+
+    with patch(
+        "mlte.store.user.factory.create_user_store",
+        side_effect=_create_user_store_with_fixtures,
+    ), patch(
+        "mlte.store.custom_list.factory.create_custom_list_store",
+        side_effect=_create_custom_list_store_with_fixtures,
+    ), patch(
+        "mlte.store.artifact.factory.create_artifact_store",
+        side_effect=_create_artifact_store_with_fixtures,
+    ), patch(
+        "mlte.store.catalog.factory.create_catalog_store",
+        side_effect=_create_catalog_store_with_fixtures,
+    ), patched_create_engine():
+        yield setup_stores
