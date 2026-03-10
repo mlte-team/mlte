@@ -103,7 +103,7 @@ class TestPolicy:
             assert group in user.groups
 
 
-@pytest.mark.parametrize("user_store_type", store_types())
+@pytest.mark.parametrize("store_type", store_types())
 def test_create_policy_if_needed(
     store_type: str,
     create_test_artifact_store,  # noqa

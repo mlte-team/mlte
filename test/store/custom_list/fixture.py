@@ -73,13 +73,13 @@ def create_test_custom_list_store(
     tmpdir_factory,
 ) -> typing.Callable[[str], CustomListStore]:
     def _make(store_type) -> CustomListStore:
-        if store_type == StoreType.REMOTE_HTTP.value:
+        if store_type == StoreType.REMOTE_HTTP:
             return create_api_and_http_store()
-        elif store_type == StoreType.LOCAL_MEMORY.value:
+        elif store_type == StoreType.LOCAL_MEMORY:
             return create_memory_store()
-        elif store_type == StoreType.LOCAL_FILESYSTEM.value:
+        elif store_type == StoreType.LOCAL_FILESYSTEM:
             return create_fs_store(tmpdir_factory.mktemp("data"))
-        elif store_type == StoreType.RELATIONAL_DB.value:
+        elif store_type == StoreType.RELATIONAL_DB:
             return create_rdbs_store()
         else:
             raise RuntimeError(f"Invalid store type received: {store_type}")

@@ -11,13 +11,13 @@ from test.backend.fixture.test_api import TestAPI
 from test.store.defaults import get_http_defaults_if_needed
 
 
-def store_types() -> Generator[str, None, None]:
+def store_types() -> Generator[StoreType, None, None]:
     """
-    Yield catalog store fixture names.
-    :return: Store fixture name
+    Yield catalog store types.
+    :return: Store type.
     """
-    for store_fixture_name in StoreType:
-        yield store_fixture_name.value
+    for store_type in StoreType:
+        yield store_type
 
 
 def create_api_and_http_uri(
