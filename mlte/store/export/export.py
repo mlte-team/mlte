@@ -14,6 +14,12 @@ from mlte.store.custom_list.store_session import ManagedCustomListSession
 from mlte.store.user.store_session import ManagedUserSession
 
 
+MODELS_KEY = "models"
+CUSTOM_LISTS_KEY = "custom_lists_key"
+USERS_KEY = "users"
+CATALOG_KEY = "default_test_catalog"
+
+
 class ExportSpec(TypedDict):
     """TypedDict used to select MLTE store objects to be exported."""
 
@@ -53,25 +59,25 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
     """
     # Define object to hold all JSON output
     export_dict: dict[str, Any] = {
-        "models": {},
-        "custom_lists": {},
-        "users": [],
-        "default_test_catalog": [],
+        MODELS_KEY: {},
+        CUSTOM_LISTS_KEY: {},
+        USERS_KEY: [],
+        CATALOG_KEY: [],
     }
 
     # Read items to be exported
     with ManagedArtifactSession(
         session().stores.artifact_store.session()
     ) as artifact_store:
-        if "models" in export_spec:
-            for model_id in export_spec["models"]:
-                export_dict["models"][model_id] = {}
-                for version_id in export_spec["models"][model_id]:
-                    export_dict["models"][model_id][version_id] = {}
+        if MODELS_KEY in export_spec:
+            for model_id in export_spec[MODELS_KEY]:
+                export_dict[MODELS_KEY][model_id] = {}
+                for version_id in export_spec[MODELS_KEY][model_id]:
+                    export_dict[MODELS_KEY][model_id][version_id] = {}
                     for artifact_id in artifact_store.artifact_mapper.list(
                         (model_id, version_id)
                     ):
-                        export_dict["models"][model_id][version_id][
+                        export_dict[MODELS_KEY][model_id][version_id][
                             artifact_id
                         ] = artifact_store.artifact_mapper.read(
                             artifact_id, (model_id, version_id)
@@ -81,15 +87,15 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
         session().stores.custom_list_store.session()
     ) as custom_list_store:
         # TODO: This requires the input to be things like `CustomListName.CLASSIFICATION` in the spec, consider if we want this
-        if "custom_lists" in export_spec:
-            for custom_list_id in export_spec["custom_lists"]:
-                export_dict["custom_lists"][custom_list_id] = []
+        if CUSTOM_LISTS_KEY in export_spec:
+            for custom_list_id in export_spec[CUSTOM_LISTS_KEY]:
+                export_dict[CUSTOM_LISTS_KEY][custom_list_id] = []
                 for (
                     custom_list_entry
                 ) in custom_list_store.custom_list_entry_mapper.list_details(
                     custom_list_id
                 ):
-                    export_dict["custom_lists"][custom_list_id].append(
+                    export_dict[CUSTOM_LISTS_KEY][custom_list_id].append(
                         custom_list_entry.to_json()
                     )
 
@@ -97,9 +103,9 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
     with ManagedUserSession(
         session().stores.user_store.session()
     ) as user_store:
-        if "users" in export_spec:
-            for user in export_spec["users"]:
-                export_dict["users"].append(
+        if USERS_KEY in export_spec:
+            for user in export_spec[USERS_KEY]:
+                export_dict[USERS_KEY].append(
                     user_store.user_mapper.read(user).to_json()
                 )
 
@@ -107,6 +113,6 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
         session().stores.catalog_stores.catalogs["local"].session()
     ) as catalog_store:
         for catalog_entry in catalog_store.entry_mapper.list_details():
-            export_dict["default_test_catalog"].append(catalog_entry.to_json())
+            export_dict[CATALOG_KEY].append(catalog_entry.to_json())
 
     return export_dict
