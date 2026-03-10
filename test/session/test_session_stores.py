@@ -2,36 +2,45 @@
 
 import pytest
 
-from mlte.session.session_stores import SessionStores, setup_stores
+from mlte.session.session_stores import SessionStores
 from mlte.store.base import StoreType, StoreURI
 from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.utils import store_types
+
+# -------------------------------------------------------------------------------------
+# Helpers
+# -------------------------------------------------------------------------------------
 
 
 def create_test_session_stores(
-    uri_type: StoreType,
+    store_type: StoreType,
     tmp_path,
-    patched_create_engine,
+    patched_setup_stores,
     catalog_uris: dict[str, str] = {},
 ) -> SessionStores:
     """Creates appropriate test session stores."""
-    uri_string = create_uri_string(uri_type, tmp_path)
-    if uri_type == StoreType.RELATIONAL_DB:
-        with patched_create_engine():
-            session_stores = setup_stores(uri_string, catalog_uris)
-    else:
-        session_stores = setup_stores(uri_string, catalog_uris)
+    uri_string = create_uri_string(store_type, tmp_path)
+    session_stores: SessionStores = patched_setup_stores(
+        uri_string, catalog_uris
+    )
 
     return session_stores
 
 
-def create_uri_string(uri_type: StoreType, tmp_path) -> str:
-    if uri_type == StoreType.RELATIONAL_DB:
+def create_uri_string(store_type: StoreType, tmp_path) -> str:
+    if store_type == StoreType.RELATIONAL_DB:
         uri_string = IN_MEMORY_SQLITE_DB
     else:
         uri_string = StoreURI.create_uri_string(
-            uri_type, tmp_path if uri_type == StoreType.LOCAL_FILESYSTEM else ""
+            store_type,
+            tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
         )
     return uri_string
+
+
+# -------------------------------------------------------------------------------------
+# Tests
+# -------------------------------------------------------------------------------------
 
 
 def test_add_catalog_store_from_uri():
@@ -43,10 +52,10 @@ def test_add_catalog_store_from_uri():
     assert cat_id in session_stores.catalog_stores.catalogs
 
 
-@pytest.mark.parametrize("uri_type", [type for type in StoreType])
-def test_setup_stores(uri_type: StoreType, tmp_path, patched_create_engine):
+@pytest.mark.parametrize("store_type", store_types())
+def test_setup_stores(store_type: StoreType, tmp_path, patched_setup_stores):
     session_stores = create_test_session_stores(
-        uri_type, tmp_path, patched_create_engine
+        store_type, tmp_path, patched_setup_stores
     )
 
     assert session_stores.artifact_store is not None
@@ -55,9 +64,9 @@ def test_setup_stores(uri_type: StoreType, tmp_path, patched_create_engine):
     assert session_stores.catalog_stores.catalogs != {}
 
 
-@pytest.mark.parametrize("uri_type", [type for type in StoreType])
+@pytest.mark.parametrize("store_type", store_types())
 def test_setup_stores_with_catalog_uris(
-    uri_type: StoreType, tmp_path, patched_create_engine
+    store_type: StoreType, tmp_path, patched_setup_stores
 ):
     cat_id = "catalog1"
     catalog_uris = {
@@ -65,13 +74,13 @@ def test_setup_stores_with_catalog_uris(
     }
 
     session_stores = create_test_session_stores(
-        uri_type, tmp_path, patched_create_engine, catalog_uris
+        store_type, tmp_path, patched_setup_stores, catalog_uris
     )
 
     assert cat_id in session_stores.catalog_stores.catalogs
 
 
-def test_setup_stores_with_invalid_catalog_uri():
+def test_setup_stores_with_invalid_catalog_uri(patched_setup_stores):
     catalog_uris = {"local": "test-uri-cat"}
     with pytest.raises(RuntimeError):
-        setup_stores("test-uri", catalog_uris)
+        patched_setup_stores("test-uri", catalog_uris)

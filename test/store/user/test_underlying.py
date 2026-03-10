@@ -149,7 +149,9 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_user_group_change(store_type: str, create_test_user_store) -> None:
+def test_user_group_change(
+    store_type: StoreType, create_test_user_store
+) -> None:
     """Test proper syncchronization between users and groups."""
     store: UserStore = create_test_user_store(store_type)
 
@@ -214,7 +216,7 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_permission(store_type: str, create_test_user_store) -> None:  # noqa
+def test_permission(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports permission operations."""
     store: UserStore = create_test_user_store(store_type)
 

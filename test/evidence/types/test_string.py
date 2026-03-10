@@ -1,6 +1,4 @@
-"""
-Unit tests for String.
-"""
+"""Unit tests for String."""
 
 from __future__ import annotations
 
@@ -13,7 +11,6 @@ from mlte.evidence.types.string import String
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class DummyMeasurementString(Measurement):
@@ -57,7 +54,7 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """String can be saved to and loaded from artifact store."""
     store, ctx = store_with_context

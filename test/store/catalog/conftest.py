@@ -65,12 +65,13 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     )
 
 
-def create_rdbs_store() -> RelationalDBCatalogStore:
+def create_rdbs_store(patched_create_engine) -> RelationalDBCatalogStore:
     """Creates a relational DB store."""
-    return RelationalDBCatalogStore(
-        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        poolclass=StaticPool,
-    )
+    with patched_create_engine():
+        return RelationalDBCatalogStore(
+            StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+            poolclass=StaticPool,
+        )
 
 
 def create_api_and_http_store(
@@ -86,8 +87,10 @@ def create_api_and_http_store(
 
 @pytest.fixture(scope="function")
 def create_test_catalog_store(
-    tmpdir_factory, catalog_uris: dict[str, str] = {}
+    patched_create_engine, tmpdir_factory, catalog_uris: dict[str, str] = {}
 ) -> typing.Callable[[StoreType, dict[str, str]], CatalogStore]:
+    """Fixture to manually create a CustomList store."""
+
     def _make(
         store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
     ) -> CatalogStore:
@@ -98,7 +101,7 @@ def create_test_catalog_store(
         elif store_type == StoreType.LOCAL_FILESYSTEM:
             return create_fs_store(tmpdir_factory.mktemp("data"))
         elif store_type == StoreType.RELATIONAL_DB:
-            return create_rdbs_store()
+            return create_rdbs_store(patched_create_engine)
 
         else:
             raise RuntimeError(f"Invalid store type received: {store_type}")
@@ -155,16 +158,16 @@ def get_test_entry(
 
 
 def get_test_entry_for_store(
+    store_type: StoreType,
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
     catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
-    store_name: str = "",
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     entry = get_test_entry(id, description, code, catalog_id)
 
-    if store_name == StoreType.REMOTE_HTTP.value:
+    if store_type == StoreType.REMOTE_HTTP:
         entry.header.identifier = (
             HTTPCatalogGroupEntryMapper.generate_composite_id(
                 entry.header.catalog_id, entry.header.identifier

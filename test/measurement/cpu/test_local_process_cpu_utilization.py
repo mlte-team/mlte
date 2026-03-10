@@ -1,8 +1,4 @@
-"""
-test/measurement/cpu/test_local_process_cpu_utilization.py
-
-Unit test for LocalProcessCPUUtilization measurement.
-"""
+"""Unit test for LocalProcessCPUUtilization measurement."""
 
 import os
 import time
@@ -17,7 +13,6 @@ from mlte.measurement.cpu import CPUStatistics, LocalProcessCPUUtilization
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 
 from ...support.meta import path_to_support
 
@@ -121,7 +116,7 @@ def test_cpu_windows_evaluate() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     store, ctx = store_with_context
 

@@ -11,20 +11,16 @@ from mlte.store.artifact.store_session import (
     ArtifactStoreSession,
     ManagedArtifactSession,
 )
+from mlte.store.base import StoreType
 from mlte.store.query import Query, TypeFilter
 from test.backend.fixture.user_generator import TEST_API_USERNAME
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import (  # noqa
-    create_test_artifact_store,
-    store_types_and_artifact_types,
-)
-from test.store.utils import store_types  # noqa
+from test.store.artifact.conftest import store_types_and_artifact_types
+from test.store.utils import store_types
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_init_store(
-    store_type: str, create_test_artifact_store  # noqa
-) -> None:
+def test_init_store(store_type: StoreType, create_test_artifact_store) -> None:
     """A store can be initialized."""
     _ = create_test_artifact_store(store_type)
 
@@ -33,7 +29,7 @@ def test_init_store(
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_model(store_type: str, create_test_artifact_store) -> None:  # noqa
+def test_model(store_type: StoreType, create_test_artifact_store) -> None:
     """An artifact store supports model operations."""
     store: ArtifactStore = create_test_artifact_store(store_type)
 
@@ -54,9 +50,7 @@ def test_model(store_type: str, create_test_artifact_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_model_list(
-    store_type: str, create_test_artifact_store  # noqa
-) -> None:
+def test_model_list(store_type: StoreType, create_test_artifact_store) -> None:
     """Models can be listed."""
     store: ArtifactStore = create_test_artifact_store(store_type)
 
@@ -71,7 +65,7 @@ def test_model_list(
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_version(store_type: str, create_test_artifact_store) -> None:  # noqa
+def test_version(store_type: StoreType, create_test_artifact_store) -> None:
     """An artifact store supports model version operations."""
     store: ArtifactStore = create_test_artifact_store(store_type)
 
@@ -98,7 +92,7 @@ def test_version(store_type: str, create_test_artifact_store) -> None:  # noqa
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_two_versions_same_id_same_model(
-    store_type: str, create_test_artifact_store  # noqa
+    store_type: StoreType, create_test_artifact_store
 ) -> None:
     """An artifact store does't allow creating two versions with same id if they are in the same model."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -120,7 +114,7 @@ def test_two_versions_same_id_same_model(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_two_versions_same_id_different_model(
-    store_type: str, create_test_artifact_store  # noqa
+    store_type: StoreType, create_test_artifact_store
 ) -> None:
     """An artifact store can create two versions with same id if they are in different models."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -144,7 +138,7 @@ def test_two_versions_same_id_different_model(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_version_list(
-    store_type: str, create_test_artifact_store  # noqa
+    store_type: StoreType, create_test_artifact_store
 ) -> None:
     """Versions can be listed."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -199,9 +193,9 @@ def check_artifact_writing(
     "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_search(
-    store_type: str,
+    store_type: StoreType,
     artifact_type: ArtifactType,
-    create_test_artifact_store,  # noqa
+    create_test_artifact_store,
 ) -> None:
     """An artifact store store supports queries."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -234,9 +228,9 @@ def test_search(
     "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact(
-    store_type: str,
+    store_type: StoreType,
     artifact_type: ArtifactType,
-    create_test_artifact_store,  # noqa
+    create_test_artifact_store,
 ) -> None:
     """An artifact store supports basic artifact operations."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -281,9 +275,9 @@ def test_artifact(
     "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact_without_parents(
-    store_type: str,
+    store_type: StoreType,
     artifact_type: ArtifactType,
-    create_test_artifact_store,  # noqa
+    create_test_artifact_store,
 ) -> None:
     """An artifact does not create organizational elements by default, on write."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -307,9 +301,9 @@ def test_artifact_without_parents(
     "store_type,artifact_type", store_types_and_artifact_types()
 )
 def test_artifact_overwrite(
-    store_type: str,
+    store_type: StoreType,
     artifact_type: ArtifactType,
-    create_test_artifact_store,  # noqa
+    create_test_artifact_store,
 ) -> None:
     """An artifact can be overwritten with the `force` option."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -348,7 +342,7 @@ def test_artifact_overwrite(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_invalid_chars(
-    store_type: str, create_test_artifact_store  # noqa
+    store_type: StoreType, create_test_artifact_store
 ) -> None:
     """Test creation with chars that may be invalid in some storage types."""
     store: ArtifactStore = create_test_artifact_store(store_type)

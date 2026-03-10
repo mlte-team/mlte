@@ -50,11 +50,12 @@ def _create_fs_store(path: Path) -> FileSystemCustomListStore:
     )
 
 
-def _create_rdbs_store() -> RDBCustomListStore:
-    return RDBCustomListStore(
-        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        poolclass=StaticPool,
-    )
+def _create_rdbs_store(patched_create_engine) -> RDBCustomListStore:
+    with patched_create_engine():
+        return RDBCustomListStore(
+            uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+            poolclass=StaticPool,
+        )
 
 
 def _create_api_and_http_store(
@@ -69,7 +70,7 @@ def _create_api_and_http_store(
 
 
 def _create_custom_list_store(
-    store_type: StoreType, tmpdir=None
+    store_type: StoreType, patched_create_engine=None, tmpdir=None
 ) -> CustomListStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     if store_type == StoreType.REMOTE_HTTP:
@@ -79,20 +80,21 @@ def _create_custom_list_store(
     elif store_type == StoreType.LOCAL_FILESYSTEM:
         return _create_fs_store(tmpdir)
     elif store_type == StoreType.RELATIONAL_DB:
-        return _create_rdbs_store()
+        return _create_rdbs_store(patched_create_engine)
     else:
         raise RuntimeError(f"Invalid store type received: {store_type}")
 
 
 @pytest.fixture(scope="function")
 def create_test_custom_list_store(
+    patched_create_engine,
     tmpdir_factory,
 ) -> typing.Callable[[StoreType], CustomListStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(store_type: StoreType) -> CustomListStore:
         return _create_custom_list_store(
-            store_type, tmpdir_factory.mktemp("data")
+            store_type, patched_create_engine, tmpdir_factory.mktemp("data")
         )
 
     return _make

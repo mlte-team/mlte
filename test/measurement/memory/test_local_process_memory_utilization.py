@@ -18,7 +18,6 @@ from mlte.measurement.units import Units
 from mlte.store.artifact.store import ArtifactStore
 from mlte.validation.validator import Validator
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 from test.support.meta import path_to_support
 
 # The spin duration, in seconds
@@ -103,7 +102,7 @@ def test_memory_validate_failure() -> None:
 
 
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     store, ctx = store_with_context
 

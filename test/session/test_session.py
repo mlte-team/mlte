@@ -13,7 +13,6 @@ from mlte.session.session import (
 )
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
-from test.store.artifact.fixture import create_test_artifact_store  # noqa
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import store_types
 
@@ -50,12 +49,12 @@ def test_session() -> None:
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_eager_context_creation(
-    store_type: str,
-    create_test_artifact_store,  # noqa
+    store_type: StoreType,
+    create_test_artifact_store,
     patched_create_engine,
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
-    if store_type == "http_store":
+    if store_type == StoreType.REMOTE_HTTP:
         return
 
     model = "model"

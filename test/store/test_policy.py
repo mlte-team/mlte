@@ -5,14 +5,13 @@ import pytest
 from mlte.context.model import Model
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
+from mlte.store.base import StoreType
 from mlte.store.user.policy import Policy
 from mlte.store.user.policy.model_policy import create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
-from test.store.artifact.fixture import create_test_artifact_store  # noqa
-from test.store.user.conftest import create_test_user_store  # noqa
-from test.store.utils import store_types  # noqa
+from test.store.utils import store_types
 
 
 @pytest.mark.parametrize(
@@ -62,9 +61,8 @@ class TestPolicy:
         read: bool,
         edit: bool,
         create: bool,
-        store_type: str,
-        request: pytest.FixtureRequest,
-        create_test_user_store,  # noqa
+        store_type: StoreType,
+        create_test_user_store,
     ):
         """Tests that policies can be properly saved and removed."""
         store: UserStore = create_test_user_store(store_type)
@@ -106,9 +104,9 @@ class TestPolicy:
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_create_policy_if_needed(
-    store_type: str,
-    create_test_artifact_store,  # noqa
-    create_test_user_store,  # noqa
+    store_type: StoreType,
+    create_test_artifact_store,
+    create_test_user_store,
 ):
     """Checks that policies for models created outside of backend are properly updated."""
     model_id = "m1"

@@ -18,7 +18,7 @@ from mlte.store.query import Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
-from test.store.catalog.fixture import get_entry_uri, get_test_entry
+from test.store.catalog.conftest import get_entry_uri, get_test_entry
 
 # -----------------------------------------------------------------------------
 # Helpers
@@ -71,7 +71,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 )
 def test_create_no_permissions(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permissions to create."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -86,7 +86,7 @@ def test_create_no_permissions(
     "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
 )
-def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be edited."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -119,7 +119,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_edit_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permissions to edit."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -140,7 +140,7 @@ def test_edit_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
-def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be read."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -166,7 +166,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_read_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permission to read entry"""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -185,7 +185,7 @@ def test_read_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
-def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be listed in a catalog."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -209,7 +209,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_list_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permission to list."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -224,7 +224,7 @@ def test_list_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
-def test_list_all(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_list_all(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -248,7 +248,7 @@ def test_list_all(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_list_all_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permission to list."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -262,9 +262,7 @@ def test_list_all_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.CATALOG),
 )
-def test_list_catalogs(
-    test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+def test_list_catalogs(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -283,7 +281,7 @@ def test_list_catalogs(
     "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.CATALOG),
 )
-def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     """Entries can be deleted."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()

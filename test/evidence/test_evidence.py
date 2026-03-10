@@ -9,11 +9,10 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.model import MeasurementMetadata
 from mlte.store.artifact.store import ArtifactStore
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_load_all(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    store_with_context: Tuple[ArtifactStore, Context],
 ):
     """
     Loading all models of a given type.

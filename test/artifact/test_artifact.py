@@ -24,8 +24,7 @@ from mlte.suite.model import TestSuiteModel
 from mlte.suite.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import store_with_context  # noqa
-from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
+from test.store.artifact.conftest import FX_MODEL_ID, FX_VERSION_ID
 
 
 def test_save_load_session() -> None:
@@ -91,7 +90,7 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_load_all_models(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ):
     """
     Loading all models of a given type.
@@ -108,7 +107,7 @@ def test_load_all_models(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_artifact_parents(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """An artifact can create organizational elements implicitly, on write."""
     store, ctx = store_with_context
@@ -136,7 +135,7 @@ def test_artifact_parents(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_save_no_user(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ):
     """Test null user is the default creator."""
     store, ctx = store_with_context
@@ -155,7 +154,7 @@ def test_save_no_user(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_save_explicit_user(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ):
     """Test explicit user is properly set as creator."""
     store, ctx = store_with_context
@@ -175,7 +174,7 @@ def test_save_explicit_user(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_save_user_from_session(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ):
     """Test that user from session is used when saving artifact."""
     store, ctx = store_with_context
@@ -198,7 +197,7 @@ def test_save_user_from_session(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_save_overrides_session_user(
     artifact_type: ArtifactType,
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    store_with_context: tuple[ArtifactStore, Context],
 ):
     """Test that, even if session user is set, explicit user overrides it."""
     store, ctx = store_with_context

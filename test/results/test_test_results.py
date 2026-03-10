@@ -1,6 +1,4 @@
-"""
-Unit tests for TestResults functionality.
-"""
+"""Unit tests for TestResults functionality."""
 
 from __future__ import annotations
 
@@ -18,10 +16,9 @@ from mlte.suite.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
-def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):  # noqa
+def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):
     store, ctx = store_with_context
 
     test_suite = TestSuite.from_model(

@@ -13,7 +13,7 @@ from mlte.store.catalog.catalog_group import (
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.query import Query
-from test.store.catalog.fixture import get_test_entry_for_store
+from test.store.catalog.conftest import get_test_entry_for_store
 from test.store.utils import store_types
 
 # -----------------------------------------------------------------------------
@@ -23,8 +23,9 @@ from test.store.utils import store_types
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_init_store(
-    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[[StoreType], CatalogStore],
+) -> None:
     """A store can be initialized."""
     _ = create_test_catalog_store(store_type)
 
@@ -34,12 +35,13 @@ def test_init_store(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_catalog_entry(
-    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[[StoreType], CatalogStore],
+) -> None:
     """A catalog store supports catalog entry operations."""
     store: CatalogStore = create_test_catalog_store(store_type)
 
-    test_entry = get_test_entry_for_store(store_name=store_type)
+    test_entry = get_test_entry_for_store(store_type=store_type)
     description2 = "short code sample"
 
     with ManagedCatalogSession(store.session()) as catalog_store:
@@ -74,11 +76,13 @@ def test_catalog_entry(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_catalog_group(
-    store_type: str,
-    create_test_catalog_store: Callable[[str, dict[str, str]], CatalogStore],
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[
+        [StoreType, dict[str, str]], CatalogStore
+    ],
+) -> None:
     """A catalog store group supports general operations."""
-    if store_type == StoreType.REMOTE_HTTP.value:
+    if store_type == StoreType.REMOTE_HTTP:
         # NOTE: MLTE does not support having 2 separate TestAPIs at the same time,
         # as there is one global shared state that they access and overwrite.
         # Thus, two HTTP stores, which require to TestAPIs, won't work properly.
@@ -100,10 +104,10 @@ def test_catalog_group(
     store_group.add_catalog(store2_id, store2)
 
     test_entry1 = get_test_entry_for_store(
-        id="ce1", store_name=store_type, catalog_id=store1_id
+        id="ce1", store_type=store_type, catalog_id=store1_id
     )
     test_entry2 = get_test_entry_for_store(
-        id="ce2", store_name=store_type, catalog_id=store2_id
+        id="ce2", store_type=store_type, catalog_id=store2_id
     )
 
     with ManagedCatalogGroupSession(store_group.session()) as group_session:
@@ -121,8 +125,9 @@ def test_catalog_group(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_list_details(
-    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[[StoreType], CatalogStore],
+) -> None:
     """A catalog store store supports queries."""
     store: CatalogStore = create_test_catalog_store(store_type)
 
@@ -131,13 +136,13 @@ def test_list_details(
             id="e1",
             description="code 1",
             code="print nothing",
-            store_name=store_type,
+            store_type=store_type,
         )
         e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
-            store_name=store_type,
+            store_type=store_type,
         )
 
         for entry in [e0, e1]:
@@ -149,8 +154,9 @@ def test_list_details(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_search(
-    store_type: str, create_test_catalog_store: Callable[[str], CatalogStore]
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[[StoreType], CatalogStore],
+) -> None:
     """A catalog store store supports queries."""
     store: CatalogStore = create_test_catalog_store(store_type)
 
@@ -159,13 +165,13 @@ def test_search(
             id="e1",
             description="code 1",
             code="print nothing",
-            store_name=store_type,
+            store_type=store_type,
         )
         e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
-            store_name=store_type,
+            store_type=store_type,
         )
 
         for entry in [e0, e1]:
@@ -178,9 +184,11 @@ def test_search(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_invalid_chars(
-    store_type: str,
-    create_test_catalog_store: Callable[[str, dict[str, str]], CatalogStore],
-) -> None:  # noqa
+    store_type: StoreType,
+    create_test_catalog_store: Callable[
+        [StoreType, dict[str, str]], CatalogStore
+    ],
+) -> None:
     """A catalog store store supports invalid storage chars."""
     catalog_id = "weird/catalog_id"
     store: CatalogStore = create_test_catalog_store(
@@ -190,7 +198,7 @@ def test_invalid_chars(
 
     entry_id = "weird/name"
     test_entry = get_test_entry_for_store(
-        store_name=store_type, id=entry_id, catalog_id=catalog_id
+        store_type=store_type, id=entry_id, catalog_id=catalog_id
     )
 
     with ManagedCatalogSession(store.session()) as catalog_store:

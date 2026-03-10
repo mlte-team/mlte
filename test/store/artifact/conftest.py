@@ -45,11 +45,12 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     )
 
 
-def create_rdbs_store() -> RelationalDBArtifactStore:
-    return RelationalDBArtifactStore(
-        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        poolclass=StaticPool,
-    )
+def create_rdbs_store(patched_create_engine) -> RelationalDBArtifactStore:
+    with patched_create_engine():
+        return RelationalDBArtifactStore(
+            StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+            poolclass=StaticPool,
+        )
 
 
 def create_api_and_http_store(
@@ -77,8 +78,11 @@ def store_types_and_artifact_types() -> (
 
 @pytest.fixture(scope="function")
 def create_test_artifact_store(
+    patched_create_engine,
     tmpdir_factory,
 ) -> typing.Callable[[str], ArtifactStore]:
+    """Fixture to manually create a CustomList store."""
+
     def _make(store_type) -> ArtifactStore:
         if store_type == StoreType.REMOTE_HTTP:
             return create_api_and_http_store()
@@ -87,7 +91,7 @@ def create_test_artifact_store(
         elif store_type == StoreType.LOCAL_FILESYSTEM:
             return create_fs_store(tmpdir_factory.mktemp("data"))
         elif store_type == StoreType.RELATIONAL_DB.value:
-            return create_rdbs_store()
+            return create_rdbs_store(patched_create_engine)
         else:
             raise RuntimeError(f"Invalid store type received: {store_type}")
 

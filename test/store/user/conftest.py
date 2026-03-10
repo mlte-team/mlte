@@ -5,7 +5,6 @@ from __future__ import annotations
 import typing
 from pathlib import Path
 from typing import Optional
-from unittest.mock import patch
 
 import pytest
 from sqlalchemy.pool import StaticPool
@@ -48,12 +47,13 @@ def _create_fs_store(path: Path) -> FileSystemUserStore:
     )
 
 
-def _create_rdbs_store() -> RelationalDBUserStore:
-    return RelationalDBUserStore(
-        uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
+def _create_rdbs_store(patched_create_engine) -> RelationalDBUserStore:
+    with patched_create_engine():
+        return RelationalDBUserStore(
+            uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
 
 
 def _create_api_and_http_store(
@@ -67,7 +67,9 @@ def _create_api_and_http_store(
     return HttpUserStore(uri=uri, client=client)
 
 
-def _create_user_store(store_type: StoreType, tmpdir=None) -> UserStore:
+def _create_user_store(
+    store_type: StoreType, patched_create_engine=None, tmpdir=None
+) -> UserStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     if store_type == StoreType.REMOTE_HTTP:
         return _create_api_and_http_store()
@@ -76,7 +78,7 @@ def _create_user_store(store_type: StoreType, tmpdir=None) -> UserStore:
     elif store_type == StoreType.LOCAL_FILESYSTEM:
         return _create_fs_store(tmpdir)
     elif store_type == StoreType.RELATIONAL_DB:
-        return _create_rdbs_store()
+        return _create_rdbs_store(patched_create_engine)
     else:
         raise RuntimeError(f"Invalid store type received: {store_type}")
 
@@ -84,23 +86,14 @@ def _create_user_store(store_type: StoreType, tmpdir=None) -> UserStore:
 @pytest.fixture(scope="function")
 def create_test_user_store(
     tmpdir_factory,
+    patched_create_engine,
 ) -> typing.Callable[[StoreType], UserStore]:
     """Fixture used to manually create a test store."""
 
     def _make(store_type: StoreType) -> UserStore:
         """Internal function used to capture the tmpdir_factory fixture result."""
-        return _create_user_store(store_type, tmpdir_factory.mktemp("data"))
+        return _create_user_store(
+            store_type, patched_create_engine, tmpdir_factory.mktemp("data")
+        )
 
     return _make
-
-
-@pytest.fixture(scope="function")
-def patched_create_user_store(tmpdir_factory):
-    """Fixture used to patch the store factory into using the test factory."""
-    with patch(
-        "mlte.store.user.factory.create_user_store",
-        side_effect=lambda uri: _create_user_store(
-            StoreURI.from_string(uri).type
-        ),
-    ):
-        yield create_test_user_store(tmpdir_factory)
