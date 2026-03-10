@@ -5,6 +5,8 @@ from typing import List
 import pytest
 
 import mlte.store.error as errors
+from mlte.store.base import StoreType
+from mlte.store.user.policy import user_policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import (
@@ -15,7 +17,6 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-from test.store.user.fixture import create_test_user_store  # noqa
 from test.store.utils import store_types
 
 TEST_MOD_ID = "mod1"
@@ -43,14 +44,13 @@ def get_test_user() -> UserWithPassword:
 def get_test_group() -> Group:
     """Helper to get a group structure."""
     group_name = "g1"
-    test_user = Group(name=group_name, permissions=get_test_permissions())
+    test_user = Group(name=group_name, permissions=get_default_permissions())
     return test_user
 
 
 def setup_user_groups(user: UserWithPassword, user_store: UserStoreSession):
     """Helper to set up groups."""
     for group in user.groups:
-        setup_group_permisisons(group, user_store)
         user_store.group_mapper.create(group)
 
 
@@ -58,6 +58,14 @@ def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
     """Helper to set up permissions."""
     for permission in test_group.permissions:
         user_store.permission_mapper.create(permission)
+
+
+def get_default_permissions() -> list[Permission]:
+    """Helper to get some of the default permissions."""
+    permissions: list[Permission] = []
+    for resource_type in ResourceType:
+        permissions.append(Permission(resource_type=resource_type))
+    return permissions
 
 
 def get_test_permissions() -> List[Permission]:
@@ -81,7 +89,7 @@ def get_test_permissions() -> List[Permission]:
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_init_store(store_type: str, create_test_user_store) -> None:  # noqa
+def test_init_store(store_type: StoreType, create_test_user_store) -> None:
     """A store can be initialized."""
     _ = create_test_user_store(store_type)
 
@@ -90,7 +98,7 @@ def test_init_store(store_type: str, create_test_user_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_user(store_type: str, create_test_user_store) -> None:  # noqa
+def test_user(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports user operations."""
     store: UserStore = create_test_user_store(store_type)
 
@@ -98,8 +106,13 @@ def test_user(store_type: str, create_test_user_store) -> None:  # noqa
     email2 = "email2@server.com"
     name2 = "new name"
 
+    # if store_type
+
     with ManagedUserSession(store.session()) as user_store:
         original_users = user_store.user_mapper.list()
+        test_user = user_policy.set_default_user_policies(
+            test_user, user_store.policy_store
+        )
 
         # Set up dependent groups.
         setup_user_groups(test_user, user_store)
@@ -136,9 +149,7 @@ def test_user(store_type: str, create_test_user_store) -> None:  # noqa
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_user_group_change(
-    store_type: str, create_test_user_store  # noqa
-) -> None:  # noqa
+def test_user_group_change(store_type: str, create_test_user_store) -> None:
     """Test proper syncchronization between users and groups."""
     store: UserStore = create_test_user_store(store_type)
 
@@ -164,7 +175,7 @@ def test_user_group_change(
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_group(store_type: str, create_test_user_store) -> None:  # noqa
+def test_group(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports group operations."""
     store: UserStore = create_test_user_store(store_type)
 
@@ -179,7 +190,6 @@ def test_group(store_type: str, create_test_user_store) -> None:  # noqa
         original_groups = user_store.group_mapper.list()
 
         # Set up needed permissions.
-        setup_group_permisisons(test_group, user_store)
         user_store.permission_mapper.create(p3)
 
         # Test creating a group.

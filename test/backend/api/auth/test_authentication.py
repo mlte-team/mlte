@@ -5,18 +5,18 @@ import pytest
 from mlte.backend.api.auth import authentication
 from mlte.backend.core import state_stores
 from mlte.backend.core.state import state
+from mlte.store.base import StoreType
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import UserWithPassword
-from test.store.user.fixture import create_test_user_store  # noqa
-from test.store.utils import store_types  # noqa
+from test.store.utils import store_types
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
 
 
-def set_user_store_in_state(store_type: str, create_test_store):  # noqa
+def set_user_store_in_state(store_type: StoreType, create_test_store):
     """Sets an provided fixture user store in the backend state."""
     store: UserStore = create_test_store(store_type)
     state.stores.set_user_store(store)
@@ -52,8 +52,8 @@ def state_prep():
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_authenticate_valid_user(
-    store_type: str, create_test_user_store  # noqa
-) -> None:  # noqa
+    store_type: StoreType, create_test_user_store
+) -> None:
     """Checks that an existing user can be properly authenticated."""
     username = "myuser"
     password = "mypassword"
@@ -73,7 +73,7 @@ def test_authenticate_valid_user(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_authenticate_inexistent_user(
-    store_type: str, create_test_user_store  # noqa
+    store_type: StoreType, create_test_user_store
 ) -> None:
     """Checks that an inexistent user is not authenticated."""
     username = "myuser"
@@ -92,7 +92,7 @@ def test_authenticate_inexistent_user(
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_authenticate_wrong_password(
-    store_type: str, create_test_user_store  # noqa
+    store_type: StoreType, create_test_user_store
 ) -> None:
     """Checks that a user with a wrong password can not be properly authenticated."""
     username = "myuser"

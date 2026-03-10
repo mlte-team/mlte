@@ -11,7 +11,7 @@ from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
 from test.store.artifact.fixture import create_test_artifact_store  # noqa
-from test.store.user.fixture import create_test_user_store  # noqa
+from test.store.user.conftest import create_test_user_store  # noqa
 from test.store.utils import store_types  # noqa
 
 
