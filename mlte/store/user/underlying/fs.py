@@ -7,15 +7,15 @@ from typing import Any, List, Union
 
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
-from mlte.store.user.policy import user_policy
-from mlte.store.user.policy.policy_store import PolicyStore
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,

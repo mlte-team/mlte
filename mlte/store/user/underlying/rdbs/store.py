@@ -11,15 +11,15 @@ from sqlalchemy.orm import DeclarativeBase, Session
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.rdbs_storage import RDBStorage
-from mlte.store.user.policy import user_policy
-from mlte.store.user.policy.policy_store import PolicyStore
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.store.user.underlying.rdbs.metadata import (
     DBBase,
     DBGroup,

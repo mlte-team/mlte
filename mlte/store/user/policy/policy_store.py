@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import mlte.store.error as errors
+from mlte.store.user.mappers import GroupMapper, PermissionMapper
 from mlte.store.user.policy import Policy
-from mlte.store.user.store_session import GroupMapper, PermissionMapper
 
 
 class PolicyStore:

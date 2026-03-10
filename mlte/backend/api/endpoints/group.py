@@ -167,9 +167,10 @@ def list_permission_details(
 
 @router.get("s/permission/{permission_str}")
 def read_permission(
-    *permission_str: str,
+    *,
+    permission_str: str,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> Permission:
     """
     Read a permission, regardless of whether it is assigned to a group or not.
     :return: A permission

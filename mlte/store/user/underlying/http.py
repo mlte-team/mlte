@@ -6,13 +6,13 @@ from typing import Any, List, Optional, Union
 from mlte.store.base import ResourceMapper, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpStorage
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -186,6 +186,6 @@ class HttpPermissionMapper(PermissionMapper):
         response = self.storage.get("s/permissions/details")
         return [permission for permission in response][offset : offset + limit]
 
-    def read(self, permission_str: str, context: Any = None) -> Group:
+    def read(self, permission_str: str, context: Any = None) -> Permission:
         response = self.storage.get(id=f"s/permission/{permission_str}")
         return Permission(**response)

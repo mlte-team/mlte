@@ -92,7 +92,7 @@ async def login_for_access_token(
     with state_stores.artifact_store_session() as artifact_store:
         with state_stores.user_store_session() as user_store:
             model_policy.create_model_policies_if_needed(
-                artifact_store, user_store
+                artifact_store, user_store.policy_store
             )
 
     # Create and return token using username as data.

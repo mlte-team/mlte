@@ -49,7 +49,7 @@ def create_model(
     with state_stores.user_store_session() as user_store:
         try:
             current_user = model_policy.create_model_policy(
-                created_model.identifier, current_user
+                created_model.identifier, current_user, user_store.policy_store
             )
             user_store.user_mapper.edit(current_user)
         except Exception as ex:

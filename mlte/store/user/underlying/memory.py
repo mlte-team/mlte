@@ -6,15 +6,15 @@ from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.policy import user_policy
-from mlte.store.user.policy.policy_store import PolicyStore
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,

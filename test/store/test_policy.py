@@ -5,7 +5,8 @@ import pytest
 from mlte.context.model import Model
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.user.policy import Policy, create_model_policies_if_needed
+from mlte.store.user.policy import Policy
+from mlte.store.user.policy.model_policy import create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
@@ -72,18 +73,18 @@ class TestPolicy:
         with ManagedUserSession(store.session()) as user_store:
             if not id and (create or read or edit):
                 # Store is iniitialized with non-id policies with all permissions
-                assert Policy.is_stored(policy, user_store)
+                assert user_store.policy_store.is_stored(policy)
             elif policy.groups:
                 # Only need to save if current policy has any groups.
-                assert not policy.is_stored(user_store)
-                policy.save_to_store(user_store)
+                assert not user_store.policy_store.is_stored(policy)
+                user_store.policy_store.save_to_store(policy)
 
-            assert policy.is_stored(user_store)
+            assert user_store.policy_store.is_stored(policy)
 
             # Only test remove if policy has any groups.
             if policy.groups:
-                policy.remove_from_store(user_store)
-                assert not policy.is_stored(user_store)
+                user_store.policy_store.remove_from_store(policy)
+                assert not user_store.policy_store.is_stored(policy)
 
     @staticmethod
     def test_assign_to_user(
@@ -126,13 +127,13 @@ def test_create_policy_if_needed(
 
             # Add policies.
             create_model_policies_if_needed(
-                artifact_store_session, user_store_session
+                artifact_store_session, user_store_session.policy_store
             )
 
             # Check policies now exist.
-            assert policy.is_stored(user_store_session)
+            assert user_store_session.policy_store.is_stored(policy)
 
             # Check we can call create_model_policies again with no issues.
             create_model_policies_if_needed(
-                artifact_store_session, user_store_session
+                artifact_store_session, user_store_session.policy_store
             )

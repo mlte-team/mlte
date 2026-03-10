@@ -139,8 +139,9 @@ def read_user(
     :param username: The username
     :return: The read user
     """
+    # For the special USER_ME_ID, get the current user's username.
     if username == USER_ME_ID:
-        return current_user
+        username = current_user.username
 
     with state_stores.user_store_session() as user_store:
         try:
