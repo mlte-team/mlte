@@ -13,8 +13,7 @@ from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
 from mlte.context.model import Model, Version
-from mlte.store.user.policy import Policy, model_policy
-from mlte.user.model import ResourceType
+from mlte.store.user.policy import model_policy
 
 # The router exported by this submodule
 router = APIRouter()

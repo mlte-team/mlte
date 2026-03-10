@@ -9,7 +9,6 @@ from mlte.backend.api.auth.http_auth_exception import HTTPTokenException
 from mlte.backend.core import state_stores
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
-from mlte.store.user import policy
 from mlte.store.user.policy import model_policy
 
 GRANT_TYPE_PASSWORD = "password"
