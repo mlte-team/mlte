@@ -15,10 +15,16 @@ from mlte.store.user.store_session import ManagedUserSession
 
 
 class ExportSpec(TypedDict):
-    """Class used to select MLTE store objects to be exported."""
+    """TypedDict used to select MLTE store objects to be exported."""
+
     models: dict[str, list[str]]
+    """Dict of models to be exported. Key is model ID, value is list of versions."""
+
     custom_lists: list[CustomListName]
+    """List of custom lists to be exported."""
+
     users: list[str]
+    """List of user IDs for users to be exported."""
 
 
 def library_export(export_spec: ExportSpec, output_path: Path) -> None:
