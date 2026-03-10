@@ -15,11 +15,7 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
 from test.store.artifact.fixture import create_test_artifact_store  # noqa
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import (  # noqa
-    patched_create_engine,
-    shared_sqlite_engine,
-)
-from test.store.utils import store_types  # noqa
+from test.store.utils import store_types
 
 
 @pytest.fixture(autouse=True)
@@ -56,7 +52,7 @@ def test_session() -> None:
 def test_eager_context_creation(
     store_type: str,
     create_test_artifact_store,  # noqa
-    patched_create_engine,  # noqa
+    patched_create_engine,
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
     if store_type == "http_store":

@@ -5,16 +5,12 @@ import pytest
 from mlte.session.session_stores import SessionStores, setup_stores
 from mlte.store.base import StoreType, StoreURI
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import (  # noqa
-    patched_create_engine,
-    shared_sqlite_engine,
-)
 
 
 def create_test_session_stores(
     uri_type: StoreType,
     tmp_path,
-    patched_create_engine,  # noqa
+    patched_create_engine,
     catalog_uris: dict[str, str] = {},
 ) -> SessionStores:
     """Creates appropriate test session stores."""
@@ -48,9 +44,7 @@ def test_add_catalog_store_from_uri():
 
 
 @pytest.mark.parametrize("uri_type", [type for type in StoreType])
-def test_setup_stores(
-    uri_type: StoreType, tmp_path, patched_create_engine  # noqa
-):
+def test_setup_stores(uri_type: StoreType, tmp_path, patched_create_engine):
     session_stores = create_test_session_stores(
         uri_type, tmp_path, patched_create_engine
     )
@@ -63,7 +57,7 @@ def test_setup_stores(
 
 @pytest.mark.parametrize("uri_type", [type for type in StoreType])
 def test_setup_stores_with_catalog_uris(
-    uri_type: StoreType, tmp_path, patched_create_engine  # noqa
+    uri_type: StoreType, tmp_path, patched_create_engine
 ):
     cat_id = "catalog1"
     catalog_uris = {

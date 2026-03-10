@@ -1,5 +1,5 @@
-"""
-Loading common fixtures used in tests in this and child folders.
-"""
+"""Loading common fixtures used in tests in this and child folders."""
 
-from test.store.artifact.fixture import store_with_context  # noqa
+from test.store.artifact.fixture import store_with_context
+
+__all__ = ["store_with_context"]

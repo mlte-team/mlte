@@ -16,10 +16,6 @@ from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.fixture import get_test_entry_for_store
 from test.store.defaults import IN_MEMORY_SQLITE_DB
-from test.store.fixture import (  # noqa
-    patched_create_engine,
-    shared_sqlite_engine,
-)
 
 URIS = [
     StoreURI.create_uri_string(StoreType.LOCAL_MEMORY, ""),
@@ -35,7 +31,7 @@ INVALID_USER = "not a user"
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_artifact_cross_validators(
-    store_uri: str, tmp_path: Path, patched_create_engine  # noqa
+    store_uri: str, tmp_path: Path, patched_create_engine
 ) -> None:
     """Test artifact cross validators."""
 
@@ -131,7 +127,7 @@ def test_artifact_cross_validators(
 
 @pytest.mark.parametrize("store_uri", URIS)
 def test_catalog_cross_validators(
-    store_uri: str, tmp_path: Path, patched_create_engine  # noqa
+    store_uri: str, tmp_path: Path, patched_create_engine
 ) -> None:
     """Test catalog cross validators."""
 
