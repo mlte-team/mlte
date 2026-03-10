@@ -15,6 +15,7 @@ from mlte.store.user.store_session import ManagedUserSession
 
 
 class ExportSpec(TypedDict):
+    """Class used to select MLTE store objects to be exported."""
     models: dict[str, list[str]]
     custom_lists: list[CustomListName]
     users: list[str]
