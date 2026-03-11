@@ -3,28 +3,15 @@
 import pytest
 
 from mlte.backend.api.auth import authentication
-from mlte.backend.core import state_stores
-from mlte.backend.core.state import state
 from mlte.store.base import StoreType
 from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import UserStoreSession
+from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import UserWithPassword
 from test.store.utils import store_types
 
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
-
-
-def set_user_store_in_state(store_type: StoreType, create_test_store):
-    """Sets an provided fixture user store in the backend state."""
-    store: UserStore = create_test_store(store_type)
-    state.stores.set_user_store(store)
-
-
-def clear_state():
-    """Clears the the backend state."""
-    state.reset()
 
 
 def set_test_user(
@@ -36,13 +23,6 @@ def set_test_user(
         password=password,
     )
     user_store_session.user_mapper.create(user)
-
-
-@pytest.fixture(autouse=True)
-def state_prep():
-    yield
-    # Reset state after every test.
-    clear_state()
 
 
 # -----------------------------------------------------------------------------
@@ -59,9 +39,9 @@ def test_authenticate_valid_user(
     password = "mypassword"
 
     # Set user store in state before each test.
-    set_user_store_in_state(store_type, create_test_user_store)
+    user_store: UserStore = create_test_user_store(store_type)
 
-    with state_stores.user_store_session() as user_store_sesion:
+    with ManagedUserSession(user_store.session()) as user_store_sesion:
         set_test_user(username, password, user_store_sesion)
 
         success = authentication.authenticate_user(
@@ -80,9 +60,9 @@ def test_authenticate_inexistent_user(
     password = "mypassword"
 
     # Set user store in state before each test.
-    set_user_store_in_state(store_type, create_test_user_store)
+    user_store: UserStore = create_test_user_store(store_type)
 
-    with state_stores.user_store_session() as user_store_sesion:
+    with ManagedUserSession(user_store.session()) as user_store_sesion:
         success = authentication.authenticate_user(
             username, password, user_store_sesion
         )
@@ -99,9 +79,9 @@ def test_authenticate_wrong_password(
     password = "mypassword"
 
     # Set user store in state before each test.
-    set_user_store_in_state(store_type, create_test_user_store)
+    user_store: UserStore = create_test_user_store(store_type)
 
-    with state_stores.user_store_session() as user_store_sesion:
+    with ManagedUserSession(user_store.session()) as user_store_sesion:
         set_test_user(username, password, user_store_sesion)
 
         success = authentication.authenticate_user(
