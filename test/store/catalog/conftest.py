@@ -111,12 +111,12 @@ def create_test_catalog_store(
     """Fixture to manually create a CustomList store."""
 
     def _make(
-        store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
+        store_type: StoreType, catalog_id: dict[str, str] = catalog_uris
     ) -> CatalogStore:
         with patched_create_engine():
             return _create_catalog_store(
                 StoreURI.create_uri_string(store_type),
-                catalog_uris,
+                catalog_id,
                 tmpdir_factory,
             )
 

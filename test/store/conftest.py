@@ -68,12 +68,15 @@ def patched_setup_stores(tmpdir_factory, patched_create_engine):
         side_effect=_create_custom_list_store_with_fixtures,
     ), patch(
         "mlte.store.custom_list.initial_custom_lists.create_custom_list_store",
-        side_effect=_create_custom_list_store_with_fixtures,        
+        side_effect=_create_custom_list_store_with_fixtures,
     ), patch(
         "mlte.store.artifact.factory.create_artifact_store",
         side_effect=_create_artifact_store_with_fixtures,
     ), patch(
         "mlte.store.catalog.factory.create_catalog_store",
+        side_effect=_create_catalog_store_with_fixtures,
+    ), patch(
+        "mlte.store.catalog.sample_catalog.create_catalog_store",
         side_effect=_create_catalog_store_with_fixtures,
     ), patched_create_engine():
         yield setup_stores
