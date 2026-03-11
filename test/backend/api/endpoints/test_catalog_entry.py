@@ -271,10 +271,15 @@ def test_list_catalogs(test_api_fixture, api_user: UserWithPassword) -> None:
 
     res = test_client.get(f"{url}")
     assert res.status_code == codes.OK
-    assert len(res.json()) == 1  # Default catalog only
-    catalog = CatalogReply(**res.json()[0])
-    assert catalog.read_only is False
-    assert catalog.type == StoreType.LOCAL_MEMORY.value
+    assert len(res.json()) == 2  # Sample and local catalog
+
+    catalog_list: list[CatalogReply] = res.json()
+    sample_catalog = CatalogReply(**catalog_list[0])
+    assert sample_catalog.read_only is True
+    assert sample_catalog.type == StoreType.LOCAL_MEMORY.value
+    local_catalog = CatalogReply(**catalog_list[1])
+    assert local_catalog.read_only is False
+    assert local_catalog.type == StoreType.LOCAL_MEMORY.value
 
 
 @pytest.mark.parametrize(
@@ -335,16 +340,21 @@ def test_search(
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
 
-    entry = get_test_entry()
-    create_entry_using_admin(entry, test_api)
+    test_entry = get_test_entry()
+    create_entry_using_admin(test_entry, test_api)
 
     url = get_entry_uri()
     res = test_client.post(f"{url}/search", json=Query().to_json())
     assert res.status_code == codes.OK
 
     collection = res.json()
-    assert len(collection) == 1
+    assert len(collection) >= 1
 
-    read = CatalogEntry(**collection[0])
-    read.header.created = -1  # To ignore times when comparing
-    assert read == entry
+    read: Optional[CatalogEntry] = None
+    for entry_json in collection:
+        entry = CatalogEntry(**entry_json)
+        if entry.get_identifier() == test_entry.get_identifier():
+            read = entry
+            read.header.created = -1  # To ignore times when comparing
+
+    assert read == test_entry
