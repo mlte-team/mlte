@@ -48,10 +48,9 @@ def get_test_group() -> Group:
     return test_user
 
 
-def setup_user_groups(user: UserWithPassword, user_store: UserStoreSession):
+def setup_test_group(user_store: UserStoreSession):
     """Helper to set up groups."""
-    for group in user.groups:
-        user_store.group_mapper.create(group)
+    user_store.group_mapper.create(get_test_group())
 
 
 def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
@@ -115,7 +114,7 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
         )
 
         # Set up dependent groups.
-        setup_user_groups(test_user, user_store)
+        setup_test_group(user_store)
 
         # Test creating a user.
         user_store.user_mapper.create(test_user)
@@ -159,7 +158,7 @@ def test_user_group_change(
 
     with ManagedUserSession(store.session()) as user_store:
         # Set up dependent groups.
-        setup_user_groups(test_user, user_store)
+        setup_test_group(user_store)
 
         # Create a user.
         user_store.user_mapper.create(test_user)
