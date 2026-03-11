@@ -13,7 +13,6 @@ from mlte.session.session import (
 )
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
-from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import store_types
 
 
@@ -51,7 +50,6 @@ def test_session() -> None:
 def test_eager_context_creation(
     store_type: StoreType,
     create_test_artifact_store,
-    patched_create_engine,
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
     if store_type == StoreType.REMOTE_HTTP:
@@ -61,11 +59,7 @@ def test_eager_context_creation(
     version = "v0.0.1"
     store: ArtifactStore = create_test_artifact_store(store_type)
 
-    if store.uri.uri == IN_MEMORY_SQLITE_DB:
-        with patched_create_engine():
-            set_store(store.uri.uri)
-    else:
-        set_store(store.uri.uri)
+    set_store(store.uri.uri)
 
     set_context(model, version, lazy=False)
     s = session()

@@ -86,16 +86,14 @@ def _create_custom_list_store(uri: str, tmpdir_factory) -> CustomListStore:
 @pytest.fixture(scope="function")
 def create_test_custom_list_store(
     tmpdir_factory,
-    patched_create_engine,
 ) -> typing.Callable[[StoreType], CustomListStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(store_type: StoreType) -> CustomListStore:
-        with patched_create_engine():
-            return _create_custom_list_store(
-                StoreURI.create_uri_string(store_type),
-                tmpdir_factory,
-            )
+        return _create_custom_list_store(
+            StoreURI.create_uri_string(store_type),
+            tmpdir_factory,
+        )
 
     return _make
 

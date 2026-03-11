@@ -93,16 +93,14 @@ def _create_artifact_store(uri: str, tmpdir_factory) -> ArtifactStore:
 @pytest.fixture(scope="function")
 def create_test_artifact_store(
     tmpdir_factory,
-    patched_create_engine,
 ) -> typing.Callable[[StoreType], ArtifactStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(store_type: StoreType) -> ArtifactStore:
-        with patched_create_engine():
-            return _create_artifact_store(
-                StoreURI.create_uri_string(store_type),
-                tmpdir_factory,
-            )
+        return _create_artifact_store(
+            StoreURI.create_uri_string(store_type),
+            tmpdir_factory,
+        )
 
     return _make
 

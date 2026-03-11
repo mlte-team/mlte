@@ -84,16 +84,14 @@ def _create_user_store(uri: str, tmpdir_factory) -> UserStore:
 @pytest.fixture(scope="function")
 def create_test_user_store(
     tmpdir_factory,
-    patched_create_engine,
 ) -> typing.Callable[[StoreType], UserStore]:
     """Fixture used to manually create a test store."""
 
     def _make(store_type: StoreType) -> UserStore:
         """Internal function used to capture the tmpdir_factory fixture result."""
-        with patched_create_engine():
-            return _create_user_store(
-                StoreURI.create_uri_string(store_type),
-                tmpdir_factory,
-            )
+        return _create_user_store(
+            StoreURI.create_uri_string(store_type),
+            tmpdir_factory,
+        )
 
     return _make

@@ -106,19 +106,18 @@ def _create_catalog_store(
 
 @pytest.fixture(scope="function")
 def create_test_catalog_store(
-    tmpdir_factory, patched_create_engine, catalog_uris: dict[str, str] = {}
+    tmpdir_factory, catalog_uris: dict[str, str] = {}
 ) -> typing.Callable[[StoreType, dict[str, str]], CatalogStore]:
     """Fixture to manually create a CustomList store."""
 
     def _make(
         store_type: StoreType, catalog_id: dict[str, str] = catalog_uris
     ) -> CatalogStore:
-        with patched_create_engine():
-            return _create_catalog_store(
-                StoreURI.create_uri_string(store_type),
-                catalog_id,
-                tmpdir_factory,
-            )
+        return _create_catalog_store(
+            StoreURI.create_uri_string(store_type),
+            catalog_id,
+            tmpdir_factory,
+        )
 
     return _make
 
