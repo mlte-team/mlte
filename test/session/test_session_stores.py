@@ -4,46 +4,8 @@ import pytest
 
 from mlte.session.session_stores import SessionStores
 from mlte.store.base import StoreType, StoreURI
-from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.session.conftest import create_test_session_stores
 from test.store.utils import store_types
-
-# -------------------------------------------------------------------------------------
-# Helpers
-# -------------------------------------------------------------------------------------
-
-
-def create_test_session_stores(
-    store_type: StoreType,
-    tmp_path,
-    patched_setup_stores,
-    catalog_uris: dict[str, str] = {},
-) -> SessionStores:
-    """Creates appropriate test session stores."""
-    # We can't test setup_stores with a REMOTE store, since this would require setting up the session stores,
-    # and then the TestAPI sets up its own session stores to act as a backend; however, since only one
-    # state session is supported, this tries to overwrite the previous set up and it would fail.
-    # TODO: Isolate how TestAPI works so that this can be tested.
-    if store_type == StoreType.REMOTE_HTTP:
-        pytest.skip()
-
-    uri_string = create_uri_string(store_type, tmp_path)
-    session_stores: SessionStores = patched_setup_stores(
-        uri_string, catalog_uris
-    )
-
-    return session_stores
-
-
-def create_uri_string(store_type: StoreType, tmp_path) -> str:
-    if store_type == StoreType.RELATIONAL_DB:
-        uri_string = IN_MEMORY_SQLITE_DB
-    else:
-        uri_string = StoreURI.create_uri_string(
-            store_type,
-            tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
-        )
-    return uri_string
-
 
 # -------------------------------------------------------------------------------------
 # Tests

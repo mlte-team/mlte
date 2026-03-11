@@ -8,20 +8,16 @@ import pytest
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.session.session_stores import SessionStores, setup_stores
+from mlte.session.session_stores import SessionStores
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.base import StoreType, StoreURI
+from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import ManagedCatalogGroupSession
 from test.fixture.artifact import ArtifactModelFactory
+from test.session.conftest import create_test_session_stores
 from test.store.artifact.test_underlying import check_artifact_writing
-from test.store.catalog.fixture import get_test_entry_for_store
-from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.catalog.conftest import get_test_entry_for_store
+from test.store.utils import store_types
 
-URIS = [
-    StoreURI.create_uri_string(StoreType.LOCAL_MEMORY, ""),
-    StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, ""),
-    IN_MEMORY_SQLITE_DB,
-]
 MODEL_ID = "model0"
 VERISON_ID = "version0"
 ARTIFACT_ID = "myid"
@@ -29,20 +25,15 @@ VALID_USER = "admin"
 INVALID_USER = "not a user"
 
 
-@pytest.mark.parametrize("store_uri", URIS)
+@pytest.mark.parametrize("store_type", store_types())
 def test_artifact_cross_validators(
-    store_uri: str, tmp_path: Path, patched_create_engine
+    store_type: StoreType, tmp_path: Path, patched_setup_stores
 ) -> None:
     """Test artifact cross validators."""
 
-    if StoreURI.from_string(store_uri).type == StoreType.LOCAL_FILESYSTEM:
-        store_uri += str(tmp_path)
-
-    if store_uri == IN_MEMORY_SQLITE_DB:
-        with patched_create_engine():
-            stores = setup_stores(store_uri)
-    else:
-        stores = setup_stores(store_uri)
+    stores = create_test_session_stores(
+        store_type, tmp_path, patched_setup_stores
+    )
 
     with ManagedArtifactSession(
         stores.artifact_store.session()
@@ -125,22 +116,17 @@ def test_artifact_cross_validators(
             )
 
 
-@pytest.mark.parametrize("store_uri", URIS)
+@pytest.mark.parametrize("store_type", store_types())
 def test_catalog_cross_validators(
-    store_uri: str, tmp_path: Path, patched_create_engine
+    store_type: StoreType, tmp_path: Path, patched_setup_stores
 ) -> None:
     """Test catalog cross validators."""
 
-    if StoreURI.from_string(store_uri).type == StoreType.LOCAL_FILESYSTEM:
-        store_uri += str(tmp_path)
+    stores = create_test_session_stores(
+        store_type, tmp_path, patched_setup_stores
+    )
 
-    if store_uri == IN_MEMORY_SQLITE_DB:
-        with patched_create_engine():
-            stores = setup_stores(store_uri)
-    else:
-        stores = setup_stores(store_uri)
-
-    entry = get_test_entry_for_store()
+    entry = get_test_entry_for_store(store_type)
 
     with ManagedCatalogGroupSession(
         stores.catalog_stores.session()
