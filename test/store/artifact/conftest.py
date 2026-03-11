@@ -25,7 +25,7 @@ from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
 
-def create_memory_store() -> InMemoryStore:
+def _create_memory_store() -> InMemoryStore:
     return typing.cast(
         InMemoryStore,
         create_artifact_store(
@@ -34,7 +34,7 @@ def create_memory_store() -> InMemoryStore:
     )
 
 
-def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
+def _create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
         create_artifact_store(
@@ -45,14 +45,14 @@ def create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     )
 
 
-def create_rdbs_store() -> RelationalDBArtifactStore:
+def _create_rdbs_store() -> RelationalDBArtifactStore:
     return RelationalDBArtifactStore(
         StoreURI.from_string(IN_MEMORY_SQLITE_DB),
         poolclass=StaticPool,
     )
 
 
-def create_api_and_http_store(
+def _create_api_and_http_store(
     user: Optional[UserWithPassword] = None,
 ) -> HttpArtifactStore:
     """
@@ -79,13 +79,13 @@ def _create_artifact_store(uri: str, tmpdir_factory) -> ArtifactStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     store_type = StoreURI.from_string(uri).type
     if store_type == StoreType.REMOTE_HTTP:
-        return create_api_and_http_store()
+        return _create_api_and_http_store()
     elif store_type == StoreType.LOCAL_MEMORY:
-        return create_memory_store()
+        return _create_memory_store()
     elif store_type == StoreType.LOCAL_FILESYSTEM:
-        return create_fs_store(tmpdir_factory.mktemp("data"))
+        return _create_fs_store(tmpdir_factory.mktemp("data"))
     elif store_type == StoreType.RELATIONAL_DB:
-        return create_rdbs_store()
+        return _create_rdbs_store()
     else:
         raise RuntimeError(f"Invalid store type received: {store_type}")
 
@@ -115,7 +115,7 @@ FX_VERSION_ID = "v0"
 @pytest.fixture(scope="function")
 def store_with_context() -> Tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
-    store = create_memory_store()
+    store = _create_memory_store()
     with ManagedArtifactSession(store.session()) as artifact_store:
         _ = artifact_store.model_mapper.create(Model(identifier=FX_MODEL_ID))
         _ = artifact_store.version_mapper.create(

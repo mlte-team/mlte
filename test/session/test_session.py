@@ -1,6 +1,7 @@
 """Unit tests for global session management."""
 
 import os
+from unittest.mock import patch
 
 import pytest
 
@@ -48,8 +49,7 @@ def test_session() -> None:
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_eager_context_creation(
-    store_type: StoreType,
-    create_test_artifact_store,
+    store_type: StoreType, create_test_artifact_store, patched_setup_stores
 ) -> None:
     # Ignore http_store for now, weird issue setting it up.
     if store_type == StoreType.REMOTE_HTTP:
@@ -59,7 +59,10 @@ def test_eager_context_creation(
     version = "v0.0.1"
     store: ArtifactStore = create_test_artifact_store(store_type)
 
-    set_store(store.uri.uri)
+    with patch(
+        "mlte.session.session.setup_stores", side_effect=patched_setup_stores
+    ):
+        set_store(store.uri.uri)
 
     set_context(model, version, lazy=False)
     s = session()
