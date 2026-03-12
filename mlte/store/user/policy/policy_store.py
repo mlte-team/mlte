@@ -40,15 +40,24 @@ class PolicyStore:
     def save_to_store(self, policy: Policy) -> None:
         """
         Store this policy's groups and permissions in the given store.
+        Ignore errors if it already existed.
 
         :param policy: The policy to be stored.
         """
         # Create groups and permissions in store.
         for group in policy.groups:
             for permission in group.permissions:
-                self.permission_mapper.create(permission)
+                try:
+                    self.permission_mapper.create(permission)
+                except errors.ErrorAlreadyExists:
+                    # If it already existed, we just leave it there.
+                    pass
 
-            self.group_mapper.create(group)
+            try:
+                self.group_mapper.create(group)
+            except errors.ErrorAlreadyExists:
+                # If it already existed, we just leave it there.
+                pass
 
     def remove_from_store(self, policy: Policy) -> None:
         """Delete groups and permissions for a resource."""
