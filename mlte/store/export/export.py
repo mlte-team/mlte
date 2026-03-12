@@ -62,42 +62,67 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
         MODELS_KEY: {},
         CUSTOM_LISTS_KEY: {},
         USERS_KEY: [],
-        CATALOG_KEY: [],
+        CATALOG_KEY: {},
     }
 
     # Read items to be exported
+    export_dict[MODELS_KEY] = export_artifacts(export_spec)
+    export_dict[CUSTOM_LISTS_KEY] = export_custom_lists(export_spec)
+    export_dict[USERS_KEY] = export_users(export_spec)
+    export_dict[CATALOG_KEY] = export_users(export_spec)
+
+    return export_dict
+
+
+def export_artifacts(export_spec: ExportSpec) -> dict[str, Any]:
+    """Return dict of artifacts specified in export_spec."""
+    output_dict: dict[str, Any] = {}
+
     with ManagedArtifactSession(
         session().stores.artifact_store.session()
     ) as artifact_store:
         if MODELS_KEY in export_spec:
             for model_id in export_spec[MODELS_KEY]:
-                export_dict[MODELS_KEY][model_id] = {}
+                output_dict[MODELS_KEY][model_id] = {}
                 for version_id in export_spec[MODELS_KEY][model_id]:
-                    export_dict[MODELS_KEY][model_id][version_id] = {}
+                    output_dict[MODELS_KEY][model_id][version_id] = {}
                     for artifact_id in artifact_store.artifact_mapper.list(
                         (model_id, version_id)
                     ):
-                        export_dict[MODELS_KEY][model_id][version_id][
+                        output_dict[MODELS_KEY][model_id][version_id][
                             artifact_id
                         ] = artifact_store.artifact_mapper.read(
                             artifact_id, (model_id, version_id)
                         ).to_json()
+    
+    return output_dict
+
+
+def export_custom_lists(export_spec: ExportSpec) -> dict[str, Any]:
+    """Return dict of custom lists specified in export_spec."""
+    output_dict: dict[str, Any] = {}
 
     with ManagedCustomListSession(
         session().stores.custom_list_store.session()
     ) as custom_list_store:
-        # TODO: This requires the input to be things like `CustomListName.CLASSIFICATION` in the spec, consider if we want this
         if CUSTOM_LISTS_KEY in export_spec:
             for custom_list_id in export_spec[CUSTOM_LISTS_KEY]:
-                export_dict[CUSTOM_LISTS_KEY][custom_list_id] = []
+                output_dict[CUSTOM_LISTS_KEY][custom_list_id] = []
                 for (
                     custom_list_entry
                 ) in custom_list_store.custom_list_entry_mapper.list_details(
                     custom_list_id
                 ):
-                    export_dict[CUSTOM_LISTS_KEY][custom_list_id].append(
+                    output_dict[CUSTOM_LISTS_KEY][custom_list_id].append(
                         custom_list_entry.to_json()
                     )
+
+    return output_dict
+
+
+def export_users(export_spec: ExportSpec) -> dict[str, Any]:
+    """Return list of users specified in export_spec."""
+    output_dict: dict[str, Any] = []
 
     # TODO: Handle permissions & groups
     with ManagedUserSession(
@@ -105,14 +130,19 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
     ) as user_store:
         if USERS_KEY in export_spec:
             for user in export_spec[USERS_KEY]:
-                export_dict[USERS_KEY].append(
+                output_dict[USERS_KEY].append(
                     user_store.user_mapper.read(user).to_json()
                 )
+
+
+def export_catalogs(export_spec: ExportSpec) -> dict[str, Any]:
+    """Return dict of catalogs specified in export_spec."""
+    output_dict: dict[str, Any] = {}
 
     with ManagedCatalogSession(
         session().stores.catalog_stores.catalogs["local"].session()
     ) as catalog_store:
         for catalog_entry in catalog_store.entry_mapper.list_details():
-            export_dict[CATALOG_KEY].append(catalog_entry.to_json())
+            output_dict[CATALOG_KEY].append(catalog_entry.to_json())
 
-    return export_dict
+    return output_dict
