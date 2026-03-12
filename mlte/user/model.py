@@ -68,7 +68,7 @@ class BasicUser(BaseModel):
 
         return user1 == user2
 
-    def __eq__(self, other: object):
+    def __eq__(self, other: object) -> bool:
         """Compares users, taking into account that groups may be in different orders."""
         if not isinstance(other, BasicUser):
             return False
