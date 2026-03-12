@@ -53,17 +53,13 @@ def setup_test_group(user_store: UserStoreSession):
     user_store.group_mapper.create(get_test_group())
 
 
-def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
-    """Helper to set up permissions."""
-    for permission in test_group.permissions:
-        user_store.permission_mapper.create(permission)
-
-
 def get_default_permissions() -> list[Permission]:
     """Helper to get some of the default permissions."""
     permissions: list[Permission] = []
     for resource_type in ResourceType:
-        permissions.append(Permission(resource_type=resource_type))
+        permissions.append(
+            Permission(resource_type=resource_type, method=MethodType.GET)
+        )
     return permissions
 
 
@@ -157,6 +153,10 @@ def test_user_group_change(
     test_user = get_test_user()
 
     with ManagedUserSession(store.session()) as user_store:
+        test_user = user_policy.set_default_user_policies(
+            test_user, user_store.policy_store
+        )
+
         # Set up dependent groups.
         setup_test_group(user_store)
 
