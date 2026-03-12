@@ -65,6 +65,10 @@ class TestPolicy:
         create_test_user_store,
     ):
         """Tests that policies can be properly saved and removed."""
+        # Policies will only be handled locally, so this is not tested for the remote one.
+        if store_type == StoreType.REMOTE_HTTP:
+            pytest.skip()
+
         store: UserStore = create_test_user_store(store_type)
         policy = Policy(resource_type, id, read, edit, create)
 
@@ -109,6 +113,10 @@ def test_create_policy_if_needed(
     create_test_user_store,
 ):
     """Checks that policies for models created outside of backend are properly updated."""
+    # Policies will only be handled locally, so this is not tested for the remote one.
+    if store_type == StoreType.REMOTE_HTTP:
+        pytest.skip()
+
     model_id = "m1"
     policy = Policy(ResourceType.MODEL, resource_id=model_id)
     artifact_store: ArtifactStore = create_test_artifact_store(store_type)

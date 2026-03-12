@@ -5,6 +5,7 @@ from typing import List
 import pytest
 
 import mlte.store.error as errors
+from mlte.backend.core.state import state
 from mlte.store.base import StoreType
 from mlte.store.user.policy import user_policy
 from mlte.store.user.store import UserStore
@@ -78,6 +79,16 @@ def get_test_permissions() -> List[Permission]:
     return [p1, p2]
 
 
+def get_internal_store_session(
+    tested_user_store: UserStoreSession, store_type: StoreType
+) -> UserStoreSession:
+    """Sets default user policies in the internal user store."""
+    if store_type == StoreType.REMOTE_HTTP:
+        return state.stores.user_store.session()
+    else:
+        return tested_user_store
+
+
 # -----------------------------------------------------------------------------
 # Tests
 # -----------------------------------------------------------------------------
@@ -105,8 +116,9 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
 
     with ManagedUserSession(store.session()) as user_store:
         original_users = user_store.user_mapper.list()
+        internal_store = get_internal_store_session(user_store, store_type)
         test_user = user_policy.set_default_user_policies(
-            test_user, user_store.policy_store
+            test_user, internal_store.policy_store
         )
 
         # Set up dependent groups.
@@ -153,8 +165,9 @@ def test_user_group_change(
     test_user = get_test_user()
 
     with ManagedUserSession(store.session()) as user_store:
+        internal_store = get_internal_store_session(user_store, store_type)
         test_user = user_policy.set_default_user_policies(
-            test_user, user_store.policy_store
+            test_user, internal_store.policy_store
         )
 
         # Set up dependent groups.
@@ -198,7 +211,8 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
         original_groups = user_store.group_mapper.list()
 
         # Set up needed permissions.
-        user_store.permission_mapper.create(p3)
+        internal_store = get_internal_store_session(user_store, store_type)
+        internal_store.permission_mapper.create(p3)
 
         # Test creating a group.
         user_store.group_mapper.create(test_group)
@@ -224,6 +238,11 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
 @pytest.mark.parametrize("store_type", store_types())
 def test_permission(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports permission operations."""
+
+    # Permissions will only be handled locally, so this is not tested for the remote one.
+    if store_type == StoreType.REMOTE_HTTP:
+        pytest.skip()
+
     store: UserStore = create_test_user_store(store_type)
 
     test_permission1 = get_test_permissions()[0]
