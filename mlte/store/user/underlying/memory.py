@@ -123,17 +123,17 @@ class InMemoryUserMapper(UserMapper):
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
-        # Assign policies for all users.
+        # Assign policies applied to all users.
         user = user_policy.set_default_user_policies(user, self.policy_store)
 
         # Create user with hashed passwords.
-        stored_user = user.to_hashed_user()
+        to_store_user = user.to_hashed_user()
 
         # Only store group names for consistency.
-        user.groups = Group.get_group_names(user.groups)
+        to_store_user.groups = Group.get_group_names(user.groups)
 
-        self.storage.users[user.username] = stored_user
-        return stored_user
+        self.storage.users[user.username] = to_store_user
+        return to_store_user
 
     def edit(
         self, user: Union[UserWithPassword, BasicUser], context: Any = None
