@@ -171,8 +171,15 @@ def test_user_group_change(
         updated_group = user_store.group_mapper.edit(group)
 
         # Ensure user has updated group info.
+        found_group = None
         read_user = user_store.user_mapper.read(test_user.username)
-        assert read_user.groups[0] == updated_group
+        for group in read_user.groups:
+            if group.name == updated_group.name:
+                found_group = group
+                break
+
+        # If we got here, the updated group was not even found.
+        assert found_group == updated_group
 
 
 @pytest.mark.parametrize("store_type", store_types())
