@@ -43,6 +43,11 @@ class HttpUserStore(UserStore):
         )
         """HTTP group storage."""
 
+        self.permission_storage = HttpStorage(
+            uri=uri, resource_type="groups/permissions", client=client
+        )
+        """HTTP group storage."""
+
         super().__init__(uri=uri)
 
     def session(self) -> UserStoreSession:
@@ -51,7 +56,9 @@ class HttpUserStore(UserStore):
         :return: The session handle
         """
         return HttpUserStoreSession(
-            user_storage=self.user_storage, group_storage=self.group_storage
+            user_storage=self.user_storage,
+            group_storage=self.group_storage,
+            permission_storage=self.permission_storage,
         )
 
 
@@ -64,7 +71,11 @@ class HttpUserStoreSession(UserStoreSession):
     """An HTTP implementation of the MLTE user store session."""
 
     def __init__(
-        self, *, user_storage: HttpStorage, group_storage: HttpStorage
+        self,
+        *,
+        user_storage: HttpStorage,
+        group_storage: HttpStorage,
+        permission_storage: HttpStorage,
     ) -> None:
         self.user_storage = user_storage
         """HTTP user storage."""
@@ -78,7 +89,7 @@ class HttpUserStoreSession(UserStoreSession):
         self.group_mapper = HttpGroupMapper(group_storage)
         """Group mapper."""
 
-        self.permission_mapper = HttpPermissionMapper(group_storage)
+        self.permission_mapper = HttpPermissionMapper(permission_storage)
         """Group mapper."""
 
     def close(self):
@@ -167,7 +178,7 @@ class HttpPermissionMapper(PermissionMapper):
         """The HTTP storage access."""
 
     def list(self, context: Any = None) -> list[str]:
-        response = self.storage.get("s/permissions")
+        response = self.storage.get()
         return typing.cast(list[str], response)
 
     def list_details(

@@ -24,7 +24,7 @@ class HttpStorage(Storage):
     def __init__(
         self,
         uri: StoreURI,
-        resource_type: ResourceType,
+        resource_type: ResourceType | str,
         client: Optional[OAuthHttpClient] = None,
     ) -> None:
         super().__init__(uri)
@@ -39,7 +39,10 @@ class HttpStorage(Storage):
         self.clean_url = uri.uri
         """Store the clean URL without credentials."""
 
-        self.resource_url = self.build_resource_url(resource_type.value)
+        if isinstance(resource_type, ResourceType):
+            self.resource_url = self.build_resource_url(resource_type.value)
+        else:
+            self.resource_url = self.build_resource_url(resource_type)
         """Set the base URL for all calls to this resource."""
 
     def build_resource_url(self, resource: str) -> str:
