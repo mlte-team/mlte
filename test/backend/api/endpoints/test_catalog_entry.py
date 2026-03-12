@@ -273,7 +273,7 @@ def test_list_catalogs(test_api_fixture, api_user: UserWithPassword) -> None:
     assert res.status_code == codes.OK
     assert len(res.json()) == 2  # Sample and local catalog
 
-    catalog_list: list[CatalogReply] = res.json()
+    catalog_list: list[Any] = res.json()
     sample_catalog = CatalogReply(**catalog_list[0])
     assert sample_catalog.read_only is True
     assert sample_catalog.type == StoreType.LOCAL_MEMORY.value
