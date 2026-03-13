@@ -186,7 +186,12 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
             return id2
 
     def _convert_to_local(self, entry: CatalogEntry) -> CatalogEntry:
-        """Creates a new entry from the given one, converting it to local by moving the remote catalog id from its identifier."""
+        """
+        Creates a new entry from the given one, converting it to local by moving the remote catalog id from its identifier.
+
+        :param entry: An entry with its entry_id and catalog_id in the format of the output described in _convert_to_remote.
+        :return: An entry with its entry_id being just its real entry id, and the catalog_id being a combination of the remote and local catalog ids.
+        """
         new_entry = entry.model_copy()
         new_entry.header = entry.header.model_copy()
 
@@ -200,7 +205,13 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         return new_entry
 
     def _convert_to_remote(self, entry: CatalogEntry) -> CatalogEntry:
-        """Creates a new entry from the given one, converting it to remote by moving the remote catalog id to its identifier."""
+        """
+        Creates a new entry from the given one, converting it to remote by moving the remote catalog id to its identifier.
+
+        :param entry: An entry with its entry_id and catalog_id in the format of the output described in _convert_to_local.
+        :return: An entry with its entry_id being a combination of the catalog id the entry is in and the real entry id,
+                 and the catalog_id being the id, from the caller's perpesctive, of the remote store.
+        """
         new_entry = entry.model_copy()
         new_entry.header = entry.header.model_copy()
 
