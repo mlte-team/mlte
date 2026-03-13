@@ -72,7 +72,7 @@ def export(export_spec: ExportSpec) -> dict[str, Any]:
     export_dict[MODELS_KEY] = export_artifacts(export_spec)
     export_dict[CUSTOM_LISTS_KEY] = export_custom_lists(export_spec)
     export_dict[USERS_KEY] = export_users(export_spec)
-    export_dict[CATALOG_KEY] = export_users(export_spec)
+    export_dict[CATALOG_KEY] = export_catalogs(export_spec)
 
     return export_dict
 
@@ -94,9 +94,6 @@ def export_artifacts(export_spec: ExportSpec) -> dict[str, Any]:
                 export_spec.models[model_id] = "*"
 
         for model_id in export_spec.models:
-            if model_id not in export_spec.models:
-                continue
-
             if export_spec.models[model_id] == "*":
                 export_spec.models[model_id] = artifact_store.version_mapper.list(model_id)
 
@@ -128,8 +125,7 @@ def export_custom_lists(export_spec: ExportSpec) -> dict[str, Any]:
         if export_spec.custom_lists == ALL_OPTION:
             export_spec.custom_lists = []
             for custom_list_id in CustomListName:
-                for custom_list_id in CustomListName:
-                    export_spec.custom_lists.append(custom_list_id)
+                export_spec.custom_lists.append(custom_list_id)
         
         for custom_list_id in export_spec.custom_lists:
             output_dict[custom_list_id] = []
@@ -164,7 +160,7 @@ def export_users(export_spec: ExportSpec) -> dict[str, Any]:
 
 def export_catalogs(export_spec: ExportSpec) -> dict[str, Any]:
     """Return dict of catalogs specified in export_spec."""
-    output_dict: dict[str, Any] = {}
+    output_dict: dict[str, Any] = {CATALOG_KEY: []}
 
     with ManagedCatalogSession(
         session().stores.catalog_stores.catalogs[SessionStores.LOCAL_CATALOG_STORE_ID].session()
