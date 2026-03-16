@@ -15,7 +15,7 @@ from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.artifact import Report
 from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
-from mlte.session import session
+from mlte.session import get_session
 from mlte.session.session import set_context, set_credentials, set_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
@@ -184,7 +184,7 @@ def test_save_user_from_session(
 
     set_credentials(user, "password")
     set_context(ctx.model, ctx.version)
-    session()._stores._artifact_store = store  # type: ignore
+    get_session()._stores._artifact_store = store  # type: ignore
     saved_model = artifact.save()
 
     with ManagedArtifactSession(store.session()) as artifact_store:
@@ -208,7 +208,7 @@ def test_save_overrides_session_user(
     artifact = ArtifactFactory.from_model(artifact_model)
 
     set_context(ctx.model, ctx.version)
-    session()._stores._artifact_store = store  # type: ignore
+    get_session()._stores._artifact_store = store  # type: ignore
     saved_model = artifact.save(user=explicit_user)
 
     with ManagedArtifactSession(store.session()) as artifact_store:

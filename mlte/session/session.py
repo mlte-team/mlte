@@ -115,7 +115,7 @@ def reset_session() -> None:
     g_session.reset()
 
 
-def session() -> Session:
+def get_session() -> Session:
     """Return the package global session."""
     return g_session
 

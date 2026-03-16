@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mlte.session import session, set_context, set_store
+from mlte.session import get_session, set_context, set_store
 from mlte.session.session import (
     Session,
     add_catalog_store,
@@ -37,7 +37,7 @@ def test_session() -> None:
     set_credentials(test_user)
     add_catalog_store(catalog_store_uri, cat_id)
 
-    s = session()
+    s = get_session()
 
     assert s.context.model == model
     assert s.context.version == version
@@ -65,7 +65,7 @@ def test_eager_context_creation(
         set_store(store.uri.uri)
 
     set_context(model, version, lazy=False)
-    s = session()
+    s = get_session()
 
     assert (
         s.stores.artifact_store.session().model_mapper.read(model).identifier
@@ -88,7 +88,7 @@ def test_environment_vars():
     os.environ[Session.ENV_CONTEXT_VERSION_VAR] = version
     os.environ[Session.ENV_STORE_URI_VAR] = store_uri
 
-    s = session()
+    s = get_session()
 
     assert s.context.model == model
     assert s.context.version == version
@@ -105,7 +105,7 @@ def test_no_context_setup():
 
     set_store(store_uri)
 
-    s = session()
+    s = get_session()
 
     with pytest.raises(RuntimeError):
         _ = s.context
@@ -119,7 +119,7 @@ def test_no_store_setup():
     with pytest.raises(RuntimeError):
         set_context(model, version)
 
-        s = session()
+        s = get_session()
 
         _ = s.stores.artifact_store
         _ = s.stores.custom_list_store
@@ -131,7 +131,7 @@ def test_credentials_set():
     password = "test_password"
 
     set_credentials(user, password)
-    s = session()
+    s = get_session()
 
     assert s.credentials and s.credentials.user == user
     assert s.credentials and s.credentials.password == password
@@ -144,7 +144,7 @@ def test_credentials_from_env_vars():
     os.environ[Session.ENV_CURRENT_USER_VAR] = user
     os.environ[Session.ENV_CURRENT_PASS_VAR] = password
 
-    s = session()
+    s = get_session()
 
     assert s.credentials and s.credentials.user == user
     assert s.credentials and s.credentials.password == password
@@ -160,7 +160,7 @@ def test_credentials_ignore_env_vars():
     os.environ[Session.ENV_CURRENT_USER_VAR] = "override_user"
     os.environ[Session.ENV_CURRENT_PASS_VAR] = "override_password"
 
-    s = session()
+    s = get_session()
 
     assert s.credentials and s.credentials.user == user
     assert s.credentials and s.credentials.password == password
@@ -185,7 +185,7 @@ def test_reset():
 
     reset_session()
 
-    s = session()
+    s = get_session()
     assert s._context is None
     assert s._stores is None
     assert s._credentials is None
