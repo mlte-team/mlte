@@ -95,7 +95,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def create(
         self, new_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        """This metho assumes that the original put in catgalog_id the id of the remote catalog it would be stored into."""
+        """This method assumes that the caller put in catalog_id the id of the remote catalog it would be stored into."""
         new_entry = remote_catalog.remove_remote_catalog_id(new_entry)
         response = self.storage.post(
             json=new_entry.to_json(),
@@ -106,7 +106,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def edit(
         self, edited_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        """This metho assumes that the original put in catgalog_id the id of the remote catalog it would be stored into."""
+        """This method assumes that the caller put in catalog_id the id of the remote catalog it would be stored into."""
         edited_entry = remote_catalog.remove_remote_catalog_id(edited_entry)
         response = self.storage.put(
             json=edited_entry.to_json(),
@@ -117,7 +117,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def read(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        """This metho assumes that the original prefixed the entry_id with the catalog id."""
+        """This method assumes that the caller prefixed the entry_id with the local catalog id."""
         catalog_id, entry_id = remote_catalog.split_ids(catalog_and_entry_id)
         response = self.storage.get(
             id=entry_id, groups=_entry_group(catalog_id)
@@ -131,7 +131,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def delete(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        """This metho assumes that the original prefixed the entry_id with the catalog id."""
+        """This method assumes that the caller prefixed the entry_id with the local catalog id."""
         local_catalog_id, entry_id = remote_catalog.split_ids(
             catalog_and_entry_id
         )
