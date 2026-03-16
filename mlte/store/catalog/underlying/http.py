@@ -1,5 +1,16 @@
 """
 Implementation of HTTP catalog store group.
+
+NOTE: indicating the remote catalog that an entry should be sent to/read from is not properly supported through
+the store's interface, as it only applies to HTTP catalogs and not to local ones. To add a kinda hacky way to support
+this, the following assumptions are made of the values received by the CRUD methods:
+
+ - Read/Delete: since we only receive an Entry id when indicating what to read/delete, the remote catalog id this should
+   be read from will come bundled with the entry id, with a prefix, like this "remote_catalog_id--entry_id".
+   The "remote_catalog.py" module is used to extract this, and could be used to bundle it as well.
+ - Create/Edit: besides the same bundling as above, in the entry_id field of the new entry's header, the catalog_id
+   in the new entry's header will have the actual remote catalog id, and this is the value used.
+
 """
 
 from __future__ import annotations
