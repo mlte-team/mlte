@@ -13,11 +13,11 @@ from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
 from mlte.session.session_stores import SessionStores
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
 from mlte.store.catalog.underlying.http import (
-    HTTPCatalogGroupEntryMapper,
     HttpCatalogGroupStore,
 )
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
@@ -111,11 +111,11 @@ def create_test_catalog_store(
     """Fixture to manually create a CustomList store."""
 
     def _make(
-        store_type: StoreType, catalog_id: dict[str, str] = catalog_uris
+        store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
     ) -> CatalogStore:
         return _create_catalog_store(
             StoreURI.create_uri_string(store_type),
-            catalog_id,
+            catalog_uris,
             tmpdir_factory,
         )
 
@@ -176,15 +176,18 @@ def get_test_entry_for_store(
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
     catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
+    remote_catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     entry = get_test_entry(id, description, code, catalog_id)
 
     if store_type == StoreType.REMOTE_HTTP:
-        entry.header.identifier = (
-            HTTPCatalogGroupEntryMapper.generate_composite_id(
-                entry.header.catalog_id, entry.header.identifier
-            )
+        # When accessing a remote catalog, the id of the catalog in the remote server needs to be
+        # set in the cataog_id variable, as well as a prefix in the entry id. The catalog_id variable is used
+        # to set the remote catalog when creating/editing, and the entry id prefix when reading/deleting.
+        entry.header.catalog_id = remote_catalog_id
+        entry.header.identifier = remote_catalog.generate_composite_id(
+            entry.header.catalog_id, entry.header.identifier
         )
 
     return entry

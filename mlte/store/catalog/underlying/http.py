@@ -4,10 +4,11 @@ Implementation of HTTP catalog store group.
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, OrderedDict, Tuple
+from typing import Any, List, Optional, OrderedDict
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
+from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
@@ -87,8 +88,6 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
 class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     """HTTP mapper for the catalog group entry resource."""
 
-    COMPOSITE_ID_SEPARATOR = "--"
-
     def __init__(self, storage: HttpStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
@@ -96,41 +95,34 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def create(
         self, new_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
-        new_entry = self._convert_to_local(new_entry)
-
+        """This metho assumes that the original put in catgalog_id the id of the remote catalog it would be stored into."""
+        new_entry = remote_catalog.remove_remote_catalog_id(new_entry)
         response = self.storage.post(
-            json=new_entry.to_json(), groups=_entry_group(local_catalog_id)
+            json=new_entry.to_json(),
+            groups=_entry_group(new_entry.header.catalog_id),
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def edit(
-        self, new_entry: CatalogEntry, context: Any = None
+        self, edited_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
-        edited_entry = self._convert_to_local(new_entry)
-
+        """This metho assumes that the original put in catgalog_id the id of the remote catalog it would be stored into."""
+        edited_entry = remote_catalog.remove_remote_catalog_id(edited_entry)
         response = self.storage.put(
-            json=edited_entry.to_json(), groups=_entry_group(local_catalog_id)
+            json=edited_entry.to_json(),
+            groups=_entry_group(edited_entry.header.catalog_id),
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def read(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
+        """This metho assumes that the original prefixed the entry_id with the catalog id."""
+        catalog_id, entry_id = remote_catalog.split_ids(catalog_and_entry_id)
         response = self.storage.get(
             id=entry_id, groups=_entry_group(catalog_id)
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def list(self, context: Any = None) -> List[str]:
         entries = self.list_details()
@@ -139,14 +131,14 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def delete(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        local_catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
-
+        """This metho assumes that the original prefixed the entry_id with the catalog id."""
+        local_catalog_id, entry_id = remote_catalog.split_ids(
+            catalog_and_entry_id
+        )
         response = self.storage.delete(
             id=entry_id, groups=_entry_group(local_catalog_id)
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def list_details(
         self,
@@ -161,72 +153,15 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
             id="entry",
             resource_type=f"{ResourceType.CATALOG.value}s",
         )
-        return [
-            self._convert_to_remote(CatalogEntry(**entry)) for entry in response
-        ][offset : offset + limit]
-
-    @staticmethod
-    def split_ids(composite_id: Optional[str]) -> Tuple[str, str]:
-        if not composite_id:
-            raise RuntimeError("No composite id received")
-
-        parts = composite_id.split(
-            HTTPCatalogGroupEntryMapper.COMPOSITE_ID_SEPARATOR
-        )
-        if len(parts) != 2:
-            raise RuntimeError(f"Invalid composite id provided: {composite_id}")
-        return parts[0], parts[1]
-
-    @staticmethod
-    def generate_composite_id(id1: Optional[str], id2: str) -> str:
-        """Creates a composite id given two ids."""
-        if id1:
-            return f"{id1}{HTTPCatalogGroupEntryMapper.COMPOSITE_ID_SEPARATOR}{id2}"
-        else:
-            return id2
-
-    def _convert_to_local(self, entry: CatalogEntry) -> CatalogEntry:
-        """
-        Creates a new entry from the given one, converting it to local by moving the remote catalog id from its identifier.
-
-        :param entry: An entry with its entry_id and catalog_id in the format of the output described in _convert_to_remote.
-        :return: An entry with its entry_id being just its real entry id, and the catalog_id being a combination of the remote and local catalog ids.
-        """
-        new_entry = entry.model_copy()
-        new_entry.header = entry.header.model_copy()
-
-        local_catalog_id, entry_id = self.split_ids(entry.header.identifier)
-        http_catalog_id = new_entry.header.catalog_id
-        new_entry.header.identifier = entry_id
-        new_entry.header.catalog_id = self.generate_composite_id(
-            http_catalog_id, local_catalog_id
-        )
-
-        return new_entry
-
-    def _convert_to_remote(self, entry: CatalogEntry) -> CatalogEntry:
-        """
-        Creates a new entry from the given one, converting it to remote by moving the remote catalog id to its identifier.
-
-        :param entry: An entry with its entry_id and catalog_id in the format of the output described in _convert_to_local.
-        :return: An entry with its entry_id being a combination of the catalog id the entry is in and the real entry id,
-                 and the catalog_id being the id, from the caller's perpesctive, of the remote store.
-        """
-        new_entry = entry.model_copy()
-        new_entry.header = entry.header.model_copy()
-
-        http_catalog_id, local_catalog_id = self.split_ids(
-            new_entry.header.catalog_id
-        )
-        entry_id = new_entry.header.identifier
-        new_entry.header.identifier = self.generate_composite_id(
-            local_catalog_id, entry_id
-        )
-        new_entry.header.catalog_id = http_catalog_id
-
-        return new_entry
+        return [CatalogEntry(**entry) for entry in response][
+            offset : offset + limit
+        ]
 
 
-def _entry_group(catalog_id: str) -> OrderedDict[str, str]:
+def _entry_group(catalog_id: Optional[str]) -> OrderedDict[str, str]:
     """Returns the resource group info for entries inside a catalog."""
+    if not catalog_id:
+        raise RuntimeError(
+            "Can't create catalog group for entry with an empty catalog id."
+        )
     return OrderedDict([(catalog_id, ENTRY_URL_KEY)])

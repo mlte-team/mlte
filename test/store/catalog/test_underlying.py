@@ -6,6 +6,7 @@ import pytest
 
 import mlte.store.error as errors
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.catalog_group import (
     CatalogStoreGroup,
     ManagedCatalogGroupSession,
@@ -15,6 +16,24 @@ from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.query import Query
 from test.store.catalog.conftest import get_test_entry_for_store
 from test.store.utils import store_types
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+
+def create_store_with_mem_cat(
+    create_test_catalog_store,
+    store_type: StoreType,
+    remote_catalog_id="test_cat",
+) -> tuple[CatalogStore, str]:
+    """Creates a catalog store with an in mem catalog."""
+    catalog_uris = {
+        remote_catalog_id: StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
+    }
+    store: CatalogStore = create_test_catalog_store(store_type, catalog_uris)
+    return store, remote_catalog_id
+
 
 # -----------------------------------------------------------------------------
 # Tests
@@ -39,9 +58,13 @@ def test_catalog_entry(
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
 ) -> None:
     """A catalog store supports catalog entry operations."""
-    store: CatalogStore = create_test_catalog_store(store_type)
+    store, remote_catalog_id = create_store_with_mem_cat(
+        create_test_catalog_store, store_type=store_type
+    )
 
-    test_entry = get_test_entry_for_store(store_type=store_type)
+    test_entry = get_test_entry_for_store(
+        store_type=store_type, remote_catalog_id=remote_catalog_id
+    )
     description2 = "short code sample"
 
     with ManagedCatalogSession(store.session()) as catalog_store:
@@ -54,7 +77,14 @@ def test_catalog_entry(
         )
         read_entry.header.creator = None  # To avoid issue with creator.
         read_entry.header.created = -1  # To avoid issue with creation time.
-        assert test_entry == read_entry
+
+        if store_type == StoreType.REMOTE_HTTP:
+            clean_test_entry = remote_catalog.remove_remote_catalog_id(
+                test_entry
+            )
+            assert clean_test_entry == read_entry
+        else:
+            assert test_entry == read_entry
 
         # Test listing entries.
         entries = catalog_store.entry_mapper.list()
@@ -128,28 +158,35 @@ def test_list_details(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
 ) -> None:
-    """A catalog store store supports queries."""
-    store: CatalogStore = create_test_catalog_store(store_type)
+    """A catalog store store supports list queries."""
+    store, remote_catalog_id = create_store_with_mem_cat(
+        create_test_catalog_store, store_type=store_type
+    )
 
     with ManagedCatalogSession(store.session()) as session:
+        original_entries = session.entry_mapper.list_details()
+        original_len = len(original_entries)
+
         e0 = get_test_entry_for_store(
             id="e1",
             description="code 1",
             code="print nothing",
             store_type=store_type,
+            remote_catalog_id=remote_catalog_id,
         )
         e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
             store_type=store_type,
+            remote_catalog_id=remote_catalog_id,
         )
 
         for entry in [e0, e1]:
             session.entry_mapper.create(entry)
 
         entries = session.entry_mapper.list_details()
-        assert len(entries) == 2
+        assert len(entries) == original_len + 2
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -158,20 +195,27 @@ def test_search(
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
 ) -> None:
     """A catalog store store supports queries."""
-    store: CatalogStore = create_test_catalog_store(store_type)
+    store, remote_catalog_id = create_store_with_mem_cat(
+        create_test_catalog_store, store_type=store_type
+    )
 
     with ManagedCatalogSession(store.session()) as session:
+        original_entries = session.entry_mapper.list_details()
+        original_len = len(original_entries)
+
         e0 = get_test_entry_for_store(
             id="e1",
             description="code 1",
             code="print nothing",
             store_type=store_type,
+            remote_catalog_id=remote_catalog_id,
         )
         e1 = get_test_entry_for_store(
             id="e2",
             description="code 1",
             code="print nothing",
             store_type=store_type,
+            remote_catalog_id=remote_catalog_id,
         )
 
         for entry in [e0, e1]:
@@ -179,7 +223,7 @@ def test_search(
 
         query = Query()
         entries = session.entry_mapper.search(query)
-        assert len(entries) == 2
+        assert len(entries) == original_len + 2
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -190,15 +234,16 @@ def test_invalid_chars(
     ],
 ) -> None:
     """A catalog store store supports invalid storage chars."""
-    catalog_id = "weird/catalog_id"
-    store: CatalogStore = create_test_catalog_store(
-        store_type,
-        {catalog_id: StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)},
+    remote_catalog_id = "weird/catalog_id"
+    store, _ = create_store_with_mem_cat(
+        create_test_catalog_store,
+        store_type=store_type,
+        remote_catalog_id=remote_catalog_id,
     )
 
     entry_id = "weird/name"
     test_entry = get_test_entry_for_store(
-        store_type=store_type, id=entry_id, catalog_id=catalog_id
+        store_type=store_type, id=entry_id, catalog_id=remote_catalog_id
     )
 
     with ManagedCatalogSession(store.session()) as catalog_store:
@@ -209,4 +254,6 @@ def test_invalid_chars(
         )
         read_entry.header.creator = None  # To avoid issue with creator.
         read_entry.header.created = -1  # To avoid issue with creation time.
+        if store_type == StoreType.REMOTE_HTTP:
+            test_entry = remote_catalog.remove_remote_catalog_id(test_entry)
         assert test_entry == read_entry
