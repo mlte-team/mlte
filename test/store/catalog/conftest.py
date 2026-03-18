@@ -11,7 +11,7 @@ from sqlalchemy import StaticPool
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
-from mlte.session.session_stores import SessionStores
+from mlte.session.unified_store import UnifiedStore
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.factory import create_catalog_store
@@ -150,7 +150,7 @@ def get_test_entry(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
+    catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
     creator: Optional[str] = None,
     updater: Optional[str] = None,
 ) -> CatalogEntry:
@@ -175,8 +175,8 @@ def get_test_entry_for_store(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
-    remote_catalog_id: str = SessionStores.LOCAL_CATALOG_STORE_ID,
+    catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
+    remote_catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     entry = get_test_entry(id, description, code, catalog_id)

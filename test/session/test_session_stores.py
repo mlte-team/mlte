@@ -2,7 +2,7 @@
 
 import pytest
 
-from mlte.session.session_stores import SessionStores
+from mlte.session.unified_store import UnifiedStore
 from mlte.store.base import StoreType, StoreURI
 from test.session.conftest import create_test_session_stores
 from test.store.utils import store_types
@@ -14,7 +14,7 @@ from test.store.utils import store_types
 
 def test_add_catalog_store_from_uri():
     cat_id = "catalog1"
-    session_stores = SessionStores()
+    session_stores = UnifiedStore()
     session_stores.add_catalog_store_from_uri(
         StoreURI.create_uri_string(StoreType.REMOTE_HTTP, "catalog1"), cat_id
     )

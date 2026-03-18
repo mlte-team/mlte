@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 import sqlalchemy
 
-from mlte.session.session_stores import setup_stores
+from mlte.session.unified_store import setup_stores
 from test.store.artifact.conftest import _create_artifact_store
 from test.store.catalog.conftest import _create_catalog_store
 from test.store.custom_list.conftest import _create_custom_list_store

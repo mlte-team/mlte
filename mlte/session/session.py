@@ -1,4 +1,4 @@
-"""Manages session info: context (model and version), stores and credentials."""
+"""Session info when using the MLTE library: context (model and version), stores and credentials."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Optional
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.session.credentials import Credentials
-from mlte.session.session_stores import SessionStores, setup_stores
+from mlte.session.unified_store import UnifiedStore, setup_stores
 
 
 class Session:
@@ -35,7 +35,7 @@ class Session:
         self._context: Optional[Context] = None
         """The MLTE context for the session."""
 
-        self._stores: Optional[SessionStores] = None
+        self._stores: Optional[UnifiedStore] = None
         """All stores in this session."""
 
         self._credentials: Optional[Credentials] = None
@@ -59,7 +59,7 @@ class Session:
         return self._context
 
     @property
-    def stores(self) -> SessionStores:
+    def stores(self) -> UnifiedStore:
         if self._stores is None:
             # If the stores have not been manually set, get URI from environment.
             stores_uri = self._get_env_var(self.ENV_STORE_URI_VAR)
@@ -87,7 +87,7 @@ class Session:
         """Set the session context."""
         self._context = context
 
-    def _set_stores(self, stores: SessionStores) -> None:
+    def _set_stores(self, stores: UnifiedStore) -> None:
         """Set the session stores."""
         self._stores = stores
 

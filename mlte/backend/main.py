@@ -11,7 +11,7 @@ import mlte._private.hosts as util
 import mlte.backend.core.app_factory as app_factory
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.session.session_stores import setup_stores
+from mlte.session.unified_store import setup_stores
 from mlte.store.base import StoreType, StoreURI
 
 # Application exit codes

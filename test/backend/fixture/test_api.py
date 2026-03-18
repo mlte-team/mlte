@@ -13,7 +13,7 @@ from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
-from mlte.session.session_stores import setup_stores
+from mlte.session.unified_store import setup_stores
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
