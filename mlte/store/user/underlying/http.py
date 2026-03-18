@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Union
 
 from mlte.store.base import ResourceMapper, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
-from mlte.store.common.http_storage import HttpStorage
+from mlte.store.common.http_storage import HttpResourceStorage
 from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
@@ -33,17 +33,17 @@ class HttpUserStore(UserStore):
     def __init__(
         self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
     ) -> None:
-        self.user_storage = HttpStorage(
+        self.user_storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.USER, client=client
         )
         """HTTP user storage."""
 
-        self.group_storage = HttpStorage(
+        self.group_storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.GROUP, client=client
         )
         """HTTP group storage."""
 
-        self.permission_storage = HttpStorage(
+        self.permission_storage = HttpResourceStorage(
             uri=uri, resource_type="groups/permissions", client=client
         )
         """HTTP group storage."""
@@ -73,9 +73,9 @@ class HttpUserStoreSession(UserStoreSession):
     def __init__(
         self,
         *,
-        user_storage: HttpStorage,
-        group_storage: HttpStorage,
-        permission_storage: HttpStorage,
+        user_storage: HttpResourceStorage,
+        group_storage: HttpResourceStorage,
+        permission_storage: HttpResourceStorage,
     ) -> None:
         self.user_storage = user_storage
         """HTTP user storage."""
@@ -105,7 +105,7 @@ class HttpUserStoreSession(UserStoreSession):
 class HttpUserMapper(UserMapper):
     """HTTP mapper for the user resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
@@ -140,7 +140,7 @@ class HttpUserMapper(UserMapper):
 class HttpGroupMapper(GroupMapper):
     """HTTP mapper for the group resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
@@ -173,7 +173,7 @@ class HttpGroupMapper(GroupMapper):
 class HttpPermissionMapper(PermissionMapper):
     """HTTP mapper for the permission resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 

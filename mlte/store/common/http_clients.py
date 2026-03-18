@@ -156,10 +156,14 @@ class OAuthHttpClient(HttpClient):
         uri, username, password = url_utils.remove_url_username_password(uri)
         if username is not None and password is not None:
             # If URI had user and password, get them for client auth.
-            self.username = username
-            self.password = password
+            self.set_credentials(username, password)
 
         return uri
+
+    def set_credentials(self, username: str, password: str) -> None:
+        """Sets the client's credentials, used to authenticate."""
+        self.username = username
+        self.password = password
 
 
 class RequestsClient(OAuthHttpClient):

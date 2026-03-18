@@ -7,7 +7,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
-from mlte.store.common.http_storage import HttpStorage
+from mlte.store.common.http_storage import HttpResourceStorage
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import (
     CustomListEntryMapper,
@@ -31,7 +31,7 @@ class HttpCustomListStore(CustomListStore):
     ) -> None:
         super().__init__(uri=uri)
 
-        self.storage = HttpStorage(
+        self.storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.CUSTOM_LIST, client=client
         )
         """HTTP storage."""
@@ -52,7 +52,7 @@ class HttpCustomListStore(CustomListStore):
 class HttpCustomListStoreSession(CustomListStoreSession):
     """An HTTP implementation of the MLTE custom list store session."""
 
-    def __init__(self, *, storage: HttpStorage) -> None:
+    def __init__(self, *, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """HTTP storage."""
 
@@ -71,7 +71,7 @@ class HttpCustomListStoreSession(CustomListStoreSession):
 class HttpCustomListEntryMapper(CustomListEntryMapper):
     """HTTP mapper for the custom list resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 

@@ -26,7 +26,7 @@ from mlte.store.catalog.store_session import (
     CatalogStoreSession,
 )
 from mlte.store.common.http_clients import OAuthHttpClient
-from mlte.store.common.http_storage import HttpStorage
+from mlte.store.common.http_storage import HttpResourceStorage
 from mlte.user.model import MethodType, ResourceType
 
 ENTRY_URL_KEY = "entry"
@@ -49,7 +49,7 @@ class HttpCatalogGroupStore(CatalogStore):
     ) -> None:
         super().__init__(uri=uri)
 
-        self.storage = HttpStorage(
+        self.storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.CATALOG, client=client
         )
         """HTTP storage."""
@@ -73,7 +73,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
     """An HTTP implementation of the MLTE catalog store session."""
 
     def __init__(
-        self, *, storage: HttpStorage, read_only: bool = False
+        self, *, storage: HttpResourceStorage, read_only: bool = False
     ) -> None:
         self.storage = storage
         """HTTP storage"""
@@ -99,7 +99,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
 class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     """HTTP mapper for the catalog group entry resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
