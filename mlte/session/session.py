@@ -8,7 +8,7 @@ from typing import Optional
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.session.credentials import Credentials
-from mlte.session.unified_store import UnifiedStore, setup_stores
+from mlte.store.unified_store import UnifiedStore, setup_stores
 
 
 class Session:

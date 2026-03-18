@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mlte.session.unified_store import UnifiedStore
+from mlte.store.unified_store import UnifiedStore
 
 
 class State:

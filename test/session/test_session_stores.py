@@ -2,8 +2,8 @@
 
 import pytest
 
-from mlte.session.unified_store import UnifiedStore
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.unified_store import UnifiedStore
 from test.session.conftest import create_test_session_stores
 from test.store.utils import store_types
 

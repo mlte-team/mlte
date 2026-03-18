@@ -11,7 +11,6 @@ from sqlalchemy import StaticPool
 
 from mlte.backend.core.config import settings
 from mlte.catalog.model import CatalogEntry, CatalogEntryHeader
-from mlte.session.unified_store import UnifiedStore
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.factory import create_catalog_store
@@ -22,6 +21,7 @@ from mlte.store.catalog.underlying.http import (
 )
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
+from mlte.store.unified_store import UnifiedStore
 from mlte.user.model import ResourceType
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri

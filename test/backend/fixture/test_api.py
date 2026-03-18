@@ -13,9 +13,9 @@ from mlte.backend.api import codes
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
-from mlte.session.unified_store import setup_stores
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
+from mlte.store.unified_store import setup_stores
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
 from test.backend.fixture import user_generator

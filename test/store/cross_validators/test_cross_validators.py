@@ -8,10 +8,10 @@ import pytest
 from mlte.artifact.type import ArtifactType
 from mlte.context.model import Model, Version
 from mlte.negotiation.model import NegotiationCardModel
-from mlte.session.unified_store import UnifiedStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import ManagedCatalogGroupSession
+from mlte.store.unified_store import UnifiedStore
 from test.fixture.artifact import ArtifactModelFactory
 from test.session.conftest import create_test_session_stores
 from test.store.artifact.test_underlying import check_artifact_writing

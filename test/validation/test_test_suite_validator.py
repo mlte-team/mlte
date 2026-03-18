@@ -10,8 +10,8 @@ from mlte.evidence.types.integer import Integer
 from mlte.evidence.types.real import Real
 from mlte.measurement.storage.local_object_size import LocalObjectSize
 from mlte.session.session import get_session, set_context
-from mlte.session.unified_store import UnifiedStore
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.unified_store import UnifiedStore
 from mlte.suite.test_case import TestCase
 from mlte.suite.test_suite import TestSuite
 from mlte.validation.test_suite_validator import TestSuiteValidator
