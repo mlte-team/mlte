@@ -9,7 +9,6 @@ from urllib import parse as url_parse
 
 from mlte._private import url as url_utils
 from mlte.backend.core.config import settings
-from mlte.session.credentials import Credentials
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient, RequestsClient
 from mlte.store.common.storage import Storage
@@ -27,15 +26,13 @@ class HttpResourceStorage(Storage):
         uri: StoreURI,
         resource_type: ResourceType | str,
         client: Optional[OAuthHttpClient] = None,
-        credentials: Optional[Credentials] = None,
     ) -> None:
         """
         Creates an HTTP storage for a specific resource.
 
-        :param uri: The properly formated StoreURI for an HTTP storage, including server and ports, and potentially credentials.
+        :param uri: The properly formated StoreURI for an HTTP storage, including server and ports, and credentials.
         :param resource_type: The type of resource, used to build the resource URL for this storage. Can be a ResourceType, or a simple string.
         :param client: The OAuthHttpClient to use, will default to RequestsClient if none.
-        :param credentials: Optional credentials to use. Will override the ones in the uri, if any.
         """
         super().__init__(uri)
 
@@ -47,10 +44,6 @@ class HttpResourceStorage(Storage):
         # Get credentials, if any, from the uri and into the client.
         self.clean_url = self.client.process_credentials(uri.uri)
         """Store the clean URL without credentials."""
-
-        # If we got a credentials param, overwite our internal credentials with it.
-        if credentials and credentials.password:
-            self.client.set_credentials(credentials.user, credentials.password)
 
         if isinstance(resource_type, ResourceType):
             self.resource_url = self.build_resource_url(resource_type.value)
