@@ -15,7 +15,7 @@ from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
 from mlte.session.session_stores import setup_stores
 from mlte.store.base import StoreType, StoreURI
-from mlte.store.common.http_clients import HttpClientType, OAuthHttpClient
+from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.user.model import BasicUser, User, UserWithPassword
 from test.backend.fixture import user_generator
@@ -38,7 +38,7 @@ class FastAPITestHttpClient(OAuthHttpClient):
         username: Optional[str] = None,
         password: Optional[str] = None,
     ) -> None:
-        super().__init__(HttpClientType.TESTCLIENT, username, password)
+        super().__init__(username, password)
 
         self.client = client
         """The underlying client."""
