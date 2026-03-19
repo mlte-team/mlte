@@ -10,15 +10,14 @@ from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 
 
 def create_catalog_store(
-    uri: str, catalog_id: Optional[str] = None
+    parsed_uri: StoreURI, catalog_id: Optional[str] = None
 ) -> CatalogStore:
     """
     Create a MLTE catalog store instance.
-    :param uri: The URI for the store instance
+    :param parsed_uri: The URI for the store instance
     :param catalog_id: The id used to identify the catalog.
     :return: The store instance
     """
-    parsed_uri = StoreURI.from_string(uri)
     if parsed_uri.type == StoreType.LOCAL_MEMORY:
         return InMemoryCatalogStore(uri=parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
@@ -33,4 +32,6 @@ def create_catalog_store(
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return HttpCatalogGroupStore(uri=parsed_uri)
 
-    raise Exception(f"Invalid store type: {uri}")
+    raise Exception(
+        f"Catalog store can't be created, unknown or unsupported URI type received for uri: {parsed_uri}"
+    )

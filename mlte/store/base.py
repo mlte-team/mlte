@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, List, Optional, Protocol
+from typing import Any, List, Protocol
 
 from mlte.store.query import Query
 from mlte.store.validators.cross_validator import CompositeValidator
@@ -94,6 +94,11 @@ class StoreURI:
             raise RuntimeError(f"Unsupported store URI: {uri}") from e
 
     @staticmethod
+    def from_type(type: StoreType, path: str = "") -> StoreURI:
+        """Creates a parsed StoreURI from the given type, and optional path."""
+        return StoreURI.from_string(StoreURI.create_uri_string(type, path))
+
+    @staticmethod
     def get_type(prefix: str) -> StoreType:
         """Returns the type given a prefix."""
         for type in StoreType:
@@ -108,6 +113,7 @@ class StoreURI:
         """Split an URI into its prefix and the rest of the path."""
         parts = uri.split(StoreURI.DELIMITER)
         if len(parts) != 2:
+            # Even if path is an empty string, we'll only get 2 parts if the delimiter is present.
             raise RuntimeError(f"Invalid store URI: {uri}")
         else:
             prefix = parts[0]
@@ -115,10 +121,10 @@ class StoreURI:
             return prefix, path
 
     @staticmethod
-    def create_uri_string(type: StoreType, path: Optional[str] = None) -> str:
+    def create_uri_string(type: StoreType, path: str = "") -> str:
         """Creates a URI using the default (first) prefix for the given type."""
         prefix = StoreURI.PREFIXES[type][0]
-        return f"{prefix}{StoreURI.DELIMITER}{path if path else ''}"
+        return f"{prefix}{StoreURI.DELIMITER}{path}"
 
     @staticmethod
     def create_default_fs_uri() -> StoreURI:

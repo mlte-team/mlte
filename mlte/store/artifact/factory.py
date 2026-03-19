@@ -7,13 +7,12 @@ from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.base import StoreType, StoreURI
 
 
-def create_artifact_store(uri: str) -> ArtifactStore:
+def create_artifact_store(parsed_uri: StoreURI) -> ArtifactStore:
     """
     Create a MLTE artifact store instance.
-    :param uri: The URI for the store instance
+    :param parsed_uri: The URI for the store instance
     :return: The store instance
     """
-    parsed_uri = StoreURI.from_string(uri)
     if parsed_uri.type == StoreType.LOCAL_MEMORY:
         return InMemoryStore(parsed_uri)
     if parsed_uri.type == StoreType.LOCAL_FILESYSTEM:
@@ -29,5 +28,5 @@ def create_artifact_store(uri: str) -> ArtifactStore:
         return RelationalDBArtifactStore(parsed_uri)
     else:
         raise Exception(
-            f"Artifact store can't be created, unknown URI prefix received for uri {parsed_uri}"
+            f"Artifact store can't be created, unknown or unsupported URI type received for uri {parsed_uri}"
         )

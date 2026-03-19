@@ -8,6 +8,7 @@ from typing import Optional
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.session.credentials import Credentials
+from mlte.store.base import StoreURI
 from mlte.store.unified_store import UnifiedStore, setup_stores
 
 
@@ -64,7 +65,8 @@ class Session:
             # If the stores have not been manually set, get URI from environment.
             stores_uri = self._get_env_var(self.ENV_STORE_URI_VAR)
             if stores_uri:
-                self._stores = setup_stores(stores_uri)
+                parsed_uri = StoreURI.from_string(stores_uri)
+                self._stores = setup_stores(parsed_uri)
             else:
                 raise RuntimeError(
                     "Must initialize store URI, either manually or through environment variables."
@@ -137,7 +139,7 @@ def set_store(store_uri: str):
     Set the global MLTE context store URI.
     :param store_uri: The store URI string
     """
-    g_session._set_stores(setup_stores(store_uri))
+    g_session._set_stores(setup_stores(StoreURI.from_string(store_uri)))
 
 
 def set_credentials(user: str, password: Optional[str] = None):
@@ -154,7 +156,9 @@ def add_catalog_store(catalog_store_uri: str, id: str):
     Adds a global MLTE catalog store URI.
     :param catalog_store_uri: The catalog store URI string
     """
-    g_session.stores.add_catalog_store_from_uri(catalog_store_uri, id)
+    g_session.stores.add_catalog_store_from_uri(
+        StoreURI.from_string(catalog_store_uri), id
+    )
 
 
 def print_custom_list_entries(list_name: CustomListName) -> None:

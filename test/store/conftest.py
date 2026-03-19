@@ -6,6 +6,7 @@ from unittest.mock import patch
 import pytest
 import sqlalchemy
 
+from mlte.store.base import StoreURI
 from mlte.store.unified_store import setup_stores
 from test.store.artifact.conftest import _create_artifact_store
 from test.store.catalog.conftest import _create_catalog_store
@@ -46,17 +47,17 @@ def patched_create_engine(shared_sqlite_engine):
 def patched_setup_stores(tmpdir_factory, patched_create_engine):
     """Fixture to patch store factories for setup_stores method."""
 
-    def _create_user_store_with_fixtures(uri: str):
+    def _create_user_store_with_fixtures(uri: StoreURI):
         return _create_user_store(uri, tmpdir_factory)
 
-    def _create_custom_list_store_with_fixtures(uri: str):
+    def _create_custom_list_store_with_fixtures(uri: StoreURI):
         return _create_custom_list_store(uri, tmpdir_factory)
 
-    def _create_artifact_store_with_fixtures(uri: str):
+    def _create_artifact_store_with_fixtures(uri: StoreURI):
         return _create_artifact_store(uri, tmpdir_factory)
 
     def _create_catalog_store_with_fixtures(
-        uri: str, catalog_uris: dict[str, str]
+        uri: StoreURI, catalog_uris: dict[str, StoreURI]
     ):
         return _create_catalog_store(uri, catalog_uris, tmpdir_factory)
 

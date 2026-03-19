@@ -21,7 +21,8 @@ def store_types() -> Generator[StoreType, None, None]:
 
 
 def create_api_and_http_uri(
-    user: Optional[UserWithPassword] = None, catalog_uris: dict[str, str] = {}
+    user: Optional[UserWithPassword] = None,
+    catalog_uris: dict[str, StoreURI] = {},
 ) -> tuple[OAuthHttpClient, StoreURI]:
     """
     Get the params to configure an HTTP store, creating a test API.

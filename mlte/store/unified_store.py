@@ -4,6 +4,7 @@ from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
@@ -65,7 +66,7 @@ class UnifiedStore:
         self._catalog_stores.add_catalog(id, store, overwite)
 
     def add_catalog_store_from_uri(
-        self, store_uri: str, id: str, overwite: bool = False
+        self, store_uri: StoreURI, id: str, overwite: bool = False
     ) -> None:
         """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
@@ -98,8 +99,8 @@ class UnifiedStore:
 
 
 def setup_stores(
-    stores_uri: str,
-    catalog_uris: dict[str, str] = {},
+    stores_uri: StoreURI,
+    catalog_uris: dict[str, StoreURI] = {},
 ) -> UnifiedStore:
     """
     Sets up all stores required by MLTE, from the provided URIs.
@@ -126,11 +127,11 @@ def setup_stores(
     return stores
 
 
-def _setup_arifact_store(stores_uri: str, stores: UnifiedStore) -> None:
+def _setup_arifact_store(stores_uri: StoreURI, stores: UnifiedStore) -> None:
     """
     Creates an artifact store, validators for it, and adds it to stores.
 
-    :param stores_uri: The store URI string.
+    :param stores_uri: The store URI.
     :param stores: The SessionStores object that the new store will be added to.
     """
     artifact_store_validators = CompositeValidator(
@@ -152,12 +153,14 @@ def _setup_arifact_store(stores_uri: str, stores: UnifiedStore) -> None:
 
 
 def _setup_catalog_stores(
-    stores_uri: str, stores: UnifiedStore, catalog_uris: dict[str, str]
+    stores_uri: StoreURI,
+    stores: UnifiedStore,
+    catalog_uris: dict[str, StoreURI],
 ) -> None:
     """
     Creates catalog stores, validators for them, and adds it to stores.
 
-    :param stores_uri: The store URI string.
+    :param stores_uri: The store URI.
     :param stores: The SessionStores object that the new stores will be added to.
     :param catalog_uris: A dict of URIs for catalog stores.
     """
@@ -194,5 +197,5 @@ def _setup_catalog_stores(
         stores.add_catalog_store_from_uri(uri, id)
 
     # Add catalog store validators to stores
-    for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
+    for _, catalog_store in stores.catalog_stores.catalogs.items():
         catalog_store.set_validators(catalog_store_validators)

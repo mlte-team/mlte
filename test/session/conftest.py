@@ -21,7 +21,7 @@ def create_test_session_stores(
     store_type: StoreType,
     tmp_path,
     patched_setup_stores,
-    catalog_uris: dict[str, str] = {},
+    catalog_uris: dict[str, StoreURI] = {},
 ) -> UnifiedStore:
     """Creates appropriate test session stores."""
     # We can't test setup_stores with a REMOTE store, since this would require setting up the session stores,
@@ -31,12 +31,12 @@ def create_test_session_stores(
     if store_type == StoreType.REMOTE_HTTP:
         pytest.skip()
 
-    uri_string = StoreURI.create_uri_string(
+    uri = StoreURI.from_type(
         store_type,
         tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
     )
     session_stores: UnifiedStore = patched_setup_stores(
-        uri_string, catalog_uris
+        uri, catalog_uris
     )
 
     return session_stores

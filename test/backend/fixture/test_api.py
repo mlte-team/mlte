@@ -78,7 +78,7 @@ class TestAPI:
     def __init__(
         self,
         user: Optional[UserWithPassword] = None,
-        catalog_uris: dict[str, str] = {},
+        catalog_uris: dict[str, StoreURI] = {},
     ) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
 
@@ -88,7 +88,7 @@ class TestAPI:
         # Set up API global state.
         state.reset()
         state.stores = setup_stores(
-            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY), catalog_uris
+            StoreURI.from_type(StoreType.LOCAL_MEMORY), catalog_uris
         )
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 

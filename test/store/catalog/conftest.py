@@ -45,9 +45,7 @@ def create_memory_store() -> InMemoryCatalogStore:
     if CACHED_DEFAULT_MEMORY_STORE is None:
         CACHED_DEFAULT_MEMORY_STORE = typing.cast(
             InMemoryCatalogStore,
-            create_catalog_store(
-                StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
-            ),
+            create_catalog_store(StoreURI.from_type(StoreType.LOCAL_MEMORY)),
         )
 
     return CACHED_DEFAULT_MEMORY_STORE.clone()
@@ -58,9 +56,7 @@ def create_fs_store(tmp_path: Path) -> FileSystemCatalogStore:
     return typing.cast(
         FileSystemCatalogStore,
         create_catalog_store(
-            StoreURI.create_uri_string(
-                StoreType.LOCAL_FILESYSTEM, str(tmp_path)
-            )
+            StoreURI.from_type(StoreType.LOCAL_FILESYSTEM, str(tmp_path))
         ),
     )
 
@@ -74,7 +70,7 @@ def create_rdbs_store() -> RelationalDBCatalogStore:
 
 
 def create_api_and_http_store(
-    catalog_uris: dict[str, str] = {},
+    catalog_uris: dict[str, StoreURI] = {},
 ) -> HttpCatalogGroupStore:
     """
     Get a RemoteHttpStore configured with a test client.
@@ -85,23 +81,22 @@ def create_api_and_http_store(
 
 
 def _create_catalog_store(
-    uri: str,
-    catalog_uris: dict[str, str],
+    uri: StoreURI,
+    catalog_uris: dict[str, StoreURI],
     tmpdir_factory,
 ) -> CatalogStore:
     """Function equivalent to the store's factory method, to be used for testing."""
-    store_type = StoreURI.from_string(uri).type
-    if store_type == StoreType.REMOTE_HTTP:
+    if uri.type == StoreType.REMOTE_HTTP:
         return create_api_and_http_store(catalog_uris=catalog_uris)
-    elif store_type == StoreType.LOCAL_MEMORY:
+    elif uri.type == StoreType.LOCAL_MEMORY:
         return create_memory_store()
-    elif store_type == StoreType.LOCAL_FILESYSTEM:
+    elif uri.type == StoreType.LOCAL_FILESYSTEM:
         return create_fs_store(tmpdir_factory.mktemp("data"))
-    elif store_type == StoreType.RELATIONAL_DB:
+    elif uri.type == StoreType.RELATIONAL_DB:
         return create_rdbs_store()
 
     else:
-        raise RuntimeError(f"Invalid store type received: {store_type}")
+        raise RuntimeError(f"Invalid store type received: {uri}")
 
 
 @pytest.fixture(scope="function")
@@ -114,8 +109,8 @@ def create_test_catalog_store(
         store_type: StoreType, catalog_uris: dict[str, str] = catalog_uris
     ) -> CatalogStore:
         return _create_catalog_store(
-            StoreURI.create_uri_string(store_type),
-            catalog_uris,
+            StoreURI.from_type(store_type),
+            {id: StoreURI.from_string(uri) for id, uri in catalog_uris.items()},
             tmpdir_factory,
         )
 

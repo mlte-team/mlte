@@ -28,9 +28,7 @@ from test.store.utils import create_api_and_http_uri
 def _create_memory_store() -> InMemoryStore:
     return typing.cast(
         InMemoryStore,
-        create_artifact_store(
-            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
-        ),
+        create_artifact_store(StoreURI.from_type(StoreType.LOCAL_MEMORY)),
     )
 
 
@@ -38,9 +36,7 @@ def _create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
     return typing.cast(
         LocalFileSystemStore,
         create_artifact_store(
-            StoreURI.create_uri_string(
-                StoreType.LOCAL_FILESYSTEM, str(tmp_path)
-            )
+            StoreURI.from_type(StoreType.LOCAL_FILESYSTEM, str(tmp_path))
         ),
     )
 
@@ -75,19 +71,18 @@ def store_types_and_artifact_types() -> (
             yield store_type, artifact_type
 
 
-def _create_artifact_store(uri: str, tmpdir_factory) -> ArtifactStore:
+def _create_artifact_store(uri: StoreURI, tmpdir_factory) -> ArtifactStore:
     """Function equivalent to the store's factory method, to be used for testing."""
-    store_type = StoreURI.from_string(uri).type
-    if store_type == StoreType.REMOTE_HTTP:
+    if uri.type == StoreType.REMOTE_HTTP:
         return _create_api_and_http_store()
-    elif store_type == StoreType.LOCAL_MEMORY:
+    elif uri.type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
-    elif store_type == StoreType.LOCAL_FILESYSTEM:
+    elif uri.type == StoreType.LOCAL_FILESYSTEM:
         return _create_fs_store(tmpdir_factory.mktemp("data"))
-    elif store_type == StoreType.RELATIONAL_DB:
+    elif uri.type == StoreType.RELATIONAL_DB:
         return _create_rdbs_store()
     else:
-        raise RuntimeError(f"Invalid store type received: {store_type}")
+        raise RuntimeError(f"Invalid store type received: {uri}")
 
 
 @pytest.fixture(scope="function")
@@ -98,7 +93,7 @@ def create_test_artifact_store(
 
     def _make(store_type: StoreType) -> ArtifactStore:
         return _create_artifact_store(
-            StoreURI.create_uri_string(store_type),
+            StoreURI.from_type(store_type),
             tmpdir_factory,
         )
 

@@ -6,7 +6,7 @@ import typing
 from typing import Dict, List, Optional, cast
 
 from mlte.catalog.model import CatalogEntry
-from mlte.store.base import ManagedSession, StoreSession
+from mlte.store.base import ManagedSession, StoreSession, StoreURI
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import CatalogStoreSession
@@ -24,7 +24,9 @@ class CatalogStoreGroup:
         self.catalogs: Dict[str, CatalogStore] = {}
         """Dictionary with all catalogs in this group."""
 
-    def add_catalog_from_uri(self, id: str, uri: str, overwrite: bool = False):
+    def add_catalog_from_uri(
+        self, id: str, uri: StoreURI, overwrite: bool = False
+    ):
         """
         Adds a catalog by indicating its uri.
 

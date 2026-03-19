@@ -35,9 +35,7 @@ DEFAULT_PARENT = None
 def _create_memory_store() -> InMemoryCustomListStore:
     return typing.cast(
         InMemoryCustomListStore,
-        create_custom_list_store(
-            StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
-        ),
+        create_custom_list_store(StoreURI.from_type(StoreType.LOCAL_MEMORY)),
     )
 
 
@@ -45,7 +43,7 @@ def _create_fs_store(path: Path) -> FileSystemCustomListStore:
     return typing.cast(
         FileSystemCustomListStore,
         create_custom_list_store(
-            StoreURI.create_uri_string(StoreType.LOCAL_FILESYSTEM, str(path))
+            StoreURI.from_type(StoreType.LOCAL_FILESYSTEM, str(path))
         ),
     )
 
@@ -68,19 +66,18 @@ def _create_api_and_http_store(
     return HttpCustomListStore(uri=uri, client=client)
 
 
-def _create_custom_list_store(uri: str, tmpdir_factory) -> CustomListStore:
+def _create_custom_list_store(uri: StoreURI, tmpdir_factory) -> CustomListStore:
     """Function equivalent to the store's factory method, to be used for testing."""
-    store_type = StoreURI.from_string(uri).type
-    if store_type == StoreType.REMOTE_HTTP:
+    if uri.type == StoreType.REMOTE_HTTP:
         return _create_api_and_http_store()
-    elif store_type == StoreType.LOCAL_MEMORY:
+    elif uri.type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
-    elif store_type == StoreType.LOCAL_FILESYSTEM:
+    elif uri.type == StoreType.LOCAL_FILESYSTEM:
         return _create_fs_store(tmpdir_factory.mktemp("data"))
-    elif store_type == StoreType.RELATIONAL_DB:
+    elif uri.type == StoreType.RELATIONAL_DB:
         return _create_rdbs_store()
     else:
-        raise RuntimeError(f"Invalid store type received: {store_type}")
+        raise RuntimeError(f"Invalid store type received: {uri}")
 
 
 @pytest.fixture(scope="function")
@@ -91,7 +88,7 @@ def create_test_custom_list_store(
 
     def _make(store_type: StoreType) -> CustomListStore:
         return _create_custom_list_store(
-            StoreURI.create_uri_string(store_type),
+            StoreURI.from_type(store_type),
             tmpdir_factory,
         )
 
