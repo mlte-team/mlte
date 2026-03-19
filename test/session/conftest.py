@@ -35,8 +35,6 @@ def create_test_session_stores(
         store_type,
         tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
     )
-    session_stores: UnifiedStore = patched_setup_stores(
-        uri, catalog_uris
-    )
+    session_stores: UnifiedStore = patched_setup_stores(uri, catalog_uris)
 
     return session_stores

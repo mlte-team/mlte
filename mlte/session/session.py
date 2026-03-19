@@ -65,13 +65,13 @@ class Session:
             # If the stores have not been manually set, get URI from environment.
             stores_uri = self._get_env_var(self.ENV_STORE_URI_VAR)
             if stores_uri:
-                parsed_uri = StoreURI.from_string(stores_uri)
-                self._stores = setup_stores(parsed_uri)
+                self._set_stores(stores_uri)
             else:
                 raise RuntimeError(
                     "Must initialize store URI, either manually or through environment variables."
                 )
 
+        assert self._stores is not None
         return self._stores
 
     @property
@@ -89,9 +89,9 @@ class Session:
         """Set the session context."""
         self._context = context
 
-    def _set_stores(self, stores: UnifiedStore) -> None:
-        """Set the session stores."""
-        self._stores = stores
+    def _set_stores(self, store_uri: str) -> None:
+        """Set the session stores from the given URI."""
+        self._stores = setup_stores(StoreURI.from_string(store_uri))
 
     def _set_credentials(self, credentials: Credentials) -> None:
         """Set the session stores."""
@@ -136,10 +136,10 @@ def set_context(model_id: str, version_id: str, lazy: bool = True):
 
 def set_store(store_uri: str):
     """
-    Set the global MLTE context store URI.
+    Set the global MLTE stores from the given URI.
     :param store_uri: The store URI string
     """
-    g_session._set_stores(setup_stores(StoreURI.from_string(store_uri)))
+    g_session._set_stores(store_uri)
 
 
 def set_credentials(user: str, password: Optional[str] = None):
