@@ -4,7 +4,7 @@ FROM mlte-python
 WORKDIR /mnt/app
 
 # Install dev dependencies
-RUN poetry install --with dev,demo --all-extras \
+RUN poetry install --no-root --with dev,demo --all-extras \
     && rm -rf /root/.cache/pypoetry/artifacts \
     && rm -rf /root/.cache/pypoetry/cache
 
@@ -18,5 +18,10 @@ RUN apt-get update && apt-get install -y git
 COPY .git .git
 COPY Makefile .
 COPY .flake8 .
+
+# Install MLTE package
+RUN poetry install \
+    && rm -rf /root/.cache/pypoetry/artifacts \
+    && rm -rf /root/.cache/pypoetry/cache
 
 ENTRYPOINT ["make"]
