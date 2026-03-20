@@ -4,7 +4,7 @@ import pytest
 
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.unified_store import UnifiedStore
-from test.session.conftest import create_test_session_stores
+from test.store.conftest import create_test_unified_store
 from test.store.utils import store_types
 
 # -------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ def test_add_catalog_store_from_uri():
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_setup_stores(store_type: StoreType, tmp_path, patched_setup_stores):
-    session_stores = create_test_session_stores(
+    session_stores = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
 
@@ -42,7 +42,7 @@ def test_setup_stores_with_catalog_uris(
         cat_id: StoreURI.from_type(StoreType.REMOTE_HTTP, "catalog1")
     }
 
-    session_stores = create_test_session_stores(
+    session_stores = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores, catalog_uris
     )
 

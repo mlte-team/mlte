@@ -13,9 +13,9 @@ from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import ManagedCatalogGroupSession
 from mlte.store.unified_store import UnifiedStore
 from test.fixture.artifact import ArtifactModelFactory
-from test.session.conftest import create_test_session_stores
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.conftest import get_test_entry_for_store
+from test.store.conftest import create_test_unified_store
 from test.store.utils import store_types
 
 MODEL_ID = "model0"
@@ -31,7 +31,7 @@ def test_artifact_cross_validators(
 ) -> None:
     """Test artifact cross validators."""
 
-    stores = create_test_session_stores(
+    stores = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
 
@@ -122,7 +122,7 @@ def test_catalog_cross_validators(
 ) -> None:
     """Test catalog cross validators."""
 
-    stores = create_test_session_stores(
+    stores = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
 
