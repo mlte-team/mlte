@@ -1,21 +1,21 @@
 # Automation of various common tasks
 
 # -----------------------------------------------------------------------------
-# Python env setup.
+# Python env setup
 # -----------------------------------------------------------------------------
 
-.PHONY: venv-clean
-venv-clean:
+.PHONY: python-venv-remove
+python-venv-remove:
 	rm -rf ./.venv
 
-.PHONY: venv
-venv:
+.PHONY: python-venv
+python-venv:
 	python -m venv .venv && \
 	poetry lock && \
 	poetry install --with dev,demo --all-extras
 
 .PHONY: venv-redo
-venv-redo: venv-clean venv
+venv-redo: python-venv-remove python-venv
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
@@ -30,7 +30,7 @@ check-schema:
 	poetry run python tools/schema.py vet mlte --verbose
 
 # -----------------------------------------------------------------------------
-# Doc building/checking.
+# Doc building/checking
 # -----------------------------------------------------------------------------
 
 # Doc generation.
@@ -85,32 +85,51 @@ typecheck:
 	poetry run mypy test/
 	poetry run mypy tools/
 
-# Clean demo notebooks of temporary outputs.
+# Clean python cache files
+.PHONY: python-env-clean
+python-env-clean:
+	rm -r -f .mypy_cache .pytest_cache default_store/
+
+# Clean demo notebooks of temporary outputs
 .PHONY: demo-clean
 demo-clean:
 	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
 
-# QA for Python bits.
+# QA for Python bits
 .PHONY: qa-python
 qa-python: schema isort format lint typecheck demo-clean docs build-sample-catalog
 
-# Check all QA tasks for Python.
+# QA for Python bits, ran within a docker container
+.PHONY: qa-python-docker
+qa-python-docker:
+	cd docker && sh run_python_ops.sh qa-python
+
+# Check all QA tasks for Python
 .PHONY: check-qa-python
 check-qa-python: check-schema check-isort check-format lint typecheck docs check-sample-catalog
+
+# CI for Python bits
+.PHONY: ci-python
+ci-python: python-env-clean python-venv check-qa-python test demo-test
+
+# CI for Python bits ran within a docker container
+.PHONY: ci-python-docker
+ci-python-docker:
+	cd docker && sh run_python_ops.sh ci-python
 
 # -----------------------------------------------------------------------------
 # Frontend QA
 # -----------------------------------------------------------------------------
 
-# Setup frontend env.
+# Setup frontend env
 .PHONY: frontend-env
 frontend-env:
 	cd mlte/frontend/nuxt-app && \
 	npm install && \
 	npx gulp init
 
-.PHONY: frontend-env-clean
-frontend-env-clean:
+.PHONY: frontend-env-remove
+frontend-env-remove:
 	rm -rf mlte/frontend/nuxt-app/node_modules
 	rm -rf mlte/frontend/nuxt-app/.nuxt
 	rm -rf mlte/frontend/nuxt-app/.output
@@ -130,13 +149,27 @@ check-lint-frontend:
 typecheck-frontend:
 	cd mlte/frontend/nuxt-app && npx vue-tsc
 
-# QA for frontend (node.js) bits.
+# QA for frontend (node.js) bits
 .PHONY: qa-frontend
 qa-frontend: lint-frontend typecheck-frontend
+
+# QA for the frontend (node.js) bits, ran within a docker container
+.PHONY: qa-frontend-docker
+qa-frontend-docker:
+	cd docker && bash run_frontend_ops.sh qa-frontend
 
 # Check all QA tasks for frontend
 .PHONY: check-qa-frontend
 check-qa-frontend: check-lint-frontend typecheck-frontend
+
+# CI for frontend (node.js) bits
+.PHONY: ci-frontend
+ci-frontend: frontend-env-remove frontend-env check-qa-frontend
+
+# CI for frontend (node.js) bits, ran within a docker container
+.PHONY: ci-frontend-docker
+ci-frontend-docker:
+	cd docker && bash run_frontend_ops.sh ci-frontend
 
 # -----------------------------------------------------------------------------
 # Unit Tests
@@ -153,7 +186,7 @@ demo-test:
 	cd demo && bash test.sh simple GardenBuddy ReviewPro GradientClimber
 
 # -----------------------------------------------------------------------------
-# Shorthand actions and checks needed to update and review for pushing.
+# Shorthand actions and checks needed to update and review for pushing
 # -----------------------------------------------------------------------------
 
 # All quality assurance, as well as schema generation and sample catalog generation
@@ -166,15 +199,14 @@ check-qa: check-qa-python check-qa-frontend
 
 # Clean cache files
 .PHONY: clean
-clean: frontend-env-clean
-	rm -r -f .mypy_cache .pytest_cache default_store/
+clean: frontend-env-remove python-env-clean
 
-# This is basically equivalent to what the CI server will do.
+# This is basically equivalent to what the CI server will do
 .PHONY: ci
-ci: clean venv frontend-env check-qa test demo-test
+ci: ci-python ci-frontend
 
 # -----------------------------------------------------------------------------
-# Build commands to update versions.
+# Build commands to update versions
 # -----------------------------------------------------------------------------
 
 .PHONY: bump-patch
@@ -193,7 +225,7 @@ bump-major:
 	$(MAKE) frontend-env
 
 # -----------------------------------------------------------------------------
-# Build commands to create a packaged wheel.
+# Build commands to create a packaged wheel
 # -----------------------------------------------------------------------------
 
 .PHONY: build-local
