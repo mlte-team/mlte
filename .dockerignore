@@ -15,13 +15,11 @@ tools
 .bumpversion.cfg
 .coverage
 .dockerignore
-.flake8
 .gitignore
 .python-version
 .readthedocs.yaml
 build*.sh
 LICENSE
-Makefile
 
 mlte/frontend/nuxt-app/.nuxt/
 mlte/frontend/nuxt-app/.output/
