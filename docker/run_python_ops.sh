@@ -3,7 +3,7 @@ set -e
 
 # Build python dockerfile and QA dockerfile
 (bash build_base.sh)
-(cd .. && docker build -t mlte-python-qa . -f docker/Dockerfile.python_qa)
+(cd .. && docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops)
 
 docker run --rm \
     -e GIT_DISCOVERY_ACROSS_FILESYSTEM=1 \
@@ -12,4 +12,4 @@ docker run --rm \
     -v "$(pwd)/../docs:/mnt/app/docs" \
     -v "$(pwd)/../test:/mnt/app/test" \
     -v "$(pwd)/../tools:/mnt/app/tools" \
-    mlte-python-qa "$@"
+    mlte-python-ops "$@"

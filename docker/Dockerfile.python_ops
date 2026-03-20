@@ -19,6 +19,4 @@ COPY .git .git
 COPY Makefile .
 COPY .flake8 .
 
-# Execute qa-python by default
 ENTRYPOINT ["make"]
-CMD ["qa-python"]

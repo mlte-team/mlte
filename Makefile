@@ -102,7 +102,7 @@ qa-python: schema isort format lint typecheck demo-clean docs build-sample-catal
 # QA for Python bits, ran within a docker container
 .PHONY: qa-python-docker
 qa-python-docker:
-	cd docker && sh run_python_qa.sh qa-python
+	cd docker && sh run_python_ops.sh qa-python
 
 # Check all QA tasks for Python
 .PHONY: check-qa-python
@@ -115,7 +115,7 @@ ci-python: python-env-clean python-venv check-qa-python test demo-test
 # CI for Python bits ran within a docker container
 .PHONY: ci-python-docker
 ci-python-docker:
-	cd docker && sh run_python_qa.sh ci-python
+	cd docker && sh run_python_ops.sh ci-python
 
 # -----------------------------------------------------------------------------
 # Frontend QA
@@ -156,7 +156,7 @@ qa-frontend: lint-frontend typecheck-frontend
 # QA for the frontend (node.js) bits, ran within a docker container
 .PHONY: qa-frontend-docker
 qa-frontend-docker:
-	cd docker && bash run_frontend_qa.sh qa-frontend
+	cd docker && bash run_frontend_ops.sh qa-frontend
 
 # Check all QA tasks for frontend
 .PHONY: check-qa-frontend
@@ -169,7 +169,7 @@ ci-frontend: frontend-env-remove frontend-env check-qa-frontend
 # CI for frontend (node.js) bits, ran within a docker container
 .PHONY: ci-frontend-docker
 ci-frontend-docker:
-	cd docker && bash run_frontend_qa.sh ci-frontend
+	cd docker && bash run_frontend_ops.sh ci-frontend
 
 # -----------------------------------------------------------------------------
 # Unit Tests
