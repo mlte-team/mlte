@@ -1,6 +1,10 @@
 # Image definition for MLTE frontend container.
 FROM mlte-frontend-env
 
+# Run nuxi prepare to generate .nuxt folder that eslint relies on
+WORKDIR /mnt/app/mlte/frontend/nuxt-app
+RUN npx nuxi prepare
+
 WORKDIR /mnt/app
 
 # Install make
