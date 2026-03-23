@@ -56,10 +56,8 @@ def patched_setup_stores(tmpdir_factory, patched_create_engine):
     def _create_artifact_store_with_fixtures(uri: StoreURI):
         return _create_artifact_store(uri, tmpdir_factory)
 
-    def _create_catalog_store_with_fixtures(
-        uri: StoreURI, catalog_uris: dict[str, StoreURI]
-    ):
-        return _create_catalog_store(uri, catalog_uris, tmpdir_factory)
+    def _create_catalog_store_with_fixtures(uri: StoreURI, catalog_id: str):
+        return _create_catalog_store(uri, catalog_id, tmpdir_factory)
 
     with patch(
         "mlte.store.user.factory.create_user_store",
