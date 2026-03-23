@@ -145,12 +145,12 @@ class TestAPI:
     ) -> FastAPITestHttpClient:
         """Returns a client configured for test and authenticated (if provided user is valid)."""
         # Create the test client, and authenticate to get token and allow protected endpoints to work.
-        admin_client = FastAPITestHttpClient(TestClient(self.app))
+        client = FastAPITestHttpClient(TestClient(self.app))
         if user is not None:
-            admin_client.username = user.username
-            admin_client.password = user.password
-            admin_client.authenticate(f"{settings.API_PREFIX}")
-        return admin_client
+            client.username = user.username
+            client.password = user.password
+            client.authenticate(f"{settings.API_PREFIX}")
+        return client
 
     def admin_create_entity(
         self,
