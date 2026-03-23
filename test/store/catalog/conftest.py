@@ -69,12 +69,12 @@ def create_rdbs_store() -> RelationalDBCatalogStore:
     )
 
 
-def create_api_and_http_store() -> HttpCatalogGroupStore:
+def create_api_and_http_store(uri: StoreURI) -> HttpCatalogGroupStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    client, uri = create_api_and_http_uri()
+    client, uri = create_api_and_http_uri(uri)
     return HttpCatalogGroupStore(uri=uri, client=client)
 
 
@@ -89,7 +89,7 @@ def _create_catalog_store(
     factory method, but it is not used for testing.
     """
     if uri.type == StoreType.REMOTE_HTTP:
-        return create_api_and_http_store()
+        return create_api_and_http_store(uri)
     elif uri.type == StoreType.LOCAL_MEMORY:
         return create_memory_store()
     elif uri.type == StoreType.LOCAL_FILESYSTEM:

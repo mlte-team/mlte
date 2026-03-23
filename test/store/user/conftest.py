@@ -16,7 +16,6 @@ from mlte.store.user.underlying.fs import FileSystemUserStore
 from mlte.store.user.underlying.http import HttpUserStore
 from mlte.store.user.underlying.memory import InMemoryUserStore
 from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
-from mlte.user.model import UserWithPassword
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
@@ -53,21 +52,19 @@ def _create_rdbs_store() -> RelationalDBUserStore:
     )
 
 
-def _create_api_and_http_store(
-    user: Optional[UserWithPassword] = None,
-) -> HttpUserStore:
+def _create_api_and_http_store(uri: StoreURI) -> HttpUserStore:
     """
     Get a HttpStore configured with test client.
     :return: The configured store
     """
-    client, uri = create_api_and_http_uri(user)
+    client, uri = create_api_and_http_uri(uri)
     return HttpUserStore(uri=uri, client=client)
 
 
 def _create_user_store(uri: StoreURI, tmpdir_factory) -> UserStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     if uri.type == StoreType.REMOTE_HTTP:
-        return _create_api_and_http_store()
+        return _create_api_and_http_store(uri)
     elif uri.type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
     elif uri.type == StoreType.LOCAL_FILESYSTEM:

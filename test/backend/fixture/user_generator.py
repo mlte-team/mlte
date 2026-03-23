@@ -14,7 +14,7 @@ from mlte.user.model import Group, ResourceType, RoleType, UserWithPassword
 
 TEST_ADMIN_USERNAME = "admin_user"
 TEST_API_USERNAME = "api_user"
-TEST_API_PASS = "api_pass"
+TEST_API_PASS = "api_pass"  # Note that this needs to be used, as it will be the only password to work for the API.
 TEST_API_HASHED_PASS = passwords.hash_password(TEST_API_PASS)
 """User and passwords added to test the API."""
 
