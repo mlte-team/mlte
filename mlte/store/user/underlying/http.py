@@ -48,7 +48,8 @@ class HttpUserStore(UserStore):
         )
         """HTTP group storage."""
 
-        super().__init__(uri=uri)
+        # Adding default data is not done for remote stores, since remote ones already did it when they were started.
+        super().__init__(uri=uri, add_default_data=False)
 
     def session(self) -> UserStoreSession:
         """

@@ -113,7 +113,7 @@ class FileSystemUserMappper(UserMapper):
         """Set the subfolder for this resource."""
 
         self.policy_store = policy_store
-        """Policy store abstraection"""
+        """Policy store abstraction."""
 
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)

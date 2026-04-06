@@ -60,7 +60,7 @@ class RelationalDBUserStore(UserStore):
         )
         """The relational DB storage."""
 
-        UserStore.__init__(self, uri, add_default_data)
+        super().__init__(uri, add_default_data)
         """Basic user setup."""
 
     def session(self) -> RelationalDBUserStoreSession:
