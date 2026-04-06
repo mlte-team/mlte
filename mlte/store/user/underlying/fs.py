@@ -13,7 +13,7 @@ from mlte.store.user.mappers import (
     UserMapper,
 )
 from mlte.store.user.policy import user_policy
-from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.policy.policy_store import PolicyStoreService
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
@@ -68,7 +68,7 @@ class FileSystemUserStoreSession(UserStoreSession):
         self.group_mapper = FileSystemGroupMappper(storage)
         """The mapper to group CRUD."""
 
-        self.policy_store = PolicyStore(
+        self.policy_store = PolicyStoreService(
             self.group_mapper, self.permission_mapper
         )
         """The Policy store abstraction."""
@@ -99,7 +99,7 @@ class FileSystemUserMappper(UserMapper):
         self,
         storage: FileSystemStorage,
         group_mapper: FileSystemGroupMappper,
-        policy_store: PolicyStore,
+        policy_store: PolicyStoreService,
     ) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""

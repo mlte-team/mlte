@@ -7,7 +7,7 @@ from mlte.store.user.mappers import GroupMapper, PermissionMapper
 from mlte.store.user.policy import Policy
 
 
-class PolicyStore:
+class PolicyStoreService:
     """Handles access to stored policies. It is not a store in the same sense as the rest, does not derive from Store."""
 
     def __init__(
@@ -71,7 +71,7 @@ class PolicyStore:
             self.group_mapper.delete(group.name)
 
         # Now remove all permissions.
-        # TODO: note that this main leave other groups using these permissions dangling. Not trivial to check if
+        # TODO: note that this may leave other groups using these permissions dangling. Not trivial to check if
         # a permission is no longer used. Even worse, we may want to leave some of them, even with no groups.
         for permission_str in permissions:
             self.permission_mapper.delete(permission_str)
