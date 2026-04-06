@@ -28,7 +28,8 @@ def create_api_and_http_uri(
     Get the params to configure an HTTP store, creating a test API.
     :return: The client to the test API, and the URI to connect.
     """
-    user = user_generator.build_admin_user()
+    if not user:
+        user = user_generator.build_admin_user()
     test_api = TestAPI(user=user, catalog_uris=catalog_uris)
     client = test_api.get_test_client()
 
