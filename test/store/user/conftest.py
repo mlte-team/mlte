@@ -48,7 +48,6 @@ def _create_fs_store(path: Path) -> FileSystemUserStore:
 def _create_rdbs_store() -> RelationalDBUserStore:
     return RelationalDBUserStore(
         uri=StoreURI.from_string(IN_MEMORY_SQLITE_DB),
-        connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
 
