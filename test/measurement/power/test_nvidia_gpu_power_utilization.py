@@ -244,9 +244,9 @@ def test_statistics_construction():
 
 
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     stats = NvidiaGPUPowerStatistics(50, 10, 800).with_metadata(
         get_sample_evidence_metadata()

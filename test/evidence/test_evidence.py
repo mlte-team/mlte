@@ -12,12 +12,12 @@ from mlte.store.artifact.store import ArtifactStore
 
 
 def test_load_all(
-    store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ):
     """
     Loading all models of a given type.
     """
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     m1 = EvidenceMetadata(
         measurement=MeasurementMetadata(

@@ -57,9 +57,11 @@ def test_serde() -> None:
     assert e == o
 
 
-def test_save_load(store_with_context: Tuple[ArtifactStore, Context]) -> None:
+def test_save_load(
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
+) -> None:
     """Array can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     o = Array([1, 2, 3]).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)

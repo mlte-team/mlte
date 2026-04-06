@@ -116,9 +116,9 @@ def test_cpu_windows_evaluate() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     stats = CPUStatistics(0.5, 0.1, 0.8).with_metadata(
         get_sample_evidence_metadata()
