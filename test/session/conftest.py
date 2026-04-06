@@ -23,9 +23,9 @@ def create_test_session_stores(
     patched_setup_stores,
     catalog_uris: dict[str, StoreURI] = {},
 ) -> UnifiedStore:
-    """Creates appropriate test session stores."""
-    # We can't test setup_stores with a REMOTE store, since this would require setting up the session stores,
-    # and then the TestAPI sets up its own session stores to act as a backend; however, since only one
+    """Creates appropriate test UnifiedStore."""
+    # We can't test setup_stores with a REMOTE store, since this would require setting up the UnifiedStore,
+    # and then the TestAPI sets up its own UnifiedStore to act as a backend; however, since only one
     # state session is supported, this tries to overwrite the previous set up and it would fail.
     # TODO: Isolate how TestAPI works so that this can be tested.
     if store_type == StoreType.REMOTE_HTTP:

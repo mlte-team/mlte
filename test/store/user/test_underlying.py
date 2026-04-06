@@ -112,8 +112,6 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
     email2 = "email2@server.com"
     name2 = "new name"
 
-    # if store_type
-
     with ManagedUserSession(store.session()) as user_store:
         original_users = user_store.user_mapper.list()
         internal_store = get_internal_store_session(user_store, store_type)
@@ -191,7 +189,7 @@ def test_user_group_change(
                 found_group = group
                 break
 
-        # If we got here, the updated group was not even found.
+        # Check if we got the expected group.
         assert found_group == updated_group
 
 
