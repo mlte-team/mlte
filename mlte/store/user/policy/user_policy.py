@@ -38,14 +38,12 @@ def set_default_user_policies(
     return user
 
 
-def ignore_new_groups(
+def remove_new_groups(
     user: Union[UserWithPassword, BasicUser], user_store: UserStoreSession
 ) -> Union[UserWithPassword, BasicUser]:
-    """Ignore changes to user's groups."""
-    # If not admin, keep current groups and ignore the new ones, if any.
+    """Removes any groups in the given user that are not in the stored version of this user."""
     current_groups = user_store.user_mapper.read(user.username).groups
     user.groups = current_groups
-
     return user
 
 
