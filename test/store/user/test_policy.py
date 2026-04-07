@@ -5,27 +5,13 @@ import pytest
 from mlte.context.model import Model
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.user.policy import Policy, create_model_policies_if_needed
+from mlte.store.base import StoreType
+from mlte.store.user.policy import Policy
+from mlte.store.user.policy.model_policy import create_model_policies_if_needed
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, MethodType, ResourceType
-from test.store.artifact.fixture import (
-    artifact_stores,
-)
-from test.store.artifact.fixture import fs_store as artifact_fs_store  # noqa
-from test.store.artifact.fixture import (  # noqa
-    http_store as artifact_http_store,
-)
-from test.store.artifact.fixture import (  # noqa
-    memory_store as artifact_memory_store,
-)
-from test.store.artifact.fixture import (  # noqa
-    rdbs_store as artifact_rdbs_store,
-)
-from test.store.user.fixture import fs_store as user_fs_store  # noqa
-from test.store.user.fixture import memory_store as user_memory_store  # noqa
-from test.store.user.fixture import rdbs_store as user_rdbs_store  # noqa
-from test.store.user.fixture import user_stores
+from test.store.utils import store_types
 
 
 @pytest.mark.parametrize(
@@ -68,35 +54,39 @@ class TestPolicy:
             assert found_permissions[MethodType.POST]
 
     @staticmethod
-    @pytest.mark.parametrize("store_fixture_name", user_stores())
+    @pytest.mark.parametrize("store_type", store_types())
     def test_save_remove(
         resource_type: ResourceType,
         id: str,
         read: bool,
         edit: bool,
         create: bool,
-        store_fixture_name: str,
-        request: pytest.FixtureRequest,
+        store_type: StoreType,
+        create_test_user_store,
     ):
         """Tests that policies can be properly saved and removed."""
-        store: UserStore = request.getfixturevalue(f"user_{store_fixture_name}")
+        # Policies will only be handled locally, so this is not tested for the remote one.
+        if store_type == StoreType.REMOTE_HTTP:
+            pytest.skip()
+
+        store: UserStore = create_test_user_store(store_type)
         policy = Policy(resource_type, id, read, edit, create)
 
         with ManagedUserSession(store.session()) as user_store:
             if not id and (create or read or edit):
                 # Store is iniitialized with non-id policies with all permissions
-                assert Policy.is_stored(policy, user_store)
+                assert user_store.policy_store.is_stored(policy)
             elif policy.groups:
                 # Only need to save if current policy has any groups.
-                assert not policy.is_stored(user_store)
-                policy.save_to_store(user_store)
+                assert not user_store.policy_store.is_stored(policy)
+                user_store.policy_store.save_to_store(policy)
 
-            assert policy.is_stored(user_store)
+            assert user_store.policy_store.is_stored(policy)
 
             # Only test remove if policy has any groups.
             if policy.groups:
-                policy.remove_from_store(user_store)
-                assert not policy.is_stored(user_store)
+                user_store.policy_store.remove_from_store(policy)
+                assert not user_store.policy_store.is_stored(policy)
 
     @staticmethod
     def test_assign_to_user(
@@ -116,22 +106,21 @@ class TestPolicy:
             assert group in user.groups
 
 
-@pytest.mark.parametrize("art_store_fixture_name", artifact_stores())
-@pytest.mark.parametrize("user_store_fixture_name", user_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_create_policy_if_needed(
-    art_store_fixture_name: str,
-    user_store_fixture_name: str,
-    request: pytest.FixtureRequest,
+    store_type: StoreType,
+    create_test_artifact_store,
+    create_test_user_store,
 ):
     """Checks that policies for models created outside of backend are properly updated."""
+    # Policies will only be handled locally, so this is not tested for the remote one.
+    if store_type == StoreType.REMOTE_HTTP:
+        pytest.skip()
+
     model_id = "m1"
     policy = Policy(ResourceType.MODEL, resource_id=model_id)
-    artifact_store: ArtifactStore = request.getfixturevalue(
-        f"artifact_{art_store_fixture_name}"
-    )
-    user_store: UserStore = request.getfixturevalue(
-        f"user_{user_store_fixture_name}"
-    )
+    artifact_store: ArtifactStore = create_test_artifact_store(store_type)
+    user_store: UserStore = create_test_user_store(store_type)
 
     with ManagedArtifactSession(
         artifact_store.session()
@@ -144,13 +133,13 @@ def test_create_policy_if_needed(
 
             # Add policies.
             create_model_policies_if_needed(
-                artifact_store_session, user_store_session
+                artifact_store_session, user_store_session.policy_store
             )
 
             # Check policies now exist.
-            assert policy.is_stored(user_store_session)
+            assert user_store_session.policy_store.is_stored(policy)
 
             # Check we can call create_model_policies again with no issues.
             create_model_policies_if_needed(
-                artifact_store_session, user_store_session
+                artifact_store_session, user_store_session.policy_store
             )

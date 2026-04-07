@@ -1,7 +1,6 @@
 """Unit tests for MLTE artifact protocol implementation."""
 
 import typing
-from typing import Tuple
 
 import pytest
 
@@ -16,7 +15,8 @@ from mlte.negotiation.model import NegotiationCardModel
 from mlte.report.artifact import Report
 from mlte.results.model import TestResultsModel
 from mlte.results.test_results import TestResults
-from mlte.session.session import set_context, set_store
+from mlte.session import get_session
+from mlte.session.session import set_context, set_credentials, set_store
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType, StoreURI
@@ -24,16 +24,11 @@ from mlte.suite.model import TestSuiteModel
 from mlte.suite.test_suite import TestSuite
 from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import store_with_context  # noqa
-from test.store.artifact.fixture import FX_MODEL_ID, FX_VERSION_ID
+from test.store.artifact.conftest import FX_MODEL_ID, FX_VERSION_ID
 
 
 def test_save_load_session() -> None:
-    """
-    Artifacts can be saved  and loaded from global session.
-
-    TODO(Kyle): Can we make this parametric over artifact types?
-    """
+    """Artifacts can be saved  and loaded from global session."""
 
     set_context(FX_MODEL_ID, FX_VERSION_ID)
     set_store(f"{StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)}")
@@ -95,12 +90,12 @@ def fill_test_store(ctx: Context, store: ArtifactStore):
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_load_all_models(
     artifact_type: ArtifactType,
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
     """
     Loading all models of a given type.
     """
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     fill_test_store(ctx, store)
 
     models = Artifact.load_models(artifact_type, ctx, store)
@@ -112,10 +107,10 @@ def test_load_all_models(
 @pytest.mark.parametrize("artifact_type", ArtifactType)
 def test_artifact_parents(
     artifact_type: ArtifactType,
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """An artifact can create organizational elements implicitly, on write."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     artifact_id = "myid"
 
@@ -135,3 +130,89 @@ def test_artifact_parents(
         artifact_store.artifact_mapper.read(
             stored_artifact.get_identifier(), (ctx.model, ctx.version)
         )
+
+
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_save_no_user(
+    artifact_type: ArtifactType,
+    artifact_store_with_context: tuple[ArtifactStore, Context],
+):
+    """Test null user is the default creator."""
+    store, ctx = artifact_store_with_context
+    artifact_model = ArtifactModelFactory.make(artifact_type)
+    artifact = ArtifactFactory.from_model(artifact_model)
+
+    saved_model = artifact.save_with(ctx, store)
+
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        loaded_model = artifact_store.artifact_mapper.read(
+            saved_model.get_identifier(), (ctx.model, ctx.version)
+        )
+        assert loaded_model.header.creator is None
+
+
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_save_explicit_user(
+    artifact_type: ArtifactType,
+    artifact_store_with_context: tuple[ArtifactStore, Context],
+):
+    """Test explicit user is properly set as creator."""
+    store, ctx = artifact_store_with_context
+    user = "explicit-user"
+    artifact_model = ArtifactModelFactory.make(artifact_type)
+    artifact = ArtifactFactory.from_model(artifact_model)
+
+    saved_model = artifact.save_with(ctx, store, user=user)
+
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        loaded_model = artifact_store.artifact_mapper.read(
+            saved_model.get_identifier(), (ctx.model, ctx.version)
+        )
+        assert loaded_model.header.creator == user
+
+
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_save_user_from_session(
+    artifact_type: ArtifactType,
+    artifact_store_with_context: tuple[ArtifactStore, Context],
+):
+    """Test that user from session is used when saving artifact."""
+    store, ctx = artifact_store_with_context
+    user = "session-user"
+    artifact_model = ArtifactModelFactory.make(artifact_type)
+    artifact = ArtifactFactory.from_model(artifact_model)
+
+    set_credentials(user, "password")
+    set_context(ctx.model, ctx.version)
+    get_session()._stores._artifact_store = store  # type: ignore
+    saved_model = artifact.save()
+
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        loaded_model = artifact_store.artifact_mapper.read(
+            saved_model.get_identifier(), (ctx.model, ctx.version)
+        )
+        assert loaded_model.header.creator == user
+
+
+@pytest.mark.parametrize("artifact_type", ArtifactType)
+def test_save_overrides_session_user(
+    artifact_type: ArtifactType,
+    artifact_store_with_context: tuple[ArtifactStore, Context],
+):
+    """Test that, even if session user is set, explicit user overrides it."""
+    store, ctx = artifact_store_with_context
+    user = "session-user"
+    explicit_user = "explicit-user"
+    set_credentials(user, "password")
+    artifact_model = ArtifactModelFactory.make(artifact_type)
+    artifact = ArtifactFactory.from_model(artifact_model)
+
+    set_context(ctx.model, ctx.version)
+    get_session()._stores._artifact_store = store  # type: ignore
+    saved_model = artifact.save(user=explicit_user)
+
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        loaded_model = artifact_store.artifact_mapper.read(
+            saved_model.get_identifier(), (ctx.model, ctx.version)
+        )
+        assert loaded_model.header.creator == explicit_user

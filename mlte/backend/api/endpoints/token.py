@@ -9,7 +9,7 @@ from mlte.backend.api.auth.http_auth_exception import HTTPTokenException
 from mlte.backend.core import state_stores
 from mlte.backend.core.state import state
 from mlte.model.base_model import BaseModel
-from mlte.store.user import policy
+from mlte.store.user.policy import model_policy
 
 GRANT_TYPE_PASSWORD = "password"
 """Grant type name used in token requests."""
@@ -91,7 +91,9 @@ async def login_for_access_token(
     # TODO: this is terribly not efficient. This is checked every time anybody logins.
     with state_stores.artifact_store_session() as artifact_store:
         with state_stores.user_store_session() as user_store:
-            policy.create_model_policies_if_needed(artifact_store, user_store)
+            model_policy.create_model_policies_if_needed(
+                artifact_store, user_store.policy_store
+            )
 
     # Create and return token using username as data.
     access_token = jwt.create_user_token(user.username, state.token_key)

@@ -28,7 +28,6 @@ from test.measurement.utility.test_pynvml_utils import (
     fake_gpu_command,
     make_pynvml_mocks,
 )
-from test.store.artifact.fixture import store_with_context  # noqa
 
 # =================================================================================================
 #  _   _ _   _ _ _ _   _
@@ -155,6 +154,8 @@ def test_memory_evaluate_fake_gpu(mock_import_module):
     mocked_pynvml.nvmlDeviceGetMemoryInfo.side_effect = [
         FakeMemoryInfo(3),
         FakeMemoryInfo(6),
+        FakeMemoryInfo(3),
+        FakeMemoryInfo(6),
     ]
 
     start = time.time()
@@ -254,9 +255,9 @@ def test_statistics_construction():
 
 
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     stats = NvidiaGPUMemoryStatistics(50, 10, 800).with_metadata(
         get_sample_evidence_metadata()

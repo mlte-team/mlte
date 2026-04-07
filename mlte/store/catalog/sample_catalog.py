@@ -26,7 +26,7 @@ class SampleCatalog:
 
     @staticmethod
     def setup_sample_catalog(
-        stores_uri: str,
+        stores_uri: StoreURI,
         validators: CompositeValidator,
     ) -> CatalogStore:
         """
@@ -35,12 +35,11 @@ class SampleCatalog:
         :param stores_uri: The URI of the stores being used (i.e., base folder, base DB, etc).
         :return: The sample catalog store.
         """
-        parsed_uri = StoreURI.from_string(stores_uri)
 
         # Create the actual sample catalog.
-        print(f"Creating sample catalog at URI: {parsed_uri}")
+        print(f"Creating sample catalog at URI: {stores_uri}")
         catalog = create_catalog_store(
-            parsed_uri.uri, SampleCatalog.SAMPLE_CATALOG_ID
+            stores_uri, SampleCatalog.SAMPLE_CATALOG_ID
         )
         catalog.set_validators(validators)
 

@@ -33,6 +33,8 @@ from mlte.session import set_context, set_store
 ```
 ``set_context()`` indicates the model and version being used for the script, and can be any string. ``set_store()`` indicates the location of the store being used for artifacts and other entities, with four store type options described in the <a href="https://mlte.readthedocs.io/en/latest/using_mlte/" target="_blank">documentation</a>. The MLTE context and store can alternatively be set by environment variables before starting the script (``MLTE_CONTEXT_MODEL``, ``MLTE_CONTEXT_VERSION``, and ``MLTE_STORE_URI``), and can later be overridden using the set methods above.
 
+Optionally a current user can also be set via ``set_credentials("user", "password")``, which can be imported from ``mlte.session`` as well. It will be used as the author of the created/edited artifacts. This can also be set by environment variables before starting the script (``MLTE_CURRENT_USER``, ``MLTE_CURRENT_PASS``).
+
 For a simple example of using the `MLTE` library, see the simple demo Jupyter notebooks available <a href="https://github.com/mlte-team/mlte/tree/master/demo/simple" target="_blank">here</a>. 
 
 ### Running `MLTE`'s Web UI

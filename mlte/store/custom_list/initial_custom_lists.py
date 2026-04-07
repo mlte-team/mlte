@@ -13,6 +13,7 @@ from mlte._private.reflection import get_json_resources
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store import error
+from mlte.store.base import StoreURI
 from mlte.store.custom_list.factory import create_custom_list_store
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import (
@@ -26,7 +27,7 @@ class InitialCustomLists:
 
     @staticmethod
     def setup_custom_list_store(
-        stores_uri: str,
+        stores_uri: StoreURI,
     ) -> CustomListStore:
         """
         Sets up a custom list store with the initial custom lists.
@@ -35,7 +36,7 @@ class InitialCustomLists:
         :return: A custom list store populated with the initial entries.
         """
         # Create the initial custom lists.
-        print(f"Creating initial custom lists at URI: {stores_uri}")
+        print(f"Creating initial custom lists at URI: {stores_uri.uri}")
         custom_list_store = create_custom_list_store(stores_uri)
 
         with ManagedCustomListSession(custom_list_store.session()) as session:

@@ -1,8 +1,4 @@
-"""
-test/backend/api/endpoints/test_user.py
-
-Test the API for user operations.
-"""
+"""Test the API for user operations."""
 
 from __future__ import annotations
 
@@ -15,6 +11,7 @@ from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
 from mlte.context.model import Model
 from mlte.store.user.policy import Policy
+from mlte.store.user.store_session import ManagedUserSession
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 from test.backend.api.endpoints.artifact.test_model import MODEL_URI
 from test.backend.fixture import user_generator
@@ -304,9 +301,10 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     res = admin_client.get(f"{USER_URI}/{user.username}")
     assert res.status_code == codes.NOT_FOUND
 
-    assert not Policy(ResourceType.USER, user.username).is_stored(
-        state.stores.user_store.session()
-    )
+    with ManagedUserSession(state.stores.user_store.session()) as user_store:
+        assert not user_store.policy_store.is_stored(
+            Policy(ResourceType.USER, user.username)
+        )
 
 
 @pytest.mark.parametrize(

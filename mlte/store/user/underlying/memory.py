@@ -6,13 +6,15 @@ from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store import PolicyStoreService
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -80,8 +82,15 @@ class InMemoryUserStoreSession(UserStoreSession):
         self.group_mapper = InMemoryGroupMapper(storage=storage)
         """The mapper to group CRUD."""
 
+        self.policy_store = PolicyStoreService(
+            self.group_mapper, self.permission_mapper
+        )
+        """The Policy store abstraction."""
+
         self.user_mapper = InMemoryUserMapper(
-            storage=storage, group_mapper=self.group_mapper
+            storage=storage,
+            group_mapper=self.group_mapper,
+            policy_store=self.policy_store,
         )
         """The mapper to user CRUD."""
 
@@ -95,7 +104,11 @@ class InMemoryUserMapper(UserMapper):
     """In-memory mapper for the user resource."""
 
     def __init__(
-        self, *, storage: MemoryUserStorage, group_mapper: InMemoryGroupMapper
+        self,
+        *,
+        storage: MemoryUserStorage,
+        group_mapper: InMemoryGroupMapper,
+        policy_store: PolicyStoreService,
     ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
@@ -103,18 +116,24 @@ class InMemoryUserMapper(UserMapper):
         self.group_mapper = group_mapper
         """A reference to the group mapper, to get updated group info if needed."""
 
+        self.policy_store = policy_store
+        """Policy store abstraection"""
+
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
+        # Assign policies applied to all users.
+        user = user_policy.set_default_user_policies(user, self.policy_store)
+
         # Create user with hashed passwords.
-        stored_user = user.to_hashed_user()
+        to_store_user = user.to_hashed_user()
 
         # Only store group names for consistency.
-        user.groups = Group.get_group_names(user.groups)
+        to_store_user.groups = Group.get_group_names(user.groups)
 
-        self.storage.users[user.username] = stored_user
-        return stored_user
+        self.storage.users[user.username] = to_store_user
+        return to_store_user
 
     def edit(
         self, user: Union[UserWithPassword, BasicUser], context: Any = None
@@ -150,6 +169,9 @@ class InMemoryUserMapper(UserMapper):
     def delete(self, username: str, context: Any = None) -> User:
         if username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {username}")
+
+        # Now delete related permissions and groups.
+        user_policy.delete_default_user_policies(username, self.policy_store)
 
         popped = self.storage.users[username]
         del self.storage.users[username]

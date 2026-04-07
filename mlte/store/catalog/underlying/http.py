@@ -1,20 +1,32 @@
 """
 Implementation of HTTP catalog store group.
+
+NOTE: indicating the remote catalog that an entry should be sent to/read from is not properly supported through
+the store's interface, as it only applies to HTTP catalogs and not to local ones. To add a kinda hacky way to support
+this, the following assumptions are made of the values received by the CRUD methods:
+
+ - Read/Delete: since we only receive an Entry id when indicating what to read/delete, the remote catalog id this should
+   be read from will come bundled with the entry id, with a prefix, like this "remote_catalog_id--entry_id".
+   The "remote_catalog.py" module is used to extract this, and could be used to bundle it as well.
+ - Create/Edit: besides the same bundling as above, in the entry_id field of the new entry's header, the catalog_id
+   in the new entry's header will have the actual remote catalog id, and this is the value used.
+
 """
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, OrderedDict, Tuple
+from typing import Any, List, Optional, OrderedDict
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
+from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import (
     CatalogEntryMapper,
     CatalogStoreSession,
 )
 from mlte.store.common.http_clients import OAuthHttpClient
-from mlte.store.common.http_storage import HttpStorage
+from mlte.store.common.http_storage import HttpResourceStorage
 from mlte.user.model import MethodType, ResourceType
 
 ENTRY_URL_KEY = "entry"
@@ -37,7 +49,7 @@ class HttpCatalogGroupStore(CatalogStore):
     ) -> None:
         super().__init__(uri=uri)
 
-        self.storage = HttpStorage(
+        self.storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.CATALOG, client=client
         )
         """HTTP storage."""
@@ -61,7 +73,7 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
     """An HTTP implementation of the MLTE catalog store session."""
 
     def __init__(
-        self, *, storage: HttpStorage, read_only: bool = False
+        self, *, storage: HttpResourceStorage, read_only: bool = False
     ) -> None:
         self.storage = storage
         """HTTP storage"""
@@ -87,50 +99,41 @@ class HttpCatalogGroupStoreSession(CatalogStoreSession):
 class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     """HTTP mapper for the catalog group entry resource."""
 
-    COMPOSITE_ID_SEPARATOR = "--"
-
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
     def create(
         self, new_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
-        new_entry = self._convert_to_local(new_entry)
-
+        """This method assumes that the caller put in catalog_id the id of the remote catalog it would be stored into."""
+        new_entry = remote_catalog.remove_remote_catalog_id(new_entry)
         response = self.storage.post(
-            json=new_entry.to_json(), groups=_entry_group(local_catalog_id)
+            json=new_entry.to_json(),
+            groups=_entry_group(new_entry.header.catalog_id),
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def edit(
-        self, new_entry: CatalogEntry, context: Any = None
+        self, edited_entry: CatalogEntry, context: Any = None
     ) -> CatalogEntry:
-        # Entry id contains the remote catalog id as well.
-        local_catalog_id, _ = self.split_ids(new_entry.header.identifier)
-        edited_entry = self._convert_to_local(new_entry)
-
+        """This method assumes that the caller put in catalog_id the id of the remote catalog it would be stored into."""
+        edited_entry = remote_catalog.remove_remote_catalog_id(edited_entry)
         response = self.storage.put(
-            json=edited_entry.to_json(), groups=_entry_group(local_catalog_id)
+            json=edited_entry.to_json(),
+            groups=_entry_group(edited_entry.header.catalog_id),
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def read(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
+        """This method assumes that the caller prefixed the entry_id with the local catalog id."""
+        catalog_id, entry_id = remote_catalog.split_ids(catalog_and_entry_id)
         response = self.storage.get(
             id=entry_id, groups=_entry_group(catalog_id)
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def list(self, context: Any = None) -> List[str]:
         entries = self.list_details()
@@ -139,14 +142,14 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
     def delete(
         self, catalog_and_entry_id: str, context: Any = None
     ) -> CatalogEntry:
-        local_catalog_id, entry_id = self.split_ids(catalog_and_entry_id)
-
+        """This method assumes that the caller prefixed the entry_id with the local catalog id."""
+        local_catalog_id, entry_id = remote_catalog.split_ids(
+            catalog_and_entry_id
+        )
         response = self.storage.delete(
             id=entry_id, groups=_entry_group(local_catalog_id)
         )
-
-        local_entry = CatalogEntry(**response)
-        return self._convert_to_remote(local_entry)
+        return CatalogEntry(**response)
 
     def list_details(
         self,
@@ -161,61 +164,15 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
             id="entry",
             resource_type=f"{ResourceType.CATALOG.value}s",
         )
-        return [
-            self._convert_to_remote(CatalogEntry(**entry)) for entry in response
-        ][offset : offset + limit]
-
-    @staticmethod
-    def split_ids(composite_id: Optional[str]) -> Tuple[str, str]:
-        if not composite_id:
-            raise RuntimeError("No composite id received")
-
-        parts = composite_id.split(
-            HTTPCatalogGroupEntryMapper.COMPOSITE_ID_SEPARATOR
-        )
-        if len(parts) != 2:
-            raise RuntimeError(f"Invalid composite id provided: {composite_id}")
-        return parts[0], parts[1]
-
-    @staticmethod
-    def generate_composite_id(id1: Optional[str], id2: str) -> str:
-        """Creates a composite id given two ids."""
-        if id1:
-            return f"{id1}{HTTPCatalogGroupEntryMapper.COMPOSITE_ID_SEPARATOR}{id2}"
-        else:
-            return id2
-
-    def _convert_to_local(self, entry: CatalogEntry) -> CatalogEntry:
-        """Creates a new entry from the given one, converting it to local by moving the remote catalog id from its identifier."""
-        new_entry = entry.model_copy()
-        new_entry.header = entry.header.model_copy()
-
-        local_catalog_id, entry_id = self.split_ids(entry.header.identifier)
-        http_catalog_id = new_entry.header.catalog_id
-        new_entry.header.identifier = entry_id
-        new_entry.header.catalog_id = self.generate_composite_id(
-            http_catalog_id, local_catalog_id
-        )
-
-        return new_entry
-
-    def _convert_to_remote(self, entry: CatalogEntry) -> CatalogEntry:
-        """Creates a new entry from the given one, converting it to remote by moving the remote catalog id to its identifier."""
-        new_entry = entry.model_copy()
-        new_entry.header = entry.header.model_copy()
-
-        http_catalog_id, local_catalog_id = self.split_ids(
-            new_entry.header.catalog_id
-        )
-        entry_id = new_entry.header.identifier
-        new_entry.header.identifier = self.generate_composite_id(
-            local_catalog_id, entry_id
-        )
-        new_entry.header.catalog_id = http_catalog_id
-
-        return new_entry
+        return [CatalogEntry(**entry) for entry in response][
+            offset : offset + limit
+        ]
 
 
-def _entry_group(catalog_id: str) -> OrderedDict[str, str]:
+def _entry_group(catalog_id: Optional[str]) -> OrderedDict[str, str]:
     """Returns the resource group info for entries inside a catalog."""
+    if not catalog_id:
+        raise RuntimeError(
+            "Can't create catalog group for entry with an empty catalog id."
+        )
     return OrderedDict([(catalog_id, ENTRY_URL_KEY)])

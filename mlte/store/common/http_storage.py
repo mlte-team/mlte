@@ -18,15 +18,22 @@ API_PREFIX = settings.API_PREFIX
 """API URL prefix."""
 
 
-class HttpStorage(Storage):
+class HttpResourceStorage(Storage):
     """An HTTP base storage for a given resource type."""
 
     def __init__(
         self,
         uri: StoreURI,
-        resource_type: ResourceType,
+        resource_type: ResourceType | str,
         client: Optional[OAuthHttpClient] = None,
     ) -> None:
+        """
+        Creates an HTTP storage for a specific resource.
+
+        :param uri: The properly formated StoreURI for an HTTP storage, including server and ports, and credentials.
+        :param resource_type: The type of resource, used to build the resource URL for this storage. Can be a ResourceType, or a simple string.
+        :param client: The OAuthHttpClient to use, will default to RequestsClient if none.
+        """
         super().__init__(uri)
 
         if client is None:
@@ -35,11 +42,13 @@ class HttpStorage(Storage):
         """The client for requests."""
 
         # Get credentials, if any, from the uri and into the client.
-        uri.uri = self.client.process_credentials(uri.uri)
-        self.clean_url = uri.uri
+        self.clean_url = self.client.process_credentials(uri.uri)
         """Store the clean URL without credentials."""
 
-        self.resource_url = self.build_resource_url(resource_type.value)
+        if isinstance(resource_type, ResourceType):
+            self.resource_url = self.build_resource_url(resource_type.value)
+        else:
+            self.resource_url = self.build_resource_url(resource_type)
         """Set the base URL for all calls to this resource."""
 
     def build_resource_url(self, resource: str) -> str:

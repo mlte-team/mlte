@@ -1,8 +1,4 @@
-"""
-test/report/test_artifact.py
-
-Unit tests for report artifact type.
-"""
+"""Unit tests for report artifact type."""
 
 from typing import Tuple
 
@@ -11,7 +7,6 @@ from mlte.context.context import Context
 from mlte.report.artifact import Report
 from mlte.store.artifact.store import ArtifactStore
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def test_round_trip() -> None:
@@ -26,10 +21,10 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Report can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     initial_id = "my-report"
 
     report = Report.from_model(

@@ -28,7 +28,6 @@ from test.measurement.utility.test_pynvml_utils import (
     has_torch_cuda,
     make_pynvml_mocks,
 )
-from test.store.artifact.fixture import store_with_context  # noqa
 
 # =================================================================================================
 #  _   _ _   _ _ _ _   _
@@ -140,7 +139,12 @@ def test_power_evaluate_fake_gpu(mock_import_module):
 
     # We need to preload this with bytes
     # NOTE: The internal function returns milliwatts even thought our tool returns watts
-    mocked_pynvml.nvmlDeviceGetPowerUsage.side_effect = [9000, 12000]
+    mocked_pynvml.nvmlDeviceGetPowerUsage.side_effect = [
+        9000,
+        12000,
+        9000,
+        12000,
+    ]
 
     start = time.time()
 
@@ -240,9 +244,9 @@ def test_statistics_construction():
 
 
 def test_result_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     stats = NvidiaGPUPowerStatistics(50, 10, 800).with_metadata(
         get_sample_evidence_metadata()
