@@ -93,7 +93,7 @@ class Artifact(Serializable, abc.ABC):
         Save an artifact with parameters from the configured global session.
 
         This is equivalent to calling:
-            artifact.save_with(get_session.context, get_session.store)
+            artifact.save_with(get_session().context, get_session().store)
 
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the

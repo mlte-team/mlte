@@ -3,13 +3,13 @@
 from typing import Union
 
 from mlte.store.user.policy import Policy
-from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.policy.policy_store import PolicyStoreService
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 
 
 def set_default_user_policies(
-    user: UserWithPassword, policy_store: PolicyStore
+    user: UserWithPassword, policy_store: PolicyStoreService
 ) -> UserWithPassword:
     """Assign a new user the permissions given to all users."""
     # Users with admin role don't need these policies.
@@ -38,19 +38,17 @@ def set_default_user_policies(
     return user
 
 
-def ignore_new_groups(
+def remove_new_groups(
     user: Union[UserWithPassword, BasicUser], user_store: UserStoreSession
 ) -> Union[UserWithPassword, BasicUser]:
-    """Ignore changes to user's groups."""
-    # If not admin, keep current groups and ignore the new ones, if any.
+    """Removes any groups in the given user that are not in the stored version of this user."""
     current_groups = user_store.user_mapper.read(user.username).groups
     user.groups = current_groups
-
     return user
 
 
 def delete_default_user_policies(
-    username: str, policy_store: PolicyStore
+    username: str, policy_store: PolicyStoreService
 ) -> None:
     # Now delete related permissions and groups.
     policy = Policy(ResourceType.USER, resource_id=username)

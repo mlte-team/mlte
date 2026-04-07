@@ -59,10 +59,10 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Integer can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     i = Integer(1, unit=Units.kilobyte).with_metadata(
         get_sample_evidence_metadata()

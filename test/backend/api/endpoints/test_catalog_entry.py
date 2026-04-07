@@ -14,7 +14,7 @@ from mlte.backend.api import codes
 from mlte.backend.api.models.catalog import CatalogReply
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreType
-from mlte.store.query import Query
+from mlte.store.query import IdentifierFilter, Query
 from mlte.user.model import ResourceType, UserWithPassword
 from test.backend.fixture import user_generator
 from test.backend.fixture.test_api import TestAPI
@@ -342,19 +342,15 @@ def test_search(
 
     test_entry = get_test_entry()
     create_entry_using_admin(test_entry, test_api)
+    query = Query(filter=IdentifierFilter(id=test_entry.header.identifier))
 
     url = get_entry_uri()
-    res = test_client.post(f"{url}/search", json=Query().to_json())
+    res = test_client.post(f"{url}/search", json=query.to_json())
     assert res.status_code == codes.OK
 
     collection = res.json()
-    assert len(collection) >= 1
+    assert len(collection) == 1
 
-    read: Optional[CatalogEntry] = None
-    for entry_json in collection:
-        entry = CatalogEntry(**entry_json)
-        if entry.get_identifier() == test_entry.get_identifier():
-            read = entry
-            read.header.created = -1  # To ignore times when comparing
-
+    read = CatalogEntry(**collection[0])
+    read.header.created = -1
     assert read == test_entry

@@ -73,9 +73,11 @@ def test_model() -> None:
     assert r == cm
 
 
-def test_save_load(store_with_context: Tuple[ArtifactStore, Context]) -> None:
+def test_save_load(
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
+) -> None:
     """Confusion matrix can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     cm = ConfusionMatrix([[1, 2], [3, 4]]).with_metadata(
         get_sample_evidence_metadata()

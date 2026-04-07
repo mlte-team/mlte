@@ -17,7 +17,7 @@ from mlte.store.user.mappers import (
     UserMapper,
 )
 from mlte.store.user.policy import user_policy
-from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.policy.policy_store import PolicyStoreService
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.store.user.underlying.rdbs.metadata import (
@@ -60,7 +60,7 @@ class RelationalDBUserStore(UserStore):
         )
         """The relational DB storage."""
 
-        UserStore.__init__(self, uri, add_default_data)
+        super().__init__(uri, add_default_data)
         """Basic user setup."""
 
     def session(self) -> RelationalDBUserStoreSession:
@@ -96,7 +96,7 @@ class RelationalDBUserStoreSession(UserStoreSession):
         self.permission_mapper = RDBPermissionMapper(storage)
         """The mapper to group CRUD."""
 
-        self.policy_store = PolicyStore(
+        self.policy_store = PolicyStoreService(
             self.group_mapper, self.permission_mapper
         )
         """The Policy store abstraction."""
@@ -117,7 +117,9 @@ class RelationalDBUserStoreSession(UserStoreSession):
 class RDBUserMapper(UserMapper):
     """RDB mapper for the user resource."""
 
-    def __init__(self, storage: RDBStorage, policy_store: PolicyStore) -> None:
+    def __init__(
+        self, storage: RDBStorage, policy_store: PolicyStoreService
+    ) -> None:
         self.storage = storage
         """A reference to underlying storage."""
 

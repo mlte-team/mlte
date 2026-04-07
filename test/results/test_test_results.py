@@ -18,8 +18,8 @@ from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
 
 
-def test_save_load(store_with_context: Tuple[ArtifactStore, Context]):
-    store, ctx = store_with_context
+def test_save_load(artifact_store_with_context: Tuple[ArtifactStore, Context]):
+    store, ctx = artifact_store_with_context
 
     test_suite = TestSuite.from_model(
         ArtifactModelFactory.make(ArtifactType.TEST_SUITE)

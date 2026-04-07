@@ -50,8 +50,8 @@ def test_round_trip() -> None:
     assert test_suite == loaded
 
 
-def test_save_load(store_with_context: tuple[ArtifactStore, Context]):
-    store, ctx = store_with_context
+def test_save_load(artifact_store_with_context: tuple[ArtifactStore, Context]):
+    store, ctx = artifact_store_with_context
 
     # Setup dependent card with QAS ids.
     card = get_sample_negotiation_card()
@@ -76,9 +76,9 @@ def test_save_load(store_with_context: tuple[ArtifactStore, Context]):
 
 
 def test_save_load_default(
-    store_with_context: tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     test_suite = get_sample_test_suite(identifier=TestSuite.build_full_id())
 
     test_suite.save_with(ctx, store)
@@ -96,10 +96,10 @@ def test_save_invalid_qasids():
 
 
 def test_load_failure(
-    store_with_context: tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
     """Fail to load a suite that doesn't exist."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     with pytest.raises(RuntimeError):
         _ = TestSuite.load_with("test_suite", context=ctx, store=store)
 

@@ -49,9 +49,11 @@ def test_success():
     assert test_results is not None
 
 
-def test_success_defaults(store_with_context: tuple[ArtifactStore, Context]):
+def test_success_defaults(
+    artifact_store_with_context: tuple[ArtifactStore, Context],
+):
     """Tests that validator can load default TestSuite and all Evidence from current session, and validate it."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     set_context(model_id=ctx.model, version_id=ctx.version)
     get_session()._stores = UnifiedStore()
     get_session().stores.set_artifact_store(store)

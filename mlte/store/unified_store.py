@@ -132,7 +132,7 @@ def _setup_arifact_store(stores_uri: StoreURI, stores: UnifiedStore) -> None:
     Creates an artifact store, validators for it, and adds it to stores.
 
     :param stores_uri: The store URI.
-    :param stores: The SessionStores object that the new store will be added to.
+    :param stores: The UnifiedStore object that the new store will be added to.
     """
     artifact_store_validators = CompositeValidator(
         [
@@ -161,7 +161,7 @@ def _setup_catalog_stores(
     Creates catalog stores, validators for them, and adds it to stores.
 
     :param stores_uri: The store URI.
-    :param stores: The SessionStores object that the new stores will be added to.
+    :param stores: The UnifiedStore object that the new stores will be added to.
     :param catalog_uris: A dict of URIs for catalog stores.
     """
 

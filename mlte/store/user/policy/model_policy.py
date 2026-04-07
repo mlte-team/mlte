@@ -4,12 +4,12 @@ from typing import Union
 
 from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.user.policy.policy import Policy
-from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.policy.policy_store import PolicyStoreService
 from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 
 
 def create_model_policies_if_needed(
-    artifact_store: ArtifactStoreSession, policy_store: PolicyStore
+    artifact_store: ArtifactStoreSession, policy_store: PolicyStoreService
 ):
     """
     Function that checks, for all models, if policies have not been created.
@@ -25,7 +25,7 @@ def create_model_policies_if_needed(
 def create_model_policy(
     model_id: str,
     current_user: Union[UserWithPassword, BasicUser],
-    policy_store: PolicyStore,
+    policy_store: PolicyStoreService,
 ) -> Union[UserWithPassword, BasicUser]:
     """Create a basic policy for a model for the user, and returns the updated user."""
     policy = Policy(ResourceType.MODEL, model_id)
@@ -37,7 +37,7 @@ def create_model_policy(
     return user
 
 
-def remove_model_polcy(model_id: str, policy_store: PolicyStore):
+def remove_model_polcy(model_id: str, policy_store: PolicyStoreService):
     """Removes a basic policy for a model."""
     policy = Policy(ResourceType.MODEL, resource_id=model_id)
     policy_store.remove_from_store(policy)

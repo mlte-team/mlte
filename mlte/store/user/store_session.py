@@ -6,7 +6,7 @@ from typing import cast
 
 from mlte.store.base import ManagedSession, StoreSession
 from mlte.store.user.mappers import GroupMapper, PermissionMapper, UserMapper
-from mlte.store.user.policy.policy_store import PolicyStore
+from mlte.store.user.policy.policy_store import PolicyStoreService
 
 
 class UserStoreSession(StoreSession):
@@ -21,7 +21,7 @@ class UserStoreSession(StoreSession):
     permission_mapper: PermissionMapper
     """Mapper for the permission resource."""
 
-    policy_store: PolicyStore
+    policy_store: PolicyStoreService
     """A PolicyStore abstraction to handling stored policies (groups+permissions)."""
 
 

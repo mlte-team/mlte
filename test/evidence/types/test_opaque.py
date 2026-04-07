@@ -76,10 +76,10 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Opaque can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     o = Opaque({"foo": "bar"}).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)

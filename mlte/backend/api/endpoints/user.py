@@ -117,7 +117,7 @@ def edit_user(
             # TODO: this is a weird permission check that is outside the common permission checks.
             # We only want to allow admins to edit a user's groups.
             if current_user.role != RoleType.ADMIN:
-                user = user_policy.ignore_new_groups(user, user_store)
+                user = user_policy.remove_new_groups(user, user_store)
 
             return user_store.user_mapper.edit(user)
         except errors.ErrorNotFound as e:
