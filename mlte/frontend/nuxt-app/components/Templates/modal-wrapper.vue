@@ -26,7 +26,7 @@
   </UsaModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const emit = defineEmits(["toggleVisible"]);
 const props = defineProps({
   visible: {
