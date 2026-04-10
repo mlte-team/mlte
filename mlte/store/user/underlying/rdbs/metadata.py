@@ -74,7 +74,7 @@ class DBGroup(DBBase):
     __table_args__ = (UniqueConstraint("name", name="_group_name"),)
 
     def __repr__(self) -> str:
-        return f"Group(id={self.id!r}, name={self.name!r})"
+        return f"Group(id={self.id!r}, name={self.name!r}, permissions={self.permissions!r})"
 
 
 class DBGroupPermission(DBBase):

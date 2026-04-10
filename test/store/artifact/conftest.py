@@ -1,0 +1,121 @@
+"""Fixtures for MLTE artifact store unit tests."""
+
+from __future__ import annotations
+
+import typing
+from pathlib import Path
+from typing import Generator, Optional, Tuple
+
+import pytest
+from sqlalchemy import StaticPool
+
+from mlte.artifact.type import ArtifactType
+from mlte.context.context import Context
+from mlte.context.model import Model, Version
+from mlte.store.artifact.factory import create_artifact_store
+from mlte.store.artifact.store import ArtifactStore
+from mlte.store.artifact.store_session import ManagedArtifactSession
+from mlte.store.artifact.underlying.fs import LocalFileSystemStore
+from mlte.store.artifact.underlying.http import HttpArtifactStore
+from mlte.store.artifact.underlying.memory import InMemoryStore
+from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
+from mlte.store.base import StoreType, StoreURI
+from mlte.user.model import UserWithPassword
+from test.store.defaults import IN_MEMORY_SQLITE_DB
+from test.store.utils import create_api_and_http_uri
+
+
+def _create_memory_store() -> InMemoryStore:
+    return typing.cast(
+        InMemoryStore,
+        create_artifact_store(StoreURI.from_type(StoreType.LOCAL_MEMORY)),
+    )
+
+
+def _create_fs_store(tmp_path: Path) -> LocalFileSystemStore:
+    return typing.cast(
+        LocalFileSystemStore,
+        create_artifact_store(
+            StoreURI.from_type(StoreType.LOCAL_FILESYSTEM, str(tmp_path))
+        ),
+    )
+
+
+def _create_rdbs_store() -> RelationalDBArtifactStore:
+    return RelationalDBArtifactStore(
+        StoreURI.from_string(IN_MEMORY_SQLITE_DB),
+        poolclass=StaticPool,
+    )
+
+
+def _create_api_and_http_store(
+    user: Optional[UserWithPassword] = None,
+) -> HttpArtifactStore:
+    """
+    Get a RemoteHttpStore configured with a test client.
+    :return: The configured store
+    """
+    client, uri = create_api_and_http_uri(user)
+    return HttpArtifactStore(uri=uri, client=client)
+
+
+def store_types_and_artifact_types() -> (
+    Generator[Tuple[StoreType, ArtifactType], None, None]
+):
+    """
+    Yield store fixture names and artifact types to produce all combinations.
+    :return: (store fixture name, artifact type)
+    """
+    for store_type in StoreType:
+        for artifact_type in ArtifactType:
+            yield store_type, artifact_type
+
+
+def _create_artifact_store(uri: StoreURI, tmpdir_factory) -> ArtifactStore:
+    """Function equivalent to the store's factory method, to be used for testing."""
+    if uri.type == StoreType.REMOTE_HTTP:
+        return _create_api_and_http_store()
+    elif uri.type == StoreType.LOCAL_MEMORY:
+        return _create_memory_store()
+    elif uri.type == StoreType.LOCAL_FILESYSTEM:
+        return _create_fs_store(tmpdir_factory.mktemp("data"))
+    elif uri.type == StoreType.RELATIONAL_DB:
+        return _create_rdbs_store()
+    else:
+        raise RuntimeError(f"Invalid store type received: {uri}")
+
+
+@pytest.fixture(scope="function")
+def create_test_artifact_store(
+    tmpdir_factory,
+) -> typing.Callable[[StoreType], ArtifactStore]:
+    """Fixture to manually create a CustomList store."""
+
+    def _make(store_type: StoreType) -> ArtifactStore:
+        return _create_artifact_store(
+            StoreURI.from_type(store_type),
+            tmpdir_factory,
+        )
+
+    return _make
+
+
+# The mode identifier for default context
+FX_MODEL_ID = "model0"
+
+# The version identifier for default context
+FX_VERSION_ID = "v0"
+
+
+@pytest.fixture(scope="function")
+def artifact_store_with_context() -> Tuple[ArtifactStore, Context]:
+    """Create an in-memory artifact store with initial context."""
+    store = _create_memory_store()
+    with ManagedArtifactSession(store.session()) as artifact_store:
+        _ = artifact_store.model_mapper.create(Model(identifier=FX_MODEL_ID))
+        _ = artifact_store.version_mapper.create(
+            Version(identifier=FX_VERSION_ID),
+            FX_MODEL_ID,
+        )
+
+    return store, Context(FX_MODEL_ID, FX_VERSION_ID)

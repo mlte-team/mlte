@@ -66,5 +66,5 @@ class UserStore(Store):
         user_store = self.session()
         for resource_type in ResourceType:
             policy = Policy(resource_type, resource_id=None)
-            if not policy.is_stored(user_store=user_store):
-                policy.save_to_store(user_store=user_store)
+            if not user_store.policy_store.is_stored(policy):
+                user_store.policy_store.save_to_store(policy)

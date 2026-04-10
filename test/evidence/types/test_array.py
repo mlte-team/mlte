@@ -1,8 +1,4 @@
-"""
-test/value/types/test_array.py
-
-Unit tests for Array.
-"""
+"""Unit tests for Array."""
 
 from __future__ import annotations
 
@@ -13,7 +9,6 @@ from mlte.evidence.types.array import Array
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class DummyMeasurementArray(Measurement):
@@ -63,10 +58,10 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Array can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     o = Array([1, 2, 3]).with_metadata(get_sample_evidence_metadata())
     o.save_with(ctx, store)

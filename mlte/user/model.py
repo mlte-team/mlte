@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, List, Optional, Union
+from typing import ClassVar, Optional, Union
 
 from strenum import StrEnum
 
@@ -45,7 +45,7 @@ class BasicUser(BaseModel):
     role: RoleType = RoleType.REGULAR
     """The role associated to the user."""
 
-    groups: List[Group] = []
+    groups: list[Group] = []
     """The groups the user is in."""
 
     def is_equal_to(
@@ -68,9 +68,30 @@ class BasicUser(BaseModel):
 
         return user1 == user2
 
+    def __eq__(self, other: object) -> bool:
+        """Compares users, taking into account that groups may be in different orders."""
+        if not isinstance(other, BasicUser):
+            return False
+
+        # Check general fields.
+        if (
+            self.username != other.username
+            or self.email != other.email
+            or self.full_name != other.full_name
+            or self.disabled != other.disabled
+            or self.role != other.role
+        ):
+            return False
+
+        # Compare the groups list sorted to ignore order.
+        key_func = lambda x: tuple(x.model_dump().items())  # noqa
+        return sorted(self.groups, key=key_func) == sorted(
+            other.groups, key=key_func
+        )
+
 
 class User(BasicUser):
-    """User with additional information only used locally when stored."""
+    """User with all needed information, and no plain password."""
 
     hashed_password: str
     """The hashed password of the user."""
@@ -170,13 +191,13 @@ class Group(BaseModel):
     name: str
     """The name of the group."""
 
-    permissions: List[Permission] = []
+    permissions: list[Permission] = []
     """The permissions associated to the group."""
 
     @staticmethod
-    def get_group_names(groups: List[Group]) -> List[Group]:
+    def get_group_names(groups: list[Group]) -> list[Group]:
         """Given a list of groups, returns a similar list with groups that only contain their names."""
-        group_names: List[Group] = []
+        group_names: list[Group] = []
         for group in groups:
             group_names.append(Group(name=group.name))
         return group_names

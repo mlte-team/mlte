@@ -13,8 +13,7 @@ from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
 from mlte.context.model import Model, Version
-from mlte.store.user.policy import Policy
-from mlte.user.model import ResourceType
+from mlte.store.user.policy import model_policy
 
 # The router exported by this submodule
 router = APIRouter()
@@ -47,15 +46,12 @@ def create_model(
         except Exception as ex:
             raise_http_internal_error(ex)
 
-    with state_stores.user_store_session() as artifact_store:
+    with state_stores.user_store_session() as user_store:
         try:
-            # Create permissions and groups to handle this model.
-            policy = Policy(ResourceType.MODEL, created_model.identifier)
-            policy.save_to_store(artifact_store)
-
-            # Also make user have access to CRUD for this model, since they are its creator.
-            policy.assign_to_user(current_user)
-            artifact_store.user_mapper.edit(current_user)
+            current_user = model_policy.create_model_policy(
+                created_model.identifier, current_user, user_store.policy_store
+            )
+            user_store.user_mapper.edit(current_user)
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -132,11 +128,10 @@ def delete_model(
                 detail="Internal server error.",
             )
 
-    with state_stores.user_store_session() as artifact_store:
+    with state_stores.user_store_session() as user_store:
         # Now delete related permissions and groups.
         try:
-            policy = Policy(ResourceType.MODEL, resource_id=model_id)
-            policy.remove_from_store(artifact_store)
+            model_policy.remove_model_polcy(model_id, user_store.policy_store)
         except Exception as ex:
             raise_http_internal_error(ex)
 

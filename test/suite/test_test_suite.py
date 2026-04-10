@@ -17,7 +17,6 @@ from mlte.store.artifact.store import ArtifactStore
 from mlte.suite.test_case import TestCase
 from mlte.suite.test_suite import TestSuite
 from test.negotiation.test_artifact import get_sample_negotiation_card
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def get_sample_test_suite(
@@ -51,8 +50,8 @@ def test_round_trip() -> None:
     assert test_suite == loaded
 
 
-def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
-    store, ctx = store_with_context
+def test_save_load(artifact_store_with_context: tuple[ArtifactStore, Context]):
+    store, ctx = artifact_store_with_context
 
     # Setup dependent card with QAS ids.
     card = get_sample_negotiation_card()
@@ -77,9 +76,9 @@ def test_save_load(store_with_context: tuple[ArtifactStore, Context]):  # noqa
 
 
 def test_save_load_default(
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     test_suite = get_sample_test_suite(identifier=TestSuite.build_full_id())
 
     test_suite.save_with(ctx, store)
@@ -97,10 +96,10 @@ def test_save_invalid_qasids():
 
 
 def test_load_failure(
-    store_with_context: tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
     """Fail to load a suite that doesn't exist."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
     with pytest.raises(RuntimeError):
         _ = TestSuite.load_with("test_suite", context=ctx, store=store)
 

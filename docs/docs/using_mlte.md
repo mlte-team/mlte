@@ -134,10 +134,13 @@ They are described and used in the following way:
 
 - ``set_store("store_uri")``: this command indicates the location of the store you will be using for the rest of the script. There are four store types, with the structure described in the [Store URIs](#store-uris) section.
 
-Alternatively, these two things can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
+- ``set_credentials("user")``: this command sets the provided user name as the current user. It is used to give attribution when creating/editing artifacts.
+
+Alternatively, these attributes can also be set by environment variables before starting your Python script. If needed, these values can later be overriden in the script usng the set methods above.
 
 - ``MLTE_CONTEXT_MODEL`` and ``MLTE_CONTEXT_VERSION`` to set the model and version.
 - ``MLTE_STORE_URI`` to set the store URI.
+- ``MLTE_CURRENT_USER`` to set the current username.
 
 ## Negotiate Model Quality Requirements
 

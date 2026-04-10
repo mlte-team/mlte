@@ -1,9 +1,10 @@
-"""Manages current session info about stores."""
+"""Manages info about a unified set of stores."""
 
 from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
@@ -23,9 +24,9 @@ from mlte.store.validators.cross_validators import (
 )
 
 
-class SessionStores:
+class UnifiedStore:
     """
-    Contains the store sessions currently being used.
+    Unifies all store handling into one class.
     """
 
     LOCAL_CATALOG_STORE_ID = "local"
@@ -47,27 +48,27 @@ class SessionStores:
         """The list of catalog store instances maintained by the session object."""
 
     def set_artifact_store(self, store: ArtifactStore) -> None:
-        """Set the globally-configured backend artifact store."""
+        """Set the artifact store."""
         self._artifact_store = store
 
     def set_custom_list_store(self, store: CustomListStore) -> None:
-        """Set the globally-configured backend custom list store."""
+        """Set the custom list store."""
         self._custom_list_store = store
 
     def set_user_store(self, store: UserStore) -> None:
-        """Set the globally-configured backend user store."""
+        """Set the user store."""
         self._user_store = store
 
     def add_catalog_store(
         self, store: CatalogStore, id: str, overwite: bool = False
     ) -> None:
-        """Adds to the the globally-configured backend list of catalog stores."""
+        """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog(id, store, overwite)
 
     def add_catalog_store_from_uri(
-        self, store_uri: str, id: str, overwite: bool = False
+        self, store_uri: StoreURI, id: str, overwite: bool = False
     ) -> None:
-        """Adds to the the globally-configured backend list of catalog stores."""
+        """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
 
     @property
@@ -98,16 +99,16 @@ class SessionStores:
 
 
 def setup_stores(
-    stores_uri: str,
-    catalog_uris: dict[str, str] = {},
-) -> SessionStores:
+    stores_uri: StoreURI,
+    catalog_uris: dict[str, StoreURI] = {},
+) -> UnifiedStore:
     """
     Sets up all stores required by MLTE, from the provided URIs.
 
     :param stores_uri: The store URI string, used as the common type and root location for all non-catalog stores.
     :param catalog_uris: A dict of URIs for catalog stores.
     """
-    stores = SessionStores()
+    stores = UnifiedStore()
 
     # Initialize the backing user store instance.
     user_store = user_store_factory.create_user_store(stores_uri)
@@ -126,12 +127,12 @@ def setup_stores(
     return stores
 
 
-def _setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
+def _setup_arifact_store(stores_uri: StoreURI, stores: UnifiedStore) -> None:
     """
-    Creates an artifact store, validators for it, and adds it to stores
+    Creates an artifact store, validators for it, and adds it to stores.
 
-    :param stores_uri: The store URI string
-    :param stores: The SessionStores object that the new store will be added to
+    :param stores_uri: The store URI.
+    :param stores: The UnifiedStore object that the new store will be added to.
     """
     artifact_store_validators = CompositeValidator(
         [
@@ -152,13 +153,15 @@ def _setup_arifact_store(stores_uri: str, stores: SessionStores) -> None:
 
 
 def _setup_catalog_stores(
-    stores_uri: str, stores: SessionStores, catalog_uris: dict[str, str]
+    stores_uri: StoreURI,
+    stores: UnifiedStore,
+    catalog_uris: dict[str, StoreURI],
 ) -> None:
     """
-    Creates catalog stores, validators for them, and adds it to stores
+    Creates catalog stores, validators for them, and adds it to stores.
 
-    :param stores_uri: The store URI string
-    :param stores: The SessionStores object that the new stores will be added to
+    :param stores_uri: The store URI.
+    :param stores: The UnifiedStore object that the new stores will be added to.
     :param catalog_uris: A dict of URIs for catalog stores.
     """
 
@@ -179,14 +182,14 @@ def _setup_catalog_stores(
     )
 
     # Throw error if trying to set a remote catalog with the id of the local catalog
-    if SessionStores.LOCAL_CATALOG_STORE_ID in catalog_uris:
+    if UnifiedStore.LOCAL_CATALOG_STORE_ID in catalog_uris:
         raise RuntimeError(
-            f"Remote catalog store ID cannot be {SessionStores.LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
+            f"Remote catalog store ID cannot be {UnifiedStore.LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
         )
 
     # Create local catalog
     stores.add_catalog_store_from_uri(
-        stores_uri, SessionStores.LOCAL_CATALOG_STORE_ID
+        stores_uri, UnifiedStore.LOCAL_CATALOG_STORE_ID
     )
 
     # Catalogs: Add all configured catalog stores.
@@ -194,5 +197,5 @@ def _setup_catalog_stores(
         stores.add_catalog_store_from_uri(uri, id)
 
     # Add catalog store validators to stores
-    for catalog_id, catalog_store in stores.catalog_stores.catalogs.items():
+    for _, catalog_store in stores.catalog_stores.catalogs.items():
         catalog_store.set_validators(catalog_store_validators)

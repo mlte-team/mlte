@@ -1,8 +1,4 @@
-"""
-test/negotiation/test_negotiation_card.py
-
-Unit tests for negotiation card.
-"""
+"""Unit tests for negotiation card."""
 
 from __future__ import annotations
 
@@ -18,12 +14,11 @@ from mlte.negotiation.artifact import NegotiationCard
 from mlte.negotiation.model import DataDescriptor
 from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
+from mlte.store.base import StoreType
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.fixture import (  # noqa
+from test.store.artifact.conftest import (
     FX_MODEL_ID,
     FX_VERSION_ID,
-    memory_store,
-    store_with_context,
 )
 
 
@@ -42,10 +37,10 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Negotiation card can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context  # noqa
+    store, ctx = artifact_store_with_context
 
     card = get_sample_negotiation_card()
     card.save_with(ctx, store)
@@ -54,8 +49,9 @@ def test_save_load(
     assert loaded == card
 
 
-def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
+def test_save_noparents(create_test_artifact_store) -> None:
     """Save fails when no parents are present."""
+    memory_store = create_test_artifact_store(StoreType.LOCAL_MEMORY)
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = get_sample_negotiation_card()
@@ -63,8 +59,9 @@ def test_save_noparents(memory_store: ArtifactStore) -> None:  # noqa
         card.save_with(ctx, memory_store)
 
 
-def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
+def test_save_parents(create_test_artifact_store) -> None:
     """Save succeeds when parents are present."""
+    memory_store = create_test_artifact_store(StoreType.LOCAL_MEMORY)
     ctx = Context(FX_MODEL_ID, FX_VERSION_ID)
 
     card = get_sample_negotiation_card()
@@ -72,10 +69,10 @@ def test_save_parents(memory_store: ArtifactStore) -> None:  # noqa
 
 
 def test_save_overwrite(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Save succeeds when old artifact is overwritten."""
-    store, ctx = store_with_context  # noqa
+    store, ctx = artifact_store_with_context
 
     # Initial write succeeds
     card = get_sample_negotiation_card()
