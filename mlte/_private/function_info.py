@@ -9,9 +9,7 @@ from mlte._private import meta
 
 
 class FunctionInfo:
-    """
-    Class to extract info about current class, function and arguments.
-    """
+    """Class to extract info about current class, function and arguments."""
 
     def __init__(
         self,

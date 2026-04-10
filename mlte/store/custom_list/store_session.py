@@ -1,4 +1,4 @@
-"""MLTE custom list store interface implementation"""
+"""MLTE custom list store interface implementation."""
 
 from __future__ import annotations
 
