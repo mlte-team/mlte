@@ -1,8 +1,4 @@
-"""
-test/backend/api/endpoints/artifact/test_model.py
-
-Test the API for model operations.
-"""
+"""Test the API for model operations."""
 
 import pytest
 
@@ -76,8 +72,8 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Also test that permissions and groups were created.
     with ManagedUserSession(state.stores.user_store.session()) as user_store:
-        assert Policy(ResourceType.MODEL, model.identifier).is_stored(
-            user_store
+        assert user_store.policy_store.is_stored(
+            Policy(ResourceType.MODEL, model.identifier)
         )
 
 
@@ -194,8 +190,8 @@ def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
 
     # Also test that permissions and groups were deleted
     with ManagedUserSession(state.stores.user_store.session()) as user_store:
-        assert not Policy(ResourceType.MODEL, model.identifier).is_stored(
-            user_store
+        assert not user_store.policy_store.is_stored(
+            Policy(ResourceType.MODEL, model.identifier)
         )
 
 

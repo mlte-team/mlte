@@ -1,14 +1,13 @@
-"""
-test/store/user/test_underlying.py
-
-Unit tests for the underlying user store implementations.
-"""
+"""Unit tests for the underlying user store implementations."""
 
 from typing import List
 
 import pytest
 
 import mlte.store.error as errors
+from mlte.backend.core.state import state
+from mlte.store.base import StoreType
+from mlte.store.user.policy import user_policy
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession, UserStoreSession
 from mlte.user.model import (
@@ -19,16 +18,7 @@ from mlte.user.model import (
     ResourceType,
     UserWithPassword,
 )
-
-from .fixture import (  # noqa
-    create_fs_store,
-    create_memory_store,
-    create_rdbs_store,
-    fs_store,
-    memory_store,
-    rdbs_store,
-    user_stores,
-)
+from test.store.utils import store_types
 
 TEST_MOD_ID = "mod1"
 
@@ -55,21 +45,23 @@ def get_test_user() -> UserWithPassword:
 def get_test_group() -> Group:
     """Helper to get a group structure."""
     group_name = "g1"
-    test_user = Group(name=group_name, permissions=get_test_permissions())
+    test_user = Group(name=group_name, permissions=get_default_permissions())
     return test_user
 
 
-def setup_user_groups(user: UserWithPassword, user_store: UserStoreSession):
+def setup_test_group(user_store: UserStoreSession):
     """Helper to set up groups."""
-    for group in user.groups:
-        setup_group_permisisons(group, user_store)
-        user_store.group_mapper.create(group)
+    user_store.group_mapper.create(get_test_group())
 
 
-def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
-    """Helper to set up permissions."""
-    for permission in test_group.permissions:
-        user_store.permission_mapper.create(permission)
+def get_default_permissions() -> list[Permission]:
+    """Helper to get some of the default permissions."""
+    permissions: list[Permission] = []
+    for resource_type in ResourceType:
+        permissions.append(
+            Permission(resource_type=resource_type, method=MethodType.GET)
+        )
+    return permissions
 
 
 def get_test_permissions() -> List[Permission]:
@@ -87,30 +79,34 @@ def get_test_permissions() -> List[Permission]:
     return [p1, p2]
 
 
+def get_internal_store_session(
+    tested_user_store: UserStoreSession, store_type: StoreType
+) -> UserStoreSession:
+    """Sets default user policies in the internal user store."""
+    if store_type == StoreType.REMOTE_HTTP:
+        return state.stores.user_store.session()
+    else:
+        return tested_user_store
+
+
 # -----------------------------------------------------------------------------
 # Tests
 # -----------------------------------------------------------------------------
 
 
-def test_init_memory() -> None:
-    """An in-memory store can be initialized."""
-    _ = create_memory_store()
+@pytest.mark.parametrize("store_type", store_types())
+def test_init_store(store_type: StoreType, create_test_user_store) -> None:
+    """A store can be initialized."""
+    _ = create_test_user_store(store_type)
+
+    # If we get here, the fixture was called and the store was initialized.
+    assert True
 
 
-def test_init_rdbs() -> None:
-    """A relational DB store can be initialized."""
-    _ = create_rdbs_store()
-
-
-def test_init_fs(tmp_path) -> None:
-    """A FSstore can be initialized."""
-    _ = create_fs_store(tmp_path)
-
-
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_user(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports user operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_user = get_test_user()
     email2 = "email2@server.com"
@@ -118,9 +114,13 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
 
     with ManagedUserSession(store.session()) as user_store:
         original_users = user_store.user_mapper.list()
+        internal_store = get_internal_store_session(user_store, store_type)
+        test_user = user_policy.set_default_user_policies(
+            test_user, internal_store.policy_store
+        )
 
         # Set up dependent groups.
-        setup_user_groups(test_user, user_store)
+        setup_test_group(user_store)
 
         # Test creating a user.
         user_store.user_mapper.create(test_user)
@@ -153,18 +153,23 @@ def test_user(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             user_store.user_mapper.read(test_user.username)
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
+@pytest.mark.parametrize("store_type", store_types())
 def test_user_group_change(
-    store_fixture_name: str, request: pytest.FixtureRequest
+    store_type: StoreType, create_test_user_store
 ) -> None:
     """Test proper syncchronization between users and groups."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_user = get_test_user()
 
     with ManagedUserSession(store.session()) as user_store:
+        internal_store = get_internal_store_session(user_store, store_type)
+        test_user = user_policy.set_default_user_policies(
+            test_user, internal_store.policy_store
+        )
+
         # Set up dependent groups.
-        setup_user_groups(test_user, user_store)
+        setup_test_group(user_store)
 
         # Create a user.
         user_store.user_mapper.create(test_user)
@@ -177,14 +182,21 @@ def test_user_group_change(
         updated_group = user_store.group_mapper.edit(group)
 
         # Ensure user has updated group info.
+        found_group = None
         read_user = user_store.user_mapper.read(test_user.username)
-        assert read_user.groups[0] == updated_group
+        for group in read_user.groups:
+            if group.name == updated_group.name:
+                found_group = group
+                break
+
+        # Check if we got the expected group.
+        assert found_group == updated_group
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_group(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports group operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+    store: UserStore = create_test_user_store(store_type)
 
     test_group = get_test_group()
     p3 = Permission(
@@ -197,8 +209,8 @@ def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
         original_groups = user_store.group_mapper.list()
 
         # Set up needed permissions.
-        setup_group_permisisons(test_group, user_store)
-        user_store.permission_mapper.create(p3)
+        internal_store = get_internal_store_session(user_store, store_type)
+        internal_store.permission_mapper.create(p3)
 
         # Test creating a group.
         user_store.group_mapper.create(test_group)
@@ -221,12 +233,15 @@ def test_group(store_fixture_name: str, request: pytest.FixtureRequest) -> None:
             user_store.group_mapper.read(test_group.name)
 
 
-@pytest.mark.parametrize("store_fixture_name", user_stores())
-def test_permission(
-    store_fixture_name: str, request: pytest.FixtureRequest
-) -> None:
+@pytest.mark.parametrize("store_type", store_types())
+def test_permission(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports permission operations."""
-    store: UserStore = request.getfixturevalue(store_fixture_name)
+
+    # Permissions will only be handled locally, so this is not tested for the remote one.
+    if store_type == StoreType.REMOTE_HTTP:
+        pytest.skip()
+
+    store: UserStore = create_test_user_store(store_type)
 
     test_permission1 = get_test_permissions()[0]
 

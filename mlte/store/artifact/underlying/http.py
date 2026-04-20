@@ -17,7 +17,7 @@ from mlte.store.artifact.store_session import (
 )
 from mlte.store.base import StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
-from mlte.store.common.http_storage import HttpStorage
+from mlte.store.common.http_storage import HttpResourceStorage
 from mlte.store.query import Query
 from mlte.user.model import MethodType, ResourceType
 
@@ -37,7 +37,7 @@ class HttpArtifactStore(ArtifactStore):
     ) -> None:
         super().__init__(uri=uri)
 
-        self.storage = HttpStorage(
+        self.storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.MODEL, client=client
         )
         """HTTP storage."""
@@ -58,7 +58,7 @@ class HttpArtifactStore(ArtifactStore):
 class HttpArtifactStoreSession(ArtifactStoreSession):
     """An HTTP implementation of the MLTE artifact store session."""
 
-    def __init__(self, *, storage: HttpStorage) -> None:
+    def __init__(self, *, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """HTTP storage."""
 
@@ -86,7 +86,7 @@ class HttpArtifactStoreSession(ArtifactStoreSession):
 class HTTPModelMapper(ModelMapper):
     """HTTP mapper for the model resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
@@ -115,7 +115,7 @@ class HTTPModelMapper(ModelMapper):
 class HTTPVersionMapper(VersionMapper):
     """HTTP mapper for the version resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         self.storage = storage
         """The HTTP storage access."""
 
@@ -150,7 +150,7 @@ class HTTPVersionMapper(VersionMapper):
 class HTTPArtifactMapper(ArtifactMapper):
     """HTTP mapper for the artifact resource."""
 
-    def __init__(self, storage: HttpStorage) -> None:
+    def __init__(self, storage: HttpResourceStorage) -> None:
         super().__init__()
 
         self.storage = storage

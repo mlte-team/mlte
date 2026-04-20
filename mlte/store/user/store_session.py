@@ -1,15 +1,12 @@
-"""MLTE user store interface implementation."""
+"""MLTE user store session implementation."""
 
 from __future__ import annotations
 
-from typing import Any, List, Union, cast
+from typing import cast
 
-from mlte.store.base import ManagedSession, ResourceMapper, StoreSession
-from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
-
-# -----------------------------------------------------------------------------
-# UserStoreSession
-# -----------------------------------------------------------------------------
+from mlte.store.base import ManagedSession, StoreSession
+from mlte.store.user.mappers import GroupMapper, PermissionMapper, UserMapper
+from mlte.store.user.policy.policy_store_service import PolicyStoreService
 
 
 class UserStoreSession(StoreSession):
@@ -24,74 +21,12 @@ class UserStoreSession(StoreSession):
     permission_mapper: PermissionMapper
     """Mapper for the permission resource."""
 
+    policy_store: PolicyStoreService
+    """A PolicyStore abstraction to handling stored policies (groups+permissions)."""
+
 
 class ManagedUserSession(ManagedSession):
     """A simple context manager for store sessions."""
 
     def __enter__(self) -> UserStoreSession:
         return cast(UserStoreSession, self.session)
-
-
-class UserMapper(ResourceMapper):
-    """An interface for mapping CRUD actions to store users."""
-
-    def create(self, new_user: UserWithPassword, context: Any = None) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(
-        self,
-        updated_user: Union[UserWithPassword, BasicUser],
-        context: Any = None,
-    ) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, user_id: str, context: Any = None) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self, context: Any = None) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, user_id: str, context: Any = None) -> User:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-
-class GroupMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store groups."""
-
-    def create(self, new_group: Group, context: Any = None) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(self, updated_group: Group, context: Any = None) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, group_id: str, context: Any = None) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self, context: Any = None) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, group_id: str, context: Any = None) -> Group:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-
-class PermissionMapper(ResourceMapper):
-    """A interface for mapping CRUD actions to store permissions."""
-
-    def create(
-        self, new_permission: Permission, context: Any = None
-    ) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def edit(
-        self, updated_permission: Permission, context: Any = None
-    ) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def read(self, permission: str, context: Any = None) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def list(self, context: Any = None) -> List[str]:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
-
-    def delete(self, permission: str, context: Any = None) -> Permission:
-        raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)

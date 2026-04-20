@@ -1,8 +1,8 @@
-"""Globally-accessible application state."""
+"""Globally-accessible application state for the backend."""
 
 from __future__ import annotations
 
-from mlte.session.session_stores import SessionStores
+from mlte.store.unified_store import UnifiedStore
 
 
 class State:
@@ -14,7 +14,7 @@ class State:
     def reset(self):
         """Resets all internal state to defaults."""
 
-        self.stores = SessionStores()
+        self.stores = UnifiedStore()
         """All stores in this session."""
 
         self._jwt_secret_key: str = ""

@@ -1,8 +1,4 @@
-"""
-test/value/types/test_image.py
-
-Unit tests for Image.
-"""
+"""Unit tests for Image."""
 
 from __future__ import annotations
 
@@ -13,7 +9,6 @@ from mlte.context.context import Context
 from mlte.evidence.types.image import Image
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 def get_sample_image_path() -> Path:
@@ -45,10 +40,10 @@ def test_from_bytes():
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     local_path = get_sample_image_path()
 

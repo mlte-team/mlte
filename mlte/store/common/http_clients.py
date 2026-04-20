@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
 
 import httpx
@@ -12,43 +12,35 @@ import mlte._private.url as url_utils
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 
-
-class HttpClientType(Enum):
-    """An enumeration over HTTP client types."""
-
-    REQUESTS = "requests"
-    """The requests-based HTTP client."""
-
-    TESTCLIENT = "testclient"
-    """The fastapi TestClient HTTP client."""
-
-
 HttpResponse = Union[requests.Response, httpx.Response]
 """Standard HTTP response, both have same implicit interface."""
 
 
-class HttpClient:
+class HttpClient(ABC):
     """Interface for an HTTP client."""
 
-    def __init__(self, type: HttpClientType) -> None:
-        self.type = type
+    def __init__(self) -> None:
         self.headers: dict[str, str] = {}
 
+    @abstractmethod
     def get(self, url: str, **kwargs) -> HttpResponse:
-        raise NotImplementedError("get()")
+        pass
 
+    @abstractmethod
     def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> HttpResponse:
-        raise NotImplementedError("post()")
+        pass
 
+    @abstractmethod
     def put(
         self, url: str, data: Any = None, json: Any = None, **kwargs
     ) -> HttpResponse:
-        raise NotImplementedError("put()")
+        pass
 
+    @abstractmethod
     def delete(self, url: str, **kwargs) -> HttpResponse:
-        raise NotImplementedError("delete()")
+        pass
 
     @staticmethod
     def raise_for_response(response: HttpResponse) -> None:
@@ -71,7 +63,10 @@ class HttpClient:
 
 
 class OAuthHttpClient(HttpClient):
-    """A base HTTP client type for an server needing OAuth authentication."""
+    """
+    A base HTTP client type for an server needing OAuth authentication. Works as an abstract base class for actual client
+    implementations.
+    """
 
     TOKEN_REQ_PASS_PAYLOAD = {"grant_type": "password"}
     TOKEN_REQ_HEADERS = {
@@ -82,11 +77,10 @@ class OAuthHttpClient(HttpClient):
 
     def __init__(
         self,
-        type: HttpClientType,
         username: Optional[str] = None,
         password: Optional[str] = None,
     ) -> None:
-        super().__init__(type)
+        super().__init__()
 
         self.access_token: Optional[str] = None
         """The access token."""
@@ -162,10 +156,14 @@ class OAuthHttpClient(HttpClient):
         uri, username, password = url_utils.remove_url_username_password(uri)
         if username is not None and password is not None:
             # If URI had user and password, get them for client auth.
-            self.username = username
-            self.password = password
+            self.set_credentials(username, password)
 
         return uri
+
+    def set_credentials(self, username: str, password: str) -> None:
+        """Sets the client's credentials, used to authenticate."""
+        self.username = username
+        self.password = password
 
 
 class RequestsClient(OAuthHttpClient):
@@ -174,7 +172,7 @@ class RequestsClient(OAuthHttpClient):
     def __init__(
         self, username: Optional[str] = None, password: Optional[str] = None
     ) -> None:
-        super().__init__(HttpClientType.REQUESTS, username, password)
+        super().__init__(username, password)
 
     def get(self, url: str, **kwargs) -> requests.Response:
         return requests.get(url, headers=self.headers, **kwargs)

@@ -112,7 +112,7 @@ def make_pynvml_mocks(device_count: int = 2, mock_handle: int = 1234):
 def test_aggregate_measurements_from_process(
     mock_import_module, mock_pid_exists
 ):
-    # The aggregate checks for the pid and when it goes away, the aggreator exit5s
+    # The aggregate checks for the pid and when it goes away, the aggreator exits
     mock_pid_exists.side_effect = [True, True, True, True, False]
 
     # Fake out the gpu code

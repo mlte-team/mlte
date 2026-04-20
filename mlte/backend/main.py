@@ -11,8 +11,8 @@ import mlte._private.hosts as util
 import mlte.backend.core.app_factory as app_factory
 from mlte.backend.core.config import settings
 from mlte.backend.core.state import state
-from mlte.session.session_stores import setup_stores
 from mlte.store.base import StoreType, StoreURI
+from mlte.store.unified_store import setup_stores
 
 # Application exit codes
 EXIT_SUCCESS = 0
@@ -86,7 +86,10 @@ def _setup_stores(stores_uri: str, catalog_uris: dict[str, str]):
 
     logging.info(f"Backend will add catalog stores: {catalog_uris}")
 
-    state.stores = setup_stores(stores_uri, catalog_uris)
+    state.stores = setup_stores(
+        parsed_uri,
+        {id: StoreURI.from_string(uri) for id, uri in catalog_uris.items()},
+    )
 
 
 def main() -> int:

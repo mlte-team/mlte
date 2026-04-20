@@ -84,7 +84,7 @@ def get_group_using_admin(group_id: str, api: TestAPI) -> dict[str, Any]:
     "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_create(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_create(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be created."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -103,7 +103,7 @@ def test_create(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_create_no_permissions(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permissions to create."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -117,7 +117,7 @@ def test_create_no_permissions(
     "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be edited."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -149,7 +149,7 @@ def test_edit(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_edit_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permissions to edit."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -175,7 +175,7 @@ def test_edit_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_read(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be read."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -195,7 +195,7 @@ def test_read(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_read_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permission to read group"""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -211,7 +211,7 @@ def test_read_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_list(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be listed."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -230,7 +230,7 @@ def test_list(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
 )
 def test_list_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permission to list."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -245,9 +245,7 @@ def test_list_no_permission(
     "api_user",
     user_generator.get_test_users_with_read_permissions(ResourceType.GROUP),
 )
-def test_list_detailed(
-    test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+def test_list_detailed(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be listed in detail."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -268,7 +266,7 @@ def test_list_detailed(
 )
 def test_list_detailed_no_permission(
     test_api_fixture, api_user: UserWithPassword
-) -> None:  # noqa
+) -> None:
     """No permissions to list details."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
@@ -282,7 +280,7 @@ def test_list_detailed_no_permission(
     "api_user",
     user_generator.get_test_users_with_write_permissions(ResourceType.GROUP),
 )
-def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:  # noqa
+def test_delete(test_api_fixture, api_user: UserWithPassword) -> None:
     """Groups can be deleted."""
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()

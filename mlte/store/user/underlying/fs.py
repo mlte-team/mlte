@@ -7,13 +7,15 @@ from typing import Any, List, Union
 
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import (
+from mlte.store.user.mappers import (
     GroupMapper,
     PermissionMapper,
     UserMapper,
-    UserStoreSession,
 )
+from mlte.store.user.policy import user_policy
+from mlte.store.user.policy.policy_store_service import PolicyStoreService
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -66,7 +68,14 @@ class FileSystemUserStoreSession(UserStoreSession):
         self.group_mapper = FileSystemGroupMappper(storage)
         """The mapper to group CRUD."""
 
-        self.user_mapper = FileSystemUserMappper(storage, self.group_mapper)
+        self.policy_store = PolicyStoreService(
+            self.group_mapper, self.permission_mapper
+        )
+        """The Policy store abstraction."""
+
+        self.user_mapper = FileSystemUserMappper(
+            storage, self.group_mapper, self.policy_store
+        )
         """The mapper to user CRUD."""
 
     def close(self) -> None:
@@ -87,7 +96,10 @@ class FileSystemUserMappper(UserMapper):
     """Subfolder for users."""
 
     def __init__(
-        self, storage: FileSystemStorage, group_mapper: FileSystemGroupMappper
+        self,
+        storage: FileSystemStorage,
+        group_mapper: FileSystemGroupMappper,
+        policy_store: PolicyStoreService,
     ) -> None:
         self.storage = storage.clone()
         """A reference to underlying storage."""
@@ -100,8 +112,14 @@ class FileSystemUserMappper(UserMapper):
         )
         """Set the subfolder for this resource."""
 
+        self.policy_store = policy_store
+        """Policy store abstraction."""
+
     def create(self, user: UserWithPassword, context: Any = None) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
+
+        # Assign policies for all users.
+        user = user_policy.set_default_user_policies(user, self.policy_store)
 
         new_user = user.to_hashed_user()
 
@@ -115,7 +133,6 @@ class FileSystemUserMappper(UserMapper):
     ) -> User:
         # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
         self.storage.ensure_resource_exists(user.username)
-
         curr_user = self._read_user(user.username)
         updated_user = update_user_data(curr_user, user)
 
@@ -141,6 +158,10 @@ class FileSystemUserMappper(UserMapper):
     def delete(self, username: str, context: Any = None) -> User:
         self.storage.ensure_resource_exists(username)
         user = self._read_user(username)
+
+        # Now delete related permissions and groups.
+        user_policy.delete_default_user_policies(username, self.policy_store)
+
         self.storage.delete_resource(username)
         return user
 

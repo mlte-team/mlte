@@ -6,7 +6,7 @@ import typing
 from typing import Dict, List, Optional, cast
 
 from mlte.catalog.model import CatalogEntry
-from mlte.store.base import ManagedSession, StoreSession
+from mlte.store.base import ManagedSession, StoreSession, StoreURI
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.store_session import CatalogStoreSession
@@ -24,7 +24,9 @@ class CatalogStoreGroup:
         self.catalogs: Dict[str, CatalogStore] = {}
         """Dictionary with all catalogs in this group."""
 
-    def add_catalog_from_uri(self, id: str, uri: str, overwrite: bool = False):
+    def add_catalog_from_uri(
+        self, id: str, uri: StoreURI, overwrite: bool = False
+    ):
         """
         Adds a catalog by indicating its uri.
 
@@ -103,25 +105,8 @@ class CatalogStoreGroupSession(StoreSession):
         :param offset: The offset on entries to read
         :return: The read entries
         """
-        if catalog_id is not None:
-            if catalog_id not in self.sessions:
-                raise ErrorNotFound(
-                    f"Catalog id {catalog_id} was not found in list of catalogs."
-                )
-
-            catalog_session = self.sessions[catalog_id]
-            return catalog_session.entry_mapper.list_details(
-                limit=limit, offset=offset
-            )
-        else:
-            # Go over all catalogs, reading from each one, and grouping results.
-            results: List[CatalogEntry] = []
-            for catalog_id, session in self.sessions.items():
-                partial_results = session.entry_mapper.list_details(
-                    limit=limit, offset=offset
-                )
-                results.extend(partial_results)
-            return results[offset : offset + limit]
+        # Listing is the same as searching with no filters, and then limiting as requested.
+        return self.search(catalog_id)[offset : offset + limit]
 
     def search(
         self,

@@ -14,7 +14,7 @@ from mlte.artifact.model import (
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.model.serializable import Serializable
-from mlte.session.session import session
+from mlte.session import get_session
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.query import Query, TypeFilter
@@ -93,7 +93,7 @@ class Artifact(Serializable, abc.ABC):
         Save an artifact with parameters from the configured global session.
 
         This is equivalent to calling:
-            artifact.save_with(session().context, session().store)
+            artifact.save_with(get_session().context, get_session().store)
 
         :param force: Indicates that an existing artifact may be overwritten
         :param parents: Indicates whether organizational elements for the
@@ -101,12 +101,15 @@ class Artifact(Serializable, abc.ABC):
         :param user: The username of the user executing this action.
         :return: The ArtifactModel of the saved artifact.
         """
+        credentials = get_session().credentials
         return self.save_with(
-            session().context,
-            session().stores.artifact_store,
+            get_session().context,
+            get_session().stores.artifact_store,
             force=force,
             parents=parents,
-            user=user,
+            user=(
+                user if user else (credentials.user if credentials else None)
+            ),
         )
 
     def save_with(
@@ -163,8 +166,8 @@ class Artifact(Serializable, abc.ABC):
         """
         return cls.load_with(
             identifier,
-            context=session().context,
-            store=session().stores.artifact_store,
+            context=get_session().context,
+            store=get_session().stores.artifact_store,
         )
 
     @classmethod
@@ -204,8 +207,8 @@ class Artifact(Serializable, abc.ABC):
         """Loads all artifact models of the given type from the session."""
         return Artifact.load_models(
             artifact_type,
-            context=session().context,
-            store=session().stores.artifact_store,
+            context=get_session().context,
+            store=get_session().stores.artifact_store,
         )
 
     @staticmethod

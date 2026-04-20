@@ -1,8 +1,4 @@
-"""
-test/value/types/test_real.py
-
-Unit tests for Real.
-"""
+"""Unit tests for Real."""
 
 from __future__ import annotations
 
@@ -16,7 +12,6 @@ from mlte.measurement.measurement import Measurement
 from mlte.measurement.units import Unit, Units
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata
-from test.store.artifact.fixture import store_with_context  # noqa
 
 
 class DummyMeasurementReal(Measurement):
@@ -62,10 +57,10 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    store_with_context: Tuple[ArtifactStore, Context],  # noqa
+    artifact_store_with_context: Tuple[ArtifactStore, Context],
 ) -> None:
     """Real can be saved to and loaded from artifact store."""
-    store, ctx = store_with_context
+    store, ctx = artifact_store_with_context
 
     i = Real(3.14, unit=Units.celsius).with_metadata(
         get_sample_evidence_metadata()

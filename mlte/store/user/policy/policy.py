@@ -4,9 +4,6 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-import mlte.store.error as errors
-from mlte.store.artifact.store_session import ArtifactStoreSession
-from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -16,20 +13,6 @@ from mlte.user.model import (
     RoleType,
     UserWithPassword,
 )
-
-
-def create_model_policies_if_needed(
-    artifact_store: ArtifactStoreSession, user_store: UserStoreSession
-):
-    """
-    Function that checks, for all models, if policies have not been created.
-    This is for cases where the model may have been created without the API.
-    """
-    models = artifact_store.model_mapper.list()
-    for model_id in models:
-        policy = Policy(ResourceType.MODEL, model_id)
-        if not policy.is_stored(user_store):
-            policy.save_to_store(user_store)
 
 
 class Policy:
@@ -159,63 +142,15 @@ class Policy:
 
         return groups
 
-    def is_stored(
-        self,
-        user_store: UserStoreSession,
-    ) -> bool:
-        """Checks if this policy is stored in the given store for them."""
-        try:
-            # Try to read all groups and permissions.
-            for group in self.groups:
-                _ = user_store.group_mapper.read(group.name)
-
-                for permission in group.permissions:
-                    _ = user_store.permission_mapper.read(permission.to_str())
-        except errors.ErrorNotFound:
-            # At least one permission or group is missing.
-            return False
-
-        # If we found everything, policy is complete.
-        return True
-
-    def save_to_store(self, user_store: UserStoreSession) -> None:
-        """
-        Store this policy's groups and permissions in the given store.
-
-        :param user_store: The store to use to save this policy's groups and permissions to.
-        """
-
-        # Create groups and permissions in store.
-        for group in self.groups:
-            for permission in group.permissions:
-                user_store.permission_mapper.create(permission)
-
-            user_store.group_mapper.create(group)
-
-    def remove_from_store(self, user_store: UserStoreSession) -> None:
-        """Delete groups and permissions for a resource."""
-        # TODO: This is not atomic. Error deleting one part may leave the rest dangling.
-        permissions: dict[str, bool] = {}
-        for group in self.groups:
-            for permission in group.permissions:
-                # Store permissions in dict for later removal, to avoid trying to re-remove already deleted ones.
-                permissions[permission.to_str()] = True
-
-            user_store.group_mapper.delete(group.name)
-
-        # Now remove all permissions.
-        # TODO: note that this main leave other groups using these permissions dangling. Not trivial to check if
-        # a permission is no longer used. Even worse, we may want to leave some of them, even with no groups.
-        for permission_str in permissions:
-            user_store.permission_mapper.delete(permission_str)
-
-    def assign_to_user(self, user: Union[UserWithPassword, BasicUser]):
+    def assign_to_user(
+        self, user: Union[UserWithPassword, BasicUser]
+    ) -> Union[UserWithPassword, BasicUser]:
         """
         Add to this user object the groups from this policy he is not a member of.
         """
         # Groups are not assigned to admin role, which has access to everything.
         if user.role == RoleType.ADMIN:
-            return
+            return user
 
         # Only add groups the user does not already belong to.
         for group in self.groups:
@@ -227,6 +162,8 @@ class Policy:
 
             if not user_already_in_group:
                 user.groups.append(group)
+
+        return user
 
     def __str__(self) -> str:
         return f"Resource {self.resource_type}, Id: {self.resource_id}, Read: {self.read_group}, Edit: {self.edit_group}, Create: {self.create_group}, Groups: {self.groups}"

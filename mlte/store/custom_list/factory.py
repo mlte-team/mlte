@@ -7,14 +7,12 @@ from mlte.store.custom_list.underlying.http import HttpCustomListStore
 from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 
 
-def create_custom_list_store(uri: str) -> CustomListStore:
+def create_custom_list_store(parsed_uri: StoreURI) -> CustomListStore:
     """
     Create a MLTE custom list store instance.
-    :param uri: The URI for the store instance
+    :param parsed_uri: The URI for the store instance
     :return: The store instance
     """
-    parsed_uri = StoreURI.from_string(uri)
-
     if parsed_uri.type == StoreType.REMOTE_HTTP:
         return HttpCustomListStore(uri=parsed_uri)
     elif parsed_uri.type == StoreType.LOCAL_MEMORY:
@@ -30,5 +28,5 @@ def create_custom_list_store(uri: str) -> CustomListStore:
         return RDBCustomListStore(parsed_uri)
     else:
         raise Exception(
-            f"Custom list store can't be created, unknown or unsupported URI prefix received for uri {parsed_uri}"
+            f"Custom list store can't be created, unknown or unsupported URI type received for uri {parsed_uri}"
         )
