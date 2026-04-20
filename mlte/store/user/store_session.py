@@ -6,7 +6,7 @@ from typing import cast
 
 from mlte.store.base import ManagedSession, StoreSession
 from mlte.store.user.mappers import GroupMapper, PermissionMapper, UserMapper
-from mlte.store.user.policy.policy_store import PolicyStoreService
+from mlte.store.user.policy.policy_store_service import PolicyStoreService
 
 
 class UserStoreSession(StoreSession):
