@@ -54,7 +54,7 @@ packages = [
   { include = "mlte"}
 ]
 include = [
-  "mlte/frontend/nuxt-app/.output/public/**/*"
+  { path = "mlte/frontend/nuxt-app/.output/public/**/*", format = ["sdist", "wheel"] }
 ]
 exclude = [
   "mlte/frontend/nuxt-app/**/**/*"
