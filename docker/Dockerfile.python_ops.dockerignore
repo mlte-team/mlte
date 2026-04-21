@@ -3,15 +3,10 @@
 .pytest_cache
 .venv
 .vscode
-assets
-demo
 docker
 !docker/deployment/.env.frontend
-docs
 store
-test
 testbed
-tools
 .bumpversion.cfg
 .coverage
 .dockerignore

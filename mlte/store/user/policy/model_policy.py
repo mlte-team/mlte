@@ -4,7 +4,7 @@ from typing import Union
 
 from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.user.policy.policy import Policy
-from mlte.store.user.policy.policy_store import PolicyStoreService
+from mlte.store.user.policy.policy_store_service import PolicyStoreService
 from mlte.user.model import BasicUser, ResourceType, UserWithPassword
 
 

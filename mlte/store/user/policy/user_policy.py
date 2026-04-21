@@ -3,7 +3,7 @@
 from typing import Union
 
 from mlte.store.user.policy import Policy
-from mlte.store.user.policy.policy_store import PolicyStoreService
+from mlte.store.user.policy.policy_store_service import PolicyStoreService
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import BasicUser, ResourceType, RoleType, UserWithPassword
 

@@ -56,6 +56,17 @@
                       Custom Lists
                     </NuxtLink>
                   </li>
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/etc/quality-model' }"
+                      :class="{
+                        'usa-current': route.name === 'etc-quality-model',
+                      }"
+                      @click="$emit('nav')"
+                    >
+                      Quality Model
+                    </NuxtLink>
+                  </li>
                   <li v-if="userRole === 'admin'" class="usa-sidenav__item">
                     <div class="nav-section-title">Admin Pages</div>
                     <ul class="usa-sidenav__sublist">
@@ -213,11 +224,14 @@ header {
 
 .flex-container {
   display: flex;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .sidebar {
-  width: 100%;
-  max-width: 30ch;
+  flex: 0 0 30ch;
+  width: 30ch;
+  min-width: 30ch;
   padding-top: 60px;
 }
 
@@ -237,7 +251,8 @@ header {
 }
 
 .body-div {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   max-width: 128ch;
   margin-top: 8px;
   margin-left: 40px;

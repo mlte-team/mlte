@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+# Build python dockerfile and QA dockerfile
+(bash build_base.sh)
+(cd .. && docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops)
+
+docker run --rm \
+    -e GIT_DISCOVERY_ACROSS_FILESYSTEM=1 \
+    -v "$(pwd)/../mlte:/mnt/app/mlte" \
+    -v "$(pwd)/../demo:/mnt/app/demo" \
+    -v "$(pwd)/../docs:/mnt/app/docs" \
+    -v "$(pwd)/../test:/mnt/app/test" \
+    -v "$(pwd)/../tools:/mnt/app/tools" \
+    mlte-python-ops "$@"
