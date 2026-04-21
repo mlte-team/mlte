@@ -4,7 +4,7 @@ from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
-from mlte.store.base import StoreURI
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
@@ -173,13 +173,14 @@ def _setup_catalog_stores(
         ]
     )
 
-    # Catalogs: first add the sample catalog store.
-    sample_catalog = SampleCatalog.setup_sample_catalog(
-        stores_uri, catalog_store_validators
-    )
-    stores.add_catalog_store(
-        store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
-    )
+    # Catalogs: first add the sample catalog store, but only if URL is local.
+    if stores_uri.type != StoreType.REMOTE_HTTP:
+        sample_catalog = SampleCatalog.setup_sample_catalog(
+            stores_uri, catalog_store_validators
+        )
+        stores.add_catalog_store(
+            store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
+        )
 
     # Throw error if trying to set a remote catalog with the id of the local catalog
     if UnifiedStore.LOCAL_CATALOG_STORE_ID in catalog_uris:

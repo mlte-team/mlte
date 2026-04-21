@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import Generator, Optional, Tuple
+from typing import Generator, Tuple
 
 import pytest
 from sqlalchemy import StaticPool
@@ -20,7 +20,6 @@ from mlte.store.artifact.underlying.http import HttpArtifactStore
 from mlte.store.artifact.underlying.memory import InMemoryStore
 from mlte.store.artifact.underlying.rdbs.store import RelationalDBArtifactStore
 from mlte.store.base import StoreType, StoreURI
-from mlte.user.model import UserWithPassword
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
@@ -48,14 +47,12 @@ def _create_rdbs_store() -> RelationalDBArtifactStore:
     )
 
 
-def _create_api_and_http_store(
-    user: Optional[UserWithPassword] = None,
-) -> HttpArtifactStore:
+def _create_api_and_http_store(uri: StoreURI) -> HttpArtifactStore:
     """
     Get a RemoteHttpStore configured with a test client.
     :return: The configured store
     """
-    client, uri = create_api_and_http_uri(user)
+    client, uri = create_api_and_http_uri(uri)
     return HttpArtifactStore(uri=uri, client=client)
 
 
@@ -74,7 +71,7 @@ def store_types_and_artifact_types() -> (
 def _create_artifact_store(uri: StoreURI, tmpdir_factory) -> ArtifactStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     if uri.type == StoreType.REMOTE_HTTP:
-        return _create_api_and_http_store()
+        return _create_api_and_http_store(uri)
     elif uri.type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
     elif uri.type == StoreType.LOCAL_FILESYSTEM:

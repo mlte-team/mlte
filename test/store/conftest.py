@@ -6,8 +6,8 @@ from unittest.mock import patch
 import pytest
 import sqlalchemy
 
-from mlte.store.base import StoreURI
-from mlte.store.unified_store import setup_stores
+from mlte.store.base import StoreType, StoreURI
+from mlte.store.unified_store import UnifiedStore, setup_stores
 from test.store.artifact.conftest import _create_artifact_store
 from test.store.catalog.conftest import _create_catalog_store
 from test.store.custom_list.conftest import _create_custom_list_store
@@ -56,10 +56,8 @@ def patched_setup_stores(tmpdir_factory, patched_create_engine):
     def _create_artifact_store_with_fixtures(uri: StoreURI):
         return _create_artifact_store(uri, tmpdir_factory)
 
-    def _create_catalog_store_with_fixtures(
-        uri: StoreURI, catalog_uris: dict[str, StoreURI]
-    ):
-        return _create_catalog_store(uri, catalog_uris, tmpdir_factory)
+    def _create_catalog_store_with_fixtures(uri: StoreURI, catalog_id: str):
+        return _create_catalog_store(uri, catalog_id, tmpdir_factory)
 
     with patch(
         "mlte.store.user.factory.create_user_store",
@@ -81,3 +79,26 @@ def patched_setup_stores(tmpdir_factory, patched_create_engine):
         side_effect=_create_catalog_store_with_fixtures,
     ), patched_create_engine():
         yield setup_stores
+
+
+def create_test_unified_store(
+    store_type: StoreType,
+    tmp_path,
+    patched_setup_stores,
+    catalog_uris: dict[str, StoreURI] = {},
+) -> UnifiedStore:
+    """Creates appropriate test session stores."""
+    # We can't test setup_stores with a REMOTE store, since this would require setting up the session stores,
+    # and then the TestAPI sets up its own session stores to act as a backend; however, since only one
+    # state session is supported, this tries to overwrite the previous set up and it would fail.
+    # TODO: Isolate how TestAPI works so that this can be tested.
+    if store_type == StoreType.REMOTE_HTTP:
+        pytest.skip()
+
+    uri = StoreURI.from_type(
+        store_type,
+        tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
+    )
+    session_stores: UnifiedStore = patched_setup_stores(uri, catalog_uris)
+
+    return session_stores

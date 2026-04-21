@@ -14,6 +14,8 @@ from mlte.session.session import (
 )
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType, StoreURI
+from test.backend.fixture.user_generator import TEST_API_PASS
+from test.store.defaults import DEFAULT_HTTP_URI
 from test.store.utils import store_types
 
 
@@ -148,6 +150,29 @@ def test_credentials_from_env_vars():
 
     assert s.credentials and s.credentials.user == user
     assert s.credentials and s.credentials.password == password
+    del os.environ[Session.ENV_CURRENT_USER_VAR]
+    del os.environ[Session.ENV_CURRENT_PASS_VAR]
+
+
+def test_credentials_from_env_vars_in_store(patched_setup_stores):
+    """Tests that user and password from env vars are injected into a store."""
+    user = "test_user"
+    password = TEST_API_PASS
+    os.environ[Session.ENV_CURRENT_USER_VAR] = user
+    os.environ[Session.ENV_CURRENT_PASS_VAR] = password
+
+    remote_store_uri = DEFAULT_HTTP_URI
+
+    with patch(
+        "mlte.session.session.setup_stores", side_effect=patched_setup_stores
+    ):
+        set_store(remote_store_uri)
+
+    s = get_session()
+
+    assert s.stores.artifact_store.uri.type == StoreType.REMOTE_HTTP
+    assert f"{user}:{password}" in s.stores.artifact_store.uri.uri
+
     del os.environ[Session.ENV_CURRENT_USER_VAR]
     del os.environ[Session.ENV_CURRENT_PASS_VAR]
 

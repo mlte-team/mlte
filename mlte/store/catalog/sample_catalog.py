@@ -35,6 +35,7 @@ class SampleCatalog:
         :param stores_uri: The URI of the stores being used (i.e., base folder, base DB, etc).
         :return: The sample catalog store.
         """
+
         # Create the actual sample catalog.
         print(f"Creating sample catalog at URI: {stores_uri}")
         catalog = create_catalog_store(

@@ -11,9 +11,9 @@ from test.store.conftest import (
 )
 
 __all__ = [
-    "shared_sqlite_engine",
-    "patched_create_engine",
     "patched_setup_stores",
+    "patched_create_engine",
+    "shared_sqlite_engine",
 ]
 
 

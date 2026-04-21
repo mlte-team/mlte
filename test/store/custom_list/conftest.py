@@ -19,7 +19,7 @@ from mlte.store.custom_list.underlying.fs import FileSystemCustomListStore
 from mlte.store.custom_list.underlying.http import HttpCustomListStore
 from mlte.store.custom_list.underlying.memory import InMemoryCustomListStore
 from mlte.store.custom_list.underlying.rdbs.store import RDBCustomListStore
-from mlte.user.model import ResourceType, UserWithPassword
+from mlte.user.model import ResourceType
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
@@ -55,21 +55,19 @@ def _create_rdbs_store() -> RDBCustomListStore:
     )
 
 
-def _create_api_and_http_store(
-    user: Optional[UserWithPassword] = None,
-) -> HttpCustomListStore:
+def _create_api_and_http_store(uri: StoreURI) -> HttpCustomListStore:
     """
     Get a HttpStore configured with test client.
     :return: The configured store
     """
-    client, uri = create_api_and_http_uri(user)
+    client, uri = create_api_and_http_uri(uri)
     return HttpCustomListStore(uri=uri, client=client)
 
 
 def _create_custom_list_store(uri: StoreURI, tmpdir_factory) -> CustomListStore:
     """Function equivalent to the store's factory method, to be used for testing."""
     if uri.type == StoreType.REMOTE_HTTP:
-        return _create_api_and_http_store()
+        return _create_api_and_http_store(uri)
     elif uri.type == StoreType.LOCAL_MEMORY:
         return _create_memory_store()
     elif uri.type == StoreType.LOCAL_FILESYSTEM:

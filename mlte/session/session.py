@@ -5,10 +5,11 @@ from __future__ import annotations
 import os
 from typing import Optional
 
+from mlte._private import url
 from mlte.context.context import Context
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.session.credentials import Credentials
-from mlte.store.base import StoreURI
+from mlte.store.base import StoreType, StoreURI
 from mlte.store.unified_store import UnifiedStore, setup_stores
 
 
@@ -85,13 +86,31 @@ class Session:
 
         return self._credentials
 
+    def _prepare_uri(self, store_uri: str) -> StoreURI:
+        """Prepares the uri, returning a parsed version that has everything needed."""
+        parsed_uri = StoreURI.from_string(store_uri)
+
+        if parsed_uri.type == StoreType.REMOTE_HTTP:
+            # For remote HTTP, if we have set proper credentials, inject them into the URI and/or override what was there.
+            username = self.credentials.user if self.credentials else None
+            password = self.credentials.password if self.credentials else None
+            if username and password:
+                # We only set this if we have both credentials. If either is missing, we just don't inject.
+                updated_uri = url.set_url_username_password(
+                    store_uri, username, password
+                )
+                parsed_uri = StoreURI.from_string(updated_uri)
+
+        return parsed_uri
+
     def _set_context(self, context: Context) -> None:
         """Set the session context."""
         self._context = context
 
     def _set_stores(self, store_uri: str) -> None:
         """Set the session stores from the given URI."""
-        self._stores = setup_stores(StoreURI.from_string(store_uri))
+        parsed_uri = self._prepare_uri(store_uri)
+        self._stores = setup_stores(parsed_uri)
 
     def _set_credentials(self, credentials: Credentials) -> None:
         """Set the session stores."""
