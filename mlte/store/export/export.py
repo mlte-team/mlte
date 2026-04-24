@@ -12,6 +12,7 @@ from mlte.model.base_model import BaseModel
 from mlte.session.session import session
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.catalog.store_session import ManagedCatalogSession
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.custom_list.store_session import ManagedCustomListSession
 from mlte.store.user.store_session import ManagedUserSession
 from mlte.session.session_stores import SessionStores
@@ -174,12 +175,12 @@ def _export_users(export_spec: ExportSpec, stores: SessionStores) -> dict[str, A
 
 def _export_catalogs(stores: SessionStores) -> dict[str, Any]:
     """Return the local test catalog."""
-    output_dict: dict[str, Any] = {SessionStores.LOCAL_CATALOG_STORE_ID: []}
+    output_dict: dict[str, Any] = {LOCAL_CATALOG_STORE_ID: []}
 
     with ManagedCatalogSession(
-        stores.catalog_stores.catalogs[SessionStores.LOCAL_CATALOG_STORE_ID].session()
+        catalog_stores.catalogs[LOCAL_CATALOG_STORE_ID].session()
     ) as catalog_store:
         for catalog_entry in catalog_store.entry_mapper.list_details():
-            output_dict[SessionStores.LOCAL_CATALOG_STORE_ID].append(catalog_entry.to_json())
+            output_dict[LOCAL_CATALOG_STORE_ID].append(catalog_entry.to_json())
 
     return output_dict

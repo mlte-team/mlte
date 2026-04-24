@@ -21,7 +21,7 @@ from mlte.store.catalog.underlying.http import (
 )
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
-from mlte.store.unified_store import UnifiedStore
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.user.model import ResourceType
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
@@ -145,7 +145,7 @@ def get_test_entry(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
+    catalog_id: str = LOCAL_CATALOG_STORE_ID,
     creator: Optional[str] = None,
     updater: Optional[str] = None,
 ) -> CatalogEntry:
@@ -170,8 +170,8 @@ def get_test_entry_for_store(
     id: str = DEFAULT_ENTRY_ID,
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
-    catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
-    remote_catalog_id: str = UnifiedStore.LOCAL_CATALOG_STORE_ID,
+    catalog_id: str = LOCAL_CATALOG_STORE_ID,
+    remote_catalog_id: str = LOCAL_CATALOG_STORE_ID,
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     entry = get_test_entry(id, description, code, catalog_id)

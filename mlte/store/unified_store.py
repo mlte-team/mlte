@@ -8,6 +8,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.user import factory as user_store_factory
@@ -28,9 +29,6 @@ class UnifiedStore:
     """
     Unifies all store handling into one class.
     """
-
-    LOCAL_CATALOG_STORE_ID = "local"
-    """Name of the default catalog store."""
 
     def __init__(self):
         """Defines the existing stores, none loaded yet."""
@@ -183,14 +181,14 @@ def _setup_catalog_stores(
         )
 
     # Throw error if trying to set a remote catalog with the id of the local catalog
-    if UnifiedStore.LOCAL_CATALOG_STORE_ID in catalog_uris:
+    if LOCAL_CATALOG_STORE_ID in catalog_uris:
         raise RuntimeError(
-            f"Remote catalog store ID cannot be {UnifiedStore.LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
+            f"Remote catalog store ID cannot be {LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
         )
 
     # Create local catalog
     stores.add_catalog_store_from_uri(
-        stores_uri, UnifiedStore.LOCAL_CATALOG_STORE_ID
+        stores_uri, LOCAL_CATALOG_STORE_ID
     )
 
     # Catalogs: Add all configured catalog stores.
