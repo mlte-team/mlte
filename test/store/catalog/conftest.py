@@ -105,7 +105,7 @@ def _create_catalog_store(
 def create_test_catalog_store(
     tmpdir_factory,
 ) -> typing.Callable[[StoreType], CatalogStore]:
-    """Fixture to manually create a CustomList store."""
+    """Fixture to manually create a catalog store."""
 
     def _make(store_type: StoreType) -> CatalogStore:
         return _create_catalog_store(
