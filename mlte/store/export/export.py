@@ -6,16 +6,17 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
-from mlte.backend.core.state import state
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.model.base_model import BaseModel
-from mlte.session.session import session
+from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
+from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID
+from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
+from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
-from mlte.session.session_stores import SessionStores
 
 
 MODELS_KEY = "models"
@@ -38,24 +39,14 @@ class ExportSpec(BaseModel):
     """List of user IDs for users to be exported."""
 
 
-def session_export(export_spec: ExportSpec, output_path: Path) -> None:
-    """Export using MLTE global session, available when using MLTE as a library."""
-    _export_to_file(export_spec, output_path, session().stores)
-
-
-def state_stores_export(export_spec: ExportSpec, output_path: Path) -> None:
-    """Export using MLTE state_stores, available when using MLTE backend."""
-    _export_to_file(export_spec, output_path, state.stores)
-
-
-def _export_to_file(export_spec: ExportSpec, output_path: Path, stores: SessionStores) -> None:
+def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: ArtifactStore, user_store: UserStore, custom_list_store: CustomListStore, catalog_stores: CatalogStoreGroup) -> None:
     """
-    Export when using the library, writes the exported JSON to output_path as zip file.
+    Export store data, writes the exported JSON to output_path as zip file.
 
     :param export_spec: Selection of MLTE store objects to be exported
     :param output_path: Path to write zipped JSON to
     """
-    export_json = _export(export_spec, stores)
+    export_json = _export(export_spec, artifact_store, user_store, custom_list_store, catalog_stores)
 
     # Ensure output directory exists
     os.makedirs(output_path, exist_ok=True)
@@ -68,7 +59,7 @@ def _export_to_file(export_spec: ExportSpec, output_path: Path, stores: SessionS
         )
 
 
-def _export(export_spec: ExportSpec, stores: SessionStores) -> dict[str, Any]:
+def _export(export_spec: ExportSpec, artifact_store: ArtifactStore, custom_list_store: CustomListStore, user_store: UserStore, catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
     """
     Export MLTE store objects as json dict.
 
@@ -84,21 +75,21 @@ def _export(export_spec: ExportSpec, stores: SessionStores) -> dict[str, Any]:
     }
 
     # Read items to be exported
-    export_dict[MODELS_KEY] = _export_artifacts(export_spec, stores)
-    export_dict[CUSTOM_LISTS_KEY] = _export_custom_lists(export_spec, stores)
-    export_dict[USERS_KEY] = _export_users(export_spec, stores)
-    export_dict[CATALOG_KEY] = _export_catalogs(stores)
+    export_dict[MODELS_KEY] = _export_artifacts(export_spec, artifact_store)
+    export_dict[CUSTOM_LISTS_KEY] = _export_custom_lists(export_spec, custom_list_store)
+    export_dict[USERS_KEY] = _export_users(export_spec, user_store)
+    export_dict[CATALOG_KEY] = _export_catalogs(catalog_stores)
 
     return export_dict
 
 
-def _export_artifacts(export_spec: ExportSpec, stores: SessionStores) -> dict[str, Any]:
+def _export_artifacts(export_spec: ExportSpec, artifact_store: ArtifactStore) -> dict[str, Any]:
     """Return dict of artifacts specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
     # TODO: When getting multiple versions, this exports the card under each version. Should not do that
     with ManagedArtifactSession(
-        stores.artifact_store.session()
+        artifact_store.session()
     ) as artifact_store:
         if export_spec.models == {}:
             return output_dict
@@ -127,12 +118,12 @@ def _export_artifacts(export_spec: ExportSpec, stores: SessionStores) -> dict[st
     return output_dict
 
 
-def _export_custom_lists(export_spec: ExportSpec, stores: SessionStores) -> dict[str, Any]:
+def _export_custom_lists(export_spec: ExportSpec, custom_list_store: CustomListStore) -> dict[str, Any]:
     """Return dict of custom lists specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
     with ManagedCustomListSession(
-        stores.custom_list_store.session()
+        custom_list_store.session()
     ) as custom_list_store:
         if export_spec.custom_lists == []:
             return output_dict
@@ -156,13 +147,13 @@ def _export_custom_lists(export_spec: ExportSpec, stores: SessionStores) -> dict
     return output_dict
 
 
-def _export_users(export_spec: ExportSpec, stores: SessionStores) -> dict[str, Any]:
+def _export_users(export_spec: ExportSpec, user_store: UserStore) -> dict[str, Any]:
     """Return list of users specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
     # TODO: Handle permissions & groups
     with ManagedUserSession(
-        stores.user_store.session()
+        user_store.session()
     ) as user_store:
         if export_spec.users == ALL_OPTION:
             export_spec.users = user_store.user_mapper.list()
@@ -173,7 +164,7 @@ def _export_users(export_spec: ExportSpec, stores: SessionStores) -> dict[str, A
     return output_dict
 
 
-def _export_catalogs(stores: SessionStores) -> dict[str, Any]:
+def _export_catalogs(catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
     """Return the local test catalog."""
     output_dict: dict[str, Any] = {LOCAL_CATALOG_STORE_ID: []}
 

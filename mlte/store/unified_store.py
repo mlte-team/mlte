@@ -1,5 +1,6 @@
 """Manages info about a unified set of stores."""
 
+from pathlib import Path
 from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
@@ -11,6 +12,7 @@ from mlte.store.catalog.store import CatalogStore
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
+from mlte.store.export.export import ExportSpec, export_to_file
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.cross_validator import CompositeValidator
@@ -68,6 +70,10 @@ class UnifiedStore:
     ) -> None:
         """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
+
+    def export(self, export_spec: ExportSpec, output_path: Path):
+        """Export store data."""
+        export_to_file(export_spec, output_path, self.artifact_store, self.custom_list_store, self.user_store, self.catalog_stores)
 
     @property
     def artifact_store(self) -> ArtifactStore:

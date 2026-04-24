@@ -11,6 +11,7 @@ from mlte.negotiation.model import NegotiationCardModel
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import ManagedCatalogGroupSession
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.unified_store import UnifiedStore
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
@@ -132,7 +133,7 @@ def test_catalog_cross_validators(
         stores.catalog_stores.session()
     ) as group_session:
         local_catalog_session = group_session.sessions[
-            UnifiedStore.LOCAL_CATALOG_STORE_ID
+            LOCAL_CATALOG_STORE_ID
         ]
 
         # Valid submission
