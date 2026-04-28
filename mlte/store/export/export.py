@@ -24,19 +24,18 @@ USERS_KEY = "users"
 CATALOG_KEY = "local_test_catalog"
 EXPORT_ZIP_FILE = "store_export.zip"
 EXPORT_JSON_FILE = "store_export.json"
-ALL_OPTION = "*"
 
 
 class ExportSpec(BaseModel):
     """Specification of MLTE store objects to be exported."""
 
-    models: dict[str, list[str] | str] | str | None = None
+    models: dict[str, list[str]] | None = None
     """Dict of models to be exported. Key is model ID, value is list of versions."""
 
-    custom_lists: list[CustomListName] | str | None = None
+    custom_lists: list[CustomListName] | None = None
     """List of custom lists to be exported."""
 
-    users: list[str] | str | None = None
+    users: list[str] | None = None
     """List of user IDs for users to be exported."""
 
 
@@ -57,8 +56,8 @@ def export_to_file(
     export_json = _export(
         export_spec,
         artifact_store,
-        user_store,
         custom_list_store,
+        user_store,
         catalog_stores,
     )
 
@@ -112,29 +111,30 @@ def _export_artifacts(
     output_dict: dict[str, Any] = {}
 
     # TODO: When getting multiple versions, this exports the card under each version. Should not do that
-    with ManagedArtifactSession(artifact_store.session()) as artifact_store:
-        if not export_spec.models:
+    with ManagedArtifactSession(
+        artifact_store.session()
+    ) as artifact_store_session:
+        if export_spec.models is None:
             return output_dict
 
-        if export_spec.models == ALL_OPTION:
-            export_spec.models = {}
-            for model_id in artifact_store.model_mapper.list():
-                export_spec.models[model_id] = ALL_OPTION
+        if export_spec.models == {}:
+            for model_id in artifact_store_session.model_mapper.list():
+                export_spec.models[model_id] = []
 
         for model_id in export_spec.models:
-            if export_spec.models[model_id] == ALL_OPTION:
+            if export_spec.models[model_id] == []:
                 export_spec.models[model_id] = (
-                    artifact_store.version_mapper.list(model_id)
+                    artifact_store_session.version_mapper.list(model_id)
                 )
 
             output_dict[model_id] = {}
             for version_id in export_spec.models[model_id]:
                 output_dict[model_id][version_id] = {}
-                for artifact_id in artifact_store.artifact_mapper.list(
+                for artifact_id in artifact_store_session.artifact_mapper.list(
                     (model_id, version_id)
                 ):
                     output_dict[model_id][version_id][artifact_id] = (
-                        artifact_store.artifact_mapper.read(
+                        artifact_store_session.artifact_mapper.read(
                             artifact_id, (model_id, version_id)
                         ).to_json()
                     )
@@ -150,12 +150,11 @@ def _export_custom_lists(
 
     with ManagedCustomListSession(
         custom_list_store.session()
-    ) as custom_list_store:
-        if not export_spec.custom_lists:
+    ) as custom_list_store_session:
+        if export_spec.custom_lists is None:
             return output_dict
 
-        if export_spec.custom_lists == ALL_OPTION:
-            export_spec.custom_lists = []
+        if export_spec.custom_lists == []:
             for custom_list_id in CustomListName:
                 export_spec.custom_lists.append(custom_list_id)
 
@@ -163,7 +162,7 @@ def _export_custom_lists(
             output_dict[custom_list_id] = []
             for (
                 custom_list_entry
-            ) in custom_list_store.custom_list_entry_mapper.list_details(
+            ) in custom_list_store_session.custom_list_entry_mapper.list_details(
                 custom_list_id
             ):
                 output_dict[custom_list_id].append(custom_list_entry.to_json())
@@ -178,15 +177,17 @@ def _export_users(
     output_dict: dict[str, Any] = {}
 
     # TODO: Handle permissions & groups
-    with ManagedUserSession(user_store.session()) as user_store:
-        if not export_spec.users:
+    with ManagedUserSession(user_store.session()) as user_store_session:
+        if export_spec.users is None:
             return output_dict
 
-        if export_spec.users == ALL_OPTION:
-            export_spec.users = user_store.user_mapper.list()
+        if export_spec.users == []:
+            export_spec.users = user_store_session.user_mapper.list()
 
         for user in export_spec.users:
-            output_dict[user] = user_store.user_mapper.read(user).to_json()
+            output_dict[user] = user_store_session.user_mapper.read(
+                user
+            ).to_json()
 
     return output_dict
 
@@ -197,8 +198,8 @@ def _export_catalogs(catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
 
     with ManagedCatalogSession(
         catalog_stores.catalogs[LOCAL_CATALOG_STORE_ID].session()
-    ) as catalog_store:
-        for catalog_entry in catalog_store.entry_mapper.list_details():
+    ) as catalog_store_session:
+        for catalog_entry in catalog_store_session.entry_mapper.list_details():
             output_dict[LOCAL_CATALOG_STORE_ID].append(catalog_entry.to_json())
 
     return output_dict

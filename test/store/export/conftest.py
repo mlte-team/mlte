@@ -7,13 +7,13 @@ import pytest
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.custom_list.store import CustomListStore
-from mlte.store.export.export import ALL_OPTION, ExportSpec, _export
+from mlte.store.export.export import ExportSpec, _export
 from mlte.store.user.store import UserStore
 
 ALL_EXPORT_SPEC = ExportSpec(
-    models=ALL_OPTION,
-    custom_lists=ALL_OPTION,
-    users=ALL_OPTION,
+    models={},
+    custom_lists=[],
+    users=[],
 )
 
 ARTIFACT_EXPORT_DATA = "artifact"
