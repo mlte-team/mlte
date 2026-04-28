@@ -18,7 +18,7 @@ from test.store.conftest import create_test_unified_store
 from test.store.export.conftest import ALL_EXPORT_SPEC
 from test.store.user.test_underlying import get_internal_store_session, get_test_user, setup_test_group
 from test.store.utils import store_types
-from mlte.store.export.export import _export_catalogs, _export_custom_lists, _export_users
+from mlte.store.export.export import ExportSpec, _export_catalogs, _export_custom_lists, _export_users
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -33,6 +33,10 @@ def test_export_custom_lists(
     all_export = _export_custom_lists(ALL_EXPORT_SPEC, stores.custom_list_store)
     for name in CustomListName:
         assert name in all_export
+
+    test_spec = ExportSpec(custom_lists=[CustomListName.TAGS])
+    partial_export = _export_custom_lists(test_spec, stores.custom_list_store)
+    assert CustomListName.TAGS in partial_export
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -53,10 +57,14 @@ def test_export_users(
         setup_test_group(user_store_session)
         user_store_session.user_mapper.create(test_user)
 
-    export = _export_users(ALL_EXPORT_SPEC, stores.user_store)
-    assert test_user.username in export
-    assert test_user == User(**export[test_user.username])
+    full_export = _export_users(ALL_EXPORT_SPEC, stores.user_store)
+    assert test_user.username in full_export
+    assert test_user == User(**full_export[test_user.username])
 
+    test_spec = ExportSpec(users=[test_user.username])
+    partial_export = _export_users(test_spec, stores.user_store)
+    assert test_user.username in partial_export
+    assert test_user == User(**partial_export[test_user.username])
 
 @pytest.mark.parametrize("store_type", store_types())
 def test_export_catalogs(
