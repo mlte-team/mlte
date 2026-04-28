@@ -1,7 +1,8 @@
 """Unit tests for export."""
 
+import json
 from pathlib import Path
-from typing import Callable
+import zipfile
 
 import pytest
 
@@ -19,10 +20,47 @@ from mlte.user.model import User
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.catalog.conftest import get_test_entry_for_store
 from test.store.conftest import create_test_unified_store
-from test.store.export.conftest import ALL_EXPORT_SPEC
+from test.store.export.conftest import ALL_EXPORT_SPEC, ARTIFACT_EXPORT_DATA, CATALOG_EXPORT_DATA, CUSTOM_LIST_EXPORT_DATA, USER_EXPORT_DATA
 from test.store.user.test_underlying import get_internal_store_session, get_test_user, setup_test_group
 from test.store.utils import store_types
-from mlte.store.export.export import ExportSpec, _export_artifacts, _export_catalogs, _export_custom_lists, _export_users
+from mlte.store.export.export import EXPORT_JSON_FILE, EXPORT_ZIP_FILE, ExportSpec, _export, _export_artifacts, _export_catalogs, _export_custom_lists, _export_users, MODELS_KEY, CUSTOM_LISTS_KEY, USERS_KEY, CATALOG_KEY, export_to_file
+
+
+@pytest.mark.parametrize("store_type", store_types())
+def test_export_to_file(store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export) -> None:
+    """Tests that export is written to file."""
+    stores: UnifiedStore = create_test_unified_store(store_type, tmp_path, patched_setup_stores)
+    output_dir = tmp_path / "export"
+    zip_path = output_dir / EXPORT_ZIP_FILE
+
+    export_to_file(ALL_EXPORT_SPEC, output_dir, stores.artifact_store, stores.custom_list_store, stores.user_store, stores.catalog_stores)
+    
+    assert output_dir.exists()
+    assert zip_path.exists()
+
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+        assert EXPORT_JSON_FILE in zip_ref.namelist()
+        
+        with zip_ref.open(EXPORT_JSON_FILE) as json_file:
+            export_json = json.load(json_file)
+
+            assert export_json[MODELS_KEY] == ARTIFACT_EXPORT_DATA
+            assert export_json[CUSTOM_LISTS_KEY] == CUSTOM_LIST_EXPORT_DATA
+            assert export_json[USERS_KEY] == USER_EXPORT_DATA
+            assert export_json[CATALOG_KEY] == CATALOG_EXPORT_DATA
+
+
+@pytest.mark.parametrize("store_type", store_types())
+def test_export_orchestration(store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export) -> None:
+    """Tests that all exports happen together properly"""
+    stores: UnifiedStore = create_test_unified_store(store_type, tmp_path, patched_setup_stores)
+
+    export = _export(ALL_EXPORT_SPEC, stores.artifact_store, stores.custom_list_store, stores.user_store, stores.catalog_stores)
+
+    assert export[MODELS_KEY] == ARTIFACT_EXPORT_DATA
+    assert export[CUSTOM_LISTS_KEY] == CUSTOM_LIST_EXPORT_DATA
+    assert export[USERS_KEY] == USER_EXPORT_DATA
+    assert export[CATALOG_KEY] == CATALOG_EXPORT_DATA
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -52,7 +90,7 @@ def test_export_artifacts(
     assert written_artifact.header.identifier in all_export[model_id][version_id]
     assert written_artifact.to_json() == all_export[model_id][version_id][written_artifact.header.identifier]
 
-    test_spec = ExportSpec(artifacts={model_id: version_id})
+    test_spec = ExportSpec(models={model_id: [version_id]})
     partial_export = _export_artifacts(test_spec, stores.artifact_store)
     assert written_artifact.header.identifier in partial_export[model_id][version_id]
     assert written_artifact.to_json() == partial_export[model_id][version_id][written_artifact.header.identifier]

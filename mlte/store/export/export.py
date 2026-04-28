@@ -23,23 +23,25 @@ MODELS_KEY = "models"
 CUSTOM_LISTS_KEY = "custom_lists"
 USERS_KEY = "users"
 CATALOG_KEY = "local_test_catalog"
+EXPORT_ZIP_FILE = "store_export.zip"
+EXPORT_JSON_FILE = "store_export.json"
 ALL_OPTION = "*"
 
 
 class ExportSpec(BaseModel):
     """Specification of MLTE store objects to be exported."""
 
-    models: dict[str, list[str] | str] | str
+    models: dict[str, list[str] | str] | str = None
     """Dict of models to be exported. Key is model ID, value is list of versions."""
 
-    custom_lists: list[CustomListName] | str
+    custom_lists: list[CustomListName] | str = None
     """List of custom lists to be exported."""
 
-    users: list[str] | str
+    users: list[str] | str = None
     """List of user IDs for users to be exported."""
 
 
-def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: ArtifactStore, user_store: UserStore, custom_list_store: CustomListStore, catalog_stores: CatalogStoreGroup) -> None:
+def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: ArtifactStore, custom_list_store: CustomListStore, user_store: UserStore, catalog_stores: CatalogStoreGroup) -> None:
     """
     Export store data, writes the exported JSON to output_path as zip file.
 
@@ -52,10 +54,10 @@ def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: A
     os.makedirs(output_path, exist_ok=True)
 
     with zipfile.ZipFile(
-        os.path.join(output_path, "store_export.zip"), "w", zipfile.ZIP_DEFLATED
+        os.path.join(output_path, EXPORT_ZIP_FILE), "w", zipfile.ZIP_DEFLATED
     ) as zip_export_file:
         zip_export_file.writestr(
-            "store_export.json", json.dumps(export_json, indent=4)
+            EXPORT_JSON_FILE, json.dumps(export_json, indent=4)
         )
 
 
@@ -91,7 +93,7 @@ def _export_artifacts(export_spec: ExportSpec, artifact_store: ArtifactStore) ->
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store:
-        if export_spec.models == {}:
+        if not export_spec.models:
             return output_dict
         
         if export_spec.models == ALL_OPTION:
@@ -125,7 +127,7 @@ def _export_custom_lists(export_spec: ExportSpec, custom_list_store: CustomListS
     with ManagedCustomListSession(
         custom_list_store.session()
     ) as custom_list_store:
-        if export_spec.custom_lists == []:
+        if not export_spec.custom_lists:
             return output_dict
 
         if export_spec.custom_lists == ALL_OPTION:
@@ -155,6 +157,9 @@ def _export_users(export_spec: ExportSpec, user_store: UserStore) -> dict[str, A
     with ManagedUserSession(
         user_store.session()
     ) as user_store:
+        if not export_spec.users:
+            return output_dict
+
         if export_spec.users == ALL_OPTION:
             export_spec.users = user_store.user_mapper.list()
 
