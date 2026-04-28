@@ -16,9 +16,7 @@ from mlte.store.catalog import remote_catalog
 from mlte.store.catalog.factory import create_catalog_store
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
-from mlte.store.catalog.underlying.http import (
-    HttpCatalogGroupStore,
-)
+from mlte.store.catalog.underlying.http import HttpCatalogGroupStore
 from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 from mlte.store.catalog.underlying.rdbs.store import RelationalDBCatalogStore
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID

@@ -114,7 +114,9 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
 
     with ManagedUserSession(user_store.session()) as user_store_session:
         original_users = user_store_session.user_mapper.list()
-        internal_store = get_internal_store_session(user_store_session, store_type)
+        internal_store = get_internal_store_session(
+            user_store_session, store_type
+        )
         test_user = user_policy.set_default_user_policies(
             test_user, internal_store.policy_store
         )

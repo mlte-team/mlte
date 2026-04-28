@@ -12,7 +12,6 @@ from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.catalog.catalog_group import ManagedCatalogGroupSession
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID
-from mlte.store.unified_store import UnifiedStore
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.artifact.test_underlying import check_artifact_writing
 from test.store.catalog.conftest import get_test_entry_for_store
@@ -132,9 +131,7 @@ def test_catalog_cross_validators(
     with ManagedCatalogGroupSession(
         stores.catalog_stores.session()
     ) as group_session:
-        local_catalog_session = group_session.sessions[
-            LOCAL_CATALOG_STORE_ID
-        ]
+        local_catalog_session = group_session.sessions[LOCAL_CATALOG_STORE_ID]
 
         # Valid submission
         _ = local_catalog_session.entry_mapper.create_with_header(

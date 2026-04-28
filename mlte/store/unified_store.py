@@ -73,7 +73,14 @@ class UnifiedStore:
 
     def export(self, export_spec: ExportSpec, output_path: Path):
         """Export store data."""
-        export_to_file(export_spec, output_path, self.artifact_store, self.custom_list_store, self.user_store, self.catalog_stores)
+        export_to_file(
+            export_spec,
+            output_path,
+            self.artifact_store,
+            self.custom_list_store,
+            self.user_store,
+            self.catalog_stores,
+        )
 
     @property
     def artifact_store(self) -> ArtifactStore:
@@ -193,9 +200,7 @@ def _setup_catalog_stores(
         )
 
     # Create local catalog
-    stores.add_catalog_store_from_uri(
-        stores_uri, LOCAL_CATALOG_STORE_ID
-    )
+    stores.add_catalog_store_from_uri(stores_uri, LOCAL_CATALOG_STORE_ID)
 
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():

@@ -7,10 +7,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.base import StoreType
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from test.store.custom_list.conftest import (
-    get_test_entry,
-    get_test_list,
-)
+from test.store.custom_list.conftest import get_test_entry, get_test_list
 from test.store.utils import store_types
 
 

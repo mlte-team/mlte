@@ -18,7 +18,6 @@ from mlte.store.custom_list.store_session import ManagedCustomListSession
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 
-
 MODELS_KEY = "models"
 CUSTOM_LISTS_KEY = "custom_lists"
 USERS_KEY = "users"
@@ -31,24 +30,37 @@ ALL_OPTION = "*"
 class ExportSpec(BaseModel):
     """Specification of MLTE store objects to be exported."""
 
-    models: dict[str, list[str] | str] | str = None
+    models: dict[str, list[str] | str] | str | None = None
     """Dict of models to be exported. Key is model ID, value is list of versions."""
 
-    custom_lists: list[CustomListName] | str = None
+    custom_lists: list[CustomListName] | str | None = None
     """List of custom lists to be exported."""
 
-    users: list[str] | str = None
+    users: list[str] | str | None = None
     """List of user IDs for users to be exported."""
 
 
-def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: ArtifactStore, custom_list_store: CustomListStore, user_store: UserStore, catalog_stores: CatalogStoreGroup) -> None:
+def export_to_file(
+    export_spec: ExportSpec,
+    output_path: Path,
+    artifact_store: ArtifactStore,
+    custom_list_store: CustomListStore,
+    user_store: UserStore,
+    catalog_stores: CatalogStoreGroup,
+) -> None:
     """
     Export store data, writes the exported JSON to output_path as zip file.
 
     :param export_spec: Selection of MLTE store objects to be exported
     :param output_path: Path to write zipped JSON to
     """
-    export_json = _export(export_spec, artifact_store, user_store, custom_list_store, catalog_stores)
+    export_json = _export(
+        export_spec,
+        artifact_store,
+        user_store,
+        custom_list_store,
+        catalog_stores,
+    )
 
     # Ensure output directory exists
     os.makedirs(output_path, exist_ok=True)
@@ -61,7 +73,13 @@ def export_to_file(export_spec: ExportSpec, output_path: Path, artifact_store: A
         )
 
 
-def _export(export_spec: ExportSpec, artifact_store: ArtifactStore, custom_list_store: CustomListStore, user_store: UserStore, catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
+def _export(
+    export_spec: ExportSpec,
+    artifact_store: ArtifactStore,
+    custom_list_store: CustomListStore,
+    user_store: UserStore,
+    catalog_stores: CatalogStoreGroup,
+) -> dict[str, Any]:
     """
     Export MLTE store objects as json dict.
 
@@ -78,24 +96,26 @@ def _export(export_spec: ExportSpec, artifact_store: ArtifactStore, custom_list_
 
     # Read items to be exported
     export_dict[MODELS_KEY] = _export_artifacts(export_spec, artifact_store)
-    export_dict[CUSTOM_LISTS_KEY] = _export_custom_lists(export_spec, custom_list_store)
+    export_dict[CUSTOM_LISTS_KEY] = _export_custom_lists(
+        export_spec, custom_list_store
+    )
     export_dict[USERS_KEY] = _export_users(export_spec, user_store)
     export_dict[CATALOG_KEY] = _export_catalogs(catalog_stores)
 
     return export_dict
 
 
-def _export_artifacts(export_spec: ExportSpec, artifact_store: ArtifactStore) -> dict[str, Any]:
+def _export_artifacts(
+    export_spec: ExportSpec, artifact_store: ArtifactStore
+) -> dict[str, Any]:
     """Return dict of artifacts specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
     # TODO: When getting multiple versions, this exports the card under each version. Should not do that
-    with ManagedArtifactSession(
-        artifact_store.session()
-    ) as artifact_store:
+    with ManagedArtifactSession(artifact_store.session()) as artifact_store:
         if not export_spec.models:
             return output_dict
-        
+
         if export_spec.models == ALL_OPTION:
             export_spec.models = {}
             for model_id in artifact_store.model_mapper.list():
@@ -103,7 +123,9 @@ def _export_artifacts(export_spec: ExportSpec, artifact_store: ArtifactStore) ->
 
         for model_id in export_spec.models:
             if export_spec.models[model_id] == ALL_OPTION:
-                export_spec.models[model_id] = artifact_store.version_mapper.list(model_id)
+                export_spec.models[model_id] = (
+                    artifact_store.version_mapper.list(model_id)
+                )
 
             output_dict[model_id] = {}
             for version_id in export_spec.models[model_id]:
@@ -111,16 +133,18 @@ def _export_artifacts(export_spec: ExportSpec, artifact_store: ArtifactStore) ->
                 for artifact_id in artifact_store.artifact_mapper.list(
                     (model_id, version_id)
                 ):
-                    output_dict[model_id][version_id][
-                        artifact_id
-                    ] = artifact_store.artifact_mapper.read(
-                        artifact_id, (model_id, version_id)
-                    ).to_json()
-    
+                    output_dict[model_id][version_id][artifact_id] = (
+                        artifact_store.artifact_mapper.read(
+                            artifact_id, (model_id, version_id)
+                        ).to_json()
+                    )
+
     return output_dict
 
 
-def _export_custom_lists(export_spec: ExportSpec, custom_list_store: CustomListStore) -> dict[str, Any]:
+def _export_custom_lists(
+    export_spec: ExportSpec, custom_list_store: CustomListStore
+) -> dict[str, Any]:
     """Return dict of custom lists specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
@@ -134,7 +158,7 @@ def _export_custom_lists(export_spec: ExportSpec, custom_list_store: CustomListS
             export_spec.custom_lists = []
             for custom_list_id in CustomListName:
                 export_spec.custom_lists.append(custom_list_id)
-        
+
         for custom_list_id in export_spec.custom_lists:
             output_dict[custom_list_id] = []
             for (
@@ -142,21 +166,19 @@ def _export_custom_lists(export_spec: ExportSpec, custom_list_store: CustomListS
             ) in custom_list_store.custom_list_entry_mapper.list_details(
                 custom_list_id
             ):
-                output_dict[custom_list_id].append(
-                    custom_list_entry.to_json()
-                )
+                output_dict[custom_list_id].append(custom_list_entry.to_json())
 
     return output_dict
 
 
-def _export_users(export_spec: ExportSpec, user_store: UserStore) -> dict[str, Any]:
+def _export_users(
+    export_spec: ExportSpec, user_store: UserStore
+) -> dict[str, Any]:
     """Return list of users specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
     # TODO: Handle permissions & groups
-    with ManagedUserSession(
-        user_store.session()
-    ) as user_store:
+    with ManagedUserSession(user_store.session()) as user_store:
         if not export_spec.users:
             return output_dict
 
