@@ -16,10 +16,40 @@ ALL_EXPORT_SPEC = ExportSpec(
     users=[],
 )
 
-ARTIFACT_EXPORT_DATA = "artifact"
-CUSTOM_LIST_EXPORT_DATA = "custom_list"
-USER_EXPORT_DATA = "user"
-CATALOG_EXPORT_DATA = "catalog"
+ARTIFACT_EXPORT_DATA = {
+    "testModel": {
+        "0.0.1": {
+            "evidence.test": {
+                "header": {},
+                "body": {}
+            },
+        }
+    }
+}
+CUSTOM_LIST_EXPORT_DATA = {
+    "testCustomList": [
+        {
+            "name": "test1",
+            "description": "test1",
+            "parent": None,
+        }
+    ]
+}
+USER_EXPORT_DATA = {
+    "testUser": {
+        "username": "testUser",
+    }
+}
+CATALOG_EXPORT_DATA = {
+    "testCatalog": [
+        {
+            "header": {
+                "identifier": "testIdentifier"
+            },
+            "tags": []
+        }
+    ]
+}
 
 
 @pytest.fixture

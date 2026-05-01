@@ -86,7 +86,7 @@ def test_export_to_file(
 
 
 @pytest.mark.parametrize("store_type", store_types())
-def test_export_orchestration(
+def test_export(
     store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export
 ) -> None:
     """Tests that all exports happen together properly"""
