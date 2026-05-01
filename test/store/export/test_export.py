@@ -148,8 +148,8 @@ def test_export_artifacts(
         == all_export[model_id][version_id][written_artifact.header.identifier]
     )
 
-    test_spec = ExportSpec(models={model_id: [version_id]})
-    partial_export = _export_artifacts(test_spec, stores.artifact_store)
+    partial_spec = ExportSpec(models={model_id: [version_id]})
+    partial_export = _export_artifacts(partial_spec, stores.artifact_store)
     assert (
         written_artifact.header.identifier
         in partial_export[model_id][version_id]
@@ -160,6 +160,10 @@ def test_export_artifacts(
             written_artifact.header.identifier
         ]
     )
+
+    none_spec = ExportSpec()
+    none_export = _export_artifacts(none_spec, stores.artifact_store)
+    assert none_export == {}
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -177,9 +181,13 @@ def test_export_custom_lists(
     for name in CustomListName:
         assert name in all_export
 
-    test_spec = ExportSpec(custom_lists=[CustomListName.TAGS])
-    partial_export = _export_custom_lists(test_spec, stores.custom_list_store)
+    partial_spec = ExportSpec(custom_lists=[CustomListName.TAGS])
+    partial_export = _export_custom_lists(partial_spec, stores.custom_list_store)
     assert CustomListName.TAGS in partial_export
+
+    none_spec = ExportSpec()
+    none_export = _export_custom_lists(none_spec, stores.custom_list_store)
+    assert none_export == {}
 
 
 @pytest.mark.parametrize("store_type", store_types())
@@ -208,10 +216,14 @@ def test_export_users(
     assert test_user.username in full_export
     assert test_user == User(**full_export[test_user.username])
 
-    test_spec = ExportSpec(users=[test_user.username])
-    partial_export = _export_users(test_spec, stores.user_store)
+    partial_spec = ExportSpec(users=[test_user.username])
+    partial_export = _export_users(partial_spec, stores.user_store)
     assert test_user.username in partial_export
     assert test_user == User(**partial_export[test_user.username])
+
+    none_spec = ExportSpec()
+    none_export = _export_users(none_spec, stores.user_store)
+    assert none_export == {}
 
 
 @pytest.mark.parametrize("store_type", store_types())
