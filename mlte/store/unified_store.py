@@ -9,7 +9,7 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
-from mlte.store.constants import LOCAL_CATALOG_STORE_ID
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.export.export import ExportSpec, export_to_file
@@ -190,7 +190,7 @@ def _setup_catalog_stores(
             stores_uri, catalog_store_validators
         )
         stores.add_catalog_store(
-            store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
+            store=sample_catalog, id=SAMPLE_CATALOG_STORE_ID
         )
 
     # Throw error if trying to set a remote catalog with the id of the local catalog
