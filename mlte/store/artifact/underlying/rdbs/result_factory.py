@@ -32,6 +32,7 @@ def create_results_orm(
         result_orm = DBResult(
             type=result.type,
             message=result.message,
+            additional_data=result.additional_data,
             test_results=test_results_orm,
             evidence_metadata=(
                 DBEvidenceMetadata(
@@ -56,6 +57,7 @@ def create_results_model(
                 result.evidence_metadata.test_case_id: ResultModel(
                     type=result.type,
                     message=result.message,
+                    additional_data=result.additional_data,
                     evidence_metadata=EvidenceMetadata(
                         test_case_id=result.evidence_metadata.test_case_id,
                         measurement=MeasurementMetadata.from_json_string(
