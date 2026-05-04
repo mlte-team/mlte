@@ -154,9 +154,9 @@ class Validator(Serializable):
             Info(self.info)
             if self.bool_exp is None and self.info is not None
             else (
-                Success(f"{self.success} {values_str}")
+                Success(f"{self.success}", additional_data=f"{values_str}")
                 if executed_bool_exp_value
-                else Failure(f"{self.failure} {values_str}")
+                else Failure(f"{self.failure}", additional_data=f"{values_str}")
             )
         )
         return result
