@@ -14,6 +14,7 @@ ALL_EXPORT_SPEC = ExportSpec(
     models={},
     custom_lists=[],
     users=[],
+    catalogs=[]
 )
 
 ARTIFACT_EXPORT_DATA = {
@@ -71,7 +72,10 @@ def patched_export():
     ):
         return USER_EXPORT_DATA
 
-    def _export_catalogs_with_fixtures(catalog_stores: CatalogStoreGroup):
+    def _export_catalogs_with_fixtures(
+        export_spec: ExportSpec,
+        catalog_stores: CatalogStoreGroup
+    ):
         return CATALOG_EXPORT_DATA
 
     with patch(

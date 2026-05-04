@@ -12,7 +12,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.catalog.store_session import ManagedCatalogSession
-from mlte.store.constants import LOCAL_CATALOG_STORE_ID
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
 from mlte.store.export.export import (
     CATALOG_KEY,
     CUSTOM_LISTS_KEY,
@@ -234,12 +234,13 @@ def test_export_catalogs(
     stores: UnifiedStore = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
-    test_entry = get_test_entry_for_store(store_type=store_type)
 
-    with ManagedCatalogSession(
-        stores.catalog_stores.catalogs[LOCAL_CATALOG_STORE_ID].session()
-    ) as local_catalog_store:
-        local_catalog_store.entry_mapper.create(test_entry)
+    full_spec = ExportSpec(catalogs=[])
+    full_export = _export_catalogs(full_spec, stores.catalog_stores)
+    assert SAMPLE_CATALOG_STORE_ID in full_export
+    assert LOCAL_CATALOG_STORE_ID in full_export
 
-    export = _export_catalogs(stores.catalog_stores)
-    assert test_entry.to_json() in export[LOCAL_CATALOG_STORE_ID]
+    partial_spec = ExportSpec(catalogs=[LOCAL_CATALOG_STORE_ID])
+    partial_export = _export_catalogs(partial_spec, stores.catalog_stores)
+    assert SAMPLE_CATALOG_STORE_ID not in partial_export
+    assert LOCAL_CATALOG_STORE_ID in partial_export

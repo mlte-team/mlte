@@ -10,7 +10,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.model.base_model import BaseModel
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.catalog.catalog_group import CatalogStoreGroup
+from mlte.store.catalog.catalog_group import CatalogStoreGroup, ManagedCatalogGroupSession
 from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.custom_list.store import CustomListStore
@@ -21,7 +21,7 @@ from mlte.store.user.store_session import ManagedUserSession
 MODELS_KEY = "models"
 CUSTOM_LISTS_KEY = "custom_lists"
 USERS_KEY = "users"
-CATALOG_KEY = "local_test_catalog"
+CATALOG_KEY = "catalogs"
 EXPORT_ZIP_FILE = "store_export.zip"
 EXPORT_JSON_FILE = "store_export.json"
 
@@ -37,6 +37,9 @@ class ExportSpec(BaseModel):
 
     users: list[str] | None = None
     """List of user IDs for users to be exported."""
+
+    catalogs: list[str] | None = None
+    """List of catalogs to be exported."""
 
 
 def export_to_file(
@@ -99,7 +102,7 @@ def _export(
         export_spec, custom_list_store
     )
     export_dict[USERS_KEY] = _export_users(export_spec, user_store)
-    export_dict[CATALOG_KEY] = _export_catalogs(catalog_stores)
+    export_dict[CATALOG_KEY] = _export_catalogs(export_spec, catalog_stores)
 
     return export_dict
 
@@ -192,14 +195,22 @@ def _export_users(
     return output_dict
 
 
-def _export_catalogs(catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
+def _export_catalogs(export_spec: ExportSpec, catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
     """Return the local test catalog."""
-    output_dict: dict[str, Any] = {LOCAL_CATALOG_STORE_ID: []}
+    output_dict: dict[str, Any] = {}
 
-    with ManagedCatalogSession(
-        catalog_stores.catalogs[LOCAL_CATALOG_STORE_ID].session()
-    ) as catalog_store_session:
-        for catalog_entry in catalog_store_session.entry_mapper.list_details():
-            output_dict[LOCAL_CATALOG_STORE_ID].append(catalog_entry.to_json())
+    if export_spec.catalogs is None:
+        return output_dict
+    
+    if export_spec.catalogs == []:
+        export_spec.catalogs = catalog_stores.catalogs.keys()
+
+    for catalog_name in export_spec.catalogs:
+        with ManagedCatalogSession(
+            catalog_stores.catalogs[catalog_name].session()
+        ) as catalog_store_session:
+            output_dict[catalog_name] = []
+            for catalog_entry in catalog_store_session.entry_mapper.list_details():
+                output_dict[catalog_name].append(catalog_entry.to_json())
 
     return output_dict
