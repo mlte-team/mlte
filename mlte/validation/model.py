@@ -25,6 +25,12 @@ class ValidatorModel(BaseModel):
     failure: Optional[str]
     """A string to be used when recording that the validation was not succesful."""
 
+    default_success: str
+    """A default string to be used when recording that the validation was succesful, if success is not defined, and in detailed messages.."""
+
+    default_failure: str
+    """A default string to be used when recording that the validation was not succesful, if failure is not defined, and in detailed messages."""
+
     info: Optional[str]
     """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 

@@ -8,7 +8,9 @@ from mlte.evidence.types.array import Array
 from mlte.validation.validator import Validator
 
 
-def all_nums_less_than(threshold: float, units: str) -> Validator:
+def all_nums_less_than(
+    threshold: float, units: str, success: str = "", failure: str = ""
+) -> Validator:
     """
     Checks if all the numbers in the array are equal to or below a given threshold.
 
@@ -20,14 +22,18 @@ def all_nums_less_than(threshold: float, units: str) -> Validator:
     ) == len(value.array)
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
-        success=f"All numbers provided are less than or equal to threshold {threshold}{units}",
-        failure=f"One or more numbers are above {threshold}{units}",
+        success=success,
+        failure=failure,
+        default_success=f"All numbers provided are less than or equal to threshold {threshold}{units}",
+        default_failure=f"One or more numbers are above {threshold}{units}",
         input_types=[Array],
     )
     return validator
 
 
-def p_not_signifigant(threshold: float) -> Validator:
+def p_not_signifigant(
+    threshold: float, success: str = "", failure: str = ""
+) -> Validator:
     """
     Checks if all the numbers in the array are equal to or below a given threshold.
 
@@ -39,14 +45,18 @@ def p_not_signifigant(threshold: float) -> Validator:
     ) == len(value.array)
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
-        success=f"All p-values provided are not signifigant at a threshold of p < {threshold}",
-        failure=f"One or more p-values indicate that a result may be signifigant at p < {threshold}",
+        success=success,
+        failure=failure,
+        default_success=f"All p-values provided are not signifigant at a threshold of p < {threshold}",
+        default_failure=f"One or more p-values indicate that a result may be signifigant at p < {threshold}",
         input_types=[Array],
     )
     return validator
 
 
-def p_value_greater_or_equal_to(threshold: float) -> Validator:
+def p_value_greater_or_equal_to(
+    threshold: float, success: str = "", failure: str = ""
+) -> Validator:
     """
     A RankSums array is an array with the results of the ranksums function (stat on first pos, p-value on second).
 
@@ -59,8 +69,10 @@ def p_value_greater_or_equal_to(threshold: float) -> Validator:
     )
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
-        success=f"P-Value is greater or equal to {threshold}",
-        failure=f"P-Value is less than threshold {threshold}",
+        success=success,
+        failure=failure,
+        default_success=f"P-Value is greater or equal to {threshold}",
+        default_failure=f"P-Value is less than threshold {threshold}",
         input_types=[Array],
     )
     return validator

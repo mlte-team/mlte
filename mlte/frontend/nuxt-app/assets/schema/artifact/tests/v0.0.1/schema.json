@@ -141,6 +141,14 @@
           ],
           "title": "Failure"
         },
+        "default_success": {
+          "title": "Default Success",
+          "type": "string"
+        },
+        "default_failure": {
+          "title": "Default Failure",
+          "type": "string"
+        },
         "info": {
           "anyOf": [
             {
@@ -197,6 +205,8 @@
         "thresholds",
         "success",
         "failure",
+        "default_success",
+        "default_failure",
         "info"
       ],
       "title": "ValidatorModel",

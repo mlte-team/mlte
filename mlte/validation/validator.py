@@ -28,6 +28,8 @@ class Validator(Serializable):
         thresholds: list[str] = [],
         success: Optional[str] = None,
         failure: Optional[str] = None,
+        default_success: str = "",
+        default_failure: str = "",
         info: Optional[str] = None,
         input_types: list[str] = [],
         creator: Optional[FunctionInfo] = None,
@@ -39,10 +41,18 @@ class Validator(Serializable):
         :param thresholds: A list of serialized thesholds used in the bool exp, for auditing purposes.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
+        :param default_success: A more generic value to use if success is not set.
+        :param default_failure: A more generic value to use if failure is not set.
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
         :param input_types: A list of strings indicating the type of input the validator will expect.
         :param creator: Information about the class and method that created this validator, if any.
         """
+        # Use default if needed.
+        if not success:
+            success = default_success if default_success else None
+        if not failure:
+            failure = default_failure if default_failure else None
+
         if success is not None and failure is None:
             raise ValueError(
                 "If success message is defined, failure message has to be defined as well"
@@ -60,6 +70,8 @@ class Validator(Serializable):
         self.thresholds = thresholds.copy()
         self.success = success
         self.failure = failure
+        self.default_success = default_success
+        self.default_failure = default_failure
         self.info = info
         self.input_types = input_types
         self.creator = creator
@@ -77,6 +89,8 @@ class Validator(Serializable):
         thresholds: list[Any] = [],
         success: Optional[str] = None,
         failure: Optional[str] = None,
+        default_success: str = "",
+        default_failure: str = "",
         info: Optional[str] = None,
         input_types: list[type] = [Evidence],
     ) -> Validator:
@@ -87,6 +101,8 @@ class Validator(Serializable):
         :param thresholds: A list of thesholds used in the bool exp, potentially unit-aware, for auditing purposes.
         :param success: A string indicating the message to record in case of success (bool_exp evaluating to True).
         :param failure: A string indicating the message to record in case of failure (bool_exp evaluating to False).
+        :param default_success: A more generic value to use if success is not set.
+        :param default_failure: A more generic value to use if failure is not set.
         :param info: A string indicating the message to record in case no bool expression is passed (no condition, just recording information).
         :param input_types: A list of types indicating the type of input the validator will expect.
         :returns: A Validator, potentially with caller creator information.
@@ -102,6 +118,8 @@ class Validator(Serializable):
             thresholds=[str(threshold) for threshold in thresholds],
             success=success,
             failure=failure,
+            default_success=default_success,
+            default_failure=default_failure,
             info=info,
             input_types=[
                 meta.get_qualified_name(input_type)
@@ -154,9 +172,15 @@ class Validator(Serializable):
             Info(self.info)
             if self.bool_exp is None and self.info is not None
             else (
-                Success(f"{self.success}", additional_data=f"{values_str}")
+                Success(
+                    f"{self.success}",
+                    additional_data=f"{self.default_success}{values_str}",
+                )
                 if executed_bool_exp_value
-                else Failure(f"{self.failure}", additional_data=f"{values_str}")
+                else Failure(
+                    f"{self.failure}",
+                    additional_data=f"{self.default_failure}{values_str}",
+                )
             )
         )
         return result
@@ -200,7 +224,7 @@ class Validator(Serializable):
         str_kwargs = {key: str(arg) for key, arg in kwargs.items()}
 
         # Now string them together, depending on whether we got args of each type.
-        values = "- values: "
+        values = " - values: "
         if len(args) > 0:
             values = values + f"{json.dumps(str_args)}"
         if len(args) > 0 and len(kwargs) > 0:
@@ -229,6 +253,8 @@ class Validator(Serializable):
             thresholds=self.thresholds,
             success=self.success,
             failure=self.failure,
+            default_success=self.default_success,
+            default_failure=self.default_failure,
             info=self.info,
             bool_exp_str=self.bool_exp_str,
             input_types=self.input_types,
@@ -269,6 +295,8 @@ class Validator(Serializable):
             thresholds=model.thresholds,
             success=model.success,
             failure=model.failure,
+            default_success=model.default_success,
+            default_failure=model.default_failure,
             info=model.info,
             input_types=model.input_types,
             creator=(
