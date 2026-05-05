@@ -1,5 +1,6 @@
 """Manages info about a unified set of stores."""
 
+from pathlib import Path
 from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
@@ -8,8 +9,10 @@ from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.sample_catalog import SampleCatalog
 from mlte.store.catalog.store import CatalogStore
+from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
+from mlte.store.export.export import ExportSpec, export_to_file
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.cross_validator import CompositeValidator
@@ -28,9 +31,6 @@ class UnifiedStore:
     """
     Unifies all store handling into one class.
     """
-
-    LOCAL_CATALOG_STORE_ID = "local"
-    """Name of the default catalog store."""
 
     def __init__(self):
         """Defines the existing stores, none loaded yet."""
@@ -70,6 +70,17 @@ class UnifiedStore:
     ) -> None:
         """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
+
+    def export(self, export_spec: ExportSpec, output_path: Path):
+        """Export store data."""
+        export_to_file(
+            export_spec,
+            output_path,
+            self.artifact_store,
+            self.custom_list_store,
+            self.user_store,
+            self.catalog_stores,
+        )
 
     @property
     def artifact_store(self) -> ArtifactStore:
@@ -179,19 +190,17 @@ def _setup_catalog_stores(
             stores_uri, catalog_store_validators
         )
         stores.add_catalog_store(
-            store=sample_catalog, id=SampleCatalog.SAMPLE_CATALOG_ID
+            store=sample_catalog, id=SAMPLE_CATALOG_STORE_ID
         )
 
     # Throw error if trying to set a remote catalog with the id of the local catalog
-    if UnifiedStore.LOCAL_CATALOG_STORE_ID in catalog_uris:
+    if LOCAL_CATALOG_STORE_ID in catalog_uris:
         raise RuntimeError(
-            f"Remote catalog store ID cannot be {UnifiedStore.LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
+            f"Remote catalog store ID cannot be {LOCAL_CATALOG_STORE_ID}. This is the local catalog store ID."
         )
 
     # Create local catalog
-    stores.add_catalog_store_from_uri(
-        stores_uri, UnifiedStore.LOCAL_CATALOG_STORE_ID
-    )
+    stores.add_catalog_store_from_uri(stores_uri, LOCAL_CATALOG_STORE_ID)
 
     # Catalogs: Add all configured catalog stores.
     for id, uri in catalog_uris.items():

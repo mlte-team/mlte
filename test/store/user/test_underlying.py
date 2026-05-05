@@ -106,35 +106,37 @@ def test_init_store(store_type: StoreType, create_test_user_store) -> None:
 @pytest.mark.parametrize("store_type", store_types())
 def test_user(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports user operations."""
-    store: UserStore = create_test_user_store(store_type)
+    user_store: UserStore = create_test_user_store(store_type)
 
     test_user = get_test_user()
     email2 = "email2@server.com"
     name2 = "new name"
 
-    with ManagedUserSession(store.session()) as user_store:
-        original_users = user_store.user_mapper.list()
-        internal_store = get_internal_store_session(user_store, store_type)
+    with ManagedUserSession(user_store.session()) as user_store_session:
+        original_users = user_store_session.user_mapper.list()
+        internal_store = get_internal_store_session(
+            user_store_session, store_type
+        )
         test_user = user_policy.set_default_user_policies(
             test_user, internal_store.policy_store
         )
 
         # Set up dependent groups.
-        setup_test_group(user_store)
+        setup_test_group(user_store_session)
 
         # Test creating a user.
-        user_store.user_mapper.create(test_user)
-        read_user = user_store.user_mapper.read(test_user.username)
+        user_store_session.user_mapper.create(test_user)
+        read_user = user_store_session.user_mapper.read(test_user.username)
         assert test_user.is_equal_to(read_user)
 
         # Test listing users.
-        users = user_store.user_mapper.list()
+        users = user_store_session.user_mapper.list()
         assert len(users) == 1 + len(original_users)
 
         # Test editing all user info.
         test_user.email = email2
-        _ = user_store.user_mapper.edit(test_user)
-        read_user = user_store.user_mapper.read(test_user.username)
+        _ = user_store_session.user_mapper.edit(test_user)
+        read_user = user_store_session.user_mapper.read(test_user.username)
         assert read_user.email == email2
 
         # Test editing user info w/out changing password.
@@ -142,15 +144,15 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
         test_user.password = "password that should be ignored"
         test_user2 = BasicUser(**test_user.to_json())
         test_user2.full_name = name2
-        _ = user_store.user_mapper.edit(test_user2)
-        read_user = user_store.user_mapper.read(test_user2.username)
+        _ = user_store_session.user_mapper.edit(test_user2)
+        read_user = user_store_session.user_mapper.read(test_user2.username)
         assert read_user.full_name == name2
         assert read_user.hashed_password == hashed_password
 
         # Test deleting a user.
-        user_store.user_mapper.delete(test_user.username)
+        user_store_session.user_mapper.delete(test_user.username)
         with pytest.raises(errors.ErrorNotFound):
-            user_store.user_mapper.read(test_user.username)
+            user_store_session.user_mapper.read(test_user.username)
 
 
 @pytest.mark.parametrize("store_type", store_types())

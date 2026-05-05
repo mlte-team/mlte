@@ -6,11 +6,7 @@ from typing import Any, List, Optional, Union
 from mlte.store.base import ResourceMapper, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
 from mlte.store.common.http_storage import HttpResourceStorage
-from mlte.store.user.mappers import (
-    GroupMapper,
-    PermissionMapper,
-    UserMapper,
-)
+from mlte.store.user.mappers import GroupMapper, PermissionMapper, UserMapper
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import UserStoreSession
 from mlte.user.model import (
