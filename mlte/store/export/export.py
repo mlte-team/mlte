@@ -26,20 +26,94 @@ EXPORT_ZIP_FILE = "store_export.zip"
 EXPORT_JSON_FILE = "store_export.json"
 
 
-class ExportSpec(BaseModel):
+class ExportSpec:
     """Specification of MLTE store objects to be exported."""
 
     models: dict[str, list[str]] | None = None
-    """Dict of models to be exported. Key is model ID, value is list of versions."""
+    """
+    Dict of models to be exported. Key is model ID, value is list of versions.
+    
+    An empty dict will export all models, all versions. An empty list of versions will export all versions.
+    """
 
     custom_lists: list[CustomListName] | None = None
-    """List of custom lists to be exported."""
+    """
+    List of custom lists to be exported.
+    
+    An empty list will export all custom lists.
+    """
 
     users: list[str] | None = None
-    """List of user IDs for users to be exported."""
+    """
+    List of user IDs for users to be exported.
+    
+    An empty list will export all users.
+    """
 
     catalogs: list[str] | None = None
-    """List of catalogs to be exported."""
+    """
+    List of catalogs to be exported.
+    
+    An empty list will export all catalogs.
+    """
+
+    def __init__(
+        self,
+        artifact_store: ArtifactStore,
+        user_store: UserStore,
+        catalog_stores: CatalogStoreGroup,
+        models: dict[str, list[str]] | None = None,
+        custom_lists: list[CustomListName] | None = None,
+        users: list[str] | None = None,
+        catalogs: list[str] | None = None,
+    ) -> None:
+        self._setup_artifacts(artifact_store, models)
+        self._setup_custom_lists(custom_lists)
+        self._setup_users(user_store, users)
+        self._setup_catalogs(catalog_stores, catalogs)
+
+    def _setup_artifacts(self, artifact_store: ArtifactStore, models: dict[str, list[str]] | None = None) -> None:
+        """Setup artifact export, accounts for the all option of an empty dict for models, lists for versions."""
+        self.models = models
+
+        if self.models is None:
+            return
+
+        with ManagedArtifactSession(
+            artifact_store.session()
+        ) as artifact_store_session:
+            if self.models == {}:
+                for model_id in artifact_store_session.model_mapper.list():
+                    self.models[model_id] = []
+
+            for model_id in self.models:
+                if self.models[model_id] == []:
+                    self.models[model_id] = (
+                        artifact_store_session.version_mapper.list(model_id)
+                    )
+    
+    def _setup_custom_lists(self, custom_lists: list[CustomListName] | None = None) -> None:
+        """Setup custom list export, accounts for the all option of an empty list."""
+        self.custom_lists = custom_lists
+
+        if self.custom_lists == []:
+            for custom_list_id in CustomListName:
+                self.custom_lists.append(custom_list_id)
+
+    def _setup_users(self, user_store: UserStore, users: list[str] | None = None) -> None:
+        """Setup user export, accounts for the all option of an empty list."""
+        self.users = users
+
+        if self.users == []:
+            with ManagedUserSession(user_store.session()) as user_store_session:
+                self.users = user_store_session.user_mapper.list()
+
+    def _setup_catalogs(self, catalog_stores: CatalogStoreGroup | None = None, catalogs: list[str] | None = None) -> None:
+        """Setup catalog export, accounts for the all option of an empty list."""
+        self.catalogs = catalogs
+
+        if self.catalogs == []:
+            self.catalogs = catalog_stores.catalogs.keys()
 
 
 def export_to_file(
@@ -113,23 +187,14 @@ def _export_artifacts(
     """Return dict of artifacts specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
-    # TODO: When getting multiple versions, this exports the card under each version. Should not do that
+    if export_spec.models is None:
+        return output_dict
+
+    # TODO: When getting multiple versions, this exports the card under each version. Will have to be handled
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store_session:
-        if export_spec.models is None:
-            return output_dict
-
-        if export_spec.models == {}:
-            for model_id in artifact_store_session.model_mapper.list():
-                export_spec.models[model_id] = []
-
         for model_id in export_spec.models:
-            if export_spec.models[model_id] == []:
-                export_spec.models[model_id] = (
-                    artifact_store_session.version_mapper.list(model_id)
-                )
-
             output_dict[model_id] = {}
             for version_id in export_spec.models[model_id]:
                 output_dict[model_id][version_id] = {}
@@ -151,16 +216,12 @@ def _export_custom_lists(
     """Return dict of custom lists specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
+    if export_spec.custom_lists is None:
+        return output_dict
+
     with ManagedCustomListSession(
         custom_list_store.session()
     ) as custom_list_store_session:
-        if export_spec.custom_lists is None:
-            return output_dict
-
-        if export_spec.custom_lists == []:
-            for custom_list_id in CustomListName:
-                export_spec.custom_lists.append(custom_list_id)
-
         for custom_list_id in export_spec.custom_lists:
             output_dict[custom_list_id] = []
             for (
@@ -179,14 +240,11 @@ def _export_users(
     """Return list of users specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
+    if export_spec.users is None:
+        return output_dict
+
     # TODO: Handle permissions & groups
     with ManagedUserSession(user_store.session()) as user_store_session:
-        if export_spec.users is None:
-            return output_dict
-
-        if export_spec.users == []:
-            export_spec.users = user_store_session.user_mapper.list()
-
         for user in export_spec.users:
             output_dict[user] = user_store_session.user_mapper.read(
                 user
@@ -201,9 +259,6 @@ def _export_catalogs(export_spec: ExportSpec, catalog_stores: CatalogStoreGroup)
 
     if export_spec.catalogs is None:
         return output_dict
-    
-    if export_spec.catalogs == []:
-        export_spec.catalogs = catalog_stores.catalogs.keys()
 
     for catalog_name in export_spec.catalogs:
         with ManagedCatalogSession(

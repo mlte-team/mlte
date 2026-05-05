@@ -10,12 +10,6 @@ from mlte.store.custom_list.store import CustomListStore
 from mlte.store.export.export import ExportSpec, _export
 from mlte.store.user.store import UserStore
 
-ALL_EXPORT_SPEC = ExportSpec(
-    models={},
-    custom_lists=[],
-    users=[],
-    catalogs=[]
-)
 
 ARTIFACT_EXPORT_DATA = {
     "testModel": {
@@ -52,6 +46,12 @@ CATALOG_EXPORT_DATA = {
     ]
 }
 
+def create_all_export_spec(
+    artifact_store: ArtifactStore,
+    user_store: UserStore,
+    catalog_stores: CatalogStoreGroup,    
+) -> ExportSpec:
+    return ExportSpec(artifact_store, user_store, catalog_stores, {}, [], [], [])
 
 @pytest.fixture
 def patched_export():
