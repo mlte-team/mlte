@@ -58,7 +58,9 @@ def test_export_to_file(
     )
     output_dir = tmp_path / "export"
     zip_path = output_dir / EXPORT_ZIP_FILE
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     export_to_file(
         all_export_spec,
         output_dir,
@@ -92,7 +94,9 @@ def test_export(
         store_type, tmp_path, patched_setup_stores
     )
 
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     export = _export(
         all_export_spec,
         stores.artifact_store,
@@ -138,7 +142,9 @@ def test_export_artifacts(
             )
         )
 
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     all_export = _export_artifacts(all_export_spec, stores.artifact_store)
     assert (
         written_artifact.header.identifier in all_export[model_id][version_id]
@@ -148,7 +154,12 @@ def test_export_artifacts(
         == all_export[model_id][version_id][written_artifact.header.identifier]
     )
 
-    partial_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores, models={model_id: [version_id]})
+    partial_spec = ExportSpec(
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        models={model_id: [version_id]},
+    )
     partial_export = _export_artifacts(partial_spec, stores.artifact_store)
     assert (
         written_artifact.header.identifier
@@ -161,7 +172,9 @@ def test_export_artifacts(
         ]
     )
 
-    none_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    none_spec = ExportSpec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     none_export = _export_artifacts(none_spec, stores.artifact_store)
     assert none_export == {}
 
@@ -177,16 +190,27 @@ def test_export_custom_lists(
         store_type, tmp_path, patched_setup_stores
     )
 
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     all_export = _export_custom_lists(all_export_spec, stores.custom_list_store)
     for name in CustomListName:
         assert name in all_export
 
-    partial_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores, custom_lists=[CustomListName.TAGS])
-    partial_export = _export_custom_lists(partial_spec, stores.custom_list_store)
+    partial_spec = ExportSpec(
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        custom_lists=[CustomListName.TAGS],
+    )
+    partial_export = _export_custom_lists(
+        partial_spec, stores.custom_list_store
+    )
     assert CustomListName.TAGS in partial_export
 
-    none_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    none_spec = ExportSpec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     none_export = _export_custom_lists(none_spec, stores.custom_list_store)
     assert none_export == {}
 
@@ -213,17 +237,26 @@ def test_export_users(
         setup_test_group(user_store_session)
         user_store_session.user_mapper.create(test_user)
 
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     full_export = _export_users(all_export_spec, stores.user_store)
     assert test_user.username in full_export
     assert test_user == User(**full_export[test_user.username])
 
-    partial_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores, users=[test_user.username])
+    partial_spec = ExportSpec(
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        users=[test_user.username],
+    )
     partial_export = _export_users(partial_spec, stores.user_store)
     assert test_user.username in partial_export
     assert test_user == User(**partial_export[test_user.username])
 
-    none_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    none_spec = ExportSpec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     none_export = _export_users(none_spec, stores.user_store)
     assert none_export == {}
 
@@ -237,16 +270,25 @@ def test_export_catalogs(
         store_type, tmp_path, patched_setup_stores
     )
 
-    all_export_spec = create_all_export_spec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    all_export_spec = create_all_export_spec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     full_export = _export_catalogs(all_export_spec, stores.catalog_stores)
     assert SAMPLE_CATALOG_STORE_ID in full_export
     assert LOCAL_CATALOG_STORE_ID in full_export
 
-    partial_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores, catalogs=[LOCAL_CATALOG_STORE_ID])
+    partial_spec = ExportSpec(
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        catalogs=[LOCAL_CATALOG_STORE_ID],
+    )
     partial_export = _export_catalogs(partial_spec, stores.catalog_stores)
     assert SAMPLE_CATALOG_STORE_ID not in partial_export
     assert LOCAL_CATALOG_STORE_ID in partial_export
 
-    none_spec = ExportSpec(stores.artifact_store, stores.user_store, stores.catalog_stores)
+    none_spec = ExportSpec(
+        stores.artifact_store, stores.user_store, stores.catalog_stores
+    )
     none_export = _export_catalogs(none_spec, stores.catalog_stores)
     assert none_export == {}

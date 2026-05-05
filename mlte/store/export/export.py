@@ -7,12 +7,10 @@ from pathlib import Path
 from typing import Any
 
 from mlte.custom_list.custom_list_names import CustomListName
-from mlte.model.base_model import BaseModel
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.artifact.store_session import ManagedArtifactSession
-from mlte.store.catalog.catalog_group import CatalogStoreGroup, ManagedCatalogGroupSession
+from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.store_session import ManagedCatalogSession
-from mlte.store.constants import LOCAL_CATALOG_STORE_ID
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
 from mlte.store.user.store import UserStore
@@ -32,28 +30,28 @@ class ExportSpec:
     models: dict[str, list[str]] | None = None
     """
     Dict of models to be exported. Key is model ID, value is list of versions.
-    
+
     An empty dict will export all models, all versions. An empty list of versions will export all versions.
     """
 
     custom_lists: list[CustomListName] | None = None
     """
     List of custom lists to be exported.
-    
+
     An empty list will export all custom lists.
     """
 
     users: list[str] | None = None
     """
     List of user IDs for users to be exported.
-    
+
     An empty list will export all users.
     """
 
     catalogs: list[str] | None = None
     """
     List of catalogs to be exported.
-    
+
     An empty list will export all catalogs.
     """
 
@@ -72,7 +70,11 @@ class ExportSpec:
         self._setup_users(user_store, users)
         self._setup_catalogs(catalog_stores, catalogs)
 
-    def _setup_artifacts(self, artifact_store: ArtifactStore, models: dict[str, list[str]] | None = None) -> None:
+    def _setup_artifacts(
+        self,
+        artifact_store: ArtifactStore,
+        models: dict[str, list[str]] | None = None,
+    ) -> None:
         """Setup artifact export, accounts for the all option of an empty dict for models, lists for versions."""
         self.models = models
 
@@ -91,8 +93,10 @@ class ExportSpec:
                     self.models[model_id] = (
                         artifact_store_session.version_mapper.list(model_id)
                     )
-    
-    def _setup_custom_lists(self, custom_lists: list[CustomListName] | None = None) -> None:
+
+    def _setup_custom_lists(
+        self, custom_lists: list[CustomListName] | None = None
+    ) -> None:
         """Setup custom list export, accounts for the all option of an empty list."""
         self.custom_lists = custom_lists
 
@@ -100,7 +104,9 @@ class ExportSpec:
             for custom_list_id in CustomListName:
                 self.custom_lists.append(custom_list_id)
 
-    def _setup_users(self, user_store: UserStore, users: list[str] | None = None) -> None:
+    def _setup_users(
+        self, user_store: UserStore, users: list[str] | None = None
+    ) -> None:
         """Setup user export, accounts for the all option of an empty list."""
         self.users = users
 
@@ -108,12 +114,16 @@ class ExportSpec:
             with ManagedUserSession(user_store.session()) as user_store_session:
                 self.users = user_store_session.user_mapper.list()
 
-    def _setup_catalogs(self, catalog_stores: CatalogStoreGroup | None = None, catalogs: list[str] | None = None) -> None:
+    def _setup_catalogs(
+        self,
+        catalog_stores: CatalogStoreGroup,
+        catalogs: list[str] | None = None,
+    ) -> None:
         """Setup catalog export, accounts for the all option of an empty list."""
         self.catalogs = catalogs
 
         if self.catalogs == []:
-            self.catalogs = catalog_stores.catalogs.keys()
+            self.catalogs = list(catalog_stores.catalogs.keys())
 
 
 def export_to_file(
@@ -253,7 +263,9 @@ def _export_users(
     return output_dict
 
 
-def _export_catalogs(export_spec: ExportSpec, catalog_stores: CatalogStoreGroup) -> dict[str, Any]:
+def _export_catalogs(
+    export_spec: ExportSpec, catalog_stores: CatalogStoreGroup
+) -> dict[str, Any]:
     """Return the local test catalog."""
     output_dict: dict[str, Any] = {}
 
@@ -265,7 +277,9 @@ def _export_catalogs(export_spec: ExportSpec, catalog_stores: CatalogStoreGroup)
             catalog_stores.catalogs[catalog_name].session()
         ) as catalog_store_session:
             output_dict[catalog_name] = []
-            for catalog_entry in catalog_store_session.entry_mapper.list_details():
+            for (
+                catalog_entry
+            ) in catalog_store_session.entry_mapper.list_details():
                 output_dict[catalog_name].append(catalog_entry.to_json())
 
     return output_dict

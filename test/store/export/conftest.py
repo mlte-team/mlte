@@ -1,5 +1,6 @@
 """Fixtures for store export."""
 
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -10,18 +11,14 @@ from mlte.store.custom_list.store import CustomListStore
 from mlte.store.export.export import ExportSpec, _export
 from mlte.store.user.store import UserStore
 
-
-ARTIFACT_EXPORT_DATA = {
+ARTIFACT_EXPORT_DATA: dict[str, Any] = {
     "testModel": {
         "0.0.1": {
-            "evidence.test": {
-                "header": {},
-                "body": {}
-            },
+            "evidence.test": {"header": {}, "body": {}},
         }
     }
 }
-CUSTOM_LIST_EXPORT_DATA = {
+CUSTOM_LIST_EXPORT_DATA: dict[str, Any] = {
     "testCustomList": [
         {
             "name": "test1",
@@ -30,28 +27,25 @@ CUSTOM_LIST_EXPORT_DATA = {
         }
     ]
 }
-USER_EXPORT_DATA = {
+USER_EXPORT_DATA: dict[str, Any] = {
     "testUser": {
         "username": "testUser",
     }
 }
-CATALOG_EXPORT_DATA = {
-    "testCatalog": [
-        {
-            "header": {
-                "identifier": "testIdentifier"
-            },
-            "tags": []
-        }
-    ]
+CATALOG_EXPORT_DATA: dict[str, Any] = {
+    "testCatalog": [{"header": {"identifier": "testIdentifier"}, "tags": []}]
 }
+
 
 def create_all_export_spec(
     artifact_store: ArtifactStore,
     user_store: UserStore,
-    catalog_stores: CatalogStoreGroup,    
+    catalog_stores: CatalogStoreGroup,
 ) -> ExportSpec:
-    return ExportSpec(artifact_store, user_store, catalog_stores, {}, [], [], [])
+    return ExportSpec(
+        artifact_store, user_store, catalog_stores, {}, [], [], []
+    )
+
 
 @pytest.fixture
 def patched_export():
@@ -73,8 +67,7 @@ def patched_export():
         return USER_EXPORT_DATA
 
     def _export_catalogs_with_fixtures(
-        export_spec: ExportSpec,
-        catalog_stores: CatalogStoreGroup
+        export_spec: ExportSpec, catalog_stores: CatalogStoreGroup
     ):
         return CATALOG_EXPORT_DATA
 
