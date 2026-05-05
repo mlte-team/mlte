@@ -84,7 +84,11 @@ class CommonStatistics(ExternalEvidence):
 
     @classmethod
     def max_utilization_less_than(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Construct and invoke a validator for maximum resource utilization.
@@ -105,15 +109,21 @@ class CommonStatistics(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Maximum utilization below threshold {threshold_w_unit}",
-            failure=f"Maximum utilization exceeds threshold {threshold_w_unit}",
+            success=success,
+            failure=failure,
+            default_success=f"Maximum utilization below threshold {threshold_w_unit}",
+            default_failure=f"Maximum utilization exceeds threshold {threshold_w_unit}",
             input_types=[cls],
         )
         return validator
 
     @classmethod
     def average_utilization_less_than(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Construct and invoke a validator for average resource utilization.
@@ -135,8 +145,10 @@ class CommonStatistics(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Average utilization below threshold {threshold_w_unit}",
-            failure=f"Average utilization exceeds threshold {threshold_w_unit}",
+            success=success,
+            failure=failure,
+            default_success=f"Average utilization below threshold {threshold_w_unit}",
+            default_failure=f"Average utilization exceeds threshold {threshold_w_unit}",
             input_types=[cls],
         )
         return validator

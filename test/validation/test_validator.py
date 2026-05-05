@@ -61,8 +61,10 @@ class TestValue:
         validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value > arg1 and real.value < arg2,
             thresholds=[arg1 * Units.meter, arg2],
-            success=f"Real magnitude is between {arg1} and {arg2}",
-            failure=f"Real magnitude is not between {arg1} and {arg2}",
+            success="OK everything went well",
+            failure="FAILURE problems",
+            default_success=f"Real magnitude is between {arg1} and {arg2}",
+            default_failure=f"Real magnitude is not between {arg1} and {arg2}",
         )
         return validator
 
@@ -72,8 +74,8 @@ class TestValue:
         validator: Validator = Validator.build_validator(
             bool_exp=lambda real: real.value > arg1 and arg2.data == str(real),
             thresholds=[arg1 * Units.meter, arg2],
-            success=f"Real magnitude is between {arg1} and {arg2}",
-            failure=f"Real magnitude is not between {arg1} and {arg2}",
+            default_success=f"Real magnitude is between {arg1} and {arg2}",
+            default_failure=f"Real magnitude is not between {arg1} and {arg2}",
         )
         return validator
 
@@ -103,14 +105,18 @@ def test_validator_model() -> None:
             bool_exp_str="test()",
             success="Test was succesful!",
             failure="Test failed :(",
+            default_success="SUCESSS",
+            default_failure="FAILURE",
             info="Only data was attached",
         ),
         ValidatorModel(
             bool_exp="ASJDH12384jahsd",
             bool_exp_str="test()",
             thresholds=[str(4 * Units.meter)],
-            success="Test was succesful!",
-            failure="Test failed :(",
+            success=None,
+            failure=None,
+            default_success="SUCESSS",
+            default_failure="FAILURE",
             info="Only data was attached",
             creator_entity="TestClass",
             creator_function="test_validator_model",
@@ -188,7 +194,7 @@ def test_validate_success() -> None:
     assert (
         validator.success is not None
         and result.message == validator.success
-        and result.additional_data == f'- values: ["{x}", "{y}"]'
+        and result.additional_data == f' - values: ["{x}", "{y}"]'
     )
 
 
@@ -204,7 +210,7 @@ def test_validate_success_kwargs() -> None:
     assert (
         validator.success is not None
         and result.message == validator.success
-        and result.additional_data == f'- values: {{"x": "{x}", "y": "{y}"}}'
+        and result.additional_data == f' - values: {{"x": "{x}", "y": "{y}"}}'
     )
 
 
@@ -220,7 +226,7 @@ def test_validate_success_args_and_kwargs() -> None:
     assert (
         validator.success is not None
         and result.message == validator.success
-        and result.additional_data == f'- values: ["{x}"], {{"y": "{y}"}}'
+        and result.additional_data == f' - values: ["{x}"], {{"y": "{y}"}}'
     )
 
 
@@ -236,7 +242,7 @@ def test_validate_failure() -> None:
     assert (
         validator.failure is not None
         and result.message == validator.failure
-        and result.additional_data == f'- values: ["{x}", "{y}"]'
+        and result.additional_data == f' - values: ["{x}", "{y}"]'
     )
 
 
@@ -274,7 +280,7 @@ def test_validate_success_with_evidence() -> None:
     assert (
         validator.success is not None
         and result.message == validator.success
-        and result.additional_data == '- values: ["1"]'
+        and result.additional_data.endswith(' - values: ["1"]')
     )
 
 

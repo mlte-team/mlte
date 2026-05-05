@@ -8,7 +8,9 @@ from mlte.evidence.types.array import Array
 from mlte.validation.validator import Validator
 
 
-def passed_percent_more_or_equal_then(threshold: float) -> Validator:
+def passed_percent_more_or_equal_then(
+    threshold: float, success: str = "", failure: str = ""
+) -> Validator:
     """
     Checks if an array of pass/fail values have pass above a given threshold.
 
@@ -21,8 +23,10 @@ def passed_percent_more_or_equal_then(threshold: float) -> Validator:
     )
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,
-        success=f"The fraction of passes is at or over threshold {threshold}",
-        failure=f"The fraction of passes is below threshold  {threshold}",
+        success=success,
+        failure=failure,
+        default_success=f"The fraction of passes is at or over threshold {threshold}",
+        default_failure=f"The fraction of passes is below threshold  {threshold}",
         input_types=[Array],
     )
     return validator
