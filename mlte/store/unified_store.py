@@ -12,7 +12,7 @@ from mlte.store.catalog.store import CatalogStore
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
 from mlte.store.custom_list.initial_custom_lists import InitialCustomLists
 from mlte.store.custom_list.store import CustomListStore
-from mlte.store.export.export import ExportSpec, export_to_file
+from mlte.store.import_export.export import ExportSpec, export_to_file
 from mlte.store.user import factory as user_store_factory
 from mlte.store.user.store import UserStore
 from mlte.store.validators.cross_validator import CompositeValidator
