@@ -55,14 +55,11 @@ BASE_ALLOWED_SYMBOLS = {
     "MeasurementMetadata",
 }
 
+
 @pytest.mark.skipif(
-    not (
-        Path(GENERATED_OUTPUT_DIR) / "llm_generated_test_suite.py"
-    ).exists(),
+    not (Path(GENERATED_OUTPUT_DIR) / "llm_generated_test_suite.py").exists(),
     reason="Generated LLM output file is not present",
 )
-
-
 def test_llm_generated_test_suite() -> None:
     generated_output_filename = os.environ.get(
         "GENERATED_OUTPUT_FILE",
