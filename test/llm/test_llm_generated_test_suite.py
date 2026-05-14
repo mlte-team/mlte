@@ -53,6 +53,7 @@ BASE_ALLOWED_SYMBOLS = {
     "MeasurementMetadata",
 }
 
+
 def test_llm_generated_test_suite() -> None:
     generated_output_filename = os.environ.get(
         "GENERATED_OUTPUT_FILE",
@@ -94,7 +95,9 @@ def read_generated_output(filename: str) -> str:
     return generated_output_file_path.read_text(encoding="utf-8")
 
 
-def assert_generated_output_has_required_format(generated_source_code: str) -> None:
+def assert_generated_output_has_required_format(
+    generated_source_code: str,
+) -> None:
     generated_source_lines = generated_source_code.splitlines()
 
     if not generated_source_lines:
@@ -306,9 +309,7 @@ def assert_validators_have_reviewer_comments(
             generated_source_lines,
             test_case_line_number - 2,
         )
-        expected_reviewer_comment_prefix = (
-            f"# Reviewer: implement validators.{custom_validator_name}(...) because "
-        )
+        expected_reviewer_comment_prefix = f"# Reviewer: implement validators.{custom_validator_name}(...) because "
 
         if not reviewer_comment.startswith(expected_reviewer_comment_prefix):
             validation_failures.append(
