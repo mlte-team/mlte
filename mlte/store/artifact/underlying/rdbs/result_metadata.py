@@ -57,6 +57,7 @@ class DBResult(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[str]
     message: Mapped[str]
+    additional_data: Mapped[str]
     test_results_id: Mapped[int] = mapped_column(ForeignKey("test_results.id"))
 
     evidence_metadata: Mapped[DBEvidenceMetadata] = relationship(

@@ -23,11 +23,14 @@ class Result(ABC):
         """Define the interface for all concrete Result."""
         return meta.has_callables(subclass, "__bool__", "__str__")
 
-    def __init__(self, message: str):
+    def __init__(self, message: str, additional_data: str = ""):
         """Initialize a Result instance."""
 
         self.message = message
         """The message indicating the reason for status."""
+
+        self.additional_data = additional_data
+        """Additional details to complement the message, if any."""
 
         self.evidence_metadata: Optional[EvidenceMetadata] = None
         """
@@ -61,6 +64,7 @@ class Result(ABC):
         return ResultModel(
             type=f"{self}",
             message=self.message,
+            additional_data=self.additional_data,
             evidence_metadata=self.evidence_metadata,
         )
 
@@ -76,7 +80,7 @@ class Result(ABC):
         results_module = sys.modules[__name__]
         result_class = getattr(results_module, result_type)
 
-        result: Result = result_class(model.message)
+        result: Result = result_class(model.message, model.additional_data)
         result = result._with_evidence_metadata(model.evidence_metadata)
         return result
 
@@ -91,13 +95,13 @@ class Result(ABC):
 class Success(Result):
     """Indicates successful measurement validation."""
 
-    def __init__(self, message: str = ""):
+    def __init__(self, message: str = "", additional_data: str = ""):
         """
         Initialize a Success validation result instance.
 
         :param message: Optional message
         """
-        super().__init__(message)
+        super().__init__(message, additional_data)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -111,13 +115,13 @@ class Success(Result):
 class Failure(Result):
     """Indicates failed measurement validation."""
 
-    def __init__(self, message: str = ""):
+    def __init__(self, message: str = "", additional_data: str = ""):
         """
         Initialize a Failure validation result instance.
 
         :param message: Optional message
         """
-        super().__init__(message)
+        super().__init__(message, additional_data)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""
@@ -131,13 +135,13 @@ class Failure(Result):
 class Info(Result):
     """Indicates an informational resut of measurement validation, not validated."""
 
-    def __init__(self, message: str):
+    def __init__(self, message: str, additional_data: str = ""):
         """
         Initialize an Info validatation result instance.
 
         :param message: Message indicating the reason validation is info
         """
-        super().__init__(message)
+        super().__init__(message, additional_data)
 
     def __bool__(self) -> bool:
         """Implicit boolean conversion."""

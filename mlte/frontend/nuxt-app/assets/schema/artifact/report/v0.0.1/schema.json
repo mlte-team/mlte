@@ -710,6 +710,10 @@
           "title": "Message",
           "type": "string"
         },
+        "additional_data": {
+          "title": "Additional Data",
+          "type": "string"
+        },
         "evidence_metadata": {
           "anyOf": [
             {
@@ -724,6 +728,7 @@
       "required": [
         "type",
         "message",
+        "additional_data",
         "evidence_metadata"
       ],
       "title": "ResultModel",
@@ -948,6 +953,14 @@
           ],
           "title": "Failure"
         },
+        "default_success": {
+          "title": "Default Success",
+          "type": "string"
+        },
+        "default_failure": {
+          "title": "Default Failure",
+          "type": "string"
+        },
         "info": {
           "anyOf": [
             {
@@ -1004,6 +1017,8 @@
         "thresholds",
         "success",
         "failure",
+        "default_success",
+        "default_failure",
         "info"
       ],
       "title": "ValidatorModel",

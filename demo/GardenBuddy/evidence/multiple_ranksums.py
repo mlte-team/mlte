@@ -39,7 +39,9 @@ class MultipleRanksums(ExternalEvidence):
         return MultipleRanksums(np.asarray(json_["array"]), json_["num_pops"])
 
     @classmethod
-    def all_p_values_greater_or_equal_than(cls, threshold: float) -> Validator:
+    def all_p_values_greater_or_equal_than(
+        cls, threshold: float, success: str = "", failure: str = ""
+    ) -> Validator:
         """
         Checks if the p-value for multiple ranksums is below given threshold.
 
@@ -52,8 +54,10 @@ class MultipleRanksums(ExternalEvidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold],
-            success=f"All p-values are equal to or over threshold {threshold}",
-            failure=f"One or more p-values are below threshold {threshold}",
+            success=success,
+            failure=failure,
+            default_success=f"All p-values are equal to or over threshold {threshold}",
+            default_failure=f"One or more p-values are below threshold {threshold}",
             input_types=[MultipleRanksums],
         )
         return validator
