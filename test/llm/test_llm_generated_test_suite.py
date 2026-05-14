@@ -187,7 +187,7 @@ def assert_allowed_symbol_usage(
         )
 
 
-def assert_quality_scenarios_are_lists_of_qas_ids(
+def assert_quality_scenarios_are_well_formed(
     parsed_generated_module: ast.Module,
 ) -> None:
     validation_failures = []
