@@ -451,7 +451,7 @@ def get_symbol_root(syntax_node: ast.AST) -> str | None:
 
 
 def get_attribute_root(attribute_node: ast.Attribute) -> str | None:
-    current_node = attribute_node
+    current_node: ast.expr = attribute_node
 
     while isinstance(current_node, ast.Attribute):
         current_node = current_node.value
