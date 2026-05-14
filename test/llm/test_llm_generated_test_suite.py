@@ -1,8 +1,9 @@
 import ast
 import os
 import re
-import pytest
 from pathlib import Path
+
+import pytest
 
 GENERATED_OUTPUT_DIR = "test/generated_llm_outputs"
 
