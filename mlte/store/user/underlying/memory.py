@@ -6,11 +6,7 @@ from typing import Any, Dict, List, Union
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
-from mlte.store.user.mappers import (
-    GroupMapper,
-    PermissionMapper,
-    UserMapper,
-)
+from mlte.store.user.mappers import GroupMapper, PermissionMapper, UserMapper
 from mlte.store.user.policy import user_policy
 from mlte.store.user.policy.policy_store_service import PolicyStoreService
 from mlte.store.user.store import UserStore

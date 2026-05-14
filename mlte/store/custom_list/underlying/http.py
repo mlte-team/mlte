@@ -98,7 +98,9 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
     def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.get(id=list_name)
-        return typing.cast(list[str], response)
+        list_details = typing.cast(list[dict[str, str]], response)
+        name_list = [entry["name"] for entry in list_details]
+        return name_list
 
     def edit(
         self,

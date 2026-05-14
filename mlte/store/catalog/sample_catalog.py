@@ -15,14 +15,12 @@ from mlte.store.catalog.store_session import (
     CatalogStoreSession,
     ManagedCatalogSession,
 )
+from mlte.store.constants import SAMPLE_CATALOG_STORE_ID
 from mlte.store.validators.cross_validator import CompositeValidator
 
 
 class SampleCatalog:
     """A catalog with sample code. This class is used to set that catalog up when needed."""
-
-    SAMPLE_CATALOG_ID = "sample"
-    """Id for sample catalog."""
 
     @staticmethod
     def setup_sample_catalog(
@@ -38,9 +36,7 @@ class SampleCatalog:
 
         # Create the actual sample catalog.
         print(f"Creating sample catalog at URI: {stores_uri}")
-        catalog = create_catalog_store(
-            stores_uri, SampleCatalog.SAMPLE_CATALOG_ID
-        )
+        catalog = create_catalog_store(stores_uri, SAMPLE_CATALOG_STORE_ID)
         catalog.set_validators(validators)
 
         # Ensure the catalog is always reset to its initial state, and mark it as read only.
@@ -73,9 +69,7 @@ class SampleCatalog:
                     if file.is_file() and file.name.endswith("json"):
                         with open(file.path) as open_file:
                             entry = CatalogEntry(**json.load(open_file))
-                            entry.header.catalog_id = (
-                                SampleCatalog.SAMPLE_CATALOG_ID
-                            )
+                            entry.header.catalog_id = SAMPLE_CATALOG_STORE_ID
                             catalog_session.entry_mapper.create(entry)
                             num_entries += 1
                 print(f"Loaded {num_entries} entries for sample catalog.")

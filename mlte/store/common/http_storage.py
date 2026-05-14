@@ -1,6 +1,4 @@
-"""
-Base class for HTTP based stores.
-"""
+"""Base class for HTTP based stores."""
 
 from __future__ import annotations
 

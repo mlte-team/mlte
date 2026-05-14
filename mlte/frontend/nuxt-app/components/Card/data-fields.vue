@@ -249,9 +249,7 @@
               v-for="(field, fieldIndex) in dataItem.fields"
               :key="fieldIndex"
             >
-              <h3 class="no-margin-sub-header">
-                Data Schema {{ fieldIndex + 1 }}
-              </h3>
+              <h3 class="no-margin-sub-header">Field {{ fieldIndex + 1 }}</h3>
               <div>
                 <div class="inline-input-left">
                   <UsaTextInput v-model="field.name">

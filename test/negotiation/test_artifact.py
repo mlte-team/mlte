@@ -16,10 +16,7 @@ from mlte.negotiation.qas import QASDescriptor
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.base import StoreType
 from test.fixture.artifact import ArtifactModelFactory
-from test.store.artifact.conftest import (
-    FX_MODEL_ID,
-    FX_VERSION_ID,
-)
+from test.store.artifact.conftest import FX_MODEL_ID, FX_VERSION_ID
 
 
 def get_sample_negotiation_card(id: str = "my-card"):
