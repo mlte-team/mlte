@@ -1,6 +1,7 @@
 import ast
 import os
 import re
+import pytest
 from pathlib import Path
 
 GENERATED_OUTPUT_DIR = "test/generated_llm_outputs"
@@ -52,6 +53,13 @@ BASE_ALLOWED_SYMBOLS = {
     "Measurement",
     "MeasurementMetadata",
 }
+
+@pytest.mark.skipif(
+    not (
+        Path(GENERATED_OUTPUT_DIR) / "llm_generated_test_suite.py"
+    ).exists(),
+    reason="Generated LLM output file is not present",
+)
 
 
 def test_llm_generated_test_suite() -> None:
