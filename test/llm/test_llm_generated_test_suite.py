@@ -187,7 +187,7 @@ def assert_allowed_symbol_usage(
         )
 
 
-def assert_quality_scenarios_are_well_formed(
+def assert_quality_scenarios_are_lists_of_qas_ids(
     parsed_generated_module: ast.Module,
 ) -> None:
     validation_failures = []
@@ -208,13 +208,10 @@ def assert_quality_scenarios_are_well_formed(
             test_case_index += 1
             continue
 
-        if not isinstance(
-            quality_scenarios_expression,
-            (ast.List, ast.Tuple, ast.Set),
-        ):
+        if not isinstance(quality_scenarios_expression, ast.List):
             validation_failures.append(
                 f"TestCase #{test_case_index} quality_scenarios must be "
-                "a list, tuple, or set of QAS ID strings"
+                "a list of QAS ID strings"
             )
             test_case_index += 1
             continue
@@ -227,6 +224,14 @@ def assert_quality_scenarios_are_well_formed(
             validation_failures.append(
                 f"TestCase #{test_case_index} quality_scenarios must contain "
                 "at least one QAS ID string"
+            )
+            test_case_index += 1
+            continue
+
+        if len(quality_scenario_ids) != len(quality_scenarios_expression.elts):
+            validation_failures.append(
+                f"TestCase #{test_case_index} quality_scenarios must contain "
+                "only string literal QAS IDs"
             )
             test_case_index += 1
             continue
