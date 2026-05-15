@@ -12,7 +12,7 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
-from mlte.store.import_export.export import (
+from mlte.store.import_export.export_store import (
     ExportSpec,
     _export,
     _export_artifacts,

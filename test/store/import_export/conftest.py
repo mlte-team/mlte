@@ -8,7 +8,7 @@ import pytest
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.custom_list.store import CustomListStore
-from mlte.store.import_export.export import ExportSpec, _export
+from mlte.store.import_export.export_store import ExportSpec, _export
 from mlte.store.user.store import UserStore
 
 ARTIFACT_EXPORT_DATA: dict[str, Any] = {
