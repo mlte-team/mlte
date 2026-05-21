@@ -17,6 +17,9 @@ class ResultModel(BaseModel):
     message: str
     """The message indicating the reason for status."""
 
+    additional_data: str
+    """Additional details that we don't want to put up front in the message, if any."""
+
     evidence_metadata: Optional[EvidenceMetadata]
     """Metadata about the evidence this came from."""
 

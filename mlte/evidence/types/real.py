@@ -84,7 +84,11 @@ class Real(Evidence):
 
     @classmethod
     def less_than(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if real is strictly less than `threshold`.
@@ -99,15 +103,21 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than threshold {quantity_to_str(threshold_w_unit)}",
-            failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Real magnitude is less than threshold {quantity_to_str(threshold_w_unit)}",
+            default_failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
     def less_or_equal_to(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if real is less than or equal to `threshold`.
@@ -122,15 +132,21 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
-            failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Real magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            default_failure=f"Real magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
     def greater_than(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if real is strictly greater than `threshold`.
@@ -145,15 +161,21 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than threshold {quantity_to_str(threshold_w_unit)}",
-            failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Real magnitude is greater than threshold {quantity_to_str(threshold_w_unit)}",
+            default_failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator
 
     @classmethod
     def greater_or_equal_to(
-        cls, threshold: float, unit: Optional[Unit] = None
+        cls,
+        threshold: float,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if real is greater than or equal to `threshold`.
@@ -168,8 +190,10 @@ class Real(Evidence):
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Real magnitude is greater than or equal to threshold {quantity_to_str(threshold_w_unit)}",
-            failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Real magnitude is greater than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            default_failure=f"Real magnitude is below threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Real],
         )
         return validator

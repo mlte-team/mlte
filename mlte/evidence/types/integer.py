@@ -83,7 +83,11 @@ class Integer(Evidence):
 
     @classmethod
     def less_than(
-        cls, threshold: int, unit: Optional[Unit] = None
+        cls,
+        threshold: int,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if integer is strictly less than `value`.
@@ -99,15 +103,21 @@ class Integer(Evidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Integer magnitude is less than threshold {quantity_to_str(threshold_w_unit)})",
-            failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Integer magnitude is less than threshold {quantity_to_str(threshold_w_unit)})",
+            default_failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Integer],
         )
         return validator
 
     @classmethod
     def less_or_equal_to(
-        cls, threshold: int, unit: Optional[Unit] = None
+        cls,
+        threshold: int,
+        unit: Optional[Unit] = None,
+        success: str = "",
+        failure: str = "",
     ) -> Validator:
         """
         Determine if integer is less than or equal to `value`.
@@ -123,8 +133,10 @@ class Integer(Evidence):
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
             thresholds=[threshold_w_unit],
-            success=f"Integer magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
-            failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
+            success=success,
+            failure=failure,
+            default_success=f"Integer magnitude is less than or equal to threshold {quantity_to_str(threshold_w_unit)}",
+            default_failure=f"Integer magnitude exceeds threshold {quantity_to_str(threshold_w_unit)}",
             input_types=[Integer],
         )
         return validator

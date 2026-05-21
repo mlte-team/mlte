@@ -265,6 +265,7 @@ def _make_test_results() -> TestResultsModel:
             "Test1": ResultModel(
                 type="Success",
                 message="The RF accuracy is greater than 3",
+                additional_data="Details about the results: a lot of extra data about specific results.",
                 evidence_metadata=EvidenceMetadata(
                     test_case_id="Test1",
                     measurement=MeasurementMetadata(

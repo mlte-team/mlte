@@ -51,29 +51,37 @@ class String(Evidence):
         return String(value=body.value.string).with_metadata(body.metadata)  # type: ignore
 
     @classmethod
-    def contains(cls, substring: str) -> Validator:
+    def contains(
+        cls, substring: str, success: str = "", failure: str = ""
+    ) -> Validator:
         """Checks if the given string is in this one."""
         bool_exp: Callable[[String], bool] = (
             lambda value: substring in value.value
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"Substring '{substring}' is contained in the string value.",
-            failure=f"Substring '{substring}' is not contained in the string value.",
+            success=success,
+            failure=failure,
+            default_success=f"Substring '{substring}' is contained in the string value.",
+            default_failure=f"Substring '{substring}' is not contained in the string value.",
             input_types=[String],
         )
         return validator
 
     @classmethod
-    def equal_to(cls, other_string: str) -> Validator:
+    def equal_to(
+        cls, other_string: str, success: str = "", failure: str = ""
+    ) -> Validator:
         """Checks if the given string is the same as this one in value."""
         bool_exp: Callable[[String], bool] = (
             lambda value: other_string == value.value
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
-            success=f"String '{other_string}' is equal to the internal string value.",
-            failure=f"String '{other_string}' is not equal to the internal string value.",
+            success=success,
+            failure=failure,
+            default_success=f"String '{other_string}' is equal to the internal string value.",
+            default_failure=f"String '{other_string}' is not equal to the internal string value.",
             input_types=[String],
         )
         return validator
