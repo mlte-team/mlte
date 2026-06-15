@@ -17,9 +17,8 @@
       <div class="spacer"></div>
 
       <div class="header-authors">
-        author details <br />
-        author details <br />
-        author details
+        {{ creator }} <br />
+        {{ timestamp }}
       </div>
     </div>
 
