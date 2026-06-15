@@ -38,7 +38,11 @@
           </div>
         </td>
         <td v-if="result.evidence_metadata">
-          {{ result.evidence_metadata.measurement.measurement_class.split('.').at(-1) }}
+          {{
+            result.evidence_metadata.measurement.measurement_class
+              .split(".")
+              .at(-1)
+          }}
         </td>
         <td v-else>Manually validated</td>
         <td v-if="result.evidence_metadata">
