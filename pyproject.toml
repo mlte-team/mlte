@@ -99,29 +99,37 @@ dev = [
     "ruff==0.15.12"
 ]
 
-[tool.hatch.build.targets.sdist]
+[tool.hatch.build]
 include = ["mlte"]
 exclude = ["mlte/frontend/nuxt-app/**/**/*"]
+artifacts = ["mlte/frontend/nuxt-app/.output/public/**/*"]
 
-[tool.hatch.build.targets.sdist.force-include]
-"mlte/frontend/nuxt-app/.output/public/**/*" = "mlte/frontend/nuxt-app/.output/public/**/*"
-
-[tool.hatch.build.targets.wheel]
-include = ["mlte"]
-exclude = ["mlte/frontend/nuxt-app/**/**/*"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"mlte/frontend/nuxt-app/.output/public/**/*" = "mlte/frontend/nuxt-app/.output/public/**/*"
-
-[tool.isort]
-profile="black"
-line_length = 80
-known_first_party=["mlte", "test"]
-
-[tool.black]
+[tool.ruff]
+target-version = "py310"
 line-length = 80
-target-version = ['py38']
-include = '\.pyi?$|\.ipynb$'
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (Flake8 default)
+    "I",   # isort import sorting
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501", # Ignore line-length violations (let the formatter handle it)
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.mypy]
 mypy_path = "src"

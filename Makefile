@@ -11,8 +11,8 @@ python-venv-remove:
 .PHONY: python-venv
 python-venv:
 	python -m venv .venv && \
-	poetry lock && \
-	poetry install --with dev,demo --all-extras
+	uv lock && \
+	uv sync --group dev --group demo --all-extras
 
 .PHONY: venv-redo
 venv-redo: python-venv-remove python-venv
@@ -23,11 +23,11 @@ venv-redo: python-venv-remove python-venv
 
 .PHONY: schema
 schema:
-	poetry run python tools/schema.py generate mlte --verbose
+	uv run python tools/schema.py generate mlte --verbose
 
 .PHONY: check-schema
 check-schema:
-	poetry run python tools/schema.py vet mlte --verbose
+	uv run python tools/schema.py vet mlte --verbose
 
 # -----------------------------------------------------------------------------
 # Doc building/checking
@@ -36,54 +36,32 @@ check-schema:
 # Doc generation.
 .PHONY: docs
 docs:
-	cd docs && poetry run mkdocs build --strict
+	cd docs && uv run mkdocs build --strict
 
 # -----------------------------------------------------------------------------
 # QA
 # -----------------------------------------------------------------------------
 
-.PHONY: isort
-isort:	
-	poetry run isort mlte/
-	poetry run isort test/
-	poetry run isort demo/
-	poetry run isort tools/
-
-.PHONY: check-isort
-check-isort:
-	poetry run isort --check mlte/
-	poetry run isort --check test/
-	poetry run isort --check demo/
-	poetry run isort --check tools/
-
 # Format all source code
 .PHONY: format
 format:
-	poetry run black mlte/
-	poetry run black test/
-	poetry run black demo/
-	poetry run black tools/
-
+	uv run ruff format .
 .PHONY: check-format 
 check-format:
-	poetry run black --check mlte/
-	poetry run black --check test/
-	poetry run black --check demo/
-	poetry run black --check tools/
+	uv run ruff format --check .
 
 # Lint all source code
 .PHONY: lint
 lint:
-	poetry run flake8 mlte/
-	poetry run flake8 test/
-	poetry run flake8 tools/
+	uv run ruff check --fix .
+.PHONY: check-lint 
+check-lint:
+	uv run ruff check .
 
 # Typecheck all source code
 .PHONY: typecheck
 typecheck:
-	poetry run mypy mlte/
-	poetry run mypy test/
-	poetry run mypy tools/
+	uv run mypy .
 
 # Clean python cache files
 .PHONY: python-env-clean
@@ -97,7 +75,7 @@ demo-clean:
 
 # QA for Python bits
 .PHONY: qa-python
-qa-python: schema isort format lint typecheck demo-clean docs build-sample-catalog
+qa-python: schema format lint typecheck demo-clean docs build-sample-catalog
 
 # QA for Python bits, ran within a docker container
 .PHONY: qa-python-docker
@@ -106,7 +84,7 @@ qa-python-docker:
 
 # Check all QA tasks for Python
 .PHONY: check-qa-python
-check-qa-python: check-schema check-isort check-format lint typecheck docs check-sample-catalog
+check-qa-python: check-schema check-lint check-format typecheck docs check-sample-catalog
 
 # CI for Python bits
 .PHONY: ci-python
@@ -178,7 +156,7 @@ ci-frontend-docker:
 # Run unit tests with pytest
 .PHONY: test
 test:
-	poetry run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
+	uv run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
 
 # Demo Jupyter Notebook tests
 .PHONY: demo-test
@@ -211,17 +189,17 @@ ci: ci-python ci-frontend
 
 .PHONY: bump-patch
 bump-patch:
-	poetry run bumpversion patch --allow-dirty
+	uv run bumpversion patch --allow-dirty
 	$(MAKE) frontend-env
 
 .PHONY: bump-minor
 bump-minor:
-	poetry run bumpversion minor --allow-dirty
+	uv run bumpversion minor --allow-dirty
 	$(MAKE) frontend-env
 
 .PHONY: bump-major
 bump-major:
-	poetry run bumpversion major --allow-dirty
+	uv run bumpversion major --allow-dirty
 	$(MAKE) frontend-env
 
 # -----------------------------------------------------------------------------
