@@ -78,7 +78,7 @@ class TestAPI:
     def __init__(
         self,
         user: UserWithPassword | None = None,
-        catalog_uris: dict[str, StoreURI] = {},
+        catalog_uris: dict[str, StoreURI] | None = None,
     ) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
 
@@ -87,6 +87,7 @@ class TestAPI:
 
         # Set up API global state.
         state.reset()
+        catalog_uris = catalog_uris or {}
         state.stores = setup_stores(
             StoreURI.from_type(StoreType.LOCAL_MEMORY), catalog_uris
         )

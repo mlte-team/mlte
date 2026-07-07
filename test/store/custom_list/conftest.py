@@ -97,7 +97,7 @@ def get_test_list(
     entries: list[CustomListEntryModel] | None = None,
 ) -> CustomListModel:
     """Helper to get a list structure."""
-    entries = entries if entries is not None else []
+    entries = entries or []
     return CustomListModel(name=name, entries=entries)
 
 

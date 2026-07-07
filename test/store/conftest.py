@@ -107,7 +107,7 @@ def create_test_unified_store(
         store_type,
         tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
     )
-    catalog_uris = catalog_uris if catalog_uris is not None else {}
+    catalog_uris = catalog_uris or {}
     session_stores: UnifiedStore = patched_setup_stores(uri, catalog_uris)
 
     return session_stores

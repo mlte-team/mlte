@@ -26,7 +26,7 @@ def create_api_and_http_uri(
     Get the params to configure an HTTP store, creating a test API.
     :return: The client to the test API, and the URI to connect.
     """
-    catalog_uris = catalog_uris if catalog_uris is not None else {}
+    catalog_uris = catalog_uris or {}
 
     # Create a user for the API. Use the one provided in the URI if any.
     _, username, password = url_utils.remove_url_username_password(uri.uri)
