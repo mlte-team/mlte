@@ -94,9 +94,10 @@ def create_test_custom_list_store(
 
 def get_test_list(
     name: CustomListName = DEFAULT_LIST_NAME,
-    entries: list[CustomListEntryModel] = [],
+    entries: list[CustomListEntryModel] | None = None,
 ) -> CustomListModel:
     """Helper to get a list structure."""
+    entries = entries if entries is not None else []
     return CustomListModel(name=name, entries=entries)
 
 

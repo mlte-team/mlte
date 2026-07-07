@@ -9,7 +9,7 @@ The best examples of how to use MLTE are contained with in the [Demos](#demos). 
 ```bash
 $ pyenv install 3.12
 $ pyenv local 3.12
-$ make venv
+$ make python-venv
 ```
 
 The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup manually or by using the `run_environment.sh` script. This will start `MLTE` as 2 docker containers with an empty file system based store. If the script `demo/run_environment.sh` is used instead, the store will be populated with the data in `demo/store`, which will include sample models, versions and [Negotiation Cards](negotiation_card.md) along with any results created by running the demo notebooks. This is volume mounted so any changes made using the frontend will be available locally in that same directory. The frontend will be available at `localhost:8000`.
@@ -60,13 +60,19 @@ $ pyenv local 3.12
 You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
-$ make venv
+$ make python-venv
 ```
 
 If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
 
 ```bash
 $ uv sync --group dev --all-extras
+```
+
+If you want to also develop for the Frontend, run the following command:
+
+```bash
+$ make frontend-env
 ```
 
 Now you are ready to start working on `MLTE`!
@@ -232,14 +238,7 @@ $ make typecheck-frontend
 
 Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
 
-To initialize the development environment for the front end, navigate to the subfolder `./mlte/frontend/nuxt-app` and run:
-
-```bash
-$ npm install
-$ npx gulp init
-```
-
-You can also run the following make command:
+To initialize the development environment for the front end, run the following make command:
 
 ```bash
 $ make frontend-env

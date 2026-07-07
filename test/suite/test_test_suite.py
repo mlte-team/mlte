@@ -20,8 +20,9 @@ from test.negotiation.test_artifact import get_sample_negotiation_card
 
 
 def get_sample_test_suite(
-    identifier: str | None = None, qas_ids: list[str] = []
+    identifier: str | None = None, qas_ids: list[str] | None = None
 ):
+    qas_ids = qas_ids if qas_ids is not None else []
     test_suite = TestSuite(
         identifier=identifier if identifier else "test_suite",
         test_cases=[

@@ -15,18 +15,19 @@ def store_types() -> Generator[StoreType, None, None]:
     Yield catalog store types.
     :return: Store type.
     """
-    for store_type in StoreType:
-        yield store_type
+    yield from StoreType
 
 
 def create_api_and_http_uri(
     uri: StoreURI,
-    catalog_uris: dict[str, StoreURI] = {},
+    catalog_uris: dict[str, StoreURI] | None = None,
 ) -> tuple[OAuthHttpClient, StoreURI]:
     """
     Get the params to configure an HTTP store, creating a test API.
     :return: The client to the test API, and the URI to connect.
     """
+    catalog_uris = catalog_uris if catalog_uris is not None else {}
+
     # Create a user for the API. Use the one provided in the URI if any.
     _, username, password = url_utils.remove_url_username_password(uri.uri)
     if not username and not password:

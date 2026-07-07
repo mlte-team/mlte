@@ -93,7 +93,7 @@ def create_test_unified_store(
     store_type: StoreType,
     tmp_path,
     patched_setup_stores,
-    catalog_uris: dict[str, StoreURI] = {},
+    catalog_uris: dict[str, StoreURI] | None = None,
 ) -> UnifiedStore:
     """Creates appropriate test session stores."""
     # We can't test setup_stores with a REMOTE store, since this would require setting up the session stores,
@@ -107,6 +107,7 @@ def create_test_unified_store(
         store_type,
         tmp_path if store_type == StoreType.LOCAL_FILESYSTEM else "",
     )
+    catalog_uris = catalog_uris if catalog_uris is not None else {}
     session_stores: UnifiedStore = patched_setup_stores(uri, catalog_uris)
 
     return session_stores
