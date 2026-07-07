@@ -2,7 +2,8 @@
 
 import base64
 import typing
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import dill  # type: ignore
 

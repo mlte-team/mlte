@@ -5,7 +5,6 @@ TestResults class implementation.
 from __future__ import annotations
 
 import typing
-from typing import Optional, Type, Union
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -33,7 +32,7 @@ class TestResults(Artifact):
     def __init__(
         self,
         test_suite: TestSuite,
-        identifier: Optional[str] = None,
+        identifier: str | None = None,
         results: dict[str, Result] = {},
     ):
         """
@@ -89,12 +88,12 @@ class TestResults(Artifact):
         :param model: The model
         :return: The deserialized specification
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.TEST_RESULTS
-        ), "Type should be TestResults."
+        assert isinstance(model, ArtifactModel), (
+            "Can't create object from non-ArtifactModel model."
+        )
+        assert model.header.type == ArtifactType.TEST_RESULTS, (
+            "Type should be TestResults."
+        )
         body = typing.cast(TestResultsModel, model.body)
 
         # Build the TestSuite and TestResults
@@ -115,7 +114,7 @@ class TestResults(Artifact):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> TestResults:
+    def load(cls, identifier: str | None = None) -> TestResults:
         """
         Load a TestResults from the configured global session.
         :param identifier: The identifier for the artifact. If None,
@@ -142,7 +141,7 @@ class TestResults(Artifact):
     def convert_result(
         self,
         test_case_id: str,
-        result_type: Union[Type[Success], Type[Failure]],
+        result_type: type[Success] | type[Failure],
         message: str,
     ) -> None:
         """Converts a given Info result into the provided type."""

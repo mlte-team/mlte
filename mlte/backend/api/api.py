@@ -16,7 +16,7 @@ from mlte.user.model import ResourceType
 
 # The common URL prefix for all artifact routes
 _ARTIFACT_PREFIX = (
-    f"/{ResourceType.MODEL.value}" "/{model_id}/version/{version_id}"
+    f"/{ResourceType.MODEL.value}/{{model_id}}/version/{{version_id}}"
 )
 
 # The base API router across all endpoints

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional
+from typing import Any
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -182,11 +182,9 @@ class RDBSVersionMapper(VersionMapper):
         versions: list[str] = []
         with Session(self.storage.engine) as session:
             version_orms = session.scalars(
-                (
-                    select(DBVersion)
-                    .where(DBVersion.model_id == DBModel.id)
-                    .where(DBModel.name == model_id)
-                )
+                select(DBVersion)
+                .where(DBVersion.model_id == DBModel.id)
+                .where(DBModel.name == model_id)
             )
             for version_orm in version_orms:
                 versions.append(version_orm.name)
@@ -271,7 +269,7 @@ class RDBSArtifactMapper(ArtifactMapper):
     ):
         """Writes an artifact to the store."""
         model_id, version_id = model_and_version
-        original_orm: Optional[DBArtifact] = None
+        original_orm: DBArtifact | None = None
         try:
             _, original_orm = self._read_artifact(
                 artifact.header.identifier, model_and_version

@@ -234,10 +234,10 @@ def _export_custom_lists(
     ) as custom_list_store_session:
         for custom_list_id in export_spec.custom_lists:
             output_dict[custom_list_id] = []
-            for (
-                custom_list_entry
-            ) in custom_list_store_session.custom_list_entry_mapper.list_details(
-                custom_list_id
+            for custom_list_entry in (
+                custom_list_store_session.custom_list_entry_mapper.list_details(
+                    custom_list_id
+                )
             ):
                 output_dict[custom_list_id].append(custom_list_entry.to_json())
 

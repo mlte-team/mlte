@@ -1,6 +1,6 @@
 """Unit tests for the underlying catalog store implementations."""
 
-from typing import Callable
+from collections.abc import Callable
 
 import pytest
 

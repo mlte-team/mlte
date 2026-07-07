@@ -4,8 +4,9 @@ Implementation of ConfusionMatrix value.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from io import StringIO
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -57,8 +58,8 @@ class ConfusionMatrix(ExternalEvidence):
         :return: A Validator to use to check for this.
 
         """
-        bool_exp: Callable[[ConfusionMatrix], bool] = (
-            lambda cm: cm.misclassifications <= threshold
+        bool_exp: Callable[[ConfusionMatrix], bool] = lambda cm: (
+            cm.misclassifications <= threshold
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,

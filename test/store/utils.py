@@ -1,6 +1,6 @@
 """Utils for MLTE store unit tests."""
 
-from typing import Generator
+from collections.abc import Generator
 
 from mlte._private import url as url_utils
 from mlte.store.base import StoreType, StoreURI

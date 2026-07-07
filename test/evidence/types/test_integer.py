@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional, Tuple
-
 import pytest
 
 from mlte.context.context import Context
@@ -23,7 +21,7 @@ class DummyMeasurementInteger(Measurement):
 
 
 @pytest.mark.parametrize("number,unit", [(1, None), (2, Units.meter)])
-def test_success(number: int, unit: Optional[Unit]):
+def test_success(number: int, unit: Unit | None):
     """Integer construction works for valid input type."""
     i = Integer(number, unit).with_metadata(get_sample_evidence_metadata())
     assert i.value == number
@@ -59,7 +57,7 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Integer can be saved to and loaded from artifact store."""
     store, ctx = artifact_store_with_context

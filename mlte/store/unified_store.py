@@ -1,7 +1,6 @@
 """Manages info about a unified set of stores."""
 
 from pathlib import Path
-from typing import Optional
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
@@ -35,13 +34,13 @@ class UnifiedStore:
     def __init__(self):
         """Defines the existing stores, none loaded yet."""
 
-        self._artifact_store: Optional[ArtifactStore] = None
+        self._artifact_store: ArtifactStore | None = None
         """The MLTE artifact store instance for the session."""
 
-        self._custom_list_store: Optional[CustomListStore] = None
+        self._custom_list_store: CustomListStore | None = None
         """The MLTE custom list store instance for the session."""
 
-        self._user_store: Optional[UserStore] = None
+        self._user_store: UserStore | None = None
         """The user store instance for the session."""
 
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()

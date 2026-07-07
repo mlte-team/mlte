@@ -7,15 +7,16 @@ import inspect
 import json
 import os
 import re
+from collections.abc import Callable, Generator
 from types import ModuleType
-from typing import Any, Callable, Generator, Union
+from typing import Any
 
 import astunparse  # type: ignore
 
 
 def load_class_or_function(
     type_path: str,
-) -> Union[type[Any], Callable[[], Any]]:
+) -> type[Any] | Callable[[], Any]:
     """
     Returns a class or function of the given class name/path.
     :param type_path: A path to a class or function, including absolute package/module path and class/function name.

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Any, Optional
+from typing import Any
 
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
@@ -43,7 +43,7 @@ class ModelArtifacts:
 
     def get_artifact(
         self, version_id: str, artifact_id: str
-    ) -> Optional[ArtifactModel]:
+    ) -> ArtifactModel | None:
         """Gets an artifact from a model or version level."""
         # First check at the model level.
         if artifact_id in self.artifacts:
@@ -55,9 +55,7 @@ class ModelArtifacts:
             else:
                 return None
 
-    def delete_artifact(
-        self, artifact_id: str, version_id: Optional[str] = None
-    ):
+    def delete_artifact(self, artifact_id: str, version_id: str | None = None):
         """Removes the given artifact, from the given version, or from the model list."""
         if version_id:
             del self.version_artifacts[version_id][artifact_id]
@@ -80,9 +78,9 @@ class MemoryArtifactStorage:
     ):
         """Adds an artifact to the model or version level list."""
         if level == ArtifactLevel.MODEL:
-            self.models[model_id].artifacts[
-                artifact.header.identifier
-            ] = artifact
+            self.models[model_id].artifacts[artifact.header.identifier] = (
+                artifact
+            )
         else:
             self.models[model_id].version_artifacts[version_id][
                 artifact.header.identifier

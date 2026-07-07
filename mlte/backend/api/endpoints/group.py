@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -86,7 +84,7 @@ def read_group(
 @router.get("")
 def list_groups(
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE group.
     :return: A collection of group names
@@ -101,7 +99,7 @@ def list_groups(
 @router.get("s/details")
 def list_group_details(
     current_user: AuthorizedUser,
-) -> List[Group]:
+) -> list[Group]:
     """
     List MLTE group, with details for each group.
     :return: A collection of groups with their details.
@@ -138,7 +136,7 @@ def delete_group(
 @router.get("s/permissions")
 def list_permissions(
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE permissions.
     :return: A collection of permissions
@@ -153,7 +151,7 @@ def list_permissions(
 @router.get("s/permissions/details")
 def list_permission_details(
     current_user: AuthorizedUser,
-) -> List[Permission]:
+) -> list[Permission]:
     """
     List MLTE permissions, with details.
     :return: A collection of permissions, with details.

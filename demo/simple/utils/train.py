@@ -9,7 +9,6 @@ import logging
 import pickle
 import sys
 from pathlib import Path
-from typing import Tuple
 
 import pandas as pd
 from sklearn import tree
@@ -27,7 +26,7 @@ TARGET_FILENAME = "target.csv"
 MODEL_FILENAME = "model.pkl"
 
 
-def parse_arguments() -> Tuple[Path, Path]:
+def parse_arguments() -> tuple[Path, Path]:
     """
     Parse commandline arguments.
     """
@@ -48,7 +47,7 @@ def parse_arguments() -> Tuple[Path, Path]:
     return Path(args.dataset_dir), Path(args.models_dir)
 
 
-def load_dataset(path: Path) -> Tuple[pd.DataFrame, pd.Series]:
+def load_dataset(path: Path) -> tuple[pd.DataFrame, pd.Series]:
     """
     Load a training dataset from `path`.
     :param path The path to the training dataset

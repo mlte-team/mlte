@@ -1,7 +1,7 @@
 """Implementation of HTTP user store"""
 
 import typing
-from typing import Any, List, Optional, Union
+from typing import Any
 
 from mlte.store.base import ResourceMapper, StoreURI
 from mlte.store.common.http_clients import OAuthHttpClient
@@ -27,7 +27,7 @@ class HttpUserStore(UserStore):
     """A http implementation of the MLTE user store."""
 
     def __init__(
-        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
+        self, *, uri: StoreURI, client: OAuthHttpClient | None = None
     ) -> None:
         self.user_storage = HttpResourceStorage(
             uri=uri, resource_type=ResourceType.USER, client=client
@@ -119,7 +119,7 @@ class HttpUserMapper(UserMapper):
         return typing.cast(list[str], response)
 
     def edit(
-        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+        self, user: UserWithPassword | BasicUser, context: Any = None
     ) -> User:
         response = self.storage.put(json=user.to_json())
         return User(**response)
@@ -183,7 +183,7 @@ class HttpPermissionMapper(PermissionMapper):
         context: Any = None,
         limit: int = ResourceMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """
         Read details of resources within limit and offset.
         :param context: Any additional context needed for this resource.

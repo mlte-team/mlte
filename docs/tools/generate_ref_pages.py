@@ -4,17 +4,19 @@ docs/tools/generate_reference_page.py
 A script to generate a reference page for the MLTE documentation.
 """
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 import mkdocs_gen_files
 
 g_nav = mkdocs_gen_files.Nav()
 
+
 def _repository_root() -> Path:
     command = ["git", "rev-parse", "--show-toplevel"]
     stdout = subprocess.check_output(command)
-    return Path(stdout.decode("utf-8").strip('\n'))
+    return Path(stdout.decode("utf-8").strip("\n"))
+
 
 package_root = _repository_root() / "mlte"
 

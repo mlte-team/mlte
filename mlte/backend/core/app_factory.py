@@ -41,7 +41,8 @@ def create(allowed_origins: list[str] = []) -> FastAPI:
 
     # Add proper exception handling for Token responses, to be OAuth compliant.
     app.add_exception_handler(
-        HTTPTokenException, json_content_exception_handler  # type: ignore
+        HTTPTokenException,
+        json_content_exception_handler,  # type: ignore
     )
 
     return app

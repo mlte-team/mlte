@@ -1,7 +1,5 @@
 """Host checking utilities."""
 
-from typing import List
-
 
 def _removeprefix(text: str, prefix: str) -> str:
     """
@@ -38,7 +36,7 @@ def _resolve_localhost(host: str) -> str:
     return host.replace("localhost", "127.0.0.1")
 
 
-def resolve_hosts(host_list: List[str]) -> List[str]:
+def resolve_hosts(host_list: list[str]) -> list[str]:
     """
     Resolve host IPs for special addresses.
 

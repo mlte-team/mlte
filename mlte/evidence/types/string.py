@@ -5,7 +5,7 @@ An Evidence instance for a string value.
 from __future__ import annotations
 
 import typing
-from typing import Callable
+from collections.abc import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -55,8 +55,8 @@ class String(Evidence):
         cls, substring: str, success: str = "", failure: str = ""
     ) -> Validator:
         """Checks if the given string is in this one."""
-        bool_exp: Callable[[String], bool] = (
-            lambda value: substring in value.value
+        bool_exp: Callable[[String], bool] = lambda value: (
+            substring in value.value
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -73,8 +73,8 @@ class String(Evidence):
         cls, other_string: str, success: str = "", failure: str = ""
     ) -> Validator:
         """Checks if the given string is the same as this one in value."""
-        bool_exp: Callable[[String], bool] = (
-            lambda value: other_string == value.value
+        bool_exp: Callable[[String], bool] = lambda value: (
+            other_string == value.value
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -88,7 +88,7 @@ class String(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> String:
+    def load(cls, identifier: str | None = None) -> String:
         evidence = super().load(identifier)
         return typing.cast(String, evidence)
 

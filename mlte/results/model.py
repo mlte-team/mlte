@@ -1,6 +1,6 @@
 """Model implementation for the TestResults artifact."""
 
-from typing import Literal, Optional
+from typing import Literal
 
 from mlte.artifact.type import ArtifactType
 from mlte.evidence.metadata import EvidenceMetadata
@@ -20,7 +20,7 @@ class ResultModel(BaseModel):
     additional_data: str
     """Additional details that we don't want to put up front in the message, if any."""
 
-    evidence_metadata: Optional[EvidenceMetadata]
+    evidence_metadata: EvidenceMetadata | None
     """Metadata about the evidence this came from."""
 
 

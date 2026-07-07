@@ -1,7 +1,5 @@
 """Unit tests for the underlying user store implementations."""
 
-from typing import List
-
 import pytest
 
 import mlte.store.error as errors
@@ -64,7 +62,7 @@ def get_default_permissions() -> list[Permission]:
     return permissions
 
 
-def get_test_permissions() -> List[Permission]:
+def get_test_permissions() -> list[Permission]:
     """Helper to get a group structure."""
     p1 = Permission(
         resource_type=ResourceType.MODEL,

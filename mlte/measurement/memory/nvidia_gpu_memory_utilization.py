@@ -22,8 +22,6 @@ https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvm
 
 from __future__ import annotations
 
-from typing import Optional, Union
-
 import mlte.measurement.utility.pynvml_utils as pynvml_utils
 from mlte.measurement.common import CommonStatistics
 from mlte.measurement.process_measurement import ProcessMeasurement
@@ -74,9 +72,9 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
 
     def __init__(
         self,
-        identifier: Optional[str] = None,
-        group: Optional[str] = None,
-        gpu_ids: Union[int, list[int]] = 0,
+        identifier: str | None = None,
+        group: str | None = None,
+        gpu_ids: int | list[int] = 0,
     ):
         """
         Initialize a NvidiaGPUMemoryUtilization instance.

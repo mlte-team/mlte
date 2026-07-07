@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -31,7 +31,7 @@ class FileSystemCatalogStore(CatalogStore):
     """A default name for a catalog folder."""
 
     def __init__(
-        self, uri: StoreURI, catalog_folder: Optional[str] = None
+        self, uri: StoreURI, catalog_folder: str | None = None
     ) -> None:
         super().__init__(uri=uri)
 
@@ -126,7 +126,7 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         return self._read_entry(entry_id)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:

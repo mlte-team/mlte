@@ -6,7 +6,7 @@ Unit test for ExternalMeasurement.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -26,11 +26,11 @@ class BigInteger(ExternalEvidence):
         super().__init__()
         self.integer = integer
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         return {"integer": self.integer}
 
     @staticmethod
-    def deserialize(data: Dict[str, Any]) -> BigInteger:
+    def deserialize(data: dict[str, Any]) -> BigInteger:
         return BigInteger(data["integer"])
 
     def __eq__(self, other: object) -> bool:

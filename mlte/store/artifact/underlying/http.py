@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional, OrderedDict
+from collections import OrderedDict
+from typing import Any
 
 from mlte.artifact.model import ArtifactModel
 from mlte.backend.api.models.artifact_model import WriteArtifactRequest
@@ -33,7 +34,7 @@ class HttpArtifactStore(ArtifactStore):
     """A HTTP implementation of the MLTE artifact store."""
 
     def __init__(
-        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
+        self, *, uri: StoreURI, client: OAuthHttpClient | None = None
     ) -> None:
         super().__init__(uri=uri)
 
@@ -167,7 +168,7 @@ class HTTPArtifactMapper(ArtifactMapper):
         return ArtifactModel(**response)
 
     def search(
-        self, query: Query, model_and_version: Optional[tuple[str, str]] = None
+        self, query: Query, model_and_version: tuple[str, str] | None = None
     ) -> list[ArtifactModel]:
         groups: OrderedDict[str, str] = OrderedDict()
         if model_and_version:

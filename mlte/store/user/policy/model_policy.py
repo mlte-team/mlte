@@ -1,7 +1,5 @@
 """Define model policies."""
 
-from typing import Union
-
 from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.user.policy.policy import Policy
 from mlte.store.user.policy.policy_store_service import PolicyStoreService
@@ -24,9 +22,9 @@ def create_model_policies_if_needed(
 
 def create_model_policy(
     model_id: str,
-    current_user: Union[UserWithPassword, BasicUser],
+    current_user: UserWithPassword | BasicUser,
     policy_store: PolicyStoreService,
-) -> Union[UserWithPassword, BasicUser]:
+) -> UserWithPassword | BasicUser:
     """Create a basic policy for a model for the user, and returns the updated user."""
     policy = Policy(ResourceType.MODEL, model_id)
     policy_store.save_to_store(policy)

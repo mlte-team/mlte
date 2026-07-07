@@ -1,6 +1,6 @@
 """Model implementation for MLTE report."""
 
-from typing import List, Literal
+from typing import Literal
 
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
@@ -40,5 +40,5 @@ class ReportModel(BaseModel):
     test_results: TestResultsModel
     """The actual detailed results of the test run."""
 
-    comments: List[CommentDescriptor] = []
+    comments: list[CommentDescriptor] = []
     """Comments included in the report."""

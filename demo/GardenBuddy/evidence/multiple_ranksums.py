@@ -4,7 +4,8 @@ Implementation of MultipleRaknsums value.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -48,8 +49,8 @@ class MultipleRanksums(ExternalEvidence):
         :param threshold: The p-value we want to check against.
         :return: A Validator that checks for this.
         """
-        bool_exp: Callable[[MultipleRanksums], bool] = (
-            lambda value: len(value.get_low_p_values(threshold)) == 0
+        bool_exp: Callable[[MultipleRanksums], bool] = lambda value: (
+            len(value.get_low_p_values(threshold)) == 0
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,

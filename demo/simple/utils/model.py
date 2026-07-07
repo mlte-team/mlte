@@ -3,9 +3,11 @@ import pickle
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn import datasets as sk_datasets
-from sklearn import model_selection as sk_model_selection
-from sklearn import tree as sk_tree
+from sklearn import (
+    datasets as sk_datasets,
+    model_selection as sk_model_selection,
+    tree as sk_tree,
+)
 
 from demo.simple.session import *
 
@@ -14,9 +16,9 @@ from demo.simple.session import *
 # ------------------------------------------------------------------------------
 
 
-def _load_data_from_lib() -> (
-    tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]
-):
+def _load_data_from_lib() -> tuple[
+    pd.DataFrame, pd.Series, pd.DataFrame, pd.Series
+]:
     """
     Load machine learning dataset.
     :return (X_train, X_test, y_train, y_test)

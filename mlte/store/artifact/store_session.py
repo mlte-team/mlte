@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
@@ -122,7 +122,7 @@ class ArtifactMapper(ResourceMapper):
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def _add_header_data(
-        self, artifact: ArtifactModel, user: Optional[str]
+        self, artifact: ArtifactModel, user: str | None
     ) -> ArtifactModel:
         """Adds time and creator data to model."""
         artifact.header.timestamp = int(time.time())
@@ -136,7 +136,7 @@ class ArtifactMapper(ResourceMapper):
         artifact: ArtifactModel,
         *,
         force: bool = False,
-        user: Optional[str] = None,
+        user: str | None = None,
     ) -> ArtifactModel:
         """
         Write an artifact, generating the timestamp and adding creator. Internally calls the actual write_artifact implementation.

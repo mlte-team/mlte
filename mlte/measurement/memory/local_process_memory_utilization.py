@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import subprocess
 import time
-from typing import Optional
 
 import psutil
 
@@ -46,9 +45,7 @@ class MemoryStatistics(CommonStatistics):
 class LocalProcessMemoryUtilization(ProcessMeasurement):
     """Measure memory utilization for a local training process."""
 
-    def __init__(
-        self, identifier: Optional[str] = None, group: Optional[str] = None
-    ):
+    def __init__(self, identifier: str | None = None, group: str | None = None):
         """
         Initialize a LocalProcessMemoryUtilization instance.
 
@@ -114,16 +111,19 @@ def _get_memory_usage_pmap(pid: int) -> int:
     """
     # sudo pmap 917 | tail -n 1 | awk '/[0-9]K/{print $2}'
     try:
-        with subprocess.Popen(
-            ["pmap", f"{pid}"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-        ) as pmap, subprocess.Popen(
-            ["tail", "-n", "1"],
-            stdin=pmap.stdout,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-        ) as tail:
+        with (
+            subprocess.Popen(
+                ["pmap", f"{pid}"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+            ) as pmap,
+            subprocess.Popen(
+                ["tail", "-n", "1"],
+                stdin=pmap.stdout,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+            ) as tail,
+        ):
             used = subprocess.check_output(
                 ["awk", "/[0-9]K/{print $2}"],
                 stdin=tail.stdout,

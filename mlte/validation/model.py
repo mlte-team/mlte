@@ -2,7 +2,7 @@
 Model implementation for the Validator.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from mlte.model.base_model import BaseModel
 
@@ -10,19 +10,19 @@ from mlte.model.base_model import BaseModel
 class ValidatorModel(BaseModel):
     """A description of a validator for a test."""
 
-    bool_exp: Optional[str]
+    bool_exp: str | None
     """A text-encoded, dilled-serialized version of the function to execute when checking the bool condition."""
 
-    bool_exp_str: Optional[str]
+    bool_exp_str: str | None
     """A string representation of the code for the bool expression to check for."""
 
     thresholds: list[str]
     """A list of thresholds used in the bool expression, serialized to string, for auditing purposes."""
 
-    success: Optional[str]
+    success: str | None
     """A string to be used when recording that the validation was succesful."""
 
-    failure: Optional[str]
+    failure: str | None
     """A string to be used when recording that the validation was not succesful."""
 
     default_success: str
@@ -31,16 +31,16 @@ class ValidatorModel(BaseModel):
     default_failure: str
     """A default string to be used when recording that the validation was not succesful, if failure is not defined, and in detailed messages."""
 
-    info: Optional[str]
+    info: str | None
     """A string to be used when recording that the validation was not checked against a expression, just recorded information."""
 
     input_types: list[str] = []
     """A list of strings representing the types of inputs to be received when validating."""
 
-    creator_entity: Optional[str] = None
+    creator_entity: str | None = None
     """The full name of the class or module used to create this validator, if any."""
 
-    creator_function: Optional[str] = None
+    creator_function: str | None = None
     """The name of the function used to create this validator, if any."""
 
     creator_args: list[Any] = []

@@ -13,7 +13,6 @@ from mlte.suite.test_suite import TestSuite
 
 
 class ArtifactFactory:
-
     @staticmethod
     def from_model(artifact_model: ArtifactModel) -> Artifact:
         """Returns a proper artifact from the given model."""

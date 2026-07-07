@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import typing
 from abc import abstractmethod
-from typing import Optional
 
 import mlte._private.meta as meta
 from mlte._private.reflection import load_class_or_function
@@ -21,12 +20,12 @@ class Measurement:
     The superclass for all model measurements.
     """
 
-    def __init__(self, test_case_id: Optional[str] = None):
+    def __init__(self, test_case_id: str | None = None):
         """Constructor."""
 
         # Initialize with no values.
-        self.test_case_id: Optional[str] = None
-        self.evidence_metadata: Optional[EvidenceMetadata] = None
+        self.test_case_id: str | None = None
+        self.evidence_metadata: EvidenceMetadata | None = None
 
         if test_case_id is not None:
             # Set our id to the test case id, and generate our evidence metadata.

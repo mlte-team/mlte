@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -31,10 +29,10 @@ class DBCatalogEntryHeader(DBBase):
     identifier: Mapped[str]
     created: Mapped[int] = mapped_column(BigInteger)
     updated: Mapped[int] = mapped_column(BigInteger)
-    creator: Mapped[Optional[str]]
-    catalog_identifier: Mapped[Optional[str]]
+    creator: Mapped[str | None]
+    catalog_identifier: Mapped[str | None]
 
-    body: Mapped[Optional[DBCatalogEntry]] = relationship(
+    body: Mapped[DBCatalogEntry | None] = relationship(
         back_populates="entry_header", cascade="all"
     )
 
@@ -49,9 +47,9 @@ class DBCatalogEntry(DBBase):
     tags: Mapped[str]
     quality_attribute: Mapped[str]
     code: Mapped[str]
-    description: Mapped[Optional[str]]
-    inputs: Mapped[Optional[str]]
-    outputs: Mapped[Optional[str]]
+    description: Mapped[str | None]
+    inputs: Mapped[str | None]
+    outputs: Mapped[str | None]
 
     entry_header_id: Mapped[int] = mapped_column(
         ForeignKey("catalog_entry_header.id")

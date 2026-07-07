@@ -4,8 +4,6 @@ test/backend/test_util_origin.py
 Unit tests for origin utility functionality.
 """
 
-from typing import List
-
 from mlte._private.hosts import is_localhost, resolve_hosts
 
 
@@ -25,7 +23,7 @@ def test_host_resolution() -> None:
     assert equal(o, e)
 
 
-def equal(a: List[str], b: List[str]) -> bool:
+def equal(a: list[str], b: list[str]) -> bool:
     """Test two lists for equality."""
     if len(a) != len(b):
         return False

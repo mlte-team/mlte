@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
-
 import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
@@ -49,8 +47,8 @@ class MemoryCustomListStorage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
-        self.custom_lists: Dict[
-            CustomListName, Dict[str, CustomListEntryModel]
+        self.custom_lists: dict[
+            CustomListName, dict[str, CustomListEntryModel]
         ] = {}
         for list_name in CustomListName:
             self.custom_lists[list_name] = {}
@@ -93,7 +91,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         new_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(new_entry.parent, list_name)
@@ -105,14 +103,14 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         return new_entry
 
     def read(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)
         entry = self.storage.custom_lists[list_name][entry_name]
         return entry
 
-    def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
+    def list(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         return [
             entry_name
@@ -122,7 +120,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     def edit(
         self,
         updated_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(updated_entry.parent, list_name)
@@ -131,7 +129,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         return updated_entry
 
     def delete(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._check_entry_in_list(entry_name, list_name)

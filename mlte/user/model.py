@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Optional, Union
+from typing import ClassVar
 
 from strenum import StrEnum
 
@@ -33,10 +33,10 @@ class BasicUser(BaseModel):
     username: str
     """The username to uniquely identify a user."""
 
-    email: Optional[str] = None
+    email: str | None = None
     """An optional email associated to the user."""
 
-    full_name: Optional[str] = None
+    full_name: str | None = None
     """The full name of the user."""
 
     disabled: bool = False
@@ -121,7 +121,7 @@ class UserWithPassword(BasicUser):
 
 
 def update_user_data(
-    curr_user: User, new_user_data: Union[UserWithPassword, BasicUser]
+    curr_user: User, new_user_data: UserWithPassword | BasicUser
 ) -> User:
     """Get updated user depending on the type, keeping hashed password if no new password is received."""
     if type(new_user_data) is UserWithPassword:
@@ -175,7 +175,7 @@ class ResourceType(StrEnum):
     """Custom lists."""
 
     @staticmethod
-    def get_type_from_url(url: str) -> Optional[ResourceType]:
+    def get_type_from_url(url: str) -> ResourceType | None:
         """Returns the resource type for the given URL."""
         for resource_type in ResourceType:
             if url.startswith(f"/{resource_type.value}"):
@@ -213,7 +213,7 @@ class Permission(BaseModel):
     resource_type: ResourceType
     """The type of resource resource."""
 
-    resource_id: Optional[str] = None
+    resource_id: str | None = None
     """The specific resource id to give permissions to, if any."""
 
     method: MethodType = MethodType.ANY

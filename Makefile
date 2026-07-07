@@ -75,7 +75,7 @@ demo-clean:
 
 # QA for Python bits
 .PHONY: qa-python
-qa-python: schema format lint typecheck demo-clean docs build-sample-catalog
+qa-python: schema lint format typecheck demo-clean docs build-sample-catalog
 
 # QA for Python bits, ran within a docker container
 .PHONY: qa-python-docker

@@ -18,13 +18,13 @@ import sys
 import time
 import traceback
 import types
+from collections.abc import Callable
 from importlib import import_module
-from typing import Callable, Optional, Tuple
 
 import psutil
 
 
-def _handle_error(msg: str, e: Optional[Exception] = None):
+def _handle_error(msg: str, e: Exception | None = None):
     logger = logging.getLogger(__name__)
     logger.error(msg)
     traceback.print_exc()
@@ -39,7 +39,7 @@ def aggregate_measurements_from_process(
     poll_interval: float,
     gpu_ids: list[int],
     fn: Callable[[types.ModuleType, int], float],
-) -> Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     """
     :param pid: The process identifier
     :param poll_interval: The poll interval, in seconds
@@ -56,7 +56,6 @@ def aggregate_measurements_from_process(
 
     while True:
         try:
-
             # This is just so that we check to see if our task is running
             # psutil.Process(pid)
             if not psutil.pid_exists(pid):

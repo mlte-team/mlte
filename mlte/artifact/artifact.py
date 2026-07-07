@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import abc
 import typing
-from typing import Optional
 
 from mlte.artifact.model import (
     ArtifactHeaderModel,
@@ -34,10 +33,10 @@ class Artifact(Serializable, abc.ABC):
     operations with them, namely persistence.
     """
 
-    type: Optional[ArtifactType] = None
+    type: ArtifactType | None = None
     """By default have no type, but a base Artifact should never be instantiated."""
 
-    def __init__(self, identifier: Optional[str] = None) -> None:
+    def __init__(self, identifier: str | None = None) -> None:
         """Main constructor for all artifacts."""
 
         self.identifier = self.build_full_id(identifier)
@@ -87,7 +86,7 @@ class Artifact(Serializable, abc.ABC):
         *,
         force: bool = False,
         parents: bool = False,
-        user: Optional[str] = None,
+        user: str | None = None,
     ) -> ArtifactModel:
         """
         Save an artifact with parameters from the configured global session.
@@ -119,7 +118,7 @@ class Artifact(Serializable, abc.ABC):
         *,
         force: bool = False,
         parents: bool = False,
-        user: Optional[str] = None,
+        user: str | None = None,
     ) -> ArtifactModel:
         """
         Save an artifact with the given context and store configuration.
@@ -142,9 +141,9 @@ class Artifact(Serializable, abc.ABC):
             # Convert to model and save.
             model = self.to_model()
 
-            assert isinstance(
-                model, ArtifactModel
-            ), "Can't create object from non-ArtifactModel model."
+            assert isinstance(model, ArtifactModel), (
+                "Can't create object from non-ArtifactModel model."
+            )
 
             return artifact_store.artifact_mapper.write_artifact_with_header(
                 context.model,
@@ -155,7 +154,7 @@ class Artifact(Serializable, abc.ABC):
             )
 
     @classmethod
-    def load(cls, identifier: Optional[str] = None) -> Artifact:
+    def load(cls, identifier: str | None = None) -> Artifact:
         """
         Load an artifact from the configured global session.
         :param identifier: The identifier for the artifact. If None,
@@ -173,7 +172,7 @@ class Artifact(Serializable, abc.ABC):
     @classmethod
     def load_with(
         cls,
-        identifier: Optional[str] = None,
+        identifier: str | None = None,
         *,
         context: Context,
         store: ArtifactStore,
@@ -224,7 +223,7 @@ class Artifact(Serializable, abc.ABC):
             return artifact_models
 
     @classmethod
-    def build_full_id(cls, base: Optional[str] = None) -> str:
+    def build_full_id(cls, base: str | None = None) -> str:
         """Builds the full id for this artifact. If base is None, default base is used."""
         if not cls.type:
             raise RuntimeError(

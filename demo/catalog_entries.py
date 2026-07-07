@@ -48,7 +48,7 @@ def main():
     )
     current_entry: CatalogEntry | None = None
     if os.path.exists(entry_path):
-        with open(entry_path, "r") as entry_file:
+        with open(entry_path) as entry_file:
             current_entry = CatalogEntry.from_json(json.load(entry_file))
 
     if mode == "check":
@@ -89,7 +89,7 @@ def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
         print(e)
         print(f"Misformatted entry data in {notebook_path}.")
         print(
-            f"Ensure that the second cell in the notebook contains JSON data for the sample test catalog."
+            "Ensure that the second cell in the notebook contains JSON data for the sample test catalog."
         )
         sys.exit(1)
 
@@ -151,11 +151,12 @@ def create_code_str(notebook_data: NotebookNode) -> str:
     # Take the JSON entry data out of the notebook data so that it doesn't end up in the code string
     local_notebook_data.cells.pop(1)
 
-    with tempfile.NamedTemporaryFile(
-        mode="r", suffix=".ipynb"
-    ) as temp_notebook_file, tempfile.NamedTemporaryFile(
-        mode="r", suffix=".py"
-    ) as temp_script_file:
+    with (
+        tempfile.NamedTemporaryFile(
+            mode="r", suffix=".ipynb"
+        ) as temp_notebook_file,
+        tempfile.NamedTemporaryFile(mode="r", suffix=".py") as temp_script_file,
+    ):
         script_path = Path(temp_script_file.name)
         notebook_path = Path(temp_notebook_file.name)
         nbformat.write(local_notebook_data, notebook_path)

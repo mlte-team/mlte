@@ -4,7 +4,6 @@ import os
 import sys
 import time
 from resource import *
-from typing import Optional
 
 # import garden
 import tensorflow as tf
@@ -30,7 +29,7 @@ def setup_log():
     )
 
 
-def print_and_log(message: Optional[str]):
+def print_and_log(message: str | None):
     """Print to console, as well as log to file."""
     print(message, flush=True)
     logging.info(message)
@@ -38,7 +37,7 @@ def print_and_log(message: Optional[str]):
 
 def load_log() -> str:
     """Loads the log contents and returns it as a string."""
-    with open(LOG_FILE, "r") as f:
+    with open(LOG_FILE) as f:
         content = f.read()
     return content
 
@@ -115,7 +114,7 @@ def run_model(image_folder_path, model_file):
             print_and_log("Model - Input Validation Pass - RGB image loaded")
         else:
             print_and_log(
-                f"Model - Input Validation Error - RGB image expected but  has wrong number of channels"
+                "Model - Input Validation Error - RGB image expected but  has wrong number of channels"
             )
             # Not sure if this is the best way to deal with the spec: "input specification it will generate the output "N/A"
             break
@@ -185,14 +184,10 @@ def run_model(image_folder_path, model_file):
     avg_inference_memory = total_inference_memory / num_samples
     print_and_log("\n--- STATISTICS ---")
     print_and_log(
-        "Average elapsed time per inference: {0:.5f} seconds".format(
-            avg_elapsed_time
-        )
+        f"Average elapsed time per inference: {avg_elapsed_time:.5f} seconds"
     )
     print_and_log(
-        "Average memory used per inference: {0:.5f} {1}.".format(
-            avg_inference_memory, r_mem_units_str
-        )
+        f"Average memory used per inference: {avg_inference_memory:.5f} {r_mem_units_str}."
     )
 
     return avg_elapsed_time, avg_inference_memory, r_mem_units_str

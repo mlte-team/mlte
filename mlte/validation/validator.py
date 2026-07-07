@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import inspect
 import typing
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
@@ -24,15 +25,15 @@ class Validator(Serializable):
     def __init__(
         self,
         *,
-        bool_exp: Optional[Callable[[Any], bool]] = None,
+        bool_exp: Callable[[Any], bool] | None = None,
         thresholds: list[str] = [],
-        success: Optional[str] = None,
-        failure: Optional[str] = None,
+        success: str | None = None,
+        failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
-        info: Optional[str] = None,
+        info: str | None = None,
         input_types: list[str] = [],
-        creator: Optional[FunctionInfo] = None,
+        creator: FunctionInfo | None = None,
     ):
         """
         Constructor.
@@ -85,13 +86,13 @@ class Validator(Serializable):
 
     @staticmethod
     def build_validator(
-        bool_exp: Optional[Callable[[Any], bool]] = None,
+        bool_exp: Callable[[Any], bool] | None = None,
         thresholds: list[Any] = [],
-        success: Optional[str] = None,
-        failure: Optional[str] = None,
+        success: str | None = None,
+        failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
-        info: Optional[str] = None,
+        info: str | None = None,
         input_types: list[type] = [Evidence],
     ) -> Validator:
         """
@@ -158,7 +159,7 @@ class Validator(Serializable):
         self._check_arguments(*args, **kwargs)
 
         # First execute bool expression (if any), and get its boolean result.
-        executed_bool_exp_value: Optional[bool] = None
+        executed_bool_exp_value: bool | None = None
         if self.bool_exp is not None:
             executed_bool_exp_value = self.bool_exp(*args, **kwargs)
             if not isinstance(executed_bool_exp_value, bool):

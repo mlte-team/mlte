@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 from mlte._private import meta
 from mlte._private.reflection import load_class_or_function
@@ -44,7 +44,7 @@ class Evidence(Artifact, ABC):
         self.typename: str = meta.get_qualified_name(self.__class__)
         """The class type of the evidence itself."""
 
-        self.metadata: Optional[EvidenceMetadata] = None
+        self.metadata: EvidenceMetadata | None = None
         """Metadata has not been initialized yet."""
 
     def with_metadata(self: T, evidence_metadata: EvidenceMetadata) -> T:
@@ -113,16 +113,16 @@ class Evidence(Artifact, ABC):
         Checks if internal types are the ones expected. Raises exception if expected conditions are not met.
         Returns the type-casted body as an EvidenceModel.
         """
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.EVIDENCE
-        ), f"Incorrect header type: {model.header.type}, expected {ArtifactType.EVIDENCE}."
+        assert isinstance(model, ArtifactModel), (
+            "Can't create object from non-ArtifactModel model."
+        )
+        assert model.header.type == ArtifactType.EVIDENCE, (
+            f"Incorrect header type: {model.header.type}, expected {ArtifactType.EVIDENCE}."
+        )
         body = typing.cast(EvidenceModel, model.body)
-        assert (
-            body.value.evidence_type == evidence_type
-        ), f"Incorrect evidence type: {body.value.evidence_type}, expected {evidence_type}."
+        assert body.value.evidence_type == evidence_type, (
+            f"Incorrect evidence type: {body.value.evidence_type}, expected {evidence_type}."
+        )
 
         return body
 
@@ -165,7 +165,7 @@ class Evidence(Artifact, ABC):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Evidence:
+    def load(cls, identifier: str | None = None) -> Evidence:
         """
         Load a Evidence from the configured global session.
         :param identifier: The identifier for the artifact. If None,

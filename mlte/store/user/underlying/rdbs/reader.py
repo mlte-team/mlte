@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -29,7 +27,7 @@ class DBReader:
     """Class encapsulating functions to read user related data from the DB."""
 
     @staticmethod
-    def get_user(username: str, session: Session) -> Tuple[User, DBUser]:
+    def get_user(username: str, session: Session) -> tuple[User, DBUser]:
         """Reads the user with the given user using the provided session, and returns a User and DBUser object."""
         user_orm = session.scalar(
             select(DBUser).where(DBUser.username == username)
@@ -57,7 +55,7 @@ class DBReader:
             )
 
     @staticmethod
-    def get_group(group_name: str, session: Session) -> Tuple[Group, DBGroup]:
+    def get_group(group_name: str, session: Session) -> tuple[Group, DBGroup]:
         """Reads the group with the given name using the provided session, and returns a Group and DBGroup object."""
         group_orm = session.scalar(
             select(DBGroup).where(DBGroup.name == group_name)
@@ -90,7 +88,7 @@ class DBReader:
     def get_permission(
         permission: Permission,
         session: Session,
-    ) -> Tuple[Permission, DBPermission]:
+    ) -> tuple[Permission, DBPermission]:
         """Reads a permission from the DB, and returns a Permission and DBPermission objects."""
         permissions_orm = session.scalar(
             select(DBPermission)
@@ -110,12 +108,12 @@ class DBReader:
     @staticmethod
     def get_permissions(
         session: Session,
-    ) -> Tuple[List[Permission], List[DBPermission]]:
+    ) -> tuple[list[Permission], list[DBPermission]]:
         """Reads all permissions in the DB, and returns a list of Permission and DBPermission objects."""
         permissions_orm = list(
             session.execute(select(DBPermission)).scalars().all()
         )
-        permissions: List[Permission] = []
+        permissions: list[Permission] = []
         for permission_orm in permissions_orm:
             permission = Permission(
                 resource_type=ResourceType(permission_orm.resource_type),

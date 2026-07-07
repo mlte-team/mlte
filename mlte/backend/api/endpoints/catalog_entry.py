@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -169,7 +167,7 @@ def list_catalog_entries(
     *,
     catalog_id: str,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
@@ -192,7 +190,7 @@ def list_catalog_entries(
 def list_catalogs(
     *,
     current_user: AuthorizedUser,
-) -> List[CatalogReply]:
+) -> list[CatalogReply]:
     """
     List MLTE catalogs, returning their ids.
     :return: A collection of catalog ids.
@@ -216,7 +214,7 @@ def list_catalogs(
 def list_catalog_entries_all_catalogs(
     *,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
@@ -237,7 +235,7 @@ def search(
     *,
     query: Query,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     Search MLTE catalog entries, with details for each entry.
     :param query: The search query.

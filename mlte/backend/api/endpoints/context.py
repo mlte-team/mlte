@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -86,7 +84,7 @@ def read_model(
 @router.get("")
 def list_models(
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE models.
     :return: A collection of model identifiers
@@ -197,7 +195,7 @@ def read_version(
 def list_versions(
     model_id: str,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE versions for the provided model.
     :param model_id: The model identifier

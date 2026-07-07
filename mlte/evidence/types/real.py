@@ -5,7 +5,7 @@ An Evidence instance for a scalar, real value.
 from __future__ import annotations
 
 import typing
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -26,7 +26,7 @@ class Real(Evidence):
     Real implements the Evidence interface for a single real value.
     """
 
-    def __init__(self, value: float, unit: Optional[Unit] = None):
+    def __init__(self, value: float, unit: Unit | None = None):
         """
         Initialize a Real instance.
         :param value: The real value
@@ -86,7 +86,7 @@ class Real(Evidence):
     def less_than(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -98,8 +98,8 @@ class Real(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Real], bool] = (
-            lambda real: real.get_value_w_units() < threshold_w_unit
+        bool_exp: Callable[[Real], bool] = lambda real: (
+            real.get_value_w_units() < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -115,7 +115,7 @@ class Real(Evidence):
     def less_or_equal_to(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -127,8 +127,8 @@ class Real(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Real], bool] = (
-            lambda real: real.get_value_w_units() <= threshold_w_unit
+        bool_exp: Callable[[Real], bool] = lambda real: (
+            real.get_value_w_units() <= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -144,7 +144,7 @@ class Real(Evidence):
     def greater_than(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -156,8 +156,8 @@ class Real(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Real], bool] = (
-            lambda real: real.get_value_w_units() > threshold_w_unit
+        bool_exp: Callable[[Real], bool] = lambda real: (
+            real.get_value_w_units() > threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -173,7 +173,7 @@ class Real(Evidence):
     def greater_or_equal_to(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -185,8 +185,8 @@ class Real(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Real], bool] = (
-            lambda real: real.get_value_w_units() >= threshold_w_unit
+        bool_exp: Callable[[Real], bool] = lambda real: (
+            real.get_value_w_units() >= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -200,6 +200,6 @@ class Real(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Real:
+    def load(cls, identifier: str | None = None) -> Real:
         evidence = super().load(identifier)
         return typing.cast(Real, evidence)

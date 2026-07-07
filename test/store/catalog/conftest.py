@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import Optional
 
 import pytest
 from sqlalchemy import StaticPool
@@ -27,7 +26,7 @@ from test.store.utils import create_api_and_http_uri
 CATALOG_BASE_URI = f"{settings.API_PREFIX}/{ResourceType.CATALOG.value}"
 """Base URI for catalogs."""
 
-CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryCatalogStore] = None
+CACHED_DEFAULT_MEMORY_STORE: InMemoryCatalogStore | None = None
 """Global, initial, in memory store, cached for faster testing."""
 
 DEFAULT_ENTRY_ID = "e1"
@@ -121,8 +120,8 @@ def create_test_catalog_store(
 
 
 def get_entry_uri(
-    catalog_id: Optional[str] = None,
-    entry_id: Optional[str] = None,
+    catalog_id: str | None = None,
+    entry_id: str | None = None,
     only_base: bool = False,
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""
@@ -144,8 +143,8 @@ def get_test_entry(
     description: str = DEFAULT_ENTRY_DESC,
     code: str = DEFAULT_ENTRY_CODE,
     catalog_id: str = LOCAL_CATALOG_STORE_ID,
-    creator: Optional[str] = None,
-    updater: Optional[str] = None,
+    creator: str | None = None,
+    updater: str | None = None,
 ) -> CatalogEntry:
     """Helper to get an entry structure."""
     id = id

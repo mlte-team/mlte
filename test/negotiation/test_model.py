@@ -7,7 +7,7 @@ Unit tests for negotiation card model.
 from __future__ import annotations
 
 import typing
-from typing import Any, Dict
+from typing import Any
 
 from deepdiff import DeepDiff  # type: ignore
 
@@ -84,7 +84,7 @@ def test_system_descriptor() -> None:
 # -----------------------------------------------------------------------------
 
 
-def deepequal(a: Dict[str, Any], b: Dict[str, Any]) -> bool:
+def deepequal(a: dict[str, Any], b: dict[str, Any]) -> bool:
     return len(DeepDiff(a, b)) == 0
 
 

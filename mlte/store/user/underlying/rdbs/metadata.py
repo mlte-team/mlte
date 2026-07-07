@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 from sqlalchemy import ForeignKey, UniqueConstraint, select
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -27,17 +25,15 @@ class DBUser(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str]
-    email: Mapped[Optional[str]]
-    full_name: Mapped[Optional[str]]
+    email: Mapped[str | None]
+    full_name: Mapped[str | None]
     hashed_password: Mapped[str]
     disabled: Mapped[bool] = mapped_column(default=False)
 
-    role_type_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("role_type.id")
-    )
+    role_type_id: Mapped[int | None] = mapped_column(ForeignKey("role_type.id"))
     role_type: Mapped[DBRoleType] = relationship("DBRoleType")
 
-    groups: Mapped[List[DBGroup]] = relationship(
+    groups: Mapped[list[DBGroup]] = relationship(
         "DBGroup", secondary="user_group", back_populates="users"
     )
 
@@ -64,10 +60,10 @@ class DBGroup(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    users: Mapped[List[DBUser]] = relationship(
+    users: Mapped[list[DBUser]] = relationship(
         DBUser, secondary="user_group", back_populates="groups"
     )
-    permissions: Mapped[List[DBPermission]] = relationship(
+    permissions: Mapped[list[DBPermission]] = relationship(
         "DBPermission", secondary="group_permission", back_populates="groups"
     )
 
@@ -93,13 +89,13 @@ class DBPermission(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     resource_type: Mapped[str]
-    resource_id: Mapped[Optional[str]]
+    resource_id: Mapped[str | None]
 
     # TODO get ID?
     method_type_id: Mapped[int] = mapped_column(ForeignKey("method_type.id"))
     method_type: Mapped[DBMethodType] = relationship()
 
-    groups: Mapped[List[DBGroup]] = relationship(
+    groups: Mapped[list[DBGroup]] = relationship(
         DBGroup,
         secondary="group_permission",
         back_populates="permissions",

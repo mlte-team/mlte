@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
@@ -60,8 +60,8 @@ class DBEvidenceMetadata(DBBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     test_case_id: Mapped[str]
     measurement: Mapped[str]
-    result_id: Mapped[Optional[int]] = mapped_column(ForeignKey("result.id"))
-    evidence_id: Mapped[Optional[int]] = mapped_column(
+    result_id: Mapped[int | None] = mapped_column(ForeignKey("result.id"))
+    evidence_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBEvidence.get_id_column())
     )
 

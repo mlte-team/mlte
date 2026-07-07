@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional, OrderedDict
+from collections import OrderedDict
+from typing import Any
 from urllib import parse as url_parse
 
 from mlte._private import url as url_utils
@@ -23,7 +24,7 @@ class HttpResourceStorage(Storage):
         self,
         uri: StoreURI,
         resource_type: ResourceType | str,
-        client: Optional[OAuthHttpClient] = None,
+        client: OAuthHttpClient | None = None,
     ) -> None:
         """
         Creates an HTTP storage for a specific resource.
@@ -70,7 +71,7 @@ class HttpResourceStorage(Storage):
 
     def get(
         self,
-        id: Optional[str] = None,
+        id: str | None = None,
         groups: OrderedDict[str, str] = OrderedDict(),
         query_args: dict[str, str] = {},
     ) -> Any:
@@ -89,10 +90,10 @@ class HttpResourceStorage(Storage):
         self,
         method: MethodType,
         groups: OrderedDict[str, str] = OrderedDict(),
-        id: Optional[str] = None,
+        id: str | None = None,
         query_args: dict[str, str] = {},
-        json: Optional[Any] = None,
-        resource_type: Optional[str] = None,
+        json: Any | None = None,
+        resource_type: str | None = None,
     ) -> Any:
         """
         Sends an HTTP command request to the backend API, and returns a JSON response from it. Commonly not used directly, as it is expected

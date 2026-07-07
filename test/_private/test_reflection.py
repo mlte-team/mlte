@@ -60,8 +60,8 @@ def test_comma_lambda() -> None:
 
 
 def test_lambda_and_comment():
-    lambda_with_lambda_in_comment = (
-        lambda w: w + 5
+    lambda_with_lambda_in_comment = lambda w: (
+        w + 5
     )  # this is a lambda  # noqa: E731
     lambda_str = get_lambda_code(lambda_with_lambda_in_comment)
     assert lambda_str == "lambda w: (w + 5)"

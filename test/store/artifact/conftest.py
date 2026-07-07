@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import typing
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Tuple
 
 import pytest
 from sqlalchemy import StaticPool
@@ -56,9 +56,9 @@ def _create_api_and_http_store(uri: StoreURI) -> HttpArtifactStore:
     return HttpArtifactStore(uri=uri, client=client)
 
 
-def store_types_and_artifact_types() -> (
-    Generator[Tuple[StoreType, ArtifactType], None, None]
-):
+def store_types_and_artifact_types() -> Generator[
+    tuple[StoreType, ArtifactType], None, None
+]:
     """
     Yield store fixture names and artifact types to produce all combinations.
     :return: (store fixture name, artifact type)
@@ -105,7 +105,7 @@ FX_VERSION_ID = "v0"
 
 
 @pytest.fixture(scope="function")
-def artifact_store_with_context() -> Tuple[ArtifactStore, Context]:
+def artifact_store_with_context() -> tuple[ArtifactStore, Context]:
     """Create an in-memory artifact store with initial context."""
     store = _create_memory_store()
     with ManagedArtifactSession(store.session()) as artifact_store:

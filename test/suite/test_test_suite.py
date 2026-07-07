@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 
@@ -20,7 +20,7 @@ from test.negotiation.test_artifact import get_sample_negotiation_card
 
 
 def get_sample_test_suite(
-    identifier: Optional[str] = None, qas_ids: list[str] = []
+    identifier: str | None = None, qas_ids: list[str] = []
 ):
     test_suite = TestSuite(
         identifier=identifier if identifier else "test_suite",

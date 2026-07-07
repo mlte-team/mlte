@@ -1,7 +1,5 @@
 """Unit tests for Value."""
 
-from typing import Tuple
-
 from mlte.context.context import Context
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
@@ -12,7 +10,7 @@ from mlte.store.artifact.store import ArtifactStore
 
 
 def test_load_all(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ):
     """
     Loading all models of a given type.

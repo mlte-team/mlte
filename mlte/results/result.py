@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import sys
 from abc import ABC
-from typing import Optional
 
 import mlte._private.meta as meta
 from mlte.evidence.metadata import EvidenceMetadata
@@ -32,13 +31,13 @@ class Result(ABC):
         self.additional_data = additional_data
         """Additional details to complement the message, if any."""
 
-        self.evidence_metadata: Optional[EvidenceMetadata] = None
+        self.evidence_metadata: EvidenceMetadata | None = None
         """
         The measurement id from which this was obtained.
         """
 
     def _with_evidence_metadata(
-        self, evidence_metadata: Optional[EvidenceMetadata]
+        self, evidence_metadata: EvidenceMetadata | None
     ) -> Result:
         """
         Set the `metadata` field of the Result

@@ -1,7 +1,5 @@
 """Define user policies."""
 
-from typing import Union
-
 from mlte.store.user.policy import Policy
 from mlte.store.user.policy.policy_store_service import PolicyStoreService
 from mlte.store.user.store_session import UserStoreSession
@@ -39,8 +37,8 @@ def set_default_user_policies(
 
 
 def remove_new_groups(
-    user: Union[UserWithPassword, BasicUser], user_store: UserStoreSession
-) -> Union[UserWithPassword, BasicUser]:
+    user: UserWithPassword | BasicUser, user_store: UserStoreSession
+) -> UserWithPassword | BasicUser:
     """Removes any groups in the given user that are not in the stored version of this user."""
     current_groups = user_store.user_mapper.read(user.username).groups
     user.groups = current_groups

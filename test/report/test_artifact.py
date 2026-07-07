@@ -1,7 +1,5 @@
 """Unit tests for report artifact type."""
 
-from typing import Tuple
-
 from mlte.artifact.type import ArtifactType
 from mlte.context.context import Context
 from mlte.report.artifact import Report
@@ -21,7 +19,7 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Report can be saved to and loaded from artifact store."""
     store, ctx = artifact_store_with_context
