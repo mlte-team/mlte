@@ -10,7 +10,6 @@ python-venv-remove:
 
 .PHONY: python-venv
 python-venv:
-	python -m venv .venv && \
 	uv lock && \
 	uv sync --group dev --group demo --all-extras
 

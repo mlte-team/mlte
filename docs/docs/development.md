@@ -53,11 +53,11 @@ $ pyenv local 3.12
 
 ### Requirements
 
- - `MLTE` uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+ - `MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
 
 ### Dev Environment Setup
 
-You will need to set up a virtual Python environment where `poetry` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
+You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
 $ make venv
@@ -66,8 +66,7 @@ $ make venv
 If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
 
 ```bash
-$ python -m venv .venv
-$ poetry install --with dev --all-extras
+$ uv sync --group dev --all-extras
 ```
 
 Now you are ready to start working on `MLTE`!
@@ -77,7 +76,7 @@ Now you are ready to start working on `MLTE`!
 There are several demos available in the `demo/` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
 
 ```bash
-$ poetry install --with demo
+$ uv sync --group demo
 ```
 
 You can go to the Jupyter notebooks in the subfolders inside the `demo/` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
@@ -95,7 +94,7 @@ Information relating to creating a new demo can be found [here](new_demo.md).
 
 You can run most project commands (e.g., format sources, lint) in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `poetry run` prefix. 
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `uv run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `uv run` prefix. 
 
 To manually activate your environment, run:
 
@@ -317,7 +316,7 @@ $ make build-in-docker
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
 ```bash
-$ poetry publish --username __token__ --password <TOKEN>
+$ uv publish --index https://pypi.org --username __token__ --password <TOKEN>
 ```
 
 ## Docker Integration

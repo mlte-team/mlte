@@ -20,16 +20,16 @@ RUN pipx ensurepath
 # Ensure we are not buffering output for clarity.
 ENV PYTHONUNBUFFERED=1
 
-# Setup poetry to handle dependencies.
-RUN pipx install poetry==2.0.1
+# Setup uv to handle dependencies.
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install Python deps.
 WORKDIR /mnt/app
 COPY pyproject.toml /mnt/app
-COPY poetry.lock /mnt/app
+COPY uv.lock /mnt/app
 COPY README.md /mnt/app
-RUN poetry install --no-root --all-extras
+RUN uv sync --no-install-project --all-extras
 
 # Copy the rest of the MLTE code.
 # TODO: note that this is also copying all extra nuxt-app frontend code that is not needed.

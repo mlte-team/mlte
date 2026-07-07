@@ -6,9 +6,8 @@ FROM mlte-python
 COPY --from=mlte-frontend-build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte/frontend/nuxt-app/.output
 
 # Install dev deps, validate pyproject.toml and lock file for consistency, and build sdist and wheel.
-RUN poetry install --no-root --with dev
-RUN poetry check
-RUN poetry build
+RUN uv install --no-install-project --group dev
+RUN uv build
 
 # Check if the description/readme in the created packages are ok for PyPi.
-RUN poetry run twine check dist/*
+RUN uv run twine check dist/*

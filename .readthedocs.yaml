@@ -11,13 +11,12 @@ build:
     python: "3.10"
   jobs:
     post_create_environment:
-      # Install poetry
-      # https://python-poetry.org/docs/#installing-manually
-      - python -m pip install poetry
+      # Install uv
+      # https://docs.astral.sh/uv/getting-started/installation/
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
     post_install:
-      # Install dependencies with 'docs' dependency group
-      # https://python-poetry.org/docs/managing-dependencies/#dependency-groups
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with dev    
+      # Install dependencies with 'dev' dependency group
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv sync --group dev    
   
 # Build documentation in the docs/ directory with mkdocs
 mkdocs:

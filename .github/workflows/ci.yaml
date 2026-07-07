@@ -36,10 +36,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install dependencies
-        run: poetry install --with dev --all-extras
+        run: uv sync --group dev --all-extras
       - name: Vet schemas
         run: make check-schema
       - name: Sort imports with isort
@@ -70,10 +70,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install demo dependencies
-        run: poetry install --with dev,demo --all-extras        
+        run: uv sync --group dev --group demo --all-extras        
       - name: Execute demo tests
         run: make demo-test
       - name: Check catalog entries
